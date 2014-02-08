@@ -9,13 +9,13 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.Toast;
 
+import com.eldritch.scifirpg.R;
 import com.eldritch.scifirpg.model.GameSettings;
 import com.eldritch.scifirpg.model.Occupation;
 import com.eldritch.scifirpg.model.Person;
 import com.eldritch.scifirpg.model.Person.Gender;
 import com.eldritch.scifirpg.model.locations.Location;
 import com.eldritch.scifirpg.view.LocationView;
-import com.eldritch.westerngothic.R;
 
 public class OverworldActivity extends Activity {
 	private TableLayout tableLayout;
@@ -40,7 +40,7 @@ public class OverworldActivity extends Activity {
         
         TableRow row = new TableRow(this);
         row.setGravity(Gravity.CENTER);
-        row.addView(new LocationView(new Location("mill", 1), this), cp);
+        row.addView(new LocationView(new Location("dungeon", 1), this), cp);
         row.addView(new LocationView(new Location("hills", 0), this), cp);
         row.addView(new LocationView(new Location("hills", 0), this), cp);
         tableLayout.addView(row, rp);

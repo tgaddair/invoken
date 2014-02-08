@@ -5,7 +5,7 @@
  * should not be modified by hand.
  */
 
-package com.eldritch.westerngothic;
+package com.eldritch.scifirpg;
 
 public final class R {
     public static final class attr {
