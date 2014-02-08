@@ -29,8 +29,11 @@ public class OverworldActivity extends Activity {
         
         pc = new Person("John", "Holliday", "Doc", Gender.MALE, Occupation.Gunslinger);
         GameSettings.newGame(pc);
-        currentLocation = new Location("town", 0);
+        Location world = new Location("world");
         
+        setLocation(world);
+        
+        // TODO(taddair): This should go in the enter() method for 'world'
         TableLayout.LayoutParams rp = new TableLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT, 1.0f);
         TableRow.LayoutParams cp = new TableRow.LayoutParams(0, LayoutParams.MATCH_PARENT);
         
@@ -40,23 +43,23 @@ public class OverworldActivity extends Activity {
         
         TableRow row = new TableRow(this);
         row.setGravity(Gravity.CENTER);
-        row.addView(new LocationView(new Location("dungeon", 1), this), cp);
-        row.addView(new LocationView(new Location("hills", 0), this), cp);
-        row.addView(new LocationView(new Location("hills", 0), this), cp);
+        row.addView(new LocationView(new Location("dungeon", world), this), cp);
+        row.addView(new LocationView(new Location("hills", world), this), cp);
+        row.addView(new LocationView(new Location("hills", world), this), cp);
         tableLayout.addView(row, rp);
         
         row = new TableRow(this);
         row.setGravity(Gravity.CENTER);
-        row.addView(new LocationView(new Location("hills", 0), this), cp);
-        row.addView(new LocationView(currentLocation, this), cp);
-        row.addView(new LocationView(new Location("creek", 0), this), cp);
+        row.addView(new LocationView(new Location("hills", world), this), cp);
+        row.addView(new LocationView(new Location("town", world), this), cp);
+        row.addView(new LocationView(new Location("creek", world), this), cp);
         tableLayout.addView(row, rp);
         
         row = new TableRow(this);
         row.setGravity(Gravity.CENTER);
-        row.addView(new LocationView(new Location("hills", 0), this), cp);
-        row.addView(new LocationView(new Location("hills", 0), this), cp);
-        row.addView(new LocationView(new Location("hills", 0), this), cp);
+        row.addView(new LocationView(new Location("hills", world), this), cp);
+        row.addView(new LocationView(new Location("hills", world), this), cp);
+        row.addView(new LocationView(new Location("hills", world), this), cp);
         tableLayout.addView(row, rp);
     }
 
@@ -68,6 +71,7 @@ public class OverworldActivity extends Activity {
     
     public void setLocation(Location location) {
     	currentLocation = location;
+    	location.enter();
     	
     	String text = String.format("Moved to %s", location.getName());
     	Toast.makeText(this, text, Toast.LENGTH_SHORT).show();

@@ -6,11 +6,11 @@ import com.eldritch.scifirpg.model.locations.Location;
 import android.view.View;
 import android.widget.Button;
 
-public class LocationView extends Button {
+public class LocationView<T extends Location> extends Button {
 	private final OverworldActivity overworld;
-	private final Location location;
+	private final T location;
 
-	public LocationView(Location loc, OverworldActivity context) {
+	public LocationView(T loc, OverworldActivity context) {
 		super(context);
 		this.overworld = context;
 		this.location = loc;
@@ -19,8 +19,20 @@ public class LocationView extends Button {
 		setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
             	overworld.setLocation(location);
+            	handleSetLocation();
             }
         });
 	}
-
+	
+	protected T getLocation() {
+		return location;
+	}
+	
+	protected OverworldActivity getOverworld() {
+		return overworld;
+	}
+	
+	protected void handleSetLocation() {
+		
+	}
 }

@@ -4,24 +4,43 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Scanner;
 
+import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
+
 public class Location {
 	private String name;
-	private int actions;
+	private final Optional<Location> parent;
 	
-	public Location() {
+	public Location(String name) {
+		this(name, Optional.<Location>absent());
+	}
+	
+	public Location(String name, Location parent) {
+		this(name, Optional.of(parent));
 	}
 
-	public Location(String name, int actions) {
+	private Location(String name, Optional<Location> parent) {
 		this.name = name;
-		this.actions = actions;
+		this.parent = parent;
 	}
 
 	public String getName() {
 		return name;
 	}
-
-	public int getActionCost() {
-		return actions;
+	
+	public boolean hasParent() {
+		return parent.isPresent();
+	}
+	
+	public Location getParent() {
+		return parent.get();
+	}
+	
+	public void enter() {
+		
+	}
+	
+	public void exit() {
 	}
 
 	public void load() throws IOException {
@@ -50,9 +69,6 @@ public class Location {
 
 	public String getShortDescription() {
 		String desc = name;
-		if (actions > 0) {
-			desc += String.format(" (%d)", actions);
-		}
 		return desc;
 	}
 }
