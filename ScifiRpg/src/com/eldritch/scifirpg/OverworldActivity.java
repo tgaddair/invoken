@@ -1,5 +1,8 @@
 package com.eldritch.scifirpg;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.Gravity;
@@ -10,11 +13,15 @@ import android.widget.TableRow;
 import android.widget.Toast;
 
 import com.eldritch.scifirpg.R;
+import com.eldritch.scifirpg.model.Encounter;
+import com.eldritch.scifirpg.model.EncounterModel;
 import com.eldritch.scifirpg.model.GameSettings;
 import com.eldritch.scifirpg.model.Occupation;
 import com.eldritch.scifirpg.model.Person;
 import com.eldritch.scifirpg.model.Person.Gender;
+import com.eldritch.scifirpg.model.locations.EncounterLocation;
 import com.eldritch.scifirpg.model.locations.Location;
+import com.eldritch.scifirpg.view.EncounterLocationView;
 import com.eldritch.scifirpg.view.LocationView;
 
 public class OverworldActivity extends Activity {
@@ -41,9 +48,16 @@ public class OverworldActivity extends Activity {
         tableLayout.setStretchAllColumns(true);
         tableLayout.setWeightSum(3);
         
+        Collection<Encounter> encounters = new ArrayList<Encounter>();
+        EncounterLocation dungeon = EncounterLocation.newBuilder()
+        		.setName("dungeon")
+        		.setParent(world)
+        		.setEncounterModel(new EncounterModel(encounters))
+        		.build();
+        
         TableRow row = new TableRow(this);
         row.setGravity(Gravity.CENTER);
-        row.addView(new LocationView(new Location("dungeon", world), this), cp);
+        row.addView(new EncounterLocationView(dungeon, this), cp);
         row.addView(new LocationView(new Location("hills", world), this), cp);
         row.addView(new LocationView(new Location("hills", world), this), cp);
         tableLayout.addView(row, rp);

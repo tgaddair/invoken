@@ -24,35 +24,45 @@ public class EncounterLocation extends Location {
 	
 	public static class Builder {
 		private String name;
-		private OverworldLocation parent;
+		private Location parent;
 		private EncounterModel eModel;
+		
+		private Builder() {
+		}
 		
 		public String getName() {
 			return name;
 		}
 
-		public void setName(String name) {
+		public Builder setName(String name) {
 			this.name = name;
+			return this;
 		}
 
-		public OverworldLocation getParent() {
+		public Location getParent() {
 			return parent;
 		}
 
-		public void setParent(OverworldLocation parent) {
+		public Builder setParent(Location parent) {
 			this.parent = parent;
+			return this;
 		}
 
-		public EncounterModel geteModel() {
+		public EncounterModel getEncounterModel() {
 			return eModel;
 		}
 
-		public void seteModel(EncounterModel eModel) {
+		public Builder setEncounterModel(EncounterModel eModel) {
 			this.eModel = eModel;
+			return this;
 		}
 
 		public EncounterLocation build() {
 			return new EncounterLocation(name, parent, eModel);
 		}
+	}
+	
+	public static Builder newBuilder() {
+		return new Builder();
 	}
 }
