@@ -1,0 +1,17 @@
+syntax = "proto2";
+
+message Outcome {
+	enum Type {
+		ITEM_CHANGE = 0; // COUNT of TARGET item
+		REP_CHANGE = 1; // COUNT reputation with TARGET faction
+		XP_GAIN = 2; // COUNT experience points
+		AUG_USE = 3; // COUNT uses of TARGET augmentation
+		AUG_GAIN = 4; // TARGET augmentation added to inventory
+		TELEPORT = 5; // TARGET destination
+	}
+
+	required double weight = 1; // 0.0 -> 1.0
+	required Type type = 2;
+	optional string target = 3;
+	optional int32 count = 4;
+}

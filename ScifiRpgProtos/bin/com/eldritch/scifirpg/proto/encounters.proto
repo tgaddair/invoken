@@ -1,0 +1,43 @@
+syntax = "proto2";
+
+import "com/eldritch/scifirpg/proto/prerequisites.proto";
+import "com/eldritch/scifirpg/proto/outcomes.proto";
+
+message DrawParams {
+	required string title = 1;
+	required double weight = 2;
+	required bool unique = 3 [default = false];
+	repeated Prerequisite prereq = 4;
+}
+
+message StaticEncounter {
+	required DrawParams params = 1;
+	required string description = 2;
+	repeated Outcome outcome = 3;
+}
+
+// Choices use hard pointers to successor states, so to prevent
+// circular dependencies, these trees must be DAGs
+message DecisionEncounter {
+	// Encounter ends when the player reaches a DecisionState with no choices
+	message DecisionState {
+		required string description = 1;
+		repeated Choice choice = 2;
+		repeated Outcome outcome = 3;
+	}
+
+	message Choice {
+		required string text = 1;
+		repeated Prerequisite prereq = 2;
+		required DecisionState successor = 3;
+	}
+
+	required DrawParams params = 1;
+	required DecisionState root = 2;
+}
+
+message ActorEncounter {
+	required DrawParams params = 1;
+	repeated string actor_id = 2;
+	// Description comes from Actor greeting
+}
