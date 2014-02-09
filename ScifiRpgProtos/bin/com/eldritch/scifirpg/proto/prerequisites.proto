@@ -7,11 +7,15 @@ message Prerequisite {
 		LVL_BETWEEN = 2; // player level between MIN and MAX
 		ENCOUNTER_SEEN = 3; // TARGET encounter previously observed
 		ITEM_HAS = 4; // MIN or more of TARGET item in inventory
-		AUG_REMAINING = 5; // MIN or more of TARGET augmentation uses remaining
+
 		// When AUG_REMAINING is a prereq, there will always be a corresponding
 		// AUG_USE outcome.
-		DIALOGUE_SEEN = 6; // TARGET dialogue previously observed
+		AUG_REMAINING = 5; // MIN or more of TARGET augmentation uses remaining
+
 		// DIALOGUE_SEEN only has meaning within a specific DialogueTree.
+		DIALOGUE_SEEN = 6; // TARGET dialogue previously observed
+
+		ITEM_EQUIPPED = 7; // TARGET item is currently equipped
 	}
 
 	required Type type = 1;

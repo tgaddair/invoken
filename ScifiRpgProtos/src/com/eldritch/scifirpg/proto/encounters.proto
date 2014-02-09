@@ -3,7 +3,8 @@ syntax = "proto2";
 import "com/eldritch/scifirpg/proto/prerequisites.proto";
 import "com/eldritch/scifirpg/proto/outcomes.proto";
 
-message DrawParams {
+message EncounterParams {
+	optional string id = 5; // unique key
 	required string title = 1;
 	required double weight = 2;
 	required bool unique = 3 [default = false];
@@ -11,7 +12,7 @@ message DrawParams {
 }
 
 message StaticEncounter {
-	required DrawParams params = 1;
+	required EncounterParams params = 1;
 	required string description = 2;
 	repeated Outcome outcome = 3;
 }
@@ -32,12 +33,12 @@ message DecisionEncounter {
 		required DecisionState successor = 3;
 	}
 
-	required DrawParams params = 1;
+	required EncounterParams params = 1;
 	required DecisionState root = 2;
 }
 
 message ActorEncounter {
-	required DrawParams params = 1;
+	required EncounterParams params = 1;
 	repeated string actor_id = 2;
 	// Description comes from Actor greeting
 }

@@ -1,5 +1,6 @@
 syntax = "proto2";
 
+import "com/eldritch/scifirpg/proto/attributes.proto";
 import "com/eldritch/scifirpg/proto/prerequisites.proto";
 import "com/eldritch/scifirpg/proto/outcomes.proto";
 
@@ -46,13 +47,6 @@ message DialogueTree {
 }
 
 message Actor {
-	enum Attribute {
-		FITNESS = 0;
-		INTELLECT = 1;
-		GUILE = 2;
-		CHARISMA = 3;
-	}
-
 	enum Gender {
 		MALE = 0;
 		FEMALE = 1;
@@ -90,6 +84,7 @@ message Actor {
 	}
 
 	// Names for various dialogue scenarios
+	optional string id = 22; // unique key
 	required string first_name = 1;
 	optional string last_name = 2;
 	optional string alias = 3;
@@ -105,9 +100,7 @@ message Actor {
 	repeated Stat stat = 9;
 	repeated FactionStatus faction_status = 10;
 	repeated Item inventory_item = 11;
-	optional string outfit_id = 12; // NPC: if not specified, inferred from inventory
-	optional string primary_weapon_id = 13; // NPC: if not specified, inferred from inventory
-	optional string secondary_weapon_id = 14; // NPC: if not specified, inferred from inventory
+	repeated string equipped_item_id = 21; // NPC: if not specified, inferred from inventory
 	repeated string known_aug_id = 15;
 	repeated StagedAugmentation staged_augmentation = 16; // if not specified, inferred from known augs
 

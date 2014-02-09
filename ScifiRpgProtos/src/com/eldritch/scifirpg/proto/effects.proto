@@ -1,0 +1,51 @@
+syntax = "proto2";
+
+import "com/eldritch/scifirpg/proto/attributes.proto";
+
+enum DamageType {
+	PHYSICAL = 0;
+	THERMAL = 1;
+	COLD = 2;
+	CORROSIVE = 3;
+	VIRAL = 4;
+}
+
+message Effect {
+	enum Type {
+		DISTANCE_MOD = 0; // VALUE change in distance to TARGET
+		RESISTANCE_MOD = 1; // VALUE change in defense to DAMAGE_TYPE on TARGET for DURATION
+		DAMAGE = 2; // VALUE damage of DAMAGE_TYPE on TARGET for DURATION
+		AGGRESSION_MOD = 3; // VALUE change in TARGET aggression for DURATION
+		HOSTILITY_MOD = 4; // VALUE change in TARGET hostility
+		ATTR_MOD = 5; // VALUE change to ATTRIBUTE on TARGET for DURATION
+		FACTION_MOD = 6; // VALUE change to ID faction standing for DURATION on TARGET
+		DAMAGE_MOD = 7; // VALUE change in DAMAGE_TYPE damage done on TARGET for DURATION
+		HEAL = 8; // VALUE change in health for DURATION on TARGET
+		FLY = 9; // VALUE change in distance (min of VALUE from ground) for DURATION on TARGET
+		PARALYZE = 10; // TARGET unable to take action for DURATION
+		GROUND = 11; // End fly effect on TARGET for DURATION if distance <= VALUE
+		AUG_USE_MOD = 12; // VALUE change in remaining uses for ID aug on TARGET
+	}
+
+	enum Target {
+		PLAYER = 0; // Only affects the player
+		SELECTED = 1; // Actively choose an Actor within an ActorEncounter
+		ALL = 2; // Everyone in an ActorEncounter, including the player
+		ALL_OTHER = 3; // Everyone in an ActorEncounter, except the player
+		ALL_HOSTILE = 4; // Everyone hostile to the player in an ActorEncounter
+	}
+
+	optional int32 value = 1;
+	optional Target target = 2;
+
+	// Only applicable to certain types
+	optional DamageType damage_type = 4;
+	optional Attribute attribute = 5;
+	optional string id = 6;
+
+	// Length of effect in complete turns (turn = all actors take action)
+	// -1 = constant
+	// 0 = immediate
+	optional int32 duration = 3 [default = 0];
+
+}

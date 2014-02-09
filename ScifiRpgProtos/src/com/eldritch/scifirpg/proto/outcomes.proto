@@ -8,6 +8,9 @@ message Outcome {
 		AUG_USE = 3; // COUNT uses of TARGET augmentation
 		AUG_GAIN = 4; // TARGET augmentation added to inventory
 		TELEPORT = 5; // TARGET destination
+		HP_CHANGE = 6; // COUNT change in player health
+
+		// NOTE: if removing an equipped item would drop the count to 0, it will also be unequipped
 	}
 
 	required double weight = 1; // 0.0 -> 1.0
