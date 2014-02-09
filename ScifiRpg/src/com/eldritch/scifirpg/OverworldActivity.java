@@ -13,12 +13,12 @@ import android.widget.TableRow;
 import android.widget.Toast;
 
 import com.eldritch.scifirpg.R;
-import com.eldritch.scifirpg.model.Encounter;
 import com.eldritch.scifirpg.model.EncounterModel;
 import com.eldritch.scifirpg.model.GameSettings;
 import com.eldritch.scifirpg.model.Occupation;
 import com.eldritch.scifirpg.model.Person;
 import com.eldritch.scifirpg.model.Person.Gender;
+import com.eldritch.scifirpg.model.encounters.Encounter;
 import com.eldritch.scifirpg.model.locations.EncounterLocation;
 import com.eldritch.scifirpg.model.locations.Location;
 import com.eldritch.scifirpg.view.EncounterLocationView;

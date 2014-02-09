@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import com.eldritch.scifirpg.model.encounters.Encounter;
+
 public class EncounterModel {
 	private final List<Encounter> encounters;
 	

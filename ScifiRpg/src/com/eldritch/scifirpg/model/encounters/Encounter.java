@@ -1,4 +1,4 @@
-package com.eldritch.scifirpg.model;
+package com.eldritch.scifirpg.model.encounters;
 
 public class Encounter {
 	private final double weight;

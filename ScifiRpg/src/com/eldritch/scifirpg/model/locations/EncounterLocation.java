@@ -1,7 +1,7 @@
 package com.eldritch.scifirpg.model.locations;
 
-import com.eldritch.scifirpg.model.Encounter;
 import com.eldritch.scifirpg.model.EncounterModel;
+import com.eldritch.scifirpg.model.encounters.Encounter;
 
 public class EncounterLocation extends Location {
 	private final EncounterModel eModel;
