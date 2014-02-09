@@ -1,4 +1,4 @@
-package com.eldritch.scifirpg.editor;
+package com.eldritch.scifirpg.editor.tables;
 
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
@@ -16,23 +16,9 @@ public class AssetTablePanel extends JPanel {
 	
 	private final JPopupMenu popup;
 
-	public AssetTablePanel() {
+	public AssetTablePanel(final JTable table) {
 		super(new GridLayout(1, 0));
 
-		String[] columnNames = { "First Name", "Last Name", "Sport",
-				"# of Years", "Vegetarian" };
-
-		Object[][] data = {
-				{ "Kathy", "Smith", "Snowboarding", new Integer(5),
-						new Boolean(false) },
-				{ "John", "Doe", "Rowing", new Integer(3), new Boolean(true) },
-				{ "Sue", "Black", "Knitting", new Integer(2),
-						new Boolean(false) },
-				{ "Jane", "White", "Speed reading", new Integer(20),
-						new Boolean(true) },
-				{ "Joe", "Brown", "Pool", new Integer(10), new Boolean(false) } };
-
-		final JTable table = new JTable(data, columnNames);
 		table.setPreferredScrollableViewportSize(new Dimension(500, 70));
 		table.setFillsViewportHeight(true);
 
@@ -44,10 +30,7 @@ public class AssetTablePanel extends JPanel {
 		
 		// Create the popup menu.
 	    popup = new JPopupMenu();
-	    JMenuItem menuItem = new JMenuItem("A popup menu item");
-	    //menuItem.addActionListener(this);
-	    popup.add(menuItem);
-	    menuItem = new JMenuItem("Another popup menu item");
+	    JMenuItem menuItem = new JMenuItem("New Asset");
 	    //menuItem.addActionListener(this);
 	    popup.add(menuItem);
 
@@ -78,7 +61,7 @@ public class AssetTablePanel extends JPanel {
 		System.out.println("--------------------------");
 	}
 	
-	class PopupListener extends MouseAdapter {
+	private class PopupListener extends MouseAdapter {
 	    public void mousePressed(MouseEvent e) {
 	        maybeShowPopup(e);
 	    }
