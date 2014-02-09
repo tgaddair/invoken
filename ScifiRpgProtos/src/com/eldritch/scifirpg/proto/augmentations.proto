@@ -1,0 +1,16 @@
+syntax = "proto2";
+
+import "com/eldritch/scifirpg/proto/attributes.proto";
+import "com/eldritch/scifirpg/proto/effects.proto";
+import "com/eldritch/scifirpg/proto/prerequisites.proto";
+
+message Augmentation {
+	optional string id = 1; // unique key
+	required string name = 2;
+	required string description = 3;
+	required int32 value = 4;
+	required int32 slots = 5;
+	required Attribute discipline = 8; // which kind of slot is filled by this aug
+	repeated Effect effect = 6;
+	repeated Prerequisite prereqs = 7;
+}

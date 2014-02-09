@@ -48,4 +48,13 @@ message Effect {
 	// 0 = immediate
 	optional int32 duration = 3 [default = 0];
 
+	// Active effects must be used manually in context-specific situations.
+	// If an item or aug has active effects, an action card will be placed
+	// into the player's deck.  The active effects for an aug can only be used
+	// once per stage.  Active effects for items can be used repeatedly.
+	//
+	// Passive effects have their effects applied upon staging or equipping and stack with
+	// successive stages (for augs).  These effects are not applied again if the action card
+	// is used to trigger the active effects associated with an item or aug.
+	optional bool active = 7 [default = true];
 }
