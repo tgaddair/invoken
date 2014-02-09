@@ -1,9 +1,5 @@
 package com.eldritch.scifirpg.view.fragment;
 
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-
 import com.eldritch.scifirpg.EncounterActivity;
 import com.eldritch.scifirpg.model.encounters.Encounter;
 
@@ -24,9 +20,5 @@ public abstract class EncounterLayoutManager<T extends Encounter> {
 		return activity;
 	}
 	
-	public void loadLayout() {
-		activity.setContentView(getLayout());
-	}
-	
-	public abstract View getLayout();
+	public abstract void loadLayout();
 }

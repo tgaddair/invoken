@@ -14,15 +14,13 @@ public class StaticEncounterManager extends EncounterLayoutManager<StaticEncount
 	}
 	
 	@Override
-	public View getLayout() {
-        RelativeLayout layout = (RelativeLayout) getActivity().findViewById(R.layout.static_encounter);
-        
-        TextView titleView = (TextView) layout.findViewById(R.id.titleView);
+	public void loadLayout() {
+		getActivity().setContentView(R.layout.static_encounter);
+		
+        TextView titleView = (TextView) getActivity().findViewById(R.id.titleView);
         titleView.setText(getEncounter().getTitle());
         
-        TextView descriptionView = (TextView) layout.findViewById(R.id.descriptionView);
+        TextView descriptionView = (TextView) getActivity().findViewById(R.id.descriptionView);
         descriptionView.setText(getEncounter().getDescription());
-        
-        return layout;
 	}
 }
