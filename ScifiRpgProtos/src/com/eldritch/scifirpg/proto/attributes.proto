@@ -1,8 +1,0 @@
-syntax = "proto2";
-
-enum Attribute {
-	FITNESS = 0;
-	INTELLECT = 1;
-	GUILE = 2;
-	CHARISMA = 3;
-}

@@ -1,16 +1,72 @@
 syntax = "proto2";
 
-import "com/eldritch/scifirpg/proto/attributes.proto";
+import "com/eldritch/scifirpg/proto/disciplines.proto";
 import "com/eldritch/scifirpg/proto/effects.proto";
 import "com/eldritch/scifirpg/proto/prerequisites.proto";
 
 message Augmentation {
+	enum Type {
+		ATTACK = 0;
+		DECEIVE = 1;
+		EXECUTE = 2;
+		DIALOGUE = 3;
+		COUNTER = 4;
+		REVEAL = 5;
+		INTERRUPT = 6;
+		PASSIVE = 7;
+	}
+
+	enum Subtype {
+		// Attack - Counter
+		MELEE = 0;
+		RANGED = 1;
+		HEAVY = 2;
+		COORDINATED = 3;
+		AMBUSH = 4;
+		CORRUPTION = 5;
+
+		// Deceive - Reveal
+		AVOIDANCE = 6;
+		ROBBERY = 7;
+		ESPIONAGE = 8;
+		STALKING = 9;
+		HACKING = 10;
+		IMPERSONATION = 11;
+
+		// Execute - Interrupt
+		ANALYSIS = 12;
+		MANIPULATION = 13;
+		CREATION = 14;
+		UPGRADE = 15;
+		ILLUSION = 16;
+		EMPATHY = 17;
+
+		// Dialogue
+		PERSUASION = 18;
+		BRIBERY = 19;
+		SEDUCTION = 20;
+		RHETORIC = 21;
+		INTIMIDATION = 22;
+		BLUFFING = 23;
+		DOMINATION = 24;
+
+		// Counter
+
+		// Passive
+	}
+
+	message Requirement {
+		required Discipline discipline = 1;
+		required int32 value = 2;
+		required int32 slots = 3;
+	}
+
 	optional string id = 1; // unique key
 	required string name = 2;
 	required string description = 3;
 	required int32 value = 4;
-	required int32 slots = 5;
-	required Attribute discipline = 8; // which kind of slot is filled by this aug
-	repeated Effect effect = 6;
-	repeated Prerequisite prereqs = 7;
+	required Type type = 5;
+	required Subtype subtype = 6;
+	repeated Requirement requirement = 7;
+	repeated Effect effect = 8;
 }

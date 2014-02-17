@@ -1,9 +1,8 @@
 syntax = "proto2";
 
-import "com/eldritch/scifirpg/proto/attributes.proto";
+import "com/eldritch/scifirpg/proto/disciplines.proto";
 import "com/eldritch/scifirpg/proto/prerequisites.proto";
 import "com/eldritch/scifirpg/proto/outcomes.proto";
-
 message Faction {
 	message Relation {
 		optional string faction_id = 1; // OPTIONAL: might change to int32
@@ -15,8 +14,8 @@ message Faction {
 }
 
 message DialogueTree {
-	// DialogueTree ends when the player reaches a Dialogue with no choices.
-	// When the DialogueTree ends, the player is returned to the first valid greeting.
+// DialogueTree ends when the player reaches a Dialogue with no choices.
+// When the DialogueTree ends, the player is returned to the first valid greeting.
 	message Dialogue {
 		optional string dialogue_id = 5; // The unique ID for this Dialogue within this tree
 		required string text = 1;
@@ -46,14 +45,32 @@ message DialogueTree {
 	repeated Dialogue dialogue = 1;
 }
 
-message Actor {
+message ActorDialogue {
+	optional string actor_id = 1;
+	optional string dialogue_id = 2;
+}
+
+message ActorParams {
 	enum Gender {
 		MALE = 0;
 		FEMALE = 1;
 	}
 
-	message Stat {
-		required Attribute attribute = 1;
+	enum Profession {
+		WARRIOR = 0;
+		EXECUTOR = 1;
+		SENTINEL = 2;
+		CAPTAIN = 3;
+		ARCHITECT = 4;
+		HACKER = 5;
+		POET = 6;
+		SPECTER = 7;
+		AGENT = 8;
+		BROKER = 9;
+	}
+
+	message Skill {
+		required Discipline discipline = 1;
 		required int32 level = 2;
 		optional int32 xp = 3; // OPTIONAL: may make global XP, N/A for NPCs
 	}
@@ -69,6 +86,51 @@ message Actor {
 		required int32 count = 2;
 	}
 
+	// Names for various dialogue scenarios
+	optional string id = 22; // unique key
+	required string first_name = 1;
+	optional string last_name = 2;
+	optional string alias = 3;
+
+	// Static info
+	required Gender gender = 6;
+
+	// Dynamic info
+	required int32 level = 8;
+	repeated Skill skill = 9;
+	repeated FactionStatus faction_status = 10;
+	repeated Item inventory_item = 11;
+	repeated string known_aug_id = 15;
+}
+
+message NonPlayerActor {
+	enum Trait {
+		AFFABLE = 0;
+		SURLY = 1;
+		GREEDY = 2;
+		ALTRUISTIC = 3;
+		LICENTIOUS = 4;
+		CHASTE = 5;
+		PASSIONATE = 6;
+		APATHETIC = 7;
+		CONFIDENT = 8;
+		INSECURE = 9;
+		SHREWD = 10;
+		GULLIBLE = 11;
+		ASSERTIVE = 12;
+		SUBMISSIVE = 13;
+	}
+
+	required ActorParams params = 1;
+	required bool unique = 2 [default = false];
+	required bool can_speak = 3 [default = true];
+	optional DialogueTree dialogue = 4;
+
+	optional int32 aggression = 5; // low reaction: high value likely to attack, negative likely to surrender
+	repeated Trait trait = 6;
+}
+
+message PlayerActor {
 	message StagedAugmentation {
 		// Every aug has a slot requirement R.  By staging an aug, you fill up
 		// R slots in the actor's slot bank.  Augs can be staged multiple times.
@@ -78,37 +140,12 @@ message Actor {
 		required int32 stages = 3;
 	}
 
-	message ActorDialogue {
-		optional string actor_id = 1;
-		optional string dialogue_id = 2;
-	}
+	required ActorParams params = 1;
 
-	// Names for various dialogue scenarios
-	optional string id = 22; // unique key
-	required string first_name = 1;
-	optional string last_name = 2;
-	optional string alias = 3;
-
-	// Static info
-	optional Attribute primary = 4; // OPTIONAL: may change
-	optional Attribute secondary = 5; // OPTIONAL: may change
-	required Gender gender = 6;
-
-	// Dynamic info
 	required int32 health = 7; // remaining, max health is calculated
-	required int32 level = 8;
-	repeated Stat stat = 9;
-	repeated FactionStatus faction_status = 10;
-	repeated Item inventory_item = 11;
 	repeated string equipped_item_id = 21; // NPC: if not specified, inferred from inventory
-	repeated string known_aug_id = 15;
 	repeated StagedAugmentation staged_augmentation = 16; // if not specified, inferred from known augs
 
-	// NPC info, N/A for player
-	optional int32 aggression = 17; // low reaction: high value likely to attack, negative likely to surrender
-	optional DialogueTree dialogue = 18;
-
-	// Player info, N/A for NPCs
 	repeated string encounter_seen = 19;
 	repeated ActorDialogue dialogue_seen = 20;
 }

@@ -1,0 +1,15 @@
+syntax = "proto2";
+
+enum Discipline {
+	// Determines max health
+	WARFARE = 0;
+
+	// Determines max hand size
+	AUTOMATA = 1;
+
+	// Determines who gets the drop on whom
+	SUBTERFUGE = 2;
+
+	// Determines NPC predisposition towards player
+	CHARISMA = 3;
+}

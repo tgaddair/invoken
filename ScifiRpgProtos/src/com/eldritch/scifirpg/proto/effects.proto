@@ -1,6 +1,6 @@
 syntax = "proto2";
 
-import "com/eldritch/scifirpg/proto/attributes.proto";
+import "com/eldritch/scifirpg/proto/disciplines.proto";
 
 enum DamageType {
 	PHYSICAL = 0;
@@ -33,6 +33,7 @@ message Effect {
 		ALL = 2; // Everyone in an ActorEncounter, including the player
 		ALL_OTHER = 3; // Everyone in an ActorEncounter, except the player
 		ALL_HOSTILE = 4; // Everyone hostile to the player in an ActorEncounter
+		ALL_ALLIED = 5; // Everyone allied with the player in an ActorEncounter
 	}
 
 	optional int32 value = 1;
@@ -40,7 +41,7 @@ message Effect {
 
 	// Only applicable to certain types
 	optional DamageType damage_type = 4;
-	optional Attribute attribute = 5;
+	optional Discipline discipline = 5;
 	optional string id = 6;
 
 	// Length of effect in complete turns (turn = all actors take action)

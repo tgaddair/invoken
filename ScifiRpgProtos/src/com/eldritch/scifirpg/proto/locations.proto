@@ -3,6 +3,12 @@ syntax = "proto2";
 import "com/eldritch/scifirpg/proto/prerequisites.proto";
 import "com/eldritch/scifirpg/proto/outcomes.proto";
 
+message Location {
+	required string id = 1; // unique key
+	required string name = 2;
+	repeated string encounter_id = 3;
+}
+
 message EncounterParams {
 	optional string id = 5; // unique key
 	required string title = 1;
