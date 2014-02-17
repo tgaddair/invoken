@@ -16,7 +16,7 @@ message Augmentation {
 		PASSIVE = 7;
 	}
 
-	enum Subtype {
+	enum AttackSubtype {
 		// Attack - Counter
 		MELEE = 0;
 		RANGED = 1;
@@ -24,35 +24,37 @@ message Augmentation {
 		COORDINATED = 3;
 		AMBUSH = 4;
 		CORRUPTION = 5;
+	}
 
+	enum DeceiveSubtype {
 		// Deceive - Reveal
-		AVOIDANCE = 6;
-		ROBBERY = 7;
-		ESPIONAGE = 8;
-		STALKING = 9;
-		HACKING = 10;
-		IMPERSONATION = 11;
+		AVOIDANCE = 0;
+		ROBBERY = 1;
+		ESPIONAGE = 2;
+		STALKING = 3;
+		HACKING = 4;
+		IMPERSONATION = 5;
+	}
 
+	enum ExecuteSubtype {
 		// Execute - Interrupt
-		ANALYSIS = 12;
-		MANIPULATION = 13;
-		CREATION = 14;
-		UPGRADE = 15;
-		ILLUSION = 16;
-		EMPATHY = 17;
+		ANALYSIS = 0;
+		MANIPULATION = 1;
+		CREATION = 2;
+		UPGRADE = 3;
+		ILLUSION = 4;
+		EMPATHY = 5;
+	}
 
+	enum DialogueSubtype {
 		// Dialogue
-		PERSUASION = 18;
-		BRIBERY = 19;
-		SEDUCTION = 20;
-		RHETORIC = 21;
-		INTIMIDATION = 22;
-		BLUFFING = 23;
-		DOMINATION = 24;
-
-		// Counter
-
-		// Passive
+		PERSUASION = 0;
+		BRIBERY = 1;
+		SEDUCTION = 2;
+		RHETORIC = 3;
+		INTIMIDATION = 4;
+		BLUFFING = 5;
+		DOMINATION = 6;
 	}
 
 	message Requirement {
@@ -66,7 +68,7 @@ message Augmentation {
 	required string description = 3;
 	required int32 value = 4;
 	required Type type = 5;
-	required Subtype subtype = 6;
+	optional int32 subtype_id = 6;
 	repeated Requirement requirement = 7;
 	repeated Effect effect = 8;
 }
