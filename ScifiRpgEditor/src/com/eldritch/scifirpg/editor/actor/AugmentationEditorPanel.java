@@ -27,8 +27,10 @@ import com.jgoodies.forms.layout.FormLayout;
 public class AugmentationEditorPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
 	
-	private final JComboBox<Type> typeBox;
-	private final JComboBox<Enum<?>> subtypeBox;
+	private final JTextField idField = new JTextField();
+	private final JTextField nameField = new JTextField();
+	private final JComboBox<Type> typeBox = new JComboBox<Type>(Type.values());
+	private final JComboBox<Enum<?>> subtypeBox = new JComboBox<Enum<?>>(AttackSubtype.values());
 
 	public AugmentationEditorPanel() {
 		super(new BorderLayout());
@@ -46,12 +48,13 @@ public class AugmentationEditorPanel extends JPanel {
 		int r = 1;
 		int c = 1;
 		
+		nameField.addActionListener(new NameTypedListener());
 		builder.addLabel("Name", cc.xy(c, r));
-		builder.add(new JTextField(), cc.xy(c + 2, r));
+		builder.add(nameField, cc.xy(c + 2, r));
 		r += 2;
 		
 		builder.addLabel("ID", cc.xy(c, r));
-		builder.add(new JTextField(), cc.xy(c + 2, r));
+		builder.add(idField, cc.xy(c + 2, r));
 		r += 2;
 		
 		builder.addLabel("Description", cc.xy(c, r));
@@ -65,13 +68,11 @@ public class AugmentationEditorPanel extends JPanel {
 		c = 5;
 		r = 1;
 		
-		typeBox = new JComboBox<Type>(Type.values());
 		typeBox.addActionListener(new TypeSelectionListener());
 		builder.addLabel("Type", cc.xy(c, r));
 		builder.add(typeBox, cc.xy(c + 2, r));
 		r += 2;
 		
-		subtypeBox = new JComboBox<Enum<?>>(AttackSubtype.values());
 		builder.addLabel("Subtype", cc.xy(c, r));
 		builder.add(subtypeBox, cc.xy(c + 2, r));
 		r += 2;
@@ -79,7 +80,6 @@ public class AugmentationEditorPanel extends JPanel {
 		builder.add(new JButton("Save"), cc.xy(c + 4, 9));
 
 		add(builder.getPanel());
-		
 		setPreferredSize(new Dimension(950, 500));
 	}
 
@@ -94,6 +94,14 @@ public class AugmentationEditorPanel extends JPanel {
 			area.setMinimumSize(new Dimension(100, 32));
 		}
 		return area;
+	}
+	
+	private class NameTypedListener implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			JTextField source = (JTextField) e.getSource();
+			idField.setText(source.getText().replaceAll(" ", ""));
+		}
 	}
 	
 	private class TypeSelectionListener implements ActionListener {
