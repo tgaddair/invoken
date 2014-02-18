@@ -88,9 +88,7 @@ message ActorParams {
 
 	// Names for various dialogue scenarios
 	optional string id = 22; // unique key
-	required string first_name = 1;
-	optional string last_name = 2;
-	optional string alias = 3;
+	required string name = 1;
 
 	// Static info
 	required Gender gender = 6;
