@@ -12,6 +12,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JTable;
+import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableModel;
 
 import com.eldritch.scifirpg.editor.asset.CreateActorPanel;
@@ -22,7 +23,7 @@ public abstract class AssetTable extends JTable {
 	private final JPopupMenu popup;
 	
 	public AssetTable(String[] columnNames) {
-		super(new DefaultTableModel(columnNames, 0));
+		super(new AssetTableModel(columnNames));
 		
 		// Create the popup menu.
 	    popup = new JPopupMenu();
@@ -53,6 +54,17 @@ public abstract class AssetTable extends JTable {
 	protected abstract JPanel getEditorPanel(JFrame frame);
 	
 	protected abstract String getAssetName();
+	
+	private static class AssetTableModel extends DefaultTableModel {
+		public AssetTableModel(String[] columnNames) {
+			super(columnNames, 0);
+		}
+		
+		@Override
+		public boolean isCellEditable(int row, int column) {
+			return false;
+		}
+	}
 	
 	private class PopupListener extends MouseAdapter {
 	    public void mousePressed(MouseEvent e) {
