@@ -1,5 +1,6 @@
 package com.eldritch.scifirpg.editor.tables;
 
+import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import com.eldritch.scifirpg.editor.asset.CreateActorPanel;
@@ -14,7 +15,7 @@ public class ActorTable extends AssetTable {
 	}
 
 	@Override
-	protected JPanel getEditorPanel() {
+	protected JPanel getEditorPanel(JFrame frame) {
 		return new CreateActorPanel();
 	}
 	

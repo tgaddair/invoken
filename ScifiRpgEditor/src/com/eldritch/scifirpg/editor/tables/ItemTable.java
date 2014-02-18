@@ -1,5 +1,6 @@
 package com.eldritch.scifirpg.editor.tables;
 
+import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 public class ItemTable extends AssetTable {
@@ -12,7 +13,7 @@ public class ItemTable extends AssetTable {
 	}
 
 	@Override
-	protected JPanel getEditorPanel() {
+	protected JPanel getEditorPanel(JFrame frame) {
 		return new JPanel();
 	}
 	

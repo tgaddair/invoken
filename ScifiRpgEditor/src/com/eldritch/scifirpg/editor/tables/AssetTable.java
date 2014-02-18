@@ -43,14 +43,14 @@ public abstract class AssetTable extends JTable {
 	protected void handleCreateAsset() {
 		// Create and set up the window.
         JFrame frame = new JFrame("Create New " + getAssetName());
-        frame.add(getEditorPanel(), BorderLayout.CENTER);
+        frame.add(getEditorPanel(frame), BorderLayout.CENTER);
         
         // Display the window.
         frame.pack();
         frame.setVisible(true);
 	}
 	
-	protected abstract JPanel getEditorPanel();
+	protected abstract JPanel getEditorPanel(JFrame frame);
 	
 	protected abstract String getAssetName();
 	

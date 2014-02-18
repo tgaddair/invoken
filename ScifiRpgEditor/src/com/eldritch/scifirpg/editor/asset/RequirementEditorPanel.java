@@ -7,6 +7,7 @@ import java.awt.event.ActionListener;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
@@ -20,14 +21,16 @@ public class RequirementEditorPanel extends JPanel implements ActionListener {
 	private static final long serialVersionUID = 1L;
 
 	private final RequirementTable owner;
+	private final JFrame frame;
 	private final JComboBox<Discipline> disciplineBox = new JComboBox<Discipline>(
 			Discipline.values());
 	private final JTextField valueField = new JTextField();
 	private final JTextField slotsField = new JTextField();
 
-	public RequirementEditorPanel(RequirementTable owner) {
+	public RequirementEditorPanel(RequirementTable owner, JFrame frame) {
 		super(new BorderLayout());
 		this.owner = owner;
+		this.frame = frame;
 
 		DefaultFormBuilder builder = new DefaultFormBuilder(new FormLayout(""));
 		builder.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
@@ -62,5 +65,6 @@ public class RequirementEditorPanel extends JPanel implements ActionListener {
 				.setSlots(slots)
 				.build();
 		owner.addAsset(req);
+		frame.dispose();
 	}
 }

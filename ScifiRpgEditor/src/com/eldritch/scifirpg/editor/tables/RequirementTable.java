@@ -1,5 +1,6 @@
 package com.eldritch.scifirpg.editor.tables;
 
+import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.table.DefaultTableModel;
 
@@ -16,8 +17,8 @@ public class RequirementTable extends AssetTable {
 	}
 
 	@Override
-	protected JPanel getEditorPanel() {
-		return new RequirementEditorPanel(this);
+	protected JPanel getEditorPanel(JFrame frame) {
+		return new RequirementEditorPanel(this, frame);
 	}
 	
 	@Override
