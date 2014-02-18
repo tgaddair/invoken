@@ -3,7 +3,10 @@ package com.eldritch.scifirpg.editor.actor;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
@@ -13,6 +16,9 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 
+import com.eldritch.scifirpg.proto.Augmentations.Augmentation.AttackSubtype;
+import com.eldritch.scifirpg.proto.Augmentations.Augmentation.DeceiveSubtype;
+import com.eldritch.scifirpg.proto.Augmentations.Augmentation.ExecuteSubtype;
 import com.eldritch.scifirpg.proto.Augmentations.Augmentation.Type;
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
@@ -20,6 +26,9 @@ import com.jgoodies.forms.layout.FormLayout;
 
 public class AugmentationEditorPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
+	
+	private final JComboBox<Type> typeBox;
+	private final JComboBox<Enum<?>> subtypeBox;
 
 	public AugmentationEditorPanel() {
 		super(new BorderLayout());
@@ -56,20 +65,15 @@ public class AugmentationEditorPanel extends JPanel {
 		c = 5;
 		r = 1;
 		
-		Type aug;
-		String[] petStrings = { "Bird", "Cat", "Dog", "Rabbit", "Pig" };
-
-		//Create the combo box, select item at index 4.
-		//Indices start at 0, so 4 specifies the pig.
-		JComboBox<String> typeBox = new JComboBox<String>(petStrings);
-		//typeBox.addActionListener(this);
-		
+		typeBox = new JComboBox<Type>(Type.values());
+		typeBox.addActionListener(new TypeSelectionListener());
 		builder.addLabel("Type", cc.xy(c, r));
 		builder.add(typeBox, cc.xy(c + 2, r));
 		r += 2;
 		
+		subtypeBox = new JComboBox<Enum<?>>(AttackSubtype.values());
 		builder.addLabel("Subtype", cc.xy(c, r));
-		builder.add(new JTextField(), cc.xy(c + 2, r));
+		builder.add(subtypeBox, cc.xy(c + 2, r));
 		r += 2;
 		
 		builder.add(new JButton("Save"), cc.xy(c + 4, 9));
@@ -90,5 +94,39 @@ public class AugmentationEditorPanel extends JPanel {
 			area.setMinimumSize(new Dimension(100, 32));
 		}
 		return area;
+	}
+	
+	private class TypeSelectionListener implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			Enum<?>[] values = null;
+			boolean visible = true;
+			
+			Type t = (Type) typeBox.getSelectedItem();
+			switch (t) {
+				case ATTACK:
+				case COUNTER:
+					values = AttackSubtype.values();
+					break;
+				case DECEIVE:
+				case REVEAL:
+					values = DeceiveSubtype.values();
+					break;
+				case EXECUTE:
+				case INTERRUPT:
+					values = ExecuteSubtype.values();
+					break;
+				case DIALOGUE:
+				case PASSIVE:
+					visible = false;
+					values = new Enum<?>[0];
+					break;
+				default:
+					throw new IllegalStateException("Unrecognized Augmentation Type: " + t);
+			}
+			
+			subtypeBox.setVisible(visible);
+			subtypeBox.setModel(new DefaultComboBoxModel<Enum<?>>(values));
+		}
 	}
 }
