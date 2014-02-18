@@ -2,9 +2,10 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/ScifiRpgProtos"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/guava-16.0.1"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/jgoodies-forms"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/jgoodies-common"/>
+	<classpathentry kind="lib" path="/ScifiRpgProtos/bin"/>
+	<classpathentry kind="lib" path="C:/Users/Travis/Downloads/protobuf-java-2.5.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
