@@ -2,7 +2,7 @@ package com.eldritch.scifirpg.editor.tables;
 
 import javax.swing.JPanel;
 
-import com.eldritch.scifirpg.editor.actor.CreateActorPanel;
+import com.eldritch.scifirpg.editor.asset.CreateActorPanel;
 
 public class ActorTable extends AssetTable {
 	private static final long serialVersionUID = 1L;

@@ -2,7 +2,7 @@ package com.eldritch.scifirpg.editor.tables;
 
 import javax.swing.JPanel;
 
-import com.eldritch.scifirpg.editor.actor.AugmentationEditorPanel;
+import com.eldritch.scifirpg.editor.asset.AugmentationEditorPanel;
 
 public class AugmentationTable extends AssetTable {
 	private static final long serialVersionUID = 1L;

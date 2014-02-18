@@ -14,7 +14,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
-import com.eldritch.scifirpg.editor.actor.CreateActorPanel;
+import com.eldritch.scifirpg.editor.asset.CreateActorPanel;
 
 public abstract class AssetTable extends JTable {
 	private static final long serialVersionUID = 1L;

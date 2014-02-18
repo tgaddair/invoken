@@ -1,4 +1,4 @@
-package com.eldritch.scifirpg.editor.actor;
+package com.eldritch.scifirpg.editor.asset;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -18,6 +18,8 @@ import javax.swing.border.LineBorder;
 
 import org.apache.commons.lang3.text.WordUtils;
 
+import com.eldritch.scifirpg.editor.tables.AssetTablePanel;
+import com.eldritch.scifirpg.editor.tables.RequirementTable;
 import com.eldritch.scifirpg.proto.Augmentations.Augmentation.AttackSubtype;
 import com.eldritch.scifirpg.proto.Augmentations.Augmentation.DeceiveSubtype;
 import com.eldritch.scifirpg.proto.Augmentations.Augmentation.ExecuteSubtype;
@@ -79,10 +81,14 @@ public class AugmentationEditorPanel extends JPanel {
 		builder.add(subtypeBox, cc.xy(c + 2, r));
 		r += 2;
 		
+		builder.addLabel("Requirements", cc.xy(c, r));
+		builder.add(new AssetTablePanel(new RequirementTable()), cc.xy(c + 2, r));
+		r += 2;
+		
 		builder.add(new JButton("Save"), cc.xy(c + 4, 9));
 
 		add(builder.getPanel());
-		setPreferredSize(new Dimension(950, 500));
+		setPreferredSize(new Dimension(1400, 500));
 	}
 
 	private JTextArea createArea(boolean lineWrap, int columns, Dimension minimumSize) {

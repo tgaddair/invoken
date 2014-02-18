@@ -1,4 +1,4 @@
-package com.eldritch.scifirpg.editor.actor;
+package com.eldritch.scifirpg.editor.asset;
 
 import javax.swing.*;
 import javax.swing.text.*;
