@@ -1,14 +1,18 @@
 package com.eldritch.scifirpg.editor.tables;
 
-import javax.swing.JTable;
-import javax.swing.table.DefaultTableModel;
+import javax.swing.JPanel;
 
-public class ItemTable extends JTable {
+public class ItemTable extends AssetTable {
 	private static final long serialVersionUID = 1L;
 	private static final String[] COLUMN_NAMES = { 
 		"ID", "Name", "Value", "Droppable" };
 	
 	public ItemTable() {
-		super(new DefaultTableModel(COLUMN_NAMES, 0));
+		super(COLUMN_NAMES);
+	}
+
+	@Override
+	protected JPanel getEditorPanel() {
+		return new JPanel();
 	}
 }

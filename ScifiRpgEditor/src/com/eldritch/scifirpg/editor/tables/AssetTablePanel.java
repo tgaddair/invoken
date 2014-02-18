@@ -14,8 +14,6 @@ import java.awt.event.MouseListener;
 public class AssetTablePanel extends JPanel {
 	private static final long serialVersionUID = 1L;
 	
-	private final JPopupMenu popup;
-
 	public AssetTablePanel(final JTable table) {
 		super(new GridLayout(1, 0));
 
@@ -28,16 +26,6 @@ public class AssetTablePanel extends JPanel {
 			}
 		});
 		
-		// Create the popup menu.
-	    popup = new JPopupMenu();
-	    JMenuItem menuItem = new JMenuItem("New Asset");
-	    //menuItem.addActionListener(this);
-	    popup.add(menuItem);
-
-	    // Add listener to components that can bring up popup menus.
-	    MouseListener popupListener = new PopupListener();
-	    table.addMouseListener(popupListener);
-
 		// Create the scroll pane and add the table to it.
 		JScrollPane scrollPane = new JScrollPane(table);
 
@@ -59,22 +47,5 @@ public class AssetTablePanel extends JPanel {
 			System.out.println();
 		}
 		System.out.println("--------------------------");
-	}
-	
-	private class PopupListener extends MouseAdapter {
-	    public void mousePressed(MouseEvent e) {
-	        maybeShowPopup(e);
-	    }
-
-	    public void mouseReleased(MouseEvent e) {
-	        maybeShowPopup(e);
-	    }
-
-	    private void maybeShowPopup(MouseEvent e) {
-	        if (e.isPopupTrigger()) {
-	            popup.show(e.getComponent(),
-	                       e.getX(), e.getY());
-	        }
-	    }
 	}
 }
