@@ -26,7 +26,7 @@ public class RequirementTable extends AssetTable<Requirement> {
 		return "Requirement";
 	}
 	
-	public void addAsset(Requirement req) {
-		getModel().addAsset(req, new Object[]{req.getDiscipline(), req.getValue(), req.getSlots()});
+	public void addAsset(Optional<Requirement> prev, Requirement req) {
+		getModel().addAsset(prev, req, new Object[]{req.getDiscipline(), req.getValue(), req.getSlots()});
 	}
 }

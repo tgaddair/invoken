@@ -15,10 +15,8 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JTable;
-import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableModel;
 
-import com.eldritch.scifirpg.editor.asset.CreateActorPanel;
 import com.google.common.base.Optional;
 import com.google.protobuf.Message;
 
@@ -85,9 +83,17 @@ public abstract class AssetTable<T extends Message> extends JTable {
 			assets = new ArrayList<T>();
 		}
 		
-		public void addAsset(T asset, Object[] data) {
-			assets.add(asset);
-			addRow(data);
+		public void addAsset(Optional<T> prev, T asset, Object[] data) {
+			if (prev.isPresent()) {
+				int i = assets.indexOf(prev.get());
+				assets.set(i, asset);
+				for (int j = 0; j < data.length; j++) {
+					setValueAt(data[j], i, j);
+				}
+			} else {
+				assets.add(asset);
+				addRow(data);
+			}
 		}
 		
 		public T getAsset(int i) {

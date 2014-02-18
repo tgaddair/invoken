@@ -23,6 +23,7 @@ public class RequirementEditorPanel extends JPanel implements ActionListener {
 
 	private final RequirementTable owner;
 	private final JFrame frame;
+	private final Optional<Requirement> prev;
 	private final JComboBox<Discipline> disciplineBox = new JComboBox<Discipline>(
 			Discipline.values());
 	private final JTextField valueField = new JTextField();
@@ -32,6 +33,7 @@ public class RequirementEditorPanel extends JPanel implements ActionListener {
 		super(new BorderLayout());
 		this.owner = owner;
 		this.frame = frame;
+		this.prev = prev;
 
 		DefaultFormBuilder builder = new DefaultFormBuilder(new FormLayout(""));
 		builder.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
@@ -72,7 +74,7 @@ public class RequirementEditorPanel extends JPanel implements ActionListener {
 				.setValue(value)
 				.setSlots(slots)
 				.build();
-		owner.addAsset(req);
+		owner.addAsset(prev, req);
 		frame.dispose();
 	}
 }
