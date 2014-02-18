@@ -1,5 +1,8 @@
 syntax = "proto2";
 
+package scifirpg;
+option java_package = "com.eldritch.scifirpg.proto";
+
 message Prerequisite {
 	enum Type {
 		ATTR_BETWEEN = 0; // TARGET attribute between MIN and MAX

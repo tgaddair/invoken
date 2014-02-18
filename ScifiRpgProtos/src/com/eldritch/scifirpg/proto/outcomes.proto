@@ -1,5 +1,8 @@
 syntax = "proto2";
 
+package scifirpg;
+option java_package = "com.eldritch.scifirpg.proto";
+
 message Outcome {
 	enum Type {
 		ITEM_CHANGE = 0; // COUNT of TARGET item
