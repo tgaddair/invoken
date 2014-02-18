@@ -48,9 +48,13 @@ public abstract class AssetTable<T extends Message> extends JTable {
 	            JTable table = (JTable) me.getSource();
 	            Point p = me.getPoint();
 	            int row = table.rowAtPoint(p);
-	            if (me.getClickCount() == 2 && row >= 0) {
-	                T asset = getModel().getAsset(row);
-	                handleCreateAsset(Optional.<T>of(asset));
+	            if (me.getClickCount() == 2) {
+	            	if (row >= 0) {
+	            		T asset = getModel().getAsset(row);
+	            		handleCreateAsset(Optional.<T>of(asset));
+	            	} else {
+	            		handleCreateAsset(Optional.<T>absent());
+	            	}
 	            }
 	        }
 	    });
