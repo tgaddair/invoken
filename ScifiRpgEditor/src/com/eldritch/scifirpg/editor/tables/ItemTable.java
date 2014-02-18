@@ -15,4 +15,9 @@ public class ItemTable extends AssetTable {
 	protected JPanel getEditorPanel() {
 		return new JPanel();
 	}
+	
+	@Override
+	protected String getAssetName() {
+		return "Item";
+	}
 }

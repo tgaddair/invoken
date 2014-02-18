@@ -26,7 +26,7 @@ public abstract class AssetTable extends JTable {
 		
 		// Create the popup menu.
 	    popup = new JPopupMenu();
-	    JMenuItem menuItem = new JMenuItem("Create New Asset");
+	    JMenuItem menuItem = new JMenuItem("Create New " + getAssetName());
 	    menuItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent ev) {
@@ -42,7 +42,7 @@ public abstract class AssetTable extends JTable {
 	
 	protected void handleCreateAsset() {
 		// Create and set up the window.
-        JFrame frame = new JFrame("Create New Actor");
+        JFrame frame = new JFrame("Create New " + getAssetName());
         frame.add(getEditorPanel(), BorderLayout.CENTER);
         
         // Display the window.
@@ -51,6 +51,8 @@ public abstract class AssetTable extends JTable {
 	}
 	
 	protected abstract JPanel getEditorPanel();
+	
+	protected abstract String getAssetName();
 	
 	private class PopupListener extends MouseAdapter {
 	    public void mousePressed(MouseEvent e) {

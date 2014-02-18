@@ -46,11 +46,11 @@ public class AugmentationEditorPanel extends JPanel {
 		int r = 1;
 		int c = 1;
 		
-		builder.addLabel("ID", cc.xy(c, r));
+		builder.addLabel("Name", cc.xy(c, r));
 		builder.add(new JTextField(), cc.xy(c + 2, r));
 		r += 2;
 		
-		builder.addLabel("Name", cc.xy(c, r));
+		builder.addLabel("ID", cc.xy(c, r));
 		builder.add(new JTextField(), cc.xy(c + 2, r));
 		r += 2;
 		

@@ -17,4 +17,9 @@ public class AugmentationTable extends AssetTable {
 	protected JPanel getEditorPanel() {
 		return new AugmentationEditorPanel();
 	}
+	
+	@Override
+	protected String getAssetName() {
+		return "Augmentation";
+	}
 }

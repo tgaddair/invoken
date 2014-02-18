@@ -17,4 +17,9 @@ public class ActorTable extends AssetTable {
 	protected JPanel getEditorPanel() {
 		return new CreateActorPanel();
 	}
+	
+	@Override
+	protected String getAssetName() {
+		return "Actor";
+	}
 }
