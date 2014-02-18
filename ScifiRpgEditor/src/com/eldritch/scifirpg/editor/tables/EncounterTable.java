@@ -3,7 +3,10 @@ package com.eldritch.scifirpg.editor.tables;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-public class EncounterTable extends AssetTable {
+import com.google.common.base.Optional;
+import com.google.protobuf.Message;
+
+public class EncounterTable extends AssetTable<Message> {
 	private static final long serialVersionUID = 1L;
 	private static final String[] COLUMN_NAMES = { 
 		"ID", "Title", "Weight", "Unique" };
@@ -13,7 +16,7 @@ public class EncounterTable extends AssetTable {
 	}
 
 	@Override
-	protected JPanel getEditorPanel(JFrame frame) {
+	protected JPanel getEditorPanel(Optional<Message> prev, JFrame frame) {
 		return new JPanel();
 	}
 	

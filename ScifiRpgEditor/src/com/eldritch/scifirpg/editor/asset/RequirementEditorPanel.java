@@ -14,6 +14,7 @@ import javax.swing.JTextField;
 import com.eldritch.scifirpg.editor.tables.RequirementTable;
 import com.eldritch.scifirpg.proto.Augmentations.Augmentation.Requirement;
 import com.eldritch.scifirpg.proto.Disciplines.Discipline;
+import com.google.common.base.Optional;
 import com.jgoodies.forms.builder.DefaultFormBuilder;
 import com.jgoodies.forms.layout.FormLayout;
 
@@ -27,7 +28,7 @@ public class RequirementEditorPanel extends JPanel implements ActionListener {
 	private final JTextField valueField = new JTextField();
 	private final JTextField slotsField = new JTextField();
 
-	public RequirementEditorPanel(RequirementTable owner, JFrame frame) {
+	public RequirementEditorPanel(RequirementTable owner, JFrame frame, Optional<Requirement> prev) {
 		super(new BorderLayout());
 		this.owner = owner;
 		this.frame = frame;
@@ -51,6 +52,13 @@ public class RequirementEditorPanel extends JPanel implements ActionListener {
 		saveButton.addActionListener(this);
 		builder.append(saveButton);
 		builder.nextLine();
+		
+		if (prev.isPresent()) {
+			Requirement req = prev.get();
+			disciplineBox.setSelectedItem(req.getDiscipline());
+			valueField.setText(req.getValue() + "");
+			slotsField.setText(req.getSlots() + "");
+		}
 
 		add(builder.getPanel());
 	}

@@ -2,12 +2,12 @@ package com.eldritch.scifirpg.editor.tables;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.table.DefaultTableModel;
 
 import com.eldritch.scifirpg.editor.asset.RequirementEditorPanel;
 import com.eldritch.scifirpg.proto.Augmentations.Augmentation.Requirement;
+import com.google.common.base.Optional;
 
-public class RequirementTable extends AssetTable {
+public class RequirementTable extends AssetTable<Requirement> {
 	private static final long serialVersionUID = 1L;
 	private static final String[] COLUMN_NAMES = { 
 		"Discipline", "Value", "Slots" };
@@ -17,8 +17,8 @@ public class RequirementTable extends AssetTable {
 	}
 
 	@Override
-	protected JPanel getEditorPanel(JFrame frame) {
-		return new RequirementEditorPanel(this, frame);
+	protected JPanel getEditorPanel(Optional<Requirement> prev, JFrame frame) {
+		return new RequirementEditorPanel(this, frame, prev);
 	}
 	
 	@Override
@@ -27,7 +27,6 @@ public class RequirementTable extends AssetTable {
 	}
 	
 	public void addAsset(Requirement req) {
-		DefaultTableModel model = (DefaultTableModel) getModel();
-		model.addRow(new Object[]{req.getDiscipline(), req.getValue(), req.getSlots()});
+		getModel().addAsset(req, new Object[]{req.getDiscipline(), req.getValue(), req.getSlots()});
 	}
 }
