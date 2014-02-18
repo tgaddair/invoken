@@ -16,6 +16,8 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 
+import org.apache.commons.lang3.text.WordUtils;
+
 import com.eldritch.scifirpg.proto.Augmentations.Augmentation.AttackSubtype;
 import com.eldritch.scifirpg.proto.Augmentations.Augmentation.DeceiveSubtype;
 import com.eldritch.scifirpg.proto.Augmentations.Augmentation.ExecuteSubtype;
@@ -100,7 +102,7 @@ public class AugmentationEditorPanel extends JPanel {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			JTextField source = (JTextField) e.getSource();
-			idField.setText(source.getText().replaceAll(" ", ""));
+			idField.setText(WordUtils.capitalizeFully(source.getText()).replaceAll(" ", ""));
 		}
 	}
 	

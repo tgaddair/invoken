@@ -7,5 +7,6 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/jgoodies-common"/>
 	<classpathentry kind="lib" path="/ScifiRpgProtos/bin"/>
 	<classpathentry kind="lib" path="C:/Users/Travis/Downloads/protobuf-java-2.5.0.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/apache-commons-lang"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
