@@ -19,6 +19,7 @@ import javax.swing.border.LineBorder;
 import org.apache.commons.lang3.text.WordUtils;
 
 import com.eldritch.scifirpg.editor.tables.AssetTablePanel;
+import com.eldritch.scifirpg.editor.tables.EffectTable;
 import com.eldritch.scifirpg.editor.tables.RequirementTable;
 import com.eldritch.scifirpg.proto.Augmentations.Augmentation.AttackSubtype;
 import com.eldritch.scifirpg.proto.Augmentations.Augmentation.DeceiveSubtype;
@@ -79,6 +80,10 @@ public class AugmentationEditorPanel extends JPanel {
 		
 		builder.addLabel("Subtype", cc.xy(c, r));
 		builder.add(subtypeBox, cc.xy(c + 2, r));
+		r += 2;
+		
+		builder.addLabel("Effects", cc.xy(c, r));
+		builder.add(new AssetTablePanel(new EffectTable()), cc.xy(c + 2, r));
 		r += 2;
 		
 		builder.addLabel("Requirements", cc.xy(c, r));

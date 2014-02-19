@@ -3,35 +3,35 @@ package com.eldritch.scifirpg.editor.asset;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.swing.BorderFactory;
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import com.eldritch.scifirpg.editor.tables.RequirementTable;
-import com.eldritch.scifirpg.proto.Augmentations.Augmentation.Requirement;
-import com.eldritch.scifirpg.proto.Disciplines.Discipline;
+import com.eldritch.scifirpg.editor.tables.EffectTable;
+import com.eldritch.scifirpg.proto.Effects.Effect;
+import com.eldritch.scifirpg.proto.Effects.Effect.Range;
+import com.eldritch.scifirpg.proto.Effects.Effect.Type;
 import com.google.common.base.Optional;
 import com.jgoodies.forms.builder.DefaultFormBuilder;
 import com.jgoodies.forms.layout.FormLayout;
 
-public class RequirementEditorPanel extends JPanel implements ActionListener {
+public class EffectEditorPanel extends JPanel implements ActionListener {
 	private static final long serialVersionUID = 1L;
 
-	private final RequirementTable owner;
+	private final EffectTable owner;
 	private final JFrame frame;
-	private final Optional<Requirement> prev;
-	private final JComboBox<Discipline> disciplineBox = new JComboBox<>(Discipline.values());
-	private final JTextField valueField = new JTextField();
-	private final JTextField slotsField = new JTextField();
+	private final Optional<Effect> prev;
+	private final JComboBox<Type> typeBox = new JComboBox<>(Type.values());
+	private final JComboBox<Range> rangeBox = new JComboBox<>(Range.values());
+	private final JTextField magnitudeField = new JTextField();
+	private final JTextField durationField = new JTextField("0");
+	private final JTextField targetField = new JTextField();
 
-	public RequirementEditorPanel(RequirementTable owner, JFrame frame, Optional<Requirement> prev) {
+	public EffectEditorPanel(EffectTable owner, JFrame frame, Optional<Effect> prev) {
 		super(new BorderLayout());
 		this.owner = owner;
 		this.frame = frame;
@@ -43,20 +43,19 @@ public class RequirementEditorPanel extends JPanel implements ActionListener {
 		builder.appendColumn("3dlu");
 		builder.appendColumn("fill:max(pref; 100px)");
 		
-		List<Discipline> values = new ArrayList<>();
-		for (Discipline d : Discipline.values()) {
-			if ((prev.isPresent() && prev.get().getDiscipline() == d) || !owner.containsDiscipline(d)) {
-				values.add(d);
-			}
-		}
-		disciplineBox.setModel(new DefaultComboBoxModel<Discipline>(values.toArray(new Discipline[0])));
-		builder.append("Discipline:", disciplineBox);
+		builder.append("Type:", typeBox);
+		builder.nextLine();
+		
+		builder.append("Range:", rangeBox);
 		builder.nextLine();
 
-		builder.append("Value:", valueField);
+		builder.append("Magnitude:", magnitudeField);
 		builder.nextLine();
 
-		builder.append("Slots:", slotsField);
+		builder.append("Duration:", durationField);
+		builder.nextLine();
+		
+		builder.append("Target:", targetField);
 		builder.nextLine();
 
 		JButton saveButton = new JButton("Save");
@@ -65,10 +64,12 @@ public class RequirementEditorPanel extends JPanel implements ActionListener {
 		builder.nextLine();
 		
 		if (prev.isPresent()) {
-			Requirement req = prev.get();
-			disciplineBox.setSelectedItem(req.getDiscipline());
-			valueField.setText(req.getValue() + "");
-			slotsField.setText(req.getSlots() + "");
+			Effect effect = prev.get();
+			typeBox.setSelectedItem(effect.getType());
+			rangeBox.setSelectedItem(effect.getRange());
+			magnitudeField.setText(effect.getMagnitude() + "");
+			durationField.setText(effect.getDuration() + "");
+			targetField.setText(effect.getTarget() + "");
 		}
 
 		add(builder.getPanel());
@@ -76,6 +77,7 @@ public class RequirementEditorPanel extends JPanel implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
+		/*
 		Discipline discipline = (Discipline) disciplineBox.getSelectedItem();
 		int value = Integer.parseInt(valueField.getText());
 		int slots = Integer.parseInt(slotsField.getText());
@@ -85,5 +87,6 @@ public class RequirementEditorPanel extends JPanel implements ActionListener {
 				.build();
 		owner.addAsset(prev, req);
 		frame.dispose();
+		*/
 	}
 }
