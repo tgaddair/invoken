@@ -43,6 +43,14 @@ public class RequirementEditorPanel extends JPanel implements ActionListener {
 		builder.appendColumn("3dlu");
 		builder.appendColumn("fill:max(pref; 100px)");
 		
+		List<Discipline> values = new ArrayList<>();
+		for (Discipline d : Discipline.values()) {
+			if ((prev.isPresent() && prev.get().getDiscipline() == d) || !owner.containsDiscipline(d)) {
+				values.add(d);
+			}
+		}
+		disciplineBox.setModel(new DefaultComboBoxModel<Discipline>(values.toArray(new Discipline[0])));
+
 		builder.append("Discipline:", disciplineBox);
 		builder.nextLine();
 
@@ -62,14 +70,6 @@ public class RequirementEditorPanel extends JPanel implements ActionListener {
 			disciplineBox.setSelectedItem(req.getDiscipline());
 			valueField.setText(req.getValue() + "");
 			slotsField.setText(req.getSlots() + "");
-		} else {
-			List<Discipline> values = new ArrayList<>();
-			for (Discipline d : Discipline.values()) {
-				if (!owner.containsDiscipline(d)) {
-					values.add(d);
-				}
-			}
-			disciplineBox.setModel(new DefaultComboBoxModel<Discipline>(values.toArray(new Discipline[0])));
 		}
 
 		add(builder.getPanel());
