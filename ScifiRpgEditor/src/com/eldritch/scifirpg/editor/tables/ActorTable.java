@@ -25,4 +25,9 @@ public class ActorTable extends AssetTable<NonPlayerActor> {
 	protected String getAssetName() {
 		return "Actor";
 	}
+
+	@Override
+	protected Object[] getDisplayFields(NonPlayerActor asset) {
+		return new Object[0];
+	}
 }

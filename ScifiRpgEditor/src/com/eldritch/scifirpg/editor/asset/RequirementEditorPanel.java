@@ -1,8 +1,5 @@
 package com.eldritch.scifirpg.editor.asset;
 
-import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,7 +8,6 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
-import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import com.eldritch.scifirpg.editor.tables.RequirementTable;
@@ -21,21 +17,15 @@ import com.google.common.base.Optional;
 import com.jgoodies.forms.builder.DefaultFormBuilder;
 import com.jgoodies.forms.layout.FormLayout;
 
-public class RequirementEditorPanel extends JPanel implements ActionListener {
+public class RequirementEditorPanel extends AssetEditorPanel<Requirement, RequirementTable> {
 	private static final long serialVersionUID = 1L;
 
-	private final RequirementTable owner;
-	private final JFrame frame;
-	private final Optional<Requirement> prev;
 	private final JComboBox<Discipline> disciplineBox = new JComboBox<>(Discipline.values());
 	private final JTextField valueField = new JTextField();
 	private final JTextField slotsField = new JTextField();
 
 	public RequirementEditorPanel(RequirementTable owner, JFrame frame, Optional<Requirement> prev) {
-		super(new BorderLayout());
-		this.owner = owner;
-		this.frame = frame;
-		this.prev = prev;
+		super(owner, frame, prev);
 
 		DefaultFormBuilder builder = new DefaultFormBuilder(new FormLayout(""));
 		builder.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
@@ -75,7 +65,7 @@ public class RequirementEditorPanel extends JPanel implements ActionListener {
 	}
 
 	@Override
-	public void actionPerformed(ActionEvent e) {
+	public Requirement createAsset() {
 		Discipline discipline = (Discipline) disciplineBox.getSelectedItem();
 		int value = Integer.parseInt(valueField.getText());
 		int slots = Integer.parseInt(slotsField.getText());
@@ -83,7 +73,6 @@ public class RequirementEditorPanel extends JPanel implements ActionListener {
 				.setValue(value)
 				.setSlots(slots)
 				.build();
-		owner.addAsset(prev, req);
-		frame.dispose();
+		return req;
 	}
 }

@@ -17,6 +17,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
+import com.eldritch.scifirpg.proto.Augmentations.Augmentation.Requirement;
 import com.google.common.base.Optional;
 import com.google.protobuf.Message;
 
@@ -78,6 +79,12 @@ public abstract class AssetTable<T extends Message> extends JTable {
 	protected abstract JPanel getEditorPanel(Optional<T> asset, JFrame frame);
 	
 	protected abstract String getAssetName();
+	
+	protected abstract Object[] getDisplayFields(T asset);
+	
+	public void addAsset(Optional<T> prev, T asset) {
+		getModel().addAsset(prev, asset, getDisplayFields(asset));
+	}
 	
 	public static class AssetTableModel<T extends Message> extends DefaultTableModel {
 		private final List<T> assets;

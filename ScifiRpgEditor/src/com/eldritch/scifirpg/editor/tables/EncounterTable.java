@@ -24,4 +24,9 @@ public class EncounterTable extends AssetTable<Message> {
 	protected String getAssetName() {
 		return "Encounter";
 	}
+	
+	@Override
+	protected Object[] getDisplayFields(Message asset) {
+		return new Object[0];
+	}
 }

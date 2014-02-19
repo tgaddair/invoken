@@ -24,4 +24,9 @@ public class ItemTable extends AssetTable<Item> {
 	protected String getAssetName() {
 		return "Item";
 	}
+	
+	@Override
+	protected Object[] getDisplayFields(Item asset) {
+		return new Object[0];
+	}
 }

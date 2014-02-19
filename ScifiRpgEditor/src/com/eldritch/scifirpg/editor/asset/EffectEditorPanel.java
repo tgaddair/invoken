@@ -1,14 +1,9 @@
 package com.eldritch.scifirpg.editor.asset;
 
-import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
-import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import com.eldritch.scifirpg.editor.tables.EffectTable;
@@ -19,12 +14,9 @@ import com.google.common.base.Optional;
 import com.jgoodies.forms.builder.DefaultFormBuilder;
 import com.jgoodies.forms.layout.FormLayout;
 
-public class EffectEditorPanel extends JPanel implements ActionListener {
+public class EffectEditorPanel extends AssetEditorPanel<Effect, EffectTable> {
 	private static final long serialVersionUID = 1L;
 
-	private final EffectTable owner;
-	private final JFrame frame;
-	private final Optional<Effect> prev;
 	private final JComboBox<Type> typeBox = new JComboBox<>(Type.values());
 	private final JComboBox<Range> rangeBox = new JComboBox<>(Range.values());
 	private final JTextField magnitudeField = new JTextField();
@@ -32,10 +24,7 @@ public class EffectEditorPanel extends JPanel implements ActionListener {
 	private final JTextField targetField = new JTextField();
 
 	public EffectEditorPanel(EffectTable owner, JFrame frame, Optional<Effect> prev) {
-		super(new BorderLayout());
-		this.owner = owner;
-		this.frame = frame;
-		this.prev = prev;
+		super(owner, frame, prev);
 
 		DefaultFormBuilder builder = new DefaultFormBuilder(new FormLayout(""));
 		builder.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
@@ -55,6 +44,7 @@ public class EffectEditorPanel extends JPanel implements ActionListener {
 		builder.append("Duration:", durationField);
 		builder.nextLine();
 		
+		// TODO: this will need to become a dynamic combo box
 		builder.append("Target:", targetField);
 		builder.nextLine();
 
@@ -69,24 +59,26 @@ public class EffectEditorPanel extends JPanel implements ActionListener {
 			rangeBox.setSelectedItem(effect.getRange());
 			magnitudeField.setText(effect.getMagnitude() + "");
 			durationField.setText(effect.getDuration() + "");
-			targetField.setText(effect.getTarget() + "");
+			targetField.setText(effect.getTarget());
 		}
 
 		add(builder.getPanel());
 	}
 
 	@Override
-	public void actionPerformed(ActionEvent e) {
-		/*
-		Discipline discipline = (Discipline) disciplineBox.getSelectedItem();
-		int value = Integer.parseInt(valueField.getText());
-		int slots = Integer.parseInt(slotsField.getText());
-		Requirement req = Requirement.newBuilder().setDiscipline(discipline)
-				.setValue(value)
-				.setSlots(slots)
+	public Effect createAsset() {
+		Type type = (Type) typeBox.getSelectedItem();
+		Range range = (Range) rangeBox.getSelectedItem();
+		int magnitude = Integer.parseInt(magnitudeField.getText());
+		int duration = Integer.parseInt(durationField.getText());
+		String target = targetField.getText();
+		Effect effect = Effect.newBuilder()
+				.setType(type)
+				.setRange(range)
+				.setMagnitude(magnitude)
+				.setDuration(duration)
+				.setTarget(target)
 				.build();
-		owner.addAsset(prev, req);
-		frame.dispose();
-		*/
+		return effect;
 	}
 }

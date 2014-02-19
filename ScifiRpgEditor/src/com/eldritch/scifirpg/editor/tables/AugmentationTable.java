@@ -25,4 +25,9 @@ public class AugmentationTable extends AssetTable<Augmentation> {
 	protected String getAssetName() {
 		return "Augmentation";
 	}
+	
+	@Override
+	protected Object[] getDisplayFields(Augmentation asset) {
+		return new Object[0];
+	}
 }
