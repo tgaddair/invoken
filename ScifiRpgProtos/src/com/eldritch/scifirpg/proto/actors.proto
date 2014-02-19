@@ -112,14 +112,14 @@ message NonPlayerActor {
 		ALTRUISTIC = 3;
 		LICENTIOUS = 4;
 		CHASTE = 5;
-		PASSIONATE = 6;
-		APATHETIC = 7;
-		CONFIDENT = 8;
-		INSECURE = 9;
-		SHREWD = 10;
-		GULLIBLE = 11;
-		ASSERTIVE = 12;
-		SUBMISSIVE = 13;
+		DOGMATIC = 6;
+		RATIONAL = 7;
+		INSECURE = 8;
+		CONFIDENT = 9;
+		GULLIBLE = 10;
+		SHREWD = 11;
+		DOCILE = 12;
+		ASSERTIVE = 13;
 	}
 
 	required ActorParams params = 1;

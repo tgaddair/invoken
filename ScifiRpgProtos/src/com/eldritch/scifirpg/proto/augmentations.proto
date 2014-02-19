@@ -54,7 +54,7 @@ message Augmentation {
 		PERSUASION = 0;
 		BRIBERY = 1;
 		SEDUCTION = 2;
-		RHETORIC = 3;
+		DEMAGOGUERY = 3;
 		INTIMIDATION = 4;
 		BLUFFING = 5;
 		DOMINATION = 6;
