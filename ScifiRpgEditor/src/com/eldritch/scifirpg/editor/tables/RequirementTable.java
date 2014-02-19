@@ -5,6 +5,7 @@ import javax.swing.JPanel;
 
 import com.eldritch.scifirpg.editor.asset.RequirementEditorPanel;
 import com.eldritch.scifirpg.proto.Augmentations.Augmentation.Requirement;
+import com.eldritch.scifirpg.proto.Disciplines.Discipline;
 import com.google.common.base.Optional;
 
 public class RequirementTable extends AssetTable<Requirement> {
@@ -28,5 +29,14 @@ public class RequirementTable extends AssetTable<Requirement> {
 	
 	public void addAsset(Optional<Requirement> prev, Requirement req) {
 		getModel().addAsset(prev, req, new Object[]{req.getDiscipline(), req.getValue(), req.getSlots()});
+	}
+	
+	public boolean containsDiscipline(Discipline d) {
+		for (Requirement r : getModel().getAssets()) {
+			if (r.getDiscipline() == d) {
+				return true;
+			}
+		}
+		return false;
 	}
 }

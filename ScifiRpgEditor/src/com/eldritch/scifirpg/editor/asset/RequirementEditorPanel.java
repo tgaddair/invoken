@@ -3,8 +3,11 @@ package com.eldritch.scifirpg.editor.asset;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.BorderFactory;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
@@ -24,8 +27,7 @@ public class RequirementEditorPanel extends JPanel implements ActionListener {
 	private final RequirementTable owner;
 	private final JFrame frame;
 	private final Optional<Requirement> prev;
-	private final JComboBox<Discipline> disciplineBox = new JComboBox<Discipline>(
-			Discipline.values());
+	private final JComboBox<Discipline> disciplineBox = new JComboBox<>(Discipline.values());
 	private final JTextField valueField = new JTextField();
 	private final JTextField slotsField = new JTextField();
 
@@ -40,7 +42,7 @@ public class RequirementEditorPanel extends JPanel implements ActionListener {
 		builder.appendColumn("right:pref");
 		builder.appendColumn("3dlu");
 		builder.appendColumn("fill:max(pref; 100px)");
-
+		
 		builder.append("Discipline:", disciplineBox);
 		builder.nextLine();
 
@@ -60,6 +62,14 @@ public class RequirementEditorPanel extends JPanel implements ActionListener {
 			disciplineBox.setSelectedItem(req.getDiscipline());
 			valueField.setText(req.getValue() + "");
 			slotsField.setText(req.getSlots() + "");
+		} else {
+			List<Discipline> values = new ArrayList<>();
+			for (Discipline d : Discipline.values()) {
+				if (!owner.containsDiscipline(d)) {
+					values.add(d);
+				}
+			}
+			disciplineBox.setModel(new DefaultComboBoxModel<Discipline>(values.toArray(new Discipline[0])));
 		}
 
 		add(builder.getPanel());

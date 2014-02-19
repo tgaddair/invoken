@@ -100,6 +100,10 @@ public abstract class AssetTable<T extends Message> extends JTable {
 			}
 		}
 		
+		public List<T> getAssets() {
+			return assets;
+		}
+		
 		public T getAsset(int i) {
 			return assets.get(i);
 		}
