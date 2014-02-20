@@ -17,8 +17,8 @@ message Faction {
 }
 
 message DialogueTree {
-// DialogueTree ends when the player reaches a Dialogue with no choices.
-// When the DialogueTree ends, the player is returned to the first valid greeting.
+	// DialogueTree ends when the player reaches a Dialogue with no choices.
+	// When the DialogueTree ends, the player is returned to the first valid greeting.
 	message Dialogue {
 		optional string dialogue_id = 5; // The unique ID for this Dialogue within this tree
 		required string text = 1;
@@ -31,8 +31,8 @@ message DialogueTree {
 	// By storing successor pointers as strings, we allow for cycles
 	message Choice {
 		required string text = 1;
-		required string successor_id = 2;
-		// The prereqs for a given choice are determined by the successor prereqs
+		repeated Prerequisite prereq = 2;
+		repeated string successor_id = 3;
 	}
 
 	// We keep all Dialogue options as a list, then convert them to a map in memory so we
@@ -119,7 +119,7 @@ message NonPlayerActor {
 		GULLIBLE = 10;
 		SHREWD = 11;
 		DOCILE = 12;
-		ASSERTIVE = 13;
+		IMPOSING = 13;
 	}
 
 	required ActorParams params = 1;
