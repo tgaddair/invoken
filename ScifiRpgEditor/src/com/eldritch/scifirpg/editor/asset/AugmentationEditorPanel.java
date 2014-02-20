@@ -126,17 +126,15 @@ public class AugmentationEditorPanel extends JPanel {
 			Type t = (Type) typeBox.getSelectedItem();
 			switch (t) {
 				case ATTACK:
-				case COUNTER:
 					values = AttackSubtype.values();
 					break;
 				case DECEIVE:
-				case REVEAL:
 					values = DeceiveSubtype.values();
 					break;
 				case EXECUTE:
-				case INTERRUPT:
 					values = ExecuteSubtype.values();
 					break;
+				case COUNTER:
 				case DIALOGUE:
 				case PASSIVE:
 					visible = false;

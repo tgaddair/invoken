@@ -1,5 +1,8 @@
 package com.eldritch.scifirpg.editor.asset;
 
+import java.util.Arrays;
+import java.util.Comparator;
+
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -17,7 +20,7 @@ import com.jgoodies.forms.layout.FormLayout;
 public class EffectEditorPanel extends AssetEditorPanel<Effect, EffectTable> {
 	private static final long serialVersionUID = 1L;
 
-	private final JComboBox<Type> typeBox = new JComboBox<>(Type.values());
+	private final JComboBox<Type> typeBox;
 	private final JComboBox<Range> rangeBox = new JComboBox<>(Range.values());
 	private final JTextField magnitudeField = new JTextField();
 	private final JTextField durationField = new JTextField("0");
@@ -32,6 +35,14 @@ public class EffectEditorPanel extends AssetEditorPanel<Effect, EffectTable> {
 		builder.appendColumn("3dlu");
 		builder.appendColumn("fill:max(pref; 100px)");
 		
+		Type[] types = Type.values();
+		Arrays.sort(types, new Comparator<Type>() {
+			@Override
+			public int compare(Type t1, Type t2) {
+				return t1.name().compareTo(t2.name());
+			}
+		});
+		typeBox = new JComboBox<>(types);
 		builder.append("Type:", typeBox);
 		builder.nextLine();
 		
