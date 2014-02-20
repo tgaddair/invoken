@@ -15,42 +15,89 @@ enum DamageType {
 
 message Effect {
 	enum Type {
-		DISTANCE_MOD = 0; // VALUE change in distance to TARGET
-		RESISTANCE_MOD = 1; // VALUE change in defense to DAMAGE_TYPE on TARGET for DURATION
-		DAMAGE = 2; // VALUE damage of DAMAGE_TYPE on TARGET for DURATION
-		AGGRESSION_MOD = 3; // VALUE change in TARGET aggression for DURATION
-		HOSTILITY_MOD = 4; // VALUE change in TARGET hostility
-		ATTR_MOD = 5; // VALUE change to ATTRIBUTE on TARGET for DURATION
-		FACTION_MOD = 6; // VALUE change to ID faction standing for DURATION on TARGET
-		DAMAGE_MOD = 7; // VALUE change in DAMAGE_TYPE damage done on TARGET for DURATION
-		HEAL = 8; // VALUE change in health for DURATION on TARGET
-		FLY = 9; // VALUE change in distance (min of VALUE from ground) for DURATION on TARGET
-		PARALYZE = 10; // TARGET unable to take action for DURATION
-		GROUND = 11; // End fly effect on TARGET for DURATION if distance <= VALUE
-		AUG_USE_MOD = 12; // VALUE change in remaining uses for ID aug on TARGET
+		// Attack
+		DAMAGE = 1; // MAGNITUDE damage of DAMAGE_TYPE on TARGET for DURATION
+		DRAIN = 2; // Corruption: Transfer life to player, W/A
+
+		// Deceive
+		FLEE = 3; // Avoid conflict and detection
+		ROB = 4; // Steal money or item from the TARGET
+		STALK = 5; // Increase damage multiplier by MAGNITUDE without being detected
+		IMPERSONATE = 6; // Pretend to belong to TARGET faction with rank MAGNITUDE
+
+		// Deceive - Espionage
+		DETECT_EQUIPMENT = 7; // Discover what equipment TARGET has currently
+		DETECT_AUGS = 8; // Discover what augs TARGET has currently staged
+		DETECT_BUFFER = 9; // Discover what augs TARGET has in their buffer
+		DETECT_TRAPS = 10;  // Discover what traps the TARGET has deployed
+
+		// Deceive - Hacking
+		OPEN = 10; // Break a lock
+		DISABLE = 11; // Prevent use and effects of a given undeployed aug (useless w/o espionage)
+		SHUTDOWN = 12; // Disable an active aug (useless on passive w/o espionage)
+
+		// Execute - Analysis
+		SCAN = 13; // learn stats for TARGET up to level MAGNITUDE, stats drop off with lower levels
+
+		// Execute - Manipulation
+		PARALYZE = 14; // TARGET unable to take action for DURATION
+		CONTROL = 15; // TARGET up to level MAGNITUDE becomes ally for DURATION
+
+		// Execute - Fabrication
+		CREATE_GOLEM = 16;
+		CREATE_SWARM = 17;
+		REANIMATE = 18; // TARGET becomes a puppet ally on death for DURATION
+
+		// Execute - Upgrade
+		REGENERATE = 19; // MAGNITUDE change in health for DURATION on TARGET
+		BARRIER = 20; // MAGNITUDE change in defense to DAMAGE_TYPE on TARGET for DURATION
+		MIRROR = 21; // TARGET reflects up to MAGNITUDE damage of DAMAGE_TYPE for DURATION
+		ABSORB = 22; // TARGET absorbs up to MAGNITUDE damage of DAMAGE_TYPE for DURATION
+
+		// Execute - Illusion
+		CLOAK = 23; // TARGET unable to be targeted directly for DURATION
+		MUFFLE = 24; // TARGET gets drop bonus of MAGNITUDE
+
+		// Execute - Empathy
+		DETECT_TRAITS = 25;
+		CHARM = 26;
+		CALM = 27;
+		FRENZY = 28;
+
+		// Counter
+		PARRY = 29; // Deflect a melee attack
+		DODGE = 30; // Avoid a ranged attack
+		RESIST = 31; // Prevent the targeted execution (includes corruption), W/A
+		REVEAL = 32; // Discover deceptive activity, including Illusion, W/S
 	}
 
-	enum Target {
+	enum Range {
 		PLAYER = 0; // Only affects the player
 		SELECTED = 1; // Actively choose an Actor within an ActorEncounter
 		ALL = 2; // Everyone in an ActorEncounter, including the player
 		ALL_OTHER = 3; // Everyone in an ActorEncounter, except the player
 		ALL_HOSTILE = 4; // Everyone hostile to the player in an ActorEncounter
-		ALL_ALLIED = 5; // Everyone allied with the player in an ActorEncounter
+		ALL_ALLIED = 5; // Everyone allied with the player in an ActorEncounter, including player
+		TRAP = 6;
+		SPREAD_ALL = 7;
+		SPREAD_HOSTILE = 8;
 	}
 
-	optional int32 value = 1;
-	optional Target target = 2;
-
-	// Only applicable to certain types
-	optional DamageType damage_type = 4;
-	optional Discipline discipline = 5;
-	optional string id = 6;
+	optional Type type = 8;
+	optional Range range = 2;
+	optional int32 magnitude = 1;
 
 	// Length of effect in complete turns (turn = all actors take action)
 	// -1 = constant
 	// 0 = immediate
 	optional int32 duration = 3 [default = 0];
+
+	optional string target = 6;
+
+	// Only applicable to certain types
+	optional DamageType damage_type = 4;
+	optional Discipline discipline = 5;
+
 
 	// Active effects must be used manually in context-specific situations.
 	// If an item or aug has active effects, an action card will be placed
