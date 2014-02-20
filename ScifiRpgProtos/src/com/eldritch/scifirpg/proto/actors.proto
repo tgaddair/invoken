@@ -6,6 +6,7 @@ option java_package = "com.eldritch.scifirpg.proto";
 import "com/eldritch/scifirpg/proto/disciplines.proto";
 import "com/eldritch/scifirpg/proto/prerequisites.proto";
 import "com/eldritch/scifirpg/proto/outcomes.proto";
+
 message Faction {
 	message Relation {
 		optional string faction_id = 1; // OPTIONAL: might change to int32
@@ -14,13 +15,14 @@ message Faction {
 
 	required string name = 1;
 	repeated Relation relation = 2;
+	repeated Discipline favored_discipline = 3;
 }
 
 message DialogueTree {
-	// DialogueTree ends when the player reaches a Dialogue with no choices.
+	// DialogueTree ends when the player reaches a Response with no choices.
 	// When the DialogueTree ends, the player is returned to the first valid greeting.
-	message Dialogue {
-		optional string dialogue_id = 5; // The unique ID for this Dialogue within this tree
+	message Response {
+		optional string id = 5; // The unique ID for this Response within this tree
 		required string text = 1;
 		repeated Prerequisite prereq = 2;
 		repeated Choice choice = 3;
@@ -35,17 +37,17 @@ message DialogueTree {
 		repeated string successor_id = 3;
 	}
 
-	// We keep all Dialogue options as a list, then convert them to a map in memory so we
-	// can traverse the DialogueTree via pointers in Choices.  Some Dialogues are marked
+	// We keep all Response options as a list, then convert them to a map in memory so we
+	// can traverse the DialogueTree via pointers in Choices.  Some Responses are marked
 	// as greetings, and one of these will serve as the 'root' of the tree.
 	//
 	// Multiple greetings are possible depending on what prereqs are met.
 	// Order matters as the first greeting to meet all prereqs will be chosen,
 	// even if multiple options are satisfied.
 	//
-	// A DialogueTree exists in isolation, unique to a particular Actor.  No Dialogue is
+	// A DialogueTree exists in isolation, unique to a particular Actor.  No Response is
 	// shared in this design.
-	repeated Dialogue dialogue = 1;
+	repeated Response dialogue = 1;
 }
 
 message ActorDialogue {
@@ -122,12 +124,19 @@ message NonPlayerActor {
 		IMPOSING = 13;
 	}
 
+	enum Aggression {
+		PACIFIST = 0; // Does not attack anyone
+		NORMAL = 1; // Will attack if provoked
+		AGGRESSIVE = 2; // Will attack enemies on sight
+		FRENZIED = 3; // Attacks anyone on sight
+	}
+
 	required ActorParams params = 1;
 	required bool unique = 2 [default = false];
 	required bool can_speak = 3 [default = true];
 	optional DialogueTree dialogue = 4;
 
-	optional int32 aggression = 5; // low reaction: high value likely to attack, negative likely to surrender
+	optional Aggression aggression = 5;
 	repeated Trait trait = 6;
 }
 

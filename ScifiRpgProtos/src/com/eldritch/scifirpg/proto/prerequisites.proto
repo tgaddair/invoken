@@ -5,20 +5,21 @@ option java_package = "com.eldritch.scifirpg.proto";
 
 message Prerequisite {
 	enum Type {
-		ATTR_BETWEEN = 0; // TARGET attribute between MIN and MAX
+		DISCIPLINE_BETWEEN = 0; // TARGET attribute between MIN and MAX
 		REP_BETWEEN = 1; // TARGET faction reputation between MIN and MAX
 		LVL_BETWEEN = 2; // player level between MIN and MAX
 		ENCOUNTER_SEEN = 3; // TARGET encounter previously observed
 		ITEM_HAS = 4; // MIN or more of TARGET item in inventory
 
-		// When AUG_REMAINING is a prereq, there will always be a corresponding
+		// When AUG_REMAINING is a prereq, there will almost always be a corresponding
 		// AUG_USE outcome.
 		AUG_REMAINING = 5; // MIN or more of TARGET augmentation uses remaining
 
-		// DIALOGUE_SEEN only has meaning within a specific DialogueTree.
+		// Only has meaning within a specific DialogueTree.
 		DIALOGUE_SEEN = 6; // TARGET dialogue previously observed
+		INFLUENCE_BETWEEN = 7; // Dialogue disposition variable between MIN and MAX
 
-		ITEM_EQUIPPED = 7; // TARGET item is currently equipped
+		ITEM_EQUIPPED = 8; // TARGET item is currently equipped
 	}
 
 	required Type type = 1;

@@ -69,6 +69,7 @@ message Effect {
 		DODGE = 30; // Avoid a ranged attack
 		RESIST = 31; // Prevent the targeted execution (includes corruption), W/A
 		REVEAL = 32; // Discover deceptive activity, including Illusion, W/S
+		INTERRUPT = 33; // Prevent negative duration effect
 	}
 
 	enum Range {
