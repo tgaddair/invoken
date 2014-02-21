@@ -81,15 +81,19 @@ public class EffectEditorPanel extends AssetEditorPanel<Effect, EffectTable> {
 		Type type = (Type) typeBox.getSelectedItem();
 		Range range = (Range) rangeBox.getSelectedItem();
 		int magnitude = Integer.parseInt(magnitudeField.getText());
-		int duration = Integer.parseInt(durationField.getText());
 		String target = targetField.getText();
-		Effect effect = Effect.newBuilder()
+		Effect.Builder builder = Effect.newBuilder()
 				.setType(type)
 				.setRange(range)
 				.setMagnitude(magnitude)
-				.setDuration(duration)
-				.setTarget(target)
-				.build();
-		return effect;
+				.setTarget(target);
+		
+		// An empty duration means the effect is permanent
+		if (!durationField.getText().isEmpty()) {
+			int duration = Integer.parseInt(durationField.getText());
+			builder.setDuration(duration);
+		}
+		
+		return builder.build();
 	}
 }

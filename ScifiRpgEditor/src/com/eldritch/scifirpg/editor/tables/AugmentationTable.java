@@ -1,8 +1,7 @@
 package com.eldritch.scifirpg.editor.tables;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -42,12 +41,8 @@ public class AugmentationTable extends MajorAssetTable<Augmentation> {
 	}
 	
 	@Override
-	protected Augmentation deserialize(File assetFile) {
-		try (FileInputStream fis = new FileInputStream(assetFile)) {
-			return Augmentation.parseFrom(fis);
-		} catch (IOException e) {
-			return null;
-		}
+	protected Augmentation readFrom(InputStream is) throws IOException {
+		return Augmentation.parseFrom(is);
 	}
 	
 	@Override

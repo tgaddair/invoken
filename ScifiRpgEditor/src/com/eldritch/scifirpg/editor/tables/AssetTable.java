@@ -71,7 +71,7 @@ public abstract class AssetTable<T extends Message> extends JTable {
 	
 	protected void handleCreateAsset(Optional<T> asset) {
 		// Create and set up the window.
-        JFrame frame = new JFrame("Create New " + getAssetName());
+        JFrame frame = new JFrame(getAssetName() + " Editor");
         frame.add(getEditorPanel(asset, frame), BorderLayout.CENTER);
         
         // Display the window.

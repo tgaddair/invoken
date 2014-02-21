@@ -2,8 +2,10 @@ package com.eldritch.scifirpg.editor.tables;
 
 import java.io.DataOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 import com.google.common.base.Optional;
 import com.google.protobuf.Message;
@@ -26,7 +28,15 @@ public abstract class MajorAssetTable<T extends Message> extends AssetTable<T> {
 	
 	protected abstract String getAssetId(T asset);
 	
-	protected abstract T deserialize(File assetFile);
+	protected abstract T readFrom(InputStream is) throws IOException;
+	
+	protected T deserialize(File assetFile) {
+		try (FileInputStream fis = new FileInputStream(assetFile)) {
+			return readFrom(fis);
+		} catch (IOException e) {
+			return null;
+		}
+	}
 	
 	protected void importAssets() {
 		String path = getTopAssetDirectory() + "/" + getAssetDirectory();
