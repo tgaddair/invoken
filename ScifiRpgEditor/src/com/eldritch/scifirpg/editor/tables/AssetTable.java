@@ -8,7 +8,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.DataOutputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -21,7 +20,6 @@ import javax.swing.JPopupMenu;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
-import com.eldritch.scifirpg.proto.Augmentations.Augmentation.Requirement;
 import com.google.common.base.Optional;
 import com.google.protobuf.Message;
 
@@ -63,6 +61,8 @@ public abstract class AssetTable<T extends Message> extends JTable {
 	            }
 	        }
 	    });
+	    
+	    importAssets();
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -87,16 +87,27 @@ public abstract class AssetTable<T extends Message> extends JTable {
 	
 	protected abstract Object[] getDisplayFields(T asset);
 	
-	protected void exportAsset(T asset) {
+	protected void importAssets() {
 	}
 	
+	protected void exportAsset(T asset) {
+	}
+
 	protected void write(T asset, String directory, String id) {
-		String filename = String.format("C:/Users/Travis/repos/data/%s/%s.dat", directory, id);
+		String filename = String.format("%s/%s/%s.dat", getTopAssetDirectory(), directory, id);
 		try (DataOutputStream os = new DataOutputStream(new FileOutputStream(filename))) {
 			os.write(asset.toByteArray());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	protected String getTopAssetDirectory() {
+		return "C:/Users/Travis/repos/data";
+	}
+	
+	public void addAsset(T asset) {
+		addAsset(Optional.<T>absent(), asset);
 	}
 	
 	public void addAsset(Optional<T> prev, T asset) {
@@ -109,6 +120,7 @@ public abstract class AssetTable<T extends Message> extends JTable {
 	}
 	
 	public static class AssetTableModel<T extends Message> extends DefaultTableModel {
+		private static final long serialVersionUID = 1L;
 		private final List<T> assets;
 		
 		public AssetTableModel(String[] columnNames) {

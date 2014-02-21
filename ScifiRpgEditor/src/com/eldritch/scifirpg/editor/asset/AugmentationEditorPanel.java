@@ -103,10 +103,10 @@ public class AugmentationEditorPanel extends AssetEditorPanel<Augmentation, Augm
 			valueField.setText(asset.getValue() + "");
 			typeBox.setSelectedItem(asset.getType());
 			for (Effect effect : asset.getEffectList()) {
-				effectTable.addAsset(Optional.<Effect>absent(), effect);
+				effectTable.addAsset(effect);
 			}
 			for (Requirement req : asset.getRequirementList()) {
-				requirementTable.addAsset(Optional.<Requirement>absent(), req);
+				requirementTable.addAsset(req);
 			}
 		}
 
