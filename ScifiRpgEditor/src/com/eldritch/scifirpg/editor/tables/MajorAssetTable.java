@@ -21,6 +21,10 @@ public abstract class MajorAssetTable<T extends Message> extends AssetTable<T> {
 	@Override
 	public void saveAsset(Optional<T> prev, T asset) {
 		exportAsset(asset);
+		if (prev.isPresent() && getAssetId(prev.get()).equals(getAssetId(asset))) {
+			// Do not replace the asset if the ID was changed -> create a new asset
+			prev = Optional.<T>absent();
+		}
 		addAsset(prev, asset);
 	}
 	
