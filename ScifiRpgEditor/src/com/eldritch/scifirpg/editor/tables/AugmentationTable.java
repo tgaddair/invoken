@@ -29,6 +29,7 @@ public class AugmentationTable extends AssetTable<Augmentation> {
 	
 	@Override
 	protected void exportAsset(Augmentation asset) {
+		write(asset, "augmentations", asset.getId());
 	}
 	
 	@Override

@@ -7,6 +7,10 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.DataOutputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -84,6 +88,15 @@ public abstract class AssetTable<T extends Message> extends JTable {
 	protected abstract Object[] getDisplayFields(T asset);
 	
 	protected void exportAsset(T asset) {
+	}
+	
+	protected void write(T asset, String directory, String id) {
+		String filename = String.format("C:/Users/Travis/repos/data/%s/%s.dat", directory, id);
+		try (DataOutputStream os = new DataOutputStream(new FileOutputStream(filename))) {
+			os.write(asset.toByteArray());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public void addAsset(Optional<T> prev, T asset) {
