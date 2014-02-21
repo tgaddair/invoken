@@ -5,12 +5,13 @@ import javax.swing.JPanel;
 
 import com.eldritch.scifirpg.editor.asset.AugmentationEditorPanel;
 import com.eldritch.scifirpg.proto.Augmentations.Augmentation;
+import com.eldritch.scifirpg.proto.Augmentations.Augmentation.Requirement;
 import com.google.common.base.Optional;
 
 public class AugmentationTable extends AssetTable<Augmentation> {
 	private static final long serialVersionUID = 1L;
 	private static final String[] COLUMN_NAMES = { 
-		"ID", "Name", "Value", "Slots", "Discipline" };
+		"ID", "Name", "Type", "Requirements", "Value"};
 	
 	public AugmentationTable() {
 		super(COLUMN_NAMES);
@@ -18,7 +19,7 @@ public class AugmentationTable extends AssetTable<Augmentation> {
 
 	@Override
 	protected JPanel getEditorPanel(Optional<Augmentation> prev, JFrame frame) {
-		return new AugmentationEditorPanel();
+		return new AugmentationEditorPanel(this, frame, prev);
 	}
 	
 	@Override
@@ -28,6 +29,18 @@ public class AugmentationTable extends AssetTable<Augmentation> {
 	
 	@Override
 	protected Object[] getDisplayFields(Augmentation asset) {
-		return new Object[0];
+		String reqs = "";
+		boolean first = true;
+		for (Requirement req : asset.getRequirementList()) {
+			String discipline = req.getDiscipline().name().substring(0, 1);
+			int slots = req.getSlots();
+			int value = req.getValue();
+			if (!first) {
+				reqs += "; ";
+			}
+			reqs += String.format("%s: %d (%d)", discipline, value, slots);
+			first = false;
+		}
+		return new Object[]{ asset.getId(), asset.getName(), asset.getType(), reqs, asset.getValue() };
 	}
 }

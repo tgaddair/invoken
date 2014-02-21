@@ -86,6 +86,10 @@ public abstract class AssetTable<T extends Message> extends JTable {
 		getModel().addAsset(prev, asset, getDisplayFields(asset));
 	}
 	
+	public List<T> getAssets() {
+		return getModel().getAssets();
+	}
+	
 	public static class AssetTableModel<T extends Message> extends DefaultTableModel {
 		private final List<T> assets;
 		

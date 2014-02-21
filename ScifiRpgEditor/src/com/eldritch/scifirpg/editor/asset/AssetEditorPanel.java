@@ -14,19 +14,19 @@ import com.google.protobuf.Message;
 public abstract class AssetEditorPanel<T extends Message, S extends AssetTable<T>> extends JPanel implements ActionListener {
 	private static final long serialVersionUID = 1L;
 
-	private final S owner;
+	private final S table;
 	private final JFrame frame;
 	private final Optional<T> prev;
 
-	public AssetEditorPanel(S owner, JFrame frame, Optional<T> prev) {
+	public AssetEditorPanel(S table, JFrame frame, Optional<T> prev) {
 		super(new BorderLayout());
-		this.owner = owner;
+		this.table = table;
 		this.frame = frame;
 		this.prev = prev;
 	}
 	
-	public S getOwner() {
-		return owner;
+	public S getTable() {
+		return table;
 	}
 
 	public JFrame getFrame() {
@@ -40,7 +40,7 @@ public abstract class AssetEditorPanel<T extends Message, S extends AssetTable<T
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		T asset = createAsset();
-		owner.addAsset(prev, asset);
+		table.addAsset(prev, asset);
 		frame.dispose();
 	}
 	

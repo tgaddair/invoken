@@ -36,8 +36,8 @@ public class AugmentationEditorPanel extends AssetEditorPanel<Augmentation, Augm
 	private final JTextField valueField = new JTextField();
 	private final JComboBox<Type> typeBox = new JComboBox<Type>(Type.values());
 	//private final JComboBox<Enum<?>> subtypeBox = new JComboBox<Enum<?>>(AttackSubtype.values());
-	private final AssetTablePanel effectsPanel = new AssetTablePanel(new EffectTable());
-	private final AssetTablePanel requirementsPanel = new AssetTablePanel(new RequirementTable());
+	private final EffectTable effectTable = new EffectTable();
+	private final RequirementTable requirementTable = new RequirementTable();
 
 	public AugmentationEditorPanel(AugmentationTable owner, JFrame frame, Optional<Augmentation> prev) {
 		super(owner, frame, prev);
@@ -82,11 +82,11 @@ public class AugmentationEditorPanel extends AssetEditorPanel<Augmentation, Augm
 
 		
 		builder.addLabel("Effects", cc.xy(c, r));
-		builder.add(effectsPanel, cc.xy(c + 2, r));
+		builder.add(new AssetTablePanel(effectTable), cc.xy(c + 2, r));
 		r += 2;
 		
 		builder.addLabel("Requirements", cc.xy(c, r));
-		builder.add(requirementsPanel, cc.xy(c + 2, r));
+		builder.add(new AssetTablePanel(requirementTable), cc.xy(c + 2, r));
 		r += 2;
 		
 		JButton saveButton = new JButton("Save");
@@ -99,8 +99,15 @@ public class AugmentationEditorPanel extends AssetEditorPanel<Augmentation, Augm
 	
 	@Override
 	public Augmentation createAsset() {
-		// TODO Auto-generated method stub
-		return null;
+		return Augmentation.newBuilder()
+				.setId(idField.getText())
+				.setName(nameField.getText())
+				.setDescription(descriptionField.getText())
+				.setValue(Integer.parseInt(valueField.getText()))
+				.setType((Type) typeBox.getSelectedItem())
+				.addAllEffect(effectTable.getAssets())
+				.addAllRequirement(requirementTable.getAssets())
+				.build();
 	}
 
 	private JTextArea createArea(boolean lineWrap, int columns, Dimension minimumSize) {

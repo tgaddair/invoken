@@ -9,7 +9,7 @@ import java.awt.GridLayout;
 public class AssetTablePanel extends JPanel {
 	private static final long serialVersionUID = 1L;
 	
-	public AssetTablePanel(final JTable table) {
+	public AssetTablePanel(JTable table) {
 		super(new GridLayout(1, 0));
 
 		table.setPreferredScrollableViewportSize(new Dimension(500, 70));
