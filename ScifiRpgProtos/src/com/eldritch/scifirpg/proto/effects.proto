@@ -79,7 +79,7 @@ message Effect {
 		ALL_OTHER = 3; // Everyone in an ActorEncounter, except the player
 		ALL_HOSTILE = 4; // Everyone hostile to the player in an ActorEncounter
 		ALL_ALLIED = 5; // Everyone allied with the player in an ActorEncounter, including player
-		TRAP = 6;
+		TARGETER = 6; // Applies to counters, traps, and passive abilities that are triggered when someone targets player
 		SPREAD_ALL = 7;
 		SPREAD_HOSTILE = 8;
 	}

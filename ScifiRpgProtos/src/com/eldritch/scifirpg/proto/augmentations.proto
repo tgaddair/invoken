@@ -14,7 +14,8 @@ message Augmentation {
 		EXECUTE = 2; // Playable in encounter
 		DIALOGUE = 3; // Playable in dialogue
 		COUNTER = 4; // Playable when targeted
-		PASSIVE = 5; // Playable when attuning outside encounter
+		TRAP = 5; // Playable at any time, activates when targeted and effect applies
+		PASSIVE = 6; // Playable when attuning outside encounter
 	}
 
 	enum AttackSubtype {
