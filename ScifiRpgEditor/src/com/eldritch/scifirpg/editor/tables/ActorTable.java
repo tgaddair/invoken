@@ -21,7 +21,7 @@ public class ActorTable extends MajorAssetTable<NonPlayerActor> {
 
 	@Override
 	protected JPanel getEditorPanel(Optional<NonPlayerActor> prev, JFrame frame) {
-		return new ActorEditorPanel();
+		return new ActorEditorPanel(this, frame, prev);
 	}
 	
 	@Override
