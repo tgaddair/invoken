@@ -21,7 +21,9 @@ import com.eldritch.scifirpg.editor.tables.AugmentationTable;
 import com.eldritch.scifirpg.editor.tables.EffectTable;
 import com.eldritch.scifirpg.editor.tables.RequirementTable;
 import com.eldritch.scifirpg.proto.Augmentations.Augmentation;
+import com.eldritch.scifirpg.proto.Augmentations.Augmentation.Requirement;
 import com.eldritch.scifirpg.proto.Augmentations.Augmentation.Type;
+import com.eldritch.scifirpg.proto.Effects.Effect;
 import com.google.common.base.Optional;
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
@@ -92,6 +94,21 @@ public class AugmentationEditorPanel extends AssetEditorPanel<Augmentation, Augm
 		JButton saveButton = new JButton("Save");
 		saveButton.addActionListener(this);
 		builder.add(saveButton, cc.xy(c + 4, 9));
+		
+		if (prev.isPresent()) {
+			Augmentation asset = prev.get();
+			idField.setText(asset.getId());
+			nameField.setText(asset.getName());
+			descriptionField.setText(asset.getDescription());
+			valueField.setText(asset.getValue() + "");
+			typeBox.setSelectedItem(asset.getType());
+			for (Effect effect : asset.getEffectList()) {
+				effectTable.addAsset(Optional.<Effect>absent(), effect);
+			}
+			for (Requirement req : asset.getRequirementList()) {
+				requirementTable.addAsset(Optional.<Requirement>absent(), req);
+			}
+		}
 
 		add(builder.getPanel());
 		setPreferredSize(new Dimension(1400, 500));

@@ -61,6 +61,7 @@ public abstract class AssetTable<T extends Message> extends JTable {
 	    });
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public AssetTableModel<T> getModel() {
 		return (AssetTableModel<T>) super.getModel();
@@ -82,7 +83,11 @@ public abstract class AssetTable<T extends Message> extends JTable {
 	
 	protected abstract Object[] getDisplayFields(T asset);
 	
+	protected void exportAsset(T asset) {
+	}
+	
 	public void addAsset(Optional<T> prev, T asset) {
+		exportAsset(asset);
 		getModel().addAsset(prev, asset, getDisplayFields(asset));
 	}
 	
