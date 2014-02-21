@@ -1,7 +1,11 @@
 package com.eldritch.scifirpg.editor.tables;
 
+import java.io.DataOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
+import com.google.common.base.Optional;
 import com.google.protobuf.Message;
 
 public abstract class MajorAssetTable<T extends Message> extends AssetTable<T> {
@@ -9,6 +13,13 @@ public abstract class MajorAssetTable<T extends Message> extends AssetTable<T> {
 
 	public MajorAssetTable(String[] columnNames) {
 		super(columnNames);
+		importAssets();
+	}
+	
+	@Override
+	public void saveAsset(Optional<T> prev, T asset) {
+		exportAsset(asset);
+		addAsset(prev, asset);
 	}
 	
 	protected abstract String getAssetDirectory();
@@ -17,7 +28,6 @@ public abstract class MajorAssetTable<T extends Message> extends AssetTable<T> {
 	
 	protected abstract T deserialize(File assetFile);
 	
-	@Override
 	protected void importAssets() {
 		String path = getTopAssetDirectory() + "/" + getAssetDirectory();
 		File dir = new File(path);
@@ -29,8 +39,20 @@ public abstract class MajorAssetTable<T extends Message> extends AssetTable<T> {
 		}
 	}
 	
-	@Override
 	protected void exportAsset(T asset) {
 		write(asset, getAssetDirectory(), getAssetId(asset));
+	}
+
+	protected void write(T asset, String directory, String id) {
+		String filename = String.format("%s/%s/%s.dat", getTopAssetDirectory(), directory, id);
+		try (DataOutputStream os = new DataOutputStream(new FileOutputStream(filename))) {
+			os.write(asset.toByteArray());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	protected String getTopAssetDirectory() {
+		return "C:/Users/Travis/repos/data";
 	}
 }

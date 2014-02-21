@@ -61,8 +61,6 @@ public abstract class AssetTable<T extends Message> extends JTable {
 	            }
 	        }
 	    });
-	    
-	    importAssets();
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -87,32 +85,16 @@ public abstract class AssetTable<T extends Message> extends JTable {
 	
 	protected abstract Object[] getDisplayFields(T asset);
 	
-	protected void importAssets() {
-	}
-	
-	protected void exportAsset(T asset) {
-	}
-
-	protected void write(T asset, String directory, String id) {
-		String filename = String.format("%s/%s/%s.dat", getTopAssetDirectory(), directory, id);
-		try (DataOutputStream os = new DataOutputStream(new FileOutputStream(filename))) {
-			os.write(asset.toByteArray());
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	protected String getTopAssetDirectory() {
-		return "C:/Users/Travis/repos/data";
-	}
-	
 	public void addAsset(T asset) {
 		addAsset(Optional.<T>absent(), asset);
 	}
 	
 	public void addAsset(Optional<T> prev, T asset) {
-		exportAsset(asset);
 		getModel().addAsset(prev, asset, getDisplayFields(asset));
+	}
+	
+	public void saveAsset(Optional<T> prev, T asset) {
+		addAsset(prev, asset);
 	}
 	
 	public List<T> getAssets() {
