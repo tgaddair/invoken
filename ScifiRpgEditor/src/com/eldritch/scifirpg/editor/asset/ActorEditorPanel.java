@@ -30,6 +30,8 @@ public class ActorEditorPanel extends AssetEditorPanel<NonPlayerActor, ActorTabl
 	private final RequirementTable itemTable = new RequirementTable();
 	private final EffectTable skillTable = new EffectTable();
 	private final RequirementTable factionTable = new RequirementTable();
+	private final EffectTable dialogueTable = new EffectTable();
+	private final RequirementTable traitTable = new RequirementTable();
 	private final JCheckBox uniqueCheck = new JCheckBox("", false);
 	private final JCheckBox speakCheck = new JCheckBox("", true);
 
@@ -38,7 +40,7 @@ public class ActorEditorPanel extends AssetEditorPanel<NonPlayerActor, ActorTabl
 		
 		FormLayout layout = new FormLayout(
 				"right:p, 4dlu, p, 7dlu, right:p, 4dlu, p, 4dlu, p", // columns
-				"p, 3dlu, p, 3dlu, p, 3dlu, p, 3dlu, p, 3dlu, p"); // rows
+				"p, 3dlu, p, 3dlu, p, 3dlu, p, 3dlu, p, 3dlu, p, 3dlu, p, 3dlu, p"); // rows
 		
 		// Specify that columns 1 & 5 as well as 3 & 7 have equal widths.       
 		layout.setColumnGroups(new int[][]{{1, 5}, {3, 7}});
@@ -58,9 +60,8 @@ public class ActorEditorPanel extends AssetEditorPanel<NonPlayerActor, ActorTabl
 		builder.add(idField, cc.xy(c + 2, r));
 		r += 2;
 		
-		aggressionBox.setSelectedItem(Aggression.NORMAL);
-		builder.addLabel("Aggression", cc.xy(c, r));
-		builder.add(aggressionBox, cc.xy(c + 2, r));
+		builder.addLabel("Unique", cc.xy(c, r));
+		builder.add(uniqueCheck, cc.xy(c + 2, r));
 		r += 2;
 		
 		builder.addLabel("Augmentations", cc.xy(c, r));
@@ -71,8 +72,12 @@ public class ActorEditorPanel extends AssetEditorPanel<NonPlayerActor, ActorTabl
 		builder.add(new AssetTablePanel(itemTable), cc.xy(c + 2, r));
 		r += 2;
 		
-		builder.addLabel("Unique", cc.xy(c, r));
-		builder.add(uniqueCheck, cc.xy(c + 2, r));
+		builder.addLabel("Can Speak", cc.xy(c, r));
+		builder.add(speakCheck, cc.xy(c + 2, r));
+		r += 2;
+		
+		builder.addLabel("Dialogue Tree", cc.xy(c, r));
+		builder.add(new AssetTablePanel(dialogueTable), cc.xy(c + 2, r));
 		r += 2;
 		
 		c = 5;
@@ -97,14 +102,19 @@ public class ActorEditorPanel extends AssetEditorPanel<NonPlayerActor, ActorTabl
 		builder.addLabel("Factions", cc.xy(c, r));
 		builder.add(new AssetTablePanel(factionTable), cc.xy(c + 2, r));
 		r += 2;
+
+		aggressionBox.setSelectedItem(Aggression.NORMAL);
+		builder.addLabel("Aggression", cc.xy(c, r));
+		builder.add(aggressionBox, cc.xy(c + 2, r));
+		r += 2;
 		
-		builder.addLabel("Can Speak", cc.xy(c, r));
-		builder.add(speakCheck, cc.xy(c + 2, r));
+		builder.addLabel("Traits", cc.xy(c, r));
+		builder.add(new AssetTablePanel(traitTable), cc.xy(c + 2, r));
 		r += 2;
 		
 		JButton saveButton = new JButton("Save");
 		saveButton.addActionListener(this);
-		builder.add(saveButton, cc.xy(c + 4, 9));
+		builder.add(saveButton, cc.xy(c + 4, r));
 		
 		if (prev.isPresent()) {
 			/*
