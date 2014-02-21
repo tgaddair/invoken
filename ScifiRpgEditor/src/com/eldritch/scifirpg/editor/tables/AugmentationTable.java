@@ -12,7 +12,7 @@ import com.eldritch.scifirpg.proto.Augmentations.Augmentation;
 import com.eldritch.scifirpg.proto.Augmentations.Augmentation.Requirement;
 import com.google.common.base.Optional;
 
-public class AugmentationTable extends AssetTable<Augmentation> {
+public class AugmentationTable extends MajorAssetTable<Augmentation> {
 	private static final long serialVersionUID = 1L;
 	private static final String[] COLUMN_NAMES = { 
 		"ID", "Name", "Type", "Requirements", "Value"};
@@ -31,33 +31,23 @@ public class AugmentationTable extends AssetTable<Augmentation> {
 		return "Augmentation";
 	}
 	
+	@Override
 	protected String getAssetDirectory() {
 		return "augmentations";
 	}
 	
+	@Override
+	protected String getAssetId(Augmentation asset) {
+		return asset.getId();
+	}
+	
+	@Override
 	protected Augmentation deserialize(File assetFile) {
 		try (FileInputStream fis = new FileInputStream(assetFile)) {
 			return Augmentation.parseFrom(fis);
 		} catch (IOException e) {
 			return null;
 		}
-	}
-	
-	@Override
-	protected void importAssets() {
-		String path = getTopAssetDirectory() + "/" + getAssetDirectory();
-		File dir = new File(path);
-		for (File assetFile : dir.listFiles()) {
-			Augmentation asset = deserialize(assetFile);
-			if (asset != null) {
-				addAsset(asset);
-			}
-		}
-	}
-	
-	@Override
-	protected void exportAsset(Augmentation asset) {
-		write(asset, getAssetDirectory(), asset.getId());
 	}
 	
 	@Override
