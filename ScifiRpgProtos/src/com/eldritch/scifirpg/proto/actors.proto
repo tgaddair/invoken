@@ -62,14 +62,14 @@ message ActorParams {
 	}
 
 	enum Profession {
-		WARRIOR = 0;
+		MERCENARY = 0;
 		EXECUTOR = 1;
-		SENTINEL = 2;
-		CAPTAIN = 3;
+		ASSASSIN = 2;
+		WARDEN = 3;
 		ARCHITECT = 4;
-		HACKER = 5;
-		POET = 6;
-		SPECTER = 7;
+		GHOST = 5;
+		INQUISITOR = 6;
+		INFILTRATOR = 7;
 		AGENT = 8;
 		BROKER = 9;
 	}
