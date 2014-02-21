@@ -1,11 +1,20 @@
 package com.eldritch.scifirpg.editor.asset;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
+
+import org.apache.commons.lang3.text.WordUtils;
 
 import com.eldritch.scifirpg.editor.tables.AssetTable;
 import com.google.common.base.Optional;
@@ -23,6 +32,19 @@ public abstract class AssetEditorPanel<T extends Message, S extends AssetTable<T
 		this.table = table;
 		this.frame = frame;
 		this.prev = prev;
+	}
+	
+	protected final JTextArea createArea(boolean lineWrap, int columns, Dimension minimumSize) {
+		JTextArea area = new JTextArea();
+		area.setBorder(new CompoundBorder(new LineBorder(Color.GRAY),
+				new EmptyBorder(1, 3, 1, 1)));
+		area.setLineWrap(lineWrap);
+		area.setWrapStyleWord(true);
+		area.setColumns(columns);
+		if (minimumSize != null) {
+			area.setMinimumSize(new Dimension(100, 32));
+		}
+		return area;
 	}
 	
 	public S getTable() {
@@ -45,4 +67,19 @@ public abstract class AssetEditorPanel<T extends Message, S extends AssetTable<T
 	}
 	
 	public abstract T createAsset();
+	
+	
+	protected static class NameTypedListener implements ActionListener {
+		private final JTextField idField;
+		
+		public NameTypedListener(JTextField idField) {
+			this.idField = idField;
+		}
+		
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			JTextField source = (JTextField) e.getSource();
+			idField.setText(WordUtils.capitalizeFully(source.getText()).replaceAll(" ", ""));
+		}
+	}
 }

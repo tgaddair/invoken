@@ -1,29 +1,21 @@
 package com.eldritch.scifirpg.editor.asset;
 
 import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JFrame;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
+import javax.swing.*;
 
 import com.eldritch.scifirpg.editor.AssetTablePanel;
-import com.eldritch.scifirpg.editor.tables.AugmentationTable;
+import com.eldritch.scifirpg.editor.tables.ActorTable;
 import com.eldritch.scifirpg.editor.tables.EffectTable;
 import com.eldritch.scifirpg.editor.tables.RequirementTable;
-import com.eldritch.scifirpg.proto.Augmentations.Augmentation;
-import com.eldritch.scifirpg.proto.Augmentations.Augmentation.Requirement;
+import com.eldritch.scifirpg.proto.Actors.NonPlayerActor;
 import com.eldritch.scifirpg.proto.Augmentations.Augmentation.Type;
-import com.eldritch.scifirpg.proto.Effects.Effect;
 import com.google.common.base.Optional;
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
-public class AugmentationEditorPanel extends AssetEditorPanel<Augmentation, AugmentationTable> {
+public class ActorEditorPanel extends AssetEditorPanel<NonPlayerActor, ActorTable> {
 	private static final long serialVersionUID = 1L;
 	
 	private final JTextField idField = new JTextField();
@@ -35,9 +27,9 @@ public class AugmentationEditorPanel extends AssetEditorPanel<Augmentation, Augm
 	private final EffectTable effectTable = new EffectTable();
 	private final RequirementTable requirementTable = new RequirementTable();
 
-	public AugmentationEditorPanel(AugmentationTable owner, JFrame frame, Optional<Augmentation> prev) {
+	public ActorEditorPanel(ActorTable owner, JFrame frame, Optional<NonPlayerActor> prev) {
 		super(owner, frame, prev);
-
+		
 		FormLayout layout = new FormLayout(
 				"right:p, 4dlu, p, 7dlu, right:p, 4dlu, p, 4dlu, p", // columns
 				"p, 3dlu, p, 3dlu, fill:default:grow, 3dlu, p, 3dlu, p"); // rows
@@ -71,7 +63,6 @@ public class AugmentationEditorPanel extends AssetEditorPanel<Augmentation, Augm
 		builder.add(valueField, cc.xy(c + 2, r));
 		r += 2;
 		
-		typeBox.addActionListener(new TypeSelectionListener());
 		builder.addLabel("Type", cc.xy(c, r));
 		builder.add(typeBox, cc.xy(c + 2, r));
 		r += 2;
@@ -90,6 +81,7 @@ public class AugmentationEditorPanel extends AssetEditorPanel<Augmentation, Augm
 		builder.add(saveButton, cc.xy(c + 4, 9));
 		
 		if (prev.isPresent()) {
+			/*
 			Augmentation asset = prev.get();
 			idField.setText(asset.getId());
 			nameField.setText(asset.getName());
@@ -102,56 +94,16 @@ public class AugmentationEditorPanel extends AssetEditorPanel<Augmentation, Augm
 			for (Requirement req : asset.getRequirementList()) {
 				requirementTable.addAsset(req);
 			}
+			*/
 		}
 
 		add(builder.getPanel());
 		setPreferredSize(new Dimension(1400, 500));
 	}
-	
+
 	@Override
-	public Augmentation createAsset() {
-		return Augmentation.newBuilder()
-				.setId(idField.getText())
-				.setName(nameField.getText())
-				.setDescription(descriptionField.getText())
-				.setValue(Integer.parseInt(valueField.getText()))
-				.setType((Type) typeBox.getSelectedItem())
-				.addAllEffect(effectTable.getAssets())
-				.addAllRequirement(requirementTable.getAssets())
-				.build();
-	}
-	
-	private class TypeSelectionListener implements ActionListener {
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			/*
-			Enum<?>[] values = null;
-			boolean visible = true;
-			
-			Type t = (Type) typeBox.getSelectedItem();
-			switch (t) {
-				case ATTACK:
-					values = AttackSubtype.values();
-					break;
-				case DECEIVE:
-					values = DeceiveSubtype.values();
-					break;
-				case EXECUTE:
-					values = ExecuteSubtype.values();
-					break;
-				case COUNTER:
-				case DIALOGUE:
-				case PASSIVE:
-					visible = false;
-					values = new Enum<?>[0];
-					break;
-				default:
-					throw new IllegalStateException("Unrecognized Augmentation Type: " + t);
-			}
-			
-			subtypeBox.setVisible(visible);
-			subtypeBox.setModel(new DefaultComboBoxModel<Enum<?>>(values));
-			*/
-		}
+	public NonPlayerActor createAsset() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

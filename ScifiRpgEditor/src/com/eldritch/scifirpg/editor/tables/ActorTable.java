@@ -6,7 +6,7 @@ import java.io.InputStream;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import com.eldritch.scifirpg.editor.asset.CreateActorPanel;
+import com.eldritch.scifirpg.editor.asset.ActorEditorPanel;
 import com.eldritch.scifirpg.proto.Actors.NonPlayerActor;
 import com.google.common.base.Optional;
 
@@ -21,7 +21,7 @@ public class ActorTable extends MajorAssetTable<NonPlayerActor> {
 
 	@Override
 	protected JPanel getEditorPanel(Optional<NonPlayerActor> prev, JFrame frame) {
-		return new CreateActorPanel();
+		return new ActorEditorPanel();
 	}
 	
 	@Override
