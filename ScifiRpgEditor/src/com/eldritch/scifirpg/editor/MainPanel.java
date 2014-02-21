@@ -6,7 +6,6 @@ import javax.swing.JPanel;
 import javax.swing.JComponent;
 
 import com.eldritch.scifirpg.editor.tables.ActorTable;
-import com.eldritch.scifirpg.editor.tables.AssetTablePanel;
 import com.eldritch.scifirpg.editor.tables.AugmentationTable;
 import com.eldritch.scifirpg.editor.tables.EncounterTable;
 import com.eldritch.scifirpg.editor.tables.ItemTable;

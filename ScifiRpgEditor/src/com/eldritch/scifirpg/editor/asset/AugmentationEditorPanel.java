@@ -1,15 +1,13 @@
 package com.eldritch.scifirpg.editor.asset;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JPanel;
+import javax.swing.JFrame;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.border.CompoundBorder;
@@ -18,27 +16,31 @@ import javax.swing.border.LineBorder;
 
 import org.apache.commons.lang3.text.WordUtils;
 
-import com.eldritch.scifirpg.editor.tables.AssetTablePanel;
+import com.eldritch.scifirpg.editor.AssetTablePanel;
+import com.eldritch.scifirpg.editor.tables.AugmentationTable;
 import com.eldritch.scifirpg.editor.tables.EffectTable;
 import com.eldritch.scifirpg.editor.tables.RequirementTable;
-import com.eldritch.scifirpg.proto.Augmentations.Augmentation.AttackSubtype;
-import com.eldritch.scifirpg.proto.Augmentations.Augmentation.DeceiveSubtype;
-import com.eldritch.scifirpg.proto.Augmentations.Augmentation.ExecuteSubtype;
+import com.eldritch.scifirpg.proto.Augmentations.Augmentation;
 import com.eldritch.scifirpg.proto.Augmentations.Augmentation.Type;
+import com.google.common.base.Optional;
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
-public class AugmentationEditorPanel extends JPanel {
+public class AugmentationEditorPanel extends AssetEditorPanel<Augmentation, AugmentationTable> {
 	private static final long serialVersionUID = 1L;
 	
 	private final JTextField idField = new JTextField();
 	private final JTextField nameField = new JTextField();
+	private final JTextArea descriptionField = createArea(true, 30, new Dimension(100, 100));
+	private final JTextField valueField = new JTextField();
 	private final JComboBox<Type> typeBox = new JComboBox<Type>(Type.values());
-	private final JComboBox<Enum<?>> subtypeBox = new JComboBox<Enum<?>>(AttackSubtype.values());
+	//private final JComboBox<Enum<?>> subtypeBox = new JComboBox<Enum<?>>(AttackSubtype.values());
+	private final AssetTablePanel effectsPanel = new AssetTablePanel(new EffectTable());
+	private final AssetTablePanel requirementsPanel = new AssetTablePanel(new RequirementTable());
 
-	public AugmentationEditorPanel() {
-		super(new BorderLayout());
+	public AugmentationEditorPanel(AugmentationTable owner, JFrame frame, Optional<Augmentation> prev) {
+		super(owner, frame, prev);
 
 		FormLayout layout = new FormLayout(
 				"right:p, 4dlu, p, 7dlu, right:p, 4dlu, p, 4dlu, p", // columns
@@ -63,37 +65,42 @@ public class AugmentationEditorPanel extends JPanel {
 		r += 2;
 		
 		builder.addLabel("Description", cc.xy(c, r));
-		builder.add(createArea(true, 30, new Dimension(100, 100)), cc.xy(c + 2, r));
-		r += 2;
-		
-		builder.addLabel("Value", cc.xy(c, r));
-		builder.add(new JTextField(), cc.xy(c + 2, r));
+		builder.add(descriptionField, cc.xy(c + 2, r));
 		r += 2;
 		
 		c = 5;
 		r = 1;
 		
+		builder.addLabel("Value", cc.xy(c, r));
+		builder.add(valueField, cc.xy(c + 2, r));
+		r += 2;
+		
 		typeBox.addActionListener(new TypeSelectionListener());
 		builder.addLabel("Type", cc.xy(c, r));
 		builder.add(typeBox, cc.xy(c + 2, r));
 		r += 2;
-		
-		builder.addLabel("Subtype", cc.xy(c, r));
-		builder.add(subtypeBox, cc.xy(c + 2, r));
-		r += 2;
+
 		
 		builder.addLabel("Effects", cc.xy(c, r));
-		builder.add(new AssetTablePanel(new EffectTable()), cc.xy(c + 2, r));
+		builder.add(effectsPanel, cc.xy(c + 2, r));
 		r += 2;
 		
 		builder.addLabel("Requirements", cc.xy(c, r));
-		builder.add(new AssetTablePanel(new RequirementTable()), cc.xy(c + 2, r));
+		builder.add(requirementsPanel, cc.xy(c + 2, r));
 		r += 2;
 		
-		builder.add(new JButton("Save"), cc.xy(c + 4, 9));
+		JButton saveButton = new JButton("Save");
+		saveButton.addActionListener(this);
+		builder.add(saveButton, cc.xy(c + 4, 9));
 
 		add(builder.getPanel());
 		setPreferredSize(new Dimension(1400, 500));
+	}
+	
+	@Override
+	public Augmentation createAsset() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	private JTextArea createArea(boolean lineWrap, int columns, Dimension minimumSize) {
@@ -120,6 +127,7 @@ public class AugmentationEditorPanel extends JPanel {
 	private class TypeSelectionListener implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
+			/*
 			Enum<?>[] values = null;
 			boolean visible = true;
 			
@@ -146,6 +154,7 @@ public class AugmentationEditorPanel extends JPanel {
 			
 			subtypeBox.setVisible(visible);
 			subtypeBox.setModel(new DefaultComboBoxModel<Enum<?>>(values));
+			*/
 		}
 	}
 }

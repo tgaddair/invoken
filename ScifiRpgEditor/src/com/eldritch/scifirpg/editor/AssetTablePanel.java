@@ -1,4 +1,4 @@
-package com.eldritch.scifirpg.editor.tables;
+package com.eldritch.scifirpg.editor;
 
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
