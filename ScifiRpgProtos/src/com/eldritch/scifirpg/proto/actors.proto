@@ -56,13 +56,22 @@ message ActorDialogue {
 }
 
 message ActorParams {
+	enum Species {
+		HUMAN = 0;
+		BEAST = 1;
+		AUTOMATON = 2;
+		UNDEAD = 3;
+		AWOKEN = 4;
+	}
+
 	enum Gender {
 		MALE = 0;
 		FEMALE = 1;
+		NONE = 2;
 	}
 
 	enum Profession {
-		MERCENARY = 0;
+		WARRIOR = 0;
 		EXECUTOR = 1;
 		ASSASSIN = 2;
 		WARDEN = 3;
@@ -92,18 +101,20 @@ message ActorParams {
 	}
 
 	// Names for various dialogue scenarios
-	optional string id = 22; // unique key
-	required string name = 1;
+	optional string id = 1; // unique key
+	required string name = 2;
 
 	// Static info
-	required Gender gender = 6;
+	required Gender gender = 3;
+	required Species species = 4;
+	required Profession profession = 5;
 
 	// Dynamic info
-	required int32 level = 8;
-	repeated Skill skill = 9;
-	repeated FactionStatus faction_status = 10;
-	repeated Item inventory_item = 11;
-	repeated string known_aug_id = 15;
+	required int32 level = 6;
+	repeated Skill skill = 7;
+	repeated FactionStatus faction_status = 8;
+	repeated Item inventory_item = 9;
+	repeated string known_aug_id = 10;
 }
 
 message NonPlayerActor {
@@ -126,9 +137,24 @@ message NonPlayerActor {
 
 	enum Aggression {
 		PACIFIST = 0; // Does not attack anyone
-		NORMAL = 1; // Will attack if provoked
+		UNAGGRESSIVE = 1; // Will attack if provoked
 		AGGRESSIVE = 2; // Will attack enemies on sight
-		FRENZIED = 3; // Attacks anyone on sight
+		HOSTILE = 3; // Attack enemies and neutral on sight
+		FRENZIED = 4; // Attacks anyone on sight
+	}
+
+	enum Assistance {
+		DETACHED = 0; // Helps no one in combat
+		LOYAL = 1; // Helps allies in combat
+		CHIVALRIC = 2; // Helps allies in combat and assists neutral when attacked
+	}
+
+	enum Confidence {
+		COWARDLY = 0; // Never instigates combat, attempts to flee if engaged
+		CAUTIOUS = 1; // Only instigate combat with low levels, flee high levels when engaged
+		CAPABLE = 2; // Instigate with similar levels and below, flee from high levels when engaged
+		BRAVE = 3; // Instigate combat with any enemy, flee only if outmatched
+		RECKLESS = 4; // Instigate combat with any enemy, never flees
 	}
 
 	required ActorParams params = 1;

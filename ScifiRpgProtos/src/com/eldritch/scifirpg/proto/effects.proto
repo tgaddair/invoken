@@ -16,20 +16,20 @@ enum DamageType {
 message Effect {
 	enum Type {
 		// Attack
-		DAMAGE = 1; // MAGNITUDE damage of DAMAGE_TYPE on TARGET for DURATION
-		DRAIN = 2; // Corruption: Transfer life to player, W/A
+		DAMAGE = 0; // MAGNITUDE damage of DAMAGE_TYPE on TARGET for DURATION
+		DRAIN = 1; // Corruption: Transfer life to player, W/A
 
 		// Deceive
-		FLEE = 3; // Avoid conflict and detection
-		ROB = 4; // Steal money or item from the TARGET
-		STALK = 5; // Increase damage multiplier by MAGNITUDE without being detected
-		IMPERSONATE = 6; // Pretend to belong to TARGET faction with rank MAGNITUDE
+		FLEE = 2; // Avoid conflict and detection
+		ROB = 3; // Steal money or item from the TARGET
+		STALK = 4; // Increase damage multiplier by MAGNITUDE without being detected
+		IMPERSONATE = 5; // Pretend to belong to TARGET faction with rank MAGNITUDE
 
 		// Deceive - Espionage
-		DETECT_EQUIPMENT = 7; // Discover what equipment TARGET has currently
-		DETECT_AUGS = 8; // Discover what augs TARGET has currently staged
-		DETECT_BUFFER = 9; // Discover what augs TARGET has in their buffer
-		DETECT_TRAPS = 10;  // Discover what traps the TARGET has deployed
+		DETECT_EQUIPMENT = 6; // Discover what equipment TARGET has currently
+		DETECT_AUGS = 7; // Discover what augs TARGET has currently staged
+		DETECT_BUFFER = 8; // Discover what augs TARGET has in their buffer
+		DETECT_TRAPS = 9;  // Discover what traps the TARGET has deployed
 
 		// Deceive - Hacking
 		OPEN = 10; // Break a lock
