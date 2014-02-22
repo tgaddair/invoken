@@ -66,7 +66,9 @@ public class FactionStatusEditorPanel extends AssetEditorPanel<FactionStatus, Fa
 		if (prev.isPresent()) {
 			FactionStatus asset = prev.get();
 			pointerBox.setSelectedItem(asset.getFactionId());
-			reputationField.setText(asset.getReputation() + "");
+			if (asset.hasReputation()) {
+				reputationField.setText(asset.getReputation() + "");
+			}
 			if (asset.hasRank()) {
 				rankField.setText(asset.getRank() + "");
 			}
@@ -78,10 +80,10 @@ public class FactionStatusEditorPanel extends AssetEditorPanel<FactionStatus, Fa
 	@Override
 	public FactionStatus createAsset() {
 		String id = (String) pointerBox.getSelectedItem();
-		int rep = Integer.parseInt(reputationField.getText());
-		FactionStatus.Builder builder = FactionStatus.newBuilder()
-				.setFactionId(id)
-				.setReputation(rep);
+		FactionStatus.Builder builder = FactionStatus.newBuilder().setFactionId(id);
+		if (!reputationField.getText().isEmpty()) {
+			builder.setReputation(Integer.parseInt(reputationField.getText()));
+		}
 		if (!rankField.getText().isEmpty()) {
 			builder.setRank(Integer.parseInt(rankField.getText()));
 		}
