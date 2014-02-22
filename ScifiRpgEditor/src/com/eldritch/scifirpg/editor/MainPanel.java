@@ -6,18 +6,21 @@ import javax.swing.JPanel;
 import javax.swing.JComponent;
 
 import com.eldritch.scifirpg.editor.tables.ActorTable;
+import com.eldritch.scifirpg.editor.tables.AssetTable;
 import com.eldritch.scifirpg.editor.tables.AugmentationTable;
 import com.eldritch.scifirpg.editor.tables.EncounterTable;
+import com.eldritch.scifirpg.editor.tables.FactionTable;
 import com.eldritch.scifirpg.editor.tables.ItemTable;
 
 import java.awt.Dimension;
 import java.awt.GridLayout;
-import java.awt.event.KeyEvent;
 
 public class MainPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
 	
 	public static final ActorTable ACTOR_TABLE = new ActorTable();
+	
+	public static final FactionTable FACTION_TABLE = new FactionTable();
 	
 	public static final EncounterTable ENCOUNTER_TABLE = new EncounterTable();
 	
@@ -29,23 +32,11 @@ public class MainPanel extends JPanel {
 		super(new GridLayout(1, 1));
 
 		JTabbedPane tabbedPane = new JTabbedPane();
-		ImageIcon icon = null;
-
-		JComponent panel1 = new AssetTablePanel(ACTOR_TABLE);
-		tabbedPane.addTab("Actors", icon, panel1, "Edit and create actors");
-		tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
-
-		JComponent panel2 = new AssetTablePanel(ENCOUNTER_TABLE);
-		tabbedPane.addTab("Encounters", icon, panel2, "Edit and create encounters");
-		tabbedPane.setMnemonicAt(1, KeyEvent.VK_2);
-
-		JComponent panel3 = new AssetTablePanel(ITEM_TABLE);
-		tabbedPane.addTab("Items", icon, panel3, "Edit and create items");
-		tabbedPane.setMnemonicAt(2, KeyEvent.VK_3);
-
-		JComponent panel4 = new AssetTablePanel(AUGMENTATION_TABLE);
-		tabbedPane.addTab("Augmentations", icon, panel4, "Edit and create augmentations");
-		tabbedPane.setMnemonicAt(3, KeyEvent.VK_4);
+		addTable(ACTOR_TABLE, tabbedPane);
+		addTable(FACTION_TABLE, tabbedPane);
+		addTable(ENCOUNTER_TABLE, tabbedPane);
+		addTable(ITEM_TABLE, tabbedPane);
+		addTable(AUGMENTATION_TABLE, tabbedPane);
 
 		// Add the tabbed pane to this panel.
 		add(tabbedPane);
@@ -54,5 +45,12 @@ public class MainPanel extends JPanel {
 		tabbedPane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
 		
 		setPreferredSize(new Dimension(1200, 800));
+	}
+	
+	private void addTable(AssetTable<?> table, JTabbedPane tabbedPane) {
+		JComponent panel = new AssetTablePanel(table);
+		ImageIcon icon = null;
+		String assetName = table.getAssetName() + "s";
+		tabbedPane.addTab(assetName, icon, panel, "Edit and create " + assetName.toLowerCase());
 	}
 }

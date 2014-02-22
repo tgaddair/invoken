@@ -90,6 +90,5 @@ public class AssetPointerTable<T extends Message> extends AssetTable<T> {
 			String id = (String) pointerBox.getSelectedItem();
 			return majorTable.getAssetFor(id);
 		}
-		
 	}
 }
