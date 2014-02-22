@@ -9,7 +9,10 @@ import javax.swing.JFrame;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
+import com.eldritch.scifirpg.editor.AssetTablePanel;
 import com.eldritch.scifirpg.editor.tables.DialogueTable;
+import com.eldritch.scifirpg.editor.tables.OutcomeTable;
+import com.eldritch.scifirpg.editor.tables.PrerequisiteTable;
 import com.eldritch.scifirpg.proto.Actors.DialogueTree.Response;
 import com.google.common.base.Optional;
 import com.jgoodies.forms.builder.DefaultFormBuilder;
@@ -21,6 +24,8 @@ public class ResponseEditorPanel extends AssetEditorPanel<Response, DialogueTabl
 	private final JTextField idField = new JTextField();
 	private final JTextArea textField = createArea(true, 30, new Dimension(100, 100));
 	private final JCheckBox greetingCheck = new JCheckBox();
+	private final PrerequisiteTable prereqTable = new PrerequisiteTable();
+	private final OutcomeTable outcomeTable = new OutcomeTable();
 
 	public ResponseEditorPanel(DialogueTable owner, JFrame frame, Optional<Response> prev) {
 		super(owner, frame, prev);
@@ -39,6 +44,12 @@ public class ResponseEditorPanel extends AssetEditorPanel<Response, DialogueTabl
 
 		builder.append("Greeting:", greetingCheck);
 		builder.nextLine();
+		
+		builder.append("Prerequisites:", new AssetTablePanel(prereqTable));
+		builder.nextLine();
+		
+		builder.append("Outcomes:", new AssetTablePanel(outcomeTable));
+		builder.nextLine();
 
 		JButton saveButton = new JButton("Save");
 		saveButton.addActionListener(this);
@@ -53,7 +64,7 @@ public class ResponseEditorPanel extends AssetEditorPanel<Response, DialogueTabl
 		}
 
 		add(builder.getPanel());
-		setPreferredSize(new Dimension(500, 750));
+		setPreferredSize(new Dimension(650, 750));
 	}
 
 	@Override

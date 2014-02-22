@@ -10,7 +10,7 @@ import com.google.common.base.Optional;
 public class DialogueTable extends AssetTable<Response> {
 	private static final long serialVersionUID = 1L;
 	private static final String[] COLUMN_NAMES = { 
-		"Discipline", "Value", "Slots" };
+		"ID", "Text", "Greeting" };
 	
 	public DialogueTable() {
 		super(COLUMN_NAMES, "Response");
@@ -23,6 +23,6 @@ public class DialogueTable extends AssetTable<Response> {
 	
 	@Override
 	protected Object[] getDisplayFields(Response resp) {
-		return new Object[]{};
+		return new Object[]{resp.getId(), resp.getText(), resp.getGreeting()};
 	}
 }
