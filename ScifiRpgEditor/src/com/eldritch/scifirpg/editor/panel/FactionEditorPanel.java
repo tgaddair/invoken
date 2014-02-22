@@ -32,6 +32,7 @@ public class FactionEditorPanel extends AssetEditorPanel<Faction, FactionTable> 
 	private final JComboBox<Profession> alignmentBox = new JComboBox<Profession>(Profession.values());
 	private final RankTable rankTable = new RankTable();
 	private final RelationTable relationTable = new RelationTable(this);
+	private final JCheckBox visibleCheck = new JCheckBox();
 
 	public FactionEditorPanel(FactionTable owner, JFrame frame, Optional<Faction> prev) {
 		super(owner, frame, prev);
@@ -62,6 +63,9 @@ public class FactionEditorPanel extends AssetEditorPanel<Faction, FactionTable> 
 		
 		builder.append("Relations:", new AssetTablePanel(relationTable));
 		builder.nextLine();
+		
+		builder.append("Visible:", visibleCheck);
+		builder.nextLine();
 
 		JButton saveButton = new JButton("Save");
 		saveButton.addActionListener(this);
@@ -84,6 +88,9 @@ public class FactionEditorPanel extends AssetEditorPanel<Faction, FactionTable> 
 			for (Relation relation : asset.getRelationList()) {
 				relationTable.addAsset(relation);
 			}
+			if (asset.hasVisible()) {
+				visibleCheck.setSelected(asset.getVisible());
+			}
 		}
 
 		add(builder.getPanel());
@@ -103,7 +110,8 @@ public class FactionEditorPanel extends AssetEditorPanel<Faction, FactionTable> 
 				.setId(id)
 				.setName(name)
 				.addAllRank(rankTable.getSortedAssets())
-				.addAllRelation(relationTable.getAssets());
+				.addAllRelation(relationTable.getAssets())
+				.setVisible(visibleCheck.isSelected());
 		if (!unalignedCheck.isSelected()) {
 			builder.setAlignment((Profession) alignmentBox.getSelectedItem());
 		}
