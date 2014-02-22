@@ -64,15 +64,17 @@ public class PrerequisiteEditorPanel extends AssetEditorPanel<Prerequisite, Prer
 		if (prev.isPresent()) {
 			Prerequisite req = prev.get();
 			typeBox.setSelectedItem(req.getType());
+			initFieldsFor((Type) typeBox.getSelectedItem());
 			if (req.hasTarget()) {
 				targetBox.setSelectedItem(req.getTarget());
 			}
 			minField.setText(req.hasMin() ? req.getMin() + "" : "");
 			minField.setText(req.hasMax() ? req.getMax() + "" : "");
 			notCheck.setSelected(req.getNot());
+		} else {
+			initFieldsFor((Type) typeBox.getSelectedItem());
 		}
 
-		initFieldsFor((Type) typeBox.getSelectedItem());
 		add(builder.getPanel());
 	}
 
