@@ -72,10 +72,12 @@ public class ProfessionUtil {
 		// In general, we want to maintain a 2:2:1:1 ratio.
 		// For level n, we have 5(n-1) skill points to distribute
 		int points = 5 * (level - 1);
+		System.out.println("points: " + points);
 		
 		// Divide the first 1/3 of the points into a separate pool for masteries.
 		// Spread them uniformly.
 		int available = points / 3;
+		System.out.println("available: " + available);
 		
 		int used = 0;
 		for (Discipline d : masteries) {
@@ -84,12 +86,14 @@ public class ProfessionUtil {
 			s.setLevel(s.getLevel() + a);
 			used += a;
 		}
+		System.out.println("used: " + used);
 		
 		// Now we want to take the remainder and distribute them randomly
 		List<Skill.Builder> list = new ArrayList<>(skills.values()); 
 		Random rand = new Random();
 		int remaining = points - used;
-		while (remaining >= 0) {
+		System.out.println("remaining: " + remaining);
+		while (remaining > 0) {
 			int i = rand.nextInt(4);
 			Skill.Builder s = list.get(i);
 			s.setLevel(s.getLevel() + 1);
