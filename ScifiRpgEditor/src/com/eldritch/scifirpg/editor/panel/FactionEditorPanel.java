@@ -31,7 +31,7 @@ public class FactionEditorPanel extends AssetEditorPanel<Faction, FactionTable> 
 	private final JCheckBox unalignedCheck = new JCheckBox();
 	private final JComboBox<Profession> alignmentBox = new JComboBox<Profession>(Profession.values());
 	private final RankTable rankTable = new RankTable();
-	private final RelationTable relationTable = new RelationTable();
+	private final RelationTable relationTable = new RelationTable(this);
 
 	public FactionEditorPanel(FactionTable owner, JFrame frame, Optional<Faction> prev) {
 		super(owner, frame, prev);
@@ -87,6 +87,11 @@ public class FactionEditorPanel extends AssetEditorPanel<Faction, FactionTable> 
 
 		add(builder.getPanel());
 		setPreferredSize(new Dimension(650, 750));
+	}
+	
+	
+	public String getCurrentFactionId() {
+		return idField.getText();
 	}
 
 	@Override

@@ -3,6 +3,7 @@ package com.eldritch.scifirpg.editor.tables;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import com.eldritch.scifirpg.editor.panel.FactionEditorPanel;
 import com.eldritch.scifirpg.editor.panel.RelationEditorPanel;
 import com.eldritch.scifirpg.proto.Factions.Faction.Relation;
 import com.google.common.base.Optional;
@@ -12,8 +13,15 @@ public class RelationTable extends AssetTable<Relation> {
 	private static final String[] COLUMN_NAMES = { 
 		"Faction", "Reaction" };
 	
-	public RelationTable() {
+	private final FactionEditorPanel owner;
+	
+	public RelationTable(FactionEditorPanel owner) {
 		super(COLUMN_NAMES, "Relation");
+		this.owner = owner;
+	}
+	
+	public String getCurrentFactionId() {
+		return owner.getCurrentFactionId();
 	}
 
 	@Override

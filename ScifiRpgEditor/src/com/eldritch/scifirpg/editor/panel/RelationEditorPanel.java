@@ -40,6 +40,7 @@ public class RelationEditorPanel extends AssetEditorPanel<Relation, RelationTabl
 		for (Relation r : table.getAssets()) {
 			currentIds.add(r.getFactionId());
 		}
+		currentIds.add(table.getCurrentFactionId());
 		List<String> values = new ArrayList<>();
 		for (String id : majorTable.getAssetIds()) {
 			if ((prev.isPresent() && prev.get().getFactionId().equals(id))
