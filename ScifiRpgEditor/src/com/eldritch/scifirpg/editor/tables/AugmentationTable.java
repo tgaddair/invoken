@@ -17,17 +17,12 @@ public class AugmentationTable extends MajorAssetTable<Augmentation> {
 		"ID", "Name", "Type", "Requirements", "Value"};
 	
 	public AugmentationTable() {
-		super(COLUMN_NAMES);
+		super(COLUMN_NAMES, "Augmentation");
 	}
 
 	@Override
 	protected JPanel getEditorPanel(Optional<Augmentation> prev, JFrame frame) {
 		return new AugmentationEditorPanel(this, frame, prev);
-	}
-	
-	@Override
-	protected String getAssetName() {
-		return "Augmentation";
 	}
 	
 	@Override

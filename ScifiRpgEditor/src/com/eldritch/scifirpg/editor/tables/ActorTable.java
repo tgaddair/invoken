@@ -16,17 +16,12 @@ public class ActorTable extends MajorAssetTable<NonPlayerActor> {
 		"ID", "First Name", "Last Name", "Alias", "Gender", "Level", "Primary", "Secondary" };
 	
 	public ActorTable() {
-		super(COLUMN_NAMES);
+		super(COLUMN_NAMES, "Actor");
 	}
 
 	@Override
 	protected JPanel getEditorPanel(Optional<NonPlayerActor> prev, JFrame frame) {
 		return new ActorEditorPanel(this, frame, prev);
-	}
-	
-	@Override
-	protected String getAssetName() {
-		return "Actor";
 	}
 
 	@Override

@@ -12,17 +12,12 @@ public class ItemTable extends AssetTable<Item> {
 		"ID", "Name", "Value", "Droppable" };
 	
 	public ItemTable() {
-		super(COLUMN_NAMES);
+		super(COLUMN_NAMES, "Item");
 	}
 
 	@Override
 	protected JPanel getEditorPanel(Optional<Item> prev, JFrame frame) {
 		return new JPanel();
-	}
-	
-	@Override
-	protected String getAssetName() {
-		return "Item";
 	}
 	
 	@Override

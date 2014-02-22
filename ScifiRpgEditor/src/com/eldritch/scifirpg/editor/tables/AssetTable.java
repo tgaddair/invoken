@@ -7,9 +7,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.io.DataOutputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,14 +25,16 @@ public abstract class AssetTable<T extends Message> extends JTable {
 	
 	private final JPopupMenu popup;
 	private final String[] columnNames;
+	private final String assetName;
 	
-	public AssetTable(String[] columnNames) {
+	public AssetTable(String[] columnNames, String assetName) {
 		super(new AssetTableModel<T>(columnNames));
 		this.columnNames = columnNames;
+		this.assetName = assetName;
 		
 		// Create the popup menu.
 	    popup = new JPopupMenu();
-	    JMenuItem menuItem = new JMenuItem("Create New " + getAssetName());
+	    JMenuItem menuItem = new JMenuItem("Create New " + assetName);
 	    menuItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent ev) {
@@ -71,9 +70,17 @@ public abstract class AssetTable<T extends Message> extends JTable {
 		return (AssetTableModel<T>) super.getModel();
 	}
 	
+	public String[] getColumnNames() {
+		return columnNames;
+	}
+	
+	public String getAssetName() {
+		return assetName;
+	}
+	
 	protected void handleCreateAsset(Optional<T> asset) {
 		// Create and set up the window.
-        JFrame frame = new JFrame(getAssetName() + " Editor");
+        JFrame frame = new JFrame(assetName + " Editor");
         frame.add(getEditorPanel(asset, frame), BorderLayout.CENTER);
         
         // Display the window.
@@ -82,8 +89,6 @@ public abstract class AssetTable<T extends Message> extends JTable {
 	}
 	
 	protected abstract JPanel getEditorPanel(Optional<T> asset, JFrame frame);
-	
-	protected abstract String getAssetName();
 	
 	protected abstract Object[] getDisplayFields(T asset);
 	

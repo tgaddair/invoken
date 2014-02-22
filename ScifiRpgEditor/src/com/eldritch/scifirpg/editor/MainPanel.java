@@ -16,6 +16,14 @@ import java.awt.event.KeyEvent;
 
 public class MainPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
+	
+	public static final ActorTable ACTOR_TABLE = new ActorTable();
+	
+	public static final EncounterTable ENCOUNTER_TABLE = new EncounterTable();
+	
+	public static final ItemTable ITEM_TABLE = new ItemTable();
+	
+	public static final AugmentationTable AUGMENTATION_TABLE = new AugmentationTable();
 
 	public MainPanel() {
 		super(new GridLayout(1, 1));
@@ -23,19 +31,19 @@ public class MainPanel extends JPanel {
 		JTabbedPane tabbedPane = new JTabbedPane();
 		ImageIcon icon = null;
 
-		JComponent panel1 = new AssetTablePanel(new ActorTable());
+		JComponent panel1 = new AssetTablePanel(ACTOR_TABLE);
 		tabbedPane.addTab("Actors", icon, panel1, "Edit and create actors");
 		tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
 
-		JComponent panel2 = new AssetTablePanel(new EncounterTable());
+		JComponent panel2 = new AssetTablePanel(ENCOUNTER_TABLE);
 		tabbedPane.addTab("Encounters", icon, panel2, "Edit and create encounters");
 		tabbedPane.setMnemonicAt(1, KeyEvent.VK_2);
 
-		JComponent panel3 = new AssetTablePanel(new ItemTable());
+		JComponent panel3 = new AssetTablePanel(ITEM_TABLE);
 		tabbedPane.addTab("Items", icon, panel3, "Edit and create items");
 		tabbedPane.setMnemonicAt(2, KeyEvent.VK_3);
 
-		JComponent panel4 = new AssetTablePanel(new AugmentationTable());
+		JComponent panel4 = new AssetTablePanel(AUGMENTATION_TABLE);
 		tabbedPane.addTab("Augmentations", icon, panel4, "Edit and create augmentations");
 		tabbedPane.setMnemonicAt(3, KeyEvent.VK_4);
 

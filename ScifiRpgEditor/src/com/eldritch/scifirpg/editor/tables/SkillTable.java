@@ -14,17 +14,12 @@ public class SkillTable extends AssetTable<Skill> {
 		"Discipline", "Level" };
 	
 	public SkillTable() {
-		super(COLUMN_NAMES);
+		super(COLUMN_NAMES, "Skill");
 	}
 
 	@Override
 	protected JPanel getEditorPanel(Optional<Skill> prev, JFrame frame) {
 		return new SkillEditorPanel(this, frame, prev);
-	}
-	
-	@Override
-	protected String getAssetName() {
-		return "Skill";
 	}
 	
 	@Override

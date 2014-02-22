@@ -6,10 +6,11 @@ import java.awt.event.ActionListener;
 
 import javax.swing.*;
 
-import org.apache.commons.lang3.text.WordUtils;
-
 import com.eldritch.scifirpg.editor.AssetTablePanel;
+import com.eldritch.scifirpg.editor.MainPanel;
 import com.eldritch.scifirpg.editor.tables.ActorTable;
+import com.eldritch.scifirpg.editor.tables.AssetPointerTable;
+import com.eldritch.scifirpg.editor.tables.AugmentationTable;
 import com.eldritch.scifirpg.editor.tables.EffectTable;
 import com.eldritch.scifirpg.editor.tables.RequirementTable;
 import com.eldritch.scifirpg.editor.tables.SkillTable;
@@ -23,6 +24,7 @@ import com.eldritch.scifirpg.proto.Actors.NonPlayerActor;
 import com.eldritch.scifirpg.proto.Actors.NonPlayerActor.Aggression;
 import com.eldritch.scifirpg.proto.Actors.NonPlayerActor.Assistance;
 import com.eldritch.scifirpg.proto.Actors.NonPlayerActor.Confidence;
+import com.eldritch.scifirpg.proto.Augmentations.Augmentation;
 import com.google.common.base.Optional;
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
@@ -37,7 +39,8 @@ public class ActorEditorPanel extends AssetEditorPanel<NonPlayerActor, ActorTabl
 	private final JComboBox<Species> speciesBox = new JComboBox<Species>(Species.values());
 	private final JComboBox<Gender> genderBox = new JComboBox<Gender>(Gender.values());
 	private final JTextField levelField = new JTextField();
-	private final EffectTable augmentationTable = new EffectTable();
+	private final AssetPointerTable<Augmentation> augmentationTable =
+			new AssetPointerTable<Augmentation>(MainPanel.AUGMENTATION_TABLE);
 	private final RequirementTable itemTable = new RequirementTable();
 	private final SkillTable skillTable = new SkillTable();
 	private final RequirementTable factionTable = new RequirementTable();

@@ -14,17 +14,12 @@ public class TraitTable extends AssetTable<Trait> {
 		"Influence", "Effective" };
 	
 	public TraitTable() {
-		super(COLUMN_NAMES);
+		super(COLUMN_NAMES, "Trait");
 	}
 
 	@Override
 	protected JPanel getEditorPanel(Optional<Trait> prev, JFrame frame) {
 		return new TraitEditorPanel(this, frame, prev);
-	}
-	
-	@Override
-	protected String getAssetName() {
-		return "Trait";
 	}
 	
 	@Override

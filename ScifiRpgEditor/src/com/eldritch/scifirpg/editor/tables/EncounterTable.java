@@ -12,17 +12,12 @@ public class EncounterTable extends AssetTable<Message> {
 		"ID", "Title", "Weight", "Unique" };
 	
 	public EncounterTable() {
-		super(COLUMN_NAMES);
+		super(COLUMN_NAMES, "Encounter");
 	}
 
 	@Override
 	protected JPanel getEditorPanel(Optional<Message> prev, JFrame frame) {
 		return new JPanel();
-	}
-	
-	@Override
-	protected String getAssetName() {
-		return "Encounter";
 	}
 	
 	@Override

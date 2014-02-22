@@ -13,17 +13,12 @@ public class EffectTable extends AssetTable<Effect> {
 			"Magnitude", "Duration", "Target" };
 
 	public EffectTable() {
-		super(COLUMN_NAMES);
+		super(COLUMN_NAMES, "Effect");
 	}
 
 	@Override
 	protected JPanel getEditorPanel(Optional<Effect> prev, JFrame frame) {
 		return new EffectEditorPanel(this, frame, prev);
-	}
-
-	@Override
-	protected String getAssetName() {
-		return "Effect";
 	}
 
 	@Override

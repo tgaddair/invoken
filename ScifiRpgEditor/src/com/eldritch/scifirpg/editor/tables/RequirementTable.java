@@ -14,17 +14,12 @@ public class RequirementTable extends AssetTable<Requirement> {
 		"Discipline", "Value", "Slots" };
 	
 	public RequirementTable() {
-		super(COLUMN_NAMES);
+		super(COLUMN_NAMES, "Requirement");
 	}
 
 	@Override
 	protected JPanel getEditorPanel(Optional<Requirement> prev, JFrame frame) {
 		return new RequirementEditorPanel(this, frame, prev);
-	}
-	
-	@Override
-	protected String getAssetName() {
-		return "Requirement";
 	}
 	
 	@Override
