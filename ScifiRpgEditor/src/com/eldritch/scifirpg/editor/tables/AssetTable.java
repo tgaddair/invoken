@@ -27,9 +27,11 @@ public abstract class AssetTable<T extends Message> extends JTable {
 	private static final long serialVersionUID = 1L;
 	
 	private final JPopupMenu popup;
+	private final String[] columnNames;
 	
 	public AssetTable(String[] columnNames) {
 		super(new AssetTableModel<T>(columnNames));
+		this.columnNames = columnNames;
 		
 		// Create the popup menu.
 	    popup = new JPopupMenu();
@@ -99,6 +101,10 @@ public abstract class AssetTable<T extends Message> extends JTable {
 	
 	public List<T> getAssets() {
 		return getModel().getAssets();
+	}
+	
+	public void clearAssets() {
+		setModel(new AssetTableModel<T>(columnNames));
 	}
 	
 	public static class AssetTableModel<T extends Message> extends DefaultTableModel {

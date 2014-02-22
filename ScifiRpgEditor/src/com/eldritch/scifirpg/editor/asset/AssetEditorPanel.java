@@ -68,7 +68,6 @@ public abstract class AssetEditorPanel<T extends Message, S extends AssetTable<T
 	
 	public abstract T createAsset();
 	
-	
 	protected static class NameTypedListener implements ActionListener {
 		private final JTextField idField;
 		

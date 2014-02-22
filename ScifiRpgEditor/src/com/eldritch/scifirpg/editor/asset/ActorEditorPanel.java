@@ -6,14 +6,18 @@ import java.awt.event.ActionListener;
 
 import javax.swing.*;
 
+import org.apache.commons.lang3.text.WordUtils;
+
 import com.eldritch.scifirpg.editor.AssetTablePanel;
 import com.eldritch.scifirpg.editor.tables.ActorTable;
 import com.eldritch.scifirpg.editor.tables.EffectTable;
 import com.eldritch.scifirpg.editor.tables.RequirementTable;
 import com.eldritch.scifirpg.editor.tables.SkillTable;
 import com.eldritch.scifirpg.editor.tables.TraitTable;
+import com.eldritch.scifirpg.editor.util.ProfessionUtil;
 import com.eldritch.scifirpg.proto.Actors.ActorParams.Gender;
 import com.eldritch.scifirpg.proto.Actors.ActorParams.Profession;
+import com.eldritch.scifirpg.proto.Actors.ActorParams.Skill;
 import com.eldritch.scifirpg.proto.Actors.ActorParams.Species;
 import com.eldritch.scifirpg.proto.Actors.NonPlayerActor;
 import com.eldritch.scifirpg.proto.Actors.NonPlayerActor.Aggression;
@@ -113,6 +117,7 @@ public class ActorEditorPanel extends AssetEditorPanel<NonPlayerActor, ActorTabl
 		builder.add(professionBox, cc.xy(c + 2, r));
 		r += 2;
 		
+		levelField.addActionListener(new LevelEnteredListener());
 		builder.addLabel("Level", cc.xy(c, r));
 		builder.add(levelField, cc.xy(c + 2, r));
 		r += 2;
@@ -186,6 +191,20 @@ public class ActorEditorPanel extends AssetEditorPanel<NonPlayerActor, ActorTabl
 			
 			genderBox.setVisible(visible);
 			professionBox.setVisible(visible);
+		}
+	}
+	
+	protected class LevelEnteredListener implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			JTextField source = (JTextField) e.getSource();
+			int level = Integer.parseInt(source.getText());
+			Profession profession = (Profession) professionBox.getSelectedItem();
+			
+			skillTable.clearAssets();
+			for (Skill asset : ProfessionUtil.getSkillsFor(profession, level)) {
+				skillTable.addAsset(asset);
+			}
 		}
 	}
 }
