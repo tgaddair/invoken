@@ -109,7 +109,7 @@ public class PrerequisiteEditorPanel extends AssetEditorPanel<Prerequisite, Prer
 				}
 				break;
 			case REP_BETWEEN:
-				//values.addAll(MainPanel.FACTION_TABLE.getAssetIds());
+				values.addAll(MainPanel.FACTION_TABLE.getAssetIds());
 			case LVL_BETWEEN:
 			case INFLUENCE_BETWEEN:
 				targetEnabled = false;

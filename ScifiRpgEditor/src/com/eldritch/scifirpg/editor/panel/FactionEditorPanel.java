@@ -56,6 +56,7 @@ public class FactionEditorPanel extends AssetEditorPanel<Faction, FactionTable> 
 		builder.append("Alignment:", alignmentBox);
 		builder.nextLine();
 		
+		builder.appendRow("fill:120dlu");
 		builder.append("Ranks:", new AssetTablePanel(rankTable));
 		builder.nextLine();
 		
