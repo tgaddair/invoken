@@ -13,6 +13,7 @@ import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JTextField;
 
+import com.eldritch.scifirpg.editor.MainPanel;
 import com.eldritch.scifirpg.editor.tables.PrerequisiteTable;
 import com.eldritch.scifirpg.proto.Disciplines.Discipline;
 import com.eldritch.scifirpg.proto.Prerequisites.Prerequisite;
@@ -84,10 +85,10 @@ public class PrerequisiteEditorPanel extends AssetEditorPanel<Prerequisite, Prer
 		if (targetBox.isEnabled()) {
 			builder.setTarget((String) targetBox.getSelectedItem());
 		}
-		if (!minField.isEnabled()) {
+		if (!minField.isEnabled() && !minField.getText().isEmpty()) {
 			builder.setMin(Integer.parseInt(minField.getText()));
 		}
-		if (!maxField.isEnabled()) {
+		if (!maxField.isEnabled() && !maxField.getText().isEmpty()) {
 			builder.setMin(Integer.parseInt(maxField.getText()));
 		}
 		return builder.build();
@@ -106,20 +107,26 @@ public class PrerequisiteEditorPanel extends AssetEditorPanel<Prerequisite, Prer
 				}
 				break;
 			case REP_BETWEEN:
+				//values.addAll(MainPanel.FACTION_TABLE.getAssetIds());
 			case LVL_BETWEEN:
 			case INFLUENCE_BETWEEN:
+				targetEnabled = false;
 				break;
-			case ITEM_HAS:
 			case AUG_REMAINING:
+				values.addAll(MainPanel.AUGMENTATION_TABLE.getAssetIds());
 				maxEnabled = false;
 				break;
 			case ENCOUNTER_SEEN:
+				//values.addAll(MainPanel.ENCOUNTER_TABLE.getAssetIds());
 			case DIALOGUE_SEEN:
+				//values.addAll(getCurrentActor().getDialogueTable());
 				targetEnabled = false;
 				break;
 			case ITEM_EQUIPPED:
 				minEnabled = false;
+			case ITEM_HAS:
 				maxEnabled = false;
+				//values.addAll(MainPanel.ITEM_TABLE.getAssetIds());
 				break;
 			default:
 				throw new IllegalStateException("Unrecognized Prerequisite Type: " + t);
