@@ -14,6 +14,8 @@ import com.eldritch.scifirpg.editor.tables.DialogueTable;
 import com.eldritch.scifirpg.editor.tables.OutcomeTable;
 import com.eldritch.scifirpg.editor.tables.PrerequisiteTable;
 import com.eldritch.scifirpg.proto.Actors.DialogueTree.Response;
+import com.eldritch.scifirpg.proto.Outcomes.Outcome;
+import com.eldritch.scifirpg.proto.Prerequisites.Prerequisite;
 import com.google.common.base.Optional;
 import com.jgoodies.forms.builder.DefaultFormBuilder;
 import com.jgoodies.forms.layout.FormLayout;
@@ -61,6 +63,12 @@ public class ResponseEditorPanel extends AssetEditorPanel<Response, DialogueTabl
 			idField.setText(resp.getId());
 			textField.setText(resp.getText());
 			greetingCheck.setSelected(resp.getGreeting());
+			for (Prerequisite asset : resp.getPrereqList()) {
+				prereqTable.addAsset(asset);
+			}
+			for (Outcome asset : resp.getOutcomeList()) {
+				outcomeTable.addAsset(asset);
+			}
 		}
 
 		add(builder.getPanel());
@@ -76,6 +84,8 @@ public class ResponseEditorPanel extends AssetEditorPanel<Response, DialogueTabl
 				.setId(id)
 				.setText(text)
 				.setGreeting(greeting)
+				.addAllPrereq(prereqTable.getAssets())
+				.addAllOutcome(outcomeTable.getAssets())
 				.build();
 	}
 }
