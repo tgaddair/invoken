@@ -61,17 +61,16 @@ message ActorParams {
 		BEAST = 1;
 		AUTOMATON = 2;
 		UNDEAD = 3;
-		AWOKEN = 4;
+		INVOKEN = 4;
 	}
 
 	enum Gender {
 		MALE = 0;
 		FEMALE = 1;
-		NONE = 2;
 	}
 
 	enum Profession {
-		WARRIOR = 0;
+		CENTURION = 0;
 		EXECUTOR = 1;
 		ASSASSIN = 2;
 		WARDEN = 3;
@@ -105,9 +104,9 @@ message ActorParams {
 	required string name = 2;
 
 	// Static info
-	required Gender gender = 3;
-	required Species species = 4;
-	required Profession profession = 5;
+	required Species species = 3;
+	optional Gender gender = 4;
+	optional Profession profession = 5;
 
 	// Dynamic info
 	required int32 level = 6;
@@ -118,6 +117,12 @@ message ActorParams {
 }
 
 message NonPlayerActor {
+	message Trait {
+		required Influence influence = 1;
+		required bool effective = 2;
+	}
+
+	/*
 	enum Trait {
 		AFFABLE = 0;
 		SURLY = 1;
@@ -134,6 +139,7 @@ message NonPlayerActor {
 		DOCILE = 12;
 		IMPOSING = 13;
 	}
+	*/
 
 	enum Aggression {
 		PACIFIST = 0; // Does not attack anyone

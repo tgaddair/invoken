@@ -1,8 +1,8 @@
 syntax = "proto2";
 
 package scifirpg;
-option java_package = "com.eldritch.scifirpg.proto";
 
+option java_package = "com.eldritch.scifirpg.proto";
 enum Discipline {
 	// Determines max health
 	WARFARE = 0;
@@ -15,4 +15,45 @@ enum Discipline {
 
 	// Determines NPC predisposition towards player
 	CHARISMA = 3;
+}
+
+enum AttackSubtype {
+	// Attack - Counter
+	MELEE = 0;
+	RANGED = 1;
+	HEAVY = 2;
+	COORDINATED = 3;
+	AMBUSH = 4;
+	CORRUPTION = 5;
+}
+
+enum DeceiveSubtype {
+	// Deceive - Reveal
+	AVOIDANCE = 0;
+	ROBBERY = 1;
+	ESPIONAGE = 2;
+	STALKING = 3;
+	HACKING = 4;
+	IMPERSONATION = 5;
+}
+
+enum ExecuteSubtype {
+	// Execute - Interrupt
+	ANALYSIS = 0;
+	MANIPULATION = 1;
+	CREATION = 2;
+	UPGRADE = 3;
+	ILLUSION = 4;
+	EMPATHY = 5;
+}
+
+enum Influence {
+	// Dialogue
+	PERSUASION = 0;
+	BRIBERY = 1;
+	SEDUCTION = 2;
+	DEMAGOGY = 3;
+	INTIMIDATION = 4;
+	BLUFFING = 5;
+	DOMINATION = 6;
 }
