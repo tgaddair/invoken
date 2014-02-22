@@ -24,7 +24,7 @@ public class SkillTable extends AssetTable<Skill> {
 	
 	@Override
 	protected String getAssetName() {
-		return "Requirement";
+		return "Skill";
 	}
 	
 	@Override

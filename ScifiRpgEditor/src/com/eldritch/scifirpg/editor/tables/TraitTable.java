@@ -1,0 +1,43 @@
+package com.eldritch.scifirpg.editor.tables;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+
+import com.eldritch.scifirpg.editor.asset.TraitEditorPanel;
+import com.eldritch.scifirpg.proto.Actors.NonPlayerActor.Trait;
+import com.eldritch.scifirpg.proto.Disciplines.Influence;
+import com.google.common.base.Optional;
+
+public class TraitTable extends AssetTable<Trait> {
+	private static final long serialVersionUID = 1L;
+	private static final String[] COLUMN_NAMES = { 
+		"Influence", "Effective" };
+	
+	public TraitTable() {
+		super(COLUMN_NAMES);
+	}
+
+	@Override
+	protected JPanel getEditorPanel(Optional<Trait> prev, JFrame frame) {
+		return new TraitEditorPanel(this, frame, prev);
+	}
+	
+	@Override
+	protected String getAssetName() {
+		return "Trait";
+	}
+	
+	@Override
+	protected Object[] getDisplayFields(Trait asset) {
+		return new Object[]{asset.getInfluence(), asset.getEffective()};
+	}
+	
+	public boolean containsInfluence(Influence i) {
+		for (Trait asset : getModel().getAssets()) {
+			if (asset.getInfluence() == i) {
+				return true;
+			}
+		}
+		return false;
+	}
+}

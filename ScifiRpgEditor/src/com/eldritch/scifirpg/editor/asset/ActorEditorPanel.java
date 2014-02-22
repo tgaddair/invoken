@@ -11,6 +11,7 @@ import com.eldritch.scifirpg.editor.tables.ActorTable;
 import com.eldritch.scifirpg.editor.tables.EffectTable;
 import com.eldritch.scifirpg.editor.tables.RequirementTable;
 import com.eldritch.scifirpg.editor.tables.SkillTable;
+import com.eldritch.scifirpg.editor.tables.TraitTable;
 import com.eldritch.scifirpg.proto.Actors.ActorParams.Gender;
 import com.eldritch.scifirpg.proto.Actors.ActorParams.Profession;
 import com.eldritch.scifirpg.proto.Actors.ActorParams.Species;
@@ -37,7 +38,7 @@ public class ActorEditorPanel extends AssetEditorPanel<NonPlayerActor, ActorTabl
 	private final SkillTable skillTable = new SkillTable();
 	private final RequirementTable factionTable = new RequirementTable();
 	private final EffectTable dialogueTable = new EffectTable();
-	private final RequirementTable traitTable = new RequirementTable();
+	private final TraitTable traitTable = new TraitTable();
 	private final JCheckBox uniqueCheck = new JCheckBox("", false);
 	private final JCheckBox speakCheck = new JCheckBox("", true);
 	private final JComboBox<Aggression> aggressionBox = new JComboBox<Aggression>(Aggression.values());
