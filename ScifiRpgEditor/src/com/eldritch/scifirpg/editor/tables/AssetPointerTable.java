@@ -35,6 +35,14 @@ public class AssetPointerTable<T extends Message> extends AssetTable<T> {
 		}
 		return ids;
 	}
+	
+	public void addAssetId(String id) {
+		for (T asset : majorTable.getAssets()) {
+			if (majorTable.getAssetId(asset).equals(id)) {
+				addAsset(asset);
+			}
+		}
+	}
 
 	@Override
 	protected JPanel getEditorPanel(Optional<T> asset, JFrame frame) {

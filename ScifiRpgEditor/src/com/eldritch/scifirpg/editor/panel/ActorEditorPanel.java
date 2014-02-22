@@ -19,13 +19,17 @@ import com.eldritch.scifirpg.editor.tables.RequirementTable;
 import com.eldritch.scifirpg.editor.tables.SkillTable;
 import com.eldritch.scifirpg.editor.tables.TraitTable;
 import com.eldritch.scifirpg.editor.util.ProfessionUtil;
+import com.eldritch.scifirpg.proto.Actors.ActorParams;
+import com.eldritch.scifirpg.proto.Actors.ActorParams.FactionStatus;
 import com.eldritch.scifirpg.proto.Actors.ActorParams.Gender;
+import com.eldritch.scifirpg.proto.Actors.ActorParams.Item;
 import com.eldritch.scifirpg.proto.Actors.ActorParams.Skill;
 import com.eldritch.scifirpg.proto.Actors.ActorParams.Species;
 import com.eldritch.scifirpg.proto.Actors.NonPlayerActor;
 import com.eldritch.scifirpg.proto.Actors.NonPlayerActor.Aggression;
 import com.eldritch.scifirpg.proto.Actors.NonPlayerActor.Assistance;
 import com.eldritch.scifirpg.proto.Actors.NonPlayerActor.Confidence;
+import com.eldritch.scifirpg.proto.Actors.NonPlayerActor.Trait;
 import com.eldritch.scifirpg.proto.Augmentations.Augmentation;
 import com.eldritch.scifirpg.proto.Disciplines.Profession;
 import com.google.common.base.Optional;
@@ -155,20 +159,44 @@ public class ActorEditorPanel extends AssetEditorPanel<NonPlayerActor, ActorTabl
 		builder.add(saveButton, cc.xy(c + 4, r));
 		
 		if (prev.isPresent()) {
-			/*
-			Augmentation asset = prev.get();
-			idField.setText(asset.getId());
-			nameField.setText(asset.getName());
-			descriptionField.setText(asset.getDescription());
-			valueField.setText(asset.getValue() + "");
-			typeBox.setSelectedItem(asset.getType());
-			for (Effect effect : asset.getEffectList()) {
-				effectTable.addAsset(effect);
+			NonPlayerActor asset = prev.get();
+			
+			// Actor params
+			ActorParams params = asset.getParams();
+			enableFieldFor(params.getSpecies());
+			idField.setText(params.getId());
+			nameField.setText(params.getName());
+			speciesBox.setSelectedItem(params.getSpecies());
+			if (params.hasGender()) {
+				genderBox.setSelectedItem(params.getGender());
 			}
-			for (Requirement req : asset.getRequirementList()) {
-				requirementTable.addAsset(req);
+			if (params.hasProfession()) {
+				professionBox.setSelectedItem(params.getProfession());
 			}
-			*/
+			levelField.setText(params.getLevel() + "");
+			for (Skill skill : params.getSkillList()) {
+				skillTable.addAsset(skill);
+			}
+			for (FactionStatus fs : params.getFactionStatusList()) {
+				factionTable.addAsset(fs);
+			}
+			for (Item item : params.getInventoryItemList()) {
+				//itemTable.addAsset(item);
+			}
+			for (String augId : params.getKnownAugIdList()) {
+				augmentationTable.addAssetId(augId);
+			}
+			
+			// NPC params
+			uniqueCheck.setSelected(asset.getUnique());
+			speakCheck.setSelected(asset.getCanSpeak());
+			// TODO: Dialogue Tree
+			aggressionBox.setSelectedItem(asset.getAggression());
+			assistanceBox.setSelectedItem(asset.getAssistance());
+			confidenceBox.setSelectedItem(asset.getConfidence());
+			for (Trait trait : asset.getTraitList()) {
+				traitTable.addAsset(trait);
+			}
 		}
 
 		add(builder.getPanel());
@@ -177,26 +205,52 @@ public class ActorEditorPanel extends AssetEditorPanel<NonPlayerActor, ActorTabl
 
 	@Override
 	public NonPlayerActor createAsset() {
-		// TODO Auto-generated method stub
-		return null;
+		ActorParams.Builder params = ActorParams.newBuilder()
+				.setId(idField.getText())
+				.setName(nameField.getText())
+				.setSpecies((Species) speciesBox.getSelectedItem())
+				.setLevel(Integer.parseInt(levelField.getText()))
+				.addAllSkill(skillTable.getAssets())
+				.addAllFactionStatus(factionTable.getAssets())
+				//.addAllInventoryItem(itemTable.getAssets())
+				.addAllKnownAugId(augmentationTable.getAssetIds());
+		if (genderBox.isEnabled()) {
+			params.setGender((Gender) genderBox.getSelectedItem());
+		}
+		if (professionBox.isEnabled()) {
+			params.setProfession((Profession) professionBox.getSelectedItem());
+		}
+		
+		return NonPlayerActor.newBuilder()
+				.setParams(params.build())
+				.setUnique(uniqueCheck.isSelected())
+				.setCanSpeak(speakCheck.isSelected())
+				.setAggression((Aggression) aggressionBox.getSelectedItem())
+				.setAssistance((Assistance) assistanceBox.getSelectedItem())
+				.setConfidence((Confidence) confidenceBox.getSelectedItem())
+				.addAllTrait(traitTable.getAssets())
+				.build();
 	}
 	
+	private void enableFieldFor(Species s) {
+		boolean enabled = true;
+		switch (s) {
+			case HUMAN:
+			case UNDEAD:
+				break;
+			default:
+				enabled = false;
+		}
+	
+		genderBox.setEnabled(enabled);
+		professionBox.setEnabled(enabled);
+	}
 	
 	private class SpeciesSelectionListener implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			boolean visible = true;
 			Species s = (Species) speciesBox.getSelectedItem();
-			switch (s) {
-				case HUMAN:
-				case UNDEAD:
-					break;
-				default:
-					visible = false;
-			}
-			
-			genderBox.setVisible(visible);
-			professionBox.setVisible(visible);
+			enableFieldFor(s);
 		}
 	}
 	
