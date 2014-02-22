@@ -13,6 +13,7 @@ import com.eldritch.scifirpg.editor.tables.AssetPointerTable;
 import com.eldritch.scifirpg.editor.tables.AugmentationTable;
 import com.eldritch.scifirpg.editor.tables.DialogueTable;
 import com.eldritch.scifirpg.editor.tables.EffectTable;
+import com.eldritch.scifirpg.editor.tables.FactionStatusTable;
 import com.eldritch.scifirpg.editor.tables.FactionTable;
 import com.eldritch.scifirpg.editor.tables.RequirementTable;
 import com.eldritch.scifirpg.editor.tables.SkillTable;
@@ -45,7 +46,7 @@ public class ActorEditorPanel extends AssetEditorPanel<NonPlayerActor, ActorTabl
 			new AssetPointerTable<Augmentation>(MainPanel.AUGMENTATION_TABLE);
 	private final RequirementTable itemTable = new RequirementTable();
 	private final SkillTable skillTable = new SkillTable();
-	private final FactionTable factionTable = new FactionTable();
+	private final FactionStatusTable factionTable = new FactionStatusTable();
 	private final DialogueTable dialogueTable = new DialogueTable();
 	private final TraitTable traitTable = new TraitTable();
 	private final JCheckBox uniqueCheck = new JCheckBox("", false);
