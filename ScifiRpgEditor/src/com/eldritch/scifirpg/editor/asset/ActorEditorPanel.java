@@ -10,6 +10,7 @@ import com.eldritch.scifirpg.editor.AssetTablePanel;
 import com.eldritch.scifirpg.editor.tables.ActorTable;
 import com.eldritch.scifirpg.editor.tables.EffectTable;
 import com.eldritch.scifirpg.editor.tables.RequirementTable;
+import com.eldritch.scifirpg.editor.tables.SkillTable;
 import com.eldritch.scifirpg.proto.Actors.ActorParams.Gender;
 import com.eldritch.scifirpg.proto.Actors.ActorParams.Profession;
 import com.eldritch.scifirpg.proto.Actors.ActorParams.Species;
@@ -33,7 +34,7 @@ public class ActorEditorPanel extends AssetEditorPanel<NonPlayerActor, ActorTabl
 	private final JTextField levelField = new JTextField();
 	private final EffectTable augmentationTable = new EffectTable();
 	private final RequirementTable itemTable = new RequirementTable();
-	private final EffectTable skillTable = new EffectTable();
+	private final SkillTable skillTable = new SkillTable();
 	private final RequirementTable factionTable = new RequirementTable();
 	private final EffectTable dialogueTable = new EffectTable();
 	private final RequirementTable traitTable = new RequirementTable();
