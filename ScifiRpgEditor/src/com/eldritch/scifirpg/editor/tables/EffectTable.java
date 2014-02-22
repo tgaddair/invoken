@@ -3,7 +3,7 @@ package com.eldritch.scifirpg.editor.tables;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import com.eldritch.scifirpg.editor.asset.EffectEditorPanel;
+import com.eldritch.scifirpg.editor.panel.EffectEditorPanel;
 import com.eldritch.scifirpg.proto.Effects.Effect;
 import com.google.common.base.Optional;
 

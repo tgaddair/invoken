@@ -3,7 +3,7 @@ package com.eldritch.scifirpg.editor.tables;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import com.eldritch.scifirpg.editor.asset.TraitEditorPanel;
+import com.eldritch.scifirpg.editor.panel.TraitEditorPanel;
 import com.eldritch.scifirpg.proto.Actors.NonPlayerActor.Trait;
 import com.eldritch.scifirpg.proto.Disciplines.Influence;
 import com.google.common.base.Optional;

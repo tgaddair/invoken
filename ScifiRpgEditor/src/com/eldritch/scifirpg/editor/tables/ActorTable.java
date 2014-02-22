@@ -6,7 +6,7 @@ import java.io.InputStream;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import com.eldritch.scifirpg.editor.asset.ActorEditorPanel;
+import com.eldritch.scifirpg.editor.panel.ActorEditorPanel;
 import com.eldritch.scifirpg.proto.Actors.ActorParams;
 import com.eldritch.scifirpg.proto.Actors.NonPlayerActor;
 import com.google.common.base.Optional;

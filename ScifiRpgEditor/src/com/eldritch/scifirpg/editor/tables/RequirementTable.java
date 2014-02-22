@@ -3,7 +3,7 @@ package com.eldritch.scifirpg.editor.tables;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import com.eldritch.scifirpg.editor.asset.RequirementEditorPanel;
+import com.eldritch.scifirpg.editor.panel.RequirementEditorPanel;
 import com.eldritch.scifirpg.proto.Augmentations.Augmentation.Requirement;
 import com.eldritch.scifirpg.proto.Disciplines.Discipline;
 import com.google.common.base.Optional;

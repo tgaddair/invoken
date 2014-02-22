@@ -1,4 +1,4 @@
-package com.eldritch.scifirpg.editor.asset;
+package com.eldritch.scifirpg.editor.panel;
 
 import java.util.Arrays;
 import java.util.Comparator;

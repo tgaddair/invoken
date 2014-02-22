@@ -12,7 +12,7 @@ import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import com.eldritch.scifirpg.editor.asset.AssetEditorPanel;
+import com.eldritch.scifirpg.editor.panel.AssetEditorPanel;
 import com.google.common.base.Optional;
 import com.google.protobuf.Message;
 import com.jgoodies.forms.builder.DefaultFormBuilder;

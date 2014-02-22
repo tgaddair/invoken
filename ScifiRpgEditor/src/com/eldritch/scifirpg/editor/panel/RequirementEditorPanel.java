@@ -1,4 +1,4 @@
-package com.eldritch.scifirpg.editor.asset;
+package com.eldritch.scifirpg.editor.panel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,20 +10,21 @@ import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JTextField;
 
-import com.eldritch.scifirpg.editor.tables.SkillTable;
-import com.eldritch.scifirpg.proto.Actors.ActorParams.Skill;
+import com.eldritch.scifirpg.editor.tables.RequirementTable;
+import com.eldritch.scifirpg.proto.Augmentations.Augmentation.Requirement;
 import com.eldritch.scifirpg.proto.Disciplines.Discipline;
 import com.google.common.base.Optional;
 import com.jgoodies.forms.builder.DefaultFormBuilder;
 import com.jgoodies.forms.layout.FormLayout;
 
-public class SkillEditorPanel extends AssetEditorPanel<Skill, SkillTable> {
+public class RequirementEditorPanel extends AssetEditorPanel<Requirement, RequirementTable> {
 	private static final long serialVersionUID = 1L;
 
 	private final JComboBox<Discipline> disciplineBox = new JComboBox<>(Discipline.values());
-	private final JTextField levelField = new JTextField();
+	private final JTextField valueField = new JTextField();
+	private final JTextField slotsField = new JTextField();
 
-	public SkillEditorPanel(SkillTable owner, JFrame frame, Optional<Skill> prev) {
+	public RequirementEditorPanel(RequirementTable owner, JFrame frame, Optional<Requirement> prev) {
 		super(owner, frame, prev);
 
 		DefaultFormBuilder builder = new DefaultFormBuilder(new FormLayout(""));
@@ -42,7 +43,10 @@ public class SkillEditorPanel extends AssetEditorPanel<Skill, SkillTable> {
 		builder.append("Discipline:", disciplineBox);
 		builder.nextLine();
 
-		builder.append("Level:", levelField);
+		builder.append("Value:", valueField);
+		builder.nextLine();
+
+		builder.append("Slots:", slotsField);
 		builder.nextLine();
 
 		JButton saveButton = new JButton("Save");
@@ -51,20 +55,23 @@ public class SkillEditorPanel extends AssetEditorPanel<Skill, SkillTable> {
 		builder.nextLine();
 		
 		if (prev.isPresent()) {
-			Skill skill = prev.get();
-			disciplineBox.setSelectedItem(skill.getDiscipline());
-			levelField.setText(skill.getLevel() + "");
+			Requirement req = prev.get();
+			disciplineBox.setSelectedItem(req.getDiscipline());
+			valueField.setText(req.getValue() + "");
+			slotsField.setText(req.getSlots() + "");
 		}
 
 		add(builder.getPanel());
 	}
 
 	@Override
-	public Skill createAsset() {
+	public Requirement createAsset() {
 		Discipline discipline = (Discipline) disciplineBox.getSelectedItem();
-		int level = Integer.parseInt(levelField.getText());
-		Skill req = Skill.newBuilder().setDiscipline(discipline)
-				.setLevel(level)
+		int value = Integer.parseInt(valueField.getText());
+		int slots = Integer.parseInt(slotsField.getText());
+		Requirement req = Requirement.newBuilder().setDiscipline(discipline)
+				.setValue(value)
+				.setSlots(slots)
 				.build();
 		return req;
 	}

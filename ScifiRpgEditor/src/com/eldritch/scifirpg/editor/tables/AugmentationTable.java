@@ -6,7 +6,7 @@ import java.io.InputStream;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import com.eldritch.scifirpg.editor.asset.AugmentationEditorPanel;
+import com.eldritch.scifirpg.editor.panel.AugmentationEditorPanel;
 import com.eldritch.scifirpg.proto.Augmentations.Augmentation;
 import com.eldritch.scifirpg.proto.Augmentations.Augmentation.Requirement;
 import com.google.common.base.Optional;

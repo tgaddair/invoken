@@ -1,4 +1,4 @@
-package com.eldritch.scifirpg.editor.asset;
+package com.eldritch.scifirpg.editor.panel;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
