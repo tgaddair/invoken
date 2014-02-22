@@ -1,6 +1,12 @@
 package com.eldritch.scifirpg.editor.panel;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.swing.BorderFactory;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -8,6 +14,7 @@ import javax.swing.JFrame;
 import javax.swing.JTextField;
 
 import com.eldritch.scifirpg.editor.tables.PrerequisiteTable;
+import com.eldritch.scifirpg.proto.Disciplines.Discipline;
 import com.eldritch.scifirpg.proto.Prerequisites.Prerequisite;
 import com.eldritch.scifirpg.proto.Prerequisites.Prerequisite.Type;
 import com.google.common.base.Optional;
@@ -18,7 +25,7 @@ public class PrerequisiteEditorPanel extends AssetEditorPanel<Prerequisite, Prer
 	private static final long serialVersionUID = 1L;
 
 	private final JComboBox<Type> typeBox = new JComboBox<>(Type.values());
-	private final JTextField targetField = new JTextField();
+	private final JComboBox<String> targetBox = new JComboBox<String>();
 	private final JTextField minField = new JTextField();
 	private final JTextField maxField = new JTextField();
 	private final JCheckBox notCheck = new JCheckBox();
@@ -32,10 +39,11 @@ public class PrerequisiteEditorPanel extends AssetEditorPanel<Prerequisite, Prer
 		builder.appendColumn("3dlu");
 		builder.appendColumn("fill:max(pref; 100px)");
 		
+		typeBox.addActionListener(new TypeSelectionListener());
 		builder.append("Type:", typeBox);
 		builder.nextLine();
 
-		builder.append("Target:", targetField);
+		builder.append("Target:", targetBox);
 		builder.nextLine();
 
 		builder.append("Min:", minField);
@@ -55,12 +63,15 @@ public class PrerequisiteEditorPanel extends AssetEditorPanel<Prerequisite, Prer
 		if (prev.isPresent()) {
 			Prerequisite req = prev.get();
 			typeBox.setSelectedItem(req.getType());
-			targetField.setText(req.hasTarget() ? req.getTarget() : "");
+			if (req.hasTarget()) {
+				targetBox.setSelectedItem(req.getTarget());
+			}
 			minField.setText(req.hasMin() ? req.getMin() + "" : "");
 			minField.setText(req.hasMax() ? req.getMax() + "" : "");
 			notCheck.setSelected(req.getNot());
 		}
 
+		initFieldsFor((Type) typeBox.getSelectedItem());
 		add(builder.getPanel());
 	}
 
@@ -70,15 +81,61 @@ public class PrerequisiteEditorPanel extends AssetEditorPanel<Prerequisite, Prer
 		Prerequisite.Builder builder = Prerequisite.newBuilder()
 				.setType(type)
 				.setNot(notCheck.isSelected());
-		if (!targetField.getText().isEmpty()) {
-			builder.setTarget(targetField.getText());
+		if (targetBox.isEnabled()) {
+			builder.setTarget((String) targetBox.getSelectedItem());
 		}
-		if (!minField.getText().isEmpty()) {
+		if (!minField.isEnabled()) {
 			builder.setMin(Integer.parseInt(minField.getText()));
 		}
-		if (!maxField.getText().isEmpty()) {
+		if (!maxField.isEnabled()) {
 			builder.setMin(Integer.parseInt(maxField.getText()));
 		}
 		return builder.build();
+	}
+	
+	private void initFieldsFor(Type t) {
+		List<String> values = new ArrayList<>();
+		boolean targetEnabled = true;
+		boolean minEnabled = true;
+		boolean maxEnabled = true;
+		
+		switch (t) {
+			case DISCIPLINE_BETWEEN:
+				for (Discipline d : Discipline.values()) {
+					values.add(d.name());
+				}
+				break;
+			case REP_BETWEEN:
+			case LVL_BETWEEN:
+			case INFLUENCE_BETWEEN:
+				break;
+			case ITEM_HAS:
+			case AUG_REMAINING:
+				maxEnabled = false;
+				break;
+			case ENCOUNTER_SEEN:
+			case DIALOGUE_SEEN:
+				targetEnabled = false;
+				break;
+			case ITEM_EQUIPPED:
+				minEnabled = false;
+				maxEnabled = false;
+				break;
+			default:
+				throw new IllegalStateException("Unrecognized Prerequisite Type: " + t);
+		}
+		
+		targetBox.setEnabled(targetEnabled);
+		minField.setEnabled(minEnabled);
+		maxField.setEnabled(maxEnabled);
+		targetBox.setModel(new DefaultComboBoxModel<String>(values.toArray(new String[0])));
+	}
+	
+	private class TypeSelectionListener implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			Type t = (Type) typeBox.getSelectedItem();
+			initFieldsFor(t);
+		}
 	}
 }
