@@ -21,4 +21,5 @@ message Faction {
 	repeated Relation relation = 3;
 	repeated Rank rank = 4;
 	optional Profession alignment = 5;
+	optional bool visible = 6 [default = false];
 }
