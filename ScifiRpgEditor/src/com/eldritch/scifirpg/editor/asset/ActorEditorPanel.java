@@ -1,6 +1,8 @@
 package com.eldritch.scifirpg.editor.asset;
 
 import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.*;
 
@@ -95,6 +97,7 @@ public class ActorEditorPanel extends AssetEditorPanel<NonPlayerActor, ActorTabl
 		c = 5;
 		r = 1;
 		
+		speciesBox.addActionListener(new SpeciesSelectionListener());
 		builder.addLabel("Species", cc.xy(c, r));
 		builder.add(speciesBox, cc.xy(c + 2, r));
 		r += 2;
@@ -163,5 +166,24 @@ public class ActorEditorPanel extends AssetEditorPanel<NonPlayerActor, ActorTabl
 	public NonPlayerActor createAsset() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+	
+	
+	private class SpeciesSelectionListener implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			boolean visible = true;
+			Species s = (Species) speciesBox.getSelectedItem();
+			switch (s) {
+				case HUMAN:
+				case UNDEAD:
+					break;
+				default:
+					visible = false;
+			}
+			
+			genderBox.setVisible(visible);
+			professionBox.setVisible(visible);
+		}
 	}
 }
