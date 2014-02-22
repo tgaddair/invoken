@@ -1,0 +1,18 @@
+syntax = "proto2";
+
+package scifirpg;
+option java_package = "com.eldritch.scifirpg.proto";
+
+import "com/eldritch/scifirpg/proto/disciplines.proto";
+
+message Faction {
+	message Relation {
+		optional string faction_id = 1; // OPTIONAL: might change to int32
+		optional int32 reaction = 2; // positive good, negative bad
+	}
+
+	optional string id = 1; // unique key
+	required string name = 2;
+	repeated Relation relation = 3;
+	repeated Discipline favored_discipline = 4;
+}

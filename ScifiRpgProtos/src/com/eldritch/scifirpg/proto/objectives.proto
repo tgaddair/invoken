@@ -1,0 +1,16 @@
+syntax = "proto2";
+
+package scifirpg;
+option java_package = "com.eldritch.scifirpg.proto";
+
+message Objective {
+	message Stage {
+		required int32 id = 1;
+		required string description = 2;
+		required bool finished = 3 [default = false];
+	}
+
+	optional string id = 1; // unique key
+	required string name = 2;
+	repeated Stage stage = 3;
+}

@@ -5,18 +5,8 @@ option java_package = "com.eldritch.scifirpg.proto";
 
 import "com/eldritch/scifirpg/proto/disciplines.proto";
 import "com/eldritch/scifirpg/proto/prerequisites.proto";
+import "com/eldritch/scifirpg/proto/objectives.proto";
 import "com/eldritch/scifirpg/proto/outcomes.proto";
-
-message Faction {
-	message Relation {
-		optional string faction_id = 1; // OPTIONAL: might change to int32
-		optional int32 reaction = 2; // positive good, negative bad
-	}
-
-	required string name = 1;
-	repeated Relation relation = 2;
-	repeated Discipline favored_discipline = 3;
-}
 
 message DialogueTree {
 	// DialogueTree ends when the player reaches a Response with no choices.
@@ -190,4 +180,5 @@ message PlayerActor {
 
 	repeated string encounter_seen = 19;
 	repeated ActorDialogue dialogue_seen = 20;
+	repeated Objective objective = 22;
 }
