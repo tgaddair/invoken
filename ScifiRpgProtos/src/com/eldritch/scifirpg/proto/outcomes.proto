@@ -18,7 +18,7 @@ message Outcome {
 		// NOTE: if removing an equipped item would drop the count to 0, it will also be unequipped
 	}
 
-	required double weight = 1; // 0.0 -> 1.0
+	required double weight = 1 [default = 1.0]; // 0.0 -> 1.0
 	required Type type = 2;
 	optional string target = 3;
 	optional int32 count = 4;

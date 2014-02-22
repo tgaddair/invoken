@@ -12,11 +12,11 @@ message DialogueTree {
 	// DialogueTree ends when the player reaches a Response with no choices.
 	// When the DialogueTree ends, the player is returned to the first valid greeting.
 	message Response {
-		optional string id = 5; // The unique ID for this Response within this tree
-		required string text = 1;
-		repeated Prerequisite prereq = 2;
-		repeated Choice choice = 3;
-		repeated Outcome outcome = 4;
+		optional string id = 1; // The unique ID for this Response within this tree
+		required string text = 2;
+		repeated Prerequisite prereq = 3;
+		repeated Choice choice = 4;
+		repeated Outcome outcome = 5;
 		required bool greeting = 6 [default = false];
 	}
 
@@ -158,8 +158,10 @@ message NonPlayerActor {
 	required bool can_speak = 3 [default = true];
 	optional DialogueTree dialogue = 4;
 
-	optional Aggression aggression = 5;
-	repeated Trait trait = 6;
+	optional Aggression aggression = 5 [default = UNAGGRESSIVE];
+	optional Assistance assistance = 6 [default = LOYAL];
+	optional Confidence confidence = 7 [default = CAPABLE];
+	repeated Trait trait = 8;
 }
 
 message PlayerActor {
