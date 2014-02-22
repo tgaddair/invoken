@@ -1,8 +1,8 @@
 syntax = "proto2";
 
 package scifirpg;
-
 option java_package = "com.eldritch.scifirpg.proto";
+
 enum Discipline {
 	// Determines max health
 	WARFARE = 0;
@@ -15,6 +15,20 @@ enum Discipline {
 
 	// Determines NPC predisposition towards player
 	CHARISMA = 3;
+}
+
+
+enum Profession {
+	CENTURION = 0;
+	EXECUTOR = 1;
+	ASSASSIN = 2;
+	WARDEN = 3;
+	ARCHITECT = 4;
+	GHOST = 5;
+	INQUISITOR = 6;
+	INFILTRATOR = 7;
+	AGENT = 8;
+	BROKER = 9;
 }
 
 enum AttackSubtype {

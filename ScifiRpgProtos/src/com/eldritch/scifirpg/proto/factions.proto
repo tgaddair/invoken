@@ -11,8 +11,14 @@ message Faction {
 		optional int32 reaction = 2; // positive good, negative bad
 	}
 
+	message Rank {
+		required int32 id = 1;
+		required string title = 2;
+	}
+
 	optional string id = 1; // unique key
 	required string name = 2;
 	repeated Relation relation = 3;
-	repeated Discipline favored_discipline = 4;
+	repeated Rank rank = 4;
+	optional Profession alignment = 5;
 }

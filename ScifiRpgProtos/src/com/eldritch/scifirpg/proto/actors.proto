@@ -59,19 +59,6 @@ message ActorParams {
 		FEMALE = 1;
 	}
 
-	enum Profession {
-		CENTURION = 0;
-		EXECUTOR = 1;
-		ASSASSIN = 2;
-		WARDEN = 3;
-		ARCHITECT = 4;
-		GHOST = 5;
-		INQUISITOR = 6;
-		INFILTRATOR = 7;
-		AGENT = 8;
-		BROKER = 9;
-	}
-
 	message Skill {
 		required Discipline discipline = 1;
 		required int32 level = 2;
