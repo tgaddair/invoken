@@ -7,13 +7,14 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import com.eldritch.scifirpg.editor.asset.ActorEditorPanel;
+import com.eldritch.scifirpg.proto.Actors.ActorParams;
 import com.eldritch.scifirpg.proto.Actors.NonPlayerActor;
 import com.google.common.base.Optional;
 
 public class ActorTable extends MajorAssetTable<NonPlayerActor> {
 	private static final long serialVersionUID = 1L;
 	private static final String[] COLUMN_NAMES = { 
-		"ID", "First Name", "Last Name", "Alias", "Gender", "Level", "Primary", "Secondary" };
+		"ID", "Name", "Species", "Gender", "Profession", "Level", "Unique" };
 	
 	public ActorTable() {
 		super(COLUMN_NAMES, "Actor");
@@ -26,7 +27,11 @@ public class ActorTable extends MajorAssetTable<NonPlayerActor> {
 
 	@Override
 	protected Object[] getDisplayFields(NonPlayerActor asset) {
-		return new Object[0];
+		ActorParams params = asset.getParams();
+		Object gender = params.hasGender() ? params.getGender() : "";
+		Object profession = params.hasProfession() ? params.getProfession() : "";
+		return new Object[]{params.getId(), params.getName(), params.getSpecies(),
+				gender, profession, params.getLevel(), asset.getUnique()};
 	}
 
 	@Override
