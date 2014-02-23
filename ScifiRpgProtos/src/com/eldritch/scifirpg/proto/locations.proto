@@ -80,6 +80,7 @@ message Encounter {
 		}
 
 		optional int32 row_length = 1; // defines the number of columns in the grid
+		repeated Cell cell = 2;
 	}
 
 	optional string id = 1; // unique key
