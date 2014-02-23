@@ -23,6 +23,8 @@ message Encounter {
 	message StaticParams {
 		required string description = 1;
 		repeated Outcome outcome = 2;
+		optional bool rest = 3 [default = false]; // allows you to save progress, heal, stage augs
+		optional bool return = 4 [default = false]; // allows you to return to the previous location
 	}
 
 	// Choices use hard pointers to successor states, so to prevent
@@ -65,6 +67,21 @@ message Encounter {
 		repeated Outcome on_flee = 3;
 	}
 
+	message RegionParams {
+		message Cell {
+			required string location_id = 1;
+
+			// Defines the ordinal position in the grid going right-down starting at 0 (upper left).
+			// Any missing entries will be filled with a blank cell.
+			optional int32 position = 2;
+
+			// Some cells will only be visible if certain prereqs are met.
+			repeated Prerequisite prereq = 3;
+		}
+
+		optional int32 row_length = 1; // defines the number of columns in the grid
+	}
+
 	optional string id = 1; // unique key
 	required string title = 2;
 	required Type type = 3;
@@ -76,5 +93,5 @@ message Encounter {
 	optional StaticParams static_params = 7;
 	optional DecisionParams decision_params = 8;
 	optional ActorParams actor_params = 9;
-	//optional RegionParams region_params = 10;
+	optional RegionParams region_params = 10;
 }
