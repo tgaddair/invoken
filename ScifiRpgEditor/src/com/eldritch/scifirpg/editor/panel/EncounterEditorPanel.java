@@ -20,11 +20,14 @@ import com.eldritch.scifirpg.editor.tables.EncounterTable;
 import com.eldritch.scifirpg.editor.tables.OutcomeTable;
 import com.eldritch.scifirpg.editor.tables.PrerequisiteTable;
 import com.eldritch.scifirpg.proto.Locations.Encounter;
+import com.eldritch.scifirpg.proto.Locations.Encounter.ActorParams;
 import com.eldritch.scifirpg.proto.Locations.Encounter.ActorParams.ActorScenario;
+import com.eldritch.scifirpg.proto.Locations.Encounter.StaticParams;
 import com.eldritch.scifirpg.proto.Locations.Encounter.Type;
 import com.eldritch.scifirpg.proto.Outcomes.Outcome;
 import com.eldritch.scifirpg.proto.Prerequisites.Prerequisite;
 import com.google.common.base.Optional;
+import com.google.protobuf.Message;
 import com.jgoodies.forms.builder.DefaultFormBuilder;
 import com.jgoodies.forms.layout.FormLayout;
 
@@ -85,10 +88,17 @@ public class EncounterEditorPanel extends AssetEditorPanel<Encounter, EncounterT
 			Encounter asset = prev.get();
 			idField.setText(asset.getId());
 			titleField.setText(asset.getTitle());
+			typeBox.setSelectedItem(asset.getType());
 			weightField.setText(asset.getWeight() + "");
 			uniqueCheck.setSelected(asset.getUnique());
 			for (Prerequisite p : asset.getPrereqList()) {
 				prereqTable.addAsset(p);
+			}
+			if (asset.hasStaticParams()) {
+				staticPanel.setParams(asset.getStaticParams());
+			}
+			if (asset.hasActorParams()) {
+				actorPanel.setParams(asset.getActorParams());
 			}
 		}
 
@@ -108,7 +118,7 @@ public class EncounterEditorPanel extends AssetEditorPanel<Encounter, EncounterT
         cl.show(cards, t.name());
 	}
 	
-	private class StaticEncounterPanel extends JPanel {
+	private class StaticEncounterPanel extends EncounterParamPanel<StaticParams> {
 		private static final long serialVersionUID = 1L;
 		
 		private final JTextArea descriptionField = createArea(true, 30, new Dimension(100, 100));
@@ -125,9 +135,21 @@ public class EncounterEditorPanel extends AssetEditorPanel<Encounter, EncounterT
 			
 			add(builder.getPanel());
 		}
+		
+		@Override
+		public StaticParams getParams() {
+			return StaticParams.newBuilder()
+					.setDescription(descriptionField.getText())
+					.addAllOutcome(outcomeTable.getAssets())
+					.build();
+		}
+
+		@Override
+		public void setParams(StaticParams params) {
+		}
 	}
 	
-	private class ActorEncounterPanel extends JPanel {
+	private class ActorEncounterPanel extends EncounterParamPanel<ActorParams> {
 		private static final long serialVersionUID = 1L;
 		
 		private final JTextArea descriptionField = createArea(true, 30, new Dimension(100, 100));
@@ -148,6 +170,19 @@ public class EncounterEditorPanel extends AssetEditorPanel<Encounter, EncounterT
 			builder.nextLine();
 			
 			add(builder.getPanel());
+		}
+		
+		@Override
+		public ActorParams getParams() {
+			return ActorParams.newBuilder()
+					.setDescription(descriptionField.getText())
+					.addAllActorScenario(actorTable.getAssets())
+					.addAllOnFlee(outcomeTable.getAssets())
+					.build();
+		}
+
+		@Override
+		public void setParams(ActorParams params) {
 		}
 	}
 	
@@ -183,6 +218,13 @@ public class EncounterEditorPanel extends AssetEditorPanel<Encounter, EncounterT
 			}
 			return new Object[]{asset.getActorId(), outcomes};
 		}
+	}
+	
+	private abstract static class EncounterParamPanel<T extends Message> extends JPanel {
+		private static final long serialVersionUID = 1L;
 		
+		public abstract T getParams();
+		
+		public abstract void setParams(T params);
 	}
 }
