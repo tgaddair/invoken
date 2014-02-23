@@ -3,6 +3,7 @@ package com.eldritch.scifirpg.editor.tables;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import com.eldritch.scifirpg.editor.panel.EncounterEditorPanel;
 import com.eldritch.scifirpg.proto.Locations.Encounter;
 import com.google.common.base.Optional;
 
@@ -17,7 +18,7 @@ public class EncounterTable extends AssetTable<Encounter> {
 
 	@Override
 	protected JPanel getEditorPanel(Optional<Encounter> prev, JFrame frame) {
-		return new JPanel();
+		return new EncounterEditorPanel(this, frame, prev);
 	}
 	
 	@Override
