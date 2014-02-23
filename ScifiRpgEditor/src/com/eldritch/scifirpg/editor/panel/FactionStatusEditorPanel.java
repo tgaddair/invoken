@@ -29,7 +29,7 @@ public class FactionStatusEditorPanel extends AssetEditorPanel<FactionStatus, Fa
 	
 	private final JComboBox<String> pointerBox = new JComboBox<String>();
 	private final JTextField reputationField = new JTextField();
-	private final JComboBox<String> rankBox = new JComboBox<String>();
+	private final JComboBox<RankWrapper> rankBox = new JComboBox<RankWrapper>();
 	
 	public FactionStatusEditorPanel(FactionStatusTable table, JFrame frame, Optional<FactionStatus> prev) {
 		super(table, frame, prev);
@@ -76,7 +76,11 @@ public class FactionStatusEditorPanel extends AssetEditorPanel<FactionStatus, Fa
 				reputationField.setText(asset.getReputation() + "");
 			}
 			if (asset.hasRank()) {
-				rankBox.setSelectedItem(asset.getRank() + "");
+				RankWrapper rank = new RankWrapper(Rank.newBuilder()
+						.setId(asset.getRank())
+						.setTitle("?")
+						.build());
+				rankBox.setSelectedItem(rank);
 			}
 		} else {
 			fillRanks((String) pointerBox.getSelectedItem());
@@ -89,12 +93,12 @@ public class FactionStatusEditorPanel extends AssetEditorPanel<FactionStatus, Fa
 		FactionTable majorTable = MainPanel.FACTION_TABLE;
 		for (Faction asset : majorTable.getAssets()) {
 			if (asset.getId().equals(factionId)) {
-				List<String> values = new ArrayList<>();
-				values.add(""); // No rank
+				List<RankWrapper> values = new ArrayList<>();
+				values.add(new RankWrapper(null)); // No rank
 				for (Rank r : asset.getRankList()) {
-					values.add(r.getId() + "");
+					values.add(new RankWrapper(r));
 				}
-				rankBox.setModel(new DefaultComboBoxModel<String>(values.toArray(new String[0])));
+				rankBox.setModel(new DefaultComboBoxModel<RankWrapper>(values.toArray(new RankWrapper[0])));
 			}
 		}
 	}
@@ -114,10 +118,60 @@ public class FactionStatusEditorPanel extends AssetEditorPanel<FactionStatus, Fa
 		if (!reputationField.getText().isEmpty()) {
 			builder.setReputation(Integer.parseInt(reputationField.getText()));
 		}
-		String rank = (String) rankBox.getSelectedItem();
-		if (!rank.isEmpty()) {
-			builder.setRank(Integer.parseInt(rank));
+		RankWrapper rank = (RankWrapper) rankBox.getSelectedItem();
+		if (rank != null && rank.hasRank()) {
+			builder.setRank(rank.getRankId());
 		}
 		return builder.build();
+	}
+	
+	private static class RankWrapper {
+		public final Rank rank;
+		
+		public RankWrapper(Rank rank) {
+			this.rank = rank;
+		}
+		
+		public boolean hasRank() {
+			return rank != null;
+		}
+		
+		public int getRankId() {
+			return rank.getId();
+		}
+		
+		@Override
+		public String toString() {
+			if (rank == null) {
+				return "";
+			}
+			return String.format("%d - %s", rank.getId(), rank.getTitle());
+		}
+
+		@Override
+		public int hashCode() {
+			Integer i = rank == null ? 0 : rank.getId();
+			return i.hashCode();
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			RankWrapper other = (RankWrapper) obj;
+			if (rank == null) {
+				if (other.rank != null)
+					return false;
+			} else if (other.rank == null) {
+				return false;
+			} else if (rank.getId() != other.rank.getId()) {
+				return false;
+			}
+			return true;
+		}
 	}
 }
