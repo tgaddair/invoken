@@ -3,6 +3,12 @@ syntax = "proto2";
 package scifirpg;
 option java_package = "com.eldritch.scifirpg.proto";
 
+enum Standing {
+	ALLY = 0;
+	NEUTRAL = 1;
+	ENEMY = 2;
+}
+
 message Prerequisite {
 	enum Type {
 		DISCIPLINE_BETWEEN = 0; // TARGET attribute between MIN and MAX
@@ -20,6 +26,7 @@ message Prerequisite {
 		// Only has meaning within a specific DialogueTree.
 		DIALOGUE_SEEN = 6; // TARGET dialogue previously observed
 		INFLUENCE_BETWEEN = 7; // Dialogue disposition variable between MIN and MAX
+		STANDING_IS = 12; // TARGET standing
 
 		ITEM_EQUIPPED = 8; // TARGET item is currently equipped
 		MISSION_STAGE = 10; // TARGET mission between MIN and MAX
