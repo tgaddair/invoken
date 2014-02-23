@@ -15,6 +15,7 @@ message Prerequisite {
 		// When AUG_REMAINING is a prereq, there will almost always be a corresponding
 		// AUG_USE outcome.
 		AUG_REMAINING = 5; // MIN or more of TARGET augmentation uses remaining
+		INFLUENCE_AUG= 11; // Has an influence aug of TARGET type in cache
 
 		// Only has meaning within a specific DialogueTree.
 		DIALOGUE_SEEN = 6; // TARGET dialogue previously observed
