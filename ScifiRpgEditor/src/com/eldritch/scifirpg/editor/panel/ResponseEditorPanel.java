@@ -110,7 +110,7 @@ public class ResponseEditorPanel extends AssetEditorPanel<Response, DialogueTabl
 		private final DialogueTable dialogueTable;
 		
 		public ChoiceTable(DialogueTable dialogueTable) {
-			super(COLUMN_NAMES, "Stage");
+			super(COLUMN_NAMES, "Choice");
 			this.dialogueTable = dialogueTable;
 		}
 
@@ -172,7 +172,7 @@ public class ResponseEditorPanel extends AssetEditorPanel<Response, DialogueTabl
 			}
 
 			add(builder.getPanel());
-			setPreferredSize(new Dimension(500, 500));
+			setPreferredSize(new Dimension(700, 500));
 		}
 
 		@Override
