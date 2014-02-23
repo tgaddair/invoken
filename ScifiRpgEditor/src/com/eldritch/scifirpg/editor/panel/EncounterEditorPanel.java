@@ -15,11 +15,14 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 import com.eldritch.scifirpg.editor.AssetTablePanel;
+import com.eldritch.scifirpg.editor.tables.AssetTable;
 import com.eldritch.scifirpg.editor.tables.EncounterTable;
 import com.eldritch.scifirpg.editor.tables.OutcomeTable;
 import com.eldritch.scifirpg.editor.tables.PrerequisiteTable;
 import com.eldritch.scifirpg.proto.Locations.Encounter;
+import com.eldritch.scifirpg.proto.Locations.Encounter.ActorParams.ActorScenario;
 import com.eldritch.scifirpg.proto.Locations.Encounter.Type;
+import com.eldritch.scifirpg.proto.Outcomes.Outcome;
 import com.eldritch.scifirpg.proto.Prerequisites.Prerequisite;
 import com.google.common.base.Optional;
 import com.jgoodies.forms.builder.DefaultFormBuilder;
@@ -38,6 +41,7 @@ public class EncounterEditorPanel extends AssetEditorPanel<Encounter, EncounterT
 	// Different cards for different types
 	private final JPanel cards;
 	private final StaticEncounterPanel staticPanel = new StaticEncounterPanel();
+	private final ActorEncounterPanel actorPanel = new ActorEncounterPanel();
 
 	public EncounterEditorPanel(EncounterTable owner, JFrame frame, Optional<Encounter> prev) {
 		super(owner, frame, prev);
@@ -50,6 +54,7 @@ public class EncounterEditorPanel extends AssetEditorPanel<Encounter, EncounterT
 		builder.append("ID:", idField);
 		builder.nextLine();
 		
+		typeBox.addItemListener(this);
 		builder.append("Type:", typeBox);
 		builder.nextLine();
 		
@@ -65,6 +70,7 @@ public class EncounterEditorPanel extends AssetEditorPanel<Encounter, EncounterT
 		
 		cards = new JPanel(new CardLayout());
 		cards.add(staticPanel, Type.STATIC.name());
+		cards.add(actorPanel, Type.ACTOR.name());
 		
 		builder.appendRow("fill:p:grow");
 		builder.append("Parameters:", cards);
@@ -87,7 +93,7 @@ public class EncounterEditorPanel extends AssetEditorPanel<Encounter, EncounterT
 		}
 
 		add(builder.getPanel());
-		setPreferredSize(new Dimension(800, 750));
+		setPreferredSize(new Dimension(800, 900));
 	}
 
 	@Override
@@ -121,6 +127,30 @@ public class EncounterEditorPanel extends AssetEditorPanel<Encounter, EncounterT
 		}
 	}
 	
+	private class ActorEncounterPanel extends JPanel {
+		private static final long serialVersionUID = 1L;
+		
+		private final JTextArea descriptionField = createArea(true, 30, new Dimension(100, 100));
+		private final ActorScenarioTable actorTable = new ActorScenarioTable();
+		private final OutcomeTable outcomeTable = new OutcomeTable();
+		
+		public ActorEncounterPanel() {
+			DefaultFormBuilder builder = createFormBuilder();
+			builder.append("Description:", descriptionField);
+			builder.nextLine();
+			
+			builder.appendRow("fill:120dlu");
+			builder.append("Actors:", new AssetTablePanel(actorTable));
+			builder.nextLine();
+			
+			builder.appendRow("fill:120dlu");
+			builder.append("On Flee:", new AssetTablePanel(outcomeTable));
+			builder.nextLine();
+			
+			add(builder.getPanel());
+		}
+	}
+	
 	private static DefaultFormBuilder createFormBuilder() {
 		DefaultFormBuilder builder = new DefaultFormBuilder(new FormLayout(""));
 		builder.border(BorderFactory.createEmptyBorder(5, 5, 5, 5));
@@ -128,5 +158,31 @@ public class EncounterEditorPanel extends AssetEditorPanel<Encounter, EncounterT
 		builder.appendColumn("3dlu");
 		builder.appendColumn("fill:max(pref; 100px)");
 		return builder;
+	}
+	
+	private static class ActorScenarioTable extends AssetTable<ActorScenario> {
+		private static final long serialVersionUID = 1L;
+		private static final String[] COLUMN_NAMES = { 
+			"Actor", "On Death" };
+
+		public ActorScenarioTable() {
+			super(COLUMN_NAMES, "Actor Scenario");
+		}
+
+		@Override
+		protected JPanel getEditorPanel(Optional<ActorScenario> asset,
+				JFrame frame) {
+			return new JPanel();
+		}
+
+		@Override
+		protected Object[] getDisplayFields(ActorScenario asset) {
+			String outcomes = "";
+			for (Outcome o : asset.getOnDeathList()) {
+				outcomes += o.getType();
+			}
+			return new Object[]{asset.getActorId(), outcomes};
+		}
+		
 	}
 }
