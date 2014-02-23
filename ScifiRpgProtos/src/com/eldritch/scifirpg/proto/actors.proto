@@ -5,7 +5,7 @@ option java_package = "com.eldritch.scifirpg.proto";
 
 import "com/eldritch/scifirpg/proto/disciplines.proto";
 import "com/eldritch/scifirpg/proto/prerequisites.proto";
-import "com/eldritch/scifirpg/proto/objectives.proto";
+import "com/eldritch/scifirpg/proto/missions.proto";
 import "com/eldritch/scifirpg/proto/outcomes.proto";
 
 message DialogueTree {
@@ -169,5 +169,5 @@ message PlayerActor {
 
 	repeated string encounter_seen = 19;
 	repeated ActorDialogue dialogue_seen = 20;
-	repeated Objective objective = 22;
+	repeated Mission mission = 22;
 }

@@ -3,7 +3,7 @@ syntax = "proto2";
 package scifirpg;
 option java_package = "com.eldritch.scifirpg.proto";
 
-message Objective {
+message Mission {
 	message Stage {
 		required int32 id = 1;
 		required string description = 2;
