@@ -20,6 +20,7 @@ import com.eldritch.scifirpg.proto.Disciplines.Discipline;
 import com.eldritch.scifirpg.proto.Disciplines.Influence;
 import com.eldritch.scifirpg.proto.Prerequisites.Prerequisite;
 import com.eldritch.scifirpg.proto.Prerequisites.Prerequisite.Type;
+import com.eldritch.scifirpg.proto.Prerequisites.Standing;
 import com.google.common.base.Optional;
 import com.jgoodies.forms.builder.DefaultFormBuilder;
 import com.jgoodies.forms.layout.FormLayout;
@@ -144,6 +145,13 @@ public class PrerequisiteEditorPanel extends AssetEditorPanel<Prerequisite, Prer
 			case ITEM_HAS:
 				maxEnabled = false;
 				//values.addAll(MainPanel.ITEM_TABLE.getAssetIds());
+				break;
+			case STANDING_IS:
+				for (Standing s : Standing.values()) {
+					values.add(s.name());
+				}
+				minEnabled = false;
+				maxEnabled = false;
 				break;
 			default:
 				throw new IllegalStateException("Unrecognized Prerequisite Type: " + t);

@@ -91,12 +91,12 @@ public class ActorEditorPanel extends AssetEditorPanel<NonPlayerActor, ActorTabl
 		r += 2;
 		
 		r += 2;
-		builder.addLabel("Traits", cc.xy(c, r));
-		builder.add(new AssetTablePanel(traitTable), cc.xy(c + 2, r));
-		r += 2;
-		
 		builder.addLabel("Items", cc.xy(c, r));
 		builder.add(new AssetTablePanel(itemTable), cc.xy(c + 2, r));
+		r += 2;
+		
+		builder.addLabel("Traits", cc.xy(c, r));
+		builder.add(new AssetTablePanel(traitTable), cc.xy(c + 2, r));
 		r += 2;
 		
 		aggressionBox.setSelectedItem(Aggression.AGGRESSIVE);
