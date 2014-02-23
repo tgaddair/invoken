@@ -68,7 +68,7 @@ message ActorParams {
 	message FactionStatus {
 		optional string faction_id = 1; // OPTIONAL: might change to int32
 		optional int32 reputation = 2;
-		optional int32 rank = 3; // not sure how to use this just yet
+		optional int32 rank = 3;
 	}
 
 	message Item {
@@ -145,7 +145,7 @@ message NonPlayerActor {
 	required bool can_speak = 3 [default = true];
 	optional DialogueTree dialogue = 4;
 
-	optional Aggression aggression = 5 [default = UNAGGRESSIVE];
+	optional Aggression aggression = 5 [default = AGGRESSIVE];
 	optional Assistance assistance = 6 [default = LOYAL];
 	optional Confidence confidence = 7 [default = CAPABLE];
 	repeated Trait trait = 8;
