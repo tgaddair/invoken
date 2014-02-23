@@ -7,6 +7,7 @@ message Prerequisite {
 	enum Type {
 		DISCIPLINE_BETWEEN = 0; // TARGET attribute between MIN and MAX
 		REP_BETWEEN = 1; // TARGET faction reputation between MIN and MAX
+		RANK_BETWEEN = 9; // TARGET faction rank between MIN and MAX
 		LVL_BETWEEN = 2; // player level between MIN and MAX
 		ENCOUNTER_SEEN = 3; // TARGET encounter previously observed
 		ITEM_HAS = 4; // MIN or more of TARGET item in inventory
@@ -20,6 +21,7 @@ message Prerequisite {
 		INFLUENCE_BETWEEN = 7; // Dialogue disposition variable between MIN and MAX
 
 		ITEM_EQUIPPED = 8; // TARGET item is currently equipped
+		MISSION_STAGE = 10; // TARGET mission between MIN and MAX
 	}
 
 	required Type type = 1;
