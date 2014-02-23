@@ -1,5 +1,7 @@
 package com.eldritch.scifirpg.editor.panel;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -55,6 +57,8 @@ public class EffectEditorPanel extends AssetEditorPanel<Effect, EffectTable> {
 			}
 		});
 		typeBox = new JComboBox<>(types);
+		
+		typeBox.addActionListener(new TypeSelectionListener());
 		builder.append("Type:", typeBox);
 		builder.nextLine();
 		
@@ -140,5 +144,13 @@ public class EffectEditorPanel extends AssetEditorPanel<Effect, EffectTable> {
 		}
 		
 		return builder.build();
+	}
+	
+	private class TypeSelectionListener implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			Type t = (Type) typeBox.getSelectedItem();
+			initFieldsFor(t);
+		}
 	}
 }
