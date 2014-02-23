@@ -46,7 +46,7 @@ public class MissionEditorPanel extends AssetEditorPanel<Mission, MissionTable> 
 		builder.append("ID:", idField);
 		builder.nextLine();
 		
-		builder.appendRow("fill:120dlu");
+		builder.appendRow("fill:p:grow");
 		builder.append("Stages:", new AssetTablePanel(stageTable));
 		builder.nextLine();
 
@@ -95,7 +95,8 @@ public class MissionEditorPanel extends AssetEditorPanel<Mission, MissionTable> 
 		
 		@Override
 		protected Object[] getDisplayFields(Stage asset) {
-			return new Object[]{asset.getId(), asset.getDescription(), asset.getFinished()};
+			Object finished = asset.getFinished() ? "yes" : "";
+			return new Object[]{asset.getId(), asset.getDescription(), finished};
 		}
 		
 		public List<Stage> getSortedAssets() {

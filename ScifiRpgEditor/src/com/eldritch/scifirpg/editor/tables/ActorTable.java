@@ -30,8 +30,9 @@ public class ActorTable extends MajorAssetTable<NonPlayerActor> {
 		ActorParams params = asset.getParams();
 		Object gender = params.hasGender() ? params.getGender() : "";
 		Object profession = params.hasProfession() ? params.getProfession() : "";
+		Object unique = asset.getUnique() ? "yes" : "";
 		return new Object[]{params.getId(), params.getName(), params.getSpecies(),
-				gender, profession, params.getLevel(), asset.getUnique()};
+				gender, profession, params.getLevel(), unique};
 	}
 
 	@Override
