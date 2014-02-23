@@ -36,6 +36,7 @@ import com.eldritch.scifirpg.proto.Augmentations.Augmentation;
 import com.eldritch.scifirpg.proto.Disciplines.Profession;
 import com.google.common.base.Optional;
 import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
@@ -72,7 +73,7 @@ public class ActorEditorPanel extends AssetEditorPanel<NonPlayerActor, ActorTabl
 		layout.setColumnGroups(new int[][]{{1, 5}, {3, 7}});
 
 		PanelBuilder builder = new PanelBuilder(layout);
-		builder.setDefaultDialogBorder();
+		builder.border(Borders.DIALOG);
 		CellConstraints cc = new CellConstraints();
 		int r = 1;
 		int c = 1;
