@@ -1,10 +1,6 @@
 package com.eldritch.scifirpg.editor.panel;
 
 import java.awt.Dimension;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -15,8 +11,6 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 import com.eldritch.scifirpg.editor.AssetTablePanel;
-import com.eldritch.scifirpg.editor.panel.MissionEditorPanel.StageEditorPanel;
-import com.eldritch.scifirpg.editor.panel.MissionEditorPanel.StageTable;
 import com.eldritch.scifirpg.editor.tables.AssetPointerTable;
 import com.eldritch.scifirpg.editor.tables.AssetTable;
 import com.eldritch.scifirpg.editor.tables.DialogueTable;
@@ -24,7 +18,6 @@ import com.eldritch.scifirpg.editor.tables.OutcomeTable;
 import com.eldritch.scifirpg.editor.tables.PrerequisiteTable;
 import com.eldritch.scifirpg.proto.Actors.DialogueTree.Choice;
 import com.eldritch.scifirpg.proto.Actors.DialogueTree.Response;
-import com.eldritch.scifirpg.proto.Missions.Mission.Stage;
 import com.eldritch.scifirpg.proto.Outcomes.Outcome;
 import com.eldritch.scifirpg.proto.Prerequisites.Prerequisite;
 import com.google.common.base.Optional;
