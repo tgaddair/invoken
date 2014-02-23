@@ -46,9 +46,10 @@ public class OutcomeEditorPanel extends AssetEditorPanel<Outcome, OutcomeTable> 
 		builder.append("Target:", targetBox);
 		builder.nextLine();
 
-		builder.append("Count:", countField);
+		builder.append("Value:", countField);
 		builder.nextLine();
 		
+		weightField.setText("1.0");
 		builder.append("Weight:", weightField);
 		builder.nextLine();
 
@@ -64,7 +65,7 @@ public class OutcomeEditorPanel extends AssetEditorPanel<Outcome, OutcomeTable> 
 			if (asset.hasTarget()) {
 				targetBox.setSelectedItem(asset.getTarget());
 			}
-			countField.setText(asset.hasCount() ? asset.getCount() + "" : "");
+			countField.setText(asset.hasValue() ? asset.getValue() + "" : "");
 			weightField.setText(asset.getWeight() + "");
 		} else {
 			initFieldsFor((Type) typeBox.getSelectedItem());
@@ -84,7 +85,7 @@ public class OutcomeEditorPanel extends AssetEditorPanel<Outcome, OutcomeTable> 
 			builder.setTarget((String) targetBox.getSelectedItem());
 		}
 		if (!countField.isEnabled() && !countField.getText().isEmpty()) {
-			builder.setCount(Integer.parseInt(countField.getText()));
+			builder.setValue(Integer.parseInt(countField.getText()));
 		}
 		return builder.build();
 	}

@@ -10,7 +10,7 @@ import com.google.common.base.Optional;
 public class OutcomeTable extends AssetTable<Outcome> {
 	private static final long serialVersionUID = 1L;
 	private static final String[] COLUMN_NAMES = { 
-		"Type", "Target", "Count", "Weight" };
+		"Type", "Target", "Value", "Weight" };
 	
 	public OutcomeTable() {
 		super(COLUMN_NAMES, "Outcome");
@@ -24,7 +24,7 @@ public class OutcomeTable extends AssetTable<Outcome> {
 	@Override
 	protected Object[] getDisplayFields(Outcome asset) {
 		Object target = asset.hasTarget() ? asset.getTarget() : "";
-		Object count = asset.hasCount() ? asset.getCount() : "";
+		Object count = asset.hasValue() ? asset.getValue() : "";
 		return new Object[]{asset.getType(), target, count, asset.getWeight()};
 	}
 }
