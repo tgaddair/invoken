@@ -16,7 +16,11 @@ enum DamageType {
 message Effect {
 	enum Type {
 		// Attack
-		DAMAGE = 0; // MAGNITUDE damage of DAMAGE_TYPE on TARGET for DURATION
+		DAMAGE_MELEE = 0; // MAGNITUDE damage of DAMAGE_TYPE on TARGET for DURATION
+		DAMAGE_RANGED = 34;
+		DAMAGE_HEAVY = 35;
+		DAMAGE_COORDINATED = 36;
+		DAMAGE_CORRUPTION = 37;
 		DRAIN = 1; // Corruption: Transfer life to player, W/A
 
 		// Deceive
@@ -70,6 +74,9 @@ message Effect {
 		RESIST = 31; // Prevent the targeted execution (includes corruption), W/A
 		REVEAL = 32; // Discover deceptive activity, including Illusion, W/S
 		INTERRUPT = 33; // Prevent negative duration effect
+
+		// Dialogue - Influence
+		INFLUENCE = 38; // Requires Influence Type
 	}
 
 	enum Range {
@@ -98,7 +105,7 @@ message Effect {
 	// Only applicable to certain types
 	optional DamageType damage_type = 4;
 	optional Discipline discipline = 5;
-
+	optional Influence influence = 9;
 
 	// Active effects must be used manually in context-specific situations.
 	// If an item or aug has active effects, an action card will be placed
