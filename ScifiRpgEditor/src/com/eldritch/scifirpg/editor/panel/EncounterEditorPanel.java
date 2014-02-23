@@ -21,17 +21,15 @@ import javax.swing.JTextField;
 
 import com.eldritch.scifirpg.editor.AssetTablePanel;
 import com.eldritch.scifirpg.editor.MainPanel;
-import com.eldritch.scifirpg.editor.tables.ActorTable;
 import com.eldritch.scifirpg.editor.tables.AssetTable;
 import com.eldritch.scifirpg.editor.tables.EncounterTable;
-import com.eldritch.scifirpg.editor.tables.FactionTable;
 import com.eldritch.scifirpg.editor.tables.OutcomeTable;
 import com.eldritch.scifirpg.editor.tables.PrerequisiteTable;
-import com.eldritch.scifirpg.editor.tables.RelationTable;
-import com.eldritch.scifirpg.proto.Factions.Faction.Relation;
 import com.eldritch.scifirpg.proto.Locations.Encounter;
 import com.eldritch.scifirpg.proto.Locations.Encounter.ActorParams;
 import com.eldritch.scifirpg.proto.Locations.Encounter.ActorParams.ActorScenario;
+import com.eldritch.scifirpg.proto.Locations.Encounter.RegionParams;
+import com.eldritch.scifirpg.proto.Locations.Encounter.RegionParams.Cell;
 import com.eldritch.scifirpg.proto.Locations.Encounter.StaticParams;
 import com.eldritch.scifirpg.proto.Locations.Encounter.Type;
 import com.eldritch.scifirpg.proto.Outcomes.Outcome;
@@ -55,6 +53,7 @@ public class EncounterEditorPanel extends AssetEditorPanel<Encounter, EncounterT
 	private final JPanel cards;
 	private final StaticEncounterPanel staticPanel = new StaticEncounterPanel();
 	private final ActorEncounterPanel actorPanel = new ActorEncounterPanel();
+	private final RegionEncounterPanel regionPanel = new RegionEncounterPanel();
 
 	public EncounterEditorPanel(EncounterTable owner, JFrame frame, Optional<Encounter> prev) {
 		super(owner, frame, prev);
@@ -84,6 +83,7 @@ public class EncounterEditorPanel extends AssetEditorPanel<Encounter, EncounterT
 		cards = new JPanel(new CardLayout());
 		cards.add(staticPanel, Type.STATIC.name());
 		cards.add(actorPanel, Type.ACTOR.name());
+		cards.add(regionPanel, Type.REGION.name());
 		
 		builder.appendRow("fill:p:grow");
 		builder.append("Parameters:", cards);
@@ -110,6 +110,9 @@ public class EncounterEditorPanel extends AssetEditorPanel<Encounter, EncounterT
 			if (asset.hasActorParams()) {
 				actorPanel.setParams(asset.getActorParams());
 			}
+			if (asset.hasRegionParams()) {
+				regionPanel.setParams(asset.getRegionParams());
+			}
 		}
 
 		add(builder.getPanel());
@@ -133,6 +136,9 @@ public class EncounterEditorPanel extends AssetEditorPanel<Encounter, EncounterT
 			case ACTOR:
 				encounter.setActorParams(actorPanel.getParams());
 				break;
+			case REGION:
+				encounter.setRegionParams(regionPanel.getParams());
+				break;
 			default:
 		}
 		return encounter.build();
@@ -150,10 +156,18 @@ public class EncounterEditorPanel extends AssetEditorPanel<Encounter, EncounterT
 		
 		private final JTextArea descriptionField = createArea(true, 30, new Dimension(100, 100));
 		private final OutcomeTable outcomeTable = new OutcomeTable();
+		private final JCheckBox restCheck = new JCheckBox();
+		private final JCheckBox returnCheck = new JCheckBox();
 		
 		public StaticEncounterPanel() {
 			DefaultFormBuilder builder = createFormBuilder();
 			builder.append("Description:", descriptionField);
+			builder.nextLine();
+			
+			builder.append("Rest:", restCheck);
+			builder.nextLine();
+			
+			builder.append("Return:", returnCheck);
 			builder.nextLine();
 			
 			builder.appendRow("fill:120dlu");
@@ -167,6 +181,8 @@ public class EncounterEditorPanel extends AssetEditorPanel<Encounter, EncounterT
 		public StaticParams getParams() {
 			return StaticParams.newBuilder()
 					.setDescription(descriptionField.getText())
+					.setRest(restCheck.isSelected())
+					.setReturn(returnCheck.isSelected())
 					.addAllOutcome(outcomeTable.getAssets())
 					.build();
 		}
@@ -174,9 +190,129 @@ public class EncounterEditorPanel extends AssetEditorPanel<Encounter, EncounterT
 		@Override
 		public void setParams(StaticParams params) {
 			descriptionField.setText(params.getDescription());
+			restCheck.setSelected(params.getRest());
+			returnCheck.setSelected(params.getReturn());
 			for (Outcome o : params.getOutcomeList()) {
 				outcomeTable.addAsset(o);
 			}
+		}
+	}
+	
+	private class RegionEncounterPanel extends EncounterParamPanel<RegionParams> {
+		private static final long serialVersionUID = 1L;
+		
+		private final JTextArea lengthField = createArea(true, 30, new Dimension(100, 100));
+		private final CellTable cellTable = new CellTable();
+		
+		public RegionEncounterPanel() {
+			DefaultFormBuilder builder = createFormBuilder();
+			builder.append("Row Length:", lengthField);
+			builder.nextLine();
+			
+			builder.appendRow("fill:120dlu");
+			builder.append("Cells:", new AssetTablePanel(cellTable));
+			builder.nextLine();
+			
+			add(builder.getPanel());
+		}
+		
+		@Override
+		public RegionParams getParams() {
+			return RegionParams.newBuilder()
+					.setRowLength(Integer.parseInt(lengthField.getText()))
+					.addAllCell(cellTable.getAssets())
+					.build();
+		}
+
+		@Override
+		public void setParams(RegionParams params) {
+			lengthField.setText(params.getRowLength() + "");
+			for (Cell c : params.getCellList()) {
+				cellTable.addAsset(c);
+			}
+		}
+	}
+	
+	private static class CellTable extends AssetTable<Cell> {
+		private static final long serialVersionUID = 1L;
+		private static final String[] COLUMN_NAMES = { 
+			"Location", "Position" };
+
+		public CellTable() {
+			super(COLUMN_NAMES, "Cell");
+		}
+
+		@Override
+		protected JPanel getEditorPanel(Optional<Cell> asset, JFrame frame) {
+			return new CellEditorPanel(this, frame, asset);
+		}
+
+		@Override
+		protected Object[] getDisplayFields(Cell asset) {
+			return new Object[]{asset.getLocationId(), asset.getPosition()};
+		}
+	}
+	
+	private static class CellEditorPanel extends AssetEditorPanel<Cell, CellTable> {
+		private static final long serialVersionUID = 1L;
+		
+		private final JComboBox<String> pointerBox = new JComboBox<String>();
+		private final JTextField positionField = new JTextField();
+		private final PrerequisiteTable prereqTable = new PrerequisiteTable();
+		
+		public CellEditorPanel(CellTable table, JFrame frame, Optional<Cell> prev) {
+			super(table, frame, prev);
+			
+			Set<String> currentIds = new HashSet<>();
+			for (Cell c : table.getAssets()) {
+				currentIds.add(c.getLocationId());
+			}
+			
+			List<String> values = new ArrayList<>();
+			for (String id : MainPanel.LOCATION_TABLE.getAssetIds()) {
+				if ((prev.isPresent() && prev.get().getLocationId().equals(id))
+						|| !currentIds.contains(id)) {
+					values.add(id);
+				}
+			}
+			pointerBox.setModel(new DefaultComboBoxModel<String>(values.toArray(new String[0])));
+			
+			DefaultFormBuilder builder = createFormBuilder();
+			builder.append("Location:", pointerBox);
+			builder.nextLine();
+			
+			builder.append("Position:", positionField);
+			builder.nextLine();
+			
+			builder.appendRow("fill:120dlu");
+			builder.append("Prerequisites:", new AssetTablePanel(prereqTable));
+			builder.nextLine();;
+
+			JButton saveButton = new JButton("Save");
+			saveButton.addActionListener(this);
+			builder.append(saveButton);
+			builder.nextLine();
+			
+			if (prev.isPresent()) {
+				Cell c = prev.get();
+				pointerBox.setSelectedItem(c.getLocationId());
+				positionField.setText(c.getPosition() + "");
+				for (Prerequisite req : c.getPrereqList()) {
+					prereqTable.addAsset(req);
+				}
+			}
+
+			add(builder.getPanel());
+		}
+
+		@Override
+		public Cell createAsset() {
+			String id = (String) pointerBox.getSelectedItem();
+			return Cell.newBuilder()
+					.setLocationId(id)
+					.setPosition(Integer.parseInt(positionField.getText()))
+					.addAllPrereq(prereqTable.getAssets())
+					.build();
 		}
 	}
 	
@@ -222,15 +358,6 @@ public class EncounterEditorPanel extends AssetEditorPanel<Encounter, EncounterT
 				outcomeTable.addAsset(o);
 			}
 		}
-	}
-	
-	private static DefaultFormBuilder createFormBuilder() {
-		DefaultFormBuilder builder = new DefaultFormBuilder(new FormLayout(""));
-		builder.border(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-		builder.appendColumn("right:pref");
-		builder.appendColumn("3dlu");
-		builder.appendColumn("fill:max(pref; 100px)");
-		return builder;
 	}
 	
 	private static class ActorScenarioTable extends AssetTable<ActorScenario> {
@@ -320,5 +447,14 @@ public class EncounterEditorPanel extends AssetEditorPanel<Encounter, EncounterT
 		public abstract T getParams();
 		
 		public abstract void setParams(T params);
+	}
+	
+	private static DefaultFormBuilder createFormBuilder() {
+		DefaultFormBuilder builder = new DefaultFormBuilder(new FormLayout(""));
+		builder.border(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+		builder.appendColumn("right:pref");
+		builder.appendColumn("3dlu");
+		builder.appendColumn("fill:max(pref; 100px)");
+		return builder;
 	}
 }
