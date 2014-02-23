@@ -26,6 +26,7 @@ public abstract class AssetTable<T extends Message> extends JTable {
 	private final JPopupMenu popup;
 	private final String[] columnNames;
 	private final String assetName;
+	private Point selectedPoint;
 	
 	public AssetTable(String[] columnNames, String assetName) {
 		super(new AssetTableModel<T>(columnNames));
@@ -39,6 +40,21 @@ public abstract class AssetTable<T extends Message> extends JTable {
 			@Override
 			public void actionPerformed(ActionEvent ev) {
 				handleCreateAsset(Optional.<T>absent());
+			}
+	    });
+	    popup.add(menuItem);
+	    
+	    menuItem = new JMenuItem("Create New " + assetName);
+	    menuItem.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent ev) {
+				if (selectedPoint != null) {
+					JTable table = (JTable) ev.getSource();
+		            int row = table.rowAtPoint(selectedPoint);
+		            if (row >= 0) {
+		            	handleDeleteAsset(row);
+		            }
+				}
 			}
 	    });
 	    popup.add(menuItem);
@@ -86,6 +102,10 @@ public abstract class AssetTable<T extends Message> extends JTable {
         // Display the window.
         frame.pack();
         frame.setVisible(true);
+	}
+	
+	protected void handleDeleteAsset(int row) {
+		getModel().removeAssetAt(row);
 	}
 	
 	protected abstract JPanel getEditorPanel(Optional<T> asset, JFrame frame);
@@ -142,6 +162,11 @@ public abstract class AssetTable<T extends Message> extends JTable {
 			return assets.get(i);
 		}
 		
+		public void removeAssetAt(int row) {
+			assets.remove(row);
+			removeRow(row);
+		}
+		
 		@Override
 		public boolean isCellEditable(int row, int column) {
 			return false;
@@ -159,6 +184,7 @@ public abstract class AssetTable<T extends Message> extends JTable {
 
 	    private void maybeShowPopup(MouseEvent e) {
 	        if (e.isPopupTrigger()) {
+	        	selectedPoint = e.getPoint();
 	            popup.show(e.getComponent(),
 	                       e.getX(), e.getY());
 	        }

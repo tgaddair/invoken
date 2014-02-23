@@ -34,11 +34,6 @@ public class EffectEditorPanel extends AssetEditorPanel<Effect, EffectTable> {
 	private final JTextField magnitudeField = new JTextField();
 	private final JTextField durationField = new JTextField("0");
 	private final JComboBox<String> targetBox = new JComboBox<String>();
-	
-	// Contextual options
-	private final JComboBox<DamageType> damageBox = new JComboBox<>(DamageType.values());
-	private final JComboBox<Discipline> disciplineBox = new JComboBox<>(Discipline.values());
-	private final JComboBox<Influence> influenceBox = new JComboBox<>(Influence.values());
 
 	public EffectEditorPanel(EffectTable owner, JFrame frame, Optional<Effect> prev) {
 		super(owner, frame, prev);
