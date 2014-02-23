@@ -129,7 +129,7 @@ public class OutcomeEditorPanel extends AssetEditorPanel<Outcome, OutcomeTable> 
 		}
 		
 		targetBox.setEnabled(targetEnabled);
-		countField.setEnabled(countEnabled);
+		valueField.setEnabled(countEnabled);
 		targetBox.setModel(new DefaultComboBoxModel<String>(values.toArray(new String[0])));
 	}
 	
