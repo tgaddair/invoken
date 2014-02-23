@@ -48,7 +48,7 @@ message Effect {
 		CONTROL = 15; // TARGET up to level MAGNITUDE becomes ally for DURATION
 
 		// Execute - Fabrication
-		CREATE_GOLEM = 16;
+		CREATE_GOLEM = 16; // MAGNITUDE is automaton level
 		CREATE_SWARM = 17;
 		REANIMATE = 18; // TARGET becomes a puppet ally on death for DURATION
 

@@ -4,6 +4,9 @@ package scifirpg;
 option java_package = "com.eldritch.scifirpg.proto";
 
 message Mission {
+	// The ID of the Stage is important, because one of the rules we apply is that no outcome
+	// can set a Mission stage to a previous stage.  This prevents bugs whereby a particular trigger
+	// will undo progress in a mission.
 	message Stage {
 		required int32 id = 1;
 		required string description = 2;
