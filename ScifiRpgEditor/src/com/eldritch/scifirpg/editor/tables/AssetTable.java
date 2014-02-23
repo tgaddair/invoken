@@ -49,7 +49,6 @@ public abstract class AssetTable<T extends Message> extends JTable {
 	    deleteItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent ev) {
-				System.out.println(AssetTable.this.getSelectedRow());
 				handleDeleteAsset(AssetTable.this.getSelectedRow());
 			}
 	    });

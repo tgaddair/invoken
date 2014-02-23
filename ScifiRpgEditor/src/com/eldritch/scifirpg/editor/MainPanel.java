@@ -8,9 +8,9 @@ import javax.swing.JComponent;
 import com.eldritch.scifirpg.editor.tables.ActorTable;
 import com.eldritch.scifirpg.editor.tables.AssetTable;
 import com.eldritch.scifirpg.editor.tables.AugmentationTable;
-import com.eldritch.scifirpg.editor.tables.EncounterTable;
 import com.eldritch.scifirpg.editor.tables.FactionTable;
 import com.eldritch.scifirpg.editor.tables.ItemTable;
+import com.eldritch.scifirpg.editor.tables.LocationTable;
 import com.eldritch.scifirpg.editor.tables.MissionTable;
 
 import java.awt.Dimension;
@@ -23,7 +23,7 @@ public class MainPanel extends JPanel {
 	
 	public static final FactionTable FACTION_TABLE = new FactionTable();
 	
-	public static final EncounterTable ENCOUNTER_TABLE = new EncounterTable();
+	public static final LocationTable LOCATION_TABLE = new LocationTable();
 	
 	public static final ItemTable ITEM_TABLE = new ItemTable();
 	
@@ -37,7 +37,7 @@ public class MainPanel extends JPanel {
 		JTabbedPane tabbedPane = new JTabbedPane();
 		addTable(ACTOR_TABLE, tabbedPane);
 		addTable(FACTION_TABLE, tabbedPane);
-		addTable(ENCOUNTER_TABLE, tabbedPane);
+		addTable(LOCATION_TABLE, tabbedPane);
 		addTable(ITEM_TABLE, tabbedPane);
 		addTable(AUGMENTATION_TABLE, tabbedPane);
 		addTable(MISSION_TABLE, tabbedPane);
