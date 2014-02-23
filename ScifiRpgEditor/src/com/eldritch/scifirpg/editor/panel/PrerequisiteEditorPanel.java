@@ -17,6 +17,7 @@ import javax.swing.JTextField;
 import com.eldritch.scifirpg.editor.MainPanel;
 import com.eldritch.scifirpg.editor.tables.PrerequisiteTable;
 import com.eldritch.scifirpg.proto.Disciplines.Discipline;
+import com.eldritch.scifirpg.proto.Disciplines.Influence;
 import com.eldritch.scifirpg.proto.Prerequisites.Prerequisite;
 import com.eldritch.scifirpg.proto.Prerequisites.Prerequisite.Type;
 import com.google.common.base.Optional;
@@ -115,6 +116,7 @@ public class PrerequisiteEditorPanel extends AssetEditorPanel<Prerequisite, Prer
 				values.addAll(MainPanel.FACTION_TABLE.getAssetIds());
 				break;
 			case MISSION_STAGE:
+				values.addAll(MainPanel.MISSION_TABLE.getAssetIds());
 				break;
 			case LVL_BETWEEN:
 			case INFLUENCE_BETWEEN:
@@ -122,6 +124,13 @@ public class PrerequisiteEditorPanel extends AssetEditorPanel<Prerequisite, Prer
 				break;
 			case AUG_REMAINING:
 				values.addAll(MainPanel.AUGMENTATION_TABLE.getAssetIds());
+				maxEnabled = false;
+				break;
+			case INFLUENCE_AUG:
+				for (Influence i : Influence.values()) {
+					values.add(i.name());
+				}
+				minEnabled = false;
 				maxEnabled = false;
 				break;
 			case ENCOUNTER_SEEN:
