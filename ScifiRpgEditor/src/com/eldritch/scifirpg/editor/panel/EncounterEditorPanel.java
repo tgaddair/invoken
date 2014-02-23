@@ -4,8 +4,13 @@ import java.awt.CardLayout;
 import java.awt.Dimension;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import javax.swing.BorderFactory;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -15,10 +20,15 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 import com.eldritch.scifirpg.editor.AssetTablePanel;
+import com.eldritch.scifirpg.editor.MainPanel;
+import com.eldritch.scifirpg.editor.tables.ActorTable;
 import com.eldritch.scifirpg.editor.tables.AssetTable;
 import com.eldritch.scifirpg.editor.tables.EncounterTable;
+import com.eldritch.scifirpg.editor.tables.FactionTable;
 import com.eldritch.scifirpg.editor.tables.OutcomeTable;
 import com.eldritch.scifirpg.editor.tables.PrerequisiteTable;
+import com.eldritch.scifirpg.editor.tables.RelationTable;
+import com.eldritch.scifirpg.proto.Factions.Faction.Relation;
 import com.eldritch.scifirpg.proto.Locations.Encounter;
 import com.eldritch.scifirpg.proto.Locations.Encounter.ActorParams;
 import com.eldritch.scifirpg.proto.Locations.Encounter.ActorParams.ActorScenario;
@@ -108,7 +118,24 @@ public class EncounterEditorPanel extends AssetEditorPanel<Encounter, EncounterT
 
 	@Override
 	public Encounter createAsset() {
-		return null;
+		Type t = (Type) typeBox.getSelectedItem();
+		Encounter.Builder encounter = Encounter.newBuilder()
+				.setId(idField.getText())
+				.setTitle(titleField.getText())
+				.setType(t)
+				.setWeight(Double.parseDouble(weightField.getText()))
+				.setUnique(uniqueCheck.isSelected())
+				.addAllPrereq(prereqTable.getAssets());
+		switch (t) {
+			case STATIC:
+				encounter.setStaticParams(staticPanel.getParams());
+				break;
+			case ACTOR:
+				encounter.setActorParams(actorPanel.getParams());
+				break;
+			default:
+		}
+		return encounter.build();
 	}
 
 	@Override
@@ -146,6 +173,10 @@ public class EncounterEditorPanel extends AssetEditorPanel<Encounter, EncounterT
 
 		@Override
 		public void setParams(StaticParams params) {
+			descriptionField.setText(params.getDescription());
+			for (Outcome o : params.getOutcomeList()) {
+				outcomeTable.addAsset(o);
+			}
 		}
 	}
 	
@@ -183,6 +214,13 @@ public class EncounterEditorPanel extends AssetEditorPanel<Encounter, EncounterT
 
 		@Override
 		public void setParams(ActorParams params) {
+			descriptionField.setText(params.getDescription());
+			for (ActorScenario scenario : params.getActorScenarioList()) {
+				actorTable.addAsset(scenario);
+			}
+			for (Outcome o : params.getOnFleeList()) {
+				outcomeTable.addAsset(o);
+			}
 		}
 	}
 	
@@ -205,9 +243,8 @@ public class EncounterEditorPanel extends AssetEditorPanel<Encounter, EncounterT
 		}
 
 		@Override
-		protected JPanel getEditorPanel(Optional<ActorScenario> asset,
-				JFrame frame) {
-			return new JPanel();
+		protected JPanel getEditorPanel(Optional<ActorScenario> asset, JFrame frame) {
+			return new ActorScenarioPanel(this, frame, asset);
 		}
 
 		@Override
@@ -217,6 +254,63 @@ public class EncounterEditorPanel extends AssetEditorPanel<Encounter, EncounterT
 				outcomes += o.getType();
 			}
 			return new Object[]{asset.getActorId(), outcomes};
+		}
+	}
+	
+	private static class ActorScenarioPanel extends AssetEditorPanel<ActorScenario, ActorScenarioTable> {
+		private static final long serialVersionUID = 1L;
+		
+		private final JComboBox<String> pointerBox = new JComboBox<String>();
+		private final OutcomeTable outcomeTable = new OutcomeTable();
+		
+		public ActorScenarioPanel(ActorScenarioTable table, JFrame frame, Optional<ActorScenario> prev) {
+			super(table, frame, prev);
+			
+			Set<String> currentIds = new HashSet<>();
+			for (ActorScenario scenario : table.getAssets()) {
+				currentIds.add(scenario.getActorId());
+			}
+			
+			List<String> values = new ArrayList<>();
+			for (String id : MainPanel.ACTOR_TABLE.getAssetIds()) {
+				if ((prev.isPresent() && prev.get().getActorId().equals(id))
+						|| !currentIds.contains(id)) {
+					values.add(id);
+				}
+			}
+			pointerBox.setModel(new DefaultComboBoxModel<String>(values.toArray(new String[0])));
+			
+			DefaultFormBuilder builder = createFormBuilder();
+			builder.append("Actor:", pointerBox);
+			builder.nextLine();
+			
+			builder.appendRow("fill:120dlu");
+			builder.append("On Death:", new AssetTablePanel(outcomeTable));
+			builder.nextLine();;
+
+			JButton saveButton = new JButton("Save");
+			saveButton.addActionListener(this);
+			builder.append(saveButton);
+			builder.nextLine();
+			
+			if (prev.isPresent()) {
+				ActorScenario scenario = prev.get();
+				pointerBox.setSelectedItem(scenario.getActorId());
+				for (Outcome o : scenario.getOnDeathList()) {
+					outcomeTable.addAsset(o);
+				}
+			}
+
+			add(builder.getPanel());
+		}
+
+		@Override
+		public ActorScenario createAsset() {
+			String id = (String) pointerBox.getSelectedItem();
+			return ActorScenario.newBuilder()
+					.setActorId(id)
+					.addAllOnDeath(outcomeTable.getAssets())
+					.build();
 		}
 	}
 	
