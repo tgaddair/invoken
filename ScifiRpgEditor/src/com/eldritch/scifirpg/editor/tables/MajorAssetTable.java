@@ -12,29 +12,12 @@ import java.util.List;
 import com.google.common.base.Optional;
 import com.google.protobuf.Message;
 
-public abstract class MajorAssetTable<T extends Message> extends AssetTable<T> {
+public abstract class MajorAssetTable<T extends Message> extends IdentifiedAssetTable<T> {
 	private static final long serialVersionUID = 1L;
 
 	public MajorAssetTable(String[] columnNames, String assetName) {
 		super(columnNames, assetName);
 		importAssets();
-	}
-	
-	public List<String> getAssetIds() {
-		List<String> ids = new ArrayList<>();
-		for (T asset : getAssets()) {
-			ids.add(getAssetId(asset));
-		}
-		return ids;
-	}
-	
-	public T getAssetFor(String id) {
-		for (T asset : getAssets()) {
-			if (getAssetId(asset).equals(id)) {
-				return asset;
-			}
-		}
-		return null;
 	}
 	
 	@Override
@@ -48,8 +31,6 @@ public abstract class MajorAssetTable<T extends Message> extends AssetTable<T> {
 	}
 	
 	protected abstract String getAssetDirectory();
-	
-	protected abstract String getAssetId(T asset);
 	
 	protected abstract T readFrom(InputStream is) throws IOException;
 	

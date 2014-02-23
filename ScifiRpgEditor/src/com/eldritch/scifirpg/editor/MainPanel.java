@@ -11,6 +11,7 @@ import com.eldritch.scifirpg.editor.tables.AugmentationTable;
 import com.eldritch.scifirpg.editor.tables.EncounterTable;
 import com.eldritch.scifirpg.editor.tables.FactionTable;
 import com.eldritch.scifirpg.editor.tables.ItemTable;
+import com.eldritch.scifirpg.editor.tables.MissionTable;
 
 import java.awt.Dimension;
 import java.awt.GridLayout;
@@ -27,6 +28,8 @@ public class MainPanel extends JPanel {
 	public static final ItemTable ITEM_TABLE = new ItemTable();
 	
 	public static final AugmentationTable AUGMENTATION_TABLE = new AugmentationTable();
+	
+	public static final MissionTable MISSION_TABLE = new MissionTable();
 
 	public MainPanel() {
 		super(new GridLayout(1, 1));
@@ -37,6 +40,7 @@ public class MainPanel extends JPanel {
 		addTable(ENCOUNTER_TABLE, tabbedPane);
 		addTable(ITEM_TABLE, tabbedPane);
 		addTable(AUGMENTATION_TABLE, tabbedPane);
+		addTable(MISSION_TABLE, tabbedPane);
 
 		// Add the tabbed pane to this panel.
 		add(tabbedPane);

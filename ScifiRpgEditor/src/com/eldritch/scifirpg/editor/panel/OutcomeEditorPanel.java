@@ -1,5 +1,6 @@
 package com.eldritch.scifirpg.editor.panel;
 
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -70,6 +71,7 @@ public class OutcomeEditorPanel extends AssetEditorPanel<Outcome, OutcomeTable> 
 		}
 		
 		add(builder.getPanel());
+		setPreferredSize(new Dimension(500, 500));
 	}
 
 	@Override

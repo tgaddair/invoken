@@ -1,5 +1,6 @@
 package com.eldritch.scifirpg.editor.panel;
 
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -76,6 +77,7 @@ public class PrerequisiteEditorPanel extends AssetEditorPanel<Prerequisite, Prer
 		}
 
 		add(builder.getPanel());
+		setPreferredSize(new Dimension(500, 500));
 	}
 
 	@Override
@@ -110,6 +112,7 @@ public class PrerequisiteEditorPanel extends AssetEditorPanel<Prerequisite, Prer
 				break;
 			case REP_BETWEEN:
 				values.addAll(MainPanel.FACTION_TABLE.getAssetIds());
+				break;
 			case LVL_BETWEEN:
 			case INFLUENCE_BETWEEN:
 				targetEnabled = false;

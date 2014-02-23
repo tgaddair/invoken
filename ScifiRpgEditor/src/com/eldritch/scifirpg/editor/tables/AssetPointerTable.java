@@ -21,9 +21,9 @@ import com.jgoodies.forms.layout.FormLayout;
 public class AssetPointerTable<T extends Message> extends AssetTable<T> {
 	private static final long serialVersionUID = 1L;
 	
-	private final MajorAssetTable<T> majorTable;
+	private final IdentifiedAssetTable<T> majorTable;
 	
-	public AssetPointerTable(MajorAssetTable<T> table) {
+	public AssetPointerTable(IdentifiedAssetTable<T> table) {
 		super(table.getColumnNames(), table.getAssetName());
 		this.majorTable = table;
 	}
