@@ -15,6 +15,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JTable;
+import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
 
 import com.google.common.base.Optional;
@@ -26,7 +27,7 @@ public abstract class AssetTable<T extends Message> extends JTable {
 	private final JPopupMenu popup;
 	private final String[] columnNames;
 	private final String assetName;
-	private Point selectedPoint;
+	private final JMenuItem deleteItem;
 	
 	public AssetTable(String[] columnNames, String assetName) {
 		super(new AssetTableModel<T>(columnNames));
@@ -44,20 +45,16 @@ public abstract class AssetTable<T extends Message> extends JTable {
 	    });
 	    popup.add(menuItem);
 	    
-	    menuItem = new JMenuItem("Create New " + assetName);
-	    menuItem.addActionListener(new ActionListener() {
+	    deleteItem = new JMenuItem("Delete Selected " + assetName);
+	    deleteItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent ev) {
-				if (selectedPoint != null) {
-					JTable table = (JTable) ev.getSource();
-		            int row = table.rowAtPoint(selectedPoint);
-		            if (row >= 0) {
-		            	handleDeleteAsset(row);
-		            }
-				}
+				System.out.println(AssetTable.this.getSelectedRow());
+				handleDeleteAsset(AssetTable.this.getSelectedRow());
 			}
 	    });
-	    popup.add(menuItem);
+	    popup.add(deleteItem);
+	    deleteItem.setVisible(false);
 
 	    // Add listener to components that can bring up popup menus.
 	    MouseListener popupListener = new PopupListener();
@@ -65,9 +62,12 @@ public abstract class AssetTable<T extends Message> extends JTable {
 	    
 	    addMouseListener(new MouseAdapter() {
 	        public void mousePressed(MouseEvent me) {
+	        	deleteItem.setVisible(AssetTable.this.getSelectedRow() >= 0);
+	        	
 	            JTable table = (JTable) me.getSource();
 	            Point p = me.getPoint();
 	            int row = table.rowAtPoint(p);
+	            
 	            if (me.getClickCount() == 2) {
 	            	if (row >= 0) {
 	            		T asset = getModel().getAsset(row);
@@ -184,7 +184,6 @@ public abstract class AssetTable<T extends Message> extends JTable {
 
 	    private void maybeShowPopup(MouseEvent e) {
 	        if (e.isPopupTrigger()) {
-	        	selectedPoint = e.getPoint();
 	            popup.show(e.getComponent(),
 	                       e.getX(), e.getY());
 	        }
