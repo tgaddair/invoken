@@ -1,5 +1,7 @@
 package com.eldritch.scifirpg.editor.panel;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -16,6 +18,8 @@ import com.eldritch.scifirpg.editor.MainPanel;
 import com.eldritch.scifirpg.editor.tables.FactionStatusTable;
 import com.eldritch.scifirpg.editor.tables.FactionTable;
 import com.eldritch.scifirpg.proto.Actors.ActorParams.FactionStatus;
+import com.eldritch.scifirpg.proto.Factions.Faction;
+import com.eldritch.scifirpg.proto.Factions.Faction.Rank;
 import com.google.common.base.Optional;
 import com.jgoodies.forms.builder.DefaultFormBuilder;
 import com.jgoodies.forms.layout.FormLayout;
@@ -25,7 +29,7 @@ public class FactionStatusEditorPanel extends AssetEditorPanel<FactionStatus, Fa
 	
 	private final JComboBox<String> pointerBox = new JComboBox<String>();
 	private final JTextField reputationField = new JTextField();
-	private final JTextField rankField = new JTextField();
+	private final JComboBox<String> rankBox = new JComboBox<String>();
 	
 	public FactionStatusEditorPanel(FactionStatusTable table, JFrame frame, Optional<FactionStatus> prev) {
 		super(table, frame, prev);
@@ -49,13 +53,14 @@ public class FactionStatusEditorPanel extends AssetEditorPanel<FactionStatus, Fa
 			}
 		}
 		pointerBox.setModel(new DefaultComboBoxModel<String>(values.toArray(new String[0])));
+		pointerBox.addActionListener(new RankFillListener());
 		builder.append("Faction:", pointerBox);
 		builder.nextLine();
 		
 		builder.append("Reputation:", reputationField);
 		builder.nextLine();
 		
-		builder.append("Rank:", rankField);
+		builder.append("Rank:", rankBox);
 		builder.nextLine();
 
 		JButton saveButton = new JButton("Save");
@@ -66,15 +71,40 @@ public class FactionStatusEditorPanel extends AssetEditorPanel<FactionStatus, Fa
 		if (prev.isPresent()) {
 			FactionStatus asset = prev.get();
 			pointerBox.setSelectedItem(asset.getFactionId());
+			fillRanks(asset.getFactionId());
 			if (asset.hasReputation()) {
 				reputationField.setText(asset.getReputation() + "");
 			}
 			if (asset.hasRank()) {
-				rankField.setText(asset.getRank() + "");
+				rankBox.setSelectedItem(asset.getRank() + "");
 			}
+		} else {
+			fillRanks((String) pointerBox.getSelectedItem());
 		}
 
 		add(builder.getPanel());
+	}
+	
+	private void fillRanks(String factionId) {
+		FactionTable majorTable = MainPanel.FACTION_TABLE;
+		for (Faction asset : majorTable.getAssets()) {
+			if (asset.getId().equals(factionId)) {
+				List<String> values = new ArrayList<>();
+				values.add(""); // No rank
+				for (Rank r : asset.getRankList()) {
+					values.add(r.getId() + "");
+				}
+				rankBox.setModel(new DefaultComboBoxModel<String>(values.toArray(new String[0])));
+			}
+		}
+	}
+	
+	private class RankFillListener implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			String factionId = (String) pointerBox.getSelectedItem();
+			fillRanks(factionId);
+		}
 	}
 
 	@Override
@@ -84,8 +114,9 @@ public class FactionStatusEditorPanel extends AssetEditorPanel<FactionStatus, Fa
 		if (!reputationField.getText().isEmpty()) {
 			builder.setReputation(Integer.parseInt(reputationField.getText()));
 		}
-		if (!rankField.getText().isEmpty()) {
-			builder.setRank(Integer.parseInt(rankField.getText()));
+		String rank = (String) rankBox.getSelectedItem();
+		if (!rank.isEmpty()) {
+			builder.setRank(Integer.parseInt(rank));
 		}
 		return builder.build();
 	}
