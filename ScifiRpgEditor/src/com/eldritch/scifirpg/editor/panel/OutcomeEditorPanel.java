@@ -27,7 +27,7 @@ public class OutcomeEditorPanel extends AssetEditorPanel<Outcome, OutcomeTable> 
 
 	private final JComboBox<Type> typeBox = new JComboBox<>(Type.values());
 	private final JComboBox<String> targetBox = new JComboBox<String>();
-	private final JTextField countField = new JTextField();
+	private final JTextField valueField = new JTextField();
 	private final JTextField weightField = new JTextField();
 
 	public OutcomeEditorPanel(OutcomeTable owner, JFrame frame, Optional<Outcome> prev) {
@@ -46,7 +46,7 @@ public class OutcomeEditorPanel extends AssetEditorPanel<Outcome, OutcomeTable> 
 		builder.append("Target:", targetBox);
 		builder.nextLine();
 
-		builder.append("Value:", countField);
+		builder.append("Value:", valueField);
 		builder.nextLine();
 		
 		weightField.setText("1.0");
@@ -65,7 +65,7 @@ public class OutcomeEditorPanel extends AssetEditorPanel<Outcome, OutcomeTable> 
 			if (asset.hasTarget()) {
 				targetBox.setSelectedItem(asset.getTarget());
 			}
-			countField.setText(asset.hasValue() ? asset.getValue() + "" : "");
+			valueField.setText(asset.hasValue() ? asset.getValue() + "" : "");
 			weightField.setText(asset.getWeight() + "");
 		} else {
 			initFieldsFor((Type) typeBox.getSelectedItem());
@@ -84,8 +84,8 @@ public class OutcomeEditorPanel extends AssetEditorPanel<Outcome, OutcomeTable> 
 		if (targetBox.isEnabled()) {
 			builder.setTarget((String) targetBox.getSelectedItem());
 		}
-		if (!countField.isEnabled() && !countField.getText().isEmpty()) {
-			builder.setValue(Integer.parseInt(countField.getText()));
+		if (valueField.isEnabled() && !valueField.getText().isEmpty()) {
+			builder.setValue(Integer.parseInt(valueField.getText()));
 		}
 		return builder.build();
 	}
