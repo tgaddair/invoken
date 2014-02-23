@@ -66,7 +66,7 @@ public class ActorEditorPanel extends AssetEditorPanel<NonPlayerActor, ActorTabl
 		
 		FormLayout layout = new FormLayout(
 				"right:p, 4dlu, p, 7dlu, right:p, 4dlu, p, 4dlu, p", // columns
-				"p, 3dlu, p, 3dlu, p, 3dlu, p, 3dlu, p, 3dlu, p, 3dlu, p, 3dlu, p, 3dlu, p, 3dlu, p"); // rows
+				"p, 3dlu, p, 3dlu, p, 3dlu, p, 3dlu, p, 3dlu, p, 3dlu, p, 3dlu, p, 3dlu, fill:pref:grow, 3dlu, p"); // rows
 		
 		// Specify that columns 1 & 5 as well as 3 & 7 have equal widths.       
 		layout.setColumnGroups(new int[][]{{1, 5}, {3, 7}});
@@ -91,8 +91,8 @@ public class ActorEditorPanel extends AssetEditorPanel<NonPlayerActor, ActorTabl
 		r += 2;
 		
 		r += 2;
-		builder.addLabel("Augmentations", cc.xy(c, r));
-		builder.add(new AssetTablePanel(augmentationTable), cc.xy(c + 2, r));
+		builder.addLabel("Traits", cc.xy(c, r));
+		builder.add(new AssetTablePanel(traitTable), cc.xy(c + 2, r));
 		r += 2;
 		
 		builder.addLabel("Items", cc.xy(c, r));
@@ -108,8 +108,8 @@ public class ActorEditorPanel extends AssetEditorPanel<NonPlayerActor, ActorTabl
 		builder.add(speakCheck, cc.xy(c + 2, r));
 		r += 2;
 		
-		builder.addLabel("Dialogue Tree", cc.xy(c, r));
-		builder.add(new AssetTablePanel(dialogueTable), cc.xy(c + 2, r));
+		builder.addLabel("Augmentations", cc.xy(c, r));
+		builder.add(new AssetTablePanel(augmentationTable), cc.xy(c + 2, r));
 		r += 2;
 		
 		c = 5;
@@ -119,7 +119,6 @@ public class ActorEditorPanel extends AssetEditorPanel<NonPlayerActor, ActorTabl
 		builder.addLabel("Species", cc.xy(c, r));
 		builder.add(speciesBox, cc.xy(c + 2, r));
 		r += 2;
-		
 		
 		builder.addLabel("Gender", cc.xy(c, r));
 		builder.add(genderBox, cc.xy(c + 2, r));
@@ -152,8 +151,8 @@ public class ActorEditorPanel extends AssetEditorPanel<NonPlayerActor, ActorTabl
 		builder.add(confidenceBox, cc.xy(c + 2, r));
 		r += 2;
 		
-		builder.addLabel("Traits", cc.xy(c, r));
-		builder.add(new AssetTablePanel(traitTable), cc.xy(c + 2, r));
+		builder.addLabel("Dialogue Tree", cc.xy(c, r));
+		builder.add(new AssetTablePanel(dialogueTable), cc.xy(c + 2, r));
 		r += 2;
 		
 		JButton saveButton = new JButton("Save");
@@ -204,7 +203,7 @@ public class ActorEditorPanel extends AssetEditorPanel<NonPlayerActor, ActorTabl
 		}
 
 		add(builder.getPanel());
-		setPreferredSize(new Dimension(1300, 525));
+		setPreferredSize(new Dimension(1300, 800));
 	}
 
 	@Override
