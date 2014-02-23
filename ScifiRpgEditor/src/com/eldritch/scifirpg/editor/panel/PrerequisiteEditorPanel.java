@@ -70,7 +70,7 @@ public class PrerequisiteEditorPanel extends AssetEditorPanel<Prerequisite, Prer
 				targetBox.setSelectedItem(req.getTarget());
 			}
 			minField.setText(req.hasMin() ? req.getMin() + "" : "");
-			minField.setText(req.hasMax() ? req.getMax() + "" : "");
+			maxField.setText(req.hasMax() ? req.getMax() + "" : "");
 			notCheck.setSelected(req.getNot());
 		} else {
 			initFieldsFor((Type) typeBox.getSelectedItem());
@@ -89,11 +89,11 @@ public class PrerequisiteEditorPanel extends AssetEditorPanel<Prerequisite, Prer
 		if (targetBox.isEnabled()) {
 			builder.setTarget((String) targetBox.getSelectedItem());
 		}
-		if (!minField.isEnabled() && !minField.getText().isEmpty()) {
+		if (minField.isEnabled() && !minField.getText().isEmpty()) {
 			builder.setMin(Integer.parseInt(minField.getText()));
 		}
-		if (!maxField.isEnabled() && !maxField.getText().isEmpty()) {
-			builder.setMin(Integer.parseInt(maxField.getText()));
+		if (maxField.isEnabled() && !maxField.getText().isEmpty()) {
+			builder.setMax(Integer.parseInt(maxField.getText()));
 		}
 		return builder.build();
 	}
@@ -111,7 +111,10 @@ public class PrerequisiteEditorPanel extends AssetEditorPanel<Prerequisite, Prer
 				}
 				break;
 			case REP_BETWEEN:
+			case RANK_BETWEEN:
 				values.addAll(MainPanel.FACTION_TABLE.getAssetIds());
+				break;
+			case MISSION_STAGE:
 				break;
 			case LVL_BETWEEN:
 			case INFLUENCE_BETWEEN:

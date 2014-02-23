@@ -97,6 +97,8 @@ public class OutcomeEditorPanel extends AssetEditorPanel<Outcome, OutcomeTable> 
 		switch (t) {
 			case ITEM_CHANGE:
 				break;
+			case MISSION_SET:
+				break;
 			case REP_CHANGE:
 				values.addAll(MainPanel.FACTION_TABLE.getAssetIds());
 				break;

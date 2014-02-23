@@ -58,6 +58,7 @@ public class ResponseEditorPanel extends AssetEditorPanel<Response, DialogueTabl
 		builder.append("Outcomes:", new AssetTablePanel(outcomeTable));
 		builder.nextLine();
 		
+		builder.appendRow("fill:120dlu");
 		choiceTable = new ChoiceTable(owner);
 		builder.append("Choices:", new AssetTablePanel(choiceTable));
 		builder.nextLine();
