@@ -120,6 +120,8 @@ public class OutcomeEditorPanel extends AssetEditorPanel<Outcome, OutcomeTable> 
 				values.addAll(MainPanel.AUGMENTATION_TABLE.getAssetIds());
 				break;
 			case KILL:
+			case GAIN_FOLLOWER:
+			case LOSE_FOLLOWER:
 				values.addAll(MainPanel.ACTOR_TABLE.getUniqueAssetIds());
 			case TELEPORT:
 				countEnabled = false;
