@@ -118,6 +118,7 @@ public class OutcomeEditorPanel extends AssetEditorPanel<Outcome, OutcomeTable> 
 				countEnabled = false;
 				break;
 			// No target
+			case START_COMBAT:
 			case INFLUENCE_RESET:
 				countEnabled = false;
 			case HP_CHANGE:
