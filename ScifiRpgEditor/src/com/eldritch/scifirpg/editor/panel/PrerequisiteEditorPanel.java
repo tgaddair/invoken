@@ -16,6 +16,7 @@ import javax.swing.JTextField;
 
 import com.eldritch.scifirpg.editor.MainPanel;
 import com.eldritch.scifirpg.editor.tables.PrerequisiteTable;
+import com.eldritch.scifirpg.editor.util.StateMarkers;
 import com.eldritch.scifirpg.proto.Disciplines.Discipline;
 import com.eldritch.scifirpg.proto.Disciplines.Influence;
 import com.eldritch.scifirpg.proto.Prerequisites.Prerequisite;
@@ -134,8 +135,9 @@ public class PrerequisiteEditorPanel extends AssetEditorPanel<Prerequisite, Prer
 				minEnabled = false;
 				maxEnabled = false;
 				break;
-			case ENCOUNTER_SEEN:
-				//values.addAll(MainPanel.ENCOUNTER_TABLE.getAssetIds());
+			case STATE_MARKER:
+				values.addAll(StateMarkers.getMarkers());
+				break;
 			case DIALOGUE_SEEN:
 				//values.addAll(getCurrentActor().getDialogueTable());
 				targetEnabled = false;

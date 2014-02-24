@@ -15,6 +15,7 @@ import javax.swing.JTextField;
 
 import com.eldritch.scifirpg.editor.MainPanel;
 import com.eldritch.scifirpg.editor.tables.OutcomeTable;
+import com.eldritch.scifirpg.editor.util.StateMarkers;
 import com.eldritch.scifirpg.proto.Disciplines.Discipline;
 import com.eldritch.scifirpg.proto.Outcomes.Outcome;
 import com.eldritch.scifirpg.proto.Outcomes.Outcome.Type;
@@ -96,6 +97,10 @@ public class OutcomeEditorPanel extends AssetEditorPanel<Outcome, OutcomeTable> 
 		boolean countEnabled = true;
 		
 		switch (t) {
+			case ADD_MARKER:
+			case REMOVE_MARKER:
+				values.addAll(StateMarkers.getMarkers());
+				break;
 			case ITEM_CHANGE:
 				break;
 			case MISSION_SET:

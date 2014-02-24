@@ -225,6 +225,7 @@ public class ActorEditorPanel extends AssetEditorPanel<NonPlayerActor, ActorTabl
 			params.setProfession((Profession) professionBox.getSelectedItem());
 		}
 		
+		// TODO: Warn about choices without successors and responses without preceding choices.
 		DialogueTree dialogueTree = DialogueTree.newBuilder()
 				.addAllDialogue(dialogueTable.getSortedAssets()).build();
 		
