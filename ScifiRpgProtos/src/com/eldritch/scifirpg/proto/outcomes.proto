@@ -17,6 +17,10 @@ message Outcome {
 		MISSION_SET = 9; // Set mission stage to TARGET
 		START_COMBAT = 10;
 
+		// Add and remove state markers for tracking the state of specific events.
+		ADD_MARKER = 11;
+		REMOVE_MARKER = 12;
+
 		// NOTE: if removing an equipped item would drop the count to 0, it will also be unequipped
 	}
 

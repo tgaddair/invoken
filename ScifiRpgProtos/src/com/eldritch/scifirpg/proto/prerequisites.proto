@@ -15,7 +15,7 @@ message Prerequisite {
 		REP_BETWEEN = 1; // TARGET faction reputation between MIN and MAX
 		RANK_BETWEEN = 9; // TARGET faction rank between MIN and MAX
 		LVL_BETWEEN = 2; // player level between MIN and MAX
-		ENCOUNTER_SEEN = 3; // TARGET encounter previously observed
+		STATE_MARKER = 3; // TARGET state marker in list
 		ITEM_HAS = 4; // MIN or more of TARGET item in inventory
 
 		// When AUG_REMAINING is a prereq, there will almost always be a corresponding

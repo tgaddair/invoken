@@ -176,7 +176,7 @@ message PlayerActor {
 	repeated string equipped_item_id = 21; // NPC: if not specified, inferred from inventory
 	repeated StagedAugmentation staged_augmentation = 16; // if not specified, inferred from known augs
 
-	repeated string encounter_seen = 19;
+	repeated string state_marker = 19;
 	repeated ActorDialogue dialogue_seen = 20;
 	repeated Mission mission = 22;
 }
