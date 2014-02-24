@@ -18,6 +18,10 @@ message DialogueTree {
 		repeated Choice choice = 4;
 		repeated Outcome outcome = 5;
 		required bool greeting = 6 [default = false];
+
+		// Defines the order responses are traversed for finding one that meets prereqs.
+		// Higher weights drop down, lower weights bubble up.
+		optional int32 weight = 7 [default = 0];
 	}
 
 	// By storing successor pointers as strings, we allow for cycles
@@ -25,6 +29,10 @@ message DialogueTree {
 		required string text = 1;
 		repeated Prerequisite prereq = 2;
 		repeated string successor_id = 3;
+
+		// Defines the order dialogue choices are displayed.
+		// Higher weights drop down, lower weights bubble up.
+		optional int32 weight = 4 [default = 0];
 	}
 
 	// We keep all Response options as a list, then convert them to a map in memory so we
