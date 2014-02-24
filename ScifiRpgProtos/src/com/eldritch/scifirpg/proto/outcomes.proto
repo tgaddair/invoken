@@ -15,6 +15,7 @@ message Outcome {
 		INFLUENCE_MOD = 7; // COUNT change in current dialogue disposition
 		INFLUENCE_RESET = 8; // Reset dialogue disposition variable to its initial state
 		MISSION_SET = 9; // Set mission stage to TARGET
+		START_COMBAT = 10;
 
 		// NOTE: if removing an equipped item would drop the count to 0, it will also be unequipped
 	}
