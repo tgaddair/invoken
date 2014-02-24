@@ -19,7 +19,7 @@ message Outcome {
 
 		// Add and remove state markers for tracking the state of specific events.
 		ADD_MARKER = 11;
-		REMOVE_MARKER = 12;
+		REMOVE_MARKER = 12; // value of -1 means remove all such markers
 
 		// NOTE: if removing an equipped item would drop the count to 0, it will also be unequipped
 	}
