@@ -59,11 +59,14 @@ message Encounter {
 		}
 
 		required string description = 1;
+
+		// First actor is the one you talk to initially
 		repeated ActorScenario actor_scenario = 2;
 
 		// Flee attempts are made against all actors collectively, so there is only one outcome
 		// for all actors.
 		repeated Outcome on_flee = 3;
+		optional bool no_sneak = 4 [default = false]; // disable getting the drop on
 	}
 
 	message RegionParams {
@@ -85,8 +88,12 @@ message Encounter {
 	optional string id = 1; // unique key
 	required string title = 2;
 	required Type type = 3;
-	required double weight = 4;
+
+	// For non-negative integers, higher weight -> higher prob
+	// For negative integers, lower weight -> lower prob, and take the first that meets our prereqs
+	required int32 weight = 4 [default = 1];
 	required bool unique = 5 [default = false];
+
 	repeated Prerequisite prereq = 6;
 	optional bool return = 7 [default = false]; // allows you to return to the previous location
 
