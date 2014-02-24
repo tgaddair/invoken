@@ -23,6 +23,8 @@ message Outcome {
 		REMOVE_MARKER = 12; // value of -1 means remove all such markers
 
 		KILL = 13; // Kill the TARGET actor
+		GAIN_FOLLOWER = 14;
+		LOSE_FOLLOWER = 15;
 	}
 
 	required double weight = 1 [default = 1.0]; // 0.0 -> 1.0

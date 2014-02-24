@@ -31,6 +31,7 @@ message Prerequisite {
 		ITEM_EQUIPPED = 8; // TARGET item is currently equipped
 		MISSION_STAGE = 10; // TARGET mission between MIN and MAX
 		ALIVE = 13; // TARGET actor is alive
+		FOLLOWER = 14; // TARGET actor is following player
 	}
 
 	required Type type = 1;
