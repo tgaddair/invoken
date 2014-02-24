@@ -47,6 +47,7 @@ public class EncounterEditorPanel extends AssetEditorPanel<Encounter, EncounterT
 	private final JComboBox<Type> typeBox = new JComboBox<Type>(Type.values());
 	private final JTextField weightField = new JTextField();
 	private final JCheckBox uniqueCheck = new JCheckBox();
+	private final JCheckBox returnCheck = new JCheckBox();
 	private final PrerequisiteTable prereqTable = new PrerequisiteTable();
 	
 	// Different cards for different types
@@ -76,6 +77,9 @@ public class EncounterEditorPanel extends AssetEditorPanel<Encounter, EncounterT
 		builder.append("Unique:", uniqueCheck);
 		builder.nextLine();
 		
+		builder.append("Return:", returnCheck);
+		builder.nextLine();
+		
 		builder.appendRow("fill:120dlu");
 		builder.append("Prerequisites:", new AssetTablePanel(prereqTable));
 		builder.nextLine();
@@ -101,6 +105,7 @@ public class EncounterEditorPanel extends AssetEditorPanel<Encounter, EncounterT
 			typeBox.setSelectedItem(asset.getType());
 			weightField.setText(asset.getWeight() + "");
 			uniqueCheck.setSelected(asset.getUnique());
+			returnCheck.setSelected(asset.getReturn());
 			for (Prerequisite p : asset.getPrereqList()) {
 				prereqTable.addAsset(p);
 			}
@@ -128,6 +133,7 @@ public class EncounterEditorPanel extends AssetEditorPanel<Encounter, EncounterT
 				.setType(t)
 				.setWeight(Double.parseDouble(weightField.getText()))
 				.setUnique(uniqueCheck.isSelected())
+				.setReturn(returnCheck.isSelected())
 				.addAllPrereq(prereqTable.getAssets());
 		switch (t) {
 			case STATIC:
@@ -157,7 +163,6 @@ public class EncounterEditorPanel extends AssetEditorPanel<Encounter, EncounterT
 		private final JTextArea descriptionField = createArea(true, 30, new Dimension(100, 100));
 		private final OutcomeTable outcomeTable = new OutcomeTable();
 		private final JCheckBox restCheck = new JCheckBox();
-		private final JCheckBox returnCheck = new JCheckBox();
 		
 		public StaticEncounterPanel() {
 			DefaultFormBuilder builder = createFormBuilder();
@@ -165,9 +170,6 @@ public class EncounterEditorPanel extends AssetEditorPanel<Encounter, EncounterT
 			builder.nextLine();
 			
 			builder.append("Rest:", restCheck);
-			builder.nextLine();
-			
-			builder.append("Return:", returnCheck);
 			builder.nextLine();
 			
 			builder.appendRow("fill:120dlu");
@@ -182,7 +184,6 @@ public class EncounterEditorPanel extends AssetEditorPanel<Encounter, EncounterT
 			return StaticParams.newBuilder()
 					.setDescription(descriptionField.getText())
 					.setRest(restCheck.isSelected())
-					.setReturn(returnCheck.isSelected())
 					.addAllOutcome(outcomeTable.getAssets())
 					.build();
 		}
@@ -191,7 +192,6 @@ public class EncounterEditorPanel extends AssetEditorPanel<Encounter, EncounterT
 		public void setParams(StaticParams params) {
 			descriptionField.setText(params.getDescription());
 			restCheck.setSelected(params.getRest());
-			returnCheck.setSelected(params.getReturn());
 			for (Outcome o : params.getOutcomeList()) {
 				outcomeTable.addAsset(o);
 			}
