@@ -9,7 +9,7 @@ import "com/eldritch/scifirpg/proto/outcomes.proto";
 message Location {
 	required string id = 1; // unique key
 	required string name = 2;
-	optional Location parent = 4;
+	optional string parent_id = 4;
 	repeated Encounter encounter = 3;
 }
 
