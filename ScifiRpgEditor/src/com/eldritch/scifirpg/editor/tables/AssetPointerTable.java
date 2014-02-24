@@ -63,7 +63,7 @@ public class AssetPointerTable<T extends Message> extends AssetTable<T> {
 			super(table, frame, prev);
 			
 			DefaultFormBuilder builder = new DefaultFormBuilder(new FormLayout(""));
-			builder.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+			builder.border(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 			builder.appendColumn("right:pref");
 			builder.appendColumn("3dlu");
 			builder.appendColumn("fill:max(pref; 100px)");

@@ -1,6 +1,10 @@
 package com.eldritch.scifirpg.editor.panel;
 
 import java.awt.Dimension;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -105,7 +109,7 @@ public class ResponseEditorPanel extends AssetEditorPanel<Response, DialogueTabl
 				.setWeight(Integer.parseInt(weightField.getText()))
 				.addAllPrereq(prereqTable.getAssets())
 				.addAllOutcome(outcomeTable.getAssets())
-				.addAllChoice(choiceTable.getAssets())
+				.addAllChoice(choiceTable.getSortedAssets())
 				.build();
 	}
 	
@@ -119,6 +123,17 @@ public class ResponseEditorPanel extends AssetEditorPanel<Response, DialogueTabl
 		public ChoiceTable(DialogueTable dialogueTable) {
 			super(COLUMN_NAMES, "Choice");
 			this.dialogueTable = dialogueTable;
+		}
+		
+		public List<Choice> getSortedAssets() {
+			List<Choice> assets = new ArrayList<>(getAssets());
+			Collections.sort(assets, new Comparator<Choice>() {
+				@Override
+				public int compare(Choice a1, Choice a2) {
+					return Integer.compare(a1.getWeight(), a2.getWeight());
+				}
+			});
+			return assets;
 		}
 
 		@Override

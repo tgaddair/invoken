@@ -16,7 +16,6 @@ import javax.swing.JTextField;
 
 import com.eldritch.scifirpg.editor.MainPanel;
 import com.eldritch.scifirpg.editor.tables.EffectTable;
-import com.eldritch.scifirpg.proto.Disciplines.Discipline;
 import com.eldritch.scifirpg.proto.Disciplines.Influence;
 import com.eldritch.scifirpg.proto.Effects.DamageType;
 import com.eldritch.scifirpg.proto.Effects.Effect;
@@ -39,7 +38,7 @@ public class EffectEditorPanel extends AssetEditorPanel<Effect, EffectTable> {
 		super(owner, frame, prev);
 
 		DefaultFormBuilder builder = new DefaultFormBuilder(new FormLayout(""));
-		builder.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+		builder.border(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 		builder.appendColumn("right:pref");
 		builder.appendColumn("3dlu");
 		builder.appendColumn("fill:max(pref; 100px)");

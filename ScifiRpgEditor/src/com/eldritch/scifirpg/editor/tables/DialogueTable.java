@@ -1,5 +1,10 @@
 package com.eldritch.scifirpg.editor.tables;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
@@ -15,6 +20,18 @@ public class DialogueTable extends IdentifiedAssetTable<Response> {
 	public DialogueTable() {
 		super(COLUMN_NAMES, "Response");
 	}
+	
+	public List<Response> getSortedAssets() {
+		List<Response> assets = new ArrayList<>(getAssets());
+		Collections.sort(assets, new Comparator<Response>() {
+			@Override
+			public int compare(Response a1, Response a2) {
+				return Integer.compare(a1.getWeight(), a2.getWeight());
+			}
+		});
+		return assets;
+	}
+
 
 	@Override
 	protected JPanel getEditorPanel(Optional<Response> prev, JFrame frame) {

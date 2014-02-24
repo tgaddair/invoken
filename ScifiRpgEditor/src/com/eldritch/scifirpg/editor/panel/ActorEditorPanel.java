@@ -226,7 +226,7 @@ public class ActorEditorPanel extends AssetEditorPanel<NonPlayerActor, ActorTabl
 		}
 		
 		DialogueTree dialogueTree = DialogueTree.newBuilder()
-				.addAllDialogue(dialogueTable.getAssets()).build();
+				.addAllDialogue(dialogueTable.getSortedAssets()).build();
 		
 		return NonPlayerActor.newBuilder()
 				.setParams(params.build())
