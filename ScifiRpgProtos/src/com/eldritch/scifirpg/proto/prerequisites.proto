@@ -30,6 +30,7 @@ message Prerequisite {
 
 		ITEM_EQUIPPED = 8; // TARGET item is currently equipped
 		MISSION_STAGE = 10; // TARGET mission between MIN and MAX
+		ALIVE = 13; // TARGET actor is alive
 	}
 
 	required Type type = 1;

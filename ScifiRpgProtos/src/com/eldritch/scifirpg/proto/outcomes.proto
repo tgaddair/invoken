@@ -5,6 +5,7 @@ option java_package = "com.eldritch.scifirpg.proto";
 
 message Outcome {
 	enum Type {
+		// NOTE: if removing an equipped item would drop the count to 0, it will also be unequipped
 		ITEM_CHANGE = 0; // COUNT of TARGET item
 		REP_CHANGE = 1; // COUNT reputation with TARGET faction
 		XP_GAIN = 2; // COUNT experience points for TARGET discipline
@@ -21,7 +22,7 @@ message Outcome {
 		ADD_MARKER = 11;
 		REMOVE_MARKER = 12; // value of -1 means remove all such markers
 
-		// NOTE: if removing an equipped item would drop the count to 0, it will also be unequipped
+		KILL = 13; // Kill the TARGET actor
 	}
 
 	required double weight = 1 [default = 1.0]; // 0.0 -> 1.0
