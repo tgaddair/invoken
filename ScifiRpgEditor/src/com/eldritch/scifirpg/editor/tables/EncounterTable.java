@@ -7,7 +7,7 @@ import com.eldritch.scifirpg.editor.panel.EncounterEditorPanel;
 import com.eldritch.scifirpg.proto.Locations.Encounter;
 import com.google.common.base.Optional;
 
-public class EncounterTable extends AssetTable<Encounter> {
+public class EncounterTable extends IdentifiedAssetTable<Encounter> {
 	private static final long serialVersionUID = 1L;
 	private static final String[] COLUMN_NAMES = { 
 		"ID", "Title", "Type", "Weight", "Unique" };
@@ -25,5 +25,10 @@ public class EncounterTable extends AssetTable<Encounter> {
 	protected Object[] getDisplayFields(Encounter asset) {
 		return new Object[]{asset.getId(), asset.getTitle(), asset.getType(),
 				asset.getWeight(), asset.getUnique()};
+	}
+
+	@Override
+	protected String getAssetId(Encounter asset) {
+		return asset.getId();
 	}
 }

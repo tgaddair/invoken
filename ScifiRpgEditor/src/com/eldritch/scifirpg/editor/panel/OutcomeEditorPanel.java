@@ -119,6 +119,8 @@ public class OutcomeEditorPanel extends AssetEditorPanel<Outcome, OutcomeTable> 
 			case AUG_USE:
 				values.addAll(MainPanel.AUGMENTATION_TABLE.getAssetIds());
 				break;
+			case KILL:
+				values.addAll(MainPanel.ACTOR_TABLE.getUniqueAssetIds());
 			case TELEPORT:
 				countEnabled = false;
 				break;

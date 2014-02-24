@@ -10,7 +10,7 @@ import com.google.common.base.Optional;
 public class PrerequisiteTable extends AssetTable<Prerequisite> {
 	private static final long serialVersionUID = 1L;
 	private static final String[] COLUMN_NAMES = { 
-		"Type", "Target", "Min", "Max", "Not" };
+		"Not", "Type", "Target", "Min", "Max" };
 	
 	public PrerequisiteTable() {
 		super(COLUMN_NAMES, "Prerequisite");
@@ -23,9 +23,10 @@ public class PrerequisiteTable extends AssetTable<Prerequisite> {
 	
 	@Override
 	protected Object[] getDisplayFields(Prerequisite asset) {
+		Object not = asset.getNot() ? "not" : "";
 		Object target = asset.hasTarget() ? asset.getTarget() : "";
 		Object min = asset.hasMin() ? asset.getMin() : "";
 		Object max = asset.hasMax() ? asset.getMax() : "";
-		return new Object[]{asset.getType(), target, min, max, asset.getNot()};
+		return new Object[]{not, asset.getType(), target, min, max};
 	}
 }

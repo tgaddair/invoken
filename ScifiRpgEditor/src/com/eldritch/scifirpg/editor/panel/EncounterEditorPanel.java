@@ -48,6 +48,7 @@ public class EncounterEditorPanel extends AssetEditorPanel<Encounter, EncounterT
 	private final JTextField weightField = new JTextField();
 	private final JCheckBox uniqueCheck = new JCheckBox();
 	private final JCheckBox returnCheck = new JCheckBox();
+	private final JComboBox<String> successorBox = new JComboBox<String>();
 	private final PrerequisiteTable prereqTable = new PrerequisiteTable();
 	
 	// Different cards for different types
@@ -80,6 +81,17 @@ public class EncounterEditorPanel extends AssetEditorPanel<Encounter, EncounterT
 		builder.append("Return:", returnCheck);
 		builder.nextLine();
 		
+		List<String> values = new ArrayList<>();
+		values.add("");
+		for (String id : owner.getAssetIds()) {
+			if (!prev.isPresent() || !prev.get().getId().equals(id)) {
+				values.add(id);
+			}
+		}
+		successorBox.setModel(new DefaultComboBoxModel<String>(values.toArray(new String[0])));
+		builder.append("Successor:", successorBox);
+		builder.nextLine();
+		
 		builder.appendRow("fill:120dlu");
 		builder.append("Prerequisites:", new AssetTablePanel(prereqTable));
 		builder.nextLine();
@@ -106,6 +118,9 @@ public class EncounterEditorPanel extends AssetEditorPanel<Encounter, EncounterT
 			weightField.setText(asset.getWeight() + "");
 			uniqueCheck.setSelected(asset.getUnique());
 			returnCheck.setSelected(asset.getReturn());
+			if (asset.hasSuccessorId()) {
+				successorBox.setSelectedItem(asset.getSuccessorId());
+			}
 			for (Prerequisite p : asset.getPrereqList()) {
 				prereqTable.addAsset(p);
 			}
@@ -135,6 +150,10 @@ public class EncounterEditorPanel extends AssetEditorPanel<Encounter, EncounterT
 				.setUnique(uniqueCheck.isSelected())
 				.setReturn(returnCheck.isSelected())
 				.addAllPrereq(prereqTable.getAssets());
+		String successorId = (String) successorBox.getSelectedItem();
+		if (!successorId.isEmpty()) {
+			encounter.setSuccessorId(successorId);
+		}
 		switch (t) {
 			case STATIC:
 				encounter.setStaticParams(staticPanel.getParams());

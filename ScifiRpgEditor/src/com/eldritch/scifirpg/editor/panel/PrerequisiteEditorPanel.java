@@ -155,6 +155,11 @@ public class PrerequisiteEditorPanel extends AssetEditorPanel<Prerequisite, Prer
 				minEnabled = false;
 				maxEnabled = false;
 				break;
+			case ALIVE:
+				values.addAll(MainPanel.ACTOR_TABLE.getUniqueAssetIds());
+				minEnabled = false;
+				maxEnabled = false;
+				break;
 			default:
 				throw new IllegalStateException("Unrecognized Prerequisite Type: " + t);
 		}

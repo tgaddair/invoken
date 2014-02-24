@@ -2,6 +2,8 @@ package com.eldritch.scifirpg.editor.tables;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -18,6 +20,16 @@ public class ActorTable extends MajorAssetTable<NonPlayerActor> {
 	
 	public ActorTable() {
 		super(COLUMN_NAMES, "Actor");
+	}
+	
+	public List<String> getUniqueAssetIds() {
+		List<String> ids = new ArrayList<>();
+		for (NonPlayerActor asset : getAssets()) {
+			if (asset.getUnique()) {
+				ids.add(asset.getParams().getId());
+			}
+		}
+		return ids;
 	}
 
 	@Override

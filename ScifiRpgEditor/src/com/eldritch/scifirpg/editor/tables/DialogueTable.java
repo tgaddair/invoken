@@ -40,7 +40,8 @@ public class DialogueTable extends IdentifiedAssetTable<Response> {
 	
 	@Override
 	protected Object[] getDisplayFields(Response resp) {
-		return new Object[]{resp.getId(), resp.getText(), resp.getGreeting()};
+		Object greeting = resp.getGreeting() ? "yes" : "";
+		return new Object[]{resp.getId(), resp.getText(), greeting};
 	}
 
 	@Override
