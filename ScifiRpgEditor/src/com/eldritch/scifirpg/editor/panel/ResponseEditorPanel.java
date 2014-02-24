@@ -30,6 +30,7 @@ public class ResponseEditorPanel extends AssetEditorPanel<Response, DialogueTabl
 	private final JTextField idField = new JTextField();
 	private final JTextArea textField = createArea(true, 30, new Dimension(100, 100));
 	private final JCheckBox greetingCheck = new JCheckBox();
+	private final JTextField weightField = new JTextField("0");
 	private final PrerequisiteTable prereqTable = new PrerequisiteTable();
 	private final OutcomeTable outcomeTable = new OutcomeTable();
 	private final ChoiceTable choiceTable;
@@ -50,6 +51,9 @@ public class ResponseEditorPanel extends AssetEditorPanel<Response, DialogueTabl
 		builder.nextLine();
 
 		builder.append("Greeting:", greetingCheck);
+		builder.nextLine();
+
+		builder.append("Weight:", weightField);
 		builder.nextLine();
 		
 		builder.append("Prerequisites:", new AssetTablePanel(prereqTable));
@@ -73,6 +77,7 @@ public class ResponseEditorPanel extends AssetEditorPanel<Response, DialogueTabl
 			idField.setText(resp.getId());
 			textField.setText(resp.getText());
 			greetingCheck.setSelected(resp.getGreeting());
+			weightField.setText(resp.getWeight() + "");
 			for (Prerequisite asset : resp.getPrereqList()) {
 				prereqTable.addAsset(asset);
 			}
@@ -97,6 +102,7 @@ public class ResponseEditorPanel extends AssetEditorPanel<Response, DialogueTabl
 				.setId(id)
 				.setText(text)
 				.setGreeting(greeting)
+				.setWeight(Integer.parseInt(weightField.getText()))
 				.addAllPrereq(prereqTable.getAssets())
 				.addAllOutcome(outcomeTable.getAssets())
 				.addAllChoice(choiceTable.getAssets())
@@ -134,6 +140,7 @@ public class ResponseEditorPanel extends AssetEditorPanel<Response, DialogueTabl
 		private static final long serialVersionUID = 1L;
 
 		private final JTextArea textField = createArea(true, 30, new Dimension(100, 100));
+		private final JTextField weightField = new JTextField("0");
 		private final PrerequisiteTable prereqTable = new PrerequisiteTable();
 		private final AssetPointerTable<Response> successorTable;
 
@@ -141,12 +148,15 @@ public class ResponseEditorPanel extends AssetEditorPanel<Response, DialogueTabl
 			super(owner, frame, prev);
 
 			DefaultFormBuilder builder = new DefaultFormBuilder(new FormLayout(""));
-			builder.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+			builder.border(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 			builder.appendColumn("right:pref");
 			builder.appendColumn("3dlu");
 			builder.appendColumn("fill:max(pref; 100px)");
 
 			builder.append("Text:", textField);
+			builder.nextLine();
+
+			builder.append("Weight:", weightField);
 			builder.nextLine();
 			
 			builder.append("Prerequisites:", new AssetTablePanel(prereqTable));
@@ -164,6 +174,7 @@ public class ResponseEditorPanel extends AssetEditorPanel<Response, DialogueTabl
 			if (prev.isPresent()) {
 				Choice asset = prev.get();
 				textField.setText(asset.getText());
+				weightField.setText(asset.getWeight() + "");
 				for (Prerequisite prereq : asset.getPrereqList()) {
 					prereqTable.addAsset(prereq);
 				}
@@ -180,6 +191,7 @@ public class ResponseEditorPanel extends AssetEditorPanel<Response, DialogueTabl
 		public Choice createAsset() {
 			return Choice.newBuilder()
 					.setText(textField.getText())
+					.setWeight(Integer.parseInt(weightField.getText()))
 					.addAllPrereq(prereqTable.getAssets())
 					.addAllSuccessorId(successorTable.getAssetIds())
 					.build();

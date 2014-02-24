@@ -131,7 +131,7 @@ public class EncounterEditorPanel extends AssetEditorPanel<Encounter, EncounterT
 				.setId(idField.getText())
 				.setTitle(titleField.getText())
 				.setType(t)
-				.setWeight(Double.parseDouble(weightField.getText()))
+				.setWeight(Integer.parseInt(weightField.getText()))
 				.setUnique(uniqueCheck.isSelected())
 				.setReturn(returnCheck.isSelected())
 				.addAllPrereq(prereqTable.getAssets());
@@ -320,12 +320,16 @@ public class EncounterEditorPanel extends AssetEditorPanel<Encounter, EncounterT
 		private static final long serialVersionUID = 1L;
 		
 		private final JTextArea descriptionField = createArea(true, 30, new Dimension(100, 100));
+		private final JCheckBox noSneakCheck = new JCheckBox();
 		private final ActorScenarioTable actorTable = new ActorScenarioTable();
 		private final OutcomeTable outcomeTable = new OutcomeTable();
 		
 		public ActorEncounterPanel() {
 			DefaultFormBuilder builder = createFormBuilder();
 			builder.append("Description:", descriptionField);
+			builder.nextLine();
+			
+			builder.append("No Sneak:", noSneakCheck);
 			builder.nextLine();
 			
 			builder.appendRow("fill:120dlu");
@@ -343,6 +347,7 @@ public class EncounterEditorPanel extends AssetEditorPanel<Encounter, EncounterT
 		public ActorParams getParams() {
 			return ActorParams.newBuilder()
 					.setDescription(descriptionField.getText())
+					.setNoSneak(noSneakCheck.isSelected())
 					.addAllActorScenario(actorTable.getAssets())
 					.addAllOnFlee(outcomeTable.getAssets())
 					.build();
@@ -351,6 +356,7 @@ public class EncounterEditorPanel extends AssetEditorPanel<Encounter, EncounterT
 		@Override
 		public void setParams(ActorParams params) {
 			descriptionField.setText(params.getDescription());
+			noSneakCheck.setSelected(params.getNoSneak());
 			for (ActorScenario scenario : params.getActorScenarioList()) {
 				actorTable.addAsset(scenario);
 			}
