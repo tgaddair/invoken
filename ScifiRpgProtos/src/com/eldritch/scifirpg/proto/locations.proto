@@ -24,7 +24,6 @@ message Encounter {
 		required string description = 1;
 		repeated Outcome outcome = 2;
 		optional bool rest = 3 [default = false]; // allows you to save progress, heal, stage augs
-		optional bool return = 4 [default = false]; // allows you to return to the previous location
 	}
 
 	// Choices use hard pointers to successor states, so to prevent
@@ -89,10 +88,11 @@ message Encounter {
 	required double weight = 4;
 	required bool unique = 5 [default = false];
 	repeated Prerequisite prereq = 6;
+	optional bool return = 7 [default = false]; // allows you to return to the previous location
 
 	// Parameters specific to encounter type
-	optional StaticParams static_params = 7;
-	optional DecisionParams decision_params = 8;
-	optional ActorParams actor_params = 9;
-	optional RegionParams region_params = 10;
+	optional StaticParams static_params = 8;
+	optional DecisionParams decision_params = 9;
+	optional ActorParams actor_params = 10;
+	optional RegionParams region_params = 11;
 }

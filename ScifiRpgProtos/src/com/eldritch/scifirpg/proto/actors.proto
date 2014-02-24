@@ -52,6 +52,7 @@ message ActorParams {
 		AUTOMATON = 2;
 		UNDEAD = 3;
 		INVOKEN = 4;
+		// KINDRED?
 	}
 
 	enum Gender {
