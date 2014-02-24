@@ -170,13 +170,18 @@ message PlayerActor {
 		required int32 stages = 3;
 	}
 
+	message StateMarker {
+		required string name = 1;
+		required int32 count = 2 [default = 1];
+	}
+
 	required ActorParams params = 1;
 
 	required int32 health = 7; // remaining, max health is calculated
 	repeated string equipped_item_id = 21; // NPC: if not specified, inferred from inventory
 	repeated StagedAugmentation staged_augmentation = 16; // if not specified, inferred from known augs
 
-	repeated string state_marker = 19;
+	repeated StateMarker state_marker = 19;
 	repeated ActorDialogue dialogue_seen = 20;
 	repeated Mission mission = 22;
 }
