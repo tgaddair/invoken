@@ -7,10 +7,10 @@ import "com/eldritch/scifirpg/proto/disciplines.proto";
 
 enum DamageType {
 	PHYSICAL = 0;
-	THERMAL = 1;
-	COLD = 2;
-	CORROSIVE = 3;
-	VIRAL = 4;
+	THERMAL = 1; // high damage, spreads, moderate duration
+	RADIOACTIVE = 2; // weakens
+	TOXIC = 3; // low damage, high duration
+	VIRAL = 4; // spreads, high duration
 }
 
 message Effect {
