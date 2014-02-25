@@ -26,7 +26,7 @@ import com.jgoodies.forms.layout.FormLayout;
 public class LocationTable extends MajorAssetTable<Location> {
 	private static final long serialVersionUID = 1L;
 	private static final String[] COLUMN_NAMES = { 
-		"ID", "Name", "Parent", "Encounters" };
+		"ID", "Name", "Parent", "Faction", "Encounters" };
 	
 	public LocationTable() {
 		super(COLUMN_NAMES, "Location");
@@ -39,12 +39,19 @@ public class LocationTable extends MajorAssetTable<Location> {
 	
 	@Override
 	protected Object[] getDisplayFields(Location asset) {
+		String faction = "";
+		if (asset.hasFactionId()) {
+			faction = asset.getFactionId();
+			if (asset.hasMinRank()) {
+				faction += " (" + asset.getMinRank() + ")";
+			}
+		}
 		String encounters = "";
 		for (Encounter e : asset.getEncounterList()) {
 			encounters += e.getId() + " ";
 		}
 		Object parentId = asset.hasParentId() ? asset.getParentId() : "";
-		return new Object[]{asset.getId(), asset.getName(), parentId, encounters};
+		return new Object[]{asset.getId(), asset.getName(), parentId, faction, encounters};
 	}
 
 	@Override

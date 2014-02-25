@@ -157,7 +157,7 @@ public class EncounterEditorPanel extends AssetEditorPanel<Encounter, EncounterT
 				.setId(idField.getText())
 				.setTitle(titleField.getText())
 				.setType(t)
-				.setWeight(Integer.parseInt(weightField.getText()))
+				.setWeight(Double.parseDouble(weightField.getText()))
 				.setUnique(uniqueCheck.isSelected())
 				.setReturn(returnCheck.isSelected())
 				.addAllPrereq(prereqTable.getAssets());
