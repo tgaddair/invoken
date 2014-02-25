@@ -28,23 +28,8 @@ message Encounter {
 		optional bool rest = 3 [default = false]; // allows you to save progress, heal, stage augs
 	}
 
-	// Choices use hard pointers to successor states, so to prevent
-	// circular dependencies, these trees must be DAGs
 	message DecisionParams {
-		// Encounter ends when the player reaches a DecisionState with no choices
-		message DecisionState {
-			required string description = 1;
-			repeated Choice choice = 2;
-			repeated Outcome outcome = 3;
-		}
-
-		message Choice {
-			required string text = 1;
-			repeated Prerequisite prereq = 2;
-			required DecisionState successor = 3;
-		}
-
-		required DecisionState root = 1;
+		required DialogueTree decision_tree = 1;
 	}
 
 	message ActorParams {
@@ -58,7 +43,12 @@ message Encounter {
 			// Additionally, we can set specific triggers in the encounter, like setting
 			// the quest stage forward.
 			repeated Outcome on_death = 2;
+
+			// Override dialogue from base actor if present and passes prereqs
 			optional DialogueTree dialogue = 3;
+
+			// This encounter cannot occur without this actor
+			optional bool essential = 4 [default = false];
 		}
 
 		required string description = 1;

@@ -18,9 +18,8 @@ message Prerequisite {
 		STATE_MARKER = 3; // TARGET state marker in list
 		ITEM_HAS = 4; // MIN or more of TARGET item in inventory
 
-		// When AUG_REMAINING is a prereq, there will almost always be a corresponding
-		// AUG_USE outcome.
-		AUG_REMAINING = 5; // MIN or more of TARGET augmentation uses remaining
+		// When AUG_REMAINING is a prereq, the game automatically expends the aug
+		AUG_AVAILABLE = 5; // MIN magnitude TARGET augmentation effect on target in cache
 		INFLUENCE_AUG= 11; // Has an influence aug of TARGET type in cache
 
 		// Only has meaning within a specific DialogueTree.
