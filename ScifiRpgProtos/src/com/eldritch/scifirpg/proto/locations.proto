@@ -12,6 +12,8 @@ message Location {
 	required string name = 2;
 	optional string parent_id = 4;
 	repeated Encounter encounter = 3;
+	optional string faction_id = 5; // Access restricted to this faction
+	optional int32 min_rank = 6; // Min rank allowed in area
 }
 
 message Encounter {
