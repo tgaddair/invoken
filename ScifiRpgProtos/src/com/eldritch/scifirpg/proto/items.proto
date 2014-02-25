@@ -3,59 +3,40 @@ syntax = "proto2";
 package scifirpg;
 option java_package = "com.eldritch.scifirpg.proto";
 
+import "com/eldritch/scifirpg/proto/disciplines.proto";
 import "com/eldritch/scifirpg/proto/effects.proto";
 import "com/eldritch/scifirpg/proto/prerequisites.proto";
 
 message ItemParams {
+	enum Type {
+		MELEE_WEAPON = 0;
+		RANGED_WEAPON = 1;
+		HEAVY_WEAPON = 2;
+		OUTFIT = 3;
+		ACCESSORY = 4;
+		CREDENTIAL = 5;
+		OTHER = 6;
+	}
+
+	message Requirement {
+		required Discipline discipline = 1;
+		required int32 value = 2;
+	}
+
+	message DamageMod {
+		required DamageType damage = 1;
+		required int32 magnitude = 2; // weapons: damage, other: resistance
+	}
+
 	optional string id = 1; // unique key
 	required string name = 2;
 	required string description = 3;
 	required int32 value = 4;
 	repeated Effect effect = 6;
-	repeated Prerequisite prereqs = 7;
+	repeated Requirement requirement = 7;
+	repeated DamageMod damage_modifier = 9;
 
-	// Some items can only be removed from the inventory as part of a specific
-	// Encounter Outcome.
+	// Some items can only be removed from the inventory as part of a specific Outcome.
 	required bool droppable = 5 [default = true];
-}
-
-message Outfit {
-	required ItemParams params = 1;
-	optional int32 burden = 2 [default = 0]; // high burden increases cost of movement actions
-}
-
-message Weapon {
-	required ItemParams params = 1;
-
-	// To model the difference between swords, shotguns, pistols, and sniper rifles,
-	// we have the concepts of 'distance' and 'range'.  When in combat, players begin at distance 2.
-	//
-	// Throughout the duration of the combat, either player can take actions to increase
-	// or decrease their distance from their opponents via various augs.
-	//
-	// A weapon cannot hit an opponent who is at a distance from the player greater than
-	// the weapon's range.
-	//
-	// This is subject to change and flexibility, but here's a general guide:
-	//
-	//   Range 0: Melee
-	//   Range 1: Shotguns
-	//   Range 2: Pistols
-	//   Range 3: Rifles
-	//   Range 4: Snipers
-	//
-	// An actor that is currently 'in flight' is always at distance greater than or equal to the
-	// flight effect magnitude from any opponent currently not in flight.
-	optional int32 range = 3;
-
-	optional bool two_handed = 4 [default = false];
-}
-
-message Accessory {
-	required ItemParams params = 1;
-}
-
-// Cannot be equipped, can only exist in the player's inventory.
-message StaticItem {
-	required ItemParams params = 1;
+	optional bool hidden = 8 [default = false];
 }
