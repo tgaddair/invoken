@@ -31,7 +31,7 @@ public class EffectEditorPanel extends AssetEditorPanel<Effect, EffectTable> {
 	private final JComboBox<Type> typeBox;
 	private final JComboBox<Range> rangeBox = new JComboBox<>(Range.values());
 	private final JTextField magnitudeField = new JTextField();
-	private final JTextField durationField = new JTextField("0");
+	private final JTextField durationField = new JTextField();
 	private final JComboBox<String> targetBox = new JComboBox<String>();
 
 	public EffectEditorPanel(EffectTable owner, JFrame frame, Optional<Effect> prev) {
@@ -79,7 +79,9 @@ public class EffectEditorPanel extends AssetEditorPanel<Effect, EffectTable> {
 			typeBox.setSelectedItem(effect.getType());
 			rangeBox.setSelectedItem(effect.getRange());
 			magnitudeField.setText(effect.getMagnitude() + "");
-			durationField.setText(effect.getDuration() + "");
+			if (effect.hasDuration()) {
+				durationField.setText(effect.getDuration() + "");
+			}
 			targetBox.setSelectedItem(effect.getTarget());
 		} else {
 			initFieldsFor((Type) typeBox.getSelectedItem());
@@ -108,6 +110,7 @@ public class EffectEditorPanel extends AssetEditorPanel<Effect, EffectTable> {
 				}
 				break;
 			case IMPERSONATE:
+			case AUTHORIZE:
 				values.addAll(MainPanel.FACTION_TABLE.getAssetIds());
 				break;
 			default:

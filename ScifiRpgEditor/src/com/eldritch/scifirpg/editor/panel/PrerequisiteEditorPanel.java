@@ -149,7 +149,7 @@ public class PrerequisiteEditorPanel extends AssetEditorPanel<Prerequisite, Prer
 				minEnabled = false;
 			case ITEM_HAS:
 				maxEnabled = false;
-				//values.addAll(MainPanel.ITEM_TABLE.getAssetIds());
+				values.addAll(MainPanel.ITEM_TABLE.getAssetIds());
 				break;
 			case STANDING_IS:
 				for (Standing s : Standing.values()) {

@@ -32,7 +32,7 @@ import com.jgoodies.forms.layout.FormLayout;
 public class ItemTable extends MajorAssetTable<Item> {
 	private static final long serialVersionUID = 1L;
 	private static final String[] COLUMN_NAMES = { 
-		"ID", "Name", "Type", "Value", "Droppable", "Hidden" };
+		"ID", "Name", "Type", "Value", "Effects", "Droppable", "Hidden" };
 	
 	public ItemTable() {
 		super(COLUMN_NAMES, "Item");
@@ -45,10 +45,14 @@ public class ItemTable extends MajorAssetTable<Item> {
 	
 	@Override
 	protected Object[] getDisplayFields(Item asset) {
+		String effects = "";
+		for (Effect e : asset.getEffectList()) {
+			effects += e.getType() + " ";
+		}
 		Object droppable = asset.getDroppable() ? "yes" : "";
 		Object hidden = asset.getHidden() ? "yes" : "";
 		return new Object[]{asset.getId(), asset.getName(), asset.getType(), asset.getValue(),
-				droppable, hidden};
+				effects, droppable, hidden};
 	}
 
 	@Override
