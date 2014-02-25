@@ -5,6 +5,8 @@ import java.awt.Dimension;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -283,7 +285,7 @@ public class EncounterEditorPanel extends AssetEditorPanel<Encounter, EncounterT
 		public RegionParams getParams() {
 			return RegionParams.newBuilder()
 					.setRowLength(Integer.parseInt(lengthField.getText()))
-					.addAllCell(cellTable.getAssets())
+					.addAllCell(cellTable.getSortedAssets())
 					.build();
 		}
 
@@ -303,6 +305,17 @@ public class EncounterEditorPanel extends AssetEditorPanel<Encounter, EncounterT
 
 		public CellTable() {
 			super(COLUMN_NAMES, "Cell");
+		}
+		
+		public List<Cell> getSortedAssets() {
+			List<Cell> assets = new ArrayList<>(getAssets());
+			Collections.sort(assets, new Comparator<Cell>() {
+				@Override
+				public int compare(Cell a1, Cell a2) {
+					return Integer.compare(a1.getPosition(), a2.getPosition());
+				}
+			});
+			return assets;
 		}
 
 		@Override
