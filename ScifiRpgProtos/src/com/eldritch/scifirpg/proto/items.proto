@@ -7,7 +7,7 @@ import "com/eldritch/scifirpg/proto/disciplines.proto";
 import "com/eldritch/scifirpg/proto/effects.proto";
 import "com/eldritch/scifirpg/proto/prerequisites.proto";
 
-message ItemParams {
+message Item {
 	enum Type {
 		MELEE_WEAPON = 0;
 		RANGED_WEAPON = 1;
