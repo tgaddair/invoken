@@ -1,11 +1,14 @@
 package com.eldritch.scifirpg.editor.tables;
 
+import java.util.List;
+
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import com.eldritch.scifirpg.editor.panel.OutcomeEditorPanel;
 import com.eldritch.scifirpg.proto.Outcomes.Outcome;
 import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableList;
 
 public class OutcomeTable extends AssetTable<Outcome> {
 	private static final long serialVersionUID = 1L;
@@ -14,6 +17,10 @@ public class OutcomeTable extends AssetTable<Outcome> {
 	
 	public OutcomeTable() {
 		super(COLUMN_NAMES, "Outcome");
+	}
+	
+	public List<String> getEncounterIds() {
+		return ImmutableList.of();
 	}
 
 	@Override
@@ -26,5 +33,19 @@ public class OutcomeTable extends AssetTable<Outcome> {
 		Object target = asset.hasTarget() ? asset.getTarget() : "";
 		Object count = asset.hasValue() ? asset.getValue() : "";
 		return new Object[]{asset.getType(), target, count, asset.getWeight()};
+	}
+	
+	public static class EncounterOutcomeTable extends OutcomeTable {
+		private static final long serialVersionUID = 1L;
+		private final EncounterTable table;
+		
+		public EncounterOutcomeTable(EncounterTable table) {
+			this.table = table;
+		}
+		
+		@Override
+		public List<String> getEncounterIds() {
+			return table.getAssetIds();
+		}
 	}
 }

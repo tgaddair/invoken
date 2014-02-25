@@ -124,6 +124,11 @@ public class OutcomeEditorPanel extends AssetEditorPanel<Outcome, OutcomeTable> 
 			case LOSE_FOLLOWER:
 				values.addAll(MainPanel.ACTOR_TABLE.getUniqueAssetIds());
 			case TELEPORT:
+				values.addAll(MainPanel.LOCATION_TABLE.getAssetIds());
+				countEnabled = false;
+				break;
+			case NEXT_ENCOUNTER:
+				values.addAll(getTable().getEncounterIds());
 				countEnabled = false;
 				break;
 			// No target

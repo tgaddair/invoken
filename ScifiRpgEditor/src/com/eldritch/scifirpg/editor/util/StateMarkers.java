@@ -8,7 +8,9 @@ public class StateMarkers {
 	public static List<String> getMarkers() {
 		return ImmutableList.<String>of(
 				"AssassinateVeraZan",
-				"KilledGothWithVera"
+				"KilledGothWithVera",
+				"KillVeraWithGoth",
+				"DetectedEnteringBasement"
 				);
 	}
 	

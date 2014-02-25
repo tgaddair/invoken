@@ -24,6 +24,7 @@ import com.eldritch.scifirpg.editor.MainPanel;
 import com.eldritch.scifirpg.editor.tables.AssetTable;
 import com.eldritch.scifirpg.editor.tables.EncounterTable;
 import com.eldritch.scifirpg.editor.tables.OutcomeTable;
+import com.eldritch.scifirpg.editor.tables.OutcomeTable.EncounterOutcomeTable;
 import com.eldritch.scifirpg.editor.tables.PrerequisiteTable;
 import com.eldritch.scifirpg.proto.Locations.Encounter;
 import com.eldritch.scifirpg.proto.Locations.Encounter.ActorParams;
@@ -180,7 +181,7 @@ public class EncounterEditorPanel extends AssetEditorPanel<Encounter, EncounterT
 		private static final long serialVersionUID = 1L;
 		
 		private final JTextArea descriptionField = createArea(true, 30, new Dimension(100, 100));
-		private final OutcomeTable outcomeTable = new OutcomeTable();
+		private final OutcomeTable outcomeTable = new EncounterOutcomeTable(getTable());
 		private final JCheckBox restCheck = new JCheckBox();
 		
 		public StaticEncounterPanel() {
@@ -341,7 +342,7 @@ public class EncounterEditorPanel extends AssetEditorPanel<Encounter, EncounterT
 		private final JTextArea descriptionField = createArea(true, 30, new Dimension(100, 100));
 		private final JCheckBox noSneakCheck = new JCheckBox();
 		private final ActorScenarioTable actorTable = new ActorScenarioTable();
-		private final OutcomeTable outcomeTable = new OutcomeTable();
+		private final OutcomeTable outcomeTable = new EncounterOutcomeTable(getTable());
 		
 		public ActorEncounterPanel() {
 			DefaultFormBuilder builder = createFormBuilder();
@@ -385,13 +386,15 @@ public class EncounterEditorPanel extends AssetEditorPanel<Encounter, EncounterT
 		}
 	}
 	
-	private static class ActorScenarioTable extends AssetTable<ActorScenario> {
+	private static final String[] SCENARIO_COLUMN_NAMES = { 
+		"Actor", "On Death" };
+	
+	private class ActorScenarioTable extends AssetTable<ActorScenario> {
 		private static final long serialVersionUID = 1L;
-		private static final String[] COLUMN_NAMES = { 
-			"Actor", "On Death" };
+		
 
 		public ActorScenarioTable() {
-			super(COLUMN_NAMES, "Actor Scenario");
+			super(SCENARIO_COLUMN_NAMES, "Actor Scenario");
 		}
 
 		@Override
@@ -409,11 +412,11 @@ public class EncounterEditorPanel extends AssetEditorPanel<Encounter, EncounterT
 		}
 	}
 	
-	private static class ActorScenarioPanel extends AssetEditorPanel<ActorScenario, ActorScenarioTable> {
+	private class ActorScenarioPanel extends AssetEditorPanel<ActorScenario, ActorScenarioTable> {
 		private static final long serialVersionUID = 1L;
 		
 		private final JComboBox<String> pointerBox = new JComboBox<String>();
-		private final OutcomeTable outcomeTable = new OutcomeTable();
+		private final OutcomeTable outcomeTable = new EncounterOutcomeTable(EncounterEditorPanel.this.getTable());
 		
 		public ActorScenarioPanel(ActorScenarioTable table, JFrame frame, Optional<ActorScenario> prev) {
 			super(table, frame, prev);
