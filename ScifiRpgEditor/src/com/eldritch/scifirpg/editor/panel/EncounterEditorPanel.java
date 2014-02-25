@@ -31,6 +31,7 @@ import com.eldritch.scifirpg.editor.tables.OutcomeTable.EncounterOutcomeTable;
 import com.eldritch.scifirpg.editor.tables.PrerequisiteTable;
 import com.eldritch.scifirpg.proto.Actors.DialogueTree;
 import com.eldritch.scifirpg.proto.Actors.DialogueTree.Response;
+import com.eldritch.scifirpg.proto.Actors.NonPlayerActor;
 import com.eldritch.scifirpg.proto.Locations.Encounter;
 import com.eldritch.scifirpg.proto.Locations.Encounter.ActorParams;
 import com.eldritch.scifirpg.proto.Locations.Encounter.ActorParams.ActorScenario;
@@ -491,8 +492,11 @@ public class EncounterEditorPanel extends AssetEditorPanel<Encounter, EncounterT
 			}
 			
 			List<String> values = new ArrayList<>();
-			for (String id : MainPanel.ACTOR_TABLE.getAssetIds()) {
-				if ((prev.isPresent() && prev.get().getActorId().equals(id))
+			for (NonPlayerActor actor : MainPanel.ACTOR_TABLE.getAssets()) {
+				String id = actor.getParams().getId();
+				if (!actor.getUnique()) {
+					values.add(id);
+				} else if ((prev.isPresent() && prev.get().getActorId().equals(id))
 						|| !currentIds.contains(id)) {
 					values.add(id);
 				}
