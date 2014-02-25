@@ -22,13 +22,17 @@ import javax.swing.JTextField;
 import com.eldritch.scifirpg.editor.AssetTablePanel;
 import com.eldritch.scifirpg.editor.MainPanel;
 import com.eldritch.scifirpg.editor.tables.AssetTable;
+import com.eldritch.scifirpg.editor.tables.DialogueTable;
 import com.eldritch.scifirpg.editor.tables.EncounterTable;
 import com.eldritch.scifirpg.editor.tables.OutcomeTable;
 import com.eldritch.scifirpg.editor.tables.OutcomeTable.EncounterOutcomeTable;
 import com.eldritch.scifirpg.editor.tables.PrerequisiteTable;
+import com.eldritch.scifirpg.proto.Actors.DialogueTree;
+import com.eldritch.scifirpg.proto.Actors.DialogueTree.Response;
 import com.eldritch.scifirpg.proto.Locations.Encounter;
 import com.eldritch.scifirpg.proto.Locations.Encounter.ActorParams;
 import com.eldritch.scifirpg.proto.Locations.Encounter.ActorParams.ActorScenario;
+import com.eldritch.scifirpg.proto.Locations.Encounter.DecisionParams;
 import com.eldritch.scifirpg.proto.Locations.Encounter.RegionParams;
 import com.eldritch.scifirpg.proto.Locations.Encounter.RegionParams.Cell;
 import com.eldritch.scifirpg.proto.Locations.Encounter.StaticParams;
@@ -55,6 +59,7 @@ public class EncounterEditorPanel extends AssetEditorPanel<Encounter, EncounterT
 	// Different cards for different types
 	private final JPanel cards;
 	private final StaticEncounterPanel staticPanel = new StaticEncounterPanel();
+	private final DecisionEncounterPanel decisionPanel = new DecisionEncounterPanel();
 	private final ActorEncounterPanel actorPanel = new ActorEncounterPanel();
 	private final RegionEncounterPanel regionPanel = new RegionEncounterPanel();
 
@@ -99,6 +104,7 @@ public class EncounterEditorPanel extends AssetEditorPanel<Encounter, EncounterT
 		
 		cards = new JPanel(new CardLayout());
 		cards.add(staticPanel, Type.STATIC.name());
+		cards.add(decisionPanel, Type.DECISION.name());
 		cards.add(actorPanel, Type.ACTOR.name());
 		cards.add(regionPanel, Type.REGION.name());
 		
@@ -127,6 +133,9 @@ public class EncounterEditorPanel extends AssetEditorPanel<Encounter, EncounterT
 			}
 			if (asset.hasStaticParams()) {
 				staticPanel.setParams(asset.getStaticParams());
+			}
+			if (asset.hasDecisionParams()) {
+				decisionPanel.setParams(asset.getDecisionParams());
 			}
 			if (asset.hasActorParams()) {
 				actorPanel.setParams(asset.getActorParams());
@@ -158,6 +167,9 @@ public class EncounterEditorPanel extends AssetEditorPanel<Encounter, EncounterT
 		switch (t) {
 			case STATIC:
 				encounter.setStaticParams(staticPanel.getParams());
+				break;
+			case DECISION:
+				encounter.setDecisionParams(decisionPanel.getParams());
 				break;
 			case ACTOR:
 				encounter.setActorParams(actorPanel.getParams());
@@ -214,6 +226,36 @@ public class EncounterEditorPanel extends AssetEditorPanel<Encounter, EncounterT
 			restCheck.setSelected(params.getRest());
 			for (Outcome o : params.getOutcomeList()) {
 				outcomeTable.addAsset(o);
+			}
+		}
+	}
+	
+	private class DecisionEncounterPanel extends EncounterParamPanel<DecisionParams> {
+		private static final long serialVersionUID = 1L;
+		
+		private final DialogueTable decisionTable = new DialogueTable();
+		
+		public DecisionEncounterPanel() {
+			DefaultFormBuilder builder = createFormBuilder();
+			builder.appendRow("fill:200dlu");
+			builder.append("Decisions:", decisionTable);
+			builder.nextLine();
+			
+			add(builder.getPanel());
+		}
+		
+		@Override
+		public DecisionParams getParams() {
+			DialogueTree dt = DialogueTree.newBuilder()
+					.addAllDialogue(decisionTable.getAssets())
+					.build();
+			return DecisionParams.newBuilder().setDecisionTree(dt).build();
+		}
+
+		@Override
+		public void setParams(DecisionParams params) {
+			for (Response r : params.getDecisionTree().getDialogueList()) {
+				decisionTable.addAsset(r);
 			}
 		}
 	}
@@ -340,7 +382,8 @@ public class EncounterEditorPanel extends AssetEditorPanel<Encounter, EncounterT
 		private static final long serialVersionUID = 1L;
 		
 		private final JTextArea descriptionField = createArea(true, 30, new Dimension(100, 100));
-		private final JCheckBox noSneakCheck = new JCheckBox();
+		private final JCheckBox noDetectCheck = new JCheckBox();
+		private final JCheckBox noFleeCheck = new JCheckBox();
 		private final ActorScenarioTable actorTable = new ActorScenarioTable();
 		private final OutcomeTable outcomeTable = new EncounterOutcomeTable(getTable());
 		
@@ -349,7 +392,10 @@ public class EncounterEditorPanel extends AssetEditorPanel<Encounter, EncounterT
 			builder.append("Description:", descriptionField);
 			builder.nextLine();
 			
-			builder.append("No Sneak:", noSneakCheck);
+			builder.append("No Detect:", noDetectCheck);
+			builder.nextLine();
+			
+			builder.append("No Flee:", noFleeCheck);
 			builder.nextLine();
 			
 			builder.appendRow("fill:120dlu");
@@ -367,7 +413,8 @@ public class EncounterEditorPanel extends AssetEditorPanel<Encounter, EncounterT
 		public ActorParams getParams() {
 			return ActorParams.newBuilder()
 					.setDescription(descriptionField.getText())
-					.setNoSneak(noSneakCheck.isSelected())
+					.setNoDetect(noDetectCheck.isSelected())
+					.setNoFlee(noFleeCheck.isSelected())
 					.addAllActorScenario(actorTable.getAssets())
 					.addAllOnFlee(outcomeTable.getAssets())
 					.build();
@@ -376,7 +423,8 @@ public class EncounterEditorPanel extends AssetEditorPanel<Encounter, EncounterT
 		@Override
 		public void setParams(ActorParams params) {
 			descriptionField.setText(params.getDescription());
-			noSneakCheck.setSelected(params.getNoSneak());
+			noDetectCheck.setSelected(params.getNoDetect());
+			noFleeCheck.setSelected(params.getNoFlee());
 			for (ActorScenario scenario : params.getActorScenarioList()) {
 				actorTable.addAsset(scenario);
 			}
@@ -416,7 +464,9 @@ public class EncounterEditorPanel extends AssetEditorPanel<Encounter, EncounterT
 		private static final long serialVersionUID = 1L;
 		
 		private final JComboBox<String> pointerBox = new JComboBox<String>();
+		private final JCheckBox essentialCheck = new JCheckBox();
 		private final OutcomeTable outcomeTable = new EncounterOutcomeTable(EncounterEditorPanel.this.getTable());
+		private final DialogueTable dialogueTable = new DialogueTable();
 		
 		public ActorScenarioPanel(ActorScenarioTable table, JFrame frame, Optional<ActorScenario> prev) {
 			super(table, frame, prev);
@@ -439,9 +489,16 @@ public class EncounterEditorPanel extends AssetEditorPanel<Encounter, EncounterT
 			builder.append("Actor:", pointerBox);
 			builder.nextLine();
 			
+			builder.append("Essential:", essentialCheck);
+			builder.nextLine();
+			
 			builder.appendRow("fill:120dlu");
 			builder.append("On Death:", new AssetTablePanel(outcomeTable));
-			builder.nextLine();;
+			builder.nextLine();
+			
+			builder.appendRow("fill:200dlu:grow");
+			builder.append("Dialogue:", new AssetTablePanel(dialogueTable));
+			builder.nextLine();
 
 			JButton saveButton = new JButton("Save");
 			saveButton.addActionListener(this);
@@ -451,8 +508,14 @@ public class EncounterEditorPanel extends AssetEditorPanel<Encounter, EncounterT
 			if (prev.isPresent()) {
 				ActorScenario scenario = prev.get();
 				pointerBox.setSelectedItem(scenario.getActorId());
+				essentialCheck.setSelected(scenario.getEssential());
 				for (Outcome o : scenario.getOnDeathList()) {
 					outcomeTable.addAsset(o);
+				}
+				if (scenario.hasDialogue()) {
+					for (Response r : scenario.getDialogue().getDialogueList()) {
+						dialogueTable.addAsset(r);
+					}
 				}
 			}
 
@@ -462,10 +525,17 @@ public class EncounterEditorPanel extends AssetEditorPanel<Encounter, EncounterT
 		@Override
 		public ActorScenario createAsset() {
 			String id = (String) pointerBox.getSelectedItem();
-			return ActorScenario.newBuilder()
+			ActorScenario.Builder as = ActorScenario.newBuilder()
 					.setActorId(id)
-					.addAllOnDeath(outcomeTable.getAssets())
-					.build();
+					.setEssential(essentialCheck.isSelected())
+					.addAllOnDeath(outcomeTable.getAssets());
+			if (!dialogueTable.getAssets().isEmpty()) {
+				DialogueTree dialogue = DialogueTree.newBuilder()
+						.addAllDialogue(dialogueTable.getAssets())
+						.build();
+				as.setDialogue(dialogue);
+			}
+			return as.build();
 		}
 	}
 	

@@ -19,6 +19,7 @@ import com.eldritch.scifirpg.editor.tables.PrerequisiteTable;
 import com.eldritch.scifirpg.editor.util.StateMarkers;
 import com.eldritch.scifirpg.proto.Disciplines.Discipline;
 import com.eldritch.scifirpg.proto.Disciplines.Influence;
+import com.eldritch.scifirpg.proto.Effects.Effect;
 import com.eldritch.scifirpg.proto.Prerequisites.Prerequisite;
 import com.eldritch.scifirpg.proto.Prerequisites.Prerequisite.Type;
 import com.eldritch.scifirpg.proto.Prerequisites.Standing;
@@ -124,8 +125,10 @@ public class PrerequisiteEditorPanel extends AssetEditorPanel<Prerequisite, Prer
 			case INFLUENCE_BETWEEN:
 				targetEnabled = false;
 				break;
-			case AUG_REMAINING:
-				values.addAll(MainPanel.AUGMENTATION_TABLE.getAssetIds());
+			case AUG_AVAILABLE:
+				for (Effect.Type effect : Effect.Type.values()) {
+					values.add(effect.name());
+				}
 				maxEnabled = false;
 				break;
 			case INFLUENCE_AUG:
