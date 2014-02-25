@@ -12,11 +12,14 @@ message Outcome {
 		AUG_USE = 3; // COUNT uses of TARGET augmentation
 		AUG_GAIN = 4; // TARGET augmentation added to inventory
 		TELEPORT = 5; // TARGET destination
+		NEXT_ENCOUNTER = 16; // Set successor encounter
 		HP_CHANGE = 6; // COUNT change in player health
+		MISSION_SET = 9; // Set mission stage to TARGET
+
+		// Dialogue
 		INFLUENCE_MOD = 7; // COUNT change in current dialogue disposition
 		INFLUENCE_RESET = 8; // Reset dialogue disposition variable to its initial state
-		MISSION_SET = 9; // Set mission stage to TARGET
-		START_COMBAT = 10;
+		START_COMBAT = 10; // Only applies to dialogue in actor encounter
 
 		// Add and remove state markers for tracking the state of specific events.
 		ADD_MARKER = 11;
