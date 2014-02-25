@@ -28,6 +28,7 @@ message Effect {
 		ROB = 3; // Steal money or item from the TARGET
 		STALK = 4; // Increase damage multiplier by MAGNITUDE without being detected
 		IMPERSONATE = 5; // Pretend to belong to TARGET faction with rank MAGNITUDE
+		AUTHORIZE = 39; // Does not improve reaction, but prevents trespass
 
 		// Deceive - Espionage
 		DETECT_EQUIPMENT = 6; // Discover what equipment TARGET has currently
