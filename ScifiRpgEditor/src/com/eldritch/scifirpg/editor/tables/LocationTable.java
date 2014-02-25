@@ -15,6 +15,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import com.eldritch.scifirpg.editor.AssetTablePanel;
+import com.eldritch.scifirpg.editor.MainPanel;
 import com.eldritch.scifirpg.editor.panel.AssetEditorPanel;
 import com.eldritch.scifirpg.proto.Locations.Encounter;
 import com.eldritch.scifirpg.proto.Locations.Location;
@@ -67,6 +68,8 @@ public class LocationTable extends MajorAssetTable<Location> {
 		private final JTextField idField = new JTextField();
 		private final JTextField nameField = new JTextField();
 		private final JComboBox<String> parentBox = new JComboBox<String>();
+		private final JComboBox<String> factionBox = new JComboBox<String>();
+		private final JTextField minRankField = new JTextField();
 		private final EncounterTable encounterTable = new EncounterTable();
 
 		public LocationEditorPanel(LocationTable owner, JFrame frame, Optional<Location> prev) {
@@ -96,6 +99,16 @@ public class LocationTable extends MajorAssetTable<Location> {
 			builder.append("Parent:", parentBox);
 			builder.nextLine();
 			
+			List<String> fIds = new ArrayList<>();
+			fIds.add("");
+			fIds.addAll(MainPanel.FACTION_TABLE.getAssetIds());
+			factionBox.setModel(new DefaultComboBoxModel<String>(fIds.toArray(new String[0])));
+			builder.append("Faction:", factionBox);
+			builder.nextLine();
+			
+			builder.append("Min Rank:", minRankField);
+			builder.nextLine();
+			
 			builder.appendRow("fill:p:grow");
 			builder.append("Encounters:", new AssetTablePanel(encounterTable));
 			builder.nextLine();
@@ -111,6 +124,12 @@ public class LocationTable extends MajorAssetTable<Location> {
 				nameField.setText(loc.getName());
 				if (loc.hasParentId()) {
 					parentBox.setSelectedItem(loc.getParentId());
+				}
+				if (loc.hasFactionId()) {
+					factionBox.setSelectedItem(loc.getFactionId());
+				}
+				if (loc.hasMinRank()) {
+					minRankField.setText(loc.getMinRank() + "");
 				}
 				for (Encounter e : loc.getEncounterList()) {
 					encounterTable.addAsset(e);
@@ -130,6 +149,13 @@ public class LocationTable extends MajorAssetTable<Location> {
 			String parentId = (String) parentBox.getSelectedItem();
 			if (!parentId.isEmpty()) {
 				location.setParentId(parentId);
+			}
+			String factionId = (String) factionBox.getSelectedItem();
+			if (!factionId.isEmpty()) {
+				location.setFactionId(factionId);
+				if (!minRankField.getText().isEmpty()) {
+					location.setMinRank(Integer.parseInt(minRankField.getText()));
+				}
 			}
 			return location.build();
 		}

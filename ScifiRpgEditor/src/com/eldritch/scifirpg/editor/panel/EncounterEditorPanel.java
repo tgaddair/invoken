@@ -78,6 +78,7 @@ public class EncounterEditorPanel extends AssetEditorPanel<Encounter, EncounterT
 		builder.append("Type:", typeBox);
 		builder.nextLine();
 		
+		weightField.setText("1.0");
 		builder.append("Weight:", weightField);
 		builder.nextLine();
 		
@@ -238,7 +239,7 @@ public class EncounterEditorPanel extends AssetEditorPanel<Encounter, EncounterT
 		public DecisionEncounterPanel() {
 			DefaultFormBuilder builder = createFormBuilder();
 			builder.appendRow("fill:200dlu");
-			builder.append("Decisions:", decisionTable);
+			builder.append("Decisions:", new AssetTablePanel(decisionTable));
 			builder.nextLine();
 			
 			add(builder.getPanel());
