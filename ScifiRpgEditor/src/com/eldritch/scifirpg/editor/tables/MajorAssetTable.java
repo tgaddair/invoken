@@ -6,8 +6,8 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
+
+import javax.swing.JOptionPane;
 
 import com.google.common.base.Optional;
 import com.google.protobuf.Message;
@@ -28,6 +28,19 @@ public abstract class MajorAssetTable<T extends Message> extends IdentifiedAsset
 			prev = Optional.<T>absent();
 		}
 		addAsset(prev, asset);
+	}
+	
+	@Override
+	protected void handleDeleteAsset(int row) {
+		T asset = getModel().getAsset(row);
+		int dialogResult = JOptionPane.showConfirmDialog(null,
+				"Delete asset " + getAssetId(asset) + "?", "Warning", JOptionPane.YES_NO_OPTION);
+		if (dialogResult == JOptionPane.YES_OPTION) {
+			super.handleDeleteAsset(row);
+			
+			// No exceptions - do the delete
+			delete(asset);
+		}
 	}
 	
 	protected abstract String getAssetDirectory();
@@ -58,12 +71,26 @@ public abstract class MajorAssetTable<T extends Message> extends IdentifiedAsset
 	}
 
 	protected void write(T asset, String directory, String id) {
-		String filename = String.format("%s/%s/%s.dat", getTopAssetDirectory(), directory, id);
+		String filename = getFilename(directory, id);
 		try (DataOutputStream os = new DataOutputStream(new FileOutputStream(filename))) {
 			os.write(asset.toByteArray());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	protected void delete(T asset) {
+		String filename = getFilename(getAssetDirectory(), getAssetId(asset));
+		try {
+			File file = new File(filename);
+			file.delete();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	protected String getFilename(String directory, String id) {
+		return String.format("%s/%s/%s.dat", getTopAssetDirectory(), directory, id);
 	}
 	
 	protected String getTopAssetDirectory() {
