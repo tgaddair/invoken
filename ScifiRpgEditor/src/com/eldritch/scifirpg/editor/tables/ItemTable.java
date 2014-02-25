@@ -18,6 +18,7 @@ import javax.swing.JTextField;
 
 import com.eldritch.scifirpg.editor.AssetTablePanel;
 import com.eldritch.scifirpg.editor.panel.AssetEditorPanel;
+import com.eldritch.scifirpg.editor.panel.AssetEditorPanel.NameTypedListener;
 import com.eldritch.scifirpg.proto.Disciplines.Discipline;
 import com.eldritch.scifirpg.proto.Effects.DamageType;
 import com.eldritch.scifirpg.proto.Effects.Effect;
@@ -89,10 +90,11 @@ public class ItemTable extends MajorAssetTable<Item> {
 			builder.appendColumn("3dlu");
 			builder.appendColumn("fill:max(pref; 100px)");
 			
-			builder.append("ID:", idField);
-			builder.nextLine();
-
+			nameField.addActionListener(new NameTypedListener(idField));
 			builder.append("Name:", nameField);
+			builder.nextLine();
+			
+			builder.append("ID:", idField);
 			builder.nextLine();
 
 			builder.append("Type:", typeBox);
