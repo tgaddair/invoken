@@ -18,7 +18,6 @@ import javax.swing.JTextField;
 
 import com.eldritch.scifirpg.editor.AssetTablePanel;
 import com.eldritch.scifirpg.editor.panel.AssetEditorPanel;
-import com.eldritch.scifirpg.editor.panel.AssetEditorPanel.NameTypedListener;
 import com.eldritch.scifirpg.proto.Disciplines.Discipline;
 import com.eldritch.scifirpg.proto.Effects.DamageType;
 import com.eldritch.scifirpg.proto.Effects.Effect;
