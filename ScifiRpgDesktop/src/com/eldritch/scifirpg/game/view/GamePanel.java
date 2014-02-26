@@ -3,6 +3,7 @@ package com.eldritch.scifirpg.game.view;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
+import com.eldritch.scifirpg.game.Application;
 import com.eldritch.scifirpg.game.model.GameState;
 import com.eldritch.scifirpg.proto.Locations.Location;
 
@@ -21,6 +22,7 @@ public class GamePanel extends JPanel {
             public void run() {
                 removeAll();
                 add(new LocationPanel(model.getLocationModel()));
+                Application.getApplication().getFrame().revalidate();
             }
         });
 	}

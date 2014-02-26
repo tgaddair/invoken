@@ -27,6 +27,7 @@ public class Application {
             public void run() {
                 mainPanel.removeAll();
                 mainPanel.add(panel);
+                frame.revalidate();
             }
 	    });
 	}
@@ -37,6 +38,10 @@ public class Application {
 	
 	public MainPanel getMainPanel() {
 		return mainPanel;
+	}
+	
+	public JFrame getFrame() {
+	    return frame;
 	}
 	
 	private void createAndShowGUI() {
