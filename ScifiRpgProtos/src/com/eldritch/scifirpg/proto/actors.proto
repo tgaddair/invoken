@@ -80,9 +80,10 @@ message ActorParams {
 		optional int32 rank = 3;
 	}
 
-	message Item {
+	message InventoryItem {
 		optional string item_id = 1; // OPTIONAL: may change to int32
-		required int32 count = 2;
+		required int32 count = 2 [default = 1];
+		optional double drop_chance = 3 [default = 1.0];
 	}
 
 	// Names for various dialogue scenarios
@@ -98,7 +99,7 @@ message ActorParams {
 	required int32 level = 6;
 	repeated Skill skill = 7;
 	repeated FactionStatus faction_status = 8;
-	repeated Item inventory_item = 9;
+	repeated InventoryItem inventory_item = 9;
 	repeated string known_aug_id = 10;
 }
 
