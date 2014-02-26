@@ -3,6 +3,10 @@ package com.eldritch.scifirpg.editor.panel;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import javax.swing.*;
 
@@ -10,17 +14,18 @@ import com.eldritch.scifirpg.editor.AssetTablePanel;
 import com.eldritch.scifirpg.editor.MainPanel;
 import com.eldritch.scifirpg.editor.tables.ActorTable;
 import com.eldritch.scifirpg.editor.tables.AssetPointerTable;
+import com.eldritch.scifirpg.editor.tables.AssetTable;
 import com.eldritch.scifirpg.editor.tables.DialogueTable;
 import com.eldritch.scifirpg.editor.tables.FactionStatusTable;
-import com.eldritch.scifirpg.editor.tables.RequirementTable;
+import com.eldritch.scifirpg.editor.tables.ItemTable;
 import com.eldritch.scifirpg.editor.tables.SkillTable;
 import com.eldritch.scifirpg.editor.tables.TraitTable;
 import com.eldritch.scifirpg.editor.util.ProfessionUtil;
 import com.eldritch.scifirpg.proto.Actors.ActorParams;
+import com.eldritch.scifirpg.proto.Actors.ActorParams.InventoryItem;
 import com.eldritch.scifirpg.proto.Actors.DialogueTree;
 import com.eldritch.scifirpg.proto.Actors.ActorParams.FactionStatus;
 import com.eldritch.scifirpg.proto.Actors.ActorParams.Gender;
-import com.eldritch.scifirpg.proto.Actors.ActorParams.Item;
 import com.eldritch.scifirpg.proto.Actors.ActorParams.Skill;
 import com.eldritch.scifirpg.proto.Actors.ActorParams.Species;
 import com.eldritch.scifirpg.proto.Actors.DialogueTree.Response;
@@ -32,6 +37,7 @@ import com.eldritch.scifirpg.proto.Actors.NonPlayerActor.Trait;
 import com.eldritch.scifirpg.proto.Augmentations.Augmentation;
 import com.eldritch.scifirpg.proto.Disciplines.Profession;
 import com.google.common.base.Optional;
+import com.jgoodies.forms.builder.DefaultFormBuilder;
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.layout.CellConstraints;
@@ -48,7 +54,7 @@ public class ActorEditorPanel extends AssetEditorPanel<NonPlayerActor, ActorTabl
 	private final JTextField levelField = new JTextField();
 	private final AssetPointerTable<Augmentation> augmentationTable =
 			new AssetPointerTable<Augmentation>(MainPanel.AUGMENTATION_TABLE);
-	private final RequirementTable itemTable = new RequirementTable();
+	private final InventoryTable itemTable = new InventoryTable();
 	private final SkillTable skillTable = new SkillTable();
 	private final FactionStatusTable factionTable = new FactionStatusTable();
 	private final DialogueTable dialogueTable = new DialogueTable();
@@ -179,8 +185,8 @@ public class ActorEditorPanel extends AssetEditorPanel<NonPlayerActor, ActorTabl
 			for (FactionStatus fs : params.getFactionStatusList()) {
 				factionTable.addAsset(fs);
 			}
-			for (Item item : params.getInventoryItemList()) {
-				//itemTable.addAsset(item);
+			for (InventoryItem item : params.getInventoryItemList()) {
+				itemTable.addAsset(item);
 			}
 			for (String augId : params.getKnownAugIdList()) {
 				augmentationTable.addAssetId(augId);
@@ -213,7 +219,7 @@ public class ActorEditorPanel extends AssetEditorPanel<NonPlayerActor, ActorTabl
 				.setLevel(Integer.parseInt(levelField.getText()))
 				.addAllSkill(skillTable.getAssets())
 				.addAllFactionStatus(factionTable.getAssets())
-				//.addAllInventoryItem(itemTable.getAssets())
+				.addAllInventoryItem(itemTable.getAssets())
 				.addAllKnownAugId(augmentationTable.getAssetIds());
 		if (genderBox.isEnabled()) {
 			params.setGender((Gender) genderBox.getSelectedItem());
@@ -271,6 +277,90 @@ public class ActorEditorPanel extends AssetEditorPanel<NonPlayerActor, ActorTabl
 			for (Skill asset : ProfessionUtil.getSkillsFor(profession, level)) {
 				skillTable.addAsset(asset);
 			}
+		}
+	}
+	
+	public static class InventoryTable extends AssetTable<InventoryItem> {
+		private static final long serialVersionUID = 1L;
+		private static final String[] COLUMN_NAMES = { 
+			"Item", "Count", "Drop Chance" };
+		
+		public InventoryTable() {
+			super(COLUMN_NAMES, "Faction Status");
+		}
+
+		@Override
+		protected JPanel getEditorPanel(Optional<InventoryItem> prev, JFrame frame) {
+			return new InventoryPanel(this, frame, prev);
+		}
+		
+		@Override
+		protected Object[] getDisplayFields(InventoryItem item) {
+			return new Object[]{item.getItemId(), item.getCount(), item.getDropChance()};
+		}
+	}
+	
+	public static class InventoryPanel extends AssetEditorPanel<InventoryItem, InventoryTable> {
+		private static final long serialVersionUID = 1L;
+		
+		private final JComboBox<String> pointerBox = new JComboBox<String>();
+		private final JTextField countField = new JTextField("1");
+		private final JTextField dropField = new JTextField("1.0");
+		
+		public InventoryPanel(InventoryTable table, JFrame frame, Optional<InventoryItem> prev) {
+			super(table, frame, prev);
+			
+			DefaultFormBuilder builder = new DefaultFormBuilder(new FormLayout(""));
+			builder.border(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+			builder.appendColumn("right:pref");
+			builder.appendColumn("3dlu");
+			builder.appendColumn("fill:max(pref; 100px)");
+			
+			ItemTable majorTable = MainPanel.ITEM_TABLE;
+			Set<String> currentIds = new HashSet<>();
+			for (InventoryItem item : table.getAssets()) {
+				currentIds.add(item.getItemId());
+			}
+			List<String> values = new ArrayList<>();
+			for (String id : majorTable.getAssetIds()) {
+				if ((prev.isPresent() && prev.get().getItemId().equals(id))
+						|| !currentIds.contains(id)) {
+					values.add(id);
+				}
+			}
+			pointerBox.setModel(new DefaultComboBoxModel<String>(values.toArray(new String[0])));
+			builder.append("Item:", pointerBox);
+			builder.nextLine();
+			
+			builder.append("Count:", countField);
+			builder.nextLine();
+			
+			builder.append("Drop Chance:", dropField);
+			builder.nextLine();
+
+			JButton saveButton = new JButton("Save");
+			saveButton.addActionListener(this);
+			builder.append(saveButton);
+			builder.nextLine();
+			
+			if (prev.isPresent()) {
+				InventoryItem asset = prev.get();
+				pointerBox.setSelectedItem(asset.getItemId());
+				countField.setText(asset.getCount() + "");
+				dropField.setText(asset.getDropChance() + "");
+			}
+
+			add(builder.getPanel());
+		}
+
+		@Override
+		public InventoryItem createAsset() {
+			String id = (String) pointerBox.getSelectedItem();
+			return InventoryItem.newBuilder()
+					.setItemId(id)
+					.setCount(Integer.parseInt(countField.getText()))
+					.setDropChance(Double.parseDouble(dropField.getText()))
+					.build();
 		}
 	}
 }
