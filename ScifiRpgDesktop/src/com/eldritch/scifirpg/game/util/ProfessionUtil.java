@@ -134,6 +134,23 @@ public class ProfessionUtil {
 		return skills;
 	}
 	
+	public static Map<Discipline, Skill.Builder> getStartingSkillsFor(Profession p) {
+		// All skills default to 10
+		Map<Discipline, Skill.Builder> skills = new LinkedHashMap<>();
+		for (Discipline d : Discipline.values()) {
+			skills.put(d, Skill.newBuilder().setDiscipline(d).setLevel(10));
+		}
+		
+		// Assign 10 additional skill levels for each mastery
+		Collection<Discipline> masteries = getMasteriesFor(p);
+		for (Discipline d : masteries) {
+			Skill.Builder s = skills.get(d);
+			s.setLevel(s.getLevel() + 10);
+		}
+		
+		return skills;
+	}
+	
 	public static List<Skill> getSkillsFor(Profession p, int level) {
 		// All skills default to 10
 		Map<Discipline, Skill.Builder> skills = new LinkedHashMap<>();

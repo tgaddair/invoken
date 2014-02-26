@@ -15,7 +15,6 @@ import javax.swing.JPanel;
 
 import com.eldritch.scifirpg.game.util.ProfessionUtil;
 import com.eldritch.scifirpg.proto.Disciplines.Discipline;
-import com.eldritch.scifirpg.proto.Disciplines.Influence;
 import com.eldritch.scifirpg.proto.Disciplines.Profession;
 import com.jgoodies.forms.builder.DefaultFormBuilder;
 import com.jgoodies.forms.layout.FormLayout;
@@ -90,7 +89,5 @@ public class ProfessionPanel extends JPanel implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent ev) {
-		Discipline d1 = (Discipline) discipline1.getSelectedItem();
-		Discipline d2 = (Discipline) discipline2.getSelectedItem();
 	}
 }
