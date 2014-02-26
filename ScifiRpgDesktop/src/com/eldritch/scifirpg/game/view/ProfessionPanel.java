@@ -13,6 +13,8 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import com.eldritch.scifirpg.game.Application;
+import com.eldritch.scifirpg.game.model.GameState;
 import com.eldritch.scifirpg.game.util.ProfessionUtil;
 import com.eldritch.scifirpg.proto.Disciplines.Discipline;
 import com.eldritch.scifirpg.proto.Disciplines.Profession;
@@ -25,6 +27,7 @@ public class ProfessionPanel extends JPanel implements ActionListener {
 	private final JComboBox<Discipline> discipline1 = new JComboBox<Discipline>(Discipline.values());
 	private final JComboBox<Discipline> discipline2 = new JComboBox<Discipline>(Discipline.values());
 	private final JLabel profLabel = new JLabel();
+	private Profession profession;
 
 	public ProfessionPanel() {
 		DefaultFormBuilder builder = new DefaultFormBuilder(new FormLayout(""));
@@ -68,6 +71,7 @@ public class ProfessionPanel extends JPanel implements ActionListener {
 					Discipline d1 = (Discipline) discipline1.getSelectedItem();
 					Profession p = ProfessionUtil.getProfessionFor(d1, d2);
 					profLabel.setText(p.name());
+					profession = p;
 				} else {
 					profLabel.setText("");
 				}
@@ -89,5 +93,7 @@ public class ProfessionPanel extends JPanel implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent ev) {
+	    GameState gameState = new GameState(profession);
+	    Application.getApplication().setPanel(new GamePanel(gameState));
 	}
 }

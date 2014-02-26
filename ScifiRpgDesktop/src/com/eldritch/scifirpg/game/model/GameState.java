@@ -19,7 +19,15 @@ public class GameState {
 		location = locationMarshaller.readAsset("IlithExterior");
 	}
 	
-	public LocationModel getLocation() {
+	public void setLocation(String locationId) {
+	    setLocation(locationMarshaller.readAsset(locationId));
+	}
+	
+	public void setLocation(Location location) {
+	    this.location = location;
+	}
+	
+	public LocationModel getLocationModel() {
 		return new LocationModel(location);
 	}
 }

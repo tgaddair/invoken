@@ -4,32 +4,44 @@ import java.awt.BorderLayout;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 
 import com.eldritch.scifirpg.game.MainPanel;
+import com.eldritch.scifirpg.game.view.GamePanel;
 
 public class Application {
-private final MainPanel panel;
+    private final JFrame frame;
+    private final MainPanel mainPanel;
 	
 	private Application() {
-		panel = new MainPanel();
+	    // Create and set up the window.
+        frame = new JFrame("SciFi RPG: The Game");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        
+	    mainPanel = new MainPanel();
 	}
 	
-	public void setPanel(JPanel panel) {
-		panel.removeAll();
-		panel.add(panel);
+	public void setPanel(final JPanel panel) {
+	    SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                mainPanel.removeAll();
+                mainPanel.add(panel);
+            }
+	    });
+	}
+	
+	public GamePanel getGamePanel() {
+	    return mainPanel.getGamePanel();
 	}
 	
 	public MainPanel getMainPanel() {
-		return panel;
+		return mainPanel;
 	}
 	
 	private void createAndShowGUI() {
-        // Create and set up the window.
-        JFrame frame = new JFrame("SciFi RPG: The Game");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
- 
         // Add content to the window.
-        frame.add(panel, BorderLayout.CENTER);
+        frame.add(mainPanel, BorderLayout.CENTER);
         
         // Display the window.
         frame.pack();
