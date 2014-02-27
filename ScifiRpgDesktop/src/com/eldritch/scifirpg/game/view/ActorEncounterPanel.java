@@ -14,26 +14,32 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 
-import com.eldritch.scifirpg.game.model.StaticEncounter;
+import com.eldritch.scifirpg.game.model.ActorEncounter;
+import com.eldritch.scifirpg.game.model.ActorModel;
+import com.eldritch.scifirpg.proto.Actors.NonPlayerActor;
 import com.jgoodies.forms.builder.DefaultFormBuilder;
 import com.jgoodies.forms.layout.FormLayout;
 
-public class StaticEncounterPanel extends JPanel {
+public class ActorEncounterPanel extends JPanel {
     private static final long serialVersionUID = 1L;
     
-    public StaticEncounterPanel(StaticEncounter encounter) {
+    public ActorEncounterPanel(ActorEncounter encounter, ActorModel model) {
         super(new BorderLayout());
         DefaultFormBuilder builder = new DefaultFormBuilder(new FormLayout(""));
         builder.border(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         builder.appendColumn("fill:max(p; 100px):grow");
         
+        for (NonPlayerActor actor : encounter.getActors(model)) {
+            
+        }
+        
         builder.appendRow("fill:200dlu");
         builder.append(createArea(encounter.getDescription()));
         builder.nextLine();
         
-        if (encounter.canRest()) {
+        if (encounter.canFlee()) {
             JPanel buttonPanel = new JPanel(new FlowLayout());
-            final JButton button = new JButton("Rest");
+            final JButton button = new JButton("Flee");
             button.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent ev) {

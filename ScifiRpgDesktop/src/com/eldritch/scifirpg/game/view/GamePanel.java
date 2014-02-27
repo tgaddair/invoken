@@ -9,20 +9,20 @@ import com.eldritch.scifirpg.game.model.LocationModel;
 
 public class GamePanel extends JPanel {
 	private static final long serialVersionUID = 1L;
-	private final GameState model;
+	private final GameState state;
 	
-	public GamePanel(GameState model) {
+	public GamePanel(GameState state) {
 	    super(new BorderLayout());
-		this.model = model;
+		this.state = state;
 		
-		LocationModel locationModel = model.getLocationModel();
-		LocationPanel locationPanel = new LocationPanel(locationModel);
+		LocationModel locationModel = state.getLocationModel();
+		LocationPanel locationPanel = new LocationPanel(state, locationModel);
 		locationModel.register(locationPanel);
 		
 		add(locationPanel);
 	}
 	
 	public GameState getModel() {
-	    return model;
+	    return state;
 	}
 }
