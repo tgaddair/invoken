@@ -10,9 +10,11 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 import javax.swing.BorderFactory;
+import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
 import javax.swing.border.CompoundBorder;
@@ -22,6 +24,7 @@ import javax.swing.border.LineBorder;
 import com.eldritch.scifirpg.game.model.ActorEncounter;
 import com.eldritch.scifirpg.game.model.ActorModel;
 import com.eldritch.scifirpg.game.model.ActorModel.NpcState;
+import com.eldritch.scifirpg.proto.Actors.DialogueTree.Choice;
 import com.eldritch.scifirpg.proto.Actors.DialogueTree.Response;
 import com.jgoodies.forms.builder.DefaultFormBuilder;
 import com.jgoodies.forms.layout.FormLayout;
@@ -67,6 +70,15 @@ public class ActorEncounterPanel extends JPanel {
             greetArea.setOpaque(false);
             builder.append(actor.getName(), greetArea);
             builder.nextLine();
+            
+            ButtonGroup group = new ButtonGroup();
+            for (Choice c : greeting.getChoiceList()) {
+                JRadioButton radio = new JRadioButton("<html>" + c.getText() + "</html>");
+                group.add(radio);
+                
+                builder.append(radio);
+                builder.nextLine();
+            }
         }
         
         builder.appendRow("fill:p:grow");
