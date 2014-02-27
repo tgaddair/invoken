@@ -33,11 +33,7 @@ public class ActorEncounter extends AbstractEncounter {
         return !params.getNoFlee();
     }
     
-    public List<NonPlayerActor> getActors(ActorModel model) {
-        List<NonPlayerActor> actors = new ArrayList<>();
-        for (ActorScenario scenario : params.getActorScenarioList()) {
-            actors.add(model.getActor(scenario.getActorId()));
-        }
-        return actors;
+    public List<ActorScenario> getScenarios() {
+        return params.getActorScenarioList();
     }
 }

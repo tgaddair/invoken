@@ -41,6 +41,8 @@ public class RegionEncounterPanel extends JPanel {
         JLabel label = new JLabel(cell.getLocationId());
         label.setBorder(BorderFactory.createLineBorder(Color.black));
         label.setHorizontalAlignment(SwingConstants.CENTER);
+        label.setBackground(Color.WHITE);
+        label.setOpaque(true);
         
         label.addMouseListener(new MouseAdapter() {
             @Override
