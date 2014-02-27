@@ -60,29 +60,8 @@ public class ActorEncounterPanel extends JPanel {
         }
         builder.append(actorPanel);
         
-        ActionPanel actionPanel = new ActionPanel();
-        if (!actors.isEmpty()) {
-            NpcState actor = actors.iterator().next();
-            Response greeting = actor.getGreeting();
-            
-            JTextArea greetArea = createArea(greeting.getText());
-            greetArea.setBorder(null);
-            greetArea.setOpaque(false);
-            builder.append(actor.getName(), greetArea);
-            builder.nextLine();
-            
-            ButtonGroup group = new ButtonGroup();
-            for (Choice c : greeting.getChoiceList()) {
-                JRadioButton radio = new JRadioButton("<html>" + c.getText() + "</html>");
-                group.add(radio);
-                
-                builder.append(radio);
-                builder.nextLine();
-            }
-        }
-        
         builder.appendRow("fill:p:grow");
-        builder.append(actionPanel);
+        builder.append(new ActionPanel());
         builder.nextLine();
         
         if (encounter.canFlee()) {
@@ -113,9 +92,39 @@ public class ActorEncounterPanel extends JPanel {
         return area;
     }
     
-    private static class ActionPanel extends JPanel {
+    private class ActionPanel extends JPanel {
+        private static final long serialVersionUID = 1L;
+
         public ActionPanel() {
             super(new BorderLayout());
+            
+            DefaultFormBuilder builder = new DefaultFormBuilder(new FormLayout(""));
+            builder.border(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+            builder.appendColumn("fill:max(p; 100px):grow");
+            
+            if (!actors.isEmpty()) {
+                NpcState actor = actors.iterator().next();
+                Response greeting = actor.getGreeting();
+                
+                JTextArea greetArea = createArea(greeting.getText());
+                greetArea.setBorder(null);
+                greetArea.setOpaque(false);
+                builder.append(actor.getName(), greetArea);
+                builder.nextLine();
+                
+                ButtonGroup group = new ButtonGroup();
+                for (Choice c : greeting.getChoiceList()) {
+                    JRadioButton radio = new JRadioButton("<html>" + c.getText() + "</html>");
+                    group.add(radio);
+                    
+                    builder.append(radio);
+                    builder.nextLine();
+                    //add(radio);
+                }
+            }
+            
+            
+            add(builder.getPanel());
         }
     }
 }
