@@ -7,6 +7,7 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 import com.eldritch.scifirpg.game.MainPanel;
+import com.eldritch.scifirpg.game.model.GameState;
 import com.eldritch.scifirpg.game.view.GamePanel;
 
 public class Application {
@@ -61,6 +62,10 @@ public class Application {
                 getApplication().createAndShowGUI();
             }
         });
+	}
+	
+	public static GameState getGameState() {
+	    return getApplication().getGamePanel().getModel();
 	}
 	
 	public static Application getApplication() {

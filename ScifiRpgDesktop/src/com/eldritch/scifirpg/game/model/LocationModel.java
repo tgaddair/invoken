@@ -4,19 +4,32 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import com.eldritch.scifirpg.game.util.LocationMarshaller;
 import com.eldritch.scifirpg.proto.Locations.Encounter;
 import com.eldritch.scifirpg.proto.Locations.Location;
 
 public class LocationModel {
-    private final Location location;
+    private Location location;
+    private final LocationMarshaller locationMarshaller = new LocationMarshaller();
     private final List<AbstractEncounter> encounters = new ArrayList<>();
+    private final List<LocationListener> listeners = new ArrayList<>();
 
-    public LocationModel(Location location) {
-        this.location = location;
+    public LocationModel(String locid) {
+        location = locationMarshaller.readAsset(locid);
         for (Encounter encounter : location.getEncounterList()) {
             encounters.add(AbstractEncounter.getEncounter(encounter));
         }
         Collections.sort(encounters);
+    }
+    
+    public void returnToPreviousLocation() {
+        if (location.hasParentId()) {
+            setCurrent(location.getParentId());
+        }
+    }
+    
+    public void setCurrent(String locid) {
+        location = locationMarshaller.readAsset(locid);
     }
 
     public AbstractEncounter drawEncounter() {
@@ -50,5 +63,13 @@ public class LocationModel {
         // TODO: return to previous location?
         throw new IllegalStateException("No encounter in " + location.getName()
                 + " satisfies its prerequisites");
+    }
+    
+    public void register(LocationListener listener) {
+        listeners.add(listener);
+    }
+    
+    public interface LocationListener {
+        void locationChanged(Location loc);
     }
 }

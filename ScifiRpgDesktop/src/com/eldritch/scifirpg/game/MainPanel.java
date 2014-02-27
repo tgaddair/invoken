@@ -1,5 +1,6 @@
 package com.eldritch.scifirpg.game;
 
+import java.awt.BorderLayout;
 import java.awt.Dimension;
 
 import javax.swing.JPanel;
@@ -14,6 +15,7 @@ public class MainPanel extends JPanel {
 	private final GamePanel gamePanel;
 	
 	public MainPanel() {
+	    super(new BorderLayout());
 	    this.gamePanel = new GamePanel(new GameState(Profession.CENTURION));
 	            
 		//add(new ProfessionPanel());
