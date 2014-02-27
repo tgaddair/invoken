@@ -24,6 +24,7 @@ import javax.swing.border.LineBorder;
 import com.eldritch.scifirpg.game.model.ActorEncounter;
 import com.eldritch.scifirpg.game.model.ActorModel;
 import com.eldritch.scifirpg.game.model.ActorModel.NpcState;
+import com.eldritch.scifirpg.game.util.LineBreaker;
 import com.eldritch.scifirpg.proto.Actors.DialogueTree.Choice;
 import com.eldritch.scifirpg.proto.Actors.DialogueTree.Response;
 import com.jgoodies.forms.builder.DefaultFormBuilder;
@@ -114,12 +115,12 @@ public class ActorEncounterPanel extends JPanel {
                 
                 ButtonGroup group = new ButtonGroup();
                 for (Choice c : greeting.getChoiceList()) {
-                    JRadioButton radio = new JRadioButton("<html>" + c.getText() + "</html>");
+                    String text = LineBreaker.breakUp(c.getText());
+                    JRadioButton radio = new JRadioButton("<html>" + text + "</html>");
                     group.add(radio);
                     
                     builder.append(radio);
                     builder.nextLine();
-                    //add(radio);
                 }
             }
             
