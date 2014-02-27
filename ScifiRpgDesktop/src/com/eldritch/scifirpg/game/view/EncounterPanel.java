@@ -9,6 +9,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.SwingConstants;
 
 import com.eldritch.scifirpg.game.model.AbstractEncounter;
 import com.eldritch.scifirpg.game.model.LocationModel;
@@ -29,6 +30,10 @@ public class EncounterPanel extends JPanel {
         builder.appendColumn("fill:max(p; 100px):grow");
 
         JLabel title = new JLabel(encounter.getTitle());
+        title.setFont(title.getFont().deriveFont(24.0f));
+        title.setHorizontalAlignment(SwingConstants.CENTER);
+        
+        builder.appendRow("fill:50dlu");
         builder.append(title);
         builder.nextLine();
 

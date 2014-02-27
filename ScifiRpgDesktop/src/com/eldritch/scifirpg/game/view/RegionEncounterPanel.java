@@ -11,17 +11,19 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
-import com.eldritch.scifirpg.game.Application;
+import com.eldritch.scifirpg.game.model.LocationModel;
 import com.eldritch.scifirpg.game.model.RegionEncounter;
 import com.eldritch.scifirpg.proto.Locations.Encounter.RegionParams.Cell;
 
 public class RegionEncounterPanel extends JPanel {
     private static final long serialVersionUID = 1L;
     private final RegionEncounter encounter;
+    private final LocationModel model;
     
-    public RegionEncounterPanel(RegionEncounter encounter) {
+    public RegionEncounterPanel(RegionEncounter encounter, LocationModel model) {
         super(new GridLayout(0, encounter.getRowCount()));
         this.encounter = encounter;
+        this.model = model;
         
         int i = 0;
         for (Cell cell : encounter.getCells()) {
@@ -45,9 +47,7 @@ public class RegionEncounterPanel extends JPanel {
         label.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent me) {
-                GamePanel gamePanel = Application.getApplication().getGamePanel();
-                gamePanel.getModel().setLocation(cell.getLocationId());
-                gamePanel.reloadLocation();
+                model.setCurrent(cell.getLocationId());
             }
         });
         

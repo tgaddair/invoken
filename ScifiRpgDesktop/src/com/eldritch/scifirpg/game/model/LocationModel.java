@@ -15,11 +15,7 @@ public class LocationModel {
     private final List<LocationListener> listeners = new ArrayList<>();
 
     public LocationModel(String locid) {
-        location = locationMarshaller.readAsset(locid);
-        for (Encounter encounter : location.getEncounterList()) {
-            encounters.add(AbstractEncounter.getEncounter(encounter));
-        }
-        Collections.sort(encounters);
+        setCurrent(locid);
     }
     
     public void returnToPreviousLocation() {
@@ -28,8 +24,20 @@ public class LocationModel {
         }
     }
     
-    public void setCurrent(String locid) {
+    public final void setCurrent(String locid) {
         location = locationMarshaller.readAsset(locid);
+        
+        // Rebuild encounters
+        encounters.clear();
+        for (Encounter encounter : location.getEncounterList()) {
+            encounters.add(AbstractEncounter.getEncounter(encounter));
+        }
+        Collections.sort(encounters);
+        
+        // Notify listeners
+        for (LocationListener listener : listeners) {
+            listener.locationChanged(location);
+        }
     }
 
     public AbstractEncounter drawEncounter() {
