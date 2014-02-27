@@ -17,12 +17,10 @@ import com.eldritch.scifirpg.proto.Locations.Encounter.RegionParams.Cell;
 
 public class RegionEncounterPanel extends JPanel {
     private static final long serialVersionUID = 1L;
-    private final RegionEncounter encounter;
     private final LocationModel model;
     
     public RegionEncounterPanel(RegionEncounter encounter, LocationModel model) {
         super(new GridLayout(0, encounter.getRowCount()));
-        this.encounter = encounter;
         this.model = model;
         
         int i = 0;

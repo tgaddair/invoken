@@ -7,7 +7,6 @@ import javax.swing.SwingUtilities;
 
 import com.eldritch.scifirpg.game.Application;
 import com.eldritch.scifirpg.game.model.AbstractEncounter;
-import com.eldritch.scifirpg.game.model.DecisionEncounter;
 import com.eldritch.scifirpg.game.model.LocationModel;
 import com.eldritch.scifirpg.game.model.LocationModel.LocationListener;
 import com.eldritch.scifirpg.game.model.RegionEncounter;

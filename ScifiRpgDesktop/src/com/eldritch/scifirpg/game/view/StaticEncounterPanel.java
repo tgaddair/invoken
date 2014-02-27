@@ -2,9 +2,12 @@ package com.eldritch.scifirpg.game.view;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
+import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.border.CompoundBorder;
@@ -27,6 +30,21 @@ public class StaticEncounterPanel extends JPanel {
         builder.appendRow("fill:200dlu");
         builder.append(createArea(encounter.getDescription()));
         builder.nextLine();
+        
+        if (encounter.canRest()) {
+            JPanel buttonPanel = new JPanel(new FlowLayout());
+            final JButton returnButton = new JButton("Rest");
+            returnButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent ev) {
+                }
+            });
+            buttonPanel.add(returnButton);
+    
+            builder.appendRow("center:p");
+            builder.append(buttonPanel);
+            builder.nextLine();
+        }
         
         add(builder.getPanel());
     }

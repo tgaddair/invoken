@@ -18,12 +18,10 @@ import com.jgoodies.forms.layout.FormLayout;
 
 public class EncounterPanel extends JPanel {
     private static final long serialVersionUID = 1L;
-    private final LocationModel locationModel;
 
     public EncounterPanel(AbstractEncounter encounter, final LocationModel locationModel,
             JPanel subpanel) {
         super(new BorderLayout());
-        this.locationModel = locationModel;
 
         DefaultFormBuilder builder = new DefaultFormBuilder(new FormLayout(""));
         builder.border(BorderFactory.createEmptyBorder(5, 5, 5, 5));
@@ -41,20 +39,22 @@ public class EncounterPanel extends JPanel {
         builder.append(subpanel);
         builder.nextLine();
 
-        JPanel buttonPanel = new JPanel(new FlowLayout());
-        final JButton returnButton = new JButton("Return");
-        returnButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent ev) {
-                locationModel.returnToPreviousLocation();
-            }
-        });
-        buttonPanel.add(returnButton);
-
-        builder.appendRow("center:p");
-        builder.append(buttonPanel);
-        builder.nextLine();
-
+        if (encounter.canReturn()) {
+            JPanel buttonPanel = new JPanel(new FlowLayout());
+            final JButton returnButton = new JButton("Return");
+            returnButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent ev) {
+                    locationModel.returnToPreviousLocation();
+                }
+            });
+            buttonPanel.add(returnButton);
+    
+            builder.appendRow("center:p");
+            builder.append(buttonPanel);
+            builder.nextLine();
+        }
+        
         add(builder.getPanel());
     }
 }
