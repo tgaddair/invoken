@@ -48,11 +48,6 @@ message DialogueTree {
 	repeated Response dialogue = 1;
 }
 
-message ActorDialogue {
-	optional string actor_id = 1;
-	optional string dialogue_id = 2;
-}
-
 message ActorParams {
 	enum Species {
 		HUMAN = 0;
@@ -71,7 +66,7 @@ message ActorParams {
 	message Skill {
 		required Discipline discipline = 1;
 		required int32 level = 2;
-		optional int32 xp = 3; // OPTIONAL: may make global XP, N/A for NPCs
+		optional int32 xp = 3; // ignored for NPCs
 	}
 
 	message FactionStatus {
@@ -83,7 +78,7 @@ message ActorParams {
 	message InventoryItem {
 		optional string item_id = 1; // OPTIONAL: may change to int32
 		required int32 count = 2 [default = 1];
-		optional double drop_chance = 3 [default = 1.0];
+		optional double drop_chance = 3 [default = 1.0]; // ignored for player
 	}
 
 	// Names for various dialogue scenarios
@@ -183,6 +178,6 @@ message PlayerActor {
 	repeated StagedAugmentation staged_augmentation = 16; // if not specified, inferred from known augs
 
 	repeated StateMarker state_marker = 19;
-	repeated ActorDialogue dialogue_seen = 20;
+	repeated string known_npc = 20;
 	repeated Mission mission = 22;
 }
