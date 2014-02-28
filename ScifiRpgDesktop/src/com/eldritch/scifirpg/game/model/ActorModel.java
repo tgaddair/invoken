@@ -131,4 +131,10 @@ public class ActorModel {
             return true;
         }
     }
+    
+    public static interface ActorListener {
+        void actorKilled(Actor actor);
+        
+        void actorTargeted(Actor actor);
+    }
 }

@@ -7,7 +7,12 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.swing.BorderFactory;
@@ -35,6 +40,7 @@ import com.jgoodies.forms.layout.FormLayout;
 public class ActorEncounterPanel extends JPanel {
     private static final long serialVersionUID = 1L;
     private final Set<Npc> actors = new LinkedHashSet<>();
+    private final List<JLabel> clickables = new ArrayList<>();
     
     public ActorEncounterPanel(ActorEncounter encounter, ActorModel model) {
         super(new BorderLayout());
@@ -51,18 +57,8 @@ public class ActorEncounterPanel extends JPanel {
         builder.nextLine();
         
         // Add all the actor cards
-        JPanel actorPanel = new JPanel(new FlowLayout());
-        for (Npc actor : actors) {
-            JLabel label = new JLabel(actor.getName());
-            label.setBorder(new CompoundBorder(new LineBorder(Color.GRAY),
-                    new EmptyBorder(1, 3, 1, 1)));
-            label.setPreferredSize(new Dimension(90, 120));
-            label.setHorizontalAlignment(SwingConstants.CENTER);
-            label.setBackground(Color.WHITE);
-            label.setOpaque(true);
-            actorPanel.add(label);
-        }
-        builder.append(actorPanel);
+        StagePanel stagePanel = new StagePanel(actors);
+        builder.append(stagePanel);
         
         // Add the interior panel
         builder.appendRow("fill:p:grow");
@@ -85,6 +81,7 @@ public class ActorEncounterPanel extends JPanel {
             button.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent ev) {
+                    // TODO
                 }
             });
             buttonPanel.add(button);
@@ -116,6 +113,35 @@ public class ActorEncounterPanel extends JPanel {
         area.setWrapStyleWord(true);
         area.setEditable(false);
         return area;
+    }
+    
+    private class StagePanel extends JPanel {
+        private static final long serialVersionUID = 1L;
+        
+        public StagePanel(Collection<Npc> actors) {
+            super(new FlowLayout());
+            
+            for (final Npc actor : actors) {
+                JLabel label = new JLabel(actor.getName());
+                label.setBorder(new CompoundBorder(new LineBorder(Color.GRAY),
+                        new EmptyBorder(1, 3, 1, 1)));
+                label.setPreferredSize(new Dimension(90, 120));
+                label.setHorizontalAlignment(SwingConstants.CENTER);
+                label.setBackground(Color.WHITE);
+                label.setOpaque(true);
+                
+                // Add a click action listener
+                label.addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mousePressed(MouseEvent me) {
+                        setBorder(new CompoundBorder(new LineBorder(Color.BLUE),
+                                new EmptyBorder(3, 5, 3, 3)));
+                    }
+                });
+                
+                add(label);
+            }
+        }
     }
     
     private class InteriorPanel extends JPanel {
