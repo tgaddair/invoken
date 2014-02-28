@@ -1,5 +1,6 @@
 package com.eldritch.scifirpg.game.model;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -36,7 +37,7 @@ public class Actor {
     private final Set<AugmentationState> stagedAugmentations = new HashSet<>();
 
     // Game specific parameters not saved to disk
-    private final Set<Augmentation> actionBuffer = new LinkedHashSet<>();
+    private final List<Augmentation> actionBuffer = new ArrayList<>();
 
     public Actor(ActorParams params) {
         this.params = params;
@@ -57,22 +58,28 @@ public class Actor {
         health = getBaseHealth();
     }
 
-    public Set<Augmentation> redrawActions() {
+    public List<Augmentation> redrawActions() {
         actionBuffer.clear();
         return drawActions();
     }
 
-    public Set<Augmentation> drawActions() {
-        Set<Augmentation> drawn = new LinkedHashSet<>();
+    public List<Augmentation> drawActions() {
+        List<Augmentation> drawn = new ArrayList<>();
         boolean canDraw = true;
         int slots = getBufferSlots();
         while (canDraw && actionBuffer.size() < slots) {
-            canDraw = drawAvailableAugmentationInto(actionBuffer);
+            Augmentation aug = drawAvailableAugmentation();
+            if (aug != null) {
+                actionBuffer.add(aug);
+                drawn.add(aug);
+            } else {
+                canDraw = false;
+            }
         }
         return drawn;
     }
     
-    private boolean drawAvailableAugmentationInto(Set<Augmentation> buffer) {
+    private Augmentation drawAvailableAugmentation() {
         int total = 0;
         for (AugmentationState augState : stagedAugmentations) {
             if (augState.getRemainingUses() > 0) {
@@ -85,12 +92,11 @@ public class Actor {
         for (AugmentationState augState : stagedAugmentations) {
             sum += augState.getWeight();
             if (sum > target) {
-                buffer.add(augState.getAugmentation());
-                return true;
+                return augState.getAugmentation();
             }
         }
         
-        return false;
+        return null;
     }
 
     /**
