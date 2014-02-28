@@ -1,6 +1,7 @@
 package com.eldritch.scifirpg.game.view;
 
 import java.awt.BorderLayout;
+import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -23,7 +24,7 @@ import javax.swing.border.LineBorder;
 
 import com.eldritch.scifirpg.game.model.ActorEncounter;
 import com.eldritch.scifirpg.game.model.ActorModel;
-import com.eldritch.scifirpg.game.model.ActorModel.NpcState;
+import com.eldritch.scifirpg.game.model.ActorModel.Npc;
 import com.eldritch.scifirpg.game.util.LineBreaker;
 import com.eldritch.scifirpg.proto.Actors.DialogueTree.Choice;
 import com.eldritch.scifirpg.proto.Actors.DialogueTree.Response;
@@ -32,7 +33,7 @@ import com.jgoodies.forms.layout.FormLayout;
 
 public class ActorEncounterPanel extends JPanel {
     private static final long serialVersionUID = 1L;
-    private final Set<NpcState> actors = new LinkedHashSet<>();
+    private final Set<Npc> actors = new LinkedHashSet<>();
     
     public ActorEncounterPanel(ActorEncounter encounter, ActorModel model) {
         super(new BorderLayout());
@@ -48,8 +49,9 @@ public class ActorEncounterPanel extends JPanel {
         builder.append(area);
         builder.nextLine();
         
+        // Add all the actor cards
         JPanel actorPanel = new JPanel(new FlowLayout());
-        for (NpcState actor : actors) {
+        for (Npc actor : actors) {
             JLabel label = new JLabel(actor.getName());
             label.setBorder(new CompoundBorder(new LineBorder(Color.GRAY),
                     new EmptyBorder(1, 3, 1, 1)));
@@ -61,10 +63,12 @@ public class ActorEncounterPanel extends JPanel {
         }
         builder.append(actorPanel);
         
+        // Add the interior panel
         builder.appendRow("fill:p:grow");
-        builder.append(new ActionPanel());
+        builder.append(new InteriorPanel());
         builder.nextLine();
         
+        // Add the flee button
         if (encounter.canFlee()) {
             JPanel buttonPanel = new JPanel(new FlowLayout());
             final JButton button = new JButton("Flee");
@@ -93,10 +97,25 @@ public class ActorEncounterPanel extends JPanel {
         return area;
     }
     
-    private class ActionPanel extends JPanel {
+    private class InteriorPanel extends JPanel {
+        private static final long serialVersionUID = 1L;
+        private static final String DIALOGUE = "Dialogue";
+        
+        public InteriorPanel() {
+            super(new CardLayout());
+            add(new DialoguePanel(), DIALOGUE);
+        }
+        
+        public void show(String key) {
+            CardLayout cl = (CardLayout) getLayout();
+            cl.show(this, key);
+        }
+    }
+    
+    private class DialoguePanel extends JPanel {
         private static final long serialVersionUID = 1L;
 
-        public ActionPanel() {
+        public DialoguePanel() {
             super(new BorderLayout());
             
             DefaultFormBuilder builder = new DefaultFormBuilder(new FormLayout(""));
@@ -104,7 +123,7 @@ public class ActorEncounterPanel extends JPanel {
             builder.appendColumn("fill:max(p; 100px):grow");
             
             if (!actors.isEmpty()) {
-                NpcState actor = actors.iterator().next();
+                Npc actor = actors.iterator().next();
                 Response greeting = actor.getGreeting();
                 
                 JTextArea greetArea = createArea(greeting.getText());

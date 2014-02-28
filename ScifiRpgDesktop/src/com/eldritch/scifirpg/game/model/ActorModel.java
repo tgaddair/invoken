@@ -1,18 +1,11 @@
 package com.eldritch.scifirpg.game.model;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import com.eldritch.scifirpg.game.util.ActorMarshaller;
-import com.eldritch.scifirpg.proto.Actors.ActorParams;
-import com.eldritch.scifirpg.proto.Actors.ActorParams.FactionStatus;
-import com.eldritch.scifirpg.proto.Actors.ActorParams.Gender;
-import com.eldritch.scifirpg.proto.Actors.ActorParams.InventoryItem;
-import com.eldritch.scifirpg.proto.Actors.ActorParams.Skill;
 import com.eldritch.scifirpg.proto.Actors.DialogueTree;
 import com.eldritch.scifirpg.proto.Actors.DialogueTree.Response;
 import com.eldritch.scifirpg.proto.Actors.NonPlayerActor;
@@ -20,21 +13,28 @@ import com.eldritch.scifirpg.proto.Actors.NonPlayerActor.Aggression;
 import com.eldritch.scifirpg.proto.Actors.NonPlayerActor.Assistance;
 import com.eldritch.scifirpg.proto.Actors.NonPlayerActor.Confidence;
 import com.eldritch.scifirpg.proto.Actors.NonPlayerActor.Trait;
-import com.eldritch.scifirpg.proto.Disciplines.Discipline;
-import com.eldritch.scifirpg.proto.Disciplines.Profession;
 import com.eldritch.scifirpg.proto.Locations.Encounter.ActorParams.ActorScenario;
 
 public class ActorModel {
+    private final Player player;
     private final ActorMarshaller actorMarshaller = new ActorMarshaller();
     private final Set<String> deadNpcs = new HashSet<>();
     private final DialogueVerifier dialogueVerifier = new DialogueVerifier();
+    
+    public ActorModel(Player player) {
+        this.player = player;
+    }
+    
+    public Player getPlayer() {
+        return player;
+    }
 
-    public List<NpcState> getActorsFor(ActorEncounter encounter) {
-        List<NpcState> actors = new ArrayList<>();
+    public List<Npc> getActorsFor(ActorEncounter encounter) {
+        List<Npc> actors = new ArrayList<>();
         for (ActorScenario scenario : encounter.getScenarios()) {
             String id = scenario.getActorId();
             if (isAlive(id)) {
-                NpcState actor = new NpcState(getActor(id), scenario);
+                Npc actor = new Npc(getActor(id), scenario);
                 actors.add(actor);
             }
         }
@@ -49,11 +49,11 @@ public class ActorModel {
         return !deadNpcs.contains(id);
     }
 
-    public class NpcState extends ActorState {
+    public class Npc extends Actor {
         private final NonPlayerActor data;
         private final ActorScenario scenario;
 
-        public NpcState(NonPlayerActor data, ActorScenario scenario) {
+        public Npc(NonPlayerActor data, ActorScenario scenario) {
             super(data.getParams());
             this.data = data;
             this.scenario = scenario;
@@ -104,72 +104,6 @@ public class ActorModel {
 
         public List<Trait> getTraits() {
             return data.getTraitList();
-        }
-    }
-
-    public static class ActorState {
-        private final ActorParams params;
-        private final Map<Discipline, SkillState> skills = new HashMap<>();
-
-        public ActorState(ActorParams params) {
-            this.params = params;
-            for (Skill skill : params.getSkillList()) {
-                skills.put(skill.getDiscipline(), new SkillState(skill));
-            }
-        }
-
-        public String getName() {
-            return params.getName();
-        }
-
-        public Gender getGender() {
-            return params.getGender();
-        }
-
-        public Profession getProfession() {
-            return params.getProfession();
-        }
-
-        public int getLevel() {
-            return params.getLevel();
-        }
-
-        public int getSkillLevel(Discipline d) {
-            return skills.get(d).getLevel();
-        }
-
-        public List<Skill> getSkills() {
-            return params.getSkillList();
-        }
-
-        public List<FactionStatus> getFactionStatus() {
-            return params.getFactionStatusList();
-        }
-
-        public List<InventoryItem> getInventoryItems() {
-            return params.getInventoryItemList();
-        }
-
-        public List<String> getKnownAugmentations() {
-            return params.getKnownAugIdList();
-        }
-    }
-
-    public static class SkillState {
-        private int level;
-        private int xp;
-
-        public SkillState(Skill skill) {
-            this.level = skill.getLevel();
-            this.xp = skill.getXp();
-        }
-
-        public int getLevel() {
-            return level;
-        }
-
-        public int getXp() {
-            return xp;
         }
     }
     
