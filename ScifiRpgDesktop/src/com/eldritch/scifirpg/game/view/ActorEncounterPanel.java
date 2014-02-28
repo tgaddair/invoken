@@ -74,6 +74,7 @@ public class ActorEncounterPanel extends JPanel {
         for (Augmentation aug : model.getPlayer().redrawActions()) {
             bufferPanel.add(createAugCard(aug));
         }
+        builder.appendRow("100dlu");
         builder.append(bufferPanel);
         builder.nextLine();
         
