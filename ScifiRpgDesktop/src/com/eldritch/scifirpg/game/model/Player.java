@@ -22,13 +22,9 @@ public class Player extends Actor {
 	private final Set<Mission> missions = new HashSet<>();
 	
 	private Player(PlayerActor player) {
-	    this(player, true);
-	}
-	
-	private Player(PlayerActor player, boolean setHealth) {
 	    super(player.getParams());
 	    
-	    if (setHealth) {
+	    if (player.hasHealth()) {
 	        setHealth(player.getHealth());
 	    }
 	    for (String itemId : player.getEquippedItemIdList()) {
@@ -73,7 +69,7 @@ public class Player extends Actor {
                 .setParams(params)
                 .build();
         
-		return new Player(player, false);
+		return new Player(player);
 	}
 	
 	public static Player fromProto(PlayerActor player) {

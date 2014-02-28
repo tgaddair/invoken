@@ -57,6 +57,9 @@ public class Actor {
     
     public final void stage(StagedAugmentation aug) {
         stagedAugmentations.add(aug);
+        if (!knownAugmentations.contains(aug.getAugId())) {
+            knownAugmentations.add(aug.getAugId());
+        }
     }
     
     public void levelUp() {
@@ -65,7 +68,7 @@ public class Actor {
     }
 
     public int getLevel() {
-        return params.getLevel();
+        return level;
     }
     
     public void setHealth(int health) {

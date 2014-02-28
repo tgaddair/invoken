@@ -1,9 +1,7 @@
 package com.eldritch.scifirpg.game.model;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import com.eldritch.scifirpg.proto.Actors.NonPlayerActor;
 import com.eldritch.scifirpg.proto.Locations.Encounter;
 import com.eldritch.scifirpg.proto.Locations.Encounter.ActorParams;
 import com.eldritch.scifirpg.proto.Locations.Encounter.ActorParams.ActorScenario;
