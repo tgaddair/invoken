@@ -3,11 +3,8 @@ package com.eldritch.scifirpg.game.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang3.text.WordUtils;
-
 import com.eldritch.scifirpg.game.util.ProfessionUtil;
 import com.eldritch.scifirpg.proto.Actors.ActorParams;
-import com.eldritch.scifirpg.proto.Actors.ActorParams.InventoryItem;
 import com.eldritch.scifirpg.proto.Actors.PlayerActor;
 import com.eldritch.scifirpg.proto.Actors.ActorParams.Gender;
 import com.eldritch.scifirpg.proto.Actors.ActorParams.Species;
