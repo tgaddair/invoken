@@ -134,7 +134,7 @@ public class ProfessionUtil {
 		return skills;
 	}
 	
-	public static Map<Discipline, Skill.Builder> getStartingSkillsFor(Profession p) {
+	public static List<Skill> getStartingSkillsFor(Profession p) {
 		// All skills default to 10
 		Map<Discipline, Skill.Builder> skills = new LinkedHashMap<>();
 		for (Discipline d : Discipline.values()) {
@@ -148,7 +148,11 @@ public class ProfessionUtil {
 			s.setLevel(s.getLevel() + 10);
 		}
 		
-		return skills;
+		List<Skill> results = new ArrayList<>();
+        for (Skill.Builder b : skills.values()) {
+            results.add(b.build());
+        }
+		return results;
 	}
 	
 	public static List<Skill> getSkillsFor(Profession p, int level) {
@@ -195,11 +199,11 @@ public class ProfessionUtil {
 		}
 		
 		// Construct the skills
-		List<Skill> result = new ArrayList<>();
+		List<Skill> results = new ArrayList<>();
 		for (Skill.Builder b : skills.values()) {
-			result.add(b.build());
+			results.add(b.build());
 		}
-		return getSorted(result, masteries);
+		return getSorted(results, masteries);
 	}
 
 	private ProfessionUtil() {
