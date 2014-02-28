@@ -28,6 +28,7 @@ import com.eldritch.scifirpg.game.model.ActorModel.Npc;
 import com.eldritch.scifirpg.game.util.LineBreaker;
 import com.eldritch.scifirpg.proto.Actors.DialogueTree.Choice;
 import com.eldritch.scifirpg.proto.Actors.DialogueTree.Response;
+import com.eldritch.scifirpg.proto.Augmentations.Augmentation;
 import com.jgoodies.forms.builder.DefaultFormBuilder;
 import com.jgoodies.forms.layout.FormLayout;
 
@@ -68,6 +69,14 @@ public class ActorEncounterPanel extends JPanel {
         builder.append(new InteriorPanel());
         builder.nextLine();
         
+        // Add action buffer
+        JPanel bufferPanel = new JPanel(new FlowLayout());
+        for (Augmentation aug : model.getPlayer().redrawActions()) {
+            bufferPanel.add(createAugCard(aug));
+        }
+        builder.append(bufferPanel);
+        builder.nextLine();
+        
         // Add the flee button
         if (encounter.canFlee()) {
             JPanel buttonPanel = new JPanel(new FlowLayout());
@@ -85,6 +94,17 @@ public class ActorEncounterPanel extends JPanel {
         }
         
         add(builder.getPanel());
+    }
+    
+    private final JLabel createAugCard(Augmentation aug) {
+        JLabel label = new JLabel(aug.getName());
+        label.setBorder(new CompoundBorder(new LineBorder(Color.GRAY),
+                new EmptyBorder(1, 3, 1, 1)));
+        label.setPreferredSize(new Dimension(90, 120));
+        label.setHorizontalAlignment(SwingConstants.CENTER);
+        label.setBackground(Color.WHITE);
+        label.setOpaque(true);
+        return label;
     }
     
     private final JTextArea createArea(String text) {
