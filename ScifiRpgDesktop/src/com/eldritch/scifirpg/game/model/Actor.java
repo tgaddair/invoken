@@ -3,7 +3,6 @@ package com.eldritch.scifirpg.game.model;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -37,7 +36,7 @@ public class Actor {
     private final Set<AugmentationState> stagedAugmentations = new HashSet<>();
 
     // Game specific parameters not saved to disk
-    private final List<Augmentation> actionBuffer = new ArrayList<>();
+    private final List<ActionAugmentation> actionBuffer = new ArrayList<>();
 
     public Actor(ActorParams params) {
         this.params = params;
@@ -58,20 +57,21 @@ public class Actor {
         health = getBaseHealth();
     }
 
-    public List<Augmentation> redrawActions() {
+    public List<ActionAugmentation> redrawActions() {
         actionBuffer.clear();
         return drawActions();
     }
 
-    public List<Augmentation> drawActions() {
-        List<Augmentation> drawn = new ArrayList<>();
+    public List<ActionAugmentation> drawActions() {
+        List<ActionAugmentation> drawn = new ArrayList<>();
         boolean canDraw = true;
         int slots = getBufferSlots();
         while (canDraw && actionBuffer.size() < slots) {
             Augmentation aug = drawAvailableAugmentation();
             if (aug != null) {
-                actionBuffer.add(aug);
-                drawn.add(aug);
+                ActionAugmentation action = new ActionAugmentation(aug, this);
+                actionBuffer.add(action);
+                drawn.add(action);
             } else {
                 canDraw = false;
             }
@@ -283,6 +283,10 @@ public class Actor {
 
         public String getAugId() {
             return augId;
+        }
+        
+        public String getName() {
+            return augmentation.getName();
         }
     }
 }

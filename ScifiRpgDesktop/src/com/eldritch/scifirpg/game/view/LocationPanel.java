@@ -8,6 +8,7 @@ import javax.swing.SwingUtilities;
 import com.eldritch.scifirpg.game.Application;
 import com.eldritch.scifirpg.game.model.AbstractEncounter;
 import com.eldritch.scifirpg.game.model.ActorEncounter;
+import com.eldritch.scifirpg.game.model.ActorEncounterModel;
 import com.eldritch.scifirpg.game.model.GameState;
 import com.eldritch.scifirpg.game.model.LocationModel;
 import com.eldritch.scifirpg.game.model.LocationModel.LocationListener;
@@ -40,8 +41,10 @@ public class LocationPanel extends JPanel implements LocationListener {
                 // model.drawEncounter());
                 break;
             case ACTOR:
-                encounterPanel = new ActorEncounterPanel((ActorEncounter) model.drawEncounter(),
+                ActorEncounterModel encounterModel = new ActorEncounterModel(
+                        (ActorEncounter) model.drawEncounter(),
                         state.getActorModel());
+                encounterPanel = new ActorEncounterPanel(encounterModel);
                 break;
             case REGION:
                 encounterPanel = new RegionEncounterPanel((RegionEncounter) model.drawEncounter(),
