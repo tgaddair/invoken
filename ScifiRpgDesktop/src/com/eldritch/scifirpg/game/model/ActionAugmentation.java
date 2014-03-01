@@ -1,6 +1,10 @@
 package com.eldritch.scifirpg.game.model;
 
+import java.util.List;
+
 import com.eldritch.scifirpg.proto.Augmentations.Augmentation;
+import com.eldritch.scifirpg.proto.Augmentations.Augmentation.Type;
+import com.eldritch.scifirpg.proto.Effects.Effect;
 
 public class ActionAugmentation {
     private final Augmentation aug;
@@ -11,33 +15,19 @@ public class ActionAugmentation {
         this.owner = owner;
     }
     
-    /**
-     * Invoke on self if target is not specified.  Some augmentations will also automatically
-     * apply to a specific target or group of targets (like all) depending on range.
-     */
-    public void invoke() {
-        invokeOn(owner);
-    }
-
-    public void invokeOn(Actor target) {
-        switch (aug.getType()) {
-            case ATTACK: // Playable to make hostile
-                break;
-            case DECEIVE: // Playable when not detected
-            case EXECUTE: // Playable in encounter
-            case DIALOGUE: // Playable in dialogue
-            case COUNTER: // Playable when targeted
-            case TRAP: // Playable at any time, activates when targeted and effect applies
-                break;
-            case PASSIVE: // Playable when attuning outside encounter
-                // It's a bug if we have an ActionAugmentation with passive type
-            default:
-                throw new IllegalArgumentException(
-                        "Unrecognized Augmentation Type: " + aug.getType());
-        }
+    public Actor getOwner() {
+        return owner;
     }
     
     public String getName() {
         return aug.getName();
+    }
+    
+    public Type getType() {
+        return aug.getType();
+    }
+    
+    public List<Effect> getEffects() {
+        return aug.getEffectList();
     }
 }

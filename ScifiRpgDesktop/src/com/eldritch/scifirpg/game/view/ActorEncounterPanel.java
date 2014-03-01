@@ -29,7 +29,6 @@ import javax.swing.border.LineBorder;
 import com.eldritch.scifirpg.game.model.Actor;
 import com.eldritch.scifirpg.game.model.ActorEncounter;
 import com.eldritch.scifirpg.game.model.ActorEncounterModel;
-import com.eldritch.scifirpg.game.model.ActorModel;
 import com.eldritch.scifirpg.game.model.ActorModel.Npc;
 import com.eldritch.scifirpg.game.model.ActionAugmentation;
 import com.eldritch.scifirpg.game.util.LineBreaker;
@@ -41,11 +40,13 @@ import com.jgoodies.forms.layout.FormLayout;
 public class ActorEncounterPanel extends JPanel {
     private static final long serialVersionUID = 1L;
     private final Set<Npc> actors = new LinkedHashSet<>();
+    private final ActorEncounterModel model;
     private ActionAugmentation selected = null;
     private Actor target = null;
     
     public ActorEncounterPanel(ActorEncounterModel model) {
         super(new BorderLayout());
+        this.model = model;
         
         ActorEncounter encounter = model.getEncounter();
         actors.addAll(model.getActors());
@@ -115,14 +116,14 @@ public class ActorEncounterPanel extends JPanel {
                 
                 // Double-click -> invoke on self
                 if (me.getClickCount() == 2) {
-                    aug.invoke();
+                    model.invoke(aug);
                 }
             }
             
             @Override
             public void mouseReleased(MouseEvent me) {
                 if (target != null) {
-                    aug.invokeOn(target);
+                    model.invoke(aug, target);
                 }
                 
                 // Visual cleanup

@@ -18,6 +18,7 @@ import com.eldritch.scifirpg.proto.Actors.PlayerActor.StagedAugmentation;
 import com.eldritch.scifirpg.proto.Augmentations.Augmentation;
 import com.eldritch.scifirpg.proto.Disciplines.Discipline;
 import com.eldritch.scifirpg.proto.Disciplines.Profession;
+import com.eldritch.scifirpg.proto.Effects.DamageType;
 
 public class Actor {
     // Immutable actor fields
@@ -55,6 +56,22 @@ public class Actor {
 
         level = params.getLevel();
         health = getBaseHealth();
+    }
+    
+    public int heal(int magnitude) {
+        // Can't heal more than our maximum health
+        int value = Math.min(magnitude, getBaseHealth());
+        health += value;
+        return value;
+    }
+    
+    public int damage(DamageType type, int magnitude) {
+        // TODO handle resistances
+        
+        // Can't do more damage than the target has health
+        int damage = Math.min(magnitude, health);
+        health -= damage;
+        return damage;
     }
 
     public List<ActionAugmentation> redrawActions() {
