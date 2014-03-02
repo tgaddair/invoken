@@ -9,8 +9,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.swing.BorderFactory;
@@ -35,8 +40,8 @@ import com.eldritch.scifirpg.game.model.actor.ActorEncounterModel;
 import com.eldritch.scifirpg.game.model.actor.ActorEncounterModel.ActorEncounterListener;
 import com.eldritch.scifirpg.game.model.actor.Npc;
 import com.eldritch.scifirpg.game.model.ActionAugmentation;
-import com.eldritch.scifirpg.game.util.EffectUtil.Result;
 import com.eldritch.scifirpg.game.util.LineBreaker;
+import com.eldritch.scifirpg.game.util.Result;
 import com.eldritch.scifirpg.proto.Actors.DialogueTree.Choice;
 import com.eldritch.scifirpg.proto.Actors.DialogueTree.Response;
 import com.jgoodies.forms.builder.DefaultFormBuilder;
@@ -47,6 +52,7 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
     private final Set<Npc> actors = new LinkedHashSet<>();
     private final ActorEncounterModel model;
     private final InteriorPanel interiorPanel;
+    private final JPanel bufferPanel;
     private ActionAugmentation selected = null;
     private Actor target = null;
     
@@ -73,12 +79,12 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
         
         // Add the interior panel
         interiorPanel = new InteriorPanel();
-        builder.appendRow("fill:p:grow");
+        builder.appendRow("fill:180dlu");
         builder.append(interiorPanel);
         builder.nextLine();
         
         // Add action buffer
-        JPanel bufferPanel = new JPanel(new FlowLayout());
+        bufferPanel = new JPanel(new FlowLayout());
         for (ActionAugmentation aug : model.getPlayer().redrawActions()) {
             bufferPanel.add(createAugCard(aug));
         }
@@ -278,6 +284,7 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
     private class CombatPanel extends JPanel {
         private static final long serialVersionUID = 1L;
         private final JTextPane combatLog;
+        private final LinkedList<Result> actions = new LinkedList<>();
 
         public CombatPanel() {
             super(new BorderLayout());
@@ -289,18 +296,41 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
             combatLog = new JTextPane();
             combatLog.setEditable(false);
             combatLog.setOpaque(false);
-            
-            JScrollPane scrollPane = new JScrollPane(combatLog);
-            scrollPane.setBorder(null);
-            builder.append(scrollPane);
+            combatLog.setContentType("text/html");
+            builder.append(combatLog);
             builder.nextLine(); 
             
             add(builder.getPanel());
         }
         
         public void report(Result result) {
-            String text = combatLog.getText() + "\n" + result.toString();
-            combatLog.setText(text);
+            // Cleanup the queue so we only show the latest set of actions by a particular actor
+            boolean hasOther = false;
+            for (Result r : actions) {
+                if (r.getActor() != result.getActor()) {
+                    hasOther = true;
+                    break;
+                }
+            }
+            if (hasOther) {
+                while (actions.peek().getActor() == result.getActor()) {
+                    actions.remove();
+                }
+            }
+            
+            // Construct the list of previous actions to display
+            String text = "";
+            for (Result r : actions) {
+                text += r.toString() + "<br/>";
+            }
+            
+            // Add the new entry
+            text += result.toString();
+            actions.add(result);
+            
+            // Display the text
+            combatLog.setText("<html>" + text + "</html>");
+            combatLog.setCaretPosition(combatLog.getDocument().getLength());
         }
     }
     
@@ -335,8 +365,15 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
     }
 
     @Override
-    public void combatTurnComplete(Actor prev, Actor next) {
-        // TODO Auto-generated method stub
+    public void combatTurnStarted(Actor current) {
+        bufferPanel.setEnabled(current == model.getPlayer());
+        interiorPanel.combatPanel.report(new Result(current,
+                "<strong>" + current.getName() + "'s turn to attack...</strong>"));
+    }
+
+    @Override
+    public void combatTurnPassed(Actor current) {
+        interiorPanel.combatPanel.report(new Result(current, "pass"));
     }
 
     @Override

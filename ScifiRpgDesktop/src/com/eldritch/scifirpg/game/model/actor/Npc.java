@@ -13,6 +13,8 @@ import com.eldritch.scifirpg.proto.Actors.NonPlayerActor.Aggression;
 import com.eldritch.scifirpg.proto.Actors.NonPlayerActor.Assistance;
 import com.eldritch.scifirpg.proto.Actors.NonPlayerActor.Confidence;
 import com.eldritch.scifirpg.proto.Actors.NonPlayerActor.Trait;
+import com.eldritch.scifirpg.proto.Augmentations.Augmentation;
+import com.eldritch.scifirpg.proto.Augmentations.Augmentation.Type;
 import com.eldritch.scifirpg.proto.Locations.Encounter.ActorParams.ActorScenario;
 
 public class Npc extends Actor {
@@ -25,9 +27,41 @@ public class Npc extends Actor {
         super(data.getParams());
         this.data = data;
         this.scenario = scenario;
+        
+        // Construct augs and items by randomly sampling from available
+        for (String augId : getKnownAugmentations()) {
+            Augmentation aug = marshaller.readAsset(augId);
+            stage(new AugmentationState(aug, 20));
+        }
+        
         // TODO construct enemies from the encounter
     }
     
+    @Override
+    public void takeCombatTurn(ActorEncounterModel model) {
+        Actor target = null;
+        for (Actor actor : enemies) {
+            // TODO pick the enemy that poses the biggest threat, or we hate the most, etc.
+            target = actor;
+        }
+        
+        ActionAugmentation action = null;
+        for (AugmentationState aug : getStagedAugmentations()) {
+            if (aug.getAugmentation().getType() == Type.ATTACK) {
+                action = new ActionAugmentation(aug.getAugmentation(), this);
+            }
+        }
+        
+        if (action != null && target != null) {
+            // Attack the target
+            model.invoke(action, target);
+        } else {
+            // Pass
+            model.passCombat();
+        }
+    }
+    
+    @Override
     public boolean handleAttack(ActionAugmentation attack) {
         enemies.add(attack.getOwner());
         return true;

@@ -15,7 +15,7 @@ public class EffectUtil {
             case DAMAGE_COORDINATED:
             case DAMAGE_CORRUPTION: {
                 int value = target.get().damage(effect.getDamageType(), effect.getMagnitude());
-                return new Result(String.format(
+                return new Result(source.get(), String.format(
                         "%d %s damage to %s",
                         value,
                         effect.getDamageType().name().toLowerCase(),
@@ -24,7 +24,7 @@ public class EffectUtil {
             case DRAIN: // Corruption: Transfer life to source, W/A
                 int value = target.get().damage(DamageType.VIRAL, effect.getMagnitude());
                 source.get().heal(value);
-                return new Result(String.format(
+                return new Result(source.get(), String.format(
                         "%d drained from %s to %s",
                         value,
                         target.get().getName(),
@@ -85,24 +85,11 @@ public class EffectUtil {
 
             // Dialogue - Influence
             case INFLUENCE: // Requires Influence Type
-                return new Result("");
+                return new Result(source.get(), "");
                 
             default:
                 throw new IllegalArgumentException(
                         "Unrecognized Effect type: " + effect.getType());
-        }
-    }
-    
-    public static class Result {
-        private final String message;
-        
-        public Result(String message) {
-            this.message = message;
-        }
-        
-        @Override
-        public String toString() {
-            return message;
         }
     }
     

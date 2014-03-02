@@ -46,17 +46,22 @@ public class Player extends Actor {
 	    }
 	}
 	
-	@Override
-	public boolean handleAttack(ActionAugmentation attack) {
-        return true;
-    }
-	
 	public Species getSpecies() {
 		return Species.HUMAN;
 	}
 
     public Set<Mission> getMissions() {
         return missions;
+    }
+    
+    @Override
+    public void takeCombatTurn(ActorEncounterModel model) {
+        // Handled by user interface
+    }
+    
+    @Override
+    public boolean handleAttack(ActionAugmentation attack) {
+        return true;
     }
 
     public static Player newPlayer(String name, Profession p, Gender g) {

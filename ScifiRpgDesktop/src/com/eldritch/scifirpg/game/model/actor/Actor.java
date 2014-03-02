@@ -1,6 +1,7 @@
 package com.eldritch.scifirpg.game.model.actor;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -22,6 +23,8 @@ import com.eldritch.scifirpg.proto.Disciplines.Profession;
 import com.eldritch.scifirpg.proto.Effects.DamageType;
 
 public abstract class Actor {
+    protected final static AugmentationMarshaller marshaller = new AugmentationMarshaller();
+    
     // Immutable actor fields
     private final ActorParams params;
 
@@ -97,6 +100,10 @@ public abstract class Actor {
         return drawn;
     }
     
+    protected Collection<AugmentationState> getStagedAugmentations() {
+        return stagedAugmentations;
+    }
+    
     private Augmentation drawAvailableAugmentation() {
         int total = 0;
         for (AugmentationState augState : stagedAugmentations) {
@@ -146,10 +153,14 @@ public abstract class Actor {
     }
 
     public final void stage(StagedAugmentation aug) {
-        stagedAugmentations.add(new AugmentationState(aug));
+        stage(new AugmentationState(aug));
         if (!knownAugmentations.contains(aug.getAugId())) {
             knownAugmentations.add(aug.getAugId());
         }
+    }
+    
+    public final void stage(AugmentationState augState) {
+        stagedAugmentations.add(augState);
     }
 
     public void levelUp() {
@@ -268,12 +279,17 @@ public abstract class Actor {
     }
     
     public static class AugmentationState {
-        private final static AugmentationMarshaller marshaller = new AugmentationMarshaller();
-        
         private final String augId;
         private final Augmentation augmentation;
         private int stages;
         private int remainingUses;
+        
+        public AugmentationState(Augmentation augmentation, int stages) {
+            this.augId = augmentation.getId();
+            this.stages = stages;
+            this.remainingUses = stages;
+            this.augmentation = augmentation;
+        }
         
         public AugmentationState(StagedAugmentation aug) {
             this.augId = aug.getAugId();
@@ -316,6 +332,7 @@ public abstract class Actor {
         }
     }
     
+    public abstract void takeCombatTurn(ActorEncounterModel model);
     
     /**
      * Returns true if the attack succeeded, false if the attack was countered.
