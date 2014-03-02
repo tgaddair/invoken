@@ -239,6 +239,11 @@ public abstract class Actor {
         return factions.get(faction).getReputation();
     }
     
+    public boolean hasRank(String faction) {
+        // TODO add further check for rank existence within faction
+        return factions.containsKey(faction);
+    }
+    
     public int getRank(String faction) {
         if (!factions.containsKey(faction)) {
             return 0;

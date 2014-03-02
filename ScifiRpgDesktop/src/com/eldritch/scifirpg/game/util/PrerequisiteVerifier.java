@@ -37,6 +37,9 @@ public class PrerequisiteVerifier {
                 return verifyBetween(prereq, value);
             }
             case RANK_BETWEEN: { // TARGET faction rank between MIN and MAX
+                if (!player.hasRank(prereq.getTarget())) {
+                    return verifyHas(prereq, false);
+                }
                 int value = player.getRank(prereq.getTarget());
                 return verifyBetween(prereq, value);
             }

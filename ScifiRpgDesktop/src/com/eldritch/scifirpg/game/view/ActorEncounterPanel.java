@@ -385,7 +385,7 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
             builder.nextLine();
             
             ButtonGroup group = new ButtonGroup();
-            for (final Choice c : response.getChoiceList()) {
+            for (final Choice c : actor.getChoicesFor(response)) {
                 String text = LineBreaker.breakUp(c.getText());
                 JRadioButton radio = new JRadioButton("<html>" + text + "</html>");
                 radio.addActionListener(new ActionListener() {

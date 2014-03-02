@@ -1,5 +1,6 @@
 package com.eldritch.scifirpg.game.model.actor;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -99,6 +100,16 @@ public class Npc extends Actor {
         return found;
     }
     
+    public List<Choice> getChoicesFor(Response response) {
+        List<Choice> choices = new ArrayList<>();
+        for (Choice choice : response.getChoiceList()) {
+            if (dialogueVerifier.isValid(choice)) {
+                choices.add(choice);
+            }
+        }
+        return choices;
+    }
+    
     public Response getResponseFor(Choice choice) {
         Set<String> successors = new HashSet<>(choice.getSuccessorIdList());
         for (Response r : data.getDialogue().getDialogueList()) {
@@ -190,6 +201,10 @@ public class Npc extends Actor {
         
         public boolean isValid(Response r) {
             return verify(r.getPrereqList(), model);
+        }
+        
+        public boolean isValid(Choice c) {
+            return verify(c.getPrereqList(), model);
         }
     }
 }
