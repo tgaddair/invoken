@@ -44,6 +44,10 @@ public abstract class AbstractEncounter implements Comparable<AbstractEncounter>
 		return data.getPrereqList();
 	}
 	
+	public boolean hasSuccessor() {
+	    return data.hasSuccessorId();
+	}
+	
 	public String getSuccessorId() {
 		return data.getSuccessorId();
 	}
