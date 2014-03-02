@@ -45,6 +45,10 @@ import com.jgoodies.forms.builder.DefaultFormBuilder;
 import com.jgoodies.forms.layout.FormLayout;
 
 public class ActorEncounterPanel extends JPanel implements ActorEncounterListener {
+    private enum InteriorPanelType {
+        DIALOGUE, COMBAT, ACTOR, AUGMENTATION, OUTCOME
+    }
+    
     private static final long serialVersionUID = 1L;
     private final Set<Npc> actors = new LinkedHashSet<>();
     private final ActorEncounterModel model;
@@ -127,6 +131,9 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
                 // Double-click -> invoke on self
                 if (me.getClickCount() == 2) {
                     model.invoke(aug);
+                } else if (me.getClickCount() == 1) {
+                    // Show augmentation panel
+                    interiorPanel.push(InteriorPanelType.AUGMENTATION);
                 }
             }
             
@@ -141,6 +148,9 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
                     selected = null;
                 }
                 label.setBorder(getDefaultBorder());
+                
+                // Stop showing augmentation panel
+                interiorPanel.pop(InteriorPanelType.AUGMENTATION);
             }
         });
         
@@ -178,10 +188,28 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
             
             @Override
             public void mousePressed(MouseEvent me) {
+                label.setBorder(getSelectedBorder());
+                
                 // Double-click -> invoke on self
                 if (me.getClickCount() == 2) {
-                    interiorPanel.dialoguePanel.beginDialogueWith(actor);
+                    // Can't initate dialogue in combat
+                    if (interiorPanel.getCurrent() != InteriorPanelType.COMBAT) {
+                        interiorPanel.show(InteriorPanelType.DIALOGUE);
+                        interiorPanel.dialoguePanel.beginDialogueWith(actor);
+                    }
+                } else if (me.getClickCount() == 1) {
+                    // Show actor panel
+                    interiorPanel.push(InteriorPanelType.ACTOR);
                 }
+            }
+            
+            @Override
+            public void mouseReleased(MouseEvent me) {
+                // Visual cleanup
+                label.setBorder(getDefaultBorder());
+                
+                // Stop showing actor panel
+                interiorPanel.pop(InteriorPanelType.ACTOR);
             }
         });
         
@@ -205,7 +233,6 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
         public void remove(ActionAugmentation action) {
             remove(views.get(action));
             views.remove(action);
-            //Application.getApplication().getFrame().revalidate();
             repaint();
         }
         
@@ -241,10 +268,10 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
     
     private class InteriorPanel extends JPanel {
         private static final long serialVersionUID = 1L;
-        private static final String DIALOGUE = "Dialogue";
-        private static final String COMBAT = "Combat";
         private final DialoguePanel dialoguePanel;
         private final CombatPanel combatPanel;
+        private InteriorPanelType currentKey;
+        private InteriorPanelType pushed;
         
         public InteriorPanel() {
             super(new CardLayout());
@@ -252,13 +279,35 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
             dialoguePanel = new DialoguePanel();
             combatPanel = new CombatPanel();
             
-            add(dialoguePanel, DIALOGUE);
-            add(combatPanel, COMBAT);
+            add(dialoguePanel, InteriorPanelType.DIALOGUE.name());
+            add(combatPanel, InteriorPanelType.COMBAT.name());
+            add(new ActorInfoPanel(), InteriorPanelType.ACTOR.name());
+            add(new AugmentationInfoPanel(), InteriorPanelType.AUGMENTATION.name());
+            add(new OutcomePanel(), InteriorPanelType.OUTCOME.name());
+            
+            currentKey = InteriorPanelType.DIALOGUE;
+            pushed = InteriorPanelType.DIALOGUE;
         }
         
-        public void show(String key) {
+        public InteriorPanelType getCurrent() {
+            return currentKey;
+        }
+        
+        public void push(InteriorPanelType key) {
+            pushed = currentKey;
+            show(key);
+        }
+        
+        public void pop(InteriorPanelType key) {
+            if (currentKey == key) {
+                show(pushed);
+            }
+        }
+        
+        public void show(InteriorPanelType key) {
+            currentKey = key;
             CardLayout cl = (CardLayout) getLayout();
-            cl.show(this, key);
+            cl.show(this, key.name());
         }
     }
     
@@ -299,9 +348,13 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
             if (actor != null) {
                 setDialogueFor(actor, actor.getGreeting());
             } else {
-                removeAll();
-                Application.getApplication().getFrame().revalidate();
+                reset();
             }
+        }
+        
+        public void reset() {
+            removeAll();
+            Application.getApplication().getFrame().revalidate();
         }
         
         public void setDialogueFor(Npc actor, Response response) {
@@ -426,15 +479,14 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
 
     @Override
     public void startedCombat() {
-        interiorPanel.show(InteriorPanel.COMBAT);
+        interiorPanel.dialoguePanel.reset();
+        interiorPanel.show(InteriorPanelType.COMBAT);
     }
     
     @Override
     public void endedCombat() {
         interiorPanel.combatPanel.clear();
-        Npc actor = !actors.isEmpty() ? actors.iterator().next() : null;
-        interiorPanel.dialoguePanel.beginDialogueWith(actor);
-        interiorPanel.show(InteriorPanel.DIALOGUE);
+        interiorPanel.show(InteriorPanelType.OUTCOME);
     }
 
     @Override
