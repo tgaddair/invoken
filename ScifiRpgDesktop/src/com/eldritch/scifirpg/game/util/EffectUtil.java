@@ -14,7 +14,8 @@ public class EffectUtil {
             case DAMAGE_HEAVY:
             case DAMAGE_COORDINATED:
             case DAMAGE_CORRUPTION: {
-                int value = target.get().damage(effect.getDamageType(), effect.getMagnitude());
+                // TODO not x10
+                int value = target.get().damage(effect.getDamageType(), effect.getMagnitude() * 10);
                 return new Result(source.get(), String.format(
                         "%d %s damage to %s",
                         value,

@@ -63,6 +63,11 @@ public class Player extends Actor {
     public boolean handleAttack(ActionAugmentation attack) {
         return true;
     }
+    
+    @Override
+    public boolean hasEnemy() {
+        return false;
+    }
 
     public static Player newPlayer(String name, Profession p, Gender g) {
         ActorParams params = ActorParams.newBuilder()

@@ -3,6 +3,7 @@ package com.eldritch.scifirpg.game.model.actor;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 
 import com.eldritch.scifirpg.game.model.ActionAugmentation;
@@ -11,6 +12,8 @@ import com.eldritch.scifirpg.game.util.EffectUtil;
 import com.eldritch.scifirpg.game.util.Result;
 import com.eldritch.scifirpg.proto.Effects.Effect;
 import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
 
 /**
  * Handles the internal state of a single ActorEncounter. Makes requests to the
@@ -23,8 +26,11 @@ public class ActorEncounterModel extends EncounterModel<ActorEncounter> {
     private final ActorModel model;
     private final List<Npc> actors;
     private final List<ActorEncounterListener> listeners = new ArrayList<>();
-    private final List<Actor> combatants = new ArrayList<>();
-    private int turn = 0; // Actor index whose current combat turn it is
+    
+    // Combat data
+    private final List<Actor> combatants;
+    private final Iterator<Actor> turns;
+    private Actor current;
     private int actions = 0; // How many actions the actor has taken this turn
     
     // When in combat, no dialogue or other interaction modes can take place until resolved.
@@ -38,6 +44,7 @@ public class ActorEncounterModel extends EncounterModel<ActorEncounter> {
         this.model = model;
         this.actors = model.getActorsFor(getEncounter());
         
+        combatants = new ArrayList<>();
         combatants.addAll(actors);
         combatants.add(model.getPlayer());
         Collections.sort(combatants, new Comparator<Actor>() {
@@ -47,6 +54,8 @@ public class ActorEncounterModel extends EncounterModel<ActorEncounter> {
                 return Integer.compare(a2.getInitiative(), a1.getInitiative());
             }
         });
+        this.turns = Iterables.cycle(combatants).iterator();
+        current = this.turns.next();
     }
     
     /**
@@ -62,6 +71,7 @@ public class ActorEncounterModel extends EncounterModel<ActorEncounter> {
             // Allow target to respond to the invocation
             boolean success = true;
             boolean hostileAction = false;
+            boolean countered = false;
             switch (aug.getType()) {
                 case ATTACK: // Playable to make hostile
                     success = target.handleAttack(aug);
@@ -71,6 +81,8 @@ public class ActorEncounterModel extends EncounterModel<ActorEncounter> {
                 case EXECUTE: // Playable in encounter
                 case DIALOGUE: // Playable in dialogue
                 case COUNTER: // Playable when targeted
+                    countered = true;
+                    break;
                 case TRAP: // Playable at any time, activates when targeted and effect applies
                     break;
                 case PASSIVE: // Playable when attuning outside encounter
@@ -94,13 +106,37 @@ public class ActorEncounterModel extends EncounterModel<ActorEncounter> {
                 // TODO handle duration effects by keeping a list we apply at the end of the round
             }
             
-            // Update combat state
-            if (inCombat) {
-                actions++;
-                if (actions >= MAX_ACTIONS) {
-                    nextCombatant();
+            // Handle any actor that might have died in this exchange, and recheck hostilities
+            // to determine if combat mode is to continue
+            boolean hasHostile = false;
+            List<Actor> actors = ImmutableList.of(aug.getOwner(), target);
+            for (Actor actor : actors) {
+                if (actor.isAlive()) {
+                    if (actor.hasEnemy()) {
+                        hasHostile = true;
+                    }
                 } else {
-                    takeCombatTurn();
+                    for (ActorEncounterListener listener : listeners) {
+                        listener.actorKilled(actor);
+                    }
+                }
+            }
+            
+            // Update combat state
+            if (inCombat && !countered) {
+                if (!hasHostile) {
+                    // If no hostilities were found, then we're not in combat
+                    inCombat = false;
+                    for (ActorEncounterListener listener : listeners) {
+                        listener.endedCombat();
+                    }
+                } else {
+                    actions++;
+                    if (actions >= MAX_ACTIONS) {
+                        nextCombatant();
+                    } else {
+                        takeCombatTurn();
+                    }
                 }
             } else if (hostileAction) {
                 startCombat();
@@ -115,7 +151,7 @@ public class ActorEncounterModel extends EncounterModel<ActorEncounter> {
         if (!inCombat) {
             return true;
         }
-        return combatants.get(turn) == actor && actions < MAX_ACTIONS;
+        return current == actor && actions < MAX_ACTIONS;
     }
     
     public void startCombat() {
@@ -124,7 +160,6 @@ public class ActorEncounterModel extends EncounterModel<ActorEncounter> {
             for (ActorEncounterListener listener : listeners) {
                 listener.startedCombat();
             }
-            Actor current = combatants.get(turn);
             for (ActorEncounterListener listener : listeners) {
                 listener.combatTurnStarted(current);
             }
@@ -133,7 +168,6 @@ public class ActorEncounterModel extends EncounterModel<ActorEncounter> {
     }
     
     public void passCombat() {
-        Actor current = combatants.get(turn);
         for (ActorEncounterListener listener : listeners) {
             listener.combatTurnPassed(current);
         }
@@ -141,19 +175,30 @@ public class ActorEncounterModel extends EncounterModel<ActorEncounter> {
     }
     
     private void nextCombatant() {
-        turn = (turn + 1) % combatants.size();
-        actions = 0;
-        
-        Actor current = combatants.get(turn);
-        for (ActorEncounterListener listener : listeners) {
-            listener.combatTurnStarted(current);
+        boolean found = false;
+        while (turns.hasNext() && !found) {
+            current = turns.next();
+            if (current.isAlive()) {
+                found = true;
+            } else {
+                turns.remove();
+            }
         }
         
-        takeCombatTurn();
+        if (found) {
+            actions = 0;
+            for (ActorEncounterListener listener : listeners) {
+                listener.combatTurnStarted(current);
+            }
+            
+            takeCombatTurn();
+        } else {
+            // Somehow every actor is dead, so end combat
+        }
     }
     
     private void takeCombatTurn() {
-        combatants.get(turn).takeCombatTurn(this);
+        current.takeCombatTurn(this);
     }
 
     public boolean isInCombat() {
@@ -180,6 +225,8 @@ public class ActorEncounterModel extends EncounterModel<ActorEncounter> {
         void effectApplied(Result result);
         
         void startedCombat();
+        
+        void endedCombat();
         
         void combatTurnStarted(Actor current);
         

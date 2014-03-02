@@ -9,13 +9,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import javax.swing.BorderFactory;
@@ -24,7 +20,6 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
-import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextPane;
 import javax.swing.SwingConstants;
@@ -51,6 +46,7 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
     private static final long serialVersionUID = 1L;
     private final Set<Npc> actors = new LinkedHashSet<>();
     private final ActorEncounterModel model;
+    private final StagePanel stagePanel;
     private final InteriorPanel interiorPanel;
     private final JPanel bufferPanel;
     private ActionAugmentation selected = null;
@@ -74,7 +70,7 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
         builder.nextLine();
         
         // Add all the actor cards
-        StagePanel stagePanel = new StagePanel(actors);
+        stagePanel = new StagePanel(actors);
         builder.append(stagePanel);
         
         // Add the interior panel
@@ -203,6 +199,15 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
                 add(createActorCard(actor));
             }
         }
+        
+        public final void reset(Collection<Npc> actors) {
+            removeAll();
+            for (Npc actor : actors) {
+                add(createActorCard(actor));
+            }
+            Application.getApplication().getFrame().revalidate();
+            repaint();
+        }
     }
     
     private class InteriorPanel extends JPanel {
@@ -241,7 +246,12 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
         }
         
         public void beginDialogueWith(Npc actor) {
-            setDialogueFor(actor, actor.getGreeting());
+            if (actor != null) {
+                setDialogueFor(actor, actor.getGreeting());
+            } else {
+                removeAll();
+                Application.getApplication().getFrame().revalidate();
+            }
         }
         
         public void setDialogueFor(Npc actor, Response response) {
@@ -301,6 +311,11 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
             builder.nextLine(); 
             
             add(builder.getPanel());
+        }
+        
+        public void clear() {
+            actions.clear();
+            combatLog.setText("<html></html>");
         }
         
         public void report(Result result) {
@@ -363,6 +378,14 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
     public void startedCombat() {
         interiorPanel.show(InteriorPanel.COMBAT);
     }
+    
+    @Override
+    public void endedCombat() {
+        interiorPanel.combatPanel.clear();
+        Npc actor = !actors.isEmpty() ? actors.iterator().next() : null;
+        interiorPanel.dialoguePanel.beginDialogueWith(actor);
+        interiorPanel.show(InteriorPanel.DIALOGUE);
+    }
 
     @Override
     public void combatTurnStarted(Actor current) {
@@ -378,7 +401,10 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
 
     @Override
     public void actorKilled(Actor actor) {
-        // TODO Auto-generated method stub
+        actors.remove(actor);
+        stagePanel.reset(actors);
+        interiorPanel.combatPanel.report(new Result(actor,
+                "<i>" + actor.getName() + " has been killed!</i>"));
     }
 
     @Override

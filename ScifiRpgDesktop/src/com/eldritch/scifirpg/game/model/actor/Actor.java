@@ -62,6 +62,10 @@ public abstract class Actor {
         health = getBaseHealth();
     }
     
+    public boolean isAlive() {
+        return health > 0;
+    }
+    
     public int heal(int magnitude) {
         // Can't heal more than our maximum health
         int value = Math.min(magnitude, getBaseHealth());
@@ -75,6 +79,7 @@ public abstract class Actor {
         // Can't do more damage than the target has health
         int damage = Math.min(magnitude, health);
         health -= damage;
+        System.out.println(getName() + ": " + health);
         return damage;
     }
 
@@ -338,4 +343,6 @@ public abstract class Actor {
      * Returns true if the attack succeeded, false if the attack was countered.
      */
     public abstract boolean handleAttack(ActionAugmentation attack);
+    
+    public abstract boolean hasEnemy();
 }

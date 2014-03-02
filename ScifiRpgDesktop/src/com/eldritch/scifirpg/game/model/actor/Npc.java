@@ -1,6 +1,7 @@
 package com.eldritch.scifirpg.game.model.actor;
 
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -65,6 +66,22 @@ public class Npc extends Actor {
     public boolean handleAttack(ActionAugmentation attack) {
         enemies.add(attack.getOwner());
         return true;
+    }
+    
+    @Override
+    public boolean hasEnemy() {
+        boolean found = false;
+        Iterator<Actor> it = enemies.iterator();
+        while (it.hasNext()) {
+            // TODO recalculate aggression maybe?
+            Actor actor = it.next();
+            if (actor.isAlive()) {
+                found = true;
+            } else {
+                it.remove();
+            }
+        }
+        return found;
     }
     
     public Response getResponseFor(Choice choice) {
