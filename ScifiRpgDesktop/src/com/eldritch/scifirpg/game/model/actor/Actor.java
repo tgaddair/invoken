@@ -68,11 +68,19 @@ public abstract class Actor {
     public boolean isAlive() {
         return health > 0;
     }
+    
+    public void changeHealth(int magnitude) {
+        if (magnitude >= 0) {
+            heal(magnitude);
+        } else {
+            damage(magnitude);
+        }
+    }
 
     public int heal(int magnitude) {
         // Can't heal more than our maximum health
-        int value = Math.min(magnitude, getBaseHealth());
-        health += value;
+        int value = Math.min(magnitude, getBaseHealth() - health);
+        health = value;
         return value;
     }
 
@@ -82,7 +90,10 @@ public abstract class Actor {
 
     public int damage(DamageType type, int magnitude) {
         // TODO handle resistances
-
+        return damage(magnitude);
+    }
+    
+    public int damage(int magnitude) {
         // Can't do more damage than the target has health
         int damage = Math.min(magnitude, health);
         health -= damage;
@@ -177,6 +188,10 @@ public abstract class Actor {
 
     public final void stage(AugmentationState augState) {
         stagedAugmentations.add(augState);
+    }
+    
+    protected SkillState getSkill(Discipline d) {
+        return skills.get(d);
     }
 
     public void levelUp() {
@@ -315,6 +330,10 @@ public abstract class Actor {
 
         public int getLevel() {
             return level;
+        }
+        
+        public void addXp(int delta) {
+            xp += delta;
         }
 
         public int getXp() {

@@ -16,6 +16,7 @@ import com.eldritch.scifirpg.proto.Actors.ActorParams.Species;
 import com.eldritch.scifirpg.proto.Actors.PlayerActor;
 import com.eldritch.scifirpg.proto.Actors.PlayerActor.StagedAugmentation;
 import com.eldritch.scifirpg.proto.Actors.PlayerActor.StateMarker;
+import com.eldritch.scifirpg.proto.Disciplines.Discipline;
 import com.eldritch.scifirpg.proto.Disciplines.Profession;
 import com.eldritch.scifirpg.proto.Missions.Mission;
 
@@ -47,6 +48,11 @@ public class Player extends Actor {
 	    for (Mission mission : player.getMissionList()) {
 	        missions.put(mission.getId(), mission);
 	    }
+	}
+	
+	public void gainExperience(Discipline d, int xp) {
+	    // TODO handle leveling up, maybe only on rest
+	    getSkill(d).addXp(xp);
 	}
 	
 	public int getMarkerCount(String marker) {
