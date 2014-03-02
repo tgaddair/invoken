@@ -32,7 +32,7 @@ import com.eldritch.scifirpg.game.model.actor.Actor;
 import com.eldritch.scifirpg.game.model.actor.ActorEncounter;
 import com.eldritch.scifirpg.game.model.actor.ActorEncounterModel;
 import com.eldritch.scifirpg.game.model.actor.ActorEncounterModel.ActorEncounterListener;
-import com.eldritch.scifirpg.game.model.actor.ActorModel.Npc;
+import com.eldritch.scifirpg.game.model.actor.Npc;
 import com.eldritch.scifirpg.game.model.ActionAugmentation;
 import com.eldritch.scifirpg.game.util.EffectUtil.Result;
 import com.eldritch.scifirpg.game.util.LineBreaker;
