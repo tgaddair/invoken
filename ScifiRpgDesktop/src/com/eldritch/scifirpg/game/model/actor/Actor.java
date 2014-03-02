@@ -273,6 +273,13 @@ public abstract class Actor {
             inventory.get(itemId).remove(count);
         }
     }
+    
+    public void changeReputation(String factionId, int value) {
+        if (!factions.containsKey(factionId)) {
+            factions.put(factionId, new FactionState(factionId));
+        }
+        factions.get(factionId).changeReputation(value);
+    }
 
     public int getReputation(String faction) {
         if (!factions.containsKey(faction)) {
@@ -319,23 +326,44 @@ public abstract class Actor {
         private final String factionId;
         private int reputation;
         private int rank;
+        
+        public FactionState(String factionId) {
+            this.factionId = factionId;
+            this.reputation = 0;
+            this.rank = -1;
+        }
 
         public FactionState(FactionStatus status) {
             this.factionId = status.getFactionId();
             this.reputation = status.getReputation();
-            this.rank = status.getRank();
+            this.rank = status.hasRank() ? status.getRank() : -1;
         }
 
         public int getReputation() {
             return reputation;
         }
+        
+        public void changeReputation(int delta) {
+            // Limit the amount we can increase reputation to be <= than 10 * (rank + 2)
+            int max = 10 * (getRank() + 2);
+            reputation = Math.min(reputation + delta, max);
+        }
 
         public void setReputation(int reputation) {
             this.reputation = reputation;
         }
+        
+        public boolean hasRank() {
+            return rank >= 0;
+        }
 
         public int getRank() {
             return rank;
+        }
+        
+        public void promote() {
+            rank++;
+            reputation += 10;
         }
 
         public void setRank(int rank) {
