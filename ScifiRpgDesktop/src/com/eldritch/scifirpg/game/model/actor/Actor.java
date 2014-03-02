@@ -9,6 +9,7 @@ import java.util.Set;
 
 import com.eldritch.scifirpg.game.model.ActionAugmentation;
 import com.eldritch.scifirpg.game.util.AugmentationMarshaller;
+import com.eldritch.scifirpg.game.util.ItemMarshaller;
 import com.eldritch.scifirpg.proto.Actors.ActorParams;
 import com.eldritch.scifirpg.proto.Actors.ActorParams.FactionStatus;
 import com.eldritch.scifirpg.proto.Actors.ActorParams.Gender;
@@ -20,10 +21,12 @@ import com.eldritch.scifirpg.proto.Augmentations.Augmentation;
 import com.eldritch.scifirpg.proto.Disciplines.Discipline;
 import com.eldritch.scifirpg.proto.Disciplines.Profession;
 import com.eldritch.scifirpg.proto.Effects.DamageType;
+import com.eldritch.scifirpg.proto.Items.Item;
 
 public abstract class Actor {
-    protected final static AugmentationMarshaller marshaller = new AugmentationMarshaller();
-    
+    protected final static AugmentationMarshaller AUG_READER = new AugmentationMarshaller();
+    protected final static ItemMarshaller ITEM_READER = new ItemMarshaller();
+
     // Immutable actor fields
     private final ActorParams params;
 
@@ -36,7 +39,7 @@ public abstract class Actor {
     private int health;
 
     // Game specific parameters not set during construction
-    private final Set<InventoryItem> equipped = new HashSet<>();
+    private final Set<Item> equipped = new HashSet<>();
     private final Set<AugmentationState> stagedAugmentations = new HashSet<>();
 
     // Game specific parameters not saved to disk
@@ -61,32 +64,32 @@ public abstract class Actor {
         level = params.getLevel();
         health = getBaseHealth();
     }
-    
+
     public boolean isAlive() {
         return health > 0;
     }
-    
+
     public int heal(int magnitude) {
         // Can't heal more than our maximum health
         int value = Math.min(magnitude, getBaseHealth());
         health += value;
         return value;
     }
-    
+
     public Set<ActionAugmentation> getActions() {
         return actionBuffer;
     }
-    
+
     public int damage(DamageType type, int magnitude) {
         // TODO handle resistances
-        
+
         // Can't do more damage than the target has health
         int damage = Math.min(magnitude, health);
         health -= damage;
         System.out.println(getName() + ": " + health);
         return damage;
     }
-    
+
     public void removeAction(ActionAugmentation aug) {
         actionBuffer.remove(aug);
     }
@@ -112,11 +115,11 @@ public abstract class Actor {
         }
         return drawn;
     }
-    
+
     protected Collection<AugmentationState> getStagedAugmentations() {
         return stagedAugmentations;
     }
-    
+
     private Augmentation drawAvailableAugmentation() {
         int total = 0;
         for (AugmentationState augState : stagedAugmentations) {
@@ -124,7 +127,7 @@ public abstract class Actor {
                 total += augState.getWeight();
             }
         }
-        
+
         double target = Math.random() * total;
         double sum = 0.0;
         for (AugmentationState augState : stagedAugmentations) {
@@ -133,7 +136,7 @@ public abstract class Actor {
                 return augState.getAugmentation();
             }
         }
-        
+
         return null;
     }
 
@@ -152,10 +155,10 @@ public abstract class Actor {
     public int getBaseHealth() {
         return skills.get(Discipline.WARFARE).getLevel();
     }
-    
+
     /**
-     * Denotes reaction time.  Higher initiative results in higher turn order
-     * in combat.
+     * Denotes reaction time. Higher initiative results in higher turn order in
+     * combat.
      */
     public int getInitiative() {
         return skills.get(Discipline.SUBTERFUGE).getLevel();
@@ -171,7 +174,7 @@ public abstract class Actor {
             knownAugmentations.add(aug.getAugId());
         }
     }
-    
+
     public final void stage(AugmentationState augState) {
         stagedAugmentations.add(augState);
     }
@@ -192,7 +195,7 @@ public abstract class Actor {
     public int getCurrentHealth() {
         return health;
     }
-    
+
     public String getId() {
         return params.getId();
     }
@@ -216,41 +219,80 @@ public abstract class Actor {
     public int getSkillLevel(Discipline d) {
         return skills.get(d).getLevel();
     }
-    
+
     public boolean hasEquipped(String itemId) {
         if (!inventory.containsKey(itemId)) {
             return false;
         }
-        InventoryItem item = inventory.get(itemId).getItem();
+        Item item = inventory.get(itemId).getItem();
         return equipped.contains(item);
     }
-    
+
     public int getItemCount(String itemId) {
         if (!inventory.containsKey(itemId)) {
             return 0;
         }
         return inventory.get(itemId).getCount();
     }
-    
+
+    public void changeItemCount(String itemId, int count) {
+        if (count >= 0) {
+            addItem(itemId, count);
+        } else {
+            removeItem(itemId, Math.abs(count));
+        }
+    }
+
+    public void addItem(String itemId, int count) {
+        if (!inventory.containsKey(itemId)) {
+            inventory.put(itemId, new ItemState(ITEM_READER.readAsset(itemId), count));
+        } else {
+            inventory.get(itemId).add(count);
+        }
+    }
+
+    /**
+     * Remove the requested number of instances of the given item from the
+     * actor's inventory. If the number requested is greater than or equal to
+     * the number available, or if count == -1, then we remove all and unequip.
+     */
+    public void removeItem(String itemId, int count) {
+        int available = getItemCount(itemId);
+        if (available == 0) {
+            // Nothing to remove
+            return;
+        }
+        
+        if (count >= available || count == -1) {
+            // Remove all and unequip
+            Item item = inventory.get(itemId).getItem();
+            equipped.remove(item);
+            inventory.remove(itemId);
+        } else {
+            // Decrement counters
+            inventory.get(itemId).remove(count);
+        }
+    }
+
     public int getReputation(String faction) {
         if (!factions.containsKey(faction)) {
             return 0;
         }
         return factions.get(faction).getReputation();
     }
-    
+
     public boolean hasRank(String faction) {
         // TODO add further check for rank existence within faction
         return factions.containsKey(faction);
     }
-    
+
     public int getRank(String faction) {
         if (!factions.containsKey(faction)) {
             return 0;
         }
         return factions.get(faction).getRank();
     }
-    
+
     public Collection<String> getKnownAugmentations() {
         return knownAugmentations;
     }
@@ -306,47 +348,61 @@ public abstract class Actor {
     }
 
     public static class ItemState {
-        private final InventoryItem item;
+        private final Item item;
         private int count;
+        
+        public ItemState(Item item, int count) {
+            this.item = item;
+            this.count = count;
+        }
 
         public ItemState(InventoryItem item) {
-            this.item = item;
+            this.item = ITEM_READER.readAsset(item.getItemId());
             count = item.getCount();
         }
 
-        public InventoryItem getItem() {
+        public Item getItem() {
             return item;
         }
         
+        public void add(int c) {
+            count += c;
+        }
+        
+        public void remove(int c) {
+            // Can't have negative count
+            count = Math.max(count - c, 0);
+        }
+
         public int getCount() {
             return count;
         }
     }
-    
+
     public static class AugmentationState {
         private final String augId;
         private final Augmentation augmentation;
         private int stages;
         private int remainingUses;
-        
+
         public AugmentationState(Augmentation augmentation, int stages) {
             this.augId = augmentation.getId();
             this.stages = stages;
             this.remainingUses = stages;
             this.augmentation = augmentation;
         }
-        
+
         public AugmentationState(StagedAugmentation aug) {
             this.augId = aug.getAugId();
             this.stages = aug.getStages();
             this.remainingUses = aug.getRemainingUses();
-            augmentation = marshaller.readAsset(augId);
+            augmentation = AUG_READER.readAsset(augId);
         }
-        
+
         public Augmentation getAugmentation() {
             return augmentation;
         }
-        
+
         public int getWeight() {
             // TODO maybe weight augs dynamically
             return remainingUses;
@@ -371,18 +427,18 @@ public abstract class Actor {
         public String getAugId() {
             return augId;
         }
-        
+
         public String getName() {
             return augmentation.getName();
         }
     }
-    
+
     public abstract void takeCombatTurn(ActorEncounterModel model);
-    
+
     /**
      * Returns true if the attack succeeded, false if the attack was countered.
      */
     public abstract boolean handleAttack(ActionAugmentation attack);
-    
+
     public abstract boolean hasEnemy();
 }

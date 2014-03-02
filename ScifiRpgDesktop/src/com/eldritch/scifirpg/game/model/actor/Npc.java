@@ -37,7 +37,7 @@ public class Npc extends Actor {
         
         // Construct augs and items by randomly sampling from available
         for (String augId : getKnownAugmentations()) {
-            Augmentation aug = marshaller.readAsset(augId);
+            Augmentation aug = AUG_READER.readAsset(augId);
             stage(new AugmentationState(aug, 20));
         }
         

@@ -41,7 +41,7 @@ public class ActorEncounterModel extends EncounterModel<ActorEncounter> {
     private boolean inCombat = false;
 
     public ActorEncounterModel(ActorEncounter encounter, GameState state) {
-        super(encounter, state.getLocationModel());
+        super(encounter, state);
         this.model = state.getActorModel();
         this.npcs = model.getActorsFor(getEncounter());
         

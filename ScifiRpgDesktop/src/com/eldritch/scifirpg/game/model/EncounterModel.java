@@ -1,16 +1,22 @@
 package com.eldritch.scifirpg.game.model;
 
+import java.util.List;
+
+import com.eldritch.scifirpg.game.model.actor.Player;
 import com.eldritch.scifirpg.proto.Locations.Encounter.Type;
+import com.eldritch.scifirpg.proto.Outcomes.Outcome;
 
 public class EncounterModel<T extends AbstractEncounter> {
     private final T encounter;
     private final LocationModel locationModel;
+    private final Player player;
     private String nextLocation = null;
     private String successor = null;
     
-    public EncounterModel(T encounter, LocationModel locationModel) {
+    public EncounterModel(T encounter, GameState state) {
         this.encounter = encounter;
-        this.locationModel = locationModel;
+        this.locationModel = state.getLocationModel();
+        this.player = state.getActorModel().getPlayer();
         if (encounter.hasSuccessor()) {
             successor = encounter.getSuccessorId();
         }
@@ -35,6 +41,10 @@ public class EncounterModel<T extends AbstractEncounter> {
     
     public void setSuccessor(String encounter) {
         successor = encounter;
+    }
+    
+    public void applyOutcomes(List<Outcome> outcomes) {
+        
     }
     
     public Type getType() {
