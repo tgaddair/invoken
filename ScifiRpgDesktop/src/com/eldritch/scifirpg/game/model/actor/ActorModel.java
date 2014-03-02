@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Set;
 
 import com.eldritch.scifirpg.game.util.ActorMarshaller;
-import com.eldritch.scifirpg.proto.Actors.DialogueTree.Response;
 import com.eldritch.scifirpg.proto.Actors.NonPlayerActor;
 import com.eldritch.scifirpg.proto.Locations.Encounter.ActorParams.ActorScenario;
 
@@ -14,7 +13,6 @@ public class ActorModel {
     private final Player player;
     private final ActorMarshaller actorMarshaller = new ActorMarshaller();
     private final Set<String> deadNpcs = new HashSet<>();
-    final DialogueVerifier dialogueVerifier = new DialogueVerifier();
     
     public ActorModel(Player player) {
         this.player = player;
@@ -42,30 +40,5 @@ public class ActorModel {
     
     public boolean isAlive(String id) {
         return !deadNpcs.contains(id);
-    }
-
-    public static class ParsedResponse {
-        private final Response response;
-        private final String parsedText;
-        
-        public ParsedResponse(Response response, String parsedText) {
-            this.response = response;
-            this.parsedText = parsedText;
-        }
-
-        public Response getResponse() {
-            return response;
-        }
-
-        public String getParsedText() {
-            return parsedText;
-        }
-    }
-    
-    public class DialogueVerifier {
-        public boolean isValid(Response r) {
-            // TODO use prerequisites and the current actor model state
-            return true;
-        }
     }
 }

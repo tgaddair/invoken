@@ -16,14 +16,13 @@ import com.eldritch.scifirpg.proto.Actors.NonPlayerActor.Trait;
 import com.eldritch.scifirpg.proto.Locations.Encounter.ActorParams.ActorScenario;
 
 public class Npc extends Actor {
-    private final ActorModel actorModel;
+    private final DialogueVerifier dialogueVerifier = new DialogueVerifier();
     private final NonPlayerActor data;
     private final ActorScenario scenario;
     private final Set<Actor> enemies = new HashSet<>();
 
     public Npc(NonPlayerActor data, ActorModel actorModel, ActorScenario scenario) {
         super(data.getParams());
-        this.actorModel = actorModel;
         this.data = data;
         this.scenario = scenario;
         // TODO construct enemies from the encounter
@@ -35,7 +34,12 @@ public class Npc extends Actor {
     }
     
     public Response getResponseFor(Choice choice) {
-        // TODO
+        Set<String> successors = new HashSet<>(choice.getSuccessorIdList());
+        for (Response r : data.getDialogue().getDialogueList()) {
+            if (successors.contains(r.getId()) && dialogueVerifier.isValid(r)) {
+                return r;
+            }
+        }
         return null;
     }
     
@@ -51,7 +55,7 @@ public class Npc extends Actor {
     
     private Response getGreetingFor(DialogueTree tree) {
         for (Response r : tree.getDialogueList()) {
-            if (r.getGreeting() && this.actorModel.dialogueVerifier.isValid(r)) {
+            if (r.getGreeting() && dialogueVerifier.isValid(r)) {
                 return r;
             }
         }
@@ -84,5 +88,30 @@ public class Npc extends Actor {
 
     public List<Trait> getTraits() {
         return data.getTraitList();
+    }
+
+    public static class ParsedResponse {
+        private final Response response;
+        private final String parsedText;
+        
+        public ParsedResponse(Response response, String parsedText) {
+            this.response = response;
+            this.parsedText = parsedText;
+        }
+
+        public Response getResponse() {
+            return response;
+        }
+
+        public String getParsedText() {
+            return parsedText;
+        }
+    }
+    
+    public class DialogueVerifier {
+        public boolean isValid(Response r) {
+            // TODO use prerequisites and the current actor model state
+            return true;
+        }
     }
 }
