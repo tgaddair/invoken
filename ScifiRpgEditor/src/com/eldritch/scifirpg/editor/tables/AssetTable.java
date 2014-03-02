@@ -59,6 +59,7 @@ public abstract class AssetTable<T extends Message> extends JTable {
 	    addMouseListener(popupListener);
 	    
 	    addMouseListener(new MouseAdapter() {
+	    	@Override
 	        public void mousePressed(MouseEvent me) {
 	        	deleteItem.setVisible(AssetTable.this.getSelectedRow() >= 0);
 	        	

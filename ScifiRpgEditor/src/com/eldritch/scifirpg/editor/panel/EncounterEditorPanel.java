@@ -480,6 +480,7 @@ public class EncounterEditorPanel extends AssetEditorPanel<Encounter, EncounterT
 		
 		private final JComboBox<String> pointerBox = new JComboBox<String>();
 		private final JCheckBox essentialCheck = new JCheckBox();
+		private final JCheckBox blockingCheck = new JCheckBox();
 		private final OutcomeTable outcomeTable = new EncounterOutcomeTable(EncounterEditorPanel.this.getTable());
 		private final DialogueTable dialogueTable = new DialogueTable();
 		
@@ -510,6 +511,9 @@ public class EncounterEditorPanel extends AssetEditorPanel<Encounter, EncounterT
 			builder.append("Essential:", essentialCheck);
 			builder.nextLine();
 			
+			builder.append("Blocking:", blockingCheck);
+			builder.nextLine();
+			
 			builder.appendRow("fill:120dlu");
 			builder.append("On Death:", new AssetTablePanel(outcomeTable));
 			builder.nextLine();
@@ -527,6 +531,7 @@ public class EncounterEditorPanel extends AssetEditorPanel<Encounter, EncounterT
 				ActorScenario scenario = prev.get();
 				pointerBox.setSelectedItem(scenario.getActorId());
 				essentialCheck.setSelected(scenario.getEssential());
+				blockingCheck.setSelected(scenario.getBlocking());
 				for (Outcome o : scenario.getOnDeathList()) {
 					outcomeTable.addAsset(o);
 				}
@@ -546,6 +551,7 @@ public class EncounterEditorPanel extends AssetEditorPanel<Encounter, EncounterT
 			ActorScenario.Builder as = ActorScenario.newBuilder()
 					.setActorId(id)
 					.setEssential(essentialCheck.isSelected())
+					.setBlocking(blockingCheck.isSelected())
 					.addAllOnDeath(outcomeTable.getAssets());
 			if (!dialogueTable.getAssets().isEmpty()) {
 				DialogueTree dialogue = DialogueTree.newBuilder()
