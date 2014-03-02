@@ -19,7 +19,9 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.JTextPane;
 import javax.swing.SwingConstants;
 import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
@@ -29,18 +31,21 @@ import javax.swing.border.LineBorder;
 import com.eldritch.scifirpg.game.model.Actor;
 import com.eldritch.scifirpg.game.model.ActorEncounter;
 import com.eldritch.scifirpg.game.model.ActorEncounterModel;
+import com.eldritch.scifirpg.game.model.ActorEncounterModel.ActorEncounterListener;
 import com.eldritch.scifirpg.game.model.ActorModel.Npc;
 import com.eldritch.scifirpg.game.model.ActionAugmentation;
+import com.eldritch.scifirpg.game.util.EffectUtil.Result;
 import com.eldritch.scifirpg.game.util.LineBreaker;
 import com.eldritch.scifirpg.proto.Actors.DialogueTree.Choice;
 import com.eldritch.scifirpg.proto.Actors.DialogueTree.Response;
 import com.jgoodies.forms.builder.DefaultFormBuilder;
 import com.jgoodies.forms.layout.FormLayout;
 
-public class ActorEncounterPanel extends JPanel {
+public class ActorEncounterPanel extends JPanel implements ActorEncounterListener {
     private static final long serialVersionUID = 1L;
     private final Set<Npc> actors = new LinkedHashSet<>();
     private final ActorEncounterModel model;
+    private final InteriorPanel interiorPanel;
     private ActionAugmentation selected = null;
     private Actor target = null;
     
@@ -66,8 +71,9 @@ public class ActorEncounterPanel extends JPanel {
         builder.append(stagePanel);
         
         // Add the interior panel
+        interiorPanel = new InteriorPanel();
         builder.appendRow("fill:p:grow");
-        builder.append(new InteriorPanel());
+        builder.append(interiorPanel);
         builder.nextLine();
         
         // Add action buffer
@@ -97,6 +103,8 @@ public class ActorEncounterPanel extends JPanel {
         }
         
         add(builder.getPanel());
+        
+        model.addListener(this);
     }
     
     private JLabel createAugCard(final ActionAugmentation aug) {
@@ -186,16 +194,24 @@ public class ActorEncounterPanel extends JPanel {
         private static final long serialVersionUID = 1L;
         private static final String DIALOGUE = "Dialogue";
         private static final String COMBAT = "Combat";
+        private final CombatPanel combatPanel;
         
         public InteriorPanel() {
             super(new CardLayout());
+            
+            combatPanel = new CombatPanel();
+            
             add(new DialoguePanel(), DIALOGUE);
-            add(new CombatPanel(), COMBAT);
+            add(combatPanel, COMBAT);
         }
         
         public void show(String key) {
             CardLayout cl = (CardLayout) getLayout();
             cl.show(this, key);
+        }
+        
+        public void report(Result result) {
+            combatPanel.report(result);
         }
     }
     
@@ -237,6 +253,7 @@ public class ActorEncounterPanel extends JPanel {
     
     private class CombatPanel extends JPanel {
         private static final long serialVersionUID = 1L;
+        private final JTextPane combatLog;
 
         public CombatPanel() {
             super(new BorderLayout());
@@ -245,13 +262,21 @@ public class ActorEncounterPanel extends JPanel {
             builder.border(BorderFactory.createEmptyBorder(5, 5, 5, 5));
             builder.appendColumn("fill:max(p; 100px):grow");
             
-            JTextArea log = createArea("");
-            log.setBorder(null);
-            log.setOpaque(false);
-            builder.append(log);
+            combatLog = new JTextPane();
+            combatLog.setEditable(false);
+            combatLog.setOpaque(false);
+            
+            JScrollPane scrollPane = new JScrollPane(combatLog);
+            scrollPane.setBorder(null);
+            builder.append(scrollPane);
             builder.nextLine(); 
             
             add(builder.getPanel());
+        }
+        
+        public void report(Result result) {
+            String text = combatLog.getText() + "\n" + result.toString();
+            combatLog.setText(text);
         }
     }
     
@@ -273,5 +298,25 @@ public class ActorEncounterPanel extends JPanel {
         area.setWrapStyleWord(true);
         area.setEditable(false);
         return area;
+    }
+
+    @Override
+    public void effectApplied(Result result) {
+        interiorPanel.report(result);
+    }
+
+    @Override
+    public void startedCombat() {
+        interiorPanel.show(InteriorPanel.COMBAT);
+    }
+
+    @Override
+    public void actorKilled(Actor actor) {
+        // TODO Auto-generated method stub
+    }
+
+    @Override
+    public void actorTargeted(Actor actor) {
+        // TODO Auto-generated method stub
     }
 }

@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.eldritch.scifirpg.game.model.ActorModel.Npc;
 import com.eldritch.scifirpg.game.util.EffectUtil;
+import com.eldritch.scifirpg.game.util.EffectUtil.Result;
 import com.eldritch.scifirpg.proto.Effects.Effect;
 import com.google.common.base.Optional;
 
@@ -17,7 +18,13 @@ import com.google.common.base.Optional;
 public class ActorEncounterModel extends EncounterModel<ActorEncounter> {
     private final ActorModel model;
     private final List<Npc> actors;
-    private final List<ActorListener> listeners = new ArrayList<>();
+    private final List<ActorEncounterListener> listeners = new ArrayList<>();
+    
+    // When in combat, no dialogue or other interaction modes can take place until resolved.
+    // Resolution occurs when there are no Actors in the encounter hostile to another
+    // actor.  If no one is hostile to the player, they can choose to "pass" on their attack
+    // turn.
+    private boolean inCombat = false;
 
     public ActorEncounterModel(ActorEncounter encounter, ActorModel model) {
         super(encounter);
@@ -38,6 +45,7 @@ public class ActorEncounterModel extends EncounterModel<ActorEncounter> {
         // Allow target to respond to the invocation
         switch (aug.getType()) {
             case ATTACK: // Playable to make hostile
+                startCombat();
                 break;
             case DECEIVE: // Playable when not detected
             case EXECUTE: // Playable in encounter
@@ -56,13 +64,29 @@ public class ActorEncounterModel extends EncounterModel<ActorEncounter> {
         Optional<Actor> source = Optional.of(aug.getOwner());
         Optional<Actor> dest = Optional.of(target);
         for (Effect effect : aug.getEffects()) {
-            EffectUtil.apply(effect, source, dest);
+            Result result = EffectUtil.apply(effect, source, dest);
+            for (ActorEncounterListener listener : listeners) {
+                listener.effectApplied(result);
+            }
         }
         
         // TODO handle duration effects by keeping a list we apply at the end of the round
     }
     
-    public void addListener(ActorListener listener) {
+    public void startCombat() {
+        if (!inCombat) {
+            inCombat = true;
+            for (ActorEncounterListener listener : listeners) {
+                listener.startedCombat();
+            }
+        }
+    }
+    
+    public boolean isInCombat() {
+        return inCombat;
+    }
+    
+    public void addListener(ActorEncounterListener listener) {
         listeners.add(listener);
     }
     
@@ -78,7 +102,11 @@ public class ActorEncounterModel extends EncounterModel<ActorEncounter> {
         return model;
     }
     
-    public static interface ActorListener {
+    public static interface ActorEncounterListener {
+        void effectApplied(Result result);
+        
+        void startedCombat();
+        
         void actorKilled(Actor actor);
         
         void actorTargeted(Actor actor);

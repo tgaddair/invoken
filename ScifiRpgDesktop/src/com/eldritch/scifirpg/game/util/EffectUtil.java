@@ -6,19 +6,29 @@ import com.eldritch.scifirpg.proto.Effects.Effect;
 import com.google.common.base.Optional;
 
 public class EffectUtil {
-    public static void apply(Effect effect, Optional<Actor> source, Optional<Actor> target) {
+    public static Result apply(Effect effect, Optional<Actor> source, Optional<Actor> target) {
         switch (effect.getType()) {
             // Attack
             case DAMAGE_MELEE: // MAGNITUDE damage of DAMAGE_TYPE on TARGET for DURATION
             case DAMAGE_RANGED:
             case DAMAGE_HEAVY:
             case DAMAGE_COORDINATED:
-            case DAMAGE_CORRUPTION:
-                target.get().damage(effect.getDamageType(), effect.getMagnitude());
-                break;
+            case DAMAGE_CORRUPTION: {
+                int value = target.get().damage(effect.getDamageType(), effect.getMagnitude());
+                return new Result(String.format(
+                        "%d %s damage to %s",
+                        value,
+                        effect.getDamageType().name().toLowerCase(),
+                        target.get().getName()));
+            }
             case DRAIN: // Corruption: Transfer life to source, W/A
                 int value = target.get().damage(DamageType.VIRAL, effect.getMagnitude());
                 source.get().heal(value);
+                return new Result(String.format(
+                        "%d drained from %s to %s",
+                        value,
+                        target.get().getName(),
+                        source.get().getName()));
 
             // Deceive
             case FLEE: // Avoid conflict and detection
@@ -75,11 +85,24 @@ public class EffectUtil {
 
             // Dialogue - Influence
             case INFLUENCE: // Requires Influence Type
-                break;
+                return new Result("");
                 
             default:
                 throw new IllegalArgumentException(
                         "Unrecognized Effect type: " + effect.getType());
+        }
+    }
+    
+    public static class Result {
+        private final String message;
+        
+        public Result(String message) {
+            this.message = message;
+        }
+        
+        @Override
+        public String toString() {
+            return message;
         }
     }
     
