@@ -21,7 +21,7 @@ import com.eldritch.scifirpg.proto.Disciplines.Discipline;
 import com.eldritch.scifirpg.proto.Disciplines.Profession;
 import com.eldritch.scifirpg.proto.Effects.DamageType;
 
-public class Actor {
+public abstract class Actor {
     // Immutable actor fields
     private final ActorParams params;
 
@@ -131,6 +131,14 @@ public class Actor {
      */
     public int getBaseHealth() {
         return skills.get(Discipline.WARFARE).getLevel();
+    }
+    
+    /**
+     * Denotes reaction time.  Higher initiative results in higher turn order
+     * in combat.
+     */
+    public int getInitiative() {
+        return skills.get(Discipline.SUBTERFUGE).getLevel();
     }
 
     public final void equip(String itemId) {
@@ -307,4 +315,10 @@ public class Actor {
             return augmentation.getName();
         }
     }
+    
+    
+    /**
+     * Returns true if the attack succeeded, false if the attack was countered.
+     */
+    public abstract boolean handleAttack(ActionAugmentation attack);
 }

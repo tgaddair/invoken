@@ -1,6 +1,8 @@
 package com.eldritch.scifirpg.game.model.actor;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import com.eldritch.scifirpg.game.model.ActionAugmentation;
@@ -20,6 +22,7 @@ public class ActorEncounterModel extends EncounterModel<ActorEncounter> {
     private final ActorModel model;
     private final List<Npc> actors;
     private final List<ActorEncounterListener> listeners = new ArrayList<>();
+    private final List<Actor> combatants = new ArrayList<>();
     
     // When in combat, no dialogue or other interaction modes can take place until resolved.
     // Resolution occurs when there are no Actors in the encounter hostile to another
@@ -31,8 +34,17 @@ public class ActorEncounterModel extends EncounterModel<ActorEncounter> {
         super(encounter);
         this.model = model;
         this.actors = model.getActorsFor(getEncounter());
+        
+        combatants.addAll(actors);
+        combatants.add(model.getPlayer());
+        Collections.sort(combatants, new Comparator<Actor>() {
+            @Override
+            public int compare(Actor a1, Actor a2) {
+                // Descending order by initiative
+                return Integer.compare(a2.getInitiative(), a1.getInitiative());
+            }
+        });
     }
-    
     
     /**
      * Invoke on self if target is not specified.  Some augmentations will also automatically
@@ -44,9 +56,11 @@ public class ActorEncounterModel extends EncounterModel<ActorEncounter> {
 
     public void invoke(ActionAugmentation aug, Actor target) {
         // Allow target to respond to the invocation
+        boolean success = true;
         switch (aug.getType()) {
             case ATTACK: // Playable to make hostile
                 startCombat();
+                success = target.handleAttack(aug);
                 break;
             case DECEIVE: // Playable when not detected
             case EXECUTE: // Playable in encounter
@@ -61,17 +75,19 @@ public class ActorEncounterModel extends EncounterModel<ActorEncounter> {
                         "Unrecognized Augmentation Type: " + aug.getType());
         }
         
-        // No counter, apply effects
-        Optional<Actor> source = Optional.of(aug.getOwner());
-        Optional<Actor> dest = Optional.of(target);
-        for (Effect effect : aug.getEffects()) {
-            Result result = EffectUtil.apply(effect, source, dest);
-            for (ActorEncounterListener listener : listeners) {
-                listener.effectApplied(result);
+        if (success) {
+            // No counter, apply effects
+            Optional<Actor> source = Optional.of(aug.getOwner());
+            Optional<Actor> dest = Optional.of(target);
+            for (Effect effect : aug.getEffects()) {
+                Result result = EffectUtil.apply(effect, source, dest);
+                for (ActorEncounterListener listener : listeners) {
+                    listener.effectApplied(result);
+                }
             }
+            
+            // TODO handle duration effects by keeping a list we apply at the end of the round
         }
-        
-        // TODO handle duration effects by keeping a list we apply at the end of the round
     }
     
     public void startCombat() {
@@ -107,6 +123,8 @@ public class ActorEncounterModel extends EncounterModel<ActorEncounter> {
         void effectApplied(Result result);
         
         void startedCombat();
+        
+        void combatTurnComplete(Actor prev, Actor next);
         
         void actorKilled(Actor actor);
         

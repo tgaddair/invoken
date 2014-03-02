@@ -25,10 +25,10 @@ public class LocationPanel extends JPanel implements LocationListener {
         super(new BorderLayout());
         this.state = state;
         this.model = model;
-        resetPanel();
+        addPanel();
     }
 
-    private void resetPanel() {
+    private void addPanel() {
         AbstractEncounter encounter = model.drawEncounter();
         JPanel encounterPanel = null;
         switch (encounter.getType()) {
@@ -63,7 +63,7 @@ public class LocationPanel extends JPanel implements LocationListener {
             @Override
             public void run() {
                 removeAll();
-                resetPanel();
+                addPanel();
                 Application.getApplication().getFrame().revalidate();
             }
         });

@@ -28,6 +28,7 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 
+import com.eldritch.scifirpg.game.Application;
 import com.eldritch.scifirpg.game.model.actor.Actor;
 import com.eldritch.scifirpg.game.model.actor.ActorEncounter;
 import com.eldritch.scifirpg.game.model.actor.ActorEncounterModel;
@@ -145,7 +146,7 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
         return label;
     }
     
-    private JLabel createActorCard(final Actor actor) {
+    private JLabel createActorCard(final Npc actor) {
         final JLabel label = new JLabel(actor.getName());
         label.setBorder(new CompoundBorder(new LineBorder(Color.GRAY),
                 new EmptyBorder(1, 3, 1, 1)));
@@ -173,6 +174,14 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
                     target = null;
                 }
             }
+            
+            @Override
+            public void mousePressed(MouseEvent me) {
+                // Double-click -> invoke on self
+                if (me.getClickCount() == 2) {
+                    interiorPanel.dialoguePanel.beginDialogueWith(actor);
+                }
+            }
         });
         
         return label;
@@ -194,24 +203,22 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
         private static final long serialVersionUID = 1L;
         private static final String DIALOGUE = "Dialogue";
         private static final String COMBAT = "Combat";
+        private final DialoguePanel dialoguePanel;
         private final CombatPanel combatPanel;
         
         public InteriorPanel() {
             super(new CardLayout());
             
+            dialoguePanel = new DialoguePanel();
             combatPanel = new CombatPanel();
             
-            add(new DialoguePanel(), DIALOGUE);
+            add(dialoguePanel, DIALOGUE);
             add(combatPanel, COMBAT);
         }
         
         public void show(String key) {
             CardLayout cl = (CardLayout) getLayout();
             cl.show(this, key);
-        }
-        
-        public void report(Result result) {
-            combatPanel.report(result);
         }
     }
     
@@ -221,33 +228,50 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
         public DialoguePanel() {
             super(new BorderLayout());
             
+            if (!actors.isEmpty()) {
+                final Npc actor = actors.iterator().next();
+                add(getPanelFor(actor, actor.getGreeting()));
+            }
+        }
+        
+        public void beginDialogueWith(Npc actor) {
+            setDialogueFor(actor, actor.getGreeting());
+        }
+        
+        public void setDialogueFor(Npc actor, Response response) {
+            removeAll();
+            add(getPanelFor(actor, response));
+            Application.getApplication().getFrame().revalidate();
+        }
+        
+        private JPanel getPanelFor(final Npc actor, Response response) {
             DefaultFormBuilder builder = new DefaultFormBuilder(new FormLayout(""));
             builder.border(BorderFactory.createEmptyBorder(5, 5, 5, 5));
             builder.appendColumn("fill:max(p; 100px):grow");
             
-            if (!actors.isEmpty()) {
-                Npc actor = actors.iterator().next();
-                Response greeting = actor.getGreeting();
+            JTextArea greetArea = createArea(response.getText());
+            greetArea.setBorder(null);
+            greetArea.setOpaque(false);
+            builder.append(actor.getName(), greetArea);
+            builder.nextLine();
+            
+            ButtonGroup group = new ButtonGroup();
+            for (final Choice c : response.getChoiceList()) {
+                String text = LineBreaker.breakUp(c.getText());
+                JRadioButton radio = new JRadioButton("<html>" + text + "</html>");
+                radio.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent ev) {
+                        setDialogueFor(actor, actor.getResponseFor(c));
+                    }
+                });
+                group.add(radio);
                 
-                JTextArea greetArea = createArea(greeting.getText());
-                greetArea.setBorder(null);
-                greetArea.setOpaque(false);
-                builder.append(actor.getName(), greetArea);
+                builder.append(radio);
                 builder.nextLine();
-                
-                ButtonGroup group = new ButtonGroup();
-                for (Choice c : greeting.getChoiceList()) {
-                    String text = LineBreaker.breakUp(c.getText());
-                    JRadioButton radio = new JRadioButton("<html>" + text + "</html>");
-                    group.add(radio);
-                    
-                    builder.append(radio);
-                    builder.nextLine();
-                }
             }
             
-            
-            add(builder.getPanel());
+            return builder.getPanel();
         }
     }
     
@@ -302,12 +326,17 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
 
     @Override
     public void effectApplied(Result result) {
-        interiorPanel.report(result);
+        interiorPanel.combatPanel.report(result);
     }
 
     @Override
     public void startedCombat() {
         interiorPanel.show(InteriorPanel.COMBAT);
+    }
+
+    @Override
+    public void combatTurnComplete(Actor prev, Actor next) {
+        // TODO Auto-generated method stub
     }
 
     @Override

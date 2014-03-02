@@ -1,8 +1,12 @@
 package com.eldritch.scifirpg.game.model.actor;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+import com.eldritch.scifirpg.game.model.ActionAugmentation;
 import com.eldritch.scifirpg.proto.Actors.DialogueTree;
+import com.eldritch.scifirpg.proto.Actors.DialogueTree.Choice;
 import com.eldritch.scifirpg.proto.Actors.NonPlayerActor;
 import com.eldritch.scifirpg.proto.Actors.DialogueTree.Response;
 import com.eldritch.scifirpg.proto.Actors.NonPlayerActor.Aggression;
@@ -15,12 +19,24 @@ public class Npc extends Actor {
     private final ActorModel actorModel;
     private final NonPlayerActor data;
     private final ActorScenario scenario;
+    private final Set<Actor> enemies = new HashSet<>();
 
     public Npc(NonPlayerActor data, ActorModel actorModel, ActorScenario scenario) {
         super(data.getParams());
         this.actorModel = actorModel;
         this.data = data;
         this.scenario = scenario;
+        // TODO construct enemies from the encounter
+    }
+    
+    public boolean handleAttack(ActionAugmentation attack) {
+        enemies.add(attack.getOwner());
+        return true;
+    }
+    
+    public Response getResponseFor(Choice choice) {
+        // TODO
+        return null;
     }
     
     public Response getGreeting() {
