@@ -100,6 +100,10 @@ public class Npc extends Actor {
         return found;
     }
     
+    public boolean hasEnemy(Actor actor) {
+        return enemies.contains(actor);
+    }
+    
     public List<Choice> getChoicesFor(Response response) {
         List<Choice> choices = new ArrayList<>();
         for (Choice choice : response.getChoiceList()) {
@@ -141,6 +145,10 @@ public class Npc extends Actor {
 
     public boolean isUnique() {
         return data.getUnique();
+    }
+    
+    public boolean isBlocking() {
+        return scenario.getBlocking();
     }
 
     public boolean canSpeak() {

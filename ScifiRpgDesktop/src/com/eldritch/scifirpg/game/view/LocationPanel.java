@@ -11,7 +11,6 @@ import com.eldritch.scifirpg.game.model.GameState;
 import com.eldritch.scifirpg.game.model.LocationModel;
 import com.eldritch.scifirpg.game.model.LocationModel.LocationListener;
 import com.eldritch.scifirpg.game.model.actor.ActorEncounter;
-import com.eldritch.scifirpg.game.model.actor.ActorEncounterModel;
 import com.eldritch.scifirpg.game.model.RegionEncounter;
 import com.eldritch.scifirpg.game.model.StaticEncounter;
 import com.eldritch.scifirpg.proto.Locations.Location;
@@ -29,25 +28,23 @@ public class LocationPanel extends JPanel implements LocationListener {
     }
 
     private void addPanel() {
-        AbstractEncounter encounter = model.drawEncounter();
+        AbstractEncounter encounter = model.getCurrentEncounter();
         JPanel encounterPanel = null;
         switch (encounter.getType()) {
             case STATIC:
-                encounterPanel = new StaticEncounterPanel((StaticEncounter) model.drawEncounter());
+                encounterPanel = new StaticEncounterPanel((StaticEncounter) encounter);
                 break;
             case DECISION:
                 // encounterPanel = new
                 // DecisionEncounterPanel((DecisionEncounter)
-                // model.drawEncounter());
+                // encounter);
                 break;
             case ACTOR:
-                ActorEncounterModel encounterModel = new ActorEncounterModel(
-                        (ActorEncounter) model.drawEncounter(),
-                        state.getActorModel());
-                encounterPanel = new ActorEncounterPanel(encounterModel);
+                encounterPanel = new ActorEncounterPanel(
+                        ((ActorEncounter) encounter).createModel(state));
                 break;
             case REGION:
-                encounterPanel = new RegionEncounterPanel((RegionEncounter) model.drawEncounter(),
+                encounterPanel = new RegionEncounterPanel((RegionEncounter) encounter,
                         model);
                 break;
             default:

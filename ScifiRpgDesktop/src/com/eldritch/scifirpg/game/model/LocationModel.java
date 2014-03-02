@@ -4,16 +4,22 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import com.eldritch.scifirpg.game.model.actor.ActorEncounter;
+import com.eldritch.scifirpg.game.model.actor.ActorEncounterModel;
 import com.eldritch.scifirpg.game.util.LocationMarshaller;
+import com.eldritch.scifirpg.game.view.ActorEncounterPanel;
+import com.eldritch.scifirpg.game.view.RegionEncounterPanel;
+import com.eldritch.scifirpg.game.view.StaticEncounterPanel;
 import com.eldritch.scifirpg.proto.Locations.Encounter;
 import com.eldritch.scifirpg.proto.Locations.Location;
 
 public class LocationModel {
     private final GameState state;
-    private Location location;
     private final LocationMarshaller locationMarshaller = new LocationMarshaller();
     private final List<AbstractEncounter> encounters = new ArrayList<>();
     private final List<LocationListener> listeners = new ArrayList<>();
+    private Location location;
+    private AbstractEncounter encounter;
 
     public LocationModel(String locid, GameState state) {
         this.state = state;
@@ -36,13 +42,33 @@ public class LocationModel {
         }
         Collections.sort(encounters);
         
+        // Draw an encounter
+        drawNextEncounter();
+        
         // Notify listeners
         for (LocationListener listener : listeners) {
             listener.locationChanged(location);
         }
     }
-
-    public AbstractEncounter drawEncounter() {
+    
+    public AbstractEncounter getCurrentEncounter() {
+        return encounter;
+    }
+    
+    public void nextEncounter() {
+        drawNextEncounter();
+        
+        // Notify listeners
+        for (LocationListener listener : listeners) {
+            listener.locationChanged(location);
+        }
+    }
+    
+    private void drawNextEncounter() {
+        encounter = drawEncounter();
+    }
+    
+    private AbstractEncounter drawEncounter() {
         double total = 0.0;
         List<AbstractEncounter> validEncounters = new ArrayList<>();
         for (AbstractEncounter encounter : encounters) {

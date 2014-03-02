@@ -58,10 +58,11 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
     private final StagePanel stagePanel;
     private final InteriorPanel interiorPanel;
     private final BufferPanel bufferPanel;
+    private final JButton continueButton;
     private ActionAugmentation selected = null;
     private Actor target = null;
     
-    public ActorEncounterPanel(ActorEncounterModel model) {
+    public ActorEncounterPanel(final ActorEncounterModel model) {
         super(new BorderLayout());
         this.model = model;
         
@@ -94,9 +95,20 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
         builder.append(bufferPanel);
         builder.nextLine();
         
+        // Add continue in location button
+        JPanel buttonPanel = new JPanel(new FlowLayout());
+        continueButton = new JButton("Continue");
+        continueButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ev) {
+                model.nextEncounter();
+            }
+        });
+        continueButton.setEnabled(model.canContinue());
+        buttonPanel.add(continueButton);
+        
         // Add the flee button
         if (encounter.canFlee()) {
-            JPanel buttonPanel = new JPanel(new FlowLayout());
             final JButton button = new JButton("Flee");
             button.addActionListener(new ActionListener() {
                 @Override
@@ -105,11 +117,10 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
                 }
             });
             buttonPanel.add(button);
-    
-            builder.appendRow("center:p");
-            builder.append(buttonPanel);
-            builder.nextLine();
         }
+        builder.appendRow("center:p");
+        builder.append(buttonPanel);
+        builder.nextLine();
         
         add(builder.getPanel());
         
@@ -542,6 +553,11 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
         if (actor == model.getPlayer()) {
             bufferPanel.addAll(actions);
         }
+    }
+    
+    @Override
+    public void canContinue(boolean can) {
+        continueButton.setEnabled(can);
     }
     
     public class ToastMessage extends JDialog {

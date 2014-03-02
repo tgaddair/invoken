@@ -56,4 +56,8 @@ public class ActorEncounter extends AbstractEncounter {
     public List<ActorScenario> getScenarios() {
         return params.getActorScenarioList();
     }
+    
+    public ActorEncounterModel createModel(GameState state) {
+        return new ActorEncounterModel(this, state);
+    }
 }

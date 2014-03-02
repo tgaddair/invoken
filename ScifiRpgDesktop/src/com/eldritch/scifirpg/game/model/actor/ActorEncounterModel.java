@@ -9,6 +9,7 @@ import java.util.Set;
 
 import com.eldritch.scifirpg.game.model.ActionAugmentation;
 import com.eldritch.scifirpg.game.model.EncounterModel;
+import com.eldritch.scifirpg.game.model.GameState;
 import com.eldritch.scifirpg.game.util.EffectUtil;
 import com.eldritch.scifirpg.game.util.Result;
 import com.eldritch.scifirpg.proto.Effects.Effect;
@@ -24,7 +25,7 @@ import com.google.common.collect.Iterables;
 public class ActorEncounterModel extends EncounterModel<ActorEncounter> {
     private static final int MAX_ACTIONS = 2;
     private final ActorModel model;
-    private final List<Npc> actors;
+    private final List<Npc> npcs;
     private final List<ActorEncounterListener> listeners = new ArrayList<>();
     
     // Combat data
@@ -39,13 +40,13 @@ public class ActorEncounterModel extends EncounterModel<ActorEncounter> {
     // turn.
     private boolean inCombat = false;
 
-    public ActorEncounterModel(ActorEncounter encounter, ActorModel model) {
-        super(encounter);
-        this.model = model;
-        this.actors = model.getActorsFor(getEncounter());
+    public ActorEncounterModel(ActorEncounter encounter, GameState state) {
+        super(encounter, state.getLocationModel());
+        this.model = state.getActorModel();
+        this.npcs = model.getActorsFor(getEncounter());
         
         combatants = new ArrayList<>();
-        combatants.addAll(actors);
+        combatants.addAll(npcs);
         combatants.add(model.getPlayer());
         Collections.sort(combatants, new Comparator<Actor>() {
             @Override
@@ -56,6 +57,47 @@ public class ActorEncounterModel extends EncounterModel<ActorEncounter> {
         });
         this.turns = Iterables.cycle(combatants).iterator();
         current = this.turns.next();
+    }
+    
+    @Override
+    public boolean canContinue() {
+        for (Npc actor : npcs) {
+            if (actor.isAlive()) {
+                if (actor.hasEnemy(model.getPlayer())) {
+                    // Cannot continue if someone is in combat with the player
+                    return false;
+                }
+                if (actor.isBlocking()) {
+                    // Cannot continue if a blocking NPC is alive
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+    
+    private boolean checkHostility() {
+        boolean hasHostile = false;
+        for (Actor actor : combatants) {
+            if (actor.isAlive()) {
+                if (actor.hasEnemy()) {
+                    hasHostile = true;
+                }
+            } else {
+                model.markDead(actor.getId());
+                for (ActorEncounterListener listener : listeners) {
+                    listener.actorKilled(actor);
+                }
+            }
+        }
+        
+        // Also update continue state
+        boolean continuable = canContinue();
+        for (ActorEncounterListener listener : listeners) {
+            listener.canContinue(continuable);
+        }
+        
+        return hasHostile;
     }
     
     /**
@@ -110,20 +152,7 @@ public class ActorEncounterModel extends EncounterModel<ActorEncounter> {
             
             // Handle any actor that might have died in this exchange, and recheck hostilities
             // to determine if combat mode is to continue
-            boolean hasHostile = false;
-            for (Actor actor : combatants) {
-                if (actor.isAlive()) {
-                    if (actor.hasEnemy()) {
-                        System.out.println(actor.getName() + " hostile");
-                        hasHostile = true;
-                    }
-                } else {
-                    model.markDead(actor.getId());
-                    for (ActorEncounterListener listener : listeners) {
-                        listener.actorKilled(actor);
-                    }
-                }
-            }
+            boolean hasHostile = checkHostility();
             
             // Remove the augmentation from the owner's buffer and notify all the listeners
             aug.getOwner().removeAction(aug);
@@ -231,7 +260,7 @@ public class ActorEncounterModel extends EncounterModel<ActorEncounter> {
     }
     
     public List<Npc> getActors() {
-        return actors;
+        return npcs;
     }
     
     public ActorModel getActorModel() {
@@ -256,5 +285,7 @@ public class ActorEncounterModel extends EncounterModel<ActorEncounter> {
         void actionUsed(ActionAugmentation action);
         
         void actionsDrawn(Actor actor, Set<ActionAugmentation> actions);
+        
+        void canContinue(boolean can);
     }
 }
