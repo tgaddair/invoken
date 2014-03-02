@@ -43,11 +43,13 @@ public class LocationModel {
         }
         Collections.sort(encList);
         
+        // Add the sorted encounters to our ordered map
         encounters.clear();
         for (AbstractEncounter encounter : encList) {
             encounters.put(encounter.getId(), encounter);
         }
         
+        // Draw the next encounter
         nextEncounter();
     }
     
