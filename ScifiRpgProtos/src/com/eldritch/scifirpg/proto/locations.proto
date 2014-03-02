@@ -51,6 +51,11 @@ message Encounter {
 
 			// This encounter cannot occur without this actor
 			optional bool essential = 4 [default = false];
+
+			// The player cannot proceed on to the next encounter unless this player is dead.
+			// Other ways to proceed include fleeing (sneaking) and teleport/set_successor
+			// dialogue outcomes.
+			optional bool blocking = 5 [default = false];
 		}
 
 		required string description = 1;
