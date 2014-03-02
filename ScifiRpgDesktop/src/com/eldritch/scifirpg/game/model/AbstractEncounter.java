@@ -2,6 +2,7 @@ package com.eldritch.scifirpg.game.model;
 
 import java.util.List;
 
+import com.eldritch.scifirpg.game.model.actor.ActorEncounter;
 import com.eldritch.scifirpg.proto.Locations.Encounter;
 import com.eldritch.scifirpg.proto.Locations.Encounter.Type;
 import com.eldritch.scifirpg.proto.Prerequisites.Prerequisite;

@@ -3,6 +3,8 @@ package com.eldritch.scifirpg.game.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.eldritch.scifirpg.game.model.actor.ActorModel;
+import com.eldritch.scifirpg.game.model.actor.Player;
 import com.eldritch.scifirpg.game.util.ProfessionUtil;
 import com.eldritch.scifirpg.proto.Actors.ActorParams;
 import com.eldritch.scifirpg.proto.Actors.PlayerActor;

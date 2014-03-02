@@ -1,4 +1,4 @@
-package com.eldritch.scifirpg.game.model;
+package com.eldritch.scifirpg.game.model.actor;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.eldritch.scifirpg.game.model.ActionAugmentation;
 import com.eldritch.scifirpg.game.util.AugmentationMarshaller;
 import com.eldritch.scifirpg.proto.Actors.ActorParams;
 import com.eldritch.scifirpg.proto.Actors.ActorParams.FactionStatus;

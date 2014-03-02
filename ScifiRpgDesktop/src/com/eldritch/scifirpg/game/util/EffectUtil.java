@@ -1,6 +1,6 @@
 package com.eldritch.scifirpg.game.util;
 
-import com.eldritch.scifirpg.game.model.Actor;
+import com.eldritch.scifirpg.game.model.actor.Actor;
 import com.eldritch.scifirpg.proto.Effects.DamageType;
 import com.eldritch.scifirpg.proto.Effects.Effect;
 import com.google.common.base.Optional;

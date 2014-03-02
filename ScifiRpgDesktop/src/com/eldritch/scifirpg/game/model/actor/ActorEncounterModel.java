@@ -1,9 +1,11 @@
-package com.eldritch.scifirpg.game.model;
+package com.eldritch.scifirpg.game.model.actor;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import com.eldritch.scifirpg.game.model.ActorModel.Npc;
+import com.eldritch.scifirpg.game.model.ActionAugmentation;
+import com.eldritch.scifirpg.game.model.EncounterModel;
+import com.eldritch.scifirpg.game.model.actor.ActorModel.Npc;
 import com.eldritch.scifirpg.game.util.EffectUtil;
 import com.eldritch.scifirpg.game.util.EffectUtil.Result;
 import com.eldritch.scifirpg.proto.Effects.Effect;

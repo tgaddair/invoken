@@ -2,6 +2,7 @@ package com.eldritch.scifirpg.game.model;
 
 import java.util.List;
 
+import com.eldritch.scifirpg.game.model.actor.Actor;
 import com.eldritch.scifirpg.proto.Augmentations.Augmentation;
 import com.eldritch.scifirpg.proto.Augmentations.Augmentation.Type;
 import com.eldritch.scifirpg.proto.Effects.Effect;

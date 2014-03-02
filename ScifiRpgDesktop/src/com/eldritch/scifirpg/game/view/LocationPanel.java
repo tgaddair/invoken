@@ -7,11 +7,11 @@ import javax.swing.SwingUtilities;
 
 import com.eldritch.scifirpg.game.Application;
 import com.eldritch.scifirpg.game.model.AbstractEncounter;
-import com.eldritch.scifirpg.game.model.ActorEncounter;
-import com.eldritch.scifirpg.game.model.ActorEncounterModel;
 import com.eldritch.scifirpg.game.model.GameState;
 import com.eldritch.scifirpg.game.model.LocationModel;
 import com.eldritch.scifirpg.game.model.LocationModel.LocationListener;
+import com.eldritch.scifirpg.game.model.actor.ActorEncounter;
+import com.eldritch.scifirpg.game.model.actor.ActorEncounterModel;
 import com.eldritch.scifirpg.game.model.RegionEncounter;
 import com.eldritch.scifirpg.game.model.StaticEncounter;
 import com.eldritch.scifirpg.proto.Locations.Location;

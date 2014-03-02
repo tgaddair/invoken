@@ -1,4 +1,4 @@
-package com.eldritch.scifirpg.game.model;
+package com.eldritch.scifirpg.game.model.actor;
 
 import java.util.ArrayList;
 import java.util.HashSet;
