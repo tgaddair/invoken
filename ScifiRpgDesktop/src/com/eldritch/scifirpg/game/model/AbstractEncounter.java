@@ -3,11 +3,13 @@ package com.eldritch.scifirpg.game.model;
 import java.util.List;
 
 import com.eldritch.scifirpg.game.model.actor.ActorEncounter;
+import com.eldritch.scifirpg.game.util.PrerequisiteVerifier;
 import com.eldritch.scifirpg.proto.Locations.Encounter;
 import com.eldritch.scifirpg.proto.Locations.Encounter.Type;
 import com.eldritch.scifirpg.proto.Prerequisites.Prerequisite;
 
 public abstract class AbstractEncounter implements Comparable<AbstractEncounter> {
+    private static final PrerequisiteVerifier VERIFIER = new PrerequisiteVerifier();
 	private final Encounter data;
 
 	public AbstractEncounter(Encounter data) {
@@ -35,8 +37,7 @@ public abstract class AbstractEncounter implements Comparable<AbstractEncounter>
 	}
 	
 	public boolean satisfiesPrerequisites(GameState state) {
-	    // TODO
-	    return true;
+	    return VERIFIER.verify(getPrerequisites(), state.getActorModel());
 	}
 	
 	public List<Prerequisite> getPrerequisites() {

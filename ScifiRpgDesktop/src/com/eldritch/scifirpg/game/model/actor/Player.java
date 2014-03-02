@@ -1,6 +1,9 @@
 package com.eldritch.scifirpg.game.model.actor;
 
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang3.text.WordUtils;
@@ -18,9 +21,9 @@ import com.eldritch.scifirpg.proto.Missions.Mission;
 
 public class Player extends Actor {
 	// Player specific parameters
-    private final Set<StateMarker> markers = new HashSet<>();
+    private final Map<String, StateMarker> markers = new HashMap<>();
     private final Set<String> npcsMet = new HashSet<>();
-	private final Set<Mission> missions = new HashSet<>();
+	private final Map<String, Mission> missions = new HashMap<>();
 	
 	private Player(PlayerActor player) {
 	    super(player.getParams());
@@ -36,22 +39,40 @@ public class Player extends Actor {
         }
 	    
 	    for (StateMarker marker : player.getStateMarkerList()) {
-            markers.add(marker);
+            markers.put(marker.getName(), marker);
         }
 	    for (String actorId : player.getKnownNpcList()) {
 	        npcsMet.add(actorId);
         }
 	    for (Mission mission : player.getMissionList()) {
-	        missions.add(mission);
+	        missions.put(mission.getId(), mission);
 	    }
+	}
+	
+	public int getMarkerCount(String marker) {
+	    if (!markers.containsKey(marker)) {
+	        return 0;
+	    }
+	    return markers.get(marker).getCount();
 	}
 	
 	public Species getSpecies() {
 		return Species.HUMAN;
 	}
+	
+	public boolean hasFollower(String actorId) {
+	    // TODO
+	    return false;
+	}
+	
+	public int getMissionStage(String missionId) {
+	    // TODO
+	    //return missions.get(missionId).getStage();
+	    return 0;
+	}
 
-    public Set<Mission> getMissions() {
-        return missions;
+    public Collection<Mission> getMissions() {
+        return missions.values();
     }
     
     @Override

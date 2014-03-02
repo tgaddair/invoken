@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import com.eldritch.scifirpg.game.model.ActionAugmentation;
+import com.eldritch.scifirpg.game.util.PrerequisiteVerifier;
 import com.eldritch.scifirpg.proto.Actors.DialogueTree;
 import com.eldritch.scifirpg.proto.Actors.DialogueTree.Choice;
 import com.eldritch.scifirpg.proto.Actors.NonPlayerActor;
@@ -17,15 +18,19 @@ import com.eldritch.scifirpg.proto.Actors.NonPlayerActor.Trait;
 import com.eldritch.scifirpg.proto.Augmentations.Augmentation;
 import com.eldritch.scifirpg.proto.Augmentations.Augmentation.Type;
 import com.eldritch.scifirpg.proto.Locations.Encounter.ActorParams.ActorScenario;
+import com.eldritch.scifirpg.proto.Prerequisites.Prerequisite;
+import com.eldritch.scifirpg.proto.Prerequisites.Standing;
 
 public class Npc extends Actor {
     private final DialogueVerifier dialogueVerifier = new DialogueVerifier();
+    private final ActorModel model;
     private final NonPlayerActor data;
     private final ActorScenario scenario;
     private final Set<Actor> enemies = new HashSet<>();
 
     public Npc(NonPlayerActor data, ActorModel actorModel, ActorScenario scenario) {
         super(data.getParams());
+        this.model = actorModel;
         this.data = data;
         this.scenario = scenario;
         
@@ -36,6 +41,16 @@ public class Npc extends Actor {
         }
         
         // TODO construct enemies from the encounter
+    }
+    
+    public int getInfluence(Actor other) {
+        // TODO
+        return 0;
+    }
+    
+    public Standing getStanding(Actor other) {
+        // TODO
+        return Standing.NEUTRAL;
     }
     
     @Override
@@ -159,10 +174,22 @@ public class Npc extends Actor {
         }
     }
     
-    public class DialogueVerifier {
+    public class DialogueVerifier extends PrerequisiteVerifier {
+        @Override
+        protected boolean verifyInfluence(Prerequisite prereq, Actor actor) {
+            int value = getInfluence(actor);
+            return verifyBetween(prereq, value);
+        }
+        
+        @Override
+        protected boolean verifyStanding(Prerequisite prereq, Actor actor) {
+            Standing value = getStanding(actor);
+            boolean has = value == Standing.valueOf(prereq.getTarget());
+            return verifyHas(prereq, has);
+        }
+        
         public boolean isValid(Response r) {
-            // TODO use prerequisites and the current actor model state
-            return true;
+            return verify(r.getPrereqList(), model);
         }
     }
 }

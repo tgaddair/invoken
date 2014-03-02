@@ -4,7 +4,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -217,21 +216,38 @@ public abstract class Actor {
     public int getSkillLevel(Discipline d) {
         return skills.get(d).getLevel();
     }
-
-    public List<Skill> getSkills() {
-        return params.getSkillList();
+    
+    public boolean hasEquipped(String itemId) {
+        if (!inventory.containsKey(itemId)) {
+            return false;
+        }
+        InventoryItem item = inventory.get(itemId).getItem();
+        return equipped.contains(item);
     }
-
-    public List<FactionStatus> getFactionStatus() {
-        return params.getFactionStatusList();
+    
+    public int getItemCount(String itemId) {
+        if (!inventory.containsKey(itemId)) {
+            return 0;
+        }
+        return inventory.get(itemId).getCount();
     }
-
-    public List<InventoryItem> getInventoryItems() {
-        return params.getInventoryItemList();
+    
+    public int getReputation(String faction) {
+        if (!factions.containsKey(faction)) {
+            return 0;
+        }
+        return factions.get(faction).getReputation();
     }
-
-    public List<String> getKnownAugmentations() {
-        return params.getKnownAugIdList();
+    
+    public int getRank(String faction) {
+        if (!factions.containsKey(faction)) {
+            return 0;
+        }
+        return factions.get(faction).getRank();
+    }
+    
+    public Collection<String> getKnownAugmentations() {
+        return knownAugmentations;
     }
 
     public static class SkillState {
@@ -286,13 +302,19 @@ public abstract class Actor {
 
     public static class ItemState {
         private final InventoryItem item;
+        private int count;
 
         public ItemState(InventoryItem item) {
             this.item = item;
+            count = item.getCount();
         }
 
         public InventoryItem getItem() {
             return item;
+        }
+        
+        public int getCount() {
+            return count;
         }
     }
     

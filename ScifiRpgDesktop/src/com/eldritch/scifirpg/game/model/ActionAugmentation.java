@@ -25,6 +25,10 @@ public class ActionAugmentation {
         return aug.getName();
     }
     
+    public String getId() {
+        return aug.getId();
+    }
+    
     public Type getType() {
         return aug.getType();
     }
