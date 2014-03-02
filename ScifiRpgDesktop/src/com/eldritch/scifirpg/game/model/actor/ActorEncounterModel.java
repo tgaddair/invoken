@@ -13,7 +13,6 @@ import com.eldritch.scifirpg.game.util.EffectUtil;
 import com.eldritch.scifirpg.game.util.Result;
 import com.eldritch.scifirpg.proto.Effects.Effect;
 import com.google.common.base.Optional;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 
 /**
@@ -112,10 +111,10 @@ public class ActorEncounterModel extends EncounterModel<ActorEncounter> {
             // Handle any actor that might have died in this exchange, and recheck hostilities
             // to determine if combat mode is to continue
             boolean hasHostile = false;
-            List<Actor> actors = ImmutableList.of(aug.getOwner(), target);
-            for (Actor actor : actors) {
+            for (Actor actor : combatants) {
                 if (actor.isAlive()) {
                     if (actor.hasEnemy()) {
+                        System.out.println(actor.getName() + " hostile");
                         hasHostile = true;
                     }
                 } else {
