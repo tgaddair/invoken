@@ -7,6 +7,7 @@ import javax.swing.SwingUtilities;
 
 import com.eldritch.scifirpg.game.Application;
 import com.eldritch.scifirpg.game.model.AbstractEncounter;
+import com.eldritch.scifirpg.game.model.DecisionEncounter;
 import com.eldritch.scifirpg.game.model.GameState;
 import com.eldritch.scifirpg.game.model.LocationModel;
 import com.eldritch.scifirpg.game.model.LocationModel.LocationListener;
@@ -36,9 +37,8 @@ public class LocationPanel extends JPanel implements LocationListener {
                         ((StaticEncounter) encounter).createModel(state));
                 break;
             case DECISION:
-                // encounterPanel = new
-                // DecisionEncounterPanel((DecisionEncounter)
-                // encounter);
+                encounterPanel = new DecisionEncounterPanel(
+                        ((DecisionEncounter) encounter).createModel(state));
                 break;
             case ACTOR:
                 encounterPanel = new ActorEncounterPanel(
