@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Set;
 
 import com.eldritch.scifirpg.game.model.ActionAugmentation;
+import com.eldritch.scifirpg.game.model.EncounterListener.ActorEncounterListener;
 import com.eldritch.scifirpg.game.model.EncounterModel;
 import com.eldritch.scifirpg.game.model.GameState;
 import com.eldritch.scifirpg.game.util.EffectUtil;
@@ -22,11 +23,10 @@ import com.google.common.collect.Iterables;
  * (who's alive, etc.).
  * 
  */
-public class ActorEncounterModel extends EncounterModel<ActorEncounter> {
+public class ActorEncounterModel extends EncounterModel<ActorEncounter, ActorEncounterListener> {
     private static final int MAX_ACTIONS = 2;
     private final ActorModel model;
     private final List<Npc> npcs;
-    private final List<ActorEncounterListener> listeners = new ArrayList<>();
     
     // Combat data
     private final List<Actor> combatants;
@@ -78,26 +78,33 @@ public class ActorEncounterModel extends EncounterModel<ActorEncounter> {
     
     private boolean checkHostility() {
         boolean hasHostile = false;
-        for (Actor actor : combatants) {
+        for (Npc actor : npcs) {
             if (actor.isAlive()) {
                 if (actor.hasEnemy()) {
                     hasHostile = true;
                 }
             } else {
-                model.markDead(actor.getId());
-                for (ActorEncounterListener listener : listeners) {
-                    listener.actorKilled(actor);
-                }
+                onActorKilled(actor);
             }
         }
         
         // Also update continue state
         boolean continuable = canContinue();
-        for (ActorEncounterListener listener : listeners) {
+        for (ActorEncounterListener listener : getListeners()) {
             listener.canContinue(continuable);
         }
         
         return hasHostile;
+    }
+    
+    private void onActorKilled(Npc actor) {
+        model.markDead(actor.getId());
+        for (ActorEncounterListener listener : getListeners()) {
+            listener.actorKilled(actor);
+        }
+        
+        // Apply outcomes on NPC death
+        applyOutcomes(actor.getDeathOutcomes());
     }
     
     /**
@@ -142,7 +149,7 @@ public class ActorEncounterModel extends EncounterModel<ActorEncounter> {
                 Optional<Actor> dest = Optional.of(target);
                 for (Effect effect : aug.getEffects()) {
                     Result result = EffectUtil.apply(effect, source, dest);
-                    for (ActorEncounterListener listener : listeners) {
+                    for (ActorEncounterListener listener : getListeners()) {
                         listener.effectApplied(result);
                     }
                 }
@@ -156,16 +163,19 @@ public class ActorEncounterModel extends EncounterModel<ActorEncounter> {
             
             // Remove the augmentation from the owner's buffer and notify all the listeners
             aug.getOwner().removeAction(aug);
-            for (ActorEncounterListener listener : listeners) {
+            for (ActorEncounterListener listener : getListeners()) {
                 listener.actionUsed(aug);
             }
+            
+            // Check for player death
+            // TODO
             
             // Update combat state
             if (inCombat && !countered) {
                 if (!hasHostile) {
                     // If no hostilities were found, then we're not in combat
                     inCombat = false;
-                    for (ActorEncounterListener listener : listeners) {
+                    for (ActorEncounterListener listener : getListeners()) {
                         listener.endedCombat();
                     }
                 } else {
@@ -195,10 +205,10 @@ public class ActorEncounterModel extends EncounterModel<ActorEncounter> {
     public void startCombat() {
         if (!inCombat) {
             inCombat = true;
-            for (ActorEncounterListener listener : listeners) {
+            for (ActorEncounterListener listener : getListeners()) {
                 listener.startedCombat();
             }
-            for (ActorEncounterListener listener : listeners) {
+            for (ActorEncounterListener listener : getListeners()) {
                 listener.combatTurnStarted(current);
             }
             startCombatTurn();
@@ -206,7 +216,7 @@ public class ActorEncounterModel extends EncounterModel<ActorEncounter> {
     }
     
     public void passCombat() {
-        for (ActorEncounterListener listener : listeners) {
+        for (ActorEncounterListener listener : getListeners()) {
             listener.combatTurnPassed(current);
         }
         nextCombatant();
@@ -225,7 +235,7 @@ public class ActorEncounterModel extends EncounterModel<ActorEncounter> {
         
         if (found) {
             actions = 0;
-            for (ActorEncounterListener listener : listeners) {
+            for (ActorEncounterListener listener : getListeners()) {
                 listener.combatTurnStarted(current);
             }
             
@@ -237,7 +247,7 @@ public class ActorEncounterModel extends EncounterModel<ActorEncounter> {
     
     private void startCombatTurn() {
         Set<ActionAugmentation> actions = current.drawActions();
-        for (ActorEncounterListener listener : listeners) {
+        for (ActorEncounterListener listener : getListeners()) {
             listener.actionsDrawn(current, actions);
         }
         takeCombatTurn();
@@ -251,10 +261,6 @@ public class ActorEncounterModel extends EncounterModel<ActorEncounter> {
         return inCombat;
     }
     
-    public void addListener(ActorEncounterListener listener) {
-        listeners.add(listener);
-    }
-    
     public Player getPlayer() {
         return model.getPlayer();
     }
@@ -265,27 +271,5 @@ public class ActorEncounterModel extends EncounterModel<ActorEncounter> {
     
     public ActorModel getActorModel() {
         return model;
-    }
-    
-    public static interface ActorEncounterListener {
-        void effectApplied(Result result);
-        
-        void startedCombat();
-        
-        void endedCombat();
-        
-        void combatTurnStarted(Actor current);
-        
-        void combatTurnPassed(Actor current);
-        
-        void actorKilled(Actor actor);
-        
-        void actorTargeted(Actor actor);
-        
-        void actionUsed(ActionAugmentation action);
-        
-        void actionsDrawn(Actor actor, Set<ActionAugmentation> actions);
-        
-        void canContinue(boolean can);
     }
 }

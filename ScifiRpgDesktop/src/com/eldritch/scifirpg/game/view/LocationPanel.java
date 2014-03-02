@@ -32,7 +32,8 @@ public class LocationPanel extends JPanel implements LocationListener {
         JPanel encounterPanel = null;
         switch (encounter.getType()) {
             case STATIC:
-                encounterPanel = new StaticEncounterPanel((StaticEncounter) encounter);
+                encounterPanel = new StaticEncounterPanel(
+                        ((StaticEncounter) encounter).createModel(state));
                 break;
             case DECISION:
                 // encounterPanel = new

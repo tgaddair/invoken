@@ -25,4 +25,8 @@ public class StaticEncounter extends AbstractEncounter {
     public boolean canRest() {
         return params.getRest();
     }
+    
+    public StaticEncounterModel createModel(GameState state) {
+        return new StaticEncounterModel(this, state);
+    }
 }

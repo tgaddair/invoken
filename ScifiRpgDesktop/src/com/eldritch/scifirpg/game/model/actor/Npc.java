@@ -19,6 +19,7 @@ import com.eldritch.scifirpg.proto.Actors.NonPlayerActor.Trait;
 import com.eldritch.scifirpg.proto.Augmentations.Augmentation;
 import com.eldritch.scifirpg.proto.Augmentations.Augmentation.Type;
 import com.eldritch.scifirpg.proto.Locations.Encounter.ActorParams.ActorScenario;
+import com.eldritch.scifirpg.proto.Outcomes.Outcome;
 import com.eldritch.scifirpg.proto.Prerequisites.Prerequisite;
 import com.eldritch.scifirpg.proto.Prerequisites.Standing;
 
@@ -173,6 +174,10 @@ public class Npc extends Actor {
 
     public List<Trait> getTraits() {
         return data.getTraitList();
+    }
+    
+    public List<Outcome> getDeathOutcomes() {
+        return scenario.getOnDeathList();
     }
 
     public static class ParsedResponse {

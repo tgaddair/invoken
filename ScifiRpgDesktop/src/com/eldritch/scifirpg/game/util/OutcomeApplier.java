@@ -1,30 +1,30 @@
 package com.eldritch.scifirpg.game.util;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.eldritch.scifirpg.game.model.EncounterModel;
-import com.eldritch.scifirpg.game.model.GameState;
 import com.eldritch.scifirpg.game.model.actor.Player;
 import com.eldritch.scifirpg.proto.Disciplines.Discipline;
 import com.eldritch.scifirpg.proto.Outcomes.Outcome;
 
 public class OutcomeApplier {
-    private final EncounterModel<?> model;
-    
-    public OutcomeApplier(EncounterModel<?> model) {
-        this.model = model;
-    }
-    
-    public void apply(List<Outcome> outcomes, GameState state) {
+    public List<Outcome> apply(List<Outcome> outcomes, Player player, EncounterModel<?, ?> model) {
+        List<Outcome> applied = new ArrayList<>();
         for (Outcome outcome : outcomes) {
-            apply(outcome, state);
+            if (apply(outcome, player, model)) {
+                applied.add(outcome);
+            }
         }
+        return applied;
     }
 
-    public void apply(Outcome outcome, GameState state) {
+    /**
+     * Returns true iff the outcome was applied successfully
+     */
+    public boolean apply(Outcome outcome, Player player, EncounterModel<?, ?> model) {
         // Check if the outcome succeeds its random chance
         if (outcome.getWeight() >= 1.0 || outcome.getWeight() <= Math.random()) {
-            Player player = state.getActorModel().getPlayer();
             switch (outcome.getType()) {
                 // NOTE: if removing an equipped item would drop the count to 0, it
                 // will also be unequipped
@@ -106,6 +106,8 @@ public class OutcomeApplier {
                     throw new IllegalArgumentException("Unrecognized Outcome type: "
                             + outcome.getType());
             }
+            return true;
         }
+        return false;
     }
 }

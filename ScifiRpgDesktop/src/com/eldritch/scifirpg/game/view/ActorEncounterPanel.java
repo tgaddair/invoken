@@ -15,6 +15,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -37,13 +38,14 @@ import com.eldritch.scifirpg.game.Application;
 import com.eldritch.scifirpg.game.model.actor.Actor;
 import com.eldritch.scifirpg.game.model.actor.ActorEncounter;
 import com.eldritch.scifirpg.game.model.actor.ActorEncounterModel;
-import com.eldritch.scifirpg.game.model.actor.ActorEncounterModel.ActorEncounterListener;
 import com.eldritch.scifirpg.game.model.actor.Npc;
 import com.eldritch.scifirpg.game.model.ActionAugmentation;
+import com.eldritch.scifirpg.game.model.EncounterListener.ActorEncounterListener;
 import com.eldritch.scifirpg.game.util.LineBreaker;
 import com.eldritch.scifirpg.game.util.Result;
 import com.eldritch.scifirpg.proto.Actors.DialogueTree.Choice;
 import com.eldritch.scifirpg.proto.Actors.DialogueTree.Response;
+import com.eldritch.scifirpg.proto.Outcomes.Outcome;
 import com.jgoodies.forms.builder.DefaultFormBuilder;
 import com.jgoodies.forms.layout.FormLayout;
 
@@ -494,6 +496,11 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
         area.setWrapStyleWord(true);
         area.setEditable(false);
         return area;
+    }
+    
+    @Override
+    public void outcomesApplied(List<Outcome> outcomes) {
+        //interiorPanel.outcomesPanel.report(outcomes);
     }
 
     @Override
