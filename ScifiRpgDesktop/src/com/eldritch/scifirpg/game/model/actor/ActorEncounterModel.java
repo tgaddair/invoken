@@ -119,6 +119,7 @@ public class ActorEncounterModel extends EncounterModel<ActorEncounter> {
                         hasHostile = true;
                     }
                 } else {
+                    model.markDead(actor.getId());
                     for (ActorEncounterListener listener : listeners) {
                         listener.actorKilled(actor);
                     }

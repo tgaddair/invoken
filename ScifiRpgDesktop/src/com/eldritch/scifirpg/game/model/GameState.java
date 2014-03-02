@@ -41,7 +41,7 @@ public class GameState {
 		Player player = Player.fromProto(proto);
 		
 		actorModel = new ActorModel(player);
-		locationModel = new LocationModel("IlithExterior");
+		locationModel = new LocationModel("IlithExterior", this);
 	}
 	
 	public void setLocation(String locid) {

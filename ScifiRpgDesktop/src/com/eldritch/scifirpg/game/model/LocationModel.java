@@ -9,12 +9,14 @@ import com.eldritch.scifirpg.proto.Locations.Encounter;
 import com.eldritch.scifirpg.proto.Locations.Location;
 
 public class LocationModel {
+    private final GameState state;
     private Location location;
     private final LocationMarshaller locationMarshaller = new LocationMarshaller();
     private final List<AbstractEncounter> encounters = new ArrayList<>();
     private final List<LocationListener> listeners = new ArrayList<>();
 
-    public LocationModel(String locid) {
+    public LocationModel(String locid, GameState state) {
+        this.state = state;
         setCurrent(locid);
     }
     
@@ -44,7 +46,7 @@ public class LocationModel {
         double total = 0.0;
         List<AbstractEncounter> validEncounters = new ArrayList<>();
         for (AbstractEncounter encounter : encounters) {
-            if (encounter.satisfiesPrerequisites()) {
+            if (encounter.satisfiesPrerequisites(state)) {
                 if (encounter.getWeight() < 0.0) {
                     // The weight is negative, so we automatically draw it if
                     // it's the first encounter we find that satisfies its

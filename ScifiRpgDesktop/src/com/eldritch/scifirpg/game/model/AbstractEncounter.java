@@ -34,7 +34,7 @@ public abstract class AbstractEncounter implements Comparable<AbstractEncounter>
 		return data.getUnique();
 	}
 	
-	public boolean satisfiesPrerequisites() {
+	public boolean satisfiesPrerequisites(GameState state) {
 	    // TODO
 	    return true;
 	}

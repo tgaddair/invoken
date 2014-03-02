@@ -41,4 +41,8 @@ public class ActorModel {
     public boolean isAlive(String id) {
         return !deadNpcs.contains(id);
     }
+    
+    public void markDead(String actorId) {
+        deadNpcs.add(actorId);
+    }
 }

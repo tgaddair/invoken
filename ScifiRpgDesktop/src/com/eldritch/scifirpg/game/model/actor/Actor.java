@@ -193,6 +193,10 @@ public abstract class Actor {
     public int getCurrentHealth() {
         return health;
     }
+    
+    public String getId() {
+        return params.getId();
+    }
 
     public String getName() {
         return params.getName();

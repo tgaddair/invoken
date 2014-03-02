@@ -323,6 +323,16 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
      */
     private class ActorInfoPanel extends JPanel {
         private static final long serialVersionUID = 1L;
+        
+        public ActorInfoPanel() {
+            super(new BorderLayout());
+            
+            DefaultFormBuilder builder = new DefaultFormBuilder(new FormLayout(""));
+            builder.border(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+            builder.appendColumn("fill:max(p; 100px):grow");
+            
+            add(builder.build());
+        }
     }
     
     /**
