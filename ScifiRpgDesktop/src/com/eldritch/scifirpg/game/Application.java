@@ -18,6 +18,7 @@ public class Application {
 	    // Create and set up the window.
         frame = new JFrame("SciFi RPG: The Game");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setResizable(false);
         
 	    mainPanel = new MainPanel();
 	}

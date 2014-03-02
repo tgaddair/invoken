@@ -34,7 +34,7 @@ public class RegionEncounterPanel extends JPanel {
             i++;
         }
         
-        setPreferredSize(new Dimension(450, 800));
+        setPreferredSize(new Dimension(430, 800));
     }
     
     private JLabel createView(final Cell cell) {
