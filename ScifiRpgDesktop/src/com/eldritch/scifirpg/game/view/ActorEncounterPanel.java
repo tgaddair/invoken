@@ -262,6 +262,27 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
         }
     }
     
+    /**
+     * After winning a fight, this panel shows the player what they won.
+     */
+    private class OutcomePanel extends JPanel {
+        private static final long serialVersionUID = 1L;
+    }
+    
+    /**
+     * Known information about the given actor on hover. 
+     */
+    private class ActorInfoPanel extends JPanel {
+        private static final long serialVersionUID = 1L;
+    }
+    
+    /**
+     * Known information about the given augmentation on hover. 
+     */
+    private class AugmentationInfoPanel extends JPanel {
+        private static final long serialVersionUID = 1L;
+    }
+    
     private class DialoguePanel extends JPanel {
         private static final long serialVersionUID = 1L;
 
