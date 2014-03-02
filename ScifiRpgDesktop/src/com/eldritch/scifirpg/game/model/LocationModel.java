@@ -63,6 +63,9 @@ public class LocationModel {
     
     private void nextEncounter(AbstractEncounter next) {
         encounter = next;
+        if (encounter.isUnique()) {
+            state.addKnownEncounter(location.getId(), encounter.getId());
+        }
         
         // Notify listeners
         for (LocationListener listener : listeners) {
@@ -70,11 +73,16 @@ public class LocationModel {
         }
     }
     
+    private boolean canVisit(AbstractEncounter encounter) {
+        return !encounter.isUnique()
+                || !state.encounterKnown(location.getId(), encounter.getId());
+    }
+    
     private AbstractEncounter drawEncounter() {
         double total = 0.0;
         List<AbstractEncounter> validEncounters = new ArrayList<>();
         for (AbstractEncounter encounter : encounters.values()) {
-            if (encounter.satisfiesPrerequisites(state)) {
+            if (canVisit(encounter) && encounter.satisfiesPrerequisites(state)) {
                 if (encounter.getWeight() < 0.0) {
                     // The weight is negative, so we automatically draw it if
                     // it's the first encounter we find that satisfies its

@@ -1,7 +1,11 @@
 package com.eldritch.scifirpg.game.model;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import com.eldritch.scifirpg.game.model.actor.ActorModel;
 import com.eldritch.scifirpg.game.model.actor.Player;
@@ -16,6 +20,7 @@ import com.eldritch.scifirpg.proto.Disciplines.Profession;
 public class GameState {
 	private final LocationModel locationModel;
 	private final ActorModel actorModel;
+	private final Map<String, Set<String>> knownEncounters = new HashMap<>();
 	
 	public GameState(Profession p) {
 	    //List<InventoryItem> inventory;
@@ -42,6 +47,22 @@ public class GameState {
 		
 		actorModel = new ActorModel(player);
 		locationModel = new LocationModel("IlithExterior", this);
+		
+		// TODO load known encounters from the saved Player game state
+	}
+	
+	public boolean encounterKnown(String locid, String encid) {
+	    if (!knownEncounters.containsKey(locid)) {
+            return false;
+        }
+        return knownEncounters.get(locid).contains(encid);
+	}
+	
+	public void addKnownEncounter(String locid, String encid) {
+	    if (!knownEncounters.containsKey(locid)) {
+	        knownEncounters.put(locid, new HashSet<String>());
+	    }
+	    knownEncounters.get(locid).add(encid);
 	}
 	
 	public void setLocation(String locid) {

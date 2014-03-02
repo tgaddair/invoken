@@ -13,6 +13,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -365,13 +366,21 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
             super(new BorderLayout());
             
             if (!actors.isEmpty()) {
-                final Npc actor = actors.iterator().next();
-                add(getPanelFor(actor, actor.getGreeting()));
+                Iterator<Npc> it = actors.iterator();
+                Npc actor = it.next();
+                while (it.hasNext() && !actor.hasGreeting()) {
+                    actor = it.next();
+                }
+                
+                // Found an actor with a greeting, so let's initiate conversation
+                if (actor.hasGreeting()) {
+                    add(getPanelFor(actor, actor.getGreeting()));
+                }
             }
         }
         
         public void beginDialogueWith(Npc actor) {
-            if (actor != null) {
+            if (actor != null && actor.hasGreeting()) {
                 setDialogueFor(actor, actor.getGreeting());
             } else {
                 reset();

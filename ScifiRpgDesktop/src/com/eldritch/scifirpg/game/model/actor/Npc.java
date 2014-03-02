@@ -125,6 +125,11 @@ public class Npc extends Actor {
         return null;
     }
     
+    public boolean hasGreeting() {
+        // TODO this could be more efficient
+        return getGreeting() != null;
+    }
+    
     public Response getGreeting() {
         if (scenario.hasDialogue()) {
             Response greeting = getGreetingFor(scenario.getDialogue());
