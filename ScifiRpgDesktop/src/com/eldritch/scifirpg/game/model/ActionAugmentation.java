@@ -6,6 +6,7 @@ import com.eldritch.scifirpg.game.model.actor.Actor;
 import com.eldritch.scifirpg.proto.Augmentations.Augmentation;
 import com.eldritch.scifirpg.proto.Augmentations.Augmentation.Type;
 import com.eldritch.scifirpg.proto.Effects.Effect;
+import com.eldritch.scifirpg.proto.Effects.Effect.Range;
 
 public class ActionAugmentation {
     private final Augmentation aug;
@@ -30,5 +31,14 @@ public class ActionAugmentation {
     
     public List<Effect> getEffects() {
         return aug.getEffectList();
+    }
+    
+    public boolean needsTarget() {
+        for (Effect effect : getEffects()) {
+            if (effect.getRange() == Range.SELECTED) {
+                return true;
+            }
+        }
+        return false;
     }
 }

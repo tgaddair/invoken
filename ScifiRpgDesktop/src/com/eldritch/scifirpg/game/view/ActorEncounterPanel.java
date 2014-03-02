@@ -10,8 +10,10 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.Set;
 
 import javax.swing.BorderFactory;
@@ -48,7 +50,7 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
     private final ActorEncounterModel model;
     private final StagePanel stagePanel;
     private final InteriorPanel interiorPanel;
-    private final JPanel bufferPanel;
+    private final BufferPanel bufferPanel;
     private ActionAugmentation selected = null;
     private Actor target = null;
     
@@ -80,10 +82,7 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
         builder.nextLine();
         
         // Add action buffer
-        bufferPanel = new JPanel(new FlowLayout());
-        for (ActionAugmentation aug : model.getPlayer().redrawActions()) {
-            bufferPanel.add(createAugCard(aug));
-        }
+        bufferPanel = new BufferPanel();
         builder.appendRow("100dlu");
         builder.append(bufferPanel);
         builder.nextLine();
@@ -187,6 +186,36 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
         });
         
         return label;
+    }
+    
+    private class BufferPanel extends JPanel {
+        private static final long serialVersionUID = 1L;
+        private final Map<ActionAugmentation, JLabel> views = new HashMap<>();
+        
+        public BufferPanel() {
+            super(new FlowLayout());
+            
+            for (ActionAugmentation aug : model.getPlayer().redrawActions()) {
+                JLabel view = createAugCard(aug);
+                add(view);
+                views.put(aug, view);
+            }
+        }
+        
+        public void remove(ActionAugmentation action) {
+            remove(views.get(action));
+            views.remove(action);
+            //Application.getApplication().getFrame().revalidate();
+            repaint();
+        }
+        
+        public void addAll(Collection<ActionAugmentation> actions) {
+            for (ActionAugmentation action : actions) {
+                JLabel view = createAugCard(action);
+                add(view);
+                views.put(action, view);
+            }
+        }
     }
     
     private class StagePanel extends JPanel {
@@ -410,5 +439,19 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
     @Override
     public void actorTargeted(Actor actor) {
         // TODO Auto-generated method stub
+    }
+    
+    @Override
+    public void actionUsed(ActionAugmentation action) {
+        if (action.getOwner() == model.getPlayer()) {
+            bufferPanel.remove(action);
+        }
+    }
+    
+    @Override
+    public void actionsDrawn(Actor actor, Set<ActionAugmentation> actions) {
+        if (actor == model.getPlayer()) {
+            bufferPanel.addAll(actions);
+        }
     }
 }

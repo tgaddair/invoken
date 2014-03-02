@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import com.eldritch.scifirpg.game.model.ActionAugmentation;
 import com.eldritch.scifirpg.game.model.EncounterModel;
@@ -63,7 +64,9 @@ public class ActorEncounterModel extends EncounterModel<ActorEncounter> {
      * apply to a specific target or group of targets (like all) depending on range.
      */
     public void invoke(ActionAugmentation aug) {
-        invoke(aug, aug.getOwner());
+        if (!aug.needsTarget()) {
+            invoke(aug, aug.getOwner());
+        }
     }
 
     public void invoke(ActionAugmentation aug, Actor target) {
@@ -122,6 +125,12 @@ public class ActorEncounterModel extends EncounterModel<ActorEncounter> {
                 }
             }
             
+            // Remove the augmentation from the owner's buffer and notify all the listeners
+            aug.getOwner().removeAction(aug);
+            for (ActorEncounterListener listener : listeners) {
+                listener.actionUsed(aug);
+            }
+            
             // Update combat state
             if (inCombat && !countered) {
                 if (!hasHostile) {
@@ -163,7 +172,7 @@ public class ActorEncounterModel extends EncounterModel<ActorEncounter> {
             for (ActorEncounterListener listener : listeners) {
                 listener.combatTurnStarted(current);
             }
-            takeCombatTurn();
+            startCombatTurn();
         }
     }
     
@@ -191,10 +200,18 @@ public class ActorEncounterModel extends EncounterModel<ActorEncounter> {
                 listener.combatTurnStarted(current);
             }
             
-            takeCombatTurn();
+            startCombatTurn();
         } else {
             // Somehow every actor is dead, so end combat
         }
+    }
+    
+    private void startCombatTurn() {
+        Set<ActionAugmentation> actions = current.drawActions();
+        for (ActorEncounterListener listener : listeners) {
+            listener.actionsDrawn(current, actions);
+        }
+        takeCombatTurn();
     }
     
     private void takeCombatTurn() {
@@ -235,5 +252,9 @@ public class ActorEncounterModel extends EncounterModel<ActorEncounter> {
         void actorKilled(Actor actor);
         
         void actorTargeted(Actor actor);
+        
+        void actionUsed(ActionAugmentation action);
+        
+        void actionsDrawn(Actor actor, Set<ActionAugmentation> actions);
     }
 }

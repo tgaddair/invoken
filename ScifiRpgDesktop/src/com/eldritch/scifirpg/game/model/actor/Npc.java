@@ -47,9 +47,9 @@ public class Npc extends Actor {
         }
         
         ActionAugmentation action = null;
-        for (AugmentationState aug : getStagedAugmentations()) {
-            if (aug.getAugmentation().getType() == Type.ATTACK) {
-                action = new ActionAugmentation(aug.getAugmentation(), this);
+        for (ActionAugmentation aug : getActions()) {
+            if (aug.getType() == Type.ATTACK) {
+                action = aug;
             }
         }
         

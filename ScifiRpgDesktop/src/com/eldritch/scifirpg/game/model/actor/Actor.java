@@ -1,9 +1,9 @@
 package com.eldritch.scifirpg.game.model.actor;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -41,7 +41,8 @@ public abstract class Actor {
     private final Set<AugmentationState> stagedAugmentations = new HashSet<>();
 
     // Game specific parameters not saved to disk
-    private final List<ActionAugmentation> actionBuffer = new ArrayList<>();
+    // ActionAugmentation must not override equals() for this to work
+    private final Set<ActionAugmentation> actionBuffer = new LinkedHashSet<>();
 
     public Actor(ActorParams params) {
         this.params = params;
@@ -73,6 +74,10 @@ public abstract class Actor {
         return value;
     }
     
+    public Set<ActionAugmentation> getActions() {
+        return actionBuffer;
+    }
+    
     public int damage(DamageType type, int magnitude) {
         // TODO handle resistances
         
@@ -82,14 +87,18 @@ public abstract class Actor {
         System.out.println(getName() + ": " + health);
         return damage;
     }
+    
+    public void removeAction(ActionAugmentation aug) {
+        actionBuffer.remove(aug);
+    }
 
-    public List<ActionAugmentation> redrawActions() {
+    public Set<ActionAugmentation> redrawActions() {
         actionBuffer.clear();
         return drawActions();
     }
 
-    public List<ActionAugmentation> drawActions() {
-        List<ActionAugmentation> drawn = new ArrayList<>();
+    public Set<ActionAugmentation> drawActions() {
+        Set<ActionAugmentation> drawn = new LinkedHashSet<>();
         boolean canDraw = true;
         int slots = getBufferSlots();
         while (canDraw && actionBuffer.size() < slots) {
