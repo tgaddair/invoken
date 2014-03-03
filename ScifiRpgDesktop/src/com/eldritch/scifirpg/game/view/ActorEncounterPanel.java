@@ -9,6 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -112,13 +113,13 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
         continueButton.setEnabled(model.canContinue());
         buttonPanel.add(continueButton);
         
-        // Add the flee button
+        // Add the pass button
         if (encounter.canFlee()) {
-            final JButton button = new JButton("Flee");
+            final JButton button = new JButton("Pass");
             button.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent ev) {
-                    // TODO
+                    model.passCombat();
                 }
             });
             buttonPanel.add(button);
@@ -179,14 +180,9 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
         return label;
     }
     
-    private JLabel createPlayerCard() {
+    private ActorLabel createPlayerCard() {
         final Player player = model.getPlayer();
-        final JLabel label = new JLabel(player.getName());
-        label.setBorder(getDefaultBorder());
-        label.setPreferredSize(new Dimension(90, 120));
-        label.setHorizontalAlignment(SwingConstants.CENTER);
-        label.setBackground(Color.WHITE);
-        label.setOpaque(true);
+        final ActorLabel label = new ActorLabel(player);
         
         // Add a click action listener
         label.addMouseListener(new MouseAdapter() {
@@ -215,13 +211,8 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
         return label;
     }
     
-    private JLabel createActorCard(final Npc actor) {
-        final JLabel label = new JLabel(actor.getName());
-        label.setBorder(getDefaultBorder());
-        label.setPreferredSize(new Dimension(90, 120));
-        label.setHorizontalAlignment(SwingConstants.CENTER);
-        label.setBackground(Color.WHITE);
-        label.setOpaque(true);
+    private ActorLabel createActorCard(final Npc actor) {
+        final ActorLabel label = new ActorLabel(actor);
         
         // Add a click action listener
         label.addMouseListener(new MouseAdapter() {
@@ -314,19 +305,31 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
     
     private class StagePanel extends JPanel {
         private static final long serialVersionUID = 1L;
+        private final List<ActorLabel> labels = new ArrayList<>();
         
         public StagePanel(Collection<Npc> actors) {
             super(new FlowLayout());
             
             for (Npc actor : actors) {
-                add(createActorCard(actor));
+                ActorLabel label = createActorCard(actor);
+                labels.add(label);
+                add(label);
+            }
+        }
+        
+        public void update() {
+            for (ActorLabel label : labels) {
+                label.update();
             }
         }
         
         public final void reset(Collection<Npc> actors) {
+            labels.clear();
             removeAll();
             for (Npc actor : actors) {
-                add(createActorCard(actor));
+                ActorLabel label = createActorCard(actor);
+                labels.add(label);
+                add(label);
             }
             Application.getApplication().getFrame().revalidate();
             repaint();
@@ -510,6 +513,7 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
         private static final long serialVersionUID = 1L;
         private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
         private final JLabel combatLog;
+        private final ActorLabel playerLabel;
         private final BlockingQueue<Result> queue = new LinkedBlockingQueue<Result>();
         private String lastText;
         private Actor lastActor;
@@ -529,8 +533,9 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
             builder.append(combatLog);
             builder.nextLine(); 
             
+            playerLabel = createPlayerCard();
             JPanel panel = new JPanel(new FlowLayout());
-            panel.add(createPlayerCard());
+            panel.add(playerLabel);
             builder.append(panel);
             builder.nextLine();
             
@@ -596,14 +601,26 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
         });
     }
     
+    private void updateActors() {
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                stagePanel.update();
+                interiorPanel.combatPanel.playerLabel.update();
+            }
+        });
+    }
+    
     @Override
     public void outcomesApplied(List<Outcome> outcomes) {
+        // TODO
         //interiorPanel.outcomesPanel.report(outcomes);
     }
 
     @Override
     public void effectApplied(Result result) {
         interiorPanel.combatPanel.report(result);
+        updateActors();
     }
 
     @Override
@@ -683,6 +700,28 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
         @Override
         public void process() {
             enableBuffer(enabled);
+        }
+    }
+    
+    public class ActorLabel extends JLabel {
+        private static final long serialVersionUID = 1L;
+        private final Actor actor;
+        
+        public ActorLabel(Actor actor) {
+            super(actor.getName());
+            this.actor = actor;
+            
+            setBorder(getDefaultBorder());
+            setPreferredSize(new Dimension(90, 120));
+            setHorizontalAlignment(SwingConstants.CENTER);
+            setBackground(Color.WHITE);
+            setOpaque(true);
+            //setForeground(Color.green);
+        }
+        
+        public void update() {
+            float r = (1.0f * actor.getCurrentHealth()) / actor.getBaseHealth();
+            setBackground(new Color(r, r, r));
         }
     }
 }

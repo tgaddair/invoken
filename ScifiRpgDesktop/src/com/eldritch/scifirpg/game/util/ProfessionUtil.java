@@ -15,6 +15,33 @@ import com.eldritch.scifirpg.proto.Disciplines.Profession;
 import com.google.common.collect.ImmutableList;
 
 public class ProfessionUtil {
+    public static List<String> getStartingAugmentationsFor(Profession p) {
+        switch (p) {
+            case CENTURION:
+                return ImmutableList.of("Fire", "Rend", "Dodge");
+            case EXECUTOR:
+                return ImmutableList.of("Rend", "Resist", "Regenerate");
+            case ASSASSIN:
+                return ImmutableList.of("Stalk", "Rend", "Dodge");
+            case WARDEN:
+                return ImmutableList.of("Fire", "Rend", "Dodge"); // Suppress
+            case ARCHITECT:
+                return ImmutableList.of("VampiricTouch", "SummonSwarm");
+            case GHOST:
+                return ImmutableList.of("Reveal", "VampiricTouch", "Flee");
+            case INQUISITOR:
+                return ImmutableList.of("Dominate", "VampiricTouch");
+            case INFILTRATOR:
+                return ImmutableList.of("Flee", "Pilfer");
+            case AGENT:
+                return ImmutableList.of("Stalk", "Bluff", "Reveal");
+            case BROKER:
+                return ImmutableList.of("Bluff");
+            default:
+                throw new IllegalArgumentException("Unrecognized profession " + p);
+        }
+    }
+    
 	public static Profession getProfessionFor(Discipline d1, Discipline d2) {
 		switch (d1) {
 			case WARFARE:

@@ -24,9 +24,13 @@ public class GameState {
 	
 	public GameState(Profession p) {
 	    //List<InventoryItem> inventory;
-	    List<StagedAugmentation> augs = new ArrayList<>();
-	    augs.add(StagedAugmentation.newBuilder()
-	            .setAugId("Fire").setRemainingUses(20).setStages(20).build());
+	    
+	    List<StagedAugmentation> staged = new ArrayList<>();
+	    List<String> startingAugs = ProfessionUtil.getStartingAugmentationsFor(p);
+	    for (String augid : startingAugs) {
+	        staged.add(StagedAugmentation.newBuilder()
+	                .setAugId(augid).setRemainingUses(10).setStages(10).build());
+	    }
 	    
 		ActorParams params = ActorParams.newBuilder()
                 .setId("Tester")
@@ -37,11 +41,11 @@ public class GameState {
                 .setLevel(10)
                 .addAllSkill(ProfessionUtil.getSkillsFor(p, 10))
                 //getStartingEquipmentFor(p)
-                //getStartingAugmentationsFor(p)
+                .addAllKnownAugId(startingAugs)
                 .build();
         PlayerActor proto = PlayerActor.newBuilder()
                 .setParams(params)
-                .addAllStagedAugmentation(augs)
+                .addAllStagedAugmentation(staged)
                 .build();
 		Player player = Player.fromProto(proto);
 		
