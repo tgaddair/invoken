@@ -129,6 +129,7 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
         add(builder.getPanel());
         
         model.addListener(this);
+        model.init();
     }
     
     private JLabel createAugCard(final ActionAugmentation aug) {
@@ -552,6 +553,9 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
 
     @Override
     public void combatTurnStarted(Actor current) {
+        if (current != model.getPlayer()) {
+            enableBuffer(false);
+        }
         interiorPanel.combatPanel.report(new EnabledResult(current,
                 "<strong>" + current.getName() + "'s turn to attack...</strong>"));
     }

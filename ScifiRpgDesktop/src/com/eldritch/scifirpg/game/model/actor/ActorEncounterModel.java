@@ -59,6 +59,10 @@ public class ActorEncounterModel extends EncounterModel<ActorEncounter, ActorEnc
         current = this.turns.next();
     }
     
+    public void init() {
+        model.getPlayer().resetHealth();
+    }
+    
     @Override
     public boolean canContinue() {
         for (Npc actor : npcs) {

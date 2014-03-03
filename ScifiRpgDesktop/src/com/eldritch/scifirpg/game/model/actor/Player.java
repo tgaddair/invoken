@@ -50,6 +50,13 @@ public class Player extends Actor {
 	    }
 	}
 	
+	/**
+	 * Do this at the beginning of every new encounter.
+	 */
+	public void resetHealth() {
+	    setHealth(getBaseHealth());
+	}
+	
 	public void gainExperience(Discipline d, int xp) {
 	    // TODO handle leveling up, maybe only on rest
 	    getSkill(d).addXp(xp);
