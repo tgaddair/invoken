@@ -166,6 +166,10 @@ public abstract class Actor {
     public int getBaseHealth() {
         return skills.get(Discipline.WARFARE).getLevel();
     }
+    
+    public int getInjuries() {
+        return getBaseHealth() - getCurrentHealth();
+    }
 
     /**
      * Denotes reaction time. Higher initiative results in higher turn order in

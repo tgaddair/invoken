@@ -3,6 +3,7 @@ package com.eldritch.scifirpg.game.model.actor;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -39,6 +40,9 @@ public class ActorEncounterModel extends EncounterModel<ActorEncounter, ActorEnc
     // actor.  If no one is hostile to the player, they can choose to "pass" on their attack
     // turn.
     private boolean inCombat = false;
+    
+    // Effects
+    private Set<Actor> scanned = new HashSet<Actor>();
 
     public ActorEncounterModel(ActorEncounter encounter, GameState state) {
         super(encounter, state);
@@ -60,7 +64,9 @@ public class ActorEncounterModel extends EncounterModel<ActorEncounter, ActorEnc
     }
     
     public void init() {
-        model.getPlayer().resetHealth();
+        Player player = model.getPlayer();
+        player.resetHealth();
+        scanned.add(player);
     }
     
     @Override

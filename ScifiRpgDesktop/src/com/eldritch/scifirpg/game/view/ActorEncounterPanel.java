@@ -41,6 +41,7 @@ import com.eldritch.scifirpg.game.model.actor.Actor;
 import com.eldritch.scifirpg.game.model.actor.ActorEncounter;
 import com.eldritch.scifirpg.game.model.actor.ActorEncounterModel;
 import com.eldritch.scifirpg.game.model.actor.Npc;
+import com.eldritch.scifirpg.game.model.actor.Player;
 import com.eldritch.scifirpg.game.model.ActionAugmentation;
 import com.eldritch.scifirpg.game.model.EncounterListener.ActorEncounterListener;
 import com.eldritch.scifirpg.game.util.LineBreaker;
@@ -178,10 +179,45 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
         return label;
     }
     
+    private JLabel createPlayerCard() {
+        final Player player = model.getPlayer();
+        final JLabel label = new JLabel(player.getName());
+        label.setBorder(getDefaultBorder());
+        label.setPreferredSize(new Dimension(90, 120));
+        label.setHorizontalAlignment(SwingConstants.CENTER);
+        label.setBackground(Color.WHITE);
+        label.setOpaque(true);
+        
+        // Add a click action listener
+        label.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent me) {
+                label.setBorder(getSelectedBorder());
+                
+                if (SwingUtilities.isRightMouseButton(me)) {
+                    // Show actor panel
+                    interiorPanel.actorPanel.setActor(player);
+                    interiorPanel.push(InteriorPanelType.ACTOR);
+                }
+            }
+            
+            @Override
+            public void mouseReleased(MouseEvent me) {
+                label.setBorder(getDefaultBorder());
+                
+                // Stop showing augmentation panel
+                if (SwingUtilities.isRightMouseButton(me)) {
+                    interiorPanel.pop(InteriorPanelType.ACTOR);
+                }
+            }
+        });
+        
+        return label;
+    }
+    
     private JLabel createActorCard(final Npc actor) {
         final JLabel label = new JLabel(actor.getName());
-        label.setBorder(new CompoundBorder(new LineBorder(Color.GRAY),
-                new EmptyBorder(1, 3, 1, 1)));
+        label.setBorder(getDefaultBorder());
         label.setPreferredSize(new Dimension(90, 120));
         label.setHorizontalAlignment(SwingConstants.CENTER);
         label.setBackground(Color.WHITE);
@@ -220,6 +256,7 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
                     }
                 } else if (SwingUtilities.isRightMouseButton(me)) {
                     // Show actor panel
+                    interiorPanel.actorPanel.setActor(actor);
                     interiorPanel.push(InteriorPanelType.ACTOR);
                 }
             }
@@ -300,6 +337,9 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
         private static final long serialVersionUID = 1L;
         private final DialoguePanel dialoguePanel;
         private final CombatPanel combatPanel;
+        private final ActorInfoPanel actorPanel;
+        private final AugmentationInfoPanel augmentationPanel;
+        private final OutcomePanel outcomePanel;
         private InteriorPanelType currentKey;
         private InteriorPanelType pushed;
         
@@ -308,12 +348,15 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
             
             dialoguePanel = new DialoguePanel();
             combatPanel = new CombatPanel();
+            actorPanel = new ActorInfoPanel();
+            augmentationPanel = new AugmentationInfoPanel();
+            outcomePanel = new OutcomePanel();
             
             add(dialoguePanel, InteriorPanelType.DIALOGUE.name());
             add(combatPanel, InteriorPanelType.COMBAT.name());
-            add(new ActorInfoPanel(), InteriorPanelType.ACTOR.name());
-            add(new AugmentationInfoPanel(), InteriorPanelType.AUGMENTATION.name());
-            add(new OutcomePanel(), InteriorPanelType.OUTCOME.name());
+            add(actorPanel, InteriorPanelType.ACTOR.name());
+            add(augmentationPanel, InteriorPanelType.AUGMENTATION.name());
+            add(outcomePanel, InteriorPanelType.OUTCOME.name());
             
             currentKey = InteriorPanelType.DIALOGUE;
             pushed = InteriorPanelType.DIALOGUE;
@@ -356,12 +399,33 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
         
         public ActorInfoPanel() {
             super(new BorderLayout());
-            
+        }
+        
+        public void setActor(Actor actor) {
+            removeAll();
+            add(getPanelFor(actor));
+            repaint();
+        }
+        
+        private JPanel getPanelFor(Actor actor) {
             DefaultFormBuilder builder = new DefaultFormBuilder(new FormLayout(""));
             builder.border(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-            builder.appendColumn("fill:max(p; 100px):grow");
+            builder.appendColumn("left:pref");
+            builder.appendColumn("3dlu");
+            builder.appendColumn("fill:max(pref; 100px)");
             
-            add(builder.build());
+            builder.append("Name:", new JLabel(actor.getName()));
+            builder.nextLine();
+            
+            boolean scanned = false;
+            if (scanned) {
+                
+            } else {
+                builder.append("Injuries:", new JLabel(actor.getInjuries() + ""));
+                builder.nextLine();
+            }
+            
+            return builder.build();
         }
     }
     
@@ -464,6 +528,11 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
             builder.appendRow("fill:p:grow");
             builder.append(combatLog);
             builder.nextLine(); 
+            
+            JPanel panel = new JPanel(new FlowLayout());
+            panel.add(createPlayerCard());
+            builder.append(panel);
+            builder.nextLine();
             
             add(builder.getPanel());
             
