@@ -168,7 +168,12 @@ public class ActorEncounterModel extends EncounterModel<ActorEncounter, ActorEnc
             }
             
             // Check for player death
-            // TODO
+            if (!model.getPlayer().isAlive()) {
+                for (ActorEncounterListener listener : getListeners()) {
+                    listener.playerKilled();
+                }
+                return;
+            }
             
             // Update combat state
             if (inCombat && !countered) {

@@ -5,8 +5,6 @@ import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.Font;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -15,15 +13,19 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 import java.util.Set;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
-import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
@@ -431,8 +433,9 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
     
     private class CombatPanel extends JPanel {
         private static final long serialVersionUID = 1L;
+        private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
         private final JTextPane combatLog;
-        private final LinkedList<Result> actions = new LinkedList<>();
+        private final BlockingQueue<Result> queue = new LinkedBlockingQueue<Result>();
 
         public CombatPanel() {
             super(new BorderLayout());
@@ -449,41 +452,26 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
             builder.nextLine(); 
             
             add(builder.getPanel());
+            
+            scheduler.scheduleWithFixedDelay(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Result result = queue.take();
+                        combatLog.setText("<html>" + result.toString() + "</html>");
+                    } catch (InterruptedException e) {
+                        // Ignore
+                    }
+                }
+            }, 0, 1, TimeUnit.SECONDS);
         }
         
         public void clear() {
-            actions.clear();
             combatLog.setText("<html></html>");
         }
         
         public void report(Result result) {
-            // Cleanup the queue so we only show the latest set of actions by a particular actor
-            boolean hasOther = false;
-            for (Result r : actions) {
-                if (r.getActor() != result.getActor()) {
-                    hasOther = true;
-                    break;
-                }
-            }
-            if (hasOther) {
-                while (actions.peek().getActor() == result.getActor()) {
-                    actions.remove();
-                }
-            }
-            
-            // Construct the list of previous actions to display
-            String text = "";
-            for (Result r : actions) {
-                text += r.toString() + "<br/>";
-            }
-            
-            // Add the new entry
-            text += result.toString();
-            actions.add(result);
-            
-            // Display the text
-            combatLog.setText("<html>" + text + "</html>");
-            combatLog.setCaretPosition(combatLog.getDocument().getLength());
+            queue.add(result);
         }
     }
     
@@ -576,44 +564,9 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
         continueButton.setEnabled(can);
     }
     
-    public class ToastMessage extends JDialog {
-        int miliseconds;
-        public ToastMessage(String toastString, int time) {
-            this.miliseconds = time;
-            setBounds(100, 100, 189, 31);
-            setUndecorated(true);
-            getContentPane().setLayout(new BorderLayout(0, 0));
-
-            JPanel panel = new JPanel();
-            panel.setBackground(Color.GRAY);
-            panel.setBorder(new LineBorder(Color.LIGHT_GRAY, 2));
-            getContentPane().add(panel, BorderLayout.CENTER);
-
-            JLabel lblToastString = new JLabel("");
-            lblToastString.setText(toastString);
-            lblToastString.setFont(new Font("Dialog", Font.BOLD, 12));
-            lblToastString.setForeground(Color.WHITE);
-
-            setAlwaysOnTop(true);
-            Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-            int y = dim.height/2-getSize().height/2;
-            int half = y/2;
-            setLocation(dim.width/2-getSize().width/2, y+half);
-            panel.add(lblToastString);
-            setVisible(false);
-
-            if(miliseconds > 10000 && miliseconds < 1000)
-                miliseconds = 3000;
-            new Thread(){
-                public void run() {
-                    try {
-                        Thread.sleep(miliseconds);
-                        dispose();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }.start();
-        }   
+    @Override
+    public void playerKilled() {
+        JPanel panel = Application.getApplication().getMainPanel().getGameOverPanel();
+        Application.getApplication().setPanel(panel);
     }
 }

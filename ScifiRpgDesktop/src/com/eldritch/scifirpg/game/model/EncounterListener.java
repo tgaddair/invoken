@@ -30,5 +30,7 @@ public interface EncounterListener {
         void actionsDrawn(Actor actor, Set<ActionAugmentation> actions);
         
         void canContinue(boolean can);
+        
+        void playerKilled();
     }
 }
