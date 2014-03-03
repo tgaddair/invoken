@@ -19,4 +19,8 @@ public class Result {
     public String toString() {
         return message;
     }
+    
+    public void process() {
+        // Does nothing
+    }
 }

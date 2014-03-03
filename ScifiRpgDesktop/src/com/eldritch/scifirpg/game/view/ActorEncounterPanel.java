@@ -15,7 +15,6 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executors;
@@ -30,8 +29,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextArea;
-import javax.swing.JTextPane;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
@@ -150,7 +149,7 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
                 // Double-click -> invoke on self
                 if (me.getClickCount() == 2) {
                     model.invoke(aug);
-                } else if (me.getClickCount() == 1) {
+                } else if (SwingUtilities.isRightMouseButton(me)) {
                     // Show augmentation panel
                     interiorPanel.push(InteriorPanelType.AUGMENTATION);
                 }
@@ -169,7 +168,9 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
                 label.setBorder(getDefaultBorder());
                 
                 // Stop showing augmentation panel
-                interiorPanel.pop(InteriorPanelType.AUGMENTATION);
+                if (SwingUtilities.isRightMouseButton(me)) {
+                    interiorPanel.pop(InteriorPanelType.AUGMENTATION);
+                }
             }
         });
         
@@ -216,7 +217,7 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
                         interiorPanel.show(InteriorPanelType.DIALOGUE);
                         interiorPanel.dialoguePanel.beginDialogueWith(actor);
                     }
-                } else if (me.getClickCount() == 1) {
+                } else if (SwingUtilities.isRightMouseButton(me)) {
                     // Show actor panel
                     interiorPanel.push(InteriorPanelType.ACTOR);
                 }
@@ -228,7 +229,9 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
                 label.setBorder(getDefaultBorder());
                 
                 // Stop showing actor panel
-                interiorPanel.pop(InteriorPanelType.ACTOR);
+                if (SwingUtilities.isRightMouseButton(me)) {
+                    interiorPanel.pop(InteriorPanelType.ACTOR);
+                }
             }
         });
         
@@ -260,6 +263,13 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
                 JLabel view = createAugCard(action);
                 add(view);
                 views.put(action, view);
+            }
+        }
+        
+        @Override
+        public void setEnabled(boolean enabled) {
+            for (JLabel label : views.values()) {
+                label.setEnabled(enabled);
             }
         }
     }
@@ -434,8 +444,10 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
     private class CombatPanel extends JPanel {
         private static final long serialVersionUID = 1L;
         private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-        private final JTextPane combatLog;
+        private final JLabel combatLog;
         private final BlockingQueue<Result> queue = new LinkedBlockingQueue<Result>();
+        private String lastText;
+        private Actor lastActor;
 
         public CombatPanel() {
             super(new BorderLayout());
@@ -444,10 +456,11 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
             builder.border(BorderFactory.createEmptyBorder(5, 5, 5, 5));
             builder.appendColumn("fill:max(p; 100px):grow");
             
-            combatLog = new JTextPane();
-            combatLog.setEditable(false);
-            combatLog.setOpaque(false);
-            combatLog.setContentType("text/html");
+            combatLog = new JLabel();
+            combatLog.setFont(combatLog.getFont().deriveFont(16.0f));
+            combatLog.setHorizontalAlignment(SwingConstants.CENTER);
+            combatLog.setVerticalAlignment(SwingConstants.CENTER);
+            builder.appendRow("fill:p:grow");
             builder.append(combatLog);
             builder.nextLine(); 
             
@@ -458,7 +471,16 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
                 public void run() {
                     try {
                         Result result = queue.take();
-                        combatLog.setText("<html>" + result.toString() + "</html>");
+                        result.process();
+                        
+                        String logText = result.toString();
+                        if (result.getActor() == lastActor) {
+                            logText = lastText + "<br/>" + logText;
+                        }
+                        lastText = logText;
+                        lastActor = result.getActor();
+                        
+                        combatLog.setText("<html>" + logText + "</html>");
                     } catch (InterruptedException e) {
                         // Ignore
                     }
@@ -495,6 +517,15 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
         return area;
     }
     
+    private void enableBuffer(final boolean enabled) {
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                bufferPanel.setEnabled(enabled);
+            }
+        });
+    }
+    
     @Override
     public void outcomesApplied(List<Outcome> outcomes) {
         //interiorPanel.outcomesPanel.report(outcomes);
@@ -503,27 +534,25 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
     @Override
     public void effectApplied(Result result) {
         interiorPanel.combatPanel.report(result);
-        
-        //ToastMessage toastMessage = new ToastMessage(result.toString(), 3000);
-        //toastMessage.setVisible(true);
     }
 
     @Override
     public void startedCombat() {
+        enableBuffer(false);
         interiorPanel.dialoguePanel.reset();
         interiorPanel.show(InteriorPanelType.COMBAT);
     }
     
     @Override
     public void endedCombat() {
+        enableBuffer(true);
         interiorPanel.combatPanel.clear();
         interiorPanel.show(InteriorPanelType.OUTCOME);
     }
 
     @Override
     public void combatTurnStarted(Actor current) {
-        bufferPanel.setEnabled(current == model.getPlayer());
-        interiorPanel.combatPanel.report(new Result(current,
+        interiorPanel.combatPanel.report(new EnabledResult(current,
                 "<strong>" + current.getName() + "'s turn to attack...</strong>"));
     }
 
@@ -568,5 +597,19 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
     public void playerKilled() {
         JPanel panel = Application.getApplication().getMainPanel().getGameOverPanel();
         Application.getApplication().setPanel(panel);
+    }
+    
+    public class EnabledResult extends Result {
+        private final boolean enabled;
+        
+        public EnabledResult(Actor actor, String message) {
+            super(actor, message);
+            enabled = actor == model.getPlayer();
+        }
+        
+        @Override
+        public void process() {
+            enableBuffer(enabled);
+        }
     }
 }
