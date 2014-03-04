@@ -22,10 +22,18 @@ message Effect {
 		DAMAGE_COORDINATED = 36;
 		DAMAGE_CORRUPTION = 37;
 		DRAIN = 1; // Corruption: Transfer life to player, W/A
+		SUPPRESS = 45;
+
+		// Combat modifiers
+		ACCURACY_MOD = 40;
+		DEFENSE_MOD = 41;
+		RESISTANCE_MOD = 42;
+		PERCEPTION_MOD = 43;
+		CRITICAL_MOD = 44;
 
 		// Deceive
-		FLEE = 2; // Avoid conflict and detection
-		ROB = 3; // Steal money or item from the TARGET
+		SNEAK = 2; // Avoid conflict and detection
+		PILFER = 3; // Steal money or item from the TARGET
 		STALK = 4; // Increase damage multiplier by MAGNITUDE without being detected
 		IMPERSONATE = 5; // Pretend to belong to TARGET faction with rank MAGNITUDE
 		AUTHORIZE = 39; // Does not improve reaction, but prevents trespass
@@ -70,8 +78,8 @@ message Effect {
 		FRENZY = 28;
 
 		// Counter
-		PARRY = 29; // Deflect a melee attack
-		DODGE = 30; // Avoid a ranged attack
+		PARRY = 29; // DEPRECATED: Deflect a melee attack
+		DEFEND = 30; // Avoid a ranged attack
 		RESIST = 31; // Prevent the targeted execution (includes corruption), W/A
 		REVEAL = 32; // Discover deceptive activity, including Illusion, W/S
 		INTERRUPT = 33; // Prevent negative duration effect

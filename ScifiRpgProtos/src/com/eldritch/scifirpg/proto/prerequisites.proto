@@ -20,7 +20,7 @@ message Prerequisite {
 
 		// When AUG_REMAINING is a prereq, the game automatically expends the aug
 		AUG_AVAILABLE = 5; // MIN magnitude TARGET augmentation effect on target in cache
-		INFLUENCE_AUG= 11; // Has an influence aug of TARGET type in cache
+		INFLUENCE_AUG = 11; // Has an influence aug of TARGET type in cache
 
 		// Only has meaning within a specific DialogueTree.
 		DIALOGUE_SEEN = 6; // TARGET dialogue previously observed
