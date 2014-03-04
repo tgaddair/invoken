@@ -82,7 +82,7 @@ public class Npc extends Actor {
     @Override
     public boolean handleAttack(ActionAugmentation attack) {
         enemies.add(attack.getOwner());
-        return true;
+        return super.handleAttack(attack);
     }
     
     @Override

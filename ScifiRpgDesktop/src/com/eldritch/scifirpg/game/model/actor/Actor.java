@@ -65,10 +65,97 @@ public abstract class Actor {
         health = getBaseHealth();
     }
 
+    /**
+     * Returns true if the attack succeeds
+     */
+    public boolean handleAttack(ActionAugmentation attack) {
+        Actor a = attack.getOwner();
+        double chance = a.getAccuracy() * a.getWeaponAccuracy(attack) * (1.0 - getDefense());
+        boolean success = Math.random() < chance;
+        return success;
+    }
+    
+    public double getAccuracy() {
+        return 0.75 + (getWarfare() / 100.0);
+    }
+    
+    public double getDefense() {
+        return Math.min(getWarfare() / 100.0, 1.0);
+    }
+
+    private double getWeaponAccuracy(ActionAugmentation attack) {
+        // TODO
+        return 1.0;
+    }
+
+    /**
+     * Returns true if the deception succeeds
+     */
+    public boolean handleDeceive(ActionAugmentation attack) {
+        Actor a = attack.getOwner();
+        double chance = a.getDeception() * (1.0 - getPerception());
+        boolean success = Math.random() < chance;
+        return success;
+    }
+    
+    public double getDeception() {
+        return 0.5 + (getSubterfuge() / 100.0);
+    }
+    
+    public double getPerception() {
+        return Math.min((getAlertness() + getSubterfuge()) / 100.0, 1.0);
+    }
+    
+    public int getAlertness() {
+        // TODO
+        // return location.getCommotion() * getWarfare();
+        return 0;
+    }
+
+    /**
+     * Returns true if the execution succeeds
+     */
+    public boolean handleExecute(ActionAugmentation attack) {
+        Actor a = attack.getOwner();
+        
+        // Unlike other abilities, can execute on self, so ignore resistance
+        double chance = a.getWillpower();
+        if (a != this) {
+            chance *= 1.0 - getResistance();
+        }
+        
+        boolean success = Math.random() < chance;
+        return success;
+    }
+    
+    public double getWillpower() {
+        return 0.5 + (getAutomata() / 100.0);
+    }
+    
+    public double getResistance() {
+        return Math.min(getAutomata() / 100.0, 1.0);
+    }
+    
+    public int getWarfare() {
+        return skills.get(Discipline.WARFARE).getLevel();
+    }
+    
+    public int getAutomata() {
+        return skills.get(Discipline.AUTOMATA).getLevel();
+    }
+    
+    public int getSubterfuge() {
+        return skills.get(Discipline.SUBTERFUGE).getLevel();
+    }
+    
+    public int getCharisma() {
+        return skills.get(Discipline.CHARISMA).getLevel();
+    }
+
     public boolean isAlive() {
         return health > 0;
     }
-    
+
     public void changeHealth(int magnitude) {
         if (magnitude >= 0) {
             heal(magnitude);
@@ -92,7 +179,7 @@ public abstract class Actor {
         // TODO handle resistances
         return damage(magnitude);
     }
-    
+
     public int damage(int magnitude) {
         // Can't do more damage than the target has health
         int damage = Math.min(magnitude, health);
@@ -164,9 +251,9 @@ public abstract class Actor {
      * Number of hit points is exactly equal to the Warfare skill.
      */
     public int getBaseHealth() {
-        return skills.get(Discipline.WARFARE).getLevel();
+        return getWarfare();
     }
-    
+
     public int getInjuries() {
         return getBaseHealth() - getCurrentHealth();
     }
@@ -193,7 +280,7 @@ public abstract class Actor {
     public final void stage(AugmentationState augState) {
         stagedAugmentations.add(augState);
     }
-    
+
     protected SkillState getSkill(Discipline d) {
         return skills.get(d);
     }
@@ -281,7 +368,7 @@ public abstract class Actor {
             // Nothing to remove
             return;
         }
-        
+
         if (count >= available || count == -1) {
             // Remove all and unequip
             Item item = inventory.get(itemId).getItem();
@@ -292,7 +379,7 @@ public abstract class Actor {
             inventory.get(itemId).remove(count);
         }
     }
-    
+
     public void changeReputation(String factionId, int value) {
         if (!factions.containsKey(factionId)) {
             factions.put(factionId, new FactionState(factionId));
@@ -335,7 +422,7 @@ public abstract class Actor {
         public int getLevel() {
             return level;
         }
-        
+
         public void addXp(int delta) {
             xp += delta;
         }
@@ -349,7 +436,7 @@ public abstract class Actor {
         private final String factionId;
         private int reputation;
         private int rank;
-        
+
         public FactionState(String factionId) {
             this.factionId = factionId;
             this.reputation = 0;
@@ -365,9 +452,10 @@ public abstract class Actor {
         public int getReputation() {
             return reputation;
         }
-        
+
         public void changeReputation(int delta) {
-            // Limit the amount we can increase reputation to be <= than 10 * (rank + 2)
+            // Limit the amount we can increase reputation to be <= than 10 *
+            // (rank + 2)
             int max = 10 * (getRank() + 2);
             reputation = Math.min(reputation + delta, max);
         }
@@ -375,7 +463,7 @@ public abstract class Actor {
         public void setReputation(int reputation) {
             this.reputation = reputation;
         }
-        
+
         public boolean hasRank() {
             return rank >= 0;
         }
@@ -383,7 +471,7 @@ public abstract class Actor {
         public int getRank() {
             return rank;
         }
-        
+
         public void promote() {
             rank++;
             reputation += 10;
@@ -401,7 +489,7 @@ public abstract class Actor {
     public static class ItemState {
         private final Item item;
         private int count;
-        
+
         public ItemState(Item item, int count) {
             this.item = item;
             this.count = count;
@@ -415,11 +503,11 @@ public abstract class Actor {
         public Item getItem() {
             return item;
         }
-        
+
         public void add(int c) {
             count += c;
         }
-        
+
         public void remove(int c) {
             // Can't have negative count
             count = Math.max(count - c, 0);
@@ -485,11 +573,6 @@ public abstract class Actor {
     }
 
     public abstract void takeCombatTurn(ActorEncounterModel model);
-
-    /**
-     * Returns true if the attack succeeded, false if the attack was countered.
-     */
-    public abstract boolean handleAttack(ActionAugmentation attack);
 
     public abstract boolean hasEnemy();
 }

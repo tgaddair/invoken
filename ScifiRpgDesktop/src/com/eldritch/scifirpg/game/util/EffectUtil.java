@@ -1,11 +1,43 @@
 package com.eldritch.scifirpg.game.util;
 
+import java.util.Collection;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
+
 import com.eldritch.scifirpg.game.model.actor.Actor;
 import com.eldritch.scifirpg.proto.Effects.DamageType;
 import com.eldritch.scifirpg.proto.Effects.Effect;
 import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableList;
 
 public class EffectUtil {
+    public static List<Actor> getTargets(Effect effect, Actor source, Actor selected, Collection<Actor> combatants) {
+        switch (effect.getRange()) {
+            case PLAYER: // Only affects the player
+                return ImmutableList.of(source);
+            case SELECTED: // Actively choose an Actor within an ActorEncounter
+                return ImmutableList.of(selected);
+            case ALL: // Everyone in an ActorEncounter, including the player
+                return ImmutableList.<Actor>builder().addAll(combatants).build();
+            case ALL_OTHER: // Everyone in an ActorEncounter, except the player
+                Set<Actor> allOther = new LinkedHashSet<>(combatants);
+                allOther.remove(source);
+                return ImmutableList.<Actor>builder().addAll(allOther).build();
+            case ALL_HOSTILE: // Everyone hostile to the player in an ActorEncounter
+                // TODO return source.getEnemies();
+            case ALL_ALLIED: // Everyone allied with the player in an ActorEncounter, including player
+                // TODO return source.getAllies();
+            case TARGETER: // Applies to counters, traps, and passive abilities that are triggered when someone targets player
+            case SPREAD_ALL:
+            case SPREAD_HOSTILE:
+                return ImmutableList.of(selected);
+            default:
+                throw new IllegalArgumentException(
+                        "Unrecognized Effect range: " + effect.getRange());
+        }
+    }
+    
     public static Result apply(Effect effect, Optional<Actor> source, Optional<Actor> target) {
         switch (effect.getType()) {
             // Attack

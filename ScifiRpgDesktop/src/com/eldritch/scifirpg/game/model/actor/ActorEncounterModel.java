@@ -127,44 +127,14 @@ public class ActorEncounterModel extends EncounterModel<ActorEncounter, ActorEnc
         }
     }
 
-    public void invoke(ActionAugmentation aug, Actor target) {
+    public void invoke(ActionAugmentation aug, Actor selected) {
         if (canTakeAction(aug.getOwner())) {
-            // Allow target to respond to the invocation
-            boolean success = true;
-            boolean hostileAction = false;
-            boolean countered = false;
-            switch (aug.getType()) {
-                case ATTACK: // Playable to make hostile
-                    success = target.handleAttack(aug);
-                    hostileAction = true;
-                    break;
-                case DECEIVE: // Playable when not detected
-                case EXECUTE: // Playable in encounter
-                case DIALOGUE: // Playable in dialogue
-                case COUNTER: // Playable when targeted
-                    countered = true;
-                    break;
-                case TRAP: // Playable at any time, activates when targeted and effect applies
-                    break;
-                case PASSIVE: // Playable when attuning outside encounter
-                    // It's a bug if we have an ActionAugmentation with passive type
-                default:
-                    throw new IllegalArgumentException(
-                            "Unrecognized Augmentation Type: " + aug.getType());
-            }
-            
-            if (success) {
-                // No counter, apply effects
-                Optional<Actor> source = Optional.of(aug.getOwner());
-                Optional<Actor> dest = Optional.of(target);
-                for (Effect effect : aug.getEffects()) {
-                    Result result = EffectUtil.apply(effect, source, dest);
-                    for (ActorEncounterListener listener : getListeners()) {
-                        listener.effectApplied(result);
-                    }
+            // Apply the augmentation
+            List<Result> results = aug.apply(combatants, selected);
+            for (Result result : results) {
+                for (ActorEncounterListener listener : getListeners()) {
+                    listener.effectApplied(result);
                 }
-                
-                // TODO handle duration effects by keeping a list we apply at the end of the round
             }
             
             // Handle any actor that might have died in this exchange, and recheck hostilities
@@ -186,7 +156,7 @@ public class ActorEncounterModel extends EncounterModel<ActorEncounter, ActorEnc
             }
             
             // Update combat state
-            if (inCombat && !countered) {
+            if (inCombat) {
                 if (!hasHostile) {
                     // If no hostilities were found, then we're not in combat
                     inCombat = false;
@@ -201,7 +171,7 @@ public class ActorEncounterModel extends EncounterModel<ActorEncounter, ActorEnc
                         takeCombatTurn();
                     }
                 }
-            } else if (hostileAction) {
+            } else if (hasHostile) {
                 startCombat();
             }
         }

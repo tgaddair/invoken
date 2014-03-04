@@ -8,7 +8,6 @@ import java.util.Set;
 
 import org.apache.commons.lang3.text.WordUtils;
 
-import com.eldritch.scifirpg.game.model.ActionAugmentation;
 import com.eldritch.scifirpg.game.util.ProfessionUtil;
 import com.eldritch.scifirpg.proto.Actors.ActorParams;
 import com.eldritch.scifirpg.proto.Actors.ActorParams.Gender;
@@ -91,11 +90,6 @@ public class Player extends Actor {
     @Override
     public void takeCombatTurn(ActorEncounterModel model) {
         // Handled by user interface
-    }
-    
-    @Override
-    public boolean handleAttack(ActionAugmentation attack) {
-        return true;
     }
     
     @Override
