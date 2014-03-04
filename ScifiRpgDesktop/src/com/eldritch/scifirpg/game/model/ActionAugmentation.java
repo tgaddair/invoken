@@ -38,7 +38,13 @@ public class ActionAugmentation {
         return uses;
     }
     
-    public List<Result> apply(Collection<Actor> combatants, Actor selected) {
+    public List<Result> applyUse(Actor selected, Collection<Actor> combatants) {
+        List<Result> results = apply(selected, combatants);
+        markUse();
+        return results;
+    }
+
+    public List<Result> apply(Actor selected, Collection<Actor> combatants) {
         List<Result> results = new ArrayList<>();
         Optional<Actor> source = Optional.of(getOwner());
         for (Effect effect : getEffects()) {
@@ -52,7 +58,6 @@ public class ActionAugmentation {
                 }
             }
         }
-        markUse();
         return results;
     }
     

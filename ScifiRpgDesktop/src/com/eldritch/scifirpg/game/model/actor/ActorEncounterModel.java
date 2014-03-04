@@ -127,7 +127,7 @@ public class ActorEncounterModel extends EncounterModel<ActorEncounter, ActorEnc
     public void invoke(ActionAugmentation aug, Actor selected) {
         if (canTakeAction(aug.getOwner())) {
             // Apply the augmentation
-            List<Result> results = aug.apply(combatants, selected);
+            List<Result> results = aug.applyUse(selected, combatants);
             for (Result result : results) {
                 for (ActorEncounterListener listener : getListeners()) {
                     listener.effectApplied(result);

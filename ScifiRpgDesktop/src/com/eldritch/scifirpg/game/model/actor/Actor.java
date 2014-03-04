@@ -74,7 +74,7 @@ public abstract class Actor {
     private void maybeCounter(Augmentation.Type type, Actor a, Collection<Actor> combatants) {
         // Counter if possible
         if (counters.containsKey(type)) {
-            counters.get(type).apply(combatants, a);
+            counters.get(type).apply(a, combatants);
         }
     }
 
