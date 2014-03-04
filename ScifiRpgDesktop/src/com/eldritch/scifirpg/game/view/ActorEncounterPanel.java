@@ -134,50 +134,8 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
         model.init();
     }
     
-    private JLabel createAugCard(final ActionAugmentation aug) {
-        final JLabel label = new JLabel(aug.getName());
-        label.setBorder(getDefaultBorder());
-        label.setPreferredSize(new Dimension(90, 120));
-        label.setHorizontalAlignment(SwingConstants.CENTER);
-        label.setBackground(Color.WHITE);
-        label.setOpaque(true);
-        
-        // Add a click action listener
-        label.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent me) {
-                selected = aug;
-                label.setBorder(getSelectedBorder());
-                
-                // Double-click -> invoke on self
-                if (me.getClickCount() == 2) {
-                    model.invoke(aug);
-                } else if (SwingUtilities.isRightMouseButton(me)) {
-                    // Show augmentation panel
-                    interiorPanel.push(InteriorPanelType.AUGMENTATION);
-                }
-            }
-            
-            @Override
-            public void mouseReleased(MouseEvent me) {
-                if (target != null) {
-                    model.invoke(aug, target);
-                }
-                
-                // Visual cleanup
-                if (selected == aug) {
-                    selected = null;
-                }
-                label.setBorder(getDefaultBorder());
-                
-                // Stop showing augmentation panel
-                if (SwingUtilities.isRightMouseButton(me)) {
-                    interiorPanel.pop(InteriorPanelType.AUGMENTATION);
-                }
-            }
-        });
-        
-        return label;
+    private AugmentationLabel createAugCard(ActionAugmentation aug) {
+        return new AugmentationLabel(aug);
     }
     
     private ActorLabel createPlayerCard() {
@@ -269,27 +227,25 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
     
     private class BufferPanel extends JPanel {
         private static final long serialVersionUID = 1L;
-        private final Map<ActionAugmentation, JLabel> views = new HashMap<>();
+        private final Map<ActionAugmentation, AugmentationLabel> views = new HashMap<>();
         
         public BufferPanel() {
             super(new FlowLayout());
             
-            for (ActionAugmentation aug : model.getPlayer().redrawActions()) {
-                JLabel view = createAugCard(aug);
+            for (ActionAugmentation aug : model.getPlayer().getActions()) {
+                AugmentationLabel view = createAugCard(aug);
                 add(view);
                 views.put(aug, view);
             }
         }
         
-        public void remove(ActionAugmentation action) {
-            remove(views.get(action));
-            views.remove(action);
-            repaint();
+        public void update(ActionAugmentation action) {
+            views.get(action).update();
         }
         
         public void addAll(Collection<ActionAugmentation> actions) {
             for (ActionAugmentation action : actions) {
-                JLabel view = createAugCard(action);
+                AugmentationLabel view = createAugCard(action);
                 add(view);
                 views.put(action, view);
             }
@@ -667,7 +623,7 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
     @Override
     public void actionUsed(ActionAugmentation action) {
         if (action.getOwner() == model.getPlayer()) {
-            bufferPanel.remove(action);
+            bufferPanel.update(action);
         }
     }
     
@@ -703,6 +659,67 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
         }
     }
     
+    
+    public class AugmentationLabel extends JLabel {
+        private static final long serialVersionUID = 1L;
+        private final ActionAugmentation aug;
+        
+        public AugmentationLabel(final ActionAugmentation aug) {
+            super(getBriefText(aug));
+            this.aug = aug;
+            
+            setBorder(getDefaultBorder());
+            setPreferredSize(new Dimension(75, 75));
+            setHorizontalAlignment(SwingConstants.CENTER);
+            setBackground(Color.WHITE);
+            setOpaque(true);
+            
+            // Add a click action listener
+            addMouseListener(new MouseAdapter() {
+                @Override
+                public void mousePressed(MouseEvent me) {
+                    selected = aug;
+                    AugmentationLabel.this.setBorder(getSelectedBorder());
+                    
+                    // Double-click -> invoke on self
+                    if (me.getClickCount() == 2) {
+                        model.invoke(aug);
+                    } else if (SwingUtilities.isRightMouseButton(me)) {
+                        // Show augmentation panel
+                        interiorPanel.push(InteriorPanelType.AUGMENTATION);
+                    }
+                }
+                
+                @Override
+                public void mouseReleased(MouseEvent me) {
+                    if (target != null) {
+                        model.invoke(aug, target);
+                    }
+                    
+                    // Visual cleanup
+                    if (selected == aug) {
+                        selected = null;
+                    }
+                    AugmentationLabel.this.setBorder(getDefaultBorder());
+                    
+                    // Stop showing augmentation panel
+                    if (SwingUtilities.isRightMouseButton(me)) {
+                        interiorPanel.pop(InteriorPanelType.AUGMENTATION);
+                    }
+                }
+            });
+        }
+        
+        public void update() {
+            SwingUtilities.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    setText(getBriefText(aug));
+                }
+            });
+        }
+    }
+    
     public class ActorLabel extends JLabel {
         private static final long serialVersionUID = 1L;
         private final Actor actor;
@@ -723,5 +740,10 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
             float r = (1.0f * actor.getCurrentHealth()) / actor.getBaseHealth();
             setBackground(new Color(r, r, r));
         }
+    }
+    
+    private static String getBriefText(ActionAugmentation aug) {
+        return "<html><div style=\"text-align: center;\">"
+              + aug.getName() + "<br/>" + aug.getUses() + "</html>";
     }
 }

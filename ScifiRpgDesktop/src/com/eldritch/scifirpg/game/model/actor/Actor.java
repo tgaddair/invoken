@@ -3,7 +3,6 @@ package com.eldritch.scifirpg.game.model.actor;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -40,11 +39,7 @@ public abstract class Actor {
 
     // Game specific parameters not set during construction
     private final Set<Item> equipped = new HashSet<>();
-    private final Set<AugmentationState> stagedAugmentations = new HashSet<>();
-
-    // Game specific parameters not saved to disk
-    // ActionAugmentation must not override equals() for this to work
-    private final Set<ActionAugmentation> actionBuffer = new LinkedHashSet<>();
+    private final Set<ActionAugmentation> stagedAugmentations = new HashSet<>();
 
     public Actor(ActorParams params) {
         this.params = params;
@@ -172,7 +167,7 @@ public abstract class Actor {
     }
 
     public Set<ActionAugmentation> getActions() {
-        return actionBuffer;
+        return stagedAugmentations;
     }
 
     public int damage(DamageType type, int magnitude) {
@@ -186,56 +181,6 @@ public abstract class Actor {
         health -= damage;
         System.out.println(getName() + ": " + health);
         return damage;
-    }
-
-    public void removeAction(ActionAugmentation aug) {
-        actionBuffer.remove(aug);
-    }
-
-    public Set<ActionAugmentation> redrawActions() {
-        actionBuffer.clear();
-        return drawActions();
-    }
-
-    public Set<ActionAugmentation> drawActions() {
-        Set<ActionAugmentation> drawn = new LinkedHashSet<>();
-        boolean canDraw = true;
-        int slots = getBufferSlots();
-        while (canDraw && actionBuffer.size() < slots) {
-            Augmentation aug = drawAvailableAugmentation();
-            if (aug != null) {
-                ActionAugmentation action = new ActionAugmentation(aug, this);
-                actionBuffer.add(action);
-                drawn.add(action);
-            } else {
-                canDraw = false;
-            }
-        }
-        return drawn;
-    }
-
-    protected Collection<AugmentationState> getStagedAugmentations() {
-        return stagedAugmentations;
-    }
-
-    private Augmentation drawAvailableAugmentation() {
-        int total = 0;
-        for (AugmentationState augState : stagedAugmentations) {
-            if (augState.getRemainingUses() > 0) {
-                total += augState.getWeight();
-            }
-        }
-
-        double target = Math.random() * total;
-        double sum = 0.0;
-        for (AugmentationState augState : stagedAugmentations) {
-            sum += augState.getWeight();
-            if (sum > target) {
-                return augState.getAugmentation();
-            }
-        }
-
-        return null;
     }
 
     /**
@@ -270,15 +215,16 @@ public abstract class Actor {
         equipped.add(inventory.get(itemId).getItem());
     }
 
-    public final void stage(StagedAugmentation aug) {
-        stage(new AugmentationState(aug));
-        if (!knownAugmentations.contains(aug.getAugId())) {
-            knownAugmentations.add(aug.getAugId());
+    public final void stage(StagedAugmentation state) {
+        Augmentation aug = AUG_READER.readAsset(state.getAugId());
+        stage(new ActionAugmentation(aug, this, state));
+        if (!knownAugmentations.contains(aug.getId())) {
+            knownAugmentations.add(aug.getId());
         }
     }
 
-    public final void stage(AugmentationState augState) {
-        stagedAugmentations.add(augState);
+    public final void stage(ActionAugmentation aug) {
+        stagedAugmentations.add(aug);
     }
 
     protected SkillState getSkill(Discipline d) {
@@ -515,60 +461,6 @@ public abstract class Actor {
 
         public int getCount() {
             return count;
-        }
-    }
-
-    public static class AugmentationState {
-        private final String augId;
-        private final Augmentation augmentation;
-        private int stages;
-        private int remainingUses;
-
-        public AugmentationState(Augmentation augmentation, int stages) {
-            this.augId = augmentation.getId();
-            this.stages = stages;
-            this.remainingUses = stages;
-            this.augmentation = augmentation;
-        }
-
-        public AugmentationState(StagedAugmentation aug) {
-            this.augId = aug.getAugId();
-            this.stages = aug.getStages();
-            this.remainingUses = aug.getRemainingUses();
-            augmentation = AUG_READER.readAsset(augId);
-        }
-
-        public Augmentation getAugmentation() {
-            return augmentation;
-        }
-
-        public int getWeight() {
-            // TODO maybe weight augs dynamically
-            return remainingUses;
-        }
-
-        public int getStages() {
-            return stages;
-        }
-
-        public void setStages(int stages) {
-            this.stages = stages;
-        }
-
-        public int getRemainingUses() {
-            return remainingUses;
-        }
-
-        public void setRemainingUses(int remainingUses) {
-            this.remainingUses = remainingUses;
-        }
-
-        public String getAugId() {
-            return augId;
-        }
-
-        public String getName() {
-            return augmentation.getName();
         }
     }
 

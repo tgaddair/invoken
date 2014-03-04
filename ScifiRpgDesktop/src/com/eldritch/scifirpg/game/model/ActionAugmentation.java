@@ -7,6 +7,7 @@ import java.util.List;
 import com.eldritch.scifirpg.game.model.actor.Actor;
 import com.eldritch.scifirpg.game.util.EffectUtil;
 import com.eldritch.scifirpg.game.util.Result;
+import com.eldritch.scifirpg.proto.Actors.PlayerActor.StagedAugmentation;
 import com.eldritch.scifirpg.proto.Augmentations.Augmentation;
 import com.eldritch.scifirpg.proto.Augmentations.Augmentation.Type;
 import com.eldritch.scifirpg.proto.Effects.Effect;
@@ -16,10 +17,25 @@ import com.google.common.base.Optional;
 public class ActionAugmentation {
     private final Augmentation aug;
     private final Actor owner;
-    
-    public ActionAugmentation(Augmentation aug, Actor owner) {
+    private final int stages;
+    private int uses;
+
+    public ActionAugmentation(Augmentation aug, Actor owner, StagedAugmentation state) {
         this.aug = aug;
         this.owner = owner;
+        this.stages = state.getStages();
+        this.uses = state.getRemainingUses();
+    }
+    
+    public ActionAugmentation(Augmentation aug, Actor owner, int uses) {
+        this.aug = aug;
+        this.owner = owner;
+        this.uses = uses;
+        stages = uses;
+    }
+    
+    public int getUses() {
+        return uses;
     }
     
     public List<Result> apply(Collection<Actor> combatants, Actor selected) {
@@ -30,10 +46,21 @@ public class ActionAugmentation {
                 if (succeedsOn(target)) {
                     Optional<Actor> dest = Optional.of(target);
                     results.add(EffectUtil.apply(effect, source, dest));
+                } else {
+                    results.add(new Result(owner, String.format(
+                            "%s MISSED %s", owner.getName(), target.getName())));
                 }
             }
         }
+        markUse();
         return results;
+    }
+    
+    private void markUse() {
+        uses--;
+        if (uses <= 0) {
+            // Disable further use
+        }
     }
     
     /**

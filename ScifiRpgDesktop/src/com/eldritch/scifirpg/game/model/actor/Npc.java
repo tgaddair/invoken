@@ -39,7 +39,7 @@ public class Npc extends Actor {
         // Construct augs and items by randomly sampling from available
         for (String augId : getKnownAugmentations()) {
             Augmentation aug = AUG_READER.readAsset(augId);
-            stage(new AugmentationState(aug, 20));
+            stage(new ActionAugmentation(aug, this, 20));
         }
         
         // TODO construct enemies from the encounter

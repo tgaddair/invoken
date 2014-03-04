@@ -12,10 +12,7 @@ import com.eldritch.scifirpg.game.model.ActionAugmentation;
 import com.eldritch.scifirpg.game.model.EncounterListener.ActorEncounterListener;
 import com.eldritch.scifirpg.game.model.EncounterModel;
 import com.eldritch.scifirpg.game.model.GameState;
-import com.eldritch.scifirpg.game.util.EffectUtil;
 import com.eldritch.scifirpg.game.util.Result;
-import com.eldritch.scifirpg.proto.Effects.Effect;
-import com.google.common.base.Optional;
 import com.google.common.collect.Iterables;
 
 /**
@@ -141,8 +138,7 @@ public class ActorEncounterModel extends EncounterModel<ActorEncounter, ActorEnc
             // to determine if combat mode is to continue
             boolean hasHostile = checkHostility();
             
-            // Remove the augmentation from the owner's buffer and notify all the listeners
-            aug.getOwner().removeAction(aug);
+            // Notify all the listeners of the aug's use
             for (ActorEncounterListener listener : getListeners()) {
                 listener.actionUsed(aug);
             }
@@ -231,10 +227,6 @@ public class ActorEncounterModel extends EncounterModel<ActorEncounter, ActorEnc
     }
     
     private void startCombatTurn() {
-        Set<ActionAugmentation> actions = current.drawActions();
-        for (ActorEncounterListener listener : getListeners()) {
-            listener.actionsDrawn(current, actions);
-        }
         takeCombatTurn();
     }
     
