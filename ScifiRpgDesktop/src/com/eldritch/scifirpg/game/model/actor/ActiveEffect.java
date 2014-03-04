@@ -2,7 +2,6 @@ package com.eldritch.scifirpg.game.model.actor;
 
 import com.eldritch.scifirpg.game.util.EffectUtil;
 import com.eldritch.scifirpg.proto.Effects.Effect;
-import com.google.common.base.Optional;
 
 public class ActiveEffect {
     private final Effect effect;
@@ -31,7 +30,7 @@ public class ActiveEffect {
     public void apply() {
         elapse();
         if (!isExpired() || countdownComplete()) {
-            EffectUtil.apply(effect, Optional.of(source), Optional.of(target));
+            EffectUtil.apply(effect, source, target);
         }
     }
     

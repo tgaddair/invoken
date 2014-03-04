@@ -12,7 +12,6 @@ import com.eldritch.scifirpg.proto.Augmentations.Augmentation;
 import com.eldritch.scifirpg.proto.Augmentations.Augmentation.Type;
 import com.eldritch.scifirpg.proto.Effects.Effect;
 import com.eldritch.scifirpg.proto.Effects.Effect.Range;
-import com.google.common.base.Optional;
 
 public class ActionAugmentation {
     private final Augmentation aug;
@@ -46,13 +45,11 @@ public class ActionAugmentation {
 
     public List<Result> apply(Actor selected, Collection<Actor> combatants) {
         List<Result> results = new ArrayList<>();
-        Optional<Actor> source = Optional.of(getOwner());
         for (Effect effect : getEffects()) {
             for (Actor target : EffectUtil.getTargets(effect, owner, selected, combatants)) {
                 Result result = succeedsOn(target, combatants);
                 if (result.isSuccess()) {
-                    Optional<Actor> dest = Optional.of(target);
-                    results.add(EffectUtil.apply(effect, source, dest));
+                    results.add(EffectUtil.apply(effect, owner, target));
                 } else {
                     results.add(result);
                 }

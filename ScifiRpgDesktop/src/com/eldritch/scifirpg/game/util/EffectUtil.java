@@ -9,7 +9,6 @@ import com.eldritch.scifirpg.game.model.actor.ActiveEffect;
 import com.eldritch.scifirpg.game.model.actor.Actor;
 import com.eldritch.scifirpg.proto.Effects.DamageType;
 import com.eldritch.scifirpg.proto.Effects.Effect;
-import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 
 public class EffectUtil {
@@ -39,16 +38,15 @@ public class EffectUtil {
         }
     }
     
-    public static Result apply(Effect effect, Optional<Actor> source, Optional<Actor> target) {
+    public static Result apply(Effect effect, Actor source, Actor target) {
         Result r = applyActive(effect, source, target);
         if (!effect.hasDuration() || effect.getDuration() != 0) {
-            target.get().addActiveEffect(new ActiveEffect(effect, source, target));
+            target.addActiveEffect(new ActiveEffect(effect, source, target));
         }
         return r;
     }
     
-    public static Result applyActive(Effect effect,
-            Optional<Actor> source, Optional<Actor> target) {
+    public static Result applyActive(Effect effect, Actor source, Actor target) {
         switch (effect.getType()) {
             // Attack
             case DAMAGE_MELEE: // MAGNITUDE damage of DAMAGE_TYPE on TARGET for DURATION
@@ -56,21 +54,21 @@ public class EffectUtil {
             case DAMAGE_HEAVY:
             case DAMAGE_COORDINATED:
             case DAMAGE_CORRUPTION: {
-                int value = target.get().damage(effect.getDamageType(), effect.getMagnitude());
-                return new Result(source.get(), String.format(
+                int value = target.damage(effect.getDamageType(), effect.getMagnitude());
+                return new Result(source, String.format(
                         "%d %s damage to %s",
                         value,
                         effect.getDamageType().name().toLowerCase(),
-                        target.get().getName()));
+                        target.getName()));
             }
             case DRAIN: // Corruption: Transfer life to source, W/A
-                int value = target.get().damage(DamageType.VIRAL, effect.getMagnitude());
-                source.get().heal(value);
-                return new Result(source.get(), String.format(
+                int value = target.damage(DamageType.VIRAL, effect.getMagnitude());
+                source.heal(value);
+                return new Result(source, String.format(
                         "%d drained from %s to %s",
                         value,
-                        target.get().getName(),
-                        source.get().getName()));
+                        target.getName(),
+                        source.getName()));
 
             // Deceive
             case FLEE: // Avoid conflict and detection
@@ -127,7 +125,7 @@ public class EffectUtil {
 
             // Dialogue - Influence
             case INFLUENCE: // Requires Influence Type
-                return new Result(source.get(), "");
+                return new Result(source, "");
                 
             default:
                 throw new IllegalArgumentException(
