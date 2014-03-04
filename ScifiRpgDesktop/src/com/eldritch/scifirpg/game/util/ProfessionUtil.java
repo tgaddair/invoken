@@ -18,21 +18,21 @@ public class ProfessionUtil {
     public static List<String> getStartingAugmentationsFor(Profession p) {
         switch (p) {
             case CENTURION:
-                return ImmutableList.of("Fire", "Rend", "Dodge");
+                return ImmutableList.of("Fire", "Rend", "Sentinel");
             case EXECUTOR:
                 return ImmutableList.of("Rend", "Resist", "Regenerate");
             case ASSASSIN:
-                return ImmutableList.of("Stalk", "Rend", "Dodge");
+                return ImmutableList.of("Stalk", "Rend", "Sentinel");
             case WARDEN:
-                return ImmutableList.of("Fire", "Rend", "Dodge"); // Suppress
+                return ImmutableList.of("Fire", "Rend", "Sentinel"); // Suppress
             case ARCHITECT:
                 return ImmutableList.of("VampiricTouch", "SummonSwarm");
             case GHOST:
-                return ImmutableList.of("Reveal", "VampiricTouch", "Flee");
+                return ImmutableList.of("Reveal", "VampiricTouch", "Sneak");
             case INQUISITOR:
                 return ImmutableList.of("Dominate", "VampiricTouch");
             case INFILTRATOR:
-                return ImmutableList.of("Flee", "Pilfer");
+                return ImmutableList.of("Sneak", "Pilfer");
             case AGENT:
                 return ImmutableList.of("Stalk", "Bluff", "Reveal");
             case BROKER:

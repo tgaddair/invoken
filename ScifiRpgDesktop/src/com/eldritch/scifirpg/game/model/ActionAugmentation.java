@@ -108,7 +108,7 @@ public class ActionAugmentation {
     private Type getCounterType() {
         for (Effect effect : getEffects()) {
             switch (effect.getType()) {
-                case DODGE: // Avoid an attack
+                case DEFEND: // Avoid an attack
                     return Type.ATTACK;
                 case RESIST: // Prevent the targeted execution (includes corruption), W/A
                     return Type.EXECUTE;
