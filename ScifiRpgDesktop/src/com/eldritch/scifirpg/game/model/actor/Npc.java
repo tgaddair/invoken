@@ -1,6 +1,7 @@
 package com.eldritch.scifirpg.game.model.actor;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -80,9 +81,9 @@ public class Npc extends Actor {
     }
     
     @Override
-    public boolean handleAttack(ActionAugmentation attack) {
+    public boolean handleAttack(ActionAugmentation attack, Collection<Actor> combatants) {
         enemies.add(attack.getOwner());
-        return super.handleAttack(attack);
+        return super.handleAttack(attack, combatants);
     }
     
     @Override

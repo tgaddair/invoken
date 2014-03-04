@@ -43,12 +43,12 @@ public class ActionAugmentation {
         Optional<Actor> source = Optional.of(getOwner());
         for (Effect effect : getEffects()) {
             for (Actor target : EffectUtil.getTargets(effect, owner, selected, combatants)) {
-                if (succeedsOn(target, combatants)) {
+                Result result = succeedsOn(target, combatants);
+                if (result.isSuccess()) {
                     Optional<Actor> dest = Optional.of(target);
                     results.add(EffectUtil.apply(effect, source, dest));
                 } else {
-                    results.add(new Result(owner, String.format(
-                            "%s MISSED %s", owner.getName(), target.getName())));
+                    results.add(result);
                 }
             }
         }
@@ -66,24 +66,24 @@ public class ActionAugmentation {
     /**
      * Returns true iff initiated success.
      */
-    private boolean succeedsOn(Actor target, Collection<Actor> combatants) {
+    private Result succeedsOn(Actor target, Collection<Actor> combatants) {
         switch (aug.getType()) {
             case ATTACK: // Playable to make hostile
-                return target.handleAttack(this, combatants);
+                return resultFrom(target, target.handleAttack(this, combatants), "MISSED");
             case DECEIVE: // Playable when not detected
-                return target.handleDeceive(this, combatants);
+                return resultFrom(target, target.handleDeceive(this, combatants), "REVEALED");
             case EXECUTE: // Playable in encounter
-                return target.handleExecute(this, combatants);
+                return resultFrom(target, target.handleExecute(this, combatants), "RESISTED");
             case DIALOGUE: // Playable in dialogue
             case COUNTER: // Playable when targeted
                 if (owner == target) {
                     // Initial deployment -> add the counter to the counter map
                     owner.addCounter(getCounterType(), this);
-                    return false;
+                    return resultFrom(target, false, "deployed counter");
                 } else {
                     // Active counter -> apply the effects
                     owner.removeCounter(getCounterType());
-                    return true;
+                    return resultFrom(target, true, "COUNTERED");
                 }
             case TRAP: // Playable at any time, activates when targeted and effect applies
                 // Deprecated
@@ -93,6 +93,11 @@ public class ActionAugmentation {
                 throw new IllegalArgumentException(
                         "Unrecognized Augmentation Type: " + aug.getType());
         }
+    }
+    
+    private Result resultFrom(Actor target, boolean success, String verb) {
+        return new Result(owner, String.format(
+                "%s %s %s", owner.getName(), verb, target.getName()), success);
     }
     
     /**
