@@ -227,6 +227,9 @@ public class ActorEncounterModel extends EncounterModel<ActorEncounter, ActorEnc
     }
     
     private void startCombatTurn() {
+        // Apply active effects on the current player
+        current.applyActiveEffects();
+        
         takeCombatTurn();
     }
     

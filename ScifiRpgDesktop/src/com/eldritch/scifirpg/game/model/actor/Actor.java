@@ -3,6 +3,8 @@ package com.eldritch.scifirpg.game.model.actor;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -38,9 +40,10 @@ public abstract class Actor {
 
     // Game specific parameters not set during construction
     private final Set<Item> equipped = new HashSet<>();
-    private final Set<ActionAugmentation> stagedAugmentations = new HashSet<>();
+    private final Set<ActionAugmentation> stagedAugmentations = new LinkedHashSet<>();
     
     // Combat stats reset after new encounter begins
+    private final Set<ActiveEffect> activeEffects = new HashSet<>();
     private final Map<Augmentation.Type, ActionAugmentation> counters = new HashMap<>();
     private int health;
 
@@ -61,6 +64,26 @@ public abstract class Actor {
 
         level = params.getLevel();
         health = getBaseHealth();
+    }
+    
+    public void addActiveEffect(ActiveEffect effect) {
+        activeEffects.add(effect);
+    }
+    
+    public void applyActiveEffects() {
+        Iterator<ActiveEffect> it = activeEffects.iterator();
+        while (it.hasNext()) {
+            ActiveEffect effect = it.next();
+            effect.apply();
+            if (effect.isExpired()) {
+                it.remove();
+            }
+        }
+    }
+    
+    public void autoStageAugmentations() {
+        stagedAugmentations.clear();
+        // TODO int slots = getBufferSlots();
     }
     
     public void addCounter(Augmentation.Type type, ActionAugmentation counter) {

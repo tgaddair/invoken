@@ -5,6 +5,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.eldritch.scifirpg.game.model.actor.ActiveEffect;
 import com.eldritch.scifirpg.game.model.actor.Actor;
 import com.eldritch.scifirpg.proto.Effects.DamageType;
 import com.eldritch.scifirpg.proto.Effects.Effect;
@@ -39,6 +40,15 @@ public class EffectUtil {
     }
     
     public static Result apply(Effect effect, Optional<Actor> source, Optional<Actor> target) {
+        Result r = applyActive(effect, source, target);
+        if (!effect.hasDuration() || effect.getDuration() != 0) {
+            target.get().addActiveEffect(new ActiveEffect(effect, source, target));
+        }
+        return r;
+    }
+    
+    public static Result applyActive(Effect effect,
+            Optional<Actor> source, Optional<Actor> target) {
         switch (effect.getType()) {
             // Attack
             case DAMAGE_MELEE: // MAGNITUDE damage of DAMAGE_TYPE on TARGET for DURATION
