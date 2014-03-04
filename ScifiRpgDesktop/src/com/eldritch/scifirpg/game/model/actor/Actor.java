@@ -35,11 +35,14 @@ public abstract class Actor {
     private final Map<String, FactionState> factions = new HashMap<>();
     private final Map<String, ItemState> inventory = new HashMap<>();
     private final Set<String> knownAugmentations = new HashSet<>();
-    private int health;
 
     // Game specific parameters not set during construction
     private final Set<Item> equipped = new HashSet<>();
     private final Set<ActionAugmentation> stagedAugmentations = new HashSet<>();
+    
+    // Combat stats reset after new encounter begins
+    private final Map<Augmentation.Type, ActionAugmentation> counters = new HashMap<>();
+    private int health;
 
     public Actor(ActorParams params) {
         this.params = params;
@@ -59,12 +62,28 @@ public abstract class Actor {
         level = params.getLevel();
         health = getBaseHealth();
     }
+    
+    public void addCounter(Augmentation.Type type, ActionAugmentation counter) {
+        counters.put(type, counter);
+    }
+    
+    public void removeCounter(Augmentation.Type type) {
+        counters.remove(type);
+    }
+    
+    private void maybeCounter(Augmentation.Type type, Actor a, Collection<Actor> combatants) {
+        // Counter if possible
+        if (counters.containsKey(type)) {
+            counters.get(type).apply(combatants, a);
+        }
+    }
 
     /**
      * Returns true if the attack succeeds
      */
-    public boolean handleAttack(ActionAugmentation attack) {
+    public boolean handleAttack(ActionAugmentation attack, Collection<Actor> combatants) {
         Actor a = attack.getOwner();
+        maybeCounter(Augmentation.Type.ATTACK, a, combatants);
         double chance = a.getAccuracy() * a.getWeaponAccuracy(attack) * (1.0 - getDefense());
         boolean success = Math.random() < chance;
         return success;
@@ -86,8 +105,9 @@ public abstract class Actor {
     /**
      * Returns true if the deception succeeds
      */
-    public boolean handleDeceive(ActionAugmentation attack) {
+    public boolean handleDeceive(ActionAugmentation attack, Collection<Actor> combatants) {
         Actor a = attack.getOwner();
+        maybeCounter(Augmentation.Type.DECEIVE, a, combatants);
         double chance = a.getDeception() * (1.0 - getPerception());
         boolean success = Math.random() < chance;
         return success;
@@ -110,8 +130,9 @@ public abstract class Actor {
     /**
      * Returns true if the execution succeeds
      */
-    public boolean handleExecute(ActionAugmentation attack) {
+    public boolean handleExecute(ActionAugmentation attack, Collection<Actor> combatants) {
         Actor a = attack.getOwner();
+        maybeCounter(Augmentation.Type.EXECUTE, a, combatants);
         
         // Unlike other abilities, can execute on self, so ignore resistance
         double chance = a.getWillpower();

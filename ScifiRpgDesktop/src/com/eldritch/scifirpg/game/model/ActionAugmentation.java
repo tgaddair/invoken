@@ -43,7 +43,7 @@ public class ActionAugmentation {
         Optional<Actor> source = Optional.of(getOwner());
         for (Effect effect : getEffects()) {
             for (Actor target : EffectUtil.getTargets(effect, owner, selected, combatants)) {
-                if (succeedsOn(target)) {
+                if (succeedsOn(target, combatants)) {
                     Optional<Actor> dest = Optional.of(target);
                     results.add(EffectUtil.apply(effect, source, dest));
                 } else {
@@ -66,17 +66,25 @@ public class ActionAugmentation {
     /**
      * Returns true iff initiated success.
      */
-    private boolean succeedsOn(Actor target) {
+    private boolean succeedsOn(Actor target, Collection<Actor> combatants) {
         switch (aug.getType()) {
             case ATTACK: // Playable to make hostile
-                return target.handleAttack(this);
+                return target.handleAttack(this, combatants);
             case DECEIVE: // Playable when not detected
-                return target.handleDeceive(this);
+                return target.handleDeceive(this, combatants);
             case EXECUTE: // Playable in encounter
-                return target.handleExecute(this);
+                return target.handleExecute(this, combatants);
             case DIALOGUE: // Playable in dialogue
             case COUNTER: // Playable when targeted
-                return false;
+                if (owner == target) {
+                    // Initial deployment -> add the counter to the counter map
+                    owner.addCounter(getCounterType(), this);
+                    return false;
+                } else {
+                    // Active counter -> apply the effects
+                    owner.removeCounter(getCounterType());
+                    return true;
+                }
             case TRAP: // Playable at any time, activates when targeted and effect applies
                 // Deprecated
             case PASSIVE: // Playable when attuning outside encounter
@@ -85,6 +93,25 @@ public class ActionAugmentation {
                 throw new IllegalArgumentException(
                         "Unrecognized Augmentation Type: " + aug.getType());
         }
+    }
+    
+    /**
+     * Only works on counters
+     */
+    private Type getCounterType() {
+        for (Effect effect : getEffects()) {
+            switch (effect.getType()) {
+                case DODGE: // Avoid an attack
+                    return Type.ATTACK;
+                case RESIST: // Prevent the targeted execution (includes corruption), W/A
+                    return Type.EXECUTE;
+                case REVEAL: // Discover deceptive activity, including Illusion, W/S
+                    return Type.DECEIVE;
+                default:
+                    // Do nothing
+            }
+        }
+        return null;
     }
     
     public Actor getOwner() {
@@ -114,5 +141,9 @@ public class ActionAugmentation {
             }
         }
         return false;
+    }
+    
+    public int getStages() {
+        return stages;
     }
 }
