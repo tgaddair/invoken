@@ -9,7 +9,6 @@ import javax.swing.SwingConstants;
 
 import com.eldritch.scifirpg.game.model.GameState;
 import com.eldritch.scifirpg.game.view.GamePanel;
-import com.eldritch.scifirpg.game.view.ProfessionPanel;
 import com.eldritch.scifirpg.proto.Disciplines.Profession;
 
 public class MainPanel extends JPanel {

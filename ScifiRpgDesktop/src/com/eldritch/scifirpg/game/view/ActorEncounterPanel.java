@@ -228,15 +228,43 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
     private class BufferPanel extends JPanel {
         private static final long serialVersionUID = 1L;
         private final Map<ActionAugmentation, AugmentationLabel> views = new HashMap<>();
+        private final ActorLabel playerLabel;
         
         public BufferPanel() {
             super(new FlowLayout());
             
+            DefaultFormBuilder leftBuilder = new DefaultFormBuilder(new FormLayout(""));
+            leftBuilder.border(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+            leftBuilder.appendColumn("right:pref");
+            
+            DefaultFormBuilder rightBuilder = new DefaultFormBuilder(new FormLayout(""));
+            rightBuilder.border(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+            rightBuilder.appendColumn("left:pref");
+            
+            boolean useLeft = true;
             for (ActionAugmentation aug : model.getPlayer().getActions()) {
                 AugmentationLabel view = createAugCard(aug);
                 add(view);
                 views.put(aug, view);
+                
+                // Assign the view to the appropriate panel
+                if (useLeft) {
+                    leftBuilder.append(view);
+                    leftBuilder.nextLine();
+                } else {
+                    rightBuilder.append(view);
+                    rightBuilder.nextLine();
+                }
+                useLeft = !useLeft;
             }
+            
+            playerLabel = createPlayerCard();
+            JPanel panel = new JPanel(new FlowLayout());
+            panel.add(playerLabel);
+            
+            add(leftBuilder.build());
+            add(panel);
+            add(rightBuilder.build());
         }
         
         public void update(ActionAugmentation action) {
@@ -469,7 +497,6 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
         private static final long serialVersionUID = 1L;
         private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
         private final JLabel combatLog;
-        private final ActorLabel playerLabel;
         private final BlockingQueue<Result> queue = new LinkedBlockingQueue<Result>();
         private String lastText;
         private Actor lastActor;
@@ -488,12 +515,6 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
             builder.appendRow("fill:p:grow");
             builder.append(combatLog);
             builder.nextLine(); 
-            
-            playerLabel = createPlayerCard();
-            JPanel panel = new JPanel(new FlowLayout());
-            panel.add(playerLabel);
-            builder.append(panel);
-            builder.nextLine();
             
             add(builder.getPanel());
             
@@ -562,7 +583,7 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
             @Override
             public void run() {
                 stagePanel.update();
-                interiorPanel.combatPanel.playerLabel.update();
+                bufferPanel.playerLabel.update();
             }
         });
     }
@@ -669,7 +690,7 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
             this.aug = aug;
             
             setBorder(getDefaultBorder());
-            setPreferredSize(new Dimension(75, 75));
+            setPreferredSize(new Dimension(55, 55));
             setHorizontalAlignment(SwingConstants.CENTER);
             setBackground(Color.WHITE);
             setOpaque(true);
