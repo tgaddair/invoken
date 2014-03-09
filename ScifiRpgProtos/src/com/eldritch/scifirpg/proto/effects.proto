@@ -125,4 +125,6 @@ message Effect {
 	// successive stages (for augs).  These effects are not applied again if the action card
 	// is used to trigger the active effects associated with an item or aug.
 	optional bool active = 7 [default = true];
+
+	optional bool dispel = 10 [default = false];
 }
