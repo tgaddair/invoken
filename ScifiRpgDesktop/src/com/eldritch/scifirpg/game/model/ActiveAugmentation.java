@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.List;
 
 import com.eldritch.scifirpg.game.model.actor.Action;
+import com.eldritch.scifirpg.game.model.actor.ActiveEffect;
 import com.eldritch.scifirpg.game.model.actor.Actor;
 import com.eldritch.scifirpg.game.model.actor.ActorState;
 import com.eldritch.scifirpg.game.util.EffectUtil;
@@ -41,11 +42,14 @@ public class ActiveAugmentation {
     
     public List<Result> applyUse(Action action, Collection<ActorState> actors) {
         List<Result> results = new ArrayList<>();
+        
+        ActorState source = action.getActor();
         for (ActorState target : actors) {
             if (succeeds(action, target)) {
                 for (Effect effect : getEffects()) {
                     if (isApplicable(action, target, effect)) {
-                        target.applyEffect(effect);
+                        ActiveEffect active = EffectUtil.createEffect(effect, source, target);
+                        target.applyEffect(active);
                         //results.add(target.applyEffect(effect));
                     }
                 }

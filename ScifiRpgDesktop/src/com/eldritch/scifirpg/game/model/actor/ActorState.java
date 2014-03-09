@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -18,7 +19,7 @@ public class ActorState implements Comparable<ActorState> {
     
     // Combat stats reset after new encounter begins
     private final Set<ActorState> enemies = new HashSet<>();
-    private final Set<ActiveEffect> activeEffects = new HashSet<>();
+    private final Map<Effect.Type, Set<ActiveEffect>> activeEffects = new HashMap<>();
     private final Map<Augmentation.Type, ActiveAugmentation> counters = new HashMap<>();
     private int health;
     
@@ -40,30 +41,60 @@ public class ActorState implements Comparable<ActorState> {
     }
     
     public void addEffect(ActiveEffect effect) {
-        activeEffects.add(effect);
+        if (!activeEffects.containsKey(effect.getType())) {
+            activeEffects.put(effect.getType(), new LinkedHashSet<ActiveEffect>());
+        }
+        activeEffects.get(effect.getType()).add(effect);
+    }
+    
+    public void dispelEffects(ActiveEffect effect) {
+        if (activeEffects.containsKey(effect.getType())) {
+            // TODO
+        }
     }
     
     public void applyActiveEffects() {
-        Iterator<ActiveEffect> it = activeEffects.iterator();
-        while (it.hasNext()) {
-            ActiveEffect effect = it.next();
-            effect.apply();
-            if (effect.isExpired()) {
-                it.remove();
+        for (Set<ActiveEffect> effects : activeEffects.values()) {
+            Iterator<ActiveEffect> it = effects.iterator();
+            while (it.hasNext()) {
+                ActiveEffect effect = it.next();
+                effect.elapse();
+                effect.apply();
+                if (effect.isExpired()) {
+                    it.remove();
+                }
             }
         }
     }
     
-    public void applyEffect(Effect effect) {
-        /*
+    public void applyEffect(ActiveEffect effect) {
         if (checkSuccess(effect)) {
-            if (effect.isDispel()) {
-                removeEffects(effect);
-            } else {
+            effect.apply();
+            if (!effect.isExpired()) {
                 addEffect(effect);
             }
         }
-        */
+    }
+    
+    private boolean checkSuccess(ActiveEffect effect) {
+        if (!effect.isDispel()) {
+            if (getDispelMagnitude(effect.getType()) >= effect.getMagnitude()) {
+                return false;
+            }
+        }
+        return true;
+    }
+    
+    private int getDispelMagnitude(Effect.Type type) {
+        int dispelMagnitude = 0;
+        if (activeEffects.containsKey(type)) {
+            for (ActiveEffect active : activeEffects.get(type)) {
+                if (active.isDispel()) {
+                    dispelMagnitude += active.getMagnitude();
+                }
+            }
+        }
+        return dispelMagnitude;
     }
     
     public boolean canTakeAnyAction() {

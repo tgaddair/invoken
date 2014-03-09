@@ -6,6 +6,9 @@ import java.util.List;
 import java.util.Set;
 
 import com.eldritch.scifirpg.game.model.actor.Action;
+import com.eldritch.scifirpg.game.model.actor.ActiveEffect;
+import com.eldritch.scifirpg.game.model.actor.ActiveEffect.RangedDamageEffect;
+import com.eldritch.scifirpg.game.model.actor.ActiveEffect.RegenerateEffect;
 import com.eldritch.scifirpg.game.model.actor.Actor;
 import com.eldritch.scifirpg.game.model.actor.ActorState;
 import com.eldritch.scifirpg.proto.Effects.Effect;
@@ -49,44 +52,13 @@ public class EffectUtil {
         }
     }
     
-    public static List<ActorState> getTargets(Effect effect, Action action,
-            Collection<ActorState> actors) {
-        switch (effect.getRange()) {
-            case PLAYER: // Only affects the player
-                return ImmutableList.of(action.getActor());
-            case SELECTED: // Actively choose an Actor within an ActorEncounter
-                return ImmutableList.of(action.getSelected());
-            case ALL: // Everyone in an ActorEncounter, including the player
-                return ImmutableList.<ActorState> builder().addAll(actors).build();
-            case ALL_OTHER: // Everyone in an ActorEncounter, except the player
-                Set<ActorState> allOther = new LinkedHashSet<>(actors);
-                allOther.remove(action.getActor());
-                return ImmutableList.<ActorState> builder().addAll(allOther).build();
-            case ALL_HOSTILE: // Everyone hostile to the player in an
-                              // ActorEncounter
-                // TODO return source.getEnemies();
-            case ALL_ALLIED: // Everyone allied with the player in an
-                             // ActorEncounter, including player
-                // TODO return source.getAllies();
-            case TARGETER: // Applies to counters, traps, and passive abilities
-                           // that are triggered when someone targets player
-            case SPREAD_ALL:
-                return ImmutableList.<ActorState> builder().addAll(actors).build();
-            case SPREAD_HOSTILE:
-                // TODO enemies combatants
-                return ImmutableList.of(action.getSelected());
-            default:
-                throw new IllegalArgumentException("Unrecognized Effect range: "
-                        + effect.getRange());
-        }
-    }
-
-    public static Result applyActive(Effect effect, Actor source, Actor target) {
+    public static ActiveEffect createEffect(Effect effect, ActorState source, ActorState target) {
         switch (effect.getType()) {
-        // Attack
+            // Attack
             case DAMAGE_MELEE: // MAGNITUDE damage of DAMAGE_TYPE on TARGET for
                                // DURATION
             case DAMAGE_RANGED:
+                return new RangedDamageEffect(effect, source, target);
             case DAMAGE_HEAVY:
             case DAMAGE_COORDINATED:
             case DAMAGE_CORRUPTION: {
@@ -142,6 +114,7 @@ public class EffectUtil {
                 // Execute - Upgrade
             case REGENERATE: // MAGNITUDE change in health for DURATION on
                              // TARGET
+                return new RegenerateEffect(effect, source, target);
             case BARRIER: // MAGNITUDE change in defense to DAMAGE_TYPE on
                           // TARGET for DURATION
             case MIRROR: // TARGET reflects up to MAGNITUDE damage of
@@ -169,8 +142,6 @@ public class EffectUtil {
 
                 // Dialogue - Influence
             case INFLUENCE: // Requires Influence Type
-                return new Result(source, "");
-
             default:
                 throw new IllegalArgumentException("Unrecognized Effect type: " + effect.getType());
         }
