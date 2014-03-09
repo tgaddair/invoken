@@ -3,12 +3,11 @@ package com.eldritch.scifirpg.game.model.actor;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
-import com.eldritch.scifirpg.game.model.ActionAugmentation;
+import com.eldritch.scifirpg.game.model.ActiveAugmentation;
 import com.eldritch.scifirpg.game.util.AugmentationMarshaller;
 import com.eldritch.scifirpg.game.util.ItemMarshaller;
 import com.eldritch.scifirpg.proto.Actors.ActorParams;
@@ -21,7 +20,6 @@ import com.eldritch.scifirpg.proto.Actors.PlayerActor.StagedAugmentation;
 import com.eldritch.scifirpg.proto.Augmentations.Augmentation;
 import com.eldritch.scifirpg.proto.Disciplines.Discipline;
 import com.eldritch.scifirpg.proto.Disciplines.Profession;
-import com.eldritch.scifirpg.proto.Effects.DamageType;
 import com.eldritch.scifirpg.proto.Items.Item;
 
 public abstract class Actor {
@@ -40,13 +38,8 @@ public abstract class Actor {
 
     // Game specific parameters not set during construction
     private final Set<Item> equipped = new HashSet<>();
-    private final Set<ActionAugmentation> stagedAugmentations = new LinkedHashSet<>();
+    private final Set<ActiveAugmentation> stagedAugmentations = new LinkedHashSet<>();
     
-    // Combat stats reset after new encounter begins
-    private final Set<ActiveEffect> activeEffects = new HashSet<>();
-    private final Map<Augmentation.Type, ActionAugmentation> counters = new HashMap<>();
-    private int health;
-
     public Actor(ActorParams params) {
         this.params = params;
         for (Skill skill : params.getSkillList()) {
@@ -63,116 +56,16 @@ public abstract class Actor {
         }
 
         level = params.getLevel();
-        health = getBaseHealth();
-    }
-    
-    public void addActiveEffect(ActiveEffect effect) {
-        activeEffects.add(effect);
-    }
-    
-    public void applyActiveEffects() {
-        Iterator<ActiveEffect> it = activeEffects.iterator();
-        while (it.hasNext()) {
-            ActiveEffect effect = it.next();
-            effect.apply();
-            if (effect.isExpired()) {
-                it.remove();
-            }
-        }
     }
     
     public void autoStageAugmentations() {
         stagedAugmentations.clear();
         // TODO int slots = getBufferSlots();
     }
-    
-    public void addCounter(Augmentation.Type type, ActionAugmentation counter) {
-        counters.put(type, counter);
-    }
-    
-    public void removeCounter(Augmentation.Type type) {
-        counters.remove(type);
-    }
-    
-    private void maybeCounter(Augmentation.Type type, Actor a, Collection<Actor> combatants) {
-        // Counter if possible
-        if (counters.containsKey(type)) {
-            counters.get(type).apply(a, combatants);
-        }
-    }
 
-    /**
-     * Returns true if the attack succeeds
-     */
-    public boolean handleAttack(ActionAugmentation attack, Collection<Actor> combatants) {
-        Actor a = attack.getOwner();
-        maybeCounter(Augmentation.Type.ATTACK, a, combatants);
-        double chance = a.getAccuracy() * a.getWeaponAccuracy(attack) * (1.0 - getDefense());
-        boolean success = Math.random() < chance;
-        return success;
-    }
-    
-    public double getAccuracy() {
-        return 0.75 + (getWarfare() / 100.0);
-    }
-    
-    public double getDefense() {
-        return Math.min(getWarfare() / 100.0, 1.0);
-    }
-
-    private double getWeaponAccuracy(ActionAugmentation attack) {
+    public double getWeaponAccuracy(ActiveAugmentation attack) {
         // TODO
         return 1.0;
-    }
-
-    /**
-     * Returns true if the deception succeeds
-     */
-    public boolean handleDeceive(ActionAugmentation attack, Collection<Actor> combatants) {
-        Actor a = attack.getOwner();
-        maybeCounter(Augmentation.Type.DECEIVE, a, combatants);
-        double chance = a.getDeception() * (1.0 - getPerception());
-        boolean success = Math.random() < chance;
-        return success;
-    }
-    
-    public double getDeception() {
-        return 0.5 + (getSubterfuge() / 100.0);
-    }
-    
-    public double getPerception() {
-        return Math.min((getAlertness() + getSubterfuge()) / 100.0, 1.0);
-    }
-    
-    public int getAlertness() {
-        // TODO
-        // return location.getCommotion() * getWarfare();
-        return 0;
-    }
-
-    /**
-     * Returns true if the execution succeeds
-     */
-    public boolean handleExecute(ActionAugmentation attack, Collection<Actor> combatants) {
-        Actor a = attack.getOwner();
-        maybeCounter(Augmentation.Type.EXECUTE, a, combatants);
-        
-        // Unlike other abilities, can execute on self, so ignore resistance
-        double chance = a.getWillpower();
-        if (a != this) {
-            chance *= 1.0 - getResistance();
-        }
-        
-        boolean success = Math.random() < chance;
-        return success;
-    }
-    
-    public double getWillpower() {
-        return 0.5 + (getAutomata() / 100.0);
-    }
-    
-    public double getResistance() {
-        return Math.min(getAutomata() / 100.0, 1.0);
     }
     
     public int getWarfare() {
@@ -191,40 +84,13 @@ public abstract class Actor {
         return skills.get(Discipline.CHARISMA).getLevel();
     }
 
-    public boolean isAlive() {
-        return health > 0;
-    }
-
-    public void changeHealth(int magnitude) {
-        if (magnitude >= 0) {
-            heal(magnitude);
-        } else {
-            damage(magnitude);
-        }
-    }
-
-    public int heal(int magnitude) {
-        // Can't heal more than our maximum health
-        int value = Math.min(magnitude, getBaseHealth() - health);
-        health = value;
-        return value;
-    }
-
-    public Set<ActionAugmentation> getActions() {
+    public Set<ActiveAugmentation> getActions() {
         return stagedAugmentations;
     }
-
-    public int damage(DamageType type, int magnitude) {
-        // TODO handle resistances
-        return damage(magnitude);
-    }
-
-    public int damage(int magnitude) {
-        // Can't do more damage than the target has health
-        int damage = Math.min(magnitude, health);
-        health -= damage;
-        System.out.println(getName() + ": " + health);
-        return damage;
+    
+    public int getActionsPerTurn() {
+        int bonus = skills.get(Discipline.WARFARE).getLevel() / 25;
+        return bonus + 2;
     }
 
     /**
@@ -243,10 +109,6 @@ public abstract class Actor {
         return getWarfare();
     }
 
-    public int getInjuries() {
-        return getBaseHealth() - getCurrentHealth();
-    }
-
     /**
      * Denotes reaction time. Higher initiative results in higher turn order in
      * combat.
@@ -261,13 +123,13 @@ public abstract class Actor {
 
     public final void stage(StagedAugmentation state) {
         Augmentation aug = AUG_READER.readAsset(state.getAugId());
-        stage(new ActionAugmentation(aug, this, state));
+        stage(new ActiveAugmentation(aug, this, state));
         if (!knownAugmentations.contains(aug.getId())) {
             knownAugmentations.add(aug.getId());
         }
     }
 
-    public final void stage(ActionAugmentation aug) {
+    public final void stage(ActiveAugmentation aug) {
         stagedAugmentations.add(aug);
     }
 
@@ -282,14 +144,6 @@ public abstract class Actor {
 
     public int getLevel() {
         return level;
-    }
-
-    public void setHealth(int health) {
-        this.health = health;
-    }
-
-    public int getCurrentHealth() {
-        return health;
     }
 
     public String getId() {
@@ -508,7 +362,5 @@ public abstract class Actor {
         }
     }
 
-    public abstract void takeCombatTurn(ActorEncounterModel model);
-
-    public abstract boolean hasEnemy();
+    public abstract void takeCombatTurn(ActionModel model);
 }

@@ -1,19 +1,12 @@
 package com.eldritch.scifirpg.game.model.actor;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
-import com.eldritch.scifirpg.game.model.ActionAugmentation;
+import com.eldritch.scifirpg.game.model.ActiveAugmentation;
 import com.eldritch.scifirpg.game.model.EncounterListener.ActorEncounterListener;
 import com.eldritch.scifirpg.game.model.EncounterModel;
 import com.eldritch.scifirpg.game.model.GameState;
-import com.eldritch.scifirpg.game.util.Result;
-import com.google.common.collect.Iterables;
 
 /**
  * Handles the internal state of a single ActorEncounter. Makes requests to the
@@ -22,55 +15,44 @@ import com.google.common.collect.Iterables;
  * 
  */
 public class ActorEncounterModel extends EncounterModel<ActorEncounter, ActorEncounterListener> {
-    private static final int MAX_ACTIONS = 2;
     private final ActorModel model;
+    private final ActionModel actionModel;
     private final List<Npc> npcs;
-    
-    // Combat data
-    private final List<Actor> combatants;
-    private final Iterator<Actor> turns;
-    private Actor current;
-    private int actions = 0; // How many actions the actor has taken this turn
-    
-    // When in combat, no dialogue or other interaction modes can take place until resolved.
-    // Resolution occurs when there are no Actors in the encounter hostile to another
-    // actor.  If no one is hostile to the player, they can choose to "pass" on their attack
-    // turn.
-    private boolean inCombat = false;
-    
-    // Effects
-    private Set<Actor> scanned = new HashSet<Actor>();
 
     public ActorEncounterModel(ActorEncounter encounter, GameState state) {
         super(encounter, state);
         this.model = state.getActorModel();
         this.npcs = model.getActorsFor(getEncounter());
-        
-        combatants = new ArrayList<>();
-        combatants.addAll(npcs);
-        combatants.add(model.getPlayer());
-        Collections.sort(combatants, new Comparator<Actor>() {
-            @Override
-            public int compare(Actor a1, Actor a2) {
-                // Descending order by initiative
-                return Integer.compare(a2.getInitiative(), a1.getInitiative());
-            }
-        });
-        this.turns = Iterables.cycle(combatants).iterator();
-        current = this.turns.next();
+        this.actionModel = new ActionModel(this);
     }
     
-    public void init() {
-        Player player = model.getPlayer();
-        player.resetHealth();
-        scanned.add(player);
+    public ActorState getState(Actor actor) {
+        return actionModel.getState(actor);
+    }
+    
+    public void passCombat(Actor actor) {
+        actionModel.passCombat(getState(actor));
+    }
+    
+    public void takeAction(ActiveAugmentation aug, Actor actor) {
+        Action action = new Action(aug, actionModel.getState(actor));
+        actionModel.takeAction(action);
+    }
+    
+    public void takeAction(ActiveAugmentation aug, Actor actor, ActorState target) {
+        Action action = new Action(aug, actionModel.getState(actor), target);
+        actionModel.takeAction(action);
+    }
+    
+    private boolean isAlive(Actor actor) {
+        return actionModel.getState(actor).isAlive();
     }
     
     @Override
     public boolean canContinue() {
         for (Npc actor : npcs) {
-            if (actor.isAlive()) {
-                if (actor.hasEnemy(model.getPlayer())) {
+            if (isAlive(actor)) {
+                if (getState(actor).hasEnemy(getState(model.getPlayer()))) {
                     // Cannot continue if someone is in combat with the player
                     return false;
                 }
@@ -83,15 +65,15 @@ public class ActorEncounterModel extends EncounterModel<ActorEncounter, ActorEnc
         return true;
     }
     
-    private boolean checkHostility() {
+    public boolean checkHostility() {
         boolean hasHostile = false;
         for (Npc actor : npcs) {
-            if (actor.isAlive()) {
-                if (actor.hasEnemy()) {
+            if (isAlive(actor)) {
+                if (getState(actor).hasEnemy()) {
                     hasHostile = true;
                 }
             } else {
-                onActorKilled(actor);
+                onNpcKilled(actor);
             }
         }
         
@@ -104,7 +86,18 @@ public class ActorEncounterModel extends EncounterModel<ActorEncounter, ActorEnc
         return hasHostile;
     }
     
-    private void onActorKilled(Npc actor) {
+    public void checkActorsAlive() {
+        for (Npc actor : npcs) {
+            if (!isAlive(actor)) {
+                onNpcKilled(actor);
+            }
+        }
+        if (!isAlive(model.getPlayer())) {
+            onPlayerKilled();
+        }
+    }
+    
+    public void onNpcKilled(Npc actor) {
         model.markDead(actor.getId());
         for (ActorEncounterListener listener : getListeners()) {
             listener.actorKilled(actor);
@@ -114,139 +107,43 @@ public class ActorEncounterModel extends EncounterModel<ActorEncounter, ActorEnc
         applyOutcomes(actor.getDeathOutcomes());
     }
     
-    /**
-     * Invoke on self if target is not specified.  Some augmentations will also automatically
-     * apply to a specific target or group of targets (like all) depending on range.
-     */
-    public void invoke(ActionAugmentation aug) {
-        if (!aug.needsTarget()) {
-            invoke(aug, aug.getOwner());
-        }
-    }
-
-    public void invoke(ActionAugmentation aug, Actor selected) {
-        if (canTakeAction(aug.getOwner())) {
-            // Apply the augmentation
-            List<Result> results = aug.applyUse(selected, combatants);
-            for (Result result : results) {
-                for (ActorEncounterListener listener : getListeners()) {
-                    listener.effectApplied(result);
-                }
-            }
-            
-            // Handle any actor that might have died in this exchange, and recheck hostilities
-            // to determine if combat mode is to continue
-            boolean hasHostile = checkHostility();
-            
-            // Notify all the listeners of the aug's use
-            for (ActorEncounterListener listener : getListeners()) {
-                listener.actionUsed(aug);
-            }
-            
-            // Check for player death
-            if (!model.getPlayer().isAlive()) {
-                for (ActorEncounterListener listener : getListeners()) {
-                    listener.playerKilled();
-                }
-                return;
-            }
-            
-            // Update combat state
-            if (inCombat) {
-                if (!hasHostile) {
-                    // If no hostilities were found, then we're not in combat
-                    inCombat = false;
-                    for (ActorEncounterListener listener : getListeners()) {
-                        listener.endedCombat();
-                    }
-                } else {
-                    actions++;
-                    if (actions >= MAX_ACTIONS) {
-                        nextCombatant();
-                    } else {
-                        takeCombatTurn();
-                    }
-                }
-            } else if (hasHostile) {
-                startCombat();
-            }
-        }
-    }
-    
-    /**
-     * Returns true iff it's the Actor's turn and they have actions remaining.
-     */
-    private boolean canTakeAction(Actor actor) {
-        if (!inCombat) {
-            return true;
-        }
-        return current == actor && actions < MAX_ACTIONS;
-    }
-    
-    public void startCombat() {
-        if (!inCombat) {
-            inCombat = true;
-            for (ActorEncounterListener listener : getListeners()) {
-                listener.startedCombat();
-            }
-            for (ActorEncounterListener listener : getListeners()) {
-                listener.combatTurnStarted(current);
-            }
-            startCombatTurn();
-        }
-    }
-    
-    public void passCombat() {
+    public void onPlayerKilled() {
         for (ActorEncounterListener listener : getListeners()) {
-            listener.combatTurnPassed(current);
-        }
-        nextCombatant();
-    }
-    
-    private void nextCombatant() {
-        boolean found = false;
-        while (turns.hasNext() && !found) {
-            current = turns.next();
-            if (current.isAlive()) {
-                found = true;
-            } else {
-                turns.remove();
-            }
-        }
-        
-        if (found) {
-            actions = 0;
-            for (ActorEncounterListener listener : getListeners()) {
-                listener.combatTurnStarted(current);
-            }
-            
-            startCombatTurn();
-        } else {
-            // Somehow every actor is dead, so end combat
+            listener.playerKilled();
         }
     }
     
-    private void startCombatTurn() {
-        // Apply active effects on the current player
-        current.applyActiveEffects();
-        
-        takeCombatTurn();
+    public void onCombatEnded() {
+        for (ActorEncounterListener listener : getListeners()) {
+            listener.endedCombat();
+        }
     }
     
-    private void takeCombatTurn() {
-        current.takeCombatTurn(this);
+    public void onCombatStarted() {
+        for (ActorEncounterListener listener : getListeners()) {
+            listener.startedCombat();
+        }
     }
-
-    public boolean isInCombat() {
-        return inCombat;
+    
+    public void onCombatTurnStarted(Actor actor) {
+        for (ActorEncounterListener listener : getListeners()) {
+            listener.combatTurnStarted(actor);
+        }
     }
     
     public Player getPlayer() {
         return model.getPlayer();
     }
     
-    public List<Npc> getActors() {
+    public List<Npc> getNpcs() {
         return npcs;
+    }
+    
+    public List<Actor> getActors() {
+        List<Actor> actors = new ArrayList<>();
+        actors.addAll(npcs);
+        actors.add(model.getPlayer());
+        return actors;
     }
     
     public ActorModel getActorModel() {

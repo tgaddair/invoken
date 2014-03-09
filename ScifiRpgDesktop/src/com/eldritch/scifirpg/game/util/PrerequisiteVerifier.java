@@ -2,7 +2,7 @@ package com.eldritch.scifirpg.game.util;
 
 import java.util.List;
 
-import com.eldritch.scifirpg.game.model.ActionAugmentation;
+import com.eldritch.scifirpg.game.model.ActiveAugmentation;
 import com.eldritch.scifirpg.game.model.actor.Actor;
 import com.eldritch.scifirpg.game.model.actor.ActorModel;
 import com.eldritch.scifirpg.game.model.actor.Player;
@@ -60,7 +60,7 @@ public class PrerequisiteVerifier {
             case AUG_AVAILABLE: { // MIN magnitude TARGET augmentation effect on target in cache
                 Effect.Type effectType = Effect.Type.valueOf(prereq.getTarget());
                 int value = 0;
-                for (ActionAugmentation action : player.getActions()) {
+                for (ActiveAugmentation action : player.getActions()) {
                     for (Effect effect : action.getEffects()) {
                         if (effect.getType() == effectType
                                 && effect.getRange() == Range.SELECTED) {
@@ -73,7 +73,7 @@ public class PrerequisiteVerifier {
             case INFLUENCE_AUG: { // Has an influence aug of TARGET type in cache
                 Influence influence = Influence.valueOf(prereq.getTarget());
                 boolean has = false;
-                for (ActionAugmentation action : player.getActions()) {
+                for (ActiveAugmentation action : player.getActions()) {
                     for (Effect effect : action.getEffects()) {
                         if (effect.hasInfluence()
                                 && effect.getInfluence() == influence

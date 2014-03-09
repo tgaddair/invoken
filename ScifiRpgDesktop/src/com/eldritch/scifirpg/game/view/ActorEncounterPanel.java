@@ -41,9 +41,10 @@ import com.eldritch.scifirpg.game.Application;
 import com.eldritch.scifirpg.game.model.actor.Actor;
 import com.eldritch.scifirpg.game.model.actor.ActorEncounter;
 import com.eldritch.scifirpg.game.model.actor.ActorEncounterModel;
+import com.eldritch.scifirpg.game.model.actor.ActorState;
 import com.eldritch.scifirpg.game.model.actor.Npc;
 import com.eldritch.scifirpg.game.model.actor.Player;
-import com.eldritch.scifirpg.game.model.ActionAugmentation;
+import com.eldritch.scifirpg.game.model.ActiveAugmentation;
 import com.eldritch.scifirpg.game.model.EncounterListener.ActorEncounterListener;
 import com.eldritch.scifirpg.game.util.LineBreaker;
 import com.eldritch.scifirpg.game.util.Result;
@@ -61,19 +62,21 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
     private static final long serialVersionUID = 1L;
     private final Set<Npc> actors = new LinkedHashSet<>();
     private final ActorEncounterModel model;
+    private final Player player;
     private final StagePanel stagePanel;
     private final InteriorPanel interiorPanel;
     private final BufferPanel bufferPanel;
     private final JButton continueButton;
-    private ActionAugmentation selected = null;
-    private Actor target = null;
+    private ActiveAugmentation selected = null;
+    private ActorState target = null;
     
     public ActorEncounterPanel(final ActorEncounterModel model) {
         super(new BorderLayout());
         this.model = model;
+        player = model.getPlayer();
         
         ActorEncounter encounter = model.getEncounter();
-        actors.addAll(model.getActors());
+        actors.addAll(model.getNpcs());
         
         DefaultFormBuilder builder = new DefaultFormBuilder(new FormLayout(""));
         builder.border(BorderFactory.createEmptyBorder(5, 5, 5, 5));
@@ -119,7 +122,7 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
             button.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent ev) {
-                    model.passCombat();
+                    model.passCombat(player);
                 }
             });
             buttonPanel.add(button);
@@ -131,16 +134,14 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
         add(builder.getPanel());
         
         model.addListener(this);
-        model.init();
     }
     
-    private AugmentationLabel createAugCard(ActionAugmentation aug) {
+    private AugmentationLabel createAugCard(ActiveAugmentation aug) {
         return new AugmentationLabel(aug);
     }
     
-    private ActorLabel createPlayerCard() {
-        final Player player = model.getPlayer();
-        final ActorLabel label = new ActorLabel(player);
+    private ActorLabel<Player> createPlayerCard() {
+        final ActorLabel<Player> label = new ActorLabel<Player>(model.getState(player), player);
         
         // Add a click action listener
         label.addMouseListener(new MouseAdapter() {
@@ -150,7 +151,7 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
                 
                 if (SwingUtilities.isRightMouseButton(me)) {
                     // Show actor panel
-                    interiorPanel.actorPanel.setActor(player);
+                    interiorPanel.actorPanel.setActor(model.getState(player));
                     interiorPanel.push(InteriorPanelType.ACTOR);
                 }
             }
@@ -169,8 +170,9 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
         return label;
     }
     
-    private ActorLabel createActorCard(final Npc actor) {
-        final ActorLabel label = new ActorLabel(actor);
+    private ActorLabel<Npc> createActorCard(final Npc actor) {
+        final ActorState state = model.getState(actor);
+        final ActorLabel<Npc> label = new ActorLabel<Npc>(state, actor);
         
         // Add a click action listener
         label.addMouseListener(new MouseAdapter() {
@@ -179,7 +181,7 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
                 if (selected != null) {
                     label.setBorder(getSelectedBorder());
                 }
-                target = actor;
+                target = state;
             }
             
             @Override
@@ -187,7 +189,7 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
                 label.setBorder(getDefaultBorder());
                 
                 // Reset the target variable if not already claimed elsewhere
-                if (target == actor) {
+                if (target == state) {
                     target = null;
                 }
             }
@@ -205,7 +207,7 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
                     }
                 } else if (SwingUtilities.isRightMouseButton(me)) {
                     // Show actor panel
-                    interiorPanel.actorPanel.setActor(actor);
+                    interiorPanel.actorPanel.setActor(state);
                     interiorPanel.push(InteriorPanelType.ACTOR);
                 }
             }
@@ -227,8 +229,8 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
     
     private class BufferPanel extends JPanel {
         private static final long serialVersionUID = 1L;
-        private final Map<ActionAugmentation, AugmentationLabel> views = new HashMap<>();
-        private final ActorLabel playerLabel;
+        private final Map<ActiveAugmentation, AugmentationLabel> views = new HashMap<>();
+        private final ActorLabel<Player> playerLabel;
         
         public BufferPanel() {
             super(new FlowLayout());
@@ -242,7 +244,7 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
             rightBuilder.appendColumn("left:pref");
             
             boolean useLeft = true;
-            for (ActionAugmentation aug : model.getPlayer().getActions()) {
+            for (ActiveAugmentation aug : player.getActions()) {
                 AugmentationLabel view = createAugCard(aug);
                 add(view);
                 views.put(aug, view);
@@ -267,12 +269,12 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
             add(rightBuilder.build());
         }
         
-        public void update(ActionAugmentation action) {
+        public void update(ActiveAugmentation action) {
             views.get(action).update();
         }
         
-        public void addAll(Collection<ActionAugmentation> actions) {
-            for (ActionAugmentation action : actions) {
+        public void addAll(Collection<ActiveAugmentation> actions) {
+            for (ActiveAugmentation action : actions) {
                 AugmentationLabel view = createAugCard(action);
                 add(view);
                 views.put(action, view);
@@ -289,20 +291,20 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
     
     private class StagePanel extends JPanel {
         private static final long serialVersionUID = 1L;
-        private final List<ActorLabel> labels = new ArrayList<>();
+        private final List<ActorLabel<?>> labels = new ArrayList<>();
         
         public StagePanel(Collection<Npc> actors) {
             super(new FlowLayout());
             
             for (Npc actor : actors) {
-                ActorLabel label = createActorCard(actor);
+                ActorLabel<?> label = createActorCard(actor);
                 labels.add(label);
                 add(label);
             }
         }
         
         public void update() {
-            for (ActorLabel label : labels) {
+            for (ActorLabel<?> label : labels) {
                 label.update();
             }
         }
@@ -311,7 +313,7 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
             labels.clear();
             removeAll();
             for (Npc actor : actors) {
-                ActorLabel label = createActorCard(actor);
+                ActorLabel<?> label = createActorCard(actor);
                 labels.add(label);
                 add(label);
             }
@@ -388,20 +390,20 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
             super(new BorderLayout());
         }
         
-        public void setActor(Actor actor) {
+        public void setActor(ActorState actor) {
             removeAll();
             add(getPanelFor(actor));
             repaint();
         }
         
-        private JPanel getPanelFor(Actor actor) {
+        private JPanel getPanelFor(ActorState actor) {
             DefaultFormBuilder builder = new DefaultFormBuilder(new FormLayout(""));
             builder.border(BorderFactory.createEmptyBorder(5, 5, 5, 5));
             builder.appendColumn("left:pref");
             builder.appendColumn("3dlu");
             builder.appendColumn("fill:max(pref; 100px)");
             
-            builder.append("Name:", new JLabel(actor.getName()));
+            builder.append("Name:", new JLabel(actor.getActor().getName()));
             builder.nextLine();
             
             boolean scanned = false;
@@ -616,7 +618,7 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
 
     @Override
     public void combatTurnStarted(Actor current) {
-        if (current != model.getPlayer()) {
+        if (current != player) {
             enableBuffer(false);
         }
         interiorPanel.combatPanel.report(new EnabledResult(current,
@@ -642,15 +644,15 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
     }
     
     @Override
-    public void actionUsed(ActionAugmentation action) {
-        if (action.getOwner() == model.getPlayer()) {
+    public void actionUsed(ActiveAugmentation action) {
+        if (action.getOwner() == player) {
             bufferPanel.update(action);
         }
     }
     
     @Override
-    public void actionsDrawn(Actor actor, Set<ActionAugmentation> actions) {
-        if (actor == model.getPlayer()) {
+    public void actionsDrawn(Actor actor, Set<ActiveAugmentation> actions) {
+        if (actor == player) {
             bufferPanel.addAll(actions);
         }
     }
@@ -671,7 +673,7 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
         
         public EnabledResult(Actor actor, String message) {
             super(actor, message);
-            enabled = actor == model.getPlayer();
+            enabled = actor == player;
         }
         
         @Override
@@ -683,9 +685,9 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
     
     public class AugmentationLabel extends JLabel {
         private static final long serialVersionUID = 1L;
-        private final ActionAugmentation aug;
+        private final ActiveAugmentation aug;
         
-        public AugmentationLabel(final ActionAugmentation aug) {
+        public AugmentationLabel(final ActiveAugmentation aug) {
             super(getBriefText(aug));
             this.aug = aug;
             
@@ -704,7 +706,7 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
                     
                     // Double-click -> invoke on self
                     if (me.getClickCount() == 2) {
-                        model.invoke(aug);
+                        model.takeAction(aug, player);
                     } else if (SwingUtilities.isRightMouseButton(me)) {
                         // Show augmentation panel
                         interiorPanel.push(InteriorPanelType.AUGMENTATION);
@@ -714,7 +716,7 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
                 @Override
                 public void mouseReleased(MouseEvent me) {
                     if (target != null) {
-                        model.invoke(aug, target);
+                        model.takeAction(aug, player, target);
                     }
                     
                     // Visual cleanup
@@ -741,12 +743,14 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
         }
     }
     
-    public class ActorLabel extends JLabel {
+    public class ActorLabel<T extends Actor> extends JLabel {
         private static final long serialVersionUID = 1L;
-        private final Actor actor;
+        private final ActorState state;
+        private final T actor;
         
-        public ActorLabel(Actor actor) {
+        public ActorLabel(ActorState state, T actor) {
             super(actor.getName());
+            this.state = state;
             this.actor = actor;
             
             setBorder(getDefaultBorder());
@@ -758,12 +762,12 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
         }
         
         public void update() {
-            float r = (1.0f * actor.getCurrentHealth()) / actor.getBaseHealth();
+            float r = (1.0f * state.getCurrentHealth()) / actor.getBaseHealth();
             setBackground(new Color(r, r, r));
         }
     }
     
-    private static String getBriefText(ActionAugmentation aug) {
+    private static String getBriefText(ActiveAugmentation aug) {
         return "<html><div style=\"text-align: center;\">"
               + aug.getName() + "<br/>" + aug.getUses() + "</html>";
     }

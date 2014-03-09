@@ -61,7 +61,7 @@ public class OutcomeApplier {
                     break;
                 }
                 case HP_CHANGE: { // COUNT change in player health
-                    player.changeHealth(outcome.getValue());
+                    //player.changeHealth(outcome.getValue());
                     break;
                 }
                 case MISSION_SET: { // Set mission stage to TARGET

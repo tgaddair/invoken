@@ -5,26 +5,32 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.eldritch.scifirpg.game.model.actor.ActiveEffect;
+import com.eldritch.scifirpg.game.model.actor.Action;
 import com.eldritch.scifirpg.game.model.actor.Actor;
-import com.eldritch.scifirpg.proto.Effects.DamageType;
+import com.eldritch.scifirpg.game.model.actor.ActorState;
 import com.eldritch.scifirpg.proto.Effects.Effect;
 import com.google.common.collect.ImmutableList;
 
 public class EffectUtil {
-    public static List<Actor> getTargets(Effect effect, Actor source, Actor selected,
-            Collection<Actor> combatants) {
+    public static boolean isTargetFor(Action action, ActorState target) {
+        for (Effect effect : action.getEffects()) {
+            if (isTargetFor(action, target, effect)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    public static boolean isTargetFor(Action action, ActorState target, Effect effect) {
         switch (effect.getRange()) {
-            case PLAYER: // Only affects the player
-                return ImmutableList.of(source);
+            case PLAYER: // Only affects self
+                return action.getActor() == target;
             case SELECTED: // Actively choose an Actor within an ActorEncounter
-                return ImmutableList.of(selected);
+                return action.getSelected() == target;
             case ALL: // Everyone in an ActorEncounter, including the player
-                return ImmutableList.<Actor> builder().addAll(combatants).build();
-            case ALL_OTHER: // Everyone in an ActorEncounter, except the player
-                Set<Actor> allOther = new LinkedHashSet<>(combatants);
-                allOther.remove(source);
-                return ImmutableList.<Actor> builder().addAll(allOther).build();
+                return true;
+            case ALL_OTHER: // Everyone in an ActorEncounter, except self
+                return action.getActor() != target;
             case ALL_HOSTILE: // Everyone hostile to the player in an
                               // ActorEncounter
                 // TODO return source.getEnemies();
@@ -34,20 +40,45 @@ public class EffectUtil {
             case TARGETER: // Applies to counters, traps, and passive abilities
                            // that are triggered when someone targets player
             case SPREAD_ALL:
+                return true;
             case SPREAD_HOSTILE:
-                return ImmutableList.of(selected);
+                // TODO return source.getEnemies();
             default:
                 throw new IllegalArgumentException("Unrecognized Effect range: "
                         + effect.getRange());
         }
     }
-
-    public static Result apply(Effect effect, Actor source, Actor target) {
-        Result r = applyActive(effect, source, target);
-        if (!effect.hasDuration() || effect.getDuration() != 0) {
-            target.addActiveEffect(new ActiveEffect(effect, source, target));
+    
+    public static List<ActorState> getTargets(Effect effect, Action action,
+            Collection<ActorState> actors) {
+        switch (effect.getRange()) {
+            case PLAYER: // Only affects the player
+                return ImmutableList.of(action.getActor());
+            case SELECTED: // Actively choose an Actor within an ActorEncounter
+                return ImmutableList.of(action.getSelected());
+            case ALL: // Everyone in an ActorEncounter, including the player
+                return ImmutableList.<ActorState> builder().addAll(actors).build();
+            case ALL_OTHER: // Everyone in an ActorEncounter, except the player
+                Set<ActorState> allOther = new LinkedHashSet<>(actors);
+                allOther.remove(action.getActor());
+                return ImmutableList.<ActorState> builder().addAll(allOther).build();
+            case ALL_HOSTILE: // Everyone hostile to the player in an
+                              // ActorEncounter
+                // TODO return source.getEnemies();
+            case ALL_ALLIED: // Everyone allied with the player in an
+                             // ActorEncounter, including player
+                // TODO return source.getAllies();
+            case TARGETER: // Applies to counters, traps, and passive abilities
+                           // that are triggered when someone targets player
+            case SPREAD_ALL:
+                return ImmutableList.<ActorState> builder().addAll(actors).build();
+            case SPREAD_HOSTILE:
+                // TODO enemies combatants
+                return ImmutableList.of(action.getSelected());
+            default:
+                throw new IllegalArgumentException("Unrecognized Effect range: "
+                        + effect.getRange());
         }
-        return r;
     }
 
     public static Result applyActive(Effect effect, Actor source, Actor target) {
@@ -59,15 +90,8 @@ public class EffectUtil {
             case DAMAGE_HEAVY:
             case DAMAGE_COORDINATED:
             case DAMAGE_CORRUPTION: {
-                int value = target.damage(effect.getDamageType(), effect.getMagnitude());
-                return new Result(source, String.format("%d %s damage to %s", value, effect
-                        .getDamageType().name().toLowerCase(), target.getName()));
             }
             case DRAIN: // Corruption: Transfer life to source, W/A
-                int value = target.damage(DamageType.VIRAL, effect.getMagnitude());
-                source.heal(value);
-                return new Result(source, String.format("%d drained from %s to %s", value,
-                        target.getName(), source.getName()));
             case SUPPRESS:
 
                 // Combat modifiers

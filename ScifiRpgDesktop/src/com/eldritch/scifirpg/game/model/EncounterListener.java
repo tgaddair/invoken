@@ -25,9 +25,9 @@ public interface EncounterListener {
         
         void actorTargeted(Actor actor);
         
-        void actionUsed(ActionAugmentation action);
+        void actionUsed(ActiveAugmentation action);
         
-        void actionsDrawn(Actor actor, Set<ActionAugmentation> actions);
+        void actionsDrawn(Actor actor, Set<ActiveAugmentation> actions);
         
         void canContinue(boolean can);
         

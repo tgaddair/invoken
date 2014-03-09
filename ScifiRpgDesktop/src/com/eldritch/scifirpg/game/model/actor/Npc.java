@@ -1,13 +1,11 @@
 package com.eldritch.scifirpg.game.model.actor;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import com.eldritch.scifirpg.game.model.ActionAugmentation;
+import com.eldritch.scifirpg.game.model.ActiveAugmentation;
 import com.eldritch.scifirpg.game.util.PrerequisiteVerifier;
 import com.eldritch.scifirpg.proto.Actors.DialogueTree;
 import com.eldritch.scifirpg.proto.Actors.DialogueTree.Choice;
@@ -29,7 +27,6 @@ public class Npc extends Actor {
     private final ActorModel model;
     private final NonPlayerActor data;
     private final ActorScenario scenario;
-    private final Set<Actor> enemies = new HashSet<>();
 
     public Npc(NonPlayerActor data, ActorModel actorModel, ActorScenario scenario) {
         super(data.getParams());
@@ -40,7 +37,7 @@ public class Npc extends Actor {
         // Construct augs and items by randomly sampling from available
         for (String augId : getKnownAugmentations()) {
             Augmentation aug = AUG_READER.readAsset(augId);
-            stage(new ActionAugmentation(aug, this, 20));
+            stage(new ActiveAugmentation(aug, this, 20));
         }
         
         // TODO construct enemies from the encounter
@@ -57,53 +54,28 @@ public class Npc extends Actor {
     }
     
     @Override
-    public void takeCombatTurn(ActorEncounterModel model) {
-        Actor target = null;
-        for (Actor actor : enemies) {
+    public void takeCombatTurn(ActionModel model) {
+        ActorState state = model.getState(this);
+        ActorState target = null;
+        for (ActorState actor : state.getEnemies()) {
             // TODO pick the enemy that poses the biggest threat, or we hate the most, etc.
             target = actor;
         }
         
-        ActionAugmentation action = null;
-        for (ActionAugmentation aug : getActions()) {
+        ActiveAugmentation chosenAug = null;
+        for (ActiveAugmentation aug : getActions()) {
             if (aug.getType() == Type.ATTACK) {
-                action = aug;
+                chosenAug = aug;
             }
         }
         
-        if (action != null && target != null) {
-            // Attack the target
-            model.invoke(action, target);
+        if (chosenAug != null && target != null) {
+            Action action = new Action(chosenAug, state, target);
+            model.takeAction(action);
         } else {
             // Pass
-            model.passCombat();
+            model.passCombat(state);
         }
-    }
-    
-    @Override
-    public boolean handleAttack(ActionAugmentation attack, Collection<Actor> combatants) {
-        enemies.add(attack.getOwner());
-        return super.handleAttack(attack, combatants);
-    }
-    
-    @Override
-    public boolean hasEnemy() {
-        boolean found = false;
-        Iterator<Actor> it = enemies.iterator();
-        while (it.hasNext()) {
-            // TODO recalculate aggression maybe?
-            Actor actor = it.next();
-            if (actor.isAlive()) {
-                found = true;
-            } else {
-                it.remove();
-            }
-        }
-        return found;
-    }
-    
-    public boolean hasEnemy(Actor actor) {
-        return enemies.contains(actor);
     }
     
     public List<Choice> getChoicesFor(Response response) {

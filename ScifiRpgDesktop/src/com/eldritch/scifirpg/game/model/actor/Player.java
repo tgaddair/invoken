@@ -28,9 +28,6 @@ public class Player extends Actor {
 	private Player(PlayerActor player) {
 	    super(player.getParams());
 	    
-	    if (player.hasHealth()) {
-	        setHealth(player.getHealth());
-	    }
 	    for (String itemId : player.getEquippedItemIdList()) {
 	        equip(itemId);
 	    }
@@ -47,13 +44,6 @@ public class Player extends Actor {
 	    for (Mission mission : player.getMissionList()) {
 	        missions.put(mission.getId(), mission);
 	    }
-	}
-	
-	/**
-	 * Do this at the beginning of every new encounter.
-	 */
-	public void resetHealth() {
-	    setHealth(getBaseHealth());
 	}
 	
 	public void gainExperience(Discipline d, int xp) {
@@ -88,13 +78,8 @@ public class Player extends Actor {
     }
     
     @Override
-    public void takeCombatTurn(ActorEncounterModel model) {
+    public void takeCombatTurn(ActionModel model) {
         // Handled by user interface
-    }
-    
-    @Override
-    public boolean hasEnemy() {
-        return false;
     }
 
     public static Player newPlayer(String name, Profession p, Gender g) {

@@ -30,7 +30,7 @@ public class ActiveEffect {
     public void apply() {
         elapse();
         if (!isExpired() || countdownComplete()) {
-            EffectUtil.apply(effect, source, target);
+            //EffectUtil.apply(effect, source, target);
         }
     }
     
