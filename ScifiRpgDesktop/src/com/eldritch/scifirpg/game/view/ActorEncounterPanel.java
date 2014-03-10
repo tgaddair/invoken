@@ -49,13 +49,14 @@ import com.eldritch.scifirpg.game.model.ActiveAugmentation;
 import com.eldritch.scifirpg.game.model.EncounterListener.ActorEncounterListener;
 import com.eldritch.scifirpg.game.util.LineBreaker;
 import com.eldritch.scifirpg.game.util.Result;
+import com.eldritch.scifirpg.game.util.Result.ResultCallback;
 import com.eldritch.scifirpg.proto.Actors.DialogueTree.Choice;
 import com.eldritch.scifirpg.proto.Actors.DialogueTree.Response;
 import com.eldritch.scifirpg.proto.Outcomes.Outcome;
 import com.jgoodies.forms.builder.DefaultFormBuilder;
 import com.jgoodies.forms.layout.FormLayout;
 
-public class ActorEncounterPanel extends JPanel implements ActorEncounterListener {
+public class ActorEncounterPanel extends JPanel implements ActorEncounterListener, ResultCallback {
     private enum InteriorPanelType {
         DIALOGUE, COMBAT, ACTOR, AUGMENTATION, OUTCOME
     }
@@ -527,8 +528,7 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
                 public void run() {
                     try {
                         Result result = queue.take();
-                        result.process();
-                        updateActorWith(result);
+                        result.process(ActorEncounterPanel.this);
                         
                         String logText = result.toString();
                         if (result.getActor() == lastActor) {
@@ -542,7 +542,7 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
                         // Ignore
                     }
                 }
-            }, 0, 1, TimeUnit.SECONDS);
+            }, 0, 500, TimeUnit.MILLISECONDS);
         }
         
         public void clear() {
@@ -627,8 +627,9 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
     }
 
     @Override
-    public void combatTurnStarted(Actor current) {
+    public void combatTurnStarted(Actor actor) {
         enableBuffer(false);
+        interiorPanel.combatPanel.report(new TurnResult(actor, true));
     }
     
     @Override
@@ -646,6 +647,11 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
     @Override
     public void combatTurnPassed(Actor current) {
         interiorPanel.combatPanel.report(new Result(current, "PASS"));
+    }
+    
+    @Override
+    public void combatTurnEnded(Actor actor) {
+        interiorPanel.combatPanel.report(new TurnResult(actor, false));
     }
 
     @Override
@@ -767,6 +773,20 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
         }
         
         public synchronized void update(Result result) {
+            // This is horrible, but this UI is only a prototype
+            if (result instanceof TurnResult) {
+                TurnResult tr = (TurnResult) result;
+                setTurn(tr.isStart());
+            } else {
+                setTextFor(result);
+            }
+        }
+        
+        private void setTurn(boolean start) {
+            setBorder(start ? getTurnBorder() : getDefaultBorder());
+        }
+        
+        private void setTextFor(Result result) {
             setText(result.toString());
             
             int delay = 3000; // milliseconds
@@ -786,11 +806,20 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
             float r = (1.0f * state.getCurrentHealth()) / actor.getBaseHealth();
             setBackground(new Color(r, r, r));
         }
+        
+        private Border getTurnBorder() {
+            return new CompoundBorder(new LineBorder(Color.GREEN),
+                    new EmptyBorder(3, 5, 3, 3));
+        }
     }
     
     private static String getBriefText(ActiveAugmentation aug) {
         return "<html><div style=\"text-align: center;\">"
               + aug.getName() + "<br/>" + aug.getUses() + "</html>";
+    }
+    
+    public void handleResult(Result result) {
+        updateActorWith(result);
     }
     
     public class EnabledResult extends Result {
@@ -799,8 +828,21 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
         }
         
         @Override
-        public void process() {
+        public void process(ResultCallback callback) {
             enableBuffer(true);
+        }
+    }
+    
+    public class TurnResult extends Result {
+        private final boolean start;
+        
+        public TurnResult(Actor actor, boolean start) {
+            super(actor, "");
+            this.start = start;
+        }
+        
+        public boolean isStart() {
+            return start;
         }
     }
 }

@@ -30,7 +30,11 @@ public class Result {
         return message;
     }
     
-    public void process() {
-        // Does nothing
+    public void process(ResultCallback callback) {
+        callback.handleResult(this);
+    }
+    
+    public interface ResultCallback {
+        void handleResult(Result result);
     }
 }

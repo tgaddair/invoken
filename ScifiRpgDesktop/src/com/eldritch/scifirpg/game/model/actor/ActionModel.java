@@ -133,6 +133,7 @@ public class ActionModel {
     }
     
     private void endCombatTurn() {
+        owner.onCombatTurnEnded(current.getActor());
         if (checkHostility()) {
             // By definition, there must be a next combatant if there are still hostilities
             startNextCombatTurn();

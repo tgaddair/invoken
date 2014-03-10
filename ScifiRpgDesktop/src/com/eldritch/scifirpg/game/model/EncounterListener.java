@@ -23,6 +23,8 @@ public interface EncounterListener {
         
         void handleResults(List<Result> results);
         
+        void combatTurnEnded(Actor current);
+        
         void combatTurnPassed(Actor current);
         
         void actorKilled(Actor actor);
