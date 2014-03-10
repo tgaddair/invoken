@@ -549,6 +549,10 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
         public void report(Result result) {
             queue.add(result);
         }
+        
+        public void report(Collection<Result> results) {
+            queue.addAll(results);
+        }
     }
     
     private Border getDefaultBorder() {
@@ -618,11 +622,20 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
 
     @Override
     public void combatTurnStarted(Actor current) {
-        if (current != player) {
-            enableBuffer(false);
-        }
+        enableBuffer(false);
         interiorPanel.combatPanel.report(new EnabledResult(current,
                 "<strong>" + current.getName() + "'s turn to attack...</strong>"));
+    }
+    
+    @Override
+    public void actionRequested(Actor actor) {
+        enableBuffer(actor == player);
+        //interiorPanel.combatPanel.report(new Result(current, "pass"));
+    }
+    
+    @Override
+    public void handleResults(List<Result> results) {
+        interiorPanel.combatPanel.report(results);
     }
 
     @Override

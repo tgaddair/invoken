@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.List;
 
 import com.eldritch.scifirpg.game.model.ActiveAugmentation;
+import com.eldritch.scifirpg.game.util.Result;
 import com.eldritch.scifirpg.proto.Augmentations.Augmentation;
 import com.eldritch.scifirpg.proto.Effects.Effect;
 import com.google.common.base.Optional;
@@ -23,6 +24,13 @@ public class Action {
         this.aug = aug;
         this.actor = actor;
         this.selected = Optional.of(selected);
+    }
+    
+    public boolean canTake() {
+        if (!hasSelectedTarget()) {
+            return false;
+        }
+        return actor.canTakeAction(this);
     }
     
     public boolean isAttack() {
@@ -49,8 +57,8 @@ public class Action {
         return selected.get();
     }
     
-    public void applyEffects(Collection<ActorState> actors) {
-        aug.applyUse(this, actors);
+    public List<Result> applyEffects(Collection<ActorState> actors) {
+        return aug.applyUse(this, actors);
     }
     
     public List<Effect> getEffects() {

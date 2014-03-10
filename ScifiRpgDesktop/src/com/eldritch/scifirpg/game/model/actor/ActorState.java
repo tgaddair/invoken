@@ -8,8 +8,7 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
-import com.eldritch.scifirpg.game.model.ActiveAugmentation;
-import com.eldritch.scifirpg.proto.Augmentations.Augmentation;
+import com.eldritch.scifirpg.game.util.Result;
 import com.eldritch.scifirpg.proto.Effects.DamageType;
 import com.eldritch.scifirpg.proto.Effects.Effect;
 
@@ -20,7 +19,7 @@ public class ActorState implements Comparable<ActorState> {
     // Combat stats reset after new encounter begins
     private final Set<ActorState> enemies = new HashSet<>();
     private final Map<Effect.Type, Set<ActiveEffect>> activeEffects = new HashMap<>();
-    private final Map<Augmentation.Type, ActiveAugmentation> counters = new HashMap<>();
+    //private final Map<Augmentation.Type, ActiveAugmentation> counters = new HashMap<>();
     private int health;
     
     public ActorState(Actor actor) {
@@ -28,12 +27,19 @@ public class ActorState implements Comparable<ActorState> {
         health = actor.getBaseHealth();
     }
     
-    public void startTurn() {
+    public boolean startTurn() {
         actions = actor.getActionsPerTurn();
         
         // Elapse, remove, and apply all status effects
         
         // Elapse all counters
+        
+        // May not have survived effects
+        return isAlive();
+    }
+    
+    public boolean hasActions() {
+        return actions > 0;
     }
     
     public void markActionTaken(Action action) {
@@ -67,12 +73,16 @@ public class ActorState implements Comparable<ActorState> {
         }
     }
     
-    public void applyEffect(ActiveEffect effect) {
+    public Result applyEffect(ActiveEffect effect) {
         if (checkSuccess(effect)) {
-            effect.apply();
+            Result result = effect.apply();
             if (!effect.isExpired()) {
                 addEffect(effect);
             }
+            return result;
+        } else {
+            // TODO add EffectResult
+            return new Result(effect.source.getActor(), "FAILED");
         }
     }
     

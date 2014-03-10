@@ -19,6 +19,10 @@ public interface EncounterListener {
         
         void combatTurnStarted(Actor current);
         
+        void actionRequested(Actor actor);
+        
+        void handleResults(List<Result> results);
+        
         void combatTurnPassed(Actor current);
         
         void actorKilled(Actor actor);

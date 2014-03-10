@@ -7,6 +7,7 @@ import com.eldritch.scifirpg.game.model.ActiveAugmentation;
 import com.eldritch.scifirpg.game.model.EncounterListener.ActorEncounterListener;
 import com.eldritch.scifirpg.game.model.EncounterModel;
 import com.eldritch.scifirpg.game.model.GameState;
+import com.eldritch.scifirpg.game.util.Result;
 
 /**
  * Handles the internal state of a single ActorEncounter. Makes requests to the
@@ -128,6 +129,18 @@ public class ActorEncounterModel extends EncounterModel<ActorEncounter, ActorEnc
     public void onCombatTurnStarted(Actor actor) {
         for (ActorEncounterListener listener : getListeners()) {
             listener.combatTurnStarted(actor);
+        }
+    }
+    
+    public void onActionRequested(Actor actor) {
+        for (ActorEncounterListener listener : getListeners()) {
+            listener.actionRequested(actor);
+        }
+    }
+    
+    public void onResults(List<Result> results) {
+        for (ActorEncounterListener listener : getListeners()) {
+            listener.handleResults(results);
         }
     }
     

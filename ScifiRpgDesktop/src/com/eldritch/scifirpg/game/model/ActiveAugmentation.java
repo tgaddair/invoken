@@ -49,8 +49,7 @@ public class ActiveAugmentation {
                 for (Effect effect : getEffects()) {
                     if (isApplicable(action, target, effect)) {
                         ActiveEffect active = EffectUtil.createEffect(effect, source, target);
-                        target.applyEffect(active);
-                        //results.add(target.applyEffect(effect));
+                        results.add(target.applyEffect(active));
                     }
                 }
             }

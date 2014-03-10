@@ -1,18 +1,11 @@
 package com.eldritch.scifirpg.game.util;
 
-import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
-
 import com.eldritch.scifirpg.game.model.actor.Action;
 import com.eldritch.scifirpg.game.model.actor.ActiveEffect;
 import com.eldritch.scifirpg.game.model.actor.ActiveEffect.RangedDamageEffect;
 import com.eldritch.scifirpg.game.model.actor.ActiveEffect.RegenerateEffect;
-import com.eldritch.scifirpg.game.model.actor.Actor;
 import com.eldritch.scifirpg.game.model.actor.ActorState;
 import com.eldritch.scifirpg.proto.Effects.Effect;
-import com.google.common.collect.ImmutableList;
 
 public class EffectUtil {
     public static boolean isTargetFor(Action action, ActorState target) {

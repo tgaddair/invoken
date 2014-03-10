@@ -1,5 +1,6 @@
 package com.eldritch.scifirpg.game.model.actor;
 
+import com.eldritch.scifirpg.game.util.Result;
 import com.eldritch.scifirpg.proto.Effects.Effect;
 import com.eldritch.scifirpg.proto.Effects.Effect.Type;
 
@@ -46,10 +47,13 @@ public abstract class ActiveEffect {
         }
     }
     
-    public void apply() {
+    public Result apply() {
         if (ready()) {
-            //EffectUtil.apply(effect, source, target);
+            return doApply();
         }
+        
+        // Not ready or countdown result
+        return new Result(source.getActor(), "");
     }
     
     private boolean ready() {
@@ -59,7 +63,7 @@ public abstract class ActiveEffect {
         return effect.getDuration() < 0 && remaining == 0;
     }
     
-    protected abstract void doApply();
+    protected abstract Result doApply();
     
     public static class RangedDamageEffect extends ActiveEffect {
         public RangedDamageEffect(Effect effect, ActorState source, ActorState target) {
@@ -67,8 +71,9 @@ public abstract class ActiveEffect {
         }
 
         @Override
-        protected void doApply() {
-            target.damage(effect.getDamageType(), effect.getMagnitude());
+        protected Result doApply() {
+            int value = target.damage(effect.getDamageType(), effect.getMagnitude());
+            return new Result(source.getActor(), "-" + value);
         }
     }
     
@@ -79,8 +84,9 @@ public abstract class ActiveEffect {
         }
 
         @Override
-        protected void doApply() {
-            target.heal(effect.getMagnitude());
+        protected Result doApply() {
+            int value = target.heal(effect.getMagnitude());
+            return new Result(source.getActor(), "+" + value);
         }
     }
 }

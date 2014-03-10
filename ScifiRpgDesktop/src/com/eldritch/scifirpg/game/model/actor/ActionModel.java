@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import com.eldritch.scifirpg.game.util.Result;
 import com.google.common.collect.Iterables;
 
 public class ActionModel {
@@ -38,6 +39,7 @@ public class ActionModel {
         combat = true;
         
         // Notify combat started
+        owner.onCombatStarted();
         
         // Choose the first valid combatant or end if none found
         startNextCombatTurn();
@@ -49,11 +51,10 @@ public class ActionModel {
             return;
         }
         
+        // Reset remaining actions and apply all active status effects / counters
         current = actorCycle.next();
-        if (current.isAlive()) {
-            // Reset remaining actions and apply all active status effects / counters
-            current.startTurn();
-            
+        if (current.isAlive() && current.startTurn()) {
+            owner.onCombatTurnStarted(current.getActor());
             startCombatAction(current);
         } else {
             actorCycle.remove();
@@ -67,6 +68,8 @@ public class ActionModel {
                 takeAction(actor.randomAction());
             } else {
                 // Notify action requested
+                owner.onActionRequested(actor.getActor());
+                actor.getActor().takeCombatTurn(this);
             }
         } else {
             endCombatTurn();
@@ -83,9 +86,9 @@ public class ActionModel {
         // Sanity check
         if (!canTakeAction(action)) {
             return;
+        } else if (current != action.getActor()) {
+            current = action.getActor();
         }
-        
-        // Notify action started
         
         doAction(action);
         
@@ -93,23 +96,22 @@ public class ActionModel {
         if (combat) {
             // Continue the combat cycle
             current.markActionTaken(action);
-            startCombatAction(current);
+            if (current.hasActions()) {
+                startCombatAction(current);
+            } else {
+                endCombatTurn();
+            }
         } else if (checkHostility()) {
             // Start the combat cycle
             startCombat();
-        } else {
-            // Notify action ended
         }
     }
     
     private boolean canTakeAction(Action action) {
-        if (action.getActor() != current) {
+        if (combat && action.getActor() != current) {
             return false;
         }
-        if (!action.hasSelectedTarget()) {
-            return false;
-        }
-        return current.canTakeAction(action);
+        return action.canTake();
     }
     
     private void doAction(Action action) {
@@ -118,7 +120,8 @@ public class ActionModel {
         // Handle counter
         
         // Handle effects
-        action.applyEffects(actors);
+        List<Result> results = action.applyEffects(actors);
+        owner.onResults(results);
         
         // Check if any actors were killed by this action and end the combat turn if the current
         // actor was killed somehow
