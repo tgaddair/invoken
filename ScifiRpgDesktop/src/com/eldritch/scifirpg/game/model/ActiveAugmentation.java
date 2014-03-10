@@ -45,12 +45,16 @@ public class ActiveAugmentation {
         
         ActorState source = action.getActor();
         for (ActorState target : actors) {
-            if (succeeds(action, target)) {
-                for (Effect effect : getEffects()) {
-                    if (isApplicable(action, target, effect)) {
-                        ActiveEffect active = EffectUtil.createEffect(effect, source, target);
-                        results.add(target.applyEffect(active));
+            if (EffectUtil.isTargetFor(action, target)) {
+                if (succeeds(action, target)) {
+                    for (Effect effect : getEffects()) {
+                        if (isApplicable(action, target, effect)) {
+                            ActiveEffect active = EffectUtil.createEffect(effect, source, target);
+                            results.add(target.applyEffect(active));
+                        }
                     }
+                } else {
+                    results.add(new Result(target.getActor(), "MISSED"));
                 }
             }
         }
@@ -60,10 +64,7 @@ public class ActiveAugmentation {
     }
     
     private boolean succeeds(Action action, ActorState target) {
-        if (EffectUtil.isTargetFor(action, target)) {
-            return target.checkSuccess(action);
-        }
-        return false;
+        return target.checkSuccess(action);
     }
     
     private boolean isApplicable(Action action, ActorState target, Effect effect) {

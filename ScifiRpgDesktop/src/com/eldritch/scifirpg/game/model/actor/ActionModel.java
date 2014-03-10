@@ -78,6 +78,7 @@ public class ActionModel {
     
     public void passCombat(ActorState actor) {
         if (actor == current) {
+            owner.onCombatPassed(actor.getActor());
             endCombatTurn();
         }
     }

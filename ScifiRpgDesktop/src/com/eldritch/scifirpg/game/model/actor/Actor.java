@@ -89,7 +89,8 @@ public abstract class Actor {
     }
     
     public int getActionsPerTurn() {
-        int bonus = skills.get(Discipline.WARFARE).getLevel() / 25;
+        // TODO int bonus = skills.get(Discipline.WARFARE).getLevel() / 25;
+        int bonus = 0;
         return bonus + 2;
     }
 

@@ -9,10 +9,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -32,6 +32,7 @@ import javax.swing.JRadioButton;
 import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
+import javax.swing.Timer;
 import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
@@ -291,21 +292,22 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
     
     private class StagePanel extends JPanel {
         private static final long serialVersionUID = 1L;
-        private final List<ActorLabel<?>> labels = new ArrayList<>();
+        private final Map<Actor, ActorLabel<?>> labels = new LinkedHashMap<>();
         
         public StagePanel(Collection<Npc> actors) {
             super(new FlowLayout());
             
             for (Npc actor : actors) {
                 ActorLabel<?> label = createActorCard(actor);
-                labels.add(label);
+                labels.put(actor, label);
                 add(label);
             }
         }
         
-        public void update() {
-            for (ActorLabel<?> label : labels) {
-                label.update();
+        public void update(Result result) {
+            // Check in case the actor was removed (killed or otherwise)
+            if (labels.containsKey(result.getActor())) {
+                labels.get(result.getActor()).update(result);
             }
         }
         
@@ -314,7 +316,7 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
             removeAll();
             for (Npc actor : actors) {
                 ActorLabel<?> label = createActorCard(actor);
-                labels.add(label);
+                labels.put(actor, label);
                 add(label);
             }
             Application.getApplication().getFrame().revalidate();
@@ -526,6 +528,7 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
                     try {
                         Result result = queue.take();
                         result.process();
+                        updateActorWith(result);
                         
                         String logText = result.toString();
                         if (result.getActor() == lastActor) {
@@ -584,12 +587,15 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
         });
     }
     
-    private void updateActors() {
+    private void updateActorWith(final Result result) {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                stagePanel.update();
-                bufferPanel.playerLabel.update();
+                if (result.getActor() == player) {
+                    bufferPanel.playerLabel.update(result);
+                } else {
+                    stagePanel.update(result);
+                }
             }
         });
     }
@@ -602,8 +608,8 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
 
     @Override
     public void effectApplied(Result result) {
-        interiorPanel.combatPanel.report(result);
-        updateActors();
+        //interiorPanel.combatPanel.report(result);
+        //updateActors();
     }
 
     @Override
@@ -623,14 +629,11 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
     @Override
     public void combatTurnStarted(Actor current) {
         enableBuffer(false);
-        interiorPanel.combatPanel.report(new EnabledResult(current,
-                "<strong>" + current.getName() + "'s turn to attack...</strong>"));
     }
     
     @Override
     public void actionRequested(Actor actor) {
         enableBuffer(actor == player);
-        //interiorPanel.combatPanel.report(new Result(current, "pass"));
     }
     
     @Override
@@ -640,15 +643,13 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
 
     @Override
     public void combatTurnPassed(Actor current) {
-        interiorPanel.combatPanel.report(new Result(current, "pass"));
+        interiorPanel.combatPanel.report(new Result(current, "PASS"));
     }
 
     @Override
     public void actorKilled(Actor actor) {
         actors.remove(actor);
         stagePanel.reset(actors);
-        interiorPanel.combatPanel.report(new Result(actor,
-                "<i>" + actor.getName() + " has been killed!</i>"));
     }
 
     @Override
@@ -774,7 +775,27 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
             //setForeground(Color.green);
         }
         
+        public T getActor() {
+            return actor;
+        }
+        
+        public synchronized void update(Result result) {
+            setText(result.toString());
+            
+            int delay = 3000; // milliseconds
+            ActionListener taskPerformer = new ActionListener() {
+                public void actionPerformed(ActionEvent ev) {
+                    update();
+                }
+            };
+            Timer t = new Timer(delay, taskPerformer);
+            t.setRepeats(false);
+            t.start();
+        }
+        
         public void update() {
+            setText(actor.getName());
+            
             float r = (1.0f * state.getCurrentHealth()) / actor.getBaseHealth();
             setBackground(new Color(r, r, r));
         }

@@ -82,7 +82,7 @@ public class ActorState implements Comparable<ActorState> {
             return result;
         } else {
             // TODO add EffectResult
-            return new Result(effect.source.getActor(), "FAILED");
+            return new Result(getActor(), "IMMUNE");
         }
     }
     

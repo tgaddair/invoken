@@ -73,7 +73,7 @@ public abstract class ActiveEffect {
         @Override
         protected Result doApply() {
             int value = target.damage(effect.getDamageType(), effect.getMagnitude());
-            return new Result(source.getActor(), "-" + value);
+            return new Result(target.getActor(), "-" + value);
         }
     }
     
@@ -86,7 +86,7 @@ public abstract class ActiveEffect {
         @Override
         protected Result doApply() {
             int value = target.heal(effect.getMagnitude());
-            return new Result(source.getActor(), "+" + value);
+            return new Result(target.getActor(), "+" + value);
         }
     }
 }

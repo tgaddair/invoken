@@ -138,6 +138,12 @@ public class ActorEncounterModel extends EncounterModel<ActorEncounter, ActorEnc
         }
     }
     
+    public void onCombatPassed(Actor actor) {
+        for (ActorEncounterListener listener : getListeners()) {
+            listener.combatTurnPassed(actor);
+        }
+    }
+    
     public void onResults(List<Result> results) {
         for (ActorEncounterListener listener : getListeners()) {
             listener.handleResults(results);
