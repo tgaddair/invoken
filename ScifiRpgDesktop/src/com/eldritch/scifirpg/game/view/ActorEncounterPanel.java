@@ -633,7 +633,9 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
     
     @Override
     public void actionRequested(Actor actor) {
-        enableBuffer(actor == player);
+        if (actor == player) {
+            interiorPanel.combatPanel.report(new EnabledResult(actor));
+        }
     }
     
     @Override
@@ -681,21 +683,6 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
         JPanel panel = Application.getApplication().getMainPanel().getGameOverPanel();
         Application.getApplication().setPanel(panel);
     }
-    
-    public class EnabledResult extends Result {
-        private final boolean enabled;
-        
-        public EnabledResult(Actor actor, String message) {
-            super(actor, message);
-            enabled = actor == player;
-        }
-        
-        @Override
-        public void process() {
-            enableBuffer(enabled);
-        }
-    }
-    
     
     public class AugmentationLabel extends JLabel {
         private static final long serialVersionUID = 1L;
@@ -804,5 +791,16 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
     private static String getBriefText(ActiveAugmentation aug) {
         return "<html><div style=\"text-align: center;\">"
               + aug.getName() + "<br/>" + aug.getUses() + "</html>";
+    }
+    
+    public class EnabledResult extends Result {
+        public EnabledResult(Actor actor) {
+            super(actor, "");
+        }
+        
+        @Override
+        public void process() {
+            enableBuffer(true);
+        }
     }
 }
