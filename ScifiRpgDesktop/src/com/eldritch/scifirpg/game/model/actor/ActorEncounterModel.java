@@ -79,10 +79,7 @@ public class ActorEncounterModel extends EncounterModel<ActorEncounter, ActorEnc
         }
         
         // Also update continue state
-        boolean continuable = canContinue();
-        for (ActorEncounterListener listener : getListeners()) {
-            listener.canContinue(continuable);
-        }
+        updateContinue();
         
         return hasHostile;
     }
@@ -95,6 +92,13 @@ public class ActorEncounterModel extends EncounterModel<ActorEncounter, ActorEnc
         }
         if (!isAlive(model.getPlayer())) {
             onPlayerKilled();
+        }
+    }
+    
+    public void updateContinue() {
+        boolean continuable = canContinue();
+        for (ActorEncounterListener listener : getListeners()) {
+            listener.canContinue(continuable);
         }
     }
     
@@ -118,12 +122,14 @@ public class ActorEncounterModel extends EncounterModel<ActorEncounter, ActorEnc
         for (ActorEncounterListener listener : getListeners()) {
             listener.endedCombat();
         }
+        updateContinue();
     }
     
     public void onCombatStarted() {
         for (ActorEncounterListener listener : getListeners()) {
             listener.startedCombat();
         }
+        updateContinue();
     }
     
     public void onCombatTurnStarted(Actor actor) {

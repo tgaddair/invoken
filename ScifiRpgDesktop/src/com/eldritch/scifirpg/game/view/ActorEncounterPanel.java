@@ -680,8 +680,13 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
     }
     
     @Override
-    public void canContinue(boolean can) {
-        continueButton.setEnabled(can);
+    public void canContinue(final boolean can) {
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                continueButton.setEnabled(can);
+            }
+        });
     }
     
     @Override

@@ -97,7 +97,7 @@ public class ActionModel {
         if (combat) {
             // Continue the combat cycle
             current.markActionTaken(action);
-            if (current.hasActions()) {
+            if (current.hasActions() && checkHostility()) {
                 startCombatAction(current);
             } else {
                 endCombatTurn();
@@ -144,7 +144,9 @@ public class ActionModel {
     
     private void endCombat() {
         combat = false;
+        
         // Notify combat ended
+        owner.onCombatEnded();
     }
     
     private boolean checkHostility() {
