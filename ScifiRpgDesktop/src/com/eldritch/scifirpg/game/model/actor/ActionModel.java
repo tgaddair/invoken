@@ -53,7 +53,11 @@ public class ActionModel {
         
         // Reset remaining actions and apply all active status effects / counters
         current = actorCycle.next();
-        if (current.isAlive() && current.startTurn()) {
+        List<Result> results = current.startTurn();
+        owner.onResults(results);
+        
+        // May not have survived effects
+        if (current.isAlive()) {
             owner.onCombatTurnStarted(current.getActor());
             startCombatAction(current);
         } else {

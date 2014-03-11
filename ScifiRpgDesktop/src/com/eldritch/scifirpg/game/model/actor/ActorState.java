@@ -1,10 +1,12 @@
 package com.eldritch.scifirpg.game.model.actor;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -27,15 +29,17 @@ public class ActorState implements Comparable<ActorState> {
         health = actor.getBaseHealth();
     }
     
-    public boolean startTurn() {
-        actions = actor.getActionsPerTurn();
-        
-        // Elapse, remove, and apply all status effects
-        
-        // Elapse all counters
-        
-        // May not have survived effects
-        return isAlive();
+    public List<Result> startTurn() {
+        List<Result> results = new ArrayList<>();
+        if (isAlive()) {
+            actions = actor.getActionsPerTurn();
+            
+            // Elapse, remove, and apply all status effects
+            applyActiveEffects(results);
+            
+            // Elapse all counters
+        }
+        return results;
     }
     
     public boolean hasActions() {
@@ -59,13 +63,13 @@ public class ActorState implements Comparable<ActorState> {
         }
     }
     
-    public void applyActiveEffects() {
+    private void applyActiveEffects(List<Result> results) {
         for (Set<ActiveEffect> effects : activeEffects.values()) {
             Iterator<ActiveEffect> it = effects.iterator();
             while (it.hasNext()) {
                 ActiveEffect effect = it.next();
                 effect.elapse();
-                effect.apply();
+                results.add(effect.apply());
                 if (effect.isExpired()) {
                     it.remove();
                 }
