@@ -1,6 +1,7 @@
 package com.eldritch.scifirpg.game.util;
 
 import com.eldritch.scifirpg.game.model.actor.Actor;
+import com.eldritch.scifirpg.game.model.actor.ActorState;
 
 public class Result {
     private final Actor actor;
@@ -36,5 +37,18 @@ public class Result {
     
     public interface ResultCallback {
         void handleResult(Result result);
+    }
+    
+    public static class HealthModResult extends Result {
+        private final int health;
+        
+        public HealthModResult(ActorState actor, String message) {
+            super(actor.getActor(), message);
+            health = actor.getCurrentHealth();
+        }
+        
+        public int getHealth() {
+            return health;
+        }
     }
 }

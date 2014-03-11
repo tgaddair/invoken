@@ -1,6 +1,7 @@
 package com.eldritch.scifirpg.game.model.actor;
 
 import com.eldritch.scifirpg.game.util.Result;
+import com.eldritch.scifirpg.game.util.Result.HealthModResult;
 import com.eldritch.scifirpg.proto.Effects.Effect;
 import com.eldritch.scifirpg.proto.Effects.Effect.Type;
 
@@ -73,7 +74,7 @@ public abstract class ActiveEffect {
         @Override
         protected Result doApply() {
             int value = target.damage(effect.getDamageType(), effect.getMagnitude());
-            return new Result(target.getActor(), "-" + value);
+            return new HealthModResult(target, "-" + value);
         }
     }
     
@@ -86,7 +87,7 @@ public abstract class ActiveEffect {
         @Override
         protected Result doApply() {
             int value = target.heal(effect.getMagnitude());
-            return new Result(target.getActor(), "+" + value);
+            return new HealthModResult(target, "+" + value);
         }
     }
 }

@@ -54,7 +54,7 @@ public class ActiveAugmentation {
                         }
                     }
                 } else {
-                    results.add(new Result(target.getActor(), "MISSED"));
+                    results.add(new Result(target.getActor(), "MISSED", false));
                 }
             }
         }

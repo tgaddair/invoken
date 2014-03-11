@@ -49,6 +49,7 @@ import com.eldritch.scifirpg.game.model.ActiveAugmentation;
 import com.eldritch.scifirpg.game.model.EncounterListener.ActorEncounterListener;
 import com.eldritch.scifirpg.game.util.LineBreaker;
 import com.eldritch.scifirpg.game.util.Result;
+import com.eldritch.scifirpg.game.util.Result.HealthModResult;
 import com.eldritch.scifirpg.game.util.Result.ResultCallback;
 import com.eldritch.scifirpg.proto.Actors.DialogueTree.Choice;
 import com.eldritch.scifirpg.proto.Actors.DialogueTree.Response;
@@ -177,11 +178,12 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
         final ActorLabel<Npc> label = new ActorLabel<Npc>(state, actor);
         
         // Add a click action listener
+        final Color selectedColor = new Color(0x98FB98);
         label.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent me) {
                 if (selected != null) {
-                    label.setBorder(getSelectedBorder());
+                    label.setBackground(selectedColor);
                 }
                 target = state;
             }
@@ -189,6 +191,7 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
             @Override
             public void mouseExited(MouseEvent me) {
                 label.setBorder(getDefaultBorder());
+                label.setBackground(label.getDefaultColor());
                 
                 // Reset the target variable if not already claimed elsewhere
                 if (target == state) {
@@ -710,11 +713,12 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
             setOpaque(true);
             
             // Add a click action listener
+            final Color selectedColor = new Color(0x98FB98);
             addMouseListener(new MouseAdapter() {
                 @Override
                 public void mousePressed(MouseEvent me) {
                     selected = aug;
-                    AugmentationLabel.this.setBorder(getSelectedBorder());
+                    setBackground(selectedColor);
                     
                     // Double-click -> invoke on self
                     if (me.getClickCount() == 2) {
@@ -735,7 +739,7 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
                     if (selected == aug) {
                         selected = null;
                     }
-                    AugmentationLabel.this.setBorder(getDefaultBorder());
+                    setBackground(Color.white);
                     
                     // Stop showing augmentation panel
                     if (SwingUtilities.isRightMouseButton(me)) {
@@ -759,16 +763,18 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
         private static final long serialVersionUID = 1L;
         private final ActorState state;
         private final T actor;
+        private Color defaultColor;
         
         public ActorLabel(ActorState state, T actor) {
             super(actor.getName());
             this.state = state;
             this.actor = actor;
+            defaultColor = Color.white;
             
             setBorder(getDefaultBorder());
             setPreferredSize(new Dimension(90, 120));
             setHorizontalAlignment(SwingConstants.CENTER);
-            setBackground(Color.WHITE);
+            setBackground(defaultColor);
             setOpaque(true);
             //setForeground(Color.green);
         }
@@ -792,6 +798,9 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
         }
         
         private void setTextFor(Result result) {
+            if (result instanceof HealthModResult) {
+                updateBackground((HealthModResult) result);
+            }
             setText(result.toString());
             
             int delay = 3000; // milliseconds
@@ -807,9 +816,16 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
         
         public void update() {
             setText(actor.getName());
+        }
             
-            float r = (1.0f * state.getCurrentHealth()) / actor.getBaseHealth();
-            setBackground(new Color(r, r, r));
+        private void updateBackground(HealthModResult result) {
+            float r = (1.0f * result.getHealth()) / actor.getBaseHealth();
+            defaultColor = new Color(r, r, r);
+            setBackground(defaultColor);
+        }
+        
+        public Color getDefaultColor() {
+            return defaultColor;
         }
         
         private Border getTurnBorder() {
