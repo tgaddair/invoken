@@ -301,7 +301,8 @@ public class ActorState implements Comparable<ActorState> {
     public int heal(int magnitude) {
         // Can't heal more than our maximum health
         int value = Math.min(magnitude, actor.getBaseHealth() - health);
-        health = value;
+        health += value;
+        System.out.println(actor.getName() + ": " + health);
         return value;
     }
     

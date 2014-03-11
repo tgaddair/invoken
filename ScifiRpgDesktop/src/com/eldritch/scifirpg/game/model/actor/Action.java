@@ -27,7 +27,7 @@ public class Action {
     }
     
     public boolean canTake() {
-        if (!hasSelectedTarget()) {
+        if (aug.needsTarget() && !hasSelectedTarget()) {
             return false;
         }
         return actor.canTakeAction(this);

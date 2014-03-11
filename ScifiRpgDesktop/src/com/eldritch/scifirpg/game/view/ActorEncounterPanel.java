@@ -717,15 +717,17 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
             addMouseListener(new MouseAdapter() {
                 @Override
                 public void mousePressed(MouseEvent me) {
-                    selected = aug;
-                    setBackground(selectedColor);
-                    
-                    // Double-click -> invoke on self
-                    if (me.getClickCount() == 2) {
-                        model.takeAction(aug, player);
-                    } else if (SwingUtilities.isRightMouseButton(me)) {
+                    if (SwingUtilities.isRightMouseButton(me)) {
                         // Show augmentation panel
                         interiorPanel.push(InteriorPanelType.AUGMENTATION);
+                    } else {
+                        selected = aug;
+                        setBackground(selectedColor);
+                        
+                        // Double-click -> invoke on self
+                        if (me.getClickCount() == 2) {
+                            model.takeAction(aug, player);
+                        }
                     }
                 }
                 
