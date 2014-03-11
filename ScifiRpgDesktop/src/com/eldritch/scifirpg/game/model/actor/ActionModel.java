@@ -98,6 +98,7 @@ public class ActionModel {
         doAction(action);
         
         // Cleanup
+        owner.onActionTaken(action);
         if (combat) {
             // Continue the combat cycle
             current.markActionTaken(action);

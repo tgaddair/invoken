@@ -53,6 +53,10 @@ public class Action {
         return actor;
     }
     
+    public ActiveAugmentation getAugmentation() {
+        return aug;
+    }
+    
     public ActorState getSelected() {
         return selected.get();
     }

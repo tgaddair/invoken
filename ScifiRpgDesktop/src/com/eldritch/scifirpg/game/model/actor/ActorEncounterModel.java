@@ -156,6 +156,12 @@ public class ActorEncounterModel extends EncounterModel<ActorEncounter, ActorEnc
         }
     }
     
+    public void onActionTaken(Action action) {
+        for (ActorEncounterListener listener : getListeners()) {
+            listener.actionUsed(action.getAugmentation());
+        }
+    }
+    
     public void onCombatTurnEnded(Actor actor) {
         for (ActorEncounterListener listener : getListeners()) {
             listener.combatTurnEnded(actor);
