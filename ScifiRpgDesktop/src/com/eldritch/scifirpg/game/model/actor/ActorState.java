@@ -202,6 +202,11 @@ public class ActorState implements Comparable<ActorState> {
      */
     public boolean handleAttack(Action action) {
         ActorState a = action.getActor();
+        if (a.getActor() == actor) {
+            // Attacks on oneself always succeed, and we don't want to add ourselves as an enemy
+            return true;
+        }
+        
         //maybeCounter(Augmentation.Type.ATTACK, a, combatants);
         enemies.add(a);
         
@@ -224,6 +229,9 @@ public class ActorState implements Comparable<ActorState> {
      */
     public boolean handleDeceive(Action action) {
         ActorState a = action.getActor();
+        // TODO we need to test this against the deception of all actors and add
+        // handler logic if the target is oneself
+        
         //maybeCounter(Augmentation.Type.DECEIVE, a, combatants);
         double chance = a.getDeception() * (1.0 - getPerception());
         boolean success = Math.random() < chance;
@@ -249,14 +257,13 @@ public class ActorState implements Comparable<ActorState> {
      */
     public boolean handleExecute(Action action) {
         ActorState a = action.getActor();
-        //maybeCounter(Augmentation.Type.EXECUTE, a, combatants);
-        
-        // Unlike other abilities, can execute on self, so ignore resistance
-        double chance = a.getWillpower();
-        if (a != this) {
-            chance *= 1.0 - getResistance();
+        if (a.getActor() == actor) {
+            // Always succeed on self
+            return true;
         }
         
+        //maybeCounter(Augmentation.Type.EXECUTE, a, combatants);
+        double chance = a.getWillpower() * (1.0 - getResistance());
         boolean success = Math.random() < chance;
         return success;
     }

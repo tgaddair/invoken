@@ -818,12 +818,14 @@ public class ActorEncounterPanel extends JPanel implements ActorEncounterListene
         
         public void update() {
             setText(actor.getName());
+            setForeground(Color.black);
         }
             
         private void updateBackground(HealthModResult result) {
             float r = (1.0f * result.getHealth()) / actor.getBaseHealth();
             defaultColor = new Color(r, r, r);
             setBackground(defaultColor);
+            setForeground(Color.red);
         }
         
         public Color getDefaultColor() {
