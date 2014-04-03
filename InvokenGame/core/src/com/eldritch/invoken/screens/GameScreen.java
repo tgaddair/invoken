@@ -1,5 +1,8 @@
 package com.eldritch.invoken.screens;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.assets.AssetManager;
@@ -133,10 +136,12 @@ public class GameScreen extends AbstractScreen {
 		static float JUMP_VELOCITY = 40f;
 		static float DAMPING = 0.87f;
 
-		private static Texture koalaTexture;
-		private static Animation stand;
-		private static Animation walk;
-		private static Animation jump;
+		private static Texture playerTexture;
+		private static Map<Direction, Animation> animations;
+		
+		enum Direction {
+			Up, Left, Down, Right
+		}
 
 		enum State {
 			Standing, Walking, Jumping
@@ -145,25 +150,31 @@ public class GameScreen extends AbstractScreen {
 		final Vector2 position = new Vector2();
 		final Vector2 velocity = new Vector2();
 		State state = State.Walking;
+		Animation currentAnim = animations.get(Direction.Down);
 		float stateTime = 0;
 		boolean facesRight = true;
 		boolean facesUp = true;
 
 		static {
+			animations = new HashMap<Direction, Animation>();
+			
 			// load the character frames, split them, and assign them to
 			// Animations
-			koalaTexture = new Texture("sprite/koalio.png");
-			TextureRegion[] regions = TextureRegion.split(koalaTexture, 18, 26)[0];
-			stand = new Animation(0, regions[0]);
-			jump = new Animation(0, regions[1]);
-			walk = new Animation(0.15f, regions[2], regions[3], regions[4]);
-			walk.setPlayMode(Animation.PlayMode.LOOP_PINGPONG);
+			playerTexture = new Texture("sprite/main/walk.png");
+			TextureRegion[][] regions = TextureRegion.split(playerTexture, 48, 48);
+			
+			// up, left, down, right
+			for (Direction d : Direction.values()) {
+				Animation anim = new Animation(0.15f, regions[d.ordinal()]);
+				anim.setPlayMode(Animation.PlayMode.LOOP_PINGPONG);
+				animations.put(d, anim);
+			}
 
-			// figure out the width and height of the koala for collision
-			// detection and rendering by converting a koala frames pixel
+			// figure out the width and height of the player for collision
+			// detection and rendering by converting a player frames pixel
 			// size into world units (1 unit == 32 pixels)
-			Player.WIDTH = 1 / 32f * regions[0].getRegionWidth();
-			Player.HEIGHT = 1 / 32f * regions[0].getRegionHeight();
+			Player.WIDTH = 1 / 32f * regions[0][0].getRegionWidth();
+			Player.HEIGHT = 1 / 32f * regions[0][0].getRegionHeight();
 		}
 
 		public void update(float delta, GameScreen screen) {
@@ -175,28 +186,24 @@ public class GameScreen extends AbstractScreen {
 					|| Gdx.input.isKeyPressed(Keys.A) || isTouched(0, 0.25f)) {
 				velocity.x = -Player.MAX_VELOCITY;
 				state = State.Walking;
-				facesRight = false;
 			}
 
 			if (Gdx.input.isKeyPressed(Keys.RIGHT)
 					|| Gdx.input.isKeyPressed(Keys.D) || isTouched(0.25f, 0.5f)) {
 				velocity.x = MAX_VELOCITY;
 				state = State.Walking;
-				facesRight = true;
 			}
 			
 			if (Gdx.input.isKeyPressed(Keys.UP)
 					|| Gdx.input.isKeyPressed(Keys.W) || isTouched(0.75f, 1.0f)) {
 				velocity.y = MAX_VELOCITY;
 				state = State.Walking;
-				facesUp = true;
 			}
 			
 			if (Gdx.input.isKeyPressed(Keys.DOWN)
 					|| Gdx.input.isKeyPressed(Keys.S) || isTouched(0.25f, 0.5f)) {
 				velocity.y = -MAX_VELOCITY;
 				state = State.Walking;
-				facesUp = false;
 			}
 
 			// apply gravity if we are falling
@@ -217,18 +224,39 @@ public class GameScreen extends AbstractScreen {
 				velocity.x = 0;
 				velocity.y = 0;
 				state = State.Standing;
+			} else {
+				// update the current animation based on the maximal velocity component
+				if (Math.abs(velocity.x) > Math.abs(velocity.y)) {
+					if (velocity.x < 0) {
+						// left
+						currentAnim = animations.get(Direction.Left);
+					} else {
+						// right
+						currentAnim = animations.get(Direction.Right);
+					}
+				} else {
+					if (velocity.y < 0) {
+						// down
+						currentAnim = animations.get(Direction.Down);
+					} else {
+						// up
+						currentAnim = animations.get(Direction.Up);
+					}
+				}
+				state = State.Walking;
 			}
+			
 
 			// multiply by delta time so we know how far we go
 			// in this frame
 			velocity.scl(delta);
 
 			// perform collision detection & response, on each axis, separately
-			// if the koala is moving right, check the tiles to the right of
+			// if the player is moving right, check the tiles to the right of
 			// it's
 			// right bounding box edge, otherwise check the ones to the left
-			Rectangle koalaRect = screen.rectPool.obtain();
-			koalaRect.set(position.x, position.y, WIDTH, HEIGHT);
+			Rectangle playerRect = screen.rectPool.obtain();
+			playerRect.set(position.x + WIDTH / 4, position.y + HEIGHT / 4, WIDTH / 2, HEIGHT / 2);
 			int startX, startY, endX, endY;
 			if (velocity.x > 0) {
 				startX = endX = (int) (position.x + WIDTH + velocity.x);
@@ -238,29 +266,29 @@ public class GameScreen extends AbstractScreen {
 			startY = (int) (position.y);
 			endY = (int) (position.y + HEIGHT);
 			screen.getTiles(startX, startY, endX, endY, screen.tiles);
-			koalaRect.x += velocity.x;
+			playerRect.x += velocity.x;
 			for (Rectangle tile : screen.tiles) {
-				if (koalaRect.overlaps(tile)) {
+				if (playerRect.overlaps(tile)) {
 					velocity.x = 0;
 					break;
 				}
 			}
-			koalaRect.x = position.x;
+			playerRect.x = position.x;
 
 			// always check collisions with the bottom of the bounding box
 			startY = endY = (int) (position.y + velocity.y);
 			startX = (int) (position.x);
 			endX = (int) (position.x + WIDTH);
 			screen.getTiles(startX, startY, endX, endY, screen.tiles);
-			koalaRect.y += velocity.y;
+			playerRect.y += velocity.y;
 			for (Rectangle tile : screen.tiles) {
-				if (koalaRect.overlaps(tile)) {
+				if (playerRect.overlaps(tile)) {
 					velocity.y = 0;
 					break;
 				}
 			}
-			koalaRect.y = position.y;
-			screen.rectPool.free(koalaRect);
+			playerRect.y = position.y;
+			screen.rectPool.free(playerRect);
 
 			// unscale the velocity by the inverse delta time and set
 			// the latest position
@@ -287,22 +315,22 @@ public class GameScreen extends AbstractScreen {
 		}
 
 		public void render(float delta, OrthogonalTiledMapRenderer renderer) {
-			// based on the koala state, get the animation frame
+			// based on the player state, get the animation frame
 			TextureRegion frame = null;
 			switch (state) {
 			case Standing:
-				frame = stand.getKeyFrame(stateTime);
+				frame = currentAnim.getKeyFrames()[0];
 				break;
 			case Walking:
-				frame = walk.getKeyFrame(stateTime);
+				frame = currentAnim.getKeyFrame(stateTime);
 				break;
 			case Jumping:
-				frame = jump.getKeyFrame(stateTime);
+				//frame = jump.getKeyFrame(stateTime);
 				break;
 			}
 			
-			// draw the koala, depending on the current velocity
-			// on the x-axis, draw the koala facing either right
+			// draw the player, depending on the current velocity
+			// on the x-axis, draw the player facing either right
 			// or left
 			Batch batch = renderer.getSpriteBatch();
 			batch.begin();
