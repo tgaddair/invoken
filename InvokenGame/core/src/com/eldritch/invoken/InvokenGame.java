@@ -1,27 +1,83 @@
 package com.eldritch.invoken;
 
-import com.badlogic.gdx.ApplicationAdapter;
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.eldritch.invoken.screens.GameScreen;
+import com.eldritch.invoken.screens.MenuScreen;
+import com.eldritch.invoken.screens.SplashScreen;
 
-public class InvokenGame extends ApplicationAdapter {
+public class InvokenGame extends Game {
+	public static final String LOG = InvokenGame.class.getSimpleName();
+	public static boolean DEV_MODE = true;
+
 	SpriteBatch batch;
 	Texture img;
-	
-	@Override
-	public void create () {
-		batch = new SpriteBatch();
-		img = new Texture("badlogic.jpg");
+
+	public SplashScreen getSplashScreen() {
+		return new SplashScreen(this);
+	}
+
+	public MenuScreen getMenuScreen() {
+		return new MenuScreen(this);
 	}
 
 	@Override
-	public void render () {
-		Gdx.gl.glClearColor(1, 0, 0, 1);
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-		batch.begin();
-		batch.draw(img, 0, 0);
-		batch.end();
+	public void create() {
+		Gdx.app.log(InvokenGame.LOG, "Creating game on " + Gdx.app.getType());
+
+		// // create the preferences manager preferencesManager = new
+		// PreferencesManager();
+		//
+		// // create the music manager musicManager = new MusicManager();
+		// musicManager.setVolume(preferencesManager.getVolume());
+		// musicManager.setEnabled(preferencesManager.isMusicEnabled());
+		//
+		// // create the sound manager soundManager = new SoundManager();
+		// soundManager.setVolume(preferencesManager.getVolume());
+		// soundManager.setEnabled(preferencesManager.isSoundEnabled());
+		//
+		// // create the profile manager profileManager = new ProfileManager();
+		// profileManager.retrieveProfile();
+		//
+		// // create the level manager levelManager = new LevelManager();
+		//
+		// // create the helper objects fpsLogger = new FPSLogger();
+	}
+
+	@Override
+	public void render() {
+		super.render();
+		
+		// output the current FPS
+		if (DEV_MODE) {
+			// fpsLogger.log();
+		}
+	}
+
+	@Override
+	public void resize(int width, int height) {
+		super.resize(width, height);
+		Gdx.app.log(InvokenGame.LOG, "Resizing game to: " + width + " x "
+				+ height);
+
+		// show the splash screen when the game is resized for the first time;
+		// this approach avoids calling the screen's resize method repeatedly
+		if (getScreen() == null) {
+			if (DEV_MODE) {
+				setScreen(new GameScreen(this));
+			} else {
+				setScreen(new SplashScreen(this));
+			}
+		}
+	}
+
+	@Override
+	public void setScreen(Screen screen) {
+		super.setScreen(screen);
+		Gdx.app.log(InvokenGame.LOG, "Setting screen: "
+				+ screen.getClass().getSimpleName());
 	}
 }
