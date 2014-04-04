@@ -15,9 +15,6 @@ import com.eldritch.invoken.screens.GameScreen;
 public class Player extends Actor {
 	public static float WIDTH;
 	public static float HEIGHT;
-	static float MAX_VELOCITY = 10f;
-	static float JUMP_VELOCITY = 40f;
-	static float DAMPING = 0.87f;
 
 	private static Texture playerTexture;
 	private static Map<Direction, Animation> animations;
@@ -44,8 +41,8 @@ public class Player extends Actor {
 		Player.HEIGHT = 1 / 32f * regions[0][0].getRegionHeight();
 	}
 	
-	public Player() {
-		super(animations.get(Direction.Down));
+	public Player(int x, int y) {
+		super(animations.get(Direction.Down), x, y);
 		Gdx.input.setInputProcessor(new PlayerInputProcessor());
 	}
 	
@@ -59,19 +56,19 @@ public class Player extends Actor {
 
 		if (Gdx.input.isKeyPressed(Keys.RIGHT)
 				|| Gdx.input.isKeyPressed(Keys.D) || isTouched(0.25f, 0.5f)) {
-			velocity.x = MAX_VELOCITY;
+			velocity.x = Actor.MAX_VELOCITY;
 			setState(State.Walking);
 		}
 		
 		if (Gdx.input.isKeyPressed(Keys.UP)
 				|| Gdx.input.isKeyPressed(Keys.W) || isTouched(0.75f, 1.0f)) {
-			velocity.y = MAX_VELOCITY;
+			velocity.y = Actor.MAX_VELOCITY;
 			setState(State.Walking);
 		}
 		
 		if (Gdx.input.isKeyPressed(Keys.DOWN)
 				|| Gdx.input.isKeyPressed(Keys.S) || isTouched(0.25f, 0.5f)) {
-			velocity.y = -MAX_VELOCITY;
+			velocity.y = -Actor.MAX_VELOCITY;
 			setState(State.Walking);
 		}
 	}

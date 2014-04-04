@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Array;
 import com.eldritch.invoken.effects.Shield;
 import com.eldritch.invoken.screens.GameScreen;
 
@@ -30,8 +31,9 @@ public abstract class Actor {
 	
 	private Shield effect = null;
 	
-	public Actor(Animation animation) {
+	public Actor(Animation animation, int x, int y) {
 		currentAnim = animation;
+		setPosition(x, y);
 	}
 	
 	public void toggleShield() {
@@ -110,11 +112,13 @@ public abstract class Actor {
 		// if the actor is moving right, check the tiles to the right of
 		// it's
 		// right bounding box edge, otherwise check the ones to the left
+		Array<Rectangle> actorRects = getCollisionActors(screen);
+		
 		float relativeX = position.x - getWidth() / 2;
 		float relativeY = position.y - getWidth() / 2;
 		
-		Rectangle actorRect = screen.getRectPool().obtain();
-		actorRect.set(position.x - getWidth() / 8, position.y - getHeight() / 2, getWidth() / 4, getHeight() / 4);
+		Rectangle actorRect = GameScreen.getRectPool().obtain();
+		getBoundingBox(actorRect);
 		
 		int startX, startY, endX, endY;
 		startX = endX = (int) (relativeX + getWidth() + velocity.x);
@@ -127,9 +131,13 @@ public abstract class Actor {
 		endY = (int) (relativeY + getHeight());
 		screen.getTiles(startX, startY, endX, endY, screen.getTiles());
 		
+		Array<Rectangle> rects = new Array<Rectangle>();
+		rects.addAll(screen.getTiles());
+		rects.addAll(actorRects);
+		
 		float oldX = actorRect.x;
 		actorRect.x += velocity.x;
-		for (Rectangle tile : screen.getTiles()) {
+		for (Rectangle tile : rects) {
 			if (actorRect.overlaps(tile)) {
 				velocity.x = 0;
 				break;
@@ -147,14 +155,20 @@ public abstract class Actor {
 		endX = (int) (relativeX + getWidth());
 		screen.getTiles(startX, startY, endX, endY, screen.getTiles());
 		actorRect.y += velocity.y;
-		for (Rectangle tile : screen.getTiles()) {
+		
+		rects.clear();
+		rects.addAll(screen.getTiles());
+		rects.addAll(actorRects);
+		
+		for (Rectangle tile : rects) {
 			if (actorRect.overlaps(tile)) {
 				velocity.y = 0;
 				break;
 			}
 		}
 		//actorRect.y = relativeY;
-		screen.getRectPool().free(actorRect);
+		GameScreen.getRectPool().free(actorRect);
+		GameScreen.getRectPool().freeAll(actorRects);
 
 		// unscale the velocity by the inverse delta time and set
 		// the latest position
@@ -187,12 +201,43 @@ public abstract class Actor {
 		// or left
 		Batch batch = renderer.getSpriteBatch();
 		batch.begin();
-		batch.draw(frame, position.x - getWidth() / 2, position.y - getHeight() / 2, getWidth(), getHeight());
+		batch.draw(frame,
+				position.x - getWidth() / 2,
+				position.y - getHeight() / 2,
+				getWidth(), getHeight());
 		batch.end();
 		
 		if (effect != null) {
 			effect.render(delta, renderer);
 		}
+	}
+	
+	public Array<Rectangle> getCollisionActors(GameScreen screen) {
+		Array<Rectangle> rects = new Array<Rectangle>();
+		for (Actor other : screen.getActors()) {
+			if (other == this) continue;
+			
+			// avoid sqrt because it is relatively expensive and unnecessary
+			float a = position.x - other.position.x;
+			float b = position.y - other.position.y;
+			float distance = a * a + b * b;
+			
+			// our tolerance is the combined radii of both actors
+			float w = getWidth() / 2 + other.getWidth() / 2;
+			float h = getHeight() / 2 + other.getHeight() / 2;
+			float tol = w * w + h * h;
+			
+			if (distance <= tol) {
+				rects.add(other.getBoundingBox(GameScreen.getRectPool().obtain()));
+			}
+		}
+		return rects;
+	}
+	
+	public Rectangle getBoundingBox(Rectangle rect) {
+		rect.set(position.x - getWidth() / 8,
+				position.y - getHeight() / 2, getWidth() / 4, getHeight() / 4);
+		return rect;
 	}
 	
 	protected void setState(State state) {

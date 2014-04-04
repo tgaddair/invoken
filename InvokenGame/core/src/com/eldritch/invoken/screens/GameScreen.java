@@ -1,5 +1,8 @@
 package com.eldritch.invoken.screens;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
@@ -17,10 +20,20 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
 import com.eldritch.invoken.InvokenGame;
+import com.eldritch.invoken.actor.Actor;
+import com.eldritch.invoken.actor.Npc;
 import com.eldritch.invoken.actor.Player;
 
 public class GameScreen extends AbstractScreen {
+	private static Pool<Rectangle> rectPool = new Pool<Rectangle>() {
+		@Override
+		protected Rectangle newObject() {
+			return new Rectangle();
+		}
+	};
+	
 	private Player player;
+	private final List<Actor> actors = new ArrayList<Actor>();
 
 	private TiledMap map;
 	private OrthogonalTiledMapRenderer renderer;
@@ -28,20 +41,13 @@ public class GameScreen extends AbstractScreen {
 	private AssetManager assetManager;
 	private BitmapFont font;
 	private SpriteBatch batch;
-
-	private Pool<Rectangle> rectPool = new Pool<Rectangle>() {
-		@Override
-		protected Rectangle newObject() {
-			return new Rectangle();
-		}
-	};
 	private Array<Rectangle> tiles = new Array<Rectangle>();
 
 	public GameScreen(InvokenGame game) {
 		super(game);
 	}
 	
-	public Pool<Rectangle> getRectPool() {
+	public static Pool<Rectangle> getRectPool() {
 		return rectPool;
 	}
 	
@@ -81,8 +87,13 @@ public class GameScreen extends AbstractScreen {
 		renderer = new OrthogonalTiledMapRenderer(map, unitScale);
 
 		// create the Player we want to move around the world
-		player = new Player();
-		player.setPosition(20, 15);
+		player = new Player(20, 15);
+		addActor(player);
+		addActor(new Npc(25, 15));
+	}
+	
+	private void addActor(Actor actor) {
+		actors.add(actor);
 	}
 
 	@Override
@@ -92,7 +103,9 @@ public class GameScreen extends AbstractScreen {
 
 		// update the player (process input, collision detection, position
 		// update)
-		player.update(delta, this);
+		for (Actor actor : actors) {
+			actor.update(delta, this);
+		}
 
 		// let the camera follow the player
 		Vector2 position = player.getPosition();
@@ -106,14 +119,20 @@ public class GameScreen extends AbstractScreen {
 		renderer.render();
 
 		// render the player
-		player.render(delta, renderer);
+		for (Actor actor : actors) {
+			actor.render(delta, renderer);
+		}
 
 		batch.begin();
 		font.draw(batch, "FPS: " + Gdx.graphics.getFramesPerSecond(), 10, 20);
 		batch.end();
 	}
+	
+	public List<Actor> getActors() {
+		return actors;
+	}
 
-	public void getTiles(int startX, int startY, int endX, int endY,
+	public Array<Rectangle> getTiles(int startX, int startY, int endX, int endY,
 			Array<Rectangle> tiles) {
 		TiledMapTileLayer layer = (TiledMapTileLayer) map.getLayers().get(1);
 		rectPool.freeAll(tiles);
@@ -128,5 +147,6 @@ public class GameScreen extends AbstractScreen {
 				}
 			}
 		}
+		return tiles;
 	}
 }
