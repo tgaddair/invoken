@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
@@ -12,12 +13,13 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.eldritch.invoken.effects.Shield;
 import com.eldritch.invoken.screens.GameScreen;
 
 /** The player character, has state and state time, */
 public class Player {
-	static float WIDTH;
-	static float HEIGHT;
+	public static float WIDTH;
+	public static float HEIGHT;
 	static float MAX_VELOCITY = 10f;
 	static float JUMP_VELOCITY = 40f;
 	static float DAMPING = 0.87f;
@@ -38,8 +40,8 @@ public class Player {
 	State state = State.Walking;
 	Animation currentAnim = animations.get(Direction.Down);
 	float stateTime = 0;
-	boolean facesRight = true;
-	boolean facesUp = true;
+	
+	private Shield effect = null;
 
 	static {
 		animations = new HashMap<Direction, Animation>();
@@ -61,6 +63,22 @@ public class Player {
 		// size into world units (1 unit == 32 pixels)
 		Player.WIDTH = 1 / 32f * regions[0][0].getRegionWidth();
 		Player.HEIGHT = 1 / 32f * regions[0][0].getRegionHeight();
+	}
+	
+	public Player() {
+		Gdx.input.setInputProcessor(new PlayerInputProcessor());
+	}
+	
+	public void toggleShield() {
+		if (effect == null) {
+			addEffect(new Shield(this));
+		} else {
+			effect = null;
+		}
+	}
+	
+	public void addEffect(Shield effect) {
+		this.effect = effect;
 	}
 	
 	public void setPosition(int x, int y) {
@@ -149,17 +167,24 @@ public class Player {
 		// if the player is moving right, check the tiles to the right of
 		// it's
 		// right bounding box edge, otherwise check the ones to the left
+		float relativeX = position.x - WIDTH / 2;
+		float relativeY = position.y - HEIGHT / 2;
+		
 		Rectangle playerRect = screen.getRectPool().obtain();
-		playerRect.set(position.x + WIDTH / 4, position.y + HEIGHT / 4, WIDTH / 2, HEIGHT / 2);
+		playerRect.set(position.x - WIDTH / 8, position.y - HEIGHT / 2, WIDTH / 4, HEIGHT / 4);
+		
 		int startX, startY, endX, endY;
+		startX = endX = (int) (relativeX + WIDTH + velocity.x);
 		if (velocity.x > 0) {
-			startX = endX = (int) (position.x + WIDTH + velocity.x);
+			startX = endX = (int) (relativeX + WIDTH + velocity.x);
 		} else {
-			startX = endX = (int) (position.x + velocity.x);
+			startX = endX = (int) (relativeX + velocity.x);
 		}
-		startY = (int) (position.y);
-		endY = (int) (position.y + HEIGHT);
+		startY = (int) (relativeY);
+		endY = (int) (relativeY + HEIGHT);
 		screen.getTiles(startX, startY, endX, endY, screen.getTiles());
+		
+		float oldX = playerRect.x;
 		playerRect.x += velocity.x;
 		for (Rectangle tile : screen.getTiles()) {
 			if (playerRect.overlaps(tile)) {
@@ -167,12 +192,16 @@ public class Player {
 				break;
 			}
 		}
-		playerRect.x = position.x;
+		playerRect.x = oldX;
 
 		// always check collisions with the bottom of the bounding box
-		startY = endY = (int) (position.y + velocity.y);
-		startX = (int) (position.x);
-		endX = (int) (position.x + WIDTH);
+		if (velocity.y > 0) {
+			startX = endX = (int) (relativeY + HEIGHT + velocity.y);
+		} else {
+			startY = endY = (int) (relativeY + velocity.y);
+		}
+		startX = (int) (relativeX);
+		endX = (int) (relativeX + WIDTH);
 		screen.getTiles(startX, startY, endX, endY, screen.getTiles());
 		playerRect.y += velocity.y;
 		for (Rectangle tile : screen.getTiles()) {
@@ -181,7 +210,7 @@ public class Player {
 				break;
 			}
 		}
-		playerRect.y = position.y;
+		//playerRect.y = relativeY;
 		screen.getRectPool().free(playerRect);
 
 		// unscale the velocity by the inverse delta time and set
@@ -228,12 +257,58 @@ public class Player {
 		// or left
 		Batch batch = renderer.getSpriteBatch();
 		batch.begin();
-		if (facesRight) {
-			batch.draw(frame, position.x, position.y, WIDTH, HEIGHT);
-		} else {
-			batch.draw(frame, position.x + WIDTH, position.y, -WIDTH,
-					HEIGHT);
-		}
+		batch.draw(frame, position.x - WIDTH / 2, position.y - HEIGHT / 2, WIDTH, HEIGHT);
 		batch.end();
+		
+		if (effect != null) {
+			effect.render(delta, renderer);
+		}
+	}
+	
+	class PlayerInputProcessor implements InputProcessor {
+		@Override
+		public boolean keyDown(int keycode) {
+			return false;
+		}
+
+		@Override
+		public boolean keyUp(int keycode) {
+			if (keycode == Keys.SPACE) {
+				toggleShield();
+				return true;
+			}
+			return false;
+		}
+
+		@Override
+		public boolean keyTyped(char character) {
+			return false;
+		}
+
+		@Override
+		public boolean touchDown(int screenX, int screenY, int pointer,
+				int button) {
+			return false;
+		}
+
+		@Override
+		public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+			return false;
+		}
+
+		@Override
+		public boolean touchDragged(int screenX, int screenY, int pointer) {
+			return false;
+		}
+
+		@Override
+		public boolean mouseMoved(int screenX, int screenY) {
+			return false;
+		}
+
+		@Override
+		public boolean scrolled(int amount) {
+			return false;
+		}
 	}
 }
