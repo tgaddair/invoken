@@ -48,12 +48,24 @@ public abstract class Actor {
 		this.effect = effect;
 	}
 	
-	public void setPosition(int x, int y) {
+	public void setPosition(float x, float y) {
 		position.set(x, y);
 	}
 	
 	public Vector2 getPosition() {
 		return position;
+	}
+	
+	public void setVelocity(float x, float y) {
+		velocity.set(x, y);
+	}
+	
+	public Vector2 getVelocity() {
+		return velocity;
+	}
+	
+	public float getMaxVelocity() {
+		return MAX_VELOCITY;
 	}
 
 	public void update(float delta, GameScreen screen) {

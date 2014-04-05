@@ -6,6 +6,8 @@ import java.util.Map;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.eldritch.invoken.actor.ai.PatrolRoutine;
+import com.eldritch.invoken.actor.ai.Routine;
 import com.eldritch.invoken.screens.GameScreen;
 
 public class Npc extends Actor {
@@ -14,6 +16,8 @@ public class Npc extends Actor {
 
 	private static Texture playerTexture;
 	private static Map<Direction, Animation> animations;
+	
+	private Routine routine;
 
 	static {
 		animations = new HashMap<Direction, Animation>();
@@ -39,10 +43,12 @@ public class Npc extends Actor {
 	
 	public Npc(int x, int y) {
 		super(animations.get(Direction.Down), x, y);
+		routine = new PatrolRoutine(this);
 	}
 	
 	@Override
 	protected void takeAction(float delta, GameScreen screen) {
+		routine.takeAction(delta);
 	}
 	
 	@Override
