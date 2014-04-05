@@ -12,7 +12,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.eldritch.invoken.screens.GameScreen;
 
 /** The player character, has state and state time, */
-public class Player extends Actor {
+public class Player extends Entity {
 	public static float WIDTH;
 	public static float HEIGHT;
 
@@ -50,25 +50,25 @@ public class Player extends Actor {
 	protected void takeAction(float delta, GameScreen screen) {
 		if (Gdx.input.isKeyPressed(Keys.LEFT)
 				|| Gdx.input.isKeyPressed(Keys.A) || isTouched(0, 0.25f)) {
-			velocity.x = -Actor.MAX_VELOCITY;
+			velocity.x = -Entity.MAX_VELOCITY;
 			setState(State.Walking);
 		}
 
 		if (Gdx.input.isKeyPressed(Keys.RIGHT)
 				|| Gdx.input.isKeyPressed(Keys.D) || isTouched(0.25f, 0.5f)) {
-			velocity.x = Actor.MAX_VELOCITY;
+			velocity.x = Entity.MAX_VELOCITY;
 			setState(State.Walking);
 		}
 		
 		if (Gdx.input.isKeyPressed(Keys.UP)
 				|| Gdx.input.isKeyPressed(Keys.W) || isTouched(0.75f, 1.0f)) {
-			velocity.y = Actor.MAX_VELOCITY;
+			velocity.y = Entity.MAX_VELOCITY;
 			setState(State.Walking);
 		}
 		
 		if (Gdx.input.isKeyPressed(Keys.DOWN)
 				|| Gdx.input.isKeyPressed(Keys.S) || isTouched(0.25f, 0.5f)) {
-			velocity.y = -Actor.MAX_VELOCITY;
+			velocity.y = -Entity.MAX_VELOCITY;
 			setState(State.Walking);
 		}
 	}

@@ -6,7 +6,7 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
-import com.eldritch.invoken.actor.Actor;
+import com.eldritch.invoken.actor.Entity;
 
 public class Shield {
 	static float WIDTH;
@@ -14,7 +14,7 @@ public class Shield {
 	private static Texture texture;
 	private static Animation animation;
 	
-	private final Actor actor;
+	private final Entity actor;
 	private float stateTime = 0;
 	
 	static {
@@ -30,7 +30,7 @@ public class Shield {
 		HEIGHT = 1 / 32f * regions[0][0].getRegionHeight();
 	}
 	
-	public Shield(Actor actor) {
+	public Shield(Entity actor) {
 		this.actor = actor;
 	}
 	

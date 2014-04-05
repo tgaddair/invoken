@@ -10,7 +10,7 @@ import com.badlogic.gdx.utils.Array;
 import com.eldritch.invoken.effects.Shield;
 import com.eldritch.invoken.screens.GameScreen;
 
-public abstract class Actor {
+public abstract class Entity {
 	static float MAX_VELOCITY = 10f;
 	static float JUMP_VELOCITY = 40f;
 	static float DAMPING = 0.87f;
@@ -31,7 +31,7 @@ public abstract class Actor {
 	
 	private Shield effect = null;
 	
-	public Actor(Animation animation, int x, int y) {
+	public Entity(Animation animation, int x, int y) {
 		currentAnim = animation;
 		setPosition(x, y);
 	}
@@ -226,7 +226,7 @@ public abstract class Actor {
 	
 	public Array<Rectangle> getCollisionActors(GameScreen screen) {
 		Array<Rectangle> rects = new Array<Rectangle>();
-		for (Actor other : screen.getActors()) {
+		for (Entity other : screen.getActors()) {
 			if (other == this) continue;
 			
 			// avoid sqrt because it is relatively expensive and unnecessary

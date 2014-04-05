@@ -16,7 +16,7 @@ import com.eldritch.invoken.actor.ai.PatrolRoutine;
 import com.eldritch.invoken.actor.ai.Routine;
 import com.eldritch.invoken.screens.GameScreen;
 
-public class Npc extends Actor {
+public class Npc extends Entity {
 	public static float WIDTH;
 	public static float HEIGHT;
 

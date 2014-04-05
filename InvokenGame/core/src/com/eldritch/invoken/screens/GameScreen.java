@@ -20,7 +20,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
 import com.eldritch.invoken.InvokenGame;
-import com.eldritch.invoken.actor.Actor;
+import com.eldritch.invoken.actor.Entity;
 import com.eldritch.invoken.actor.Npc;
 import com.eldritch.invoken.actor.Player;
 
@@ -33,7 +33,7 @@ public class GameScreen extends AbstractScreen {
 	};
 	
 	private Player player;
-	private final List<Actor> actors = new ArrayList<Actor>();
+	private final List<Entity> actors = new ArrayList<Entity>();
 
 	private TiledMap map;
 	private OrthogonalTiledMapRenderer renderer;
@@ -92,7 +92,7 @@ public class GameScreen extends AbstractScreen {
 		addActor(new Npc(25, 15));
 	}
 	
-	private void addActor(Actor actor) {
+	private void addActor(Entity actor) {
 		actors.add(actor);
 	}
 
@@ -103,7 +103,7 @@ public class GameScreen extends AbstractScreen {
 
 		// update the player (process input, collision detection, position
 		// update)
-		for (Actor actor : actors) {
+		for (Entity actor : actors) {
 			actor.update(delta, this);
 		}
 
@@ -119,7 +119,7 @@ public class GameScreen extends AbstractScreen {
 		renderer.render();
 
 		// render the player
-		for (Actor actor : actors) {
+		for (Entity actor : actors) {
 			actor.render(delta, renderer);
 		}
 
@@ -128,7 +128,7 @@ public class GameScreen extends AbstractScreen {
 		batch.end();
 	}
 	
-	public List<Actor> getActors() {
+	public List<Entity> getActors() {
 		return actors;
 	}
 
