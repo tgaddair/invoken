@@ -4,7 +4,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.actor.Actor;
 
 public class PatrolRoutine implements Routine {
-	
 	private final Actor actor;
 	
 	/** cannot stray too far from the origin location, or we're wandering, not patrolling */
@@ -28,6 +27,11 @@ public class PatrolRoutine implements Routine {
 		this.maxDistance = maxDistance;
 		this.maxVelocity = maxVelocity;
 		this.duration = duration;
+	}
+	
+	@Override
+	public boolean isFinished() {
+		return elapsed >= duration;
 	}
 	
 	@Override
@@ -67,10 +71,6 @@ public class PatrolRoutine implements Routine {
 			} else {
 				yVelocity = Math.signum(dy) * maxVelocity;
 			}
-			
-			// we don't want to get stuck in an oscillating loop, but no direction should be too
-			// short either
-			elapsed = Math.min(elapsed, duration / 2);
 		} else {
 			// keep going in our patrol direction
 			elapsed += delta;

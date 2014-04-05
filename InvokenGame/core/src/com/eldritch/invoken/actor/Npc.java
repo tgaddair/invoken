@@ -1,11 +1,17 @@
 package com.eldritch.invoken.actor;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.eldritch.invoken.InvokenGame;
+import com.eldritch.invoken.actor.ai.IdleRoutine;
 import com.eldritch.invoken.actor.ai.PatrolRoutine;
 import com.eldritch.invoken.actor.ai.Routine;
 import com.eldritch.invoken.screens.GameScreen;
@@ -17,6 +23,7 @@ public class Npc extends Actor {
 	private static Texture playerTexture;
 	private static Map<Direction, Animation> animations;
 	
+	private final List<Routine> routines = new ArrayList<Routine>();
 	private Routine routine;
 
 	static {
@@ -44,10 +51,21 @@ public class Npc extends Actor {
 	public Npc(int x, int y) {
 		super(animations.get(Direction.Down), x, y);
 		routine = new PatrolRoutine(this);
+		routines.add(routine);
+		routines.add(new IdleRoutine(this));
 	}
 	
 	@Override
 	protected void takeAction(float delta, GameScreen screen) {
+		if (routine.isFinished()) {
+			Gdx.app.log(InvokenGame.LOG, "FINISHED");
+			Collections.shuffle(routines);
+			for (Routine r : routines) {
+				if (r.isValid()) {
+					routine = r;
+				}
+			}
+		}
 		routine.takeAction(delta);
 	}
 	
