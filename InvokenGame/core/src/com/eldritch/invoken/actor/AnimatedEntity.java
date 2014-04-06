@@ -1,6 +1,7 @@
 package com.eldritch.invoken.actor;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -84,7 +85,7 @@ public abstract class AnimatedEntity implements Entity {
 	}
 	
 	public void damage(int value) {
-		addEffect(new Bleed());
+		addEffect(new Bleed(this));
 	}
 
 	public void toggleShield() {
@@ -156,6 +157,18 @@ public abstract class AnimatedEntity implements Entity {
 			}
 		}
 		
+		// apply all active effects, remove any that are finished
+		Iterator<Effect> it = effects.iterator();
+		while (it.hasNext()) {
+			Effect effect = it.next();
+			if (!effect.isFinished()) {
+				effect.apply(delta);
+			} else {
+				it.remove();
+			}
+		}
+		
+		// take conscious action
 		takeAction(delta, screen);
 
 		// clamp the velocity to the maximum
@@ -316,6 +329,13 @@ public abstract class AnimatedEntity implements Entity {
 		// render the current action if one exists
 		if (action != null) {
 			action.render(delta, renderer);
+		}
+		
+		// render all unfinished effects
+		for (Effect effect : effects) {
+			if (!effect.isFinished()) {
+				effect.render(delta, renderer);
+			}
 		}
 
 		if (effect != null) {
