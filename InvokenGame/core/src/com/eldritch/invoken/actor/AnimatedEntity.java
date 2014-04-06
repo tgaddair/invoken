@@ -5,7 +5,6 @@ import java.util.Map;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -23,7 +22,7 @@ public abstract class AnimatedEntity implements Entity {
 	static float JUMP_VELOCITY = 40f;
 	static float DAMPING = 0.87f;
 
-	enum Direction {
+	public enum Direction {
 		Up, Left, Down, Right
 	}
 
@@ -42,9 +41,9 @@ public abstract class AnimatedEntity implements Entity {
 	final Vector2 velocity = new Vector2();
 	State state = State.Moving;
 	Activity activity = Activity.Explore;
+	Direction direction = Direction.Down;
 	private final Map<Activity, Map<Direction, Animation>> animations =
 			new HashMap<Activity, Map<Direction, Animation>>();
-	Animation currentAnim = null;
 	float stateTime = 0;
 
 	private AnimatedEntity target;
@@ -54,7 +53,6 @@ public abstract class AnimatedEntity implements Entity {
 		setPosition(x, y);
 		animations.put(Activity.Explore, getAnimations(assetPath + "/walk.png"));
 		animations.put(Activity.Combat, getAnimations(assetPath + "/shoot.png"));
-		currentAnim = getAnimation(Direction.Down);
 
 		// figure out the width and height of the player for collision
 		// detection and rendering by converting a player frames pixel
@@ -100,6 +98,10 @@ public abstract class AnimatedEntity implements Entity {
 	public float getMaxVelocity() {
 		return MAX_VELOCITY;
 	}
+	
+	public Direction getDirection() {
+		return direction;
+	}
 
 	public Animation getAnimation(Direction direction) {
 		return animations.get(activity).get(direction);
@@ -107,6 +109,10 @@ public abstract class AnimatedEntity implements Entity {
 
 	protected void setTarget(AnimatedEntity target) {
 		this.target = target;
+	}
+	
+	public AnimatedEntity getTarget() {
+		return target;
 	}
 
 	public void update(float delta, GameScreen screen) {
@@ -137,8 +143,7 @@ public abstract class AnimatedEntity implements Entity {
 		} else if (target == null || target == this) {
 			// update the current animation based on the maximal velocity
 			// component
-			currentAnim = getAnimation(getDominantDirection(velocity.x,
-					velocity.y));
+			direction = getDominantDirection(velocity.x, velocity.y);
 			state = State.Moving;
 		}
 
@@ -146,7 +151,7 @@ public abstract class AnimatedEntity implements Entity {
 		if (target != null && target != this) {
 			float dx = target.position.x - position.x;
 			float dy = target.position.y - position.y;
-			currentAnim = getAnimation(getDominantDirection(dx, dy));
+			direction = getDominantDirection(dx, dy);
 		}
 
 		// multiply by delta time so we know how far we go
@@ -251,10 +256,10 @@ public abstract class AnimatedEntity implements Entity {
 		TextureRegion frame = null;
 		switch (state) {
 		case Standing:
-			frame = currentAnim.getKeyFrames()[0];
+			frame = getAnimation(direction).getKeyFrames()[0];
 			break;
 		case Moving:
-			frame = currentAnim.getKeyFrame(stateTime);
+			frame = getAnimation(direction).getKeyFrame(stateTime);
 			break;
 		}
 
@@ -323,22 +328,11 @@ public abstract class AnimatedEntity implements Entity {
 		return height;
 	}
 
-	private TextureRegion[][] getRegions(String assetName) {
-		// load the character frames, split them, and assign them to
-		// Animations
-		if (!assetManager.isLoaded(assetName, Texture.class)) {
-			assetManager.load(assetName, Texture.class);
-			assetManager.finishLoading();
-		}
-		Texture playerTexture = assetManager.get(assetName, Texture.class);
-		return TextureRegion.split(playerTexture, 48, 48);
-	}
-
 	private Map<Direction, Animation> getAnimations(String assetName) {
 		Map<Direction, Animation> animations = new HashMap<Direction, Animation>();
 
 		// up, left, down, right
-		TextureRegion[][] regions = getRegions(assetName);
+		TextureRegion[][] regions = GameScreen.getRegions(assetName, 48, 48);
 		for (Direction d : Direction.values()) {
 			Animation anim = new Animation(0.15f, regions[d.ordinal()]);
 			anim.setPlayMode(Animation.PlayMode.LOOP_PINGPONG);

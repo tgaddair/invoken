@@ -32,6 +32,8 @@ import com.eldritch.invoken.actor.Npc;
 import com.eldritch.invoken.actor.Player;
 
 public class GameScreen extends AbstractScreen implements InputProcessor {
+	public static final AssetManager textureManager = new AssetManager();
+	
 	private static Pool<Rectangle> rectPool = new Pool<Rectangle>() {
 		@Override
 		protected Rectangle newObject() {
@@ -40,7 +42,6 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 	};
 
 	private Player player;
-	private AnimatedEntity selected = null;
 	private final List<AnimatedEntity> entities = new ArrayList<AnimatedEntity>();
 
 	private TiledMap map;
@@ -134,7 +135,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 
 		// render the player
 		for (AnimatedEntity actor : entities) {
-			if (actor == selected) {
+			if (actor == player.getTarget()) {
 				//Gdx.app.log(InvokenGame.LOG, "select");
 				drawCentered(selector, actor.getPosition());
 			}
@@ -188,11 +189,11 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 	@Override
 	public boolean keyUp(int keycode) {
 		switch (keycode) {
-		case Keys.SPACE:
-			player.toggleShield();
-			return true;
 		case Keys.NUM_1:
 			player.attack();
+			return true;
+		case Keys.NUM_2:
+			player.toggleShield();
 			return true;
 		default:
 			return false;
@@ -215,7 +216,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 		for (AnimatedEntity entity : entities) {
 			if (entity.contains(world.x, world.y)) {
 				// toggle selection
-				selected = selected != entity ? entity : null;
+				AnimatedEntity selected = player.getTarget() != entity ? entity : null;
 				player.select(selected);
 				return true;
 			}
@@ -236,5 +237,17 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 	@Override
 	public boolean scrolled(int amount) {
 		return false;
+	}
+	
+	
+	public static TextureRegion[][] getRegions(String assetName, int w, int h) {
+		// load the character frames, split them, and assign them to
+		// Animations
+		if (!textureManager.isLoaded(assetName, Texture.class)) {
+			textureManager.load(assetName, Texture.class);
+			textureManager.finishLoading();
+		}
+		Texture texture = textureManager.get(assetName, Texture.class);
+		return TextureRegion.split(texture, w, h);
 	}
 }
