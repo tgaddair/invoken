@@ -16,7 +16,7 @@ import com.eldritch.invoken.actor.ai.PatrolRoutine;
 import com.eldritch.invoken.actor.ai.Routine;
 import com.eldritch.invoken.screens.GameScreen;
 
-public class Npc extends Entity {
+public class Npc extends AnimatedEntity {
 	public static float WIDTH;
 	public static float HEIGHT;
 
@@ -58,7 +58,7 @@ public class Npc extends Entity {
 	@Override
 	protected void takeAction(float delta, GameScreen screen) {
 		if (routine.isFinished()) {
-			Gdx.app.log(InvokenGame.LOG, "FINISHED");
+			//Gdx.app.log(InvokenGame.LOG, "FINISHED");
 			Collections.shuffle(routines);
 			for (Routine r : routines) {
 				if (r.isValid()) {

@@ -5,14 +5,13 @@ import java.util.Map;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
-import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.eldritch.invoken.screens.GameScreen;
 
 /** The player character, has state and state time, */
-public class Player extends Entity {
+public class Player extends AnimatedEntity {
 	public static float WIDTH;
 	public static float HEIGHT;
 
@@ -43,32 +42,31 @@ public class Player extends Entity {
 	
 	public Player(int x, int y) {
 		super(animations.get(Direction.Down), x, y);
-		Gdx.input.setInputProcessor(new PlayerInputProcessor());
 	}
 	
 	@Override
 	protected void takeAction(float delta, GameScreen screen) {
 		if (Gdx.input.isKeyPressed(Keys.LEFT)
-				|| Gdx.input.isKeyPressed(Keys.A) || isTouched(0, 0.25f)) {
-			velocity.x = -Entity.MAX_VELOCITY;
+				|| Gdx.input.isKeyPressed(Keys.A)) {
+			velocity.x = -AnimatedEntity.MAX_VELOCITY;
 			setState(State.Walking);
 		}
 
 		if (Gdx.input.isKeyPressed(Keys.RIGHT)
-				|| Gdx.input.isKeyPressed(Keys.D) || isTouched(0.25f, 0.5f)) {
-			velocity.x = Entity.MAX_VELOCITY;
+				|| Gdx.input.isKeyPressed(Keys.D)) {
+			velocity.x = AnimatedEntity.MAX_VELOCITY;
 			setState(State.Walking);
 		}
 		
 		if (Gdx.input.isKeyPressed(Keys.UP)
-				|| Gdx.input.isKeyPressed(Keys.W) || isTouched(0.75f, 1.0f)) {
-			velocity.y = Entity.MAX_VELOCITY;
+				|| Gdx.input.isKeyPressed(Keys.W)) {
+			velocity.y = AnimatedEntity.MAX_VELOCITY;
 			setState(State.Walking);
 		}
 		
 		if (Gdx.input.isKeyPressed(Keys.DOWN)
-				|| Gdx.input.isKeyPressed(Keys.S) || isTouched(0.25f, 0.5f)) {
-			velocity.y = -Entity.MAX_VELOCITY;
+				|| Gdx.input.isKeyPressed(Keys.S)) {
+			velocity.y = -AnimatedEntity.MAX_VELOCITY;
 			setState(State.Walking);
 		}
 	}
@@ -87,9 +85,13 @@ public class Player extends Entity {
 	protected Animation getAnimation(Direction dir) {
 		return animations.get(dir);
 	}
+	
+	public void select(AnimatedEntity other) {
+		setTarget(other);
+	}
 
 	private boolean isTouched(float startX, float endX) {
-		// check if any finge is touch the area between startX and endX
+		// check if any finger is touch the area between startX and endX
 		// startX/endX are given between 0 (left edge of the screen) and 1
 		// (right edge of the screen)
 		for (int i = 0; i < 2; i++) {
@@ -99,52 +101,5 @@ public class Player extends Entity {
 			}
 		}
 		return false;
-	}
-	
-	class PlayerInputProcessor implements InputProcessor {
-		@Override
-		public boolean keyDown(int keycode) {
-			return false;
-		}
-
-		@Override
-		public boolean keyUp(int keycode) {
-			if (keycode == Keys.SPACE) {
-				toggleShield();
-				return true;
-			}
-			return false;
-		}
-
-		@Override
-		public boolean keyTyped(char character) {
-			return false;
-		}
-
-		@Override
-		public boolean touchDown(int screenX, int screenY, int pointer,
-				int button) {
-			return false;
-		}
-
-		@Override
-		public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-			return false;
-		}
-
-		@Override
-		public boolean touchDragged(int screenX, int screenY, int pointer) {
-			return false;
-		}
-
-		@Override
-		public boolean mouseMoved(int screenX, int screenY) {
-			return false;
-		}
-
-		@Override
-		public boolean scrolled(int amount) {
-			return false;
-		}
 	}
 }

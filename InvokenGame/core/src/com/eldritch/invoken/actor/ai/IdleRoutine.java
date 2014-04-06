@@ -1,13 +1,13 @@
 package com.eldritch.invoken.actor.ai;
 
-import com.eldritch.invoken.actor.Entity;
+import com.eldritch.invoken.actor.AnimatedEntity;
 
 public class IdleRoutine implements Routine {
-	private final Entity actor;
+	private final AnimatedEntity actor;
 	private final int duration;
 	private float elapsed = 0;
 	
-	public IdleRoutine(Entity actor) {
+	public IdleRoutine(AnimatedEntity actor) {
 		this.actor = actor;
 		this.duration = 3;
 	}

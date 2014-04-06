@@ -4,12 +4,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
@@ -17,25 +23,28 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
 import com.eldritch.invoken.InvokenGame;
-import com.eldritch.invoken.actor.Entity;
+import com.eldritch.invoken.actor.AnimatedEntity;
 import com.eldritch.invoken.actor.Npc;
 import com.eldritch.invoken.actor.Player;
 
-public class GameScreen extends AbstractScreen {
+public class GameScreen extends AbstractScreen implements InputProcessor {
 	private static Pool<Rectangle> rectPool = new Pool<Rectangle>() {
 		@Override
 		protected Rectangle newObject() {
 			return new Rectangle();
 		}
 	};
-	
+
 	private Player player;
-	private final List<Entity> actors = new ArrayList<Entity>();
+	private AnimatedEntity selected = null;
+	private final List<AnimatedEntity> entities = new ArrayList<AnimatedEntity>();
 
 	private TiledMap map;
+	private TextureRegion selector;
 	private OrthogonalTiledMapRenderer renderer;
 	private OrthographicCamera camera;
 	private AssetManager assetManager;
@@ -46,11 +55,11 @@ public class GameScreen extends AbstractScreen {
 	public GameScreen(InvokenGame game) {
 		super(game);
 	}
-	
+
 	public static Pool<Rectangle> getRectPool() {
 		return rectPool;
 	}
-	
+
 	public Array<Rectangle> getTiles() {
 		return tiles;
 	}
@@ -85,15 +94,20 @@ public class GameScreen extends AbstractScreen {
 
 		float unitScale = 1 / 32f;
 		renderer = new OrthogonalTiledMapRenderer(map, unitScale);
+		
+		// load the selector
+		selector = new TextureRegion(new Texture("sprite/selection.png"));
 
 		// create the Player we want to move around the world
 		player = new Player(20, 15);
 		addActor(player);
 		addActor(new Npc(25, 15));
+		
+		Gdx.input.setInputProcessor(this);
 	}
-	
-	private void addActor(Entity actor) {
-		actors.add(actor);
+
+	private void addActor(AnimatedEntity actor) {
+		entities.add(actor);
 	}
 
 	@Override
@@ -103,7 +117,7 @@ public class GameScreen extends AbstractScreen {
 
 		// update the player (process input, collision detection, position
 		// update)
-		for (Entity actor : actors) {
+		for (AnimatedEntity actor : entities) {
 			actor.update(delta, this);
 		}
 
@@ -119,7 +133,11 @@ public class GameScreen extends AbstractScreen {
 		renderer.render();
 
 		// render the player
-		for (Entity actor : actors) {
+		for (AnimatedEntity actor : entities) {
+			if (actor == selected) {
+				//Gdx.app.log(InvokenGame.LOG, "select");
+				drawCentered(selector, actor.getPosition());
+			}
 			actor.render(delta, renderer);
 		}
 
@@ -128,12 +146,24 @@ public class GameScreen extends AbstractScreen {
 		batch.end();
 	}
 	
-	public List<Entity> getActors() {
-		return actors;
+	private void drawCentered(TextureRegion region, Vector2 position) {
+		float w = 1 / 32f * region.getRegionWidth();
+		float h = 1 / 32f * region.getRegionHeight();
+		
+		Batch batch = renderer.getSpriteBatch();
+		batch.setColor(Color.GREEN);
+		batch.begin();
+		batch.draw(region, position.x - w / 2, position.y - h / 2 - 0.2f, w, h);
+		batch.end();
+		batch.setColor(Color.WHITE);
 	}
 
-	public Array<Rectangle> getTiles(int startX, int startY, int endX, int endY,
-			Array<Rectangle> tiles) {
+	public List<AnimatedEntity> getActors() {
+		return entities;
+	}
+
+	public Array<Rectangle> getTiles(int startX, int startY, int endX,
+			int endY, Array<Rectangle> tiles) {
 		TiledMapTileLayer layer = (TiledMapTileLayer) map.getLayers().get(1);
 		rectPool.freeAll(tiles);
 		tiles.clear();
@@ -148,5 +178,58 @@ public class GameScreen extends AbstractScreen {
 			}
 		}
 		return tiles;
+	}
+
+	@Override
+	public boolean keyDown(int keycode) {
+		return false;
+	}
+
+	@Override
+	public boolean keyUp(int keycode) {
+		if (keycode == Keys.SPACE) {
+			player.toggleShield();
+			return true;
+		}
+		return false;
+	}
+
+	@Override
+	public boolean keyTyped(char character) {
+		return false;
+	}
+
+	@Override
+	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+		return false;
+	}
+
+	@Override
+	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+		Vector3 world = camera.unproject(new Vector3(screenX, screenY, 0));
+		for (AnimatedEntity entity : entities) {
+			if (entity.contains(world.x, world.y)) {
+				// toggle selection
+				selected = selected != entity ? entity : null;
+				player.select(selected);
+				return true;
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public boolean touchDragged(int screenX, int screenY, int pointer) {
+		return false;
+	}
+
+	@Override
+	public boolean mouseMoved(int screenX, int screenY) {
+		return false;
+	}
+
+	@Override
+	public boolean scrolled(int amount) {
+		return false;
 	}
 }
