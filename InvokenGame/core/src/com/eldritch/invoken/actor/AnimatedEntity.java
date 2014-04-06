@@ -52,6 +52,8 @@ public abstract class AnimatedEntity implements Entity {
 	Direction direction = Direction.Down;
 	private final Map<Activity, Map<Direction, Animation>> animations =
 			new HashMap<Activity, Map<Direction, Animation>>();
+	private final Animation deathAnimation;
+	float deathTime = 0;
 	float stateTime = 0;
 	
 	private final LinkedList<Action> actions = new LinkedList<Action>();
@@ -61,11 +63,16 @@ public abstract class AnimatedEntity implements Entity {
 	private Shotgun weapon;
 	private AnimatedEntity target;
 	private Shield effect = null;
+	
+	private int health;
 
 	public AnimatedEntity(String assetPath, int x, int y) {
 		setPosition(x, y);
 		animations.put(Activity.Explore, getAnimations(assetPath + "/walk.png"));
 		animations.put(Activity.Combat, getAnimations(assetPath + "/shoot.png"));
+		
+		deathAnimation = getAnimation(assetPath + "/hurt.png");
+		deathAnimation.setPlayMode(Animation.PlayMode.NORMAL);
 
 		// figure out the width and height of the player for collision
 		// detection and rendering by converting a player frames pixel
@@ -75,6 +82,7 @@ public abstract class AnimatedEntity implements Entity {
 		
 		// for debug purposes
 		weapon = new Shotgun(this);
+		health = 5;
 	}
 	
 	public void attack() {
@@ -85,7 +93,12 @@ public abstract class AnimatedEntity implements Entity {
 	}
 	
 	public void damage(int value) {
+		health -= value;
 		addEffect(new Bleed(this));
+	}
+	
+	public boolean isAlive() {
+		return health > 0;
 	}
 
 	public void toggleShield() {
@@ -148,14 +161,6 @@ public abstract class AnimatedEntity implements Entity {
 		if (delta == 0)
 			return;
 		stateTime += delta;
-
-		// handle the action queue
-		if (action == null || action.isFinished()) {
-			action = actions.poll();
-			if (action != null) {
-				action.apply();
-			}
-		}
 		
 		// apply all active effects, remove any that are finished
 		Iterator<Effect> it = effects.iterator();
@@ -168,8 +173,18 @@ public abstract class AnimatedEntity implements Entity {
 			}
 		}
 		
-		// take conscious action
-		takeAction(delta, screen);
+		if (isAlive()) {
+			// handle the action queue
+			if (action == null || action.isFinished()) {
+				action = actions.poll();
+				if (action != null) {
+					action.apply();
+				}
+			}
+			
+			// take conscious action
+			takeAction(delta, screen);
+		}
 
 		// clamp the velocity to the maximum
 		if (Math.abs(velocity.x) > MAX_VELOCITY) {
@@ -301,16 +316,22 @@ public abstract class AnimatedEntity implements Entity {
 		// based on the actor state, get the animation frame
 		TextureRegion frame = null;
 		
-		Animation animation = getAnimation(direction);
 		int index = 0;
-		switch (state) {
-		case Standing:
-			frame = animation.getKeyFrames()[0];
-			break;
-		case Moving:
-			frame = animation.getKeyFrame(stateTime);
-			index = animation.getKeyFrameIndex(stateTime);
-			break;
+		if (isAlive()) {
+			switch (state) {
+			case Standing:
+				frame = getAnimation(direction).getKeyFrames()[0];
+				break;
+			case Moving: {
+				Animation animation = getAnimation(direction);
+				frame = animation.getKeyFrame(stateTime);
+				index = animation.getKeyFrameIndex(stateTime);
+				break;
+			}
+			}
+		} else {
+			deathTime += delta;
+			frame = deathAnimation.getKeyFrame(deathTime);
 		}
 		
 		// draw the actor, depending on the current velocity
@@ -322,13 +343,16 @@ public abstract class AnimatedEntity implements Entity {
 				/ 2, getWidth(), getHeight());
 		batch.end();
 		
-		if (activity == Activity.Combat && weapon != null) {
-			weapon.render(index, renderer);
-		}
-		
-		// render the current action if one exists
-		if (action != null) {
-			action.render(delta, renderer);
+		if (isAlive()) {
+			// only take actions when alive
+			if (activity == Activity.Combat && weapon != null) {
+				weapon.render(index, renderer);
+			}
+			
+			// render the current action if one exists
+			if (action != null) {
+				action.render(delta, renderer);
+			}
 		}
 		
 		// render all unfinished effects
@@ -392,6 +416,12 @@ public abstract class AnimatedEntity implements Entity {
 
 	protected float getHeight() {
 		return height;
+	}
+	
+	public static Animation getAnimation(String assetName) {
+		TextureRegion[][] regions = GameScreen.getRegions(assetName, 48, 48);
+		Animation anim = new Animation(0.15f, regions[0]);
+		return anim;
 	}
 
 	public static Map<Direction, Animation> getAnimations(String assetName) {

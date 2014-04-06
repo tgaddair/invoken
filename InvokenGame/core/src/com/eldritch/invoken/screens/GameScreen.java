@@ -137,7 +137,12 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 		for (AnimatedEntity actor : entities) {
 			if (actor == player.getTarget()) {
 				//Gdx.app.log(InvokenGame.LOG, "select");
-				drawCentered(selector, actor.getPosition());
+				Color color = new Color(0x00FA9AFF);
+				if (!actor.isAlive()) {
+					// dark slate blue
+					color = new Color(0x483D8BFF);
+				}
+				drawCentered(selector, actor.getPosition(), color);
 			}
 			actor.render(delta, renderer);
 		}
@@ -147,12 +152,12 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 		batch.end();
 	}
 	
-	private void drawCentered(TextureRegion region, Vector2 position) {
+	private void drawCentered(TextureRegion region, Vector2 position, Color color) {
 		float w = 1 / 32f * region.getRegionWidth();
 		float h = 1 / 32f * region.getRegionHeight();
 		
 		Batch batch = renderer.getSpriteBatch();
-		batch.setColor(Color.GREEN);
+		batch.setColor(color);
 		batch.begin();
 		batch.draw(region, position.x - w / 2, position.y - h / 2 - 0.2f, w, h);
 		batch.end();
