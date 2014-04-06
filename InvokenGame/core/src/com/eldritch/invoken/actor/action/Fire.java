@@ -1,4 +1,4 @@
-package com.eldritch.invoken.effects;
+package com.eldritch.invoken.actor.action;
 
 import java.util.HashMap;
 import java.util.Map;
