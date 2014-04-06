@@ -1,6 +1,8 @@
 package com.eldritch.invoken.actor;
 
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import com.badlogic.gdx.Gdx;
@@ -13,6 +15,10 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.eldritch.invoken.InvokenGame;
+import com.eldritch.invoken.actor.action.Action;
+import com.eldritch.invoken.actor.action.Fire;
+import com.eldritch.invoken.effects.Bleed;
+import com.eldritch.invoken.effects.Effect;
 import com.eldritch.invoken.effects.Shield;
 import com.eldritch.invoken.screens.GameScreen;
 
@@ -45,6 +51,10 @@ public abstract class AnimatedEntity implements Entity {
 	private final Map<Activity, Map<Direction, Animation>> animations =
 			new HashMap<Activity, Map<Direction, Animation>>();
 	float stateTime = 0;
+	
+	private final LinkedList<Action> actions = new LinkedList<Action>();
+	private final List<Effect> effects = new LinkedList<Effect>();
+	private Action action = null;
 
 	private AnimatedEntity target;
 	private Shield effect = null;
@@ -64,7 +74,13 @@ public abstract class AnimatedEntity implements Entity {
 	public void attack() {
 		if (target != null && target != this) {
 			activity = Activity.Combat;
+			addAction(new Fire(this));
 		}
+	}
+	
+	
+	public void damage(int value) {
+		addEffect(new Bleed());
 	}
 
 	public void toggleShield() {
@@ -73,6 +89,14 @@ public abstract class AnimatedEntity implements Entity {
 		} else {
 			effect = null;
 		}
+	}
+	
+	private void addAction(Action action) {
+		actions.add(action);
+	}
+	
+	private void addEffect(Effect effect) {
+		effects.add(effect);
 	}
 
 	public void addEffect(Shield effect) {
@@ -120,10 +144,15 @@ public abstract class AnimatedEntity implements Entity {
 			return;
 		stateTime += delta;
 
+		// handle the action queue
+		if (action == null || action.isFinished()) {
+			action = actions.poll();
+			if (action != null) {
+				action.apply();
+			}
+		}
+		
 		takeAction(delta, screen);
-
-		// apply gravity if we are falling
-		// velocity.add(0, GRAVITY);
 
 		// clamp the velocity to the maximum
 		if (Math.abs(velocity.x) > MAX_VELOCITY) {
@@ -271,6 +300,11 @@ public abstract class AnimatedEntity implements Entity {
 		batch.draw(frame, position.x - getWidth() / 2, position.y - getHeight()
 				/ 2, getWidth(), getHeight());
 		batch.end();
+		
+		// render the current action if one exists
+		if (action != null) {
+			action.render(delta, renderer);
+		}
 
 		if (effect != null) {
 			effect.render(delta, renderer);

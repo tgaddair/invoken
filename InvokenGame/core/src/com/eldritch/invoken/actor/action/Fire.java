@@ -12,7 +12,7 @@ import com.eldritch.invoken.actor.AnimatedEntity;
 import com.eldritch.invoken.actor.AnimatedEntity.Direction;
 import com.eldritch.invoken.screens.GameScreen;
 
-public class Fire {
+public class Fire implements Action {
 	private final float width;
 	private final float height;
 	private static Map<Direction, Animation> animations = new HashMap<Direction, Animation>();
@@ -24,7 +24,7 @@ public class Fire {
 		this.actor = actor;
 		
 		TextureRegion[][] regions = GameScreen.getRegions(
-				"sprite/effects/muzzle-flash.png", 96, 96);
+				"sprite/effects/muzzle-flash.png", 48, 48);
 		for (Direction d : Direction.values()) {
 			Animation anim = new Animation(0.15f, regions[d.ordinal()]);
 			anim.setPlayMode(Animation.PlayMode.NORMAL);
@@ -35,6 +35,7 @@ public class Fire {
 		height = 1 / 32f * regions[0][0].getRegionHeight();
 	}
 	
+	@Override
 	public void render(float delta, OrthogonalTiledMapRenderer renderer) {
 		stateTime += delta;
 		TextureRegion frame = getAnimation().getKeyFrame(stateTime);
@@ -44,6 +45,19 @@ public class Fire {
 		batch.begin();
 		batch.draw(frame, position.x - width / 2, position.y - height / 2, width, height);
 		batch.end();
+	}
+
+	@Override
+	public boolean isFinished() {
+		return getAnimation().isAnimationFinished(stateTime);
+	}
+
+	@Override
+	public void apply() {
+		AnimatedEntity target = actor.getTarget();
+		if (target != null) {
+			target.damage(1);
+		}
 	}
 	
 	private Animation getAnimation() {
