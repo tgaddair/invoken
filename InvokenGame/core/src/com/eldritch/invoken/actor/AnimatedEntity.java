@@ -17,6 +17,7 @@ import com.badlogic.gdx.utils.Array;
 import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.actor.action.Action;
 import com.eldritch.invoken.actor.action.Fire;
+import com.eldritch.invoken.actor.weapon.Shotgun;
 import com.eldritch.invoken.effects.Bleed;
 import com.eldritch.invoken.effects.Effect;
 import com.eldritch.invoken.effects.Shield;
@@ -56,6 +57,7 @@ public abstract class AnimatedEntity implements Entity {
 	private final List<Effect> effects = new LinkedList<Effect>();
 	private Action action = null;
 
+	private Shotgun weapon;
 	private AnimatedEntity target;
 	private Shield effect = null;
 
@@ -69,6 +71,9 @@ public abstract class AnimatedEntity implements Entity {
 		// size into world units (1 unit == 32 pixels)
 		width = 1 / 32f * 48; // regions[0][0].getRegionWidth();
 		height = 1 / 32f * 48; // regions[0][0].getRegionHeight();
+		
+		// for debug purposes
+		weapon = new Shotgun(this);
 	}
 	
 	public void attack() {
@@ -77,7 +82,6 @@ public abstract class AnimatedEntity implements Entity {
 			addAction(new Fire(this));
 		}
 	}
-	
 	
 	public void damage(int value) {
 		addEffect(new Bleed());
@@ -283,15 +287,19 @@ public abstract class AnimatedEntity implements Entity {
 	public void render(float delta, OrthogonalTiledMapRenderer renderer) {
 		// based on the actor state, get the animation frame
 		TextureRegion frame = null;
+		
+		Animation animation = getAnimation(direction);
+		int index = 0;
 		switch (state) {
 		case Standing:
-			frame = getAnimation(direction).getKeyFrames()[0];
+			frame = animation.getKeyFrames()[0];
 			break;
 		case Moving:
-			frame = getAnimation(direction).getKeyFrame(stateTime);
+			frame = animation.getKeyFrame(stateTime);
+			index = animation.getKeyFrameIndex(stateTime);
 			break;
 		}
-
+		
 		// draw the actor, depending on the current velocity
 		// on the x-axis, draw the actor facing either right
 		// or left
@@ -300,6 +308,10 @@ public abstract class AnimatedEntity implements Entity {
 		batch.draw(frame, position.x - getWidth() / 2, position.y - getHeight()
 				/ 2, getWidth(), getHeight());
 		batch.end();
+		
+		if (activity == Activity.Combat && weapon != null) {
+			weapon.render(index, renderer);
+		}
 		
 		// render the current action if one exists
 		if (action != null) {
@@ -362,7 +374,7 @@ public abstract class AnimatedEntity implements Entity {
 		return height;
 	}
 
-	private Map<Direction, Animation> getAnimations(String assetName) {
+	public static Map<Direction, Animation> getAnimations(String assetName) {
 		Map<Direction, Animation> animations = new HashMap<Direction, Animation>();
 
 		// up, left, down, right

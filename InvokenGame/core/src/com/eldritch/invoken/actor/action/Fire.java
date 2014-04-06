@@ -26,7 +26,7 @@ public class Fire implements Action {
 		TextureRegion[][] regions = GameScreen.getRegions(
 				"sprite/effects/muzzle-flash.png", 48, 48);
 		for (Direction d : Direction.values()) {
-			Animation anim = new Animation(0.15f, regions[d.ordinal()]);
+			Animation anim = new Animation(0.05f, regions[d.ordinal()]);
 			anim.setPlayMode(Animation.PlayMode.NORMAL);
 			animations.put(d, anim);
 		}
