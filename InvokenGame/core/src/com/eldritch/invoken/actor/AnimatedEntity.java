@@ -1,6 +1,11 @@
 package com.eldritch.invoken.actor;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -13,32 +18,57 @@ import com.eldritch.invoken.effects.Shield;
 import com.eldritch.invoken.screens.GameScreen;
 
 public abstract class AnimatedEntity implements Entity {
+	static AssetManager assetManager = new AssetManager();
 	static float MAX_VELOCITY = 10f;
 	static float JUMP_VELOCITY = 40f;
 	static float DAMPING = 0.87f;
-	
+
 	enum Direction {
 		Up, Left, Down, Right
 	}
 
 	enum State {
-		Standing, Walking, Jumping
+		Standing, Moving
 	}
+
+	enum Activity {
+		Explore, Combat
+	}
+
+	private final float width;
+	private final float height;
 
 	final Vector2 position = new Vector2();
 	final Vector2 velocity = new Vector2();
-	State state = State.Walking;
+	State state = State.Moving;
+	Activity activity = Activity.Explore;
+	private final Map<Activity, Map<Direction, Animation>> animations =
+			new HashMap<Activity, Map<Direction, Animation>>();
 	Animation currentAnim = null;
 	float stateTime = 0;
-	
+
 	private AnimatedEntity target;
 	private Shield effect = null;
-	
-	public AnimatedEntity(Animation animation, int x, int y) {
-		currentAnim = animation;
+
+	public AnimatedEntity(String assetPath, int x, int y) {
 		setPosition(x, y);
+		animations.put(Activity.Explore, getAnimations(assetPath + "/walk.png"));
+		animations.put(Activity.Combat, getAnimations(assetPath + "/shoot.png"));
+		currentAnim = getAnimation(Direction.Down);
+
+		// figure out the width and height of the player for collision
+		// detection and rendering by converting a player frames pixel
+		// size into world units (1 unit == 32 pixels)
+		width = 1 / 32f * 48; // regions[0][0].getRegionWidth();
+		height = 1 / 32f * 48; // regions[0][0].getRegionHeight();
 	}
 	
+	public void attack() {
+		if (target != null && target != this) {
+			activity = Activity.Combat;
+		}
+	}
+
 	public void toggleShield() {
 		if (effect == null) {
 			addEffect(new Shield(this));
@@ -46,31 +76,35 @@ public abstract class AnimatedEntity implements Entity {
 			effect = null;
 		}
 	}
-	
+
 	public void addEffect(Shield effect) {
 		this.effect = effect;
 	}
-	
+
 	public void setPosition(float x, float y) {
 		position.set(x, y);
 	}
-	
+
 	public Vector2 getPosition() {
 		return position;
 	}
-	
+
 	public void setVelocity(float x, float y) {
 		velocity.set(x, y);
 	}
-	
+
 	public Vector2 getVelocity() {
 		return velocity;
 	}
-	
+
 	public float getMaxVelocity() {
 		return MAX_VELOCITY;
 	}
-	
+
+	public Animation getAnimation(Direction direction) {
+		return animations.get(activity).get(direction);
+	}
+
 	protected void setTarget(AnimatedEntity target) {
 		this.target = target;
 	}
@@ -89,7 +123,7 @@ public abstract class AnimatedEntity implements Entity {
 		if (Math.abs(velocity.x) > MAX_VELOCITY) {
 			velocity.x = Math.signum(velocity.x) * MAX_VELOCITY;
 		}
-		
+
 		if (Math.abs(velocity.y) > MAX_VELOCITY) {
 			velocity.y = Math.signum(velocity.y) * MAX_VELOCITY;
 		}
@@ -100,19 +134,20 @@ public abstract class AnimatedEntity implements Entity {
 			velocity.x = 0;
 			velocity.y = 0;
 			state = State.Standing;
-		} else if (target == null) {
-			// update the current animation based on the maximal velocity component
-			currentAnim = getAnimation(getDominantDirection(velocity.x, velocity.y));
-			state = State.Walking;
+		} else if (target == null || target == this) {
+			// update the current animation based on the maximal velocity
+			// component
+			currentAnim = getAnimation(getDominantDirection(velocity.x,
+					velocity.y));
+			state = State.Moving;
 		}
-		
+
 		// do this separately so we can still get the standing state
-		if (target != null) {
+		if (target != null && target != this) {
 			float dx = target.position.x - position.x;
 			float dy = target.position.y - position.y;
 			currentAnim = getAnimation(getDominantDirection(dx, dy));
-		} 
-		
+		}
 
 		// multiply by delta time so we know how far we go
 		// in this frame
@@ -123,13 +158,13 @@ public abstract class AnimatedEntity implements Entity {
 		// it's
 		// right bounding box edge, otherwise check the ones to the left
 		Array<Rectangle> actorRects = getCollisionActors(screen);
-		
+
 		float relativeX = position.x - getWidth() / 2;
 		float relativeY = position.y - getWidth() / 2;
-		
+
 		Rectangle actorRect = GameScreen.getRectPool().obtain();
 		getBoundingBox(actorRect);
-		
+
 		int startX, startY, endX, endY;
 		startX = endX = (int) (relativeX + getWidth() + velocity.x);
 		if (velocity.x > 0) {
@@ -140,11 +175,11 @@ public abstract class AnimatedEntity implements Entity {
 		startY = (int) (relativeY);
 		endY = (int) (relativeY + getHeight());
 		screen.getTiles(startX, startY, endX, endY, screen.getTiles());
-		
+
 		Array<Rectangle> rects = new Array<Rectangle>();
 		rects.addAll(screen.getTiles());
 		rects.addAll(actorRects);
-		
+
 		float oldX = actorRect.x;
 		actorRect.x += velocity.x;
 		for (Rectangle tile : rects) {
@@ -165,18 +200,18 @@ public abstract class AnimatedEntity implements Entity {
 		endX = (int) (relativeX + getWidth());
 		screen.getTiles(startX, startY, endX, endY, screen.getTiles());
 		actorRect.y += velocity.y;
-		
+
 		rects.clear();
 		rects.addAll(screen.getTiles());
 		rects.addAll(actorRects);
-		
+
 		for (Rectangle tile : rects) {
 			if (actorRect.overlaps(tile)) {
 				velocity.y = 0;
 				break;
 			}
 		}
-		//actorRect.y = relativeY;
+		// actorRect.y = relativeY;
 		GameScreen.getRectPool().free(actorRect);
 		GameScreen.getRectPool().freeAll(actorRects);
 
@@ -190,7 +225,7 @@ public abstract class AnimatedEntity implements Entity {
 		velocity.x *= DAMPING;
 		velocity.y *= DAMPING;
 	}
-	
+
 	private Direction getDominantDirection(float x, float y) {
 		if (Math.abs(x) > Math.abs(y)) {
 			if (x < 0) {
@@ -218,74 +253,98 @@ public abstract class AnimatedEntity implements Entity {
 		case Standing:
 			frame = currentAnim.getKeyFrames()[0];
 			break;
-		case Walking:
+		case Moving:
 			frame = currentAnim.getKeyFrame(stateTime);
 			break;
-		case Jumping:
-			//frame = jump.getKeyFrame(stateTime);
-			break;
 		}
-		
+
 		// draw the actor, depending on the current velocity
 		// on the x-axis, draw the actor facing either right
 		// or left
 		Batch batch = renderer.getSpriteBatch();
 		batch.begin();
-		batch.draw(frame,
-				position.x - getWidth() / 2,
-				position.y - getHeight() / 2,
-				getWidth(), getHeight());
+		batch.draw(frame, position.x - getWidth() / 2, position.y - getHeight()
+				/ 2, getWidth(), getHeight());
 		batch.end();
-		
+
 		if (effect != null) {
 			effect.render(delta, renderer);
 		}
 	}
-	
+
 	public Array<Rectangle> getCollisionActors(GameScreen screen) {
 		Array<Rectangle> rects = new Array<Rectangle>();
 		for (AnimatedEntity other : screen.getActors()) {
-			if (other == this) continue;
-			
+			if (other == this)
+				continue;
+
 			// avoid sqrt because it is relatively expensive and unnecessary
 			float a = position.x - other.position.x;
 			float b = position.y - other.position.y;
 			float distance = a * a + b * b;
-			
+
 			// our tolerance is the combined radii of both actors
 			float w = getWidth() / 2 + other.getWidth() / 2;
 			float h = getHeight() / 2 + other.getHeight() / 2;
 			float tol = w * w + h * h;
-			
+
 			if (distance <= tol) {
-				rects.add(other.getBoundingBox(GameScreen.getRectPool().obtain()));
+				rects.add(other.getBoundingBox(GameScreen.getRectPool()
+						.obtain()));
 			}
 		}
 		return rects;
 	}
-	
+
 	public Rectangle getBoundingBox(Rectangle rect) {
-		rect.set(position.x - getWidth() / 8,
-				position.y - getHeight() / 2, getWidth() / 4, getHeight() / 4);
+		rect.set(position.x - getWidth() / 8, position.y - getHeight() / 2,
+				getWidth() / 4, getHeight() / 4);
 		return rect;
 	}
-	
+
 	public boolean contains(float x, float y) {
 		return x >= position.x - getWidth() / 2
 				&& x <= position.x + getWidth() / 2
 				&& y >= position.y - getHeight() / 2
 				&& y <= position.y + getHeight() / 2;
 	}
-	
+
 	protected void setState(State state) {
 		this.state = state;
 	}
-	
+
 	protected abstract void takeAction(float delta, GameScreen screen);
-	
-	protected abstract float getWidth();
-	
-	protected abstract float getHeight();
-	
-	protected abstract Animation getAnimation(Direction dir);
+
+	protected float getWidth() {
+		return width;
+	}
+
+	protected float getHeight() {
+		return height;
+	}
+
+	private TextureRegion[][] getRegions(String assetName) {
+		// load the character frames, split them, and assign them to
+		// Animations
+		if (!assetManager.isLoaded(assetName, Texture.class)) {
+			assetManager.load(assetName, Texture.class);
+			assetManager.finishLoading();
+		}
+		Texture playerTexture = assetManager.get(assetName, Texture.class);
+		return TextureRegion.split(playerTexture, 48, 48);
+	}
+
+	private Map<Direction, Animation> getAnimations(String assetName) {
+		Map<Direction, Animation> animations = new HashMap<Direction, Animation>();
+
+		// up, left, down, right
+		TextureRegion[][] regions = getRegions(assetName);
+		for (Direction d : Direction.values()) {
+			Animation anim = new Animation(0.15f, regions[d.ordinal()]);
+			anim.setPlayMode(Animation.PlayMode.LOOP_PINGPONG);
+			animations.put(d, anim);
+		}
+
+		return animations;
+	}
 }

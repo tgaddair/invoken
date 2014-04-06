@@ -187,11 +187,16 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 
 	@Override
 	public boolean keyUp(int keycode) {
-		if (keycode == Keys.SPACE) {
+		switch (keycode) {
+		case Keys.SPACE:
 			player.toggleShield();
 			return true;
+		case Keys.NUM_1:
+			player.attack();
+			return true;
+		default:
+			return false;
 		}
-		return false;
 	}
 
 	@Override
