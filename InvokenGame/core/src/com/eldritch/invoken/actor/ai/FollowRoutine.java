@@ -11,23 +11,19 @@ public class FollowRoutine implements Routine {
 	/** cannot stray too far from the origin location, or we're wandering, not patrolling */
 	private final int maxDistance; // from origin
 	private final float maxVelocity;
-	private final float duration; // before we update our destination
-	private float elapsed;
 	
 	/** how long we move in a single direction before turning */ 
 	private float xVelocity;
 	private float yVelocity;
 	
 	public FollowRoutine(Npc npc) {
-		this(npc, npc.getMaxVelocity() * 0.8f, 3, 0.1f);
+		this(npc, npc.getMaxVelocity() * 0.8f, 3);
 	}
 	
-	public FollowRoutine(Npc npc, float maxVelocity, int maxDistance, float duration) {
+	public FollowRoutine(Npc npc, float maxVelocity, int maxDistance) {
 		this.npc = npc;
 		this.maxDistance = maxDistance;
 		this.maxVelocity = maxVelocity;
-		this.duration = duration;
-		elapsed = duration;
 	}
 	
 	@Override
@@ -42,10 +38,7 @@ public class FollowRoutine implements Routine {
 	
 	@Override
 	public void takeAction(float delta) {
-		elapsed += delta;
-		if (!hasStrayed()) {
-			xVelocity = yVelocity = 0;
-		} else {
+		if (hasStrayed()) {
 			// roughly move towards the origin to get us back on track
 			Vector2 position = npc.getPosition();
 			Vector2 target = getTarget();
@@ -62,6 +55,8 @@ public class FollowRoutine implements Routine {
 			} else {
 				yVelocity = Math.signum(dy) * maxVelocity;
 			}
+		} else {
+			xVelocity = yVelocity = 0;
 		}
 		
 		resetVelocity();
