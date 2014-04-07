@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.actor.Npc;
+import com.eldritch.invoken.screens.GameScreen;
 
 public class FollowRoutine implements Routine {
 	private final Npc npc;
@@ -37,7 +38,7 @@ public class FollowRoutine implements Routine {
 	}
 	
 	@Override
-	public void takeAction(float delta) {
+	public void takeAction(float delta, GameScreen screen) {
 		if (hasStrayed()) {
 			// roughly move towards the origin to get us back on track
 			Vector2 position = npc.getPosition();
@@ -54,6 +55,21 @@ public class FollowRoutine implements Routine {
 				xVelocity = Math.signum(dx) * maxVelocity;
 			} else {
 				yVelocity = Math.signum(dy) * maxVelocity;
+			}
+			
+			// check that the tile immediately adjacent in the chosen direction is not an obstacle
+			int x1 = (int) npc.getX1();
+			int y1 = (int) npc.getY1();
+			if (Math.abs(xVelocity) != 0) {
+				if (screen.isObstacle((int) (x1 + Math.signum(xVelocity)), y1)) {
+					xVelocity = 0;
+					yVelocity = Math.signum(dy) * maxVelocity;
+				}
+			} else if (Math.abs(yVelocity) != 0) {
+				if (screen.isObstacle(x1, (int) (y1 + Math.signum(yVelocity)))) {
+					xVelocity = Math.signum(dx) * maxVelocity;
+					yVelocity = 0;
+				}
 			}
 		} else {
 			xVelocity = yVelocity = 0;

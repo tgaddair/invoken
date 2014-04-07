@@ -37,7 +37,7 @@ public class Npc extends AnimatedEntity {
 				}
 			}
 		}
-		routine.takeAction(delta);
+		routine.takeAction(delta, screen);
 	}
 	
 	@Override

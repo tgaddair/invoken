@@ -247,8 +247,8 @@ public abstract class AnimatedEntity implements Entity {
 		// right bounding box edge, otherwise check the ones to the left
 		Array<Rectangle> actorRects = getCollisionActors(screen);
 
-		float relativeX = position.x - getWidth() / 2;
-		float relativeY = position.y - getWidth() / 2;
+		float relativeX = getX1();
+		float relativeY = getY1();
 
 		Rectangle actorRect = GameScreen.getRectPool().obtain();
 		getBoundingBox(actorRect);
@@ -279,11 +279,7 @@ public abstract class AnimatedEntity implements Entity {
 		actorRect.x = oldX;
 
 		// always check collisions with the bottom of the bounding box
-		if (velocity.y > 0) {
-			startX = endX = (int) (relativeY + getHeight() + velocity.y);
-		} else {
-			startY = endY = (int) (relativeY + velocity.y);
-		}
+		startY = endY = (int) (relativeY + velocity.y);
 		startX = (int) (relativeX);
 		endX = (int) (relativeX + getWidth());
 		screen.getTiles(startX, startY, endX, endY, screen.getTiles());
@@ -312,6 +308,14 @@ public abstract class AnimatedEntity implements Entity {
 		// walk infinitely once a key was pressed
 		velocity.x *= DAMPING;
 		velocity.y *= DAMPING;
+	}
+	
+	public float getX1() {
+		return position.x - getWidth() / 2; 
+	}
+	
+	public float getY1() {
+		return position.y - getWidth() / 2; 
 	}
 
 	private Direction getDominantDirection(float x, float y) {

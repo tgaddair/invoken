@@ -167,6 +167,11 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 	public List<AnimatedEntity> getActors() {
 		return entities;
 	}
+	
+	public boolean isObstacle(int x, int y) {
+		TiledMapTileLayer layer = (TiledMapTileLayer) map.getLayers().get(1);
+		return layer.getCell(x, y) != null;
+	}
 
 	public Array<Rectangle> getTiles(int startX, int startY, int endX,
 			int endY, Array<Rectangle> tiles) {

@@ -2,6 +2,7 @@ package com.eldritch.invoken.actor.ai;
 
 import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.actor.AnimatedEntity;
+import com.eldritch.invoken.screens.GameScreen;
 
 public class PatrolRoutine implements Routine {
 	private final AnimatedEntity actor;
@@ -40,7 +41,7 @@ public class PatrolRoutine implements Routine {
 	}
 	
 	@Override
-	public void takeAction(float delta) {
+	public void takeAction(float delta, GameScreen screen) {
 		// try to move in some direction until time is up or we hit an obstacle
 		Vector2 velocity = actor.getVelocity();
 		if (velocity.isZero() || elapsed >= duration) {

@@ -1,6 +1,7 @@
 package com.eldritch.invoken.actor.ai;
 
 import com.eldritch.invoken.actor.AnimatedEntity;
+import com.eldritch.invoken.screens.GameScreen;
 
 public class IdleRoutine implements Routine {
 	private final AnimatedEntity actor;
@@ -23,7 +24,7 @@ public class IdleRoutine implements Routine {
 	}
 
 	@Override
-	public void takeAction(float delta) {
+	public void takeAction(float delta, GameScreen screen) {
 		if (isFinished()) {
 			elapsed = 0;
 		}
