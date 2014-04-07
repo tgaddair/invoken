@@ -36,7 +36,7 @@ public class PatrolRoutine implements Routine {
 	
 	@Override
 	public boolean isValid() {
-		return true;
+		return Math.random() < 0.5;
 	}
 	
 	@Override

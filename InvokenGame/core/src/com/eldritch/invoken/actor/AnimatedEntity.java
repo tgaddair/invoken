@@ -1,5 +1,6 @@
 package com.eldritch.invoken.actor;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -59,11 +60,14 @@ public abstract class AnimatedEntity implements Entity {
 	private final LinkedList<Action> actions = new LinkedList<Action>();
 	private final List<Effect> effects = new LinkedList<Effect>();
 	private Action action = null;
+	
+	private final List<AnimatedEntity> followers = new ArrayList<AnimatedEntity>();
 
 	private Shotgun weapon;
 	private AnimatedEntity target;
 	private Shield effect = null;
 	
+	private final int baseHealth = 5;
 	private int health;
 
 	public AnimatedEntity(String assetPath, int x, int y) {
@@ -80,9 +84,14 @@ public abstract class AnimatedEntity implements Entity {
 		width = 1 / 32f * 48; // regions[0][0].getRegionWidth();
 		height = 1 / 32f * 48; // regions[0][0].getRegionHeight();
 		
+		health = baseHealth;
+		
 		// for debug purposes
 		weapon = new Shotgun(this);
-		health = 5;
+	}
+	
+	public boolean isAlive() {
+		return health > 0;
 	}
 	
 	public void attack() {
@@ -97,8 +106,21 @@ public abstract class AnimatedEntity implements Entity {
 		addEffect(new Bleed(this));
 	}
 	
-	public boolean isAlive() {
-		return health > 0;
+	public void resurrectTarget() {
+		if (target != null && target != this && !target.isAlive()) {
+			target.resurrect();
+			addFollower(target);
+		}
+	}
+	
+	public void resurrect() {
+		health = baseHealth;
+		deathTime = 0;
+	}
+	
+	public void addFollower(AnimatedEntity follower) {
+		follower.setFollowing(this);
+		followers.add(follower);
 	}
 
 	public void toggleShield() {
@@ -408,8 +430,6 @@ public abstract class AnimatedEntity implements Entity {
 		this.state = state;
 	}
 
-	protected abstract void takeAction(float delta, GameScreen screen);
-
 	protected float getWidth() {
 		return width;
 	}
@@ -417,6 +437,11 @@ public abstract class AnimatedEntity implements Entity {
 	protected float getHeight() {
 		return height;
 	}
+	
+
+	protected abstract void takeAction(float delta, GameScreen screen);
+	
+	public abstract void setFollowing(AnimatedEntity actor);
 	
 	public static Animation getAnimation(String assetName) {
 		TextureRegion[][] regions = GameScreen.getRegions(assetName, 48, 48);

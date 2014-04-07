@@ -198,6 +198,9 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 			player.attack();
 			return true;
 		case Keys.NUM_2:
+			player.resurrectTarget();
+			return true;
+		case Keys.NUM_3:
 			player.toggleShield();
 			return true;
 		default:
