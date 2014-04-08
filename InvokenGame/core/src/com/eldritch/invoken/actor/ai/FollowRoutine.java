@@ -14,8 +14,7 @@ public class FollowRoutine implements Routine {
 	private final float maxVelocity;
 	
 	/** how long we move in a single direction before turning */ 
-	private float xVelocity;
-	private float yVelocity;
+	private final Vector2 velocity = new Vector2();
 	
 	public FollowRoutine(Npc npc) {
 		this(npc, npc.getMaxVelocity() * 0.8f, 3);
@@ -46,40 +45,67 @@ public class FollowRoutine implements Routine {
 			float dx = target.x - position.x;
 			float dy = target.y - position.y;
 			
-			xVelocity = yVelocity = 0;
+			velocity.x = velocity.y = 0;
 			if (Math.abs(Math.abs(dx) - Math.abs(dy)) < 0.1) {
 				// prevents flickering when moving along the diagonal
-				xVelocity = Math.signum(dx) * maxVelocity;
-				yVelocity = Math.signum(dy) * maxVelocity;
+				velocity.x = Math.signum(dx) * maxVelocity;
+				velocity.y = Math.signum(dy) * maxVelocity;
 			} else if (Math.abs(dx) > Math.abs(dy)) {
-				xVelocity = Math.signum(dx) * maxVelocity;
+				velocity.x = Math.signum(dx) * maxVelocity;
 			} else {
-				yVelocity = Math.signum(dy) * maxVelocity;
+				velocity.y = Math.signum(dy) * maxVelocity;
 			}
 			
 			// check that the tile immediately adjacent in the chosen direction is not an obstacle
-			int x1 = (int) npc.getX1();
-			int y1 = (int) npc.getY1();
-			if (Math.abs(xVelocity) != 0) {
-				if (screen.isObstacle((int) (x1 + Math.signum(xVelocity)), y1)) {
-					xVelocity = 0;
-					yVelocity = Math.signum(dy) * maxVelocity;
-				}
-			} else if (Math.abs(yVelocity) != 0) {
-				if (screen.isObstacle(x1, (int) (y1 + Math.signum(yVelocity)))) {
-					xVelocity = Math.signum(dx) * maxVelocity;
-					yVelocity = 0;
-				}
-			}
+			avoidCollisions(velocity, screen);
+//			int x = (int) position.x;
+//			int y = (int) position.y;
+//			if (Math.abs(velocity.x) != 0) {
+//				if (screen.isObstacle((int) (x + Math.signum(velocity.x)), y)) {
+//					velocity.x = 0;
+//					velocity.y = Math.signum(dy) * maxVelocity;
+//				}
+//			} else if (Math.abs(velocity.y) != 0) {
+//				if (screen.isObstacle(x, (int) (y + Math.signum(velocity.y)))) {
+//					velocity.x = Math.signum(dx) * maxVelocity;
+//					velocity.y = 0;
+//				}
+//			}
 		} else {
-			xVelocity = yVelocity = 0;
+			velocity.x = velocity.y = 0;
 		}
 		
 		resetVelocity();
 	}
 	
+	private void avoidCollisions(Vector2 velocity, GameScreen screen) {
+		Vector2 position = npc.getPosition().cpy();
+		int i1 = (int) position.x - 1;
+		int i2 = (int) position.x + 1;
+		int j1 = (int) position.y - 1;
+		int j2 = (int) position.y + 1;
+		
+		Vector2 obstacleMass = new Vector2(0, 0);
+		int totalObstacles = 0;
+		for (int i = i1; i <= i2; i++) {
+			for (int j = j1; j <= j2; j++) {
+				if (screen.isObstacle(i, j)) {
+					obstacleMass.add(i, j);
+					totalObstacles++;
+				}
+			}
+		}
+		
+		if (totalObstacles > 0) {
+			obstacleMass.scl(1f / totalObstacles);
+			position.sub(obstacleMass).scl(2f);
+			Gdx.app.log(InvokenGame.LOG, "force: " + position);
+			velocity.add(position);
+		}
+	}
+	
 	private void resetVelocity() {
-		npc.setVelocity(xVelocity, yVelocity);
+		npc.setVelocity(velocity.x, velocity.y);
 	}
 	
 	public Vector2 getTarget() {
