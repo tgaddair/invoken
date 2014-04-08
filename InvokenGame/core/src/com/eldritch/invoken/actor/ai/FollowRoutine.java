@@ -17,7 +17,7 @@ public class FollowRoutine implements Routine {
 	private final Vector2 velocity = new Vector2();
 	
 	public FollowRoutine(Npc npc) {
-		this(npc, npc.getMaxVelocity() * 0.8f, 3);
+		this(npc, npc.getMaxVelocity() * 1f, 3);
 	}
 	
 	public FollowRoutine(Npc npc, float maxVelocity, int maxDistance) {
@@ -39,43 +39,47 @@ public class FollowRoutine implements Routine {
 	@Override
 	public void takeAction(float delta, GameScreen screen) {
 		if (hasStrayed()) {
-			// roughly move towards the origin to get us back on track
-			Vector2 position = npc.getPosition();
-			Vector2 target = getTarget();
-			float dx = target.x - position.x;
-			float dy = target.y - position.y;
+			Vector2 velocityDelta = new Vector2(0, 0);
 			
-			velocity.x = velocity.y = 0;
-			if (Math.abs(Math.abs(dx) - Math.abs(dy)) < 0.1) {
-				// prevents flickering when moving along the diagonal
-				velocity.x = Math.signum(dx) * maxVelocity;
-				velocity.y = Math.signum(dy) * maxVelocity;
-			} else if (Math.abs(dx) > Math.abs(dy)) {
-				velocity.x = Math.signum(dx) * maxVelocity;
-			} else {
-				velocity.y = Math.signum(dy) * maxVelocity;
-			}
+			// roughly move towards the origin to get us back on track
+			followTarget(velocityDelta, screen);
 			
 			// check that the tile immediately adjacent in the chosen direction is not an obstacle
-			avoidCollisions(velocity, screen);
-//			int x = (int) position.x;
-//			int y = (int) position.y;
-//			if (Math.abs(velocity.x) != 0) {
-//				if (screen.isObstacle((int) (x + Math.signum(velocity.x)), y)) {
-//					velocity.x = 0;
-//					velocity.y = Math.signum(dy) * maxVelocity;
-//				}
-//			} else if (Math.abs(velocity.y) != 0) {
-//				if (screen.isObstacle(x, (int) (y + Math.signum(velocity.y)))) {
-//					velocity.x = Math.signum(dx) * maxVelocity;
-//					velocity.y = 0;
-//				}
-//			}
+			avoidCollisions(velocityDelta, screen);
+			
+			// scale down the previous velocity to reduce the effects of momentum as we're turning
+			velocity.scl(0.75f);
+			
+			// add our velocity delta and clamp it to the max velocity
+			velocity.add(velocityDelta);
+			bound(velocity, maxVelocity);
 		} else {
 			velocity.x = velocity.y = 0;
 		}
 		
 		resetVelocity();
+	}
+	
+	private void bound(Vector2 vector, float tol) {
+		vector.x = Math.min(Math.max(vector.x, -tol), tol);
+		vector.y = Math.min(Math.max(vector.y, -tol), tol);
+	}
+	
+	private void followTarget(Vector2 velocity, GameScreen screen) {
+		Vector2 position = npc.getPosition();
+		Vector2 target = getTarget();
+		float dx = target.x - position.x;
+		float dy = target.y - position.y;
+		
+		if (Math.abs(Math.abs(dx) - Math.abs(dy)) < 0.1) {
+			// prevents flickering when moving along the diagonal
+			velocity.x += dx;
+			velocity.y += dy;
+		} else if (Math.abs(dx) > Math.abs(dy)) {
+			velocity.x += dx;
+		} else {
+			velocity.y += dy;
+		}
 	}
 	
 	private void avoidCollisions(Vector2 velocity, GameScreen screen) {
@@ -98,7 +102,7 @@ public class FollowRoutine implements Routine {
 		
 		if (totalObstacles > 0) {
 			obstacleMass.scl(1f / totalObstacles);
-			position.sub(obstacleMass).scl(2f);
+			position.sub(obstacleMass).scl(1f);
 			Gdx.app.log(InvokenGame.LOG, "force: " + position);
 			velocity.add(position);
 		}
