@@ -8,8 +8,8 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
-import com.eldritch.invoken.actor.AnimatedEntity;
-import com.eldritch.invoken.actor.AnimatedEntity.Direction;
+import com.eldritch.invoken.actor.Agent;
+import com.eldritch.invoken.actor.Agent.Direction;
 import com.eldritch.invoken.screens.GameScreen;
 
 public class Fire implements Action {
@@ -17,10 +17,10 @@ public class Fire implements Action {
 	private final float height;
 	private static Map<Direction, Animation> animations = new HashMap<Direction, Animation>();
 	
-	private final AnimatedEntity actor;
+	private final Agent actor;
 	private float stateTime = 0;
 	
-	public Fire(AnimatedEntity actor) {
+	public Fire(Agent actor) {
 		this.actor = actor;
 		
 		TextureRegion[][] regions = GameScreen.getRegions(
@@ -54,7 +54,7 @@ public class Fire implements Action {
 
 	@Override
 	public void apply() {
-		AnimatedEntity target = actor.getTarget();
+		Agent target = actor.getTarget();
 		if (target != null) {
 			target.damage(1);
 		}

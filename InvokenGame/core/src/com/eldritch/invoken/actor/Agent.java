@@ -25,7 +25,7 @@ import com.eldritch.invoken.effects.Effect;
 import com.eldritch.invoken.effects.Shield;
 import com.eldritch.invoken.screens.GameScreen;
 
-public abstract class AnimatedEntity implements Entity {
+public abstract class Agent implements Entity {
 	static AssetManager assetManager = new AssetManager();
 	static float MAX_VELOCITY = 10f;
 	static float JUMP_VELOCITY = 40f;
@@ -61,16 +61,16 @@ public abstract class AnimatedEntity implements Entity {
 	private final List<Effect> effects = new LinkedList<Effect>();
 	private Action action = null;
 	
-	private final List<AnimatedEntity> followers = new ArrayList<AnimatedEntity>();
+	private final List<Agent> followers = new ArrayList<Agent>();
 
 	private Shotgun weapon;
-	private AnimatedEntity target;
+	private Agent target;
 	private Shield effect = null;
 	
 	private final int baseHealth = 5;
 	private int health;
 
-	public AnimatedEntity(String assetPath, int x, int y) {
+	public Agent(String assetPath, int x, int y) {
 		setPosition(x, y);
 		animations.put(Activity.Explore, getAnimations(assetPath + "/walk.png"));
 		animations.put(Activity.Combat, getAnimations(assetPath + "/shoot.png"));
@@ -118,7 +118,7 @@ public abstract class AnimatedEntity implements Entity {
 		deathTime = 0;
 	}
 	
-	public void addFollower(AnimatedEntity follower) {
+	public void addFollower(Agent follower) {
 		follower.setFollowing(this);
 		followers.add(follower);
 	}
@@ -171,11 +171,11 @@ public abstract class AnimatedEntity implements Entity {
 		return animations.get(activity).get(direction);
 	}
 
-	protected void setTarget(AnimatedEntity target) {
+	protected void setTarget(Agent target) {
 		this.target = target;
 	}
 	
-	public AnimatedEntity getTarget() {
+	public Agent getTarget() {
 		return target;
 	}
 
@@ -395,7 +395,7 @@ public abstract class AnimatedEntity implements Entity {
 
 	public Array<Rectangle> getCollisionActors(GameScreen screen) {
 		Array<Rectangle> rects = new Array<Rectangle>();
-		for (AnimatedEntity other : screen.getActors()) {
+		for (Agent other : screen.getActors()) {
 			if (other == this)
 				continue;
 
@@ -445,7 +445,7 @@ public abstract class AnimatedEntity implements Entity {
 
 	protected abstract void takeAction(float delta, GameScreen screen);
 	
-	public abstract void setFollowing(AnimatedEntity actor);
+	public abstract void setFollowing(Agent actor);
 	
 	public static Animation getAnimation(String assetName) {
 		TextureRegion[][] regions = GameScreen.getRegions(assetName, 48, 48);

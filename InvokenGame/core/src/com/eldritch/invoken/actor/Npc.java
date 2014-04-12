@@ -11,10 +11,10 @@ import com.eldritch.invoken.actor.ai.PatrolRoutine;
 import com.eldritch.invoken.actor.ai.Routine;
 import com.eldritch.invoken.screens.GameScreen;
 
-public class Npc extends AnimatedEntity {
+public class Npc extends Agent {
 	private final List<Routine> routines = new ArrayList<Routine>();
 	private Routine routine;
-	private AnimatedEntity followed = null;
+	private Agent followed = null;
 	
 	public Npc(int x, int y) {
 		super("sprite/eru_centurion", x, y);
@@ -41,11 +41,11 @@ public class Npc extends AnimatedEntity {
 	}
 	
 	@Override
-	public void setFollowing(AnimatedEntity actor) {
+	public void setFollowing(Agent actor) {
 		followed = actor;
 	}
 	
-	public AnimatedEntity getFollowed() {
+	public Agent getFollowed() {
 		return followed;
 	}
 }

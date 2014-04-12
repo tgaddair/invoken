@@ -8,19 +8,19 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
-import com.eldritch.invoken.actor.AnimatedEntity;
-import com.eldritch.invoken.actor.AnimatedEntity.Direction;
+import com.eldritch.invoken.actor.Agent;
+import com.eldritch.invoken.actor.Agent.Direction;
 
 public class Shotgun {
 	private final float width;
 	private final float height;
 	private static Map<Direction, Animation> animations = new HashMap<Direction, Animation>();
 	
-	private final AnimatedEntity actor;
+	private final Agent actor;
 	
-	public Shotgun(AnimatedEntity actor) {
+	public Shotgun(Agent actor) {
 		this.actor = actor;
-		animations = AnimatedEntity.getAnimations("sprite/weapons/shotgun.png");
+		animations = Agent.getAnimations("sprite/weapons/shotgun.png");
 		
 		width = 1 / 32f * 48;
 		height = 1 / 32f * 48;

@@ -2,10 +2,13 @@ package com.eldritch.invoken.actor;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.screens.GameScreen;
 
 /** The player character, has state and state time, */
-public class Player extends AnimatedEntity {
+public class Player extends Agent {
+	private Vector2 targetCoord = new Vector2();
+	
 	public Player(int x, int y) {
 		super("sprite/main", x, y);
 	}
@@ -14,35 +17,40 @@ public class Player extends AnimatedEntity {
 	protected void takeAction(float delta, GameScreen screen) {
 		if (Gdx.input.isKeyPressed(Keys.LEFT)
 				|| Gdx.input.isKeyPressed(Keys.A)) {
-			velocity.x = -AnimatedEntity.MAX_VELOCITY;
+			velocity.x = -Agent.MAX_VELOCITY;
 			setState(State.Moving);
 		}
 
 		if (Gdx.input.isKeyPressed(Keys.RIGHT)
 				|| Gdx.input.isKeyPressed(Keys.D)) {
-			velocity.x = AnimatedEntity.MAX_VELOCITY;
+			velocity.x = Agent.MAX_VELOCITY;
 			setState(State.Moving);
 		}
 		
 		if (Gdx.input.isKeyPressed(Keys.UP)
 				|| Gdx.input.isKeyPressed(Keys.W)) {
-			velocity.y = AnimatedEntity.MAX_VELOCITY;
+			velocity.y = Agent.MAX_VELOCITY;
 			setState(State.Moving);
 		}
 		
 		if (Gdx.input.isKeyPressed(Keys.DOWN)
 				|| Gdx.input.isKeyPressed(Keys.S)) {
-			velocity.y = -AnimatedEntity.MAX_VELOCITY;
+			velocity.y = -Agent.MAX_VELOCITY;
 			setState(State.Moving);
 		}
 	}
 	
-	public void select(AnimatedEntity other) {
+	public void moveTo(float x, float y) {
+		targetCoord.x = x;
+		targetCoord.y = y;
+	}
+	
+	public void select(Agent other) {
 		setTarget(other);
 	}
 	
 	@Override
-	public void setFollowing(AnimatedEntity actor) {
+	public void setFollowing(Agent actor) {
 		// does nothing, but may be useful in the future for certain missions
 	}
 

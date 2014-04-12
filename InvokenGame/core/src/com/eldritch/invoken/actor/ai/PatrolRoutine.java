@@ -1,11 +1,11 @@
 package com.eldritch.invoken.actor.ai;
 
 import com.badlogic.gdx.math.Vector2;
-import com.eldritch.invoken.actor.AnimatedEntity;
+import com.eldritch.invoken.actor.Agent;
 import com.eldritch.invoken.screens.GameScreen;
 
 public class PatrolRoutine implements Routine {
-	private final AnimatedEntity actor;
+	private final Agent actor;
 	
 	/** cannot stray too far from the origin location, or we're wandering, not patrolling */
 	private final Vector2 origin;
@@ -18,11 +18,11 @@ public class PatrolRoutine implements Routine {
 	private float xVelocity;
 	private float yVelocity;
 	
-	public PatrolRoutine(AnimatedEntity actor) {
+	public PatrolRoutine(Agent actor) {
 		this(actor, actor.getMaxVelocity() / 4, 10, 3);
 	}
 	
-	public PatrolRoutine(AnimatedEntity actor, float maxVelocity, int maxDistance, int duration) {
+	public PatrolRoutine(Agent actor, float maxVelocity, int maxDistance, int duration) {
 		this.actor = actor;
 		this.origin = actor.getPosition().cpy();
 		this.maxDistance = maxDistance;

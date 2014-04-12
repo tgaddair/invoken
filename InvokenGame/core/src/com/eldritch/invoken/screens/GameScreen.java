@@ -27,7 +27,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
 import com.eldritch.invoken.InvokenGame;
-import com.eldritch.invoken.actor.AnimatedEntity;
+import com.eldritch.invoken.actor.Agent;
 import com.eldritch.invoken.actor.Npc;
 import com.eldritch.invoken.actor.Player;
 
@@ -42,7 +42,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 	};
 
 	private Player player;
-	private final List<AnimatedEntity> entities = new ArrayList<AnimatedEntity>();
+	private final List<Agent> entities = new ArrayList<Agent>();
 
 	private TiledMap map;
 	private TextureRegion selector;
@@ -107,7 +107,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 		Gdx.input.setInputProcessor(this);
 	}
 
-	private void addActor(AnimatedEntity actor) {
+	private void addActor(Agent actor) {
 		entities.add(actor);
 	}
 
@@ -118,7 +118,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 
 		// update the player (process input, collision detection, position
 		// update)
-		for (AnimatedEntity actor : entities) {
+		for (Agent actor : entities) {
 			actor.update(delta, this);
 		}
 
@@ -134,7 +134,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 		renderer.render();
 
 		// render the player
-		for (AnimatedEntity actor : entities) {
+		for (Agent actor : entities) {
 			if (actor == player.getTarget()) {
 				//Gdx.app.log(InvokenGame.LOG, "select");
 				Color color = new Color(0x00FA9AFF);
@@ -164,7 +164,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 		batch.setColor(Color.WHITE);
 	}
 
-	public List<AnimatedEntity> getActors() {
+	public List<Agent> getActors() {
 		return entities;
 	}
 	
@@ -226,15 +226,18 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 	@Override
 	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
 		Vector3 world = camera.unproject(new Vector3(screenX, screenY, 0));
-		for (AnimatedEntity entity : entities) {
+		for (Agent entity : entities) {
 			if (entity.contains(world.x, world.y)) {
 				// toggle selection
-				AnimatedEntity selected = player.getTarget() != entity ? entity : null;
+				Agent selected = player.getTarget() != entity ? entity : null;
 				player.select(selected);
 				return true;
 			}
 		}
-		return false;
+		
+		// otherwise, move to the indicated position
+		player.moveTo(world.x, world.y);
+		return true;
 	}
 
 	@Override
