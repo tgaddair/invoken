@@ -42,8 +42,10 @@ public class Npc extends Agent {
 		} else {
 			for (Routine r : routines) {
 				if (r.canInterrupt() && r.isValid()) {
-					routine = r;
-					routine.reset();
+					if (r != routine) {
+						routine = r;
+						routine.reset();
+					}
 					break;
 				}
 			}

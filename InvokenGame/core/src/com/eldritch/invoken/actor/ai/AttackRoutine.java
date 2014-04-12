@@ -1,6 +1,8 @@
 package com.eldritch.invoken.actor.ai;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
+import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.actor.Agent;
 import com.eldritch.invoken.actor.Npc;
 import com.eldritch.invoken.screens.GameScreen;
@@ -18,6 +20,7 @@ public class AttackRoutine implements Routine {
 	private final Vector2 velocity = new Vector2();
 	
 	private Agent target = null;
+	private float elapsed = 0;
 
 	public AttackRoutine(Npc npc) {
 		this(npc, 10, 20);
@@ -46,6 +49,7 @@ public class AttackRoutine implements Routine {
 	
 	@Override
 	public void reset() {
+		elapsed = 0;
 	}
 
 	@Override
@@ -70,8 +74,11 @@ public class AttackRoutine implements Routine {
 	}
 	
 	private void attack(float delta, GameScreen screen) {
-		if (!npc.hasPendingAction()) {
+		elapsed += delta;
+//		Gdx.app.log(InvokenGame.LOG, "elapsed: " + elapsed);
+		if (!npc.hasPendingAction() && elapsed >= 1) {
 			npc.attack();
+			elapsed = 0;
 		}
 	}
 	

@@ -273,10 +273,12 @@ public abstract class Agent implements Entity {
 			velocity.x = 0;
 			velocity.y = 0;
 			state = State.Standing;
-		} else if (target == null || target == this) {
-			// update the current animation based on the maximal velocity
-			// component
-			direction = getDominantDirection(velocity.x, velocity.y);
+		} else {
+			if (target == null || target == this) {
+				// update the current animation based on the maximal velocity
+				// component
+				direction = getDominantDirection(velocity.x, velocity.y);
+			}
 			state = State.Moving;
 		}
 

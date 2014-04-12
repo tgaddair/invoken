@@ -20,35 +20,30 @@ public class Player extends Agent {
 	@Override
 	protected void takeAction(float delta, GameScreen screen) {
 		if (moving) {
-			setState(State.Moving);
 			moving = mover.takeAction(delta, targetCoord, screen);
 		}
 		
 		if (Gdx.input.isKeyPressed(Keys.LEFT)
 				|| Gdx.input.isKeyPressed(Keys.A)) {
 			velocity.x = -Agent.MAX_VELOCITY;
-			setState(State.Moving);
 			moving = false;
 		}
 
 		if (Gdx.input.isKeyPressed(Keys.RIGHT)
 				|| Gdx.input.isKeyPressed(Keys.D)) {
 			velocity.x = Agent.MAX_VELOCITY;
-			setState(State.Moving);
 			moving = false;
 		}
 		
 		if (Gdx.input.isKeyPressed(Keys.UP)
 				|| Gdx.input.isKeyPressed(Keys.W)) {
 			velocity.y = Agent.MAX_VELOCITY;
-			setState(State.Moving);
 			moving = false;
 		}
 		
 		if (Gdx.input.isKeyPressed(Keys.DOWN)
 				|| Gdx.input.isKeyPressed(Keys.S)) {
 			velocity.y = -Agent.MAX_VELOCITY;
-			setState(State.Moving);
 			moving = false;
 		}
 	}
