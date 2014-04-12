@@ -27,6 +27,12 @@ public class IdleRoutine implements Routine {
 	public boolean isValid() {
 		return true;
 	}
+	
+	@Override
+	public void reset() {
+		elapsed = 0;
+		actor.setTarget(null);
+	}
 
 	@Override
 	public void takeAction(float delta, GameScreen screen) {

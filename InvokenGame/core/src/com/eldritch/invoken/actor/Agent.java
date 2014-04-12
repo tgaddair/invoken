@@ -194,6 +194,10 @@ public abstract class Agent implements Entity {
 	public Agent getTarget() {
 		return target;
 	}
+	
+	public boolean hasPendingAction() {
+		return !actions.isEmpty();
+	}
 
 	public void update(float delta, GameScreen screen) {
 		if (delta == 0)

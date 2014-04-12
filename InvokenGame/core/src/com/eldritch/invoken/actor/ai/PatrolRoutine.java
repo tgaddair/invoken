@@ -46,6 +46,12 @@ public class PatrolRoutine implements Routine {
 	}
 	
 	@Override
+	public void reset() {
+		elapsed = 0;
+		actor.setTarget(null);
+	}
+	
+	@Override
 	public void takeAction(float delta, GameScreen screen) {
 		// try to move in some direction until time is up or we hit an obstacle
 		Vector2 velocity = actor.getVelocity();

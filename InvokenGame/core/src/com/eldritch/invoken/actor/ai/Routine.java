@@ -9,5 +9,7 @@ public interface Routine {
 	
 	boolean isValid();
 	
+	void reset();
+	
 	void takeAction(float delta, GameScreen screen);
 }

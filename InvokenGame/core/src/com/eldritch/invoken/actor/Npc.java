@@ -30,11 +30,12 @@ public class Npc extends Agent {
 	@Override
 	protected void takeAction(float delta, GameScreen screen) {
 		if (routine.isFinished()) {
-			Gdx.app.log(InvokenGame.LOG, "FINISHED");
+//			Gdx.app.log(InvokenGame.LOG, "FINISHED");
 			for (Routine r : routines) {
 				if (r.isValid()) {
-					Gdx.app.log(InvokenGame.LOG, "routine: " + r);
+//					Gdx.app.log(InvokenGame.LOG, "routine: " + r);
 					routine = r;
+					routine.reset();
 					break;
 				}
 			}
@@ -42,6 +43,7 @@ public class Npc extends Agent {
 			for (Routine r : routines) {
 				if (r.canInterrupt() && r.isValid()) {
 					routine = r;
+					routine.reset();
 					break;
 				}
 			}

@@ -37,6 +37,11 @@ public class FollowRoutine implements Routine {
 	}
 	
 	@Override
+	public void reset() {
+		npc.setTarget(null);
+	}
+	
+	@Override
 	public void takeAction(float delta, GameScreen screen) {
 		if (isStuck()) {
 			// TODO teleport to target

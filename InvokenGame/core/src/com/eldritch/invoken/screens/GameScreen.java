@@ -79,9 +79,6 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 		camera.zoom = 1.0f;
 		camera.update();
 
-		// cameraController = new OrthoCamController(camera);
-		// Gdx.input.setInputProcessor(cameraController);
-
 		font = new BitmapFont();
 		batch = new SpriteBatch();
 

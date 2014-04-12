@@ -43,6 +43,10 @@ public class AttackRoutine implements Routine {
 	public boolean isValid() {
 		return !npc.getEnemies().isEmpty();
 	}
+	
+	@Override
+	public void reset() {
+	}
 
 	@Override
 	public void takeAction(float delta, GameScreen screen) {
@@ -52,9 +56,26 @@ public class AttackRoutine implements Routine {
 				target = agent;
 				break;
 			}
+			
+			// can't do anything if we are unable to find a target to attack
+			if (target == null || !target.isAlive()) {
+				return;
+			}
+			
 			npc.setTarget(target);
 		}
 		
+		move(delta, screen);
+		attack(delta, screen);
+	}
+	
+	private void attack(float delta, GameScreen screen) {
+		if (!npc.hasPendingAction()) {
+			npc.attack();
+		}
+	}
+	
+	private void move(float delta, GameScreen screen) {
 		Vector2 velocityDelta = new Vector2(0, 0);
 		if (shouldPursue()) {
 			pursueTarget(velocityDelta, screen);
