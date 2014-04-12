@@ -2,10 +2,12 @@ package com.eldritch.invoken.actor;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
@@ -62,6 +64,7 @@ public abstract class Agent implements Entity {
 	private Action action = null;
 	
 	private final List<Agent> followers = new ArrayList<Agent>();
+	private final Set<Agent> enemies = new HashSet<Agent>();
 
 	private Shotgun weapon;
 	private Agent target;
@@ -90,15 +93,28 @@ public abstract class Agent implements Entity {
 		weapon = new Shotgun(this);
 	}
 	
+	public List<Agent> getFollowers() {
+		return followers;
+	}
+	
+	public Set<Agent> getEnemies() {
+		return enemies;
+	}
+	
 	public boolean isAlive() {
 		return health > 0;
 	}
 	
 	public void attack() {
 		if (target != null && target != this) {
-			activity = Activity.Combat;
+			enemies.add(target);
 			addAction(new Fire(this));
 		}
+	}
+	
+	public void damage(Agent source, int value) {
+		enemies.add(source);
+		damage(value);
 	}
 	
 	public void damage(int value) {
@@ -171,7 +187,7 @@ public abstract class Agent implements Entity {
 		return animations.get(activity).get(direction);
 	}
 
-	protected void setTarget(Agent target) {
+	public void setTarget(Agent target) {
 		this.target = target;
 	}
 	
@@ -206,6 +222,36 @@ public abstract class Agent implements Entity {
 			
 			// take conscious action
 			takeAction(delta, screen);
+		} else if (deathTime == 0) {
+			// kill the agent
+			followers.clear();
+			enemies.clear();
+			target = null;
+		}
+		
+		// update followers
+		Iterator<Agent> followerIterator = followers.iterator();
+		while (followerIterator.hasNext()) {
+			Agent follower = followerIterator.next();
+			if (!follower.isAlive()) {
+				followerIterator.remove();
+			}
+		}
+		
+		// update enemies
+		Iterator<Agent> enemyIterator = enemies.iterator();
+		while (enemyIterator.hasNext()) {
+			Agent enemy = enemyIterator.next();
+			if (!enemy.isAlive()) {
+				enemyIterator.remove();
+			}
+		}
+		
+		// set activity
+		if (enemies.isEmpty()) {
+			activity = Activity.Explore;
+		} else {
+			activity = Activity.Combat;
 		}
 
 		// clamp the velocity to the maximum
@@ -441,7 +487,6 @@ public abstract class Agent implements Entity {
 	protected float getHeight() {
 		return height;
 	}
-	
 
 	protected abstract void takeAction(float delta, GameScreen screen);
 	

@@ -1,6 +1,7 @@
 package com.eldritch.invoken.actor.ai;
 
 import com.badlogic.gdx.math.Vector2;
+import com.eldritch.invoken.actor.Agent;
 import com.eldritch.invoken.actor.Npc;
 import com.eldritch.invoken.screens.GameScreen;
 
@@ -15,9 +16,11 @@ public class AttackRoutine implements Routine {
 
 	/** how long we move in a single direction before turning */
 	private final Vector2 velocity = new Vector2();
+	
+	private Agent target = null;
 
 	public AttackRoutine(Npc npc) {
-		this(npc, 3, 20);
+		this(npc, 10, 20);
 	}
 
 	public AttackRoutine(Npc npc, int minDistance, int maxDistance) {
@@ -33,18 +36,25 @@ public class AttackRoutine implements Routine {
 
 	@Override
 	public boolean isValid() {
-		return npc.getTarget() != null; // && npc.isEnemy(npc.getTarget())
+		return !npc.getEnemies().isEmpty();
 	}
 
 	@Override
 	public void takeAction(float delta, GameScreen screen) {
+		// update target enemy
+		if (target == null || !target.isAlive()) {
+			for (Agent agent : npc.getEnemies()) {
+				target = agent;
+				break;
+			}
+			npc.setTarget(target);
+		}
+		
 		Vector2 velocityDelta = new Vector2(0, 0);
-
 		if (shouldPursue()) {
-			// roughly move towards the origin to get us back on track
-			followTarget(velocityDelta, screen);
+			pursueTarget(velocityDelta, screen);
 		} else if (shouldFlee()) {
-
+			fleeTarget(velocityDelta, screen);
 		}
 
 		// check that the tile immediately adjacent in the chosen direction is
@@ -67,9 +77,16 @@ public class AttackRoutine implements Routine {
 		vector.y = Math.min(Math.max(vector.y, -tol), tol);
 	}
 
-	private void followTarget(Vector2 velocity, GameScreen screen) {
-		Vector2 position = npc.getPosition();
-		Vector2 target = getTarget();
+	private void pursueTarget(Vector2 velocity, GameScreen screen) {
+		adjustVelocity(npc.getPosition(), getTargetPosition(), velocity, screen);
+	}
+	
+	private void fleeTarget(Vector2 velocity, GameScreen screen) {
+		adjustVelocity(getTargetPosition(), npc.getPosition(), velocity, screen);
+	}
+	
+	private void adjustVelocity(Vector2 position, Vector2 target,
+			Vector2 velocity, GameScreen screen) {
 		float dx = target.x - position.x;
 		float dy = target.y - position.y;
 
@@ -113,15 +130,15 @@ public class AttackRoutine implements Routine {
 		npc.setVelocity(velocity.x, velocity.y);
 	}
 
-	public Vector2 getTarget() {
-		return npc.getTarget().getPosition();
+	public Vector2 getTargetPosition() {
+		return target.getPosition();
 	}
 
 	private boolean shouldPursue() {
-		return getTarget().dst2(npc.getPosition()) >= maxDistance;
+		return getTargetPosition().dst2(npc.getPosition()) >= maxDistance;
 	}
 
 	private boolean shouldFlee() {
-		return getTarget().dst2(npc.getPosition()) <= minDistance;
+		return getTargetPosition().dst2(npc.getPosition()) <= minDistance;
 	}
 }

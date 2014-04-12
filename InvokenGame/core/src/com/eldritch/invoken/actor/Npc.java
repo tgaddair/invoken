@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.badlogic.gdx.Gdx;
 import com.eldritch.invoken.InvokenGame;
+import com.eldritch.invoken.actor.ai.AttackRoutine;
 import com.eldritch.invoken.actor.ai.FollowRoutine;
 import com.eldritch.invoken.actor.ai.IdleRoutine;
 import com.eldritch.invoken.actor.ai.PatrolRoutine;
@@ -20,6 +21,7 @@ public class Npc extends Agent {
 		super("sprite/eru_centurion", x, y);
 		routine = new IdleRoutine(this);
 		
+		routines.add(new AttackRoutine(this));
 		routines.add(new FollowRoutine(this));
 		routines.add(new PatrolRoutine(this));
 		routines.add(routine); // idle is fallback

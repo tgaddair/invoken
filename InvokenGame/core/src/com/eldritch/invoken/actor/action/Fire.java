@@ -56,7 +56,7 @@ public class Fire implements Action {
 	public void apply() {
 		Agent target = actor.getTarget();
 		if (target != null) {
-			target.damage(1);
+			target.damage(actor, 1);
 		}
 	}
 	
