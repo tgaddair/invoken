@@ -8,13 +8,17 @@ public class FollowRoutine implements Routine {
 	private final Npc npc;
 	private final AgentMover mover;
 	
+	/** teleport to the target at this distance because we're probably stuck */
+	private final int maxDistance;
+	
 	public FollowRoutine(Npc npc) {
 		this(npc, npc.getMaxVelocity() * 1f, 3, 20);
 	}
 	
 	public FollowRoutine(Npc npc, float maxVelocity, int minDistance, int maxDistance) {
 		this.npc = npc;
-		mover = new AgentMover(npc, maxVelocity, minDistance, maxDistance);
+		this.maxDistance = maxDistance;
+		mover = new AgentMover(npc, maxVelocity, minDistance);
 	}
 	
 	@Override
@@ -29,10 +33,18 @@ public class FollowRoutine implements Routine {
 	
 	@Override
 	public void takeAction(float delta, GameScreen screen) {
+		if (isStuck()) {
+			// TODO teleport to target
+		}
+		
 		mover.takeAction(delta, getTarget(), screen);
 	}
 	
 	public Vector2 getTarget() {
 		return npc.getFollowed().getPosition();
+	}
+	
+	private boolean isStuck() {
+		return npc.getFollowed().getPosition().dst2(npc.getPosition()) >= maxDistance;
 	}
 }

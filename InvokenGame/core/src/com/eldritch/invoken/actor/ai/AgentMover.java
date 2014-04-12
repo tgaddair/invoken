@@ -8,10 +8,7 @@ public class AgentMover {
 	private final Agent agent;
 	
 	/** stop following at this distance to avoid getting in the target's grill */
-	private final int minDistance;
-	
-	/** teleport to the target at this distance because we're probably stuck */
-	private final int maxDistance;
+	private final float minDistance;
 	
 	private final float maxVelocity;
 	
@@ -20,19 +17,17 @@ public class AgentMover {
 	
 	private Vector2 target = null;
 	
-	public AgentMover(Agent agent, float maxVelocity, int minDistance, int maxDistance) {
+	public AgentMover(Agent agent, float maxVelocity, float minDistance) {
 		this.agent = agent;
 		this.minDistance = minDistance;
-		this.maxDistance = maxDistance;
 		this.maxVelocity = maxVelocity;
 	}
 	
-	public void takeAction(float delta, Vector2 targetCoord, GameScreen screen) {
+	/** returns true if the agent is still moving towards its target, false if reached */
+	public boolean takeAction(float delta, Vector2 targetCoord, GameScreen screen) {
 		target = targetCoord;
 		
-		if (isStuck()) {
-			// TODO teleport to target
-		}		
+		boolean moving = true;
 		if (hasStrayed()) {
 			Vector2 velocityDelta = new Vector2(0, 0);
 			
@@ -51,9 +46,11 @@ public class AgentMover {
 		} else {
 			// we're close enough, so stop
 			velocity.x = velocity.y = 0;
+			moving = false;
 		}
 		
 		resetVelocity();
+		return moving;
 	}
 	
 	private void bound(Vector2 vector, float tol) {
@@ -104,10 +101,6 @@ public class AgentMover {
 	
 	private void resetVelocity() {
 		agent.setVelocity(velocity.x, velocity.y);
-	}
-	
-	private boolean isStuck() {
-		return target.dst2(agent.getPosition()) >= maxDistance;
 	}
 	
 	/** returns true if we've strayed too far from the origin of our patrol */

@@ -220,7 +220,16 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 
 	@Override
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-		return false;
+		Vector3 world = camera.unproject(new Vector3(screenX, screenY, 0));
+		for (Agent entity : entities) {
+			if (entity.contains(world.x, world.y)) {
+				return false;
+			}
+		}
+		
+		// otherwise, move to the indicated position
+		player.moveTo(world.x, world.y);
+		return true;
 	}
 
 	@Override
@@ -235,13 +244,16 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 			}
 		}
 		
-		// otherwise, move to the indicated position
-		player.moveTo(world.x, world.y);
-		return true;
+		return false;
 	}
 
 	@Override
 	public boolean touchDragged(int screenX, int screenY, int pointer) {
+		if (player.isMoving()) {
+			Vector3 world = camera.unproject(new Vector3(screenX, screenY, 0));
+			player.moveTo(world.x, world.y);
+			return true;
+		}
 		return false;
 	}
 
