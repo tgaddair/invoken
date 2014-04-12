@@ -21,6 +21,7 @@ import com.badlogic.gdx.utils.Array;
 import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.actor.action.Action;
 import com.eldritch.invoken.actor.action.Fire;
+import com.eldritch.invoken.actor.aug.Augmentation;
 import com.eldritch.invoken.actor.weapon.Shotgun;
 import com.eldritch.invoken.effects.Bleed;
 import com.eldritch.invoken.effects.Effect;
@@ -70,6 +71,7 @@ public abstract class Agent implements Entity {
 	private Agent target;
 	private Shield effect = null;
 	
+	private final PreparedAugmentations augmentations = new PreparedAugmentations(this);
 	private final int baseHealth = 5;
 	private int health;
 
@@ -93,6 +95,14 @@ public abstract class Agent implements Entity {
 		weapon = new Shotgun(this);
 	}
 	
+	public void useAugmentation(int index) {
+		augmentations.use(index);
+	}
+	
+	public void addAugmentation(Augmentation aug) {
+		augmentations.addAugmentation(aug);
+	}
+	
 	public List<Agent> getFollowers() {
 		return followers;
 	}
@@ -103,13 +113,6 @@ public abstract class Agent implements Entity {
 	
 	public boolean isAlive() {
 		return health > 0;
-	}
-	
-	public void attack() {
-		if (target != null && target != this) {
-			enemies.add(target);
-			addAction(new Fire(this));
-		}
 	}
 	
 	public void damage(Agent source, int value) {
@@ -147,11 +150,11 @@ public abstract class Agent implements Entity {
 		}
 	}
 	
-	private void addAction(Action action) {
+	public void addAction(Action action) {
 		actions.add(action);
 	}
 	
-	private void addEffect(Effect effect) {
+	public void addEffect(Effect effect) {
 		effects.add(effect);
 	}
 

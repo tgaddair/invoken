@@ -10,6 +10,7 @@ import com.eldritch.invoken.actor.ai.FollowRoutine;
 import com.eldritch.invoken.actor.ai.IdleRoutine;
 import com.eldritch.invoken.actor.ai.PatrolRoutine;
 import com.eldritch.invoken.actor.ai.Routine;
+import com.eldritch.invoken.actor.aug.FireWeapon;
 import com.eldritch.invoken.screens.GameScreen;
 
 public class Npc extends Agent {
@@ -25,6 +26,8 @@ public class Npc extends Agent {
 		routines.add(new FollowRoutine(this));
 		routines.add(new PatrolRoutine(this));
 		routines.add(routine); // idle is fallback
+		
+		addAugmentation(new FireWeapon());
 	}
 	
 	@Override

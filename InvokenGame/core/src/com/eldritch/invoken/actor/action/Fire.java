@@ -17,11 +17,13 @@ public class Fire implements Action {
 	private final float height;
 	private static Map<Direction, Animation> animations = new HashMap<Direction, Animation>();
 	
-	private final Agent actor;
+	private final Agent owner;
+	private final Agent target;
 	private float stateTime = 0;
 	
-	public Fire(Agent actor) {
-		this.actor = actor;
+	public Fire(Agent actor, Agent target) {
+		this.owner = actor;
+		this.target = target;
 		
 		TextureRegion[][] regions = GameScreen.getRegions(
 				"sprite/effects/muzzle-flash.png", 48, 48);
@@ -39,7 +41,7 @@ public class Fire implements Action {
 	public void render(float delta, OrthogonalTiledMapRenderer renderer) {
 		stateTime += delta;
 		TextureRegion frame = getAnimation().getKeyFrame(stateTime);
-		Vector2 position = actor.getPosition();
+		Vector2 position = owner.getPosition();
 		
 		Batch batch = renderer.getSpriteBatch();
 		batch.begin();
@@ -54,13 +56,13 @@ public class Fire implements Action {
 
 	@Override
 	public void apply() {
-		Agent target = actor.getTarget();
 		if (target != null) {
-			target.damage(actor, 1);
+			owner.getEnemies().add(target);
+			target.damage(owner, 1);
 		}
 	}
 	
 	private Animation getAnimation() {
-		return animations.get(actor.getDirection());
+		return animations.get(owner.getDirection());
 	}
 }

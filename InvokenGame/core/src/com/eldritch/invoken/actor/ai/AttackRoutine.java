@@ -77,7 +77,7 @@ public class AttackRoutine implements Routine {
 		elapsed += delta;
 //		Gdx.app.log(InvokenGame.LOG, "elapsed: " + elapsed);
 		if (!npc.hasPendingAction() && elapsed >= 1) {
-			npc.attack();
+			npc.useAugmentation(0);
 			elapsed = 0;
 		}
 	}

@@ -197,7 +197,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 	public boolean keyUp(int keycode) {
 		switch (keycode) {
 		case Keys.NUM_1:
-			player.attack();
+			player.useAugmentation(0);
 			return true;
 		case Keys.NUM_2:
 			player.resurrectTarget();
