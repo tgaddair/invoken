@@ -33,6 +33,11 @@ public class AttackRoutine implements Routine {
 	public boolean isFinished() {
 		return !isValid();
 	}
+	
+	@Override
+	public boolean canInterrupt() {
+		return true;
+	}
 
 	@Override
 	public boolean isValid() {

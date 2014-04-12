@@ -19,6 +19,11 @@ public class IdleRoutine implements Routine {
 	}
 	
 	@Override
+	public boolean canInterrupt() {
+		return false;
+	}
+	
+	@Override
 	public boolean isValid() {
 		return true;
 	}

@@ -38,6 +38,13 @@ public class Npc extends Agent {
 					break;
 				}
 			}
+		} else {
+			for (Routine r : routines) {
+				if (r.canInterrupt() && r.isValid()) {
+					routine = r;
+					break;
+				}
+			}
 		}
 		routine.takeAction(delta, screen);
 	}

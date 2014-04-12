@@ -27,6 +27,11 @@ public class FollowRoutine implements Routine {
 	}
 	
 	@Override
+	public boolean canInterrupt() {
+		return true;
+	}
+	
+	@Override
 	public boolean isValid() {
 		return npc.getFollowed() != null;
 	}

@@ -36,6 +36,11 @@ public class PatrolRoutine implements Routine {
 	}
 	
 	@Override
+	public boolean canInterrupt() {
+		return false;
+	}
+	
+	@Override
 	public boolean isValid() {
 		return Math.random() < 0.5;
 	}
