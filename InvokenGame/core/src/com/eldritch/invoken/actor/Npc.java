@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import com.badlogic.gdx.Gdx;
 import com.eldritch.invoken.InvokenGame;
@@ -39,12 +40,17 @@ public class Npc extends Agent {
 	protected void takeAction(float delta, GameScreen screen) {
 		// update dispositions
 		for (Agent agent : screen.getActors()) {
-			if (agent != this && !relations.containsKey(agent)) {
+			if (agent != this && agent.isAlive() && !relations.containsKey(agent)) {
 				float disp = getDisposition(agent);
 				relations.put(agent, disp);
-				if (disp < 0) {
-					addEnemy(agent);
-				}
+			}
+		}
+		
+		// handle behavior for the dispositions
+		for (Entry<Agent, Float> entry : relations.entrySet()) {
+			// make sure we're close enough to notice this agent
+			if (dst2(entry.getKey()) < 5 && entry.getValue() < 0) {
+				addEnemy(entry.getKey());
 			}
 		}
 		

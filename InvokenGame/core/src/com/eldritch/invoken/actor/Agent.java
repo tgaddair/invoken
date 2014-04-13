@@ -95,6 +95,10 @@ public abstract class Agent implements Entity {
 		weapon = new Shotgun(this);
 	}
 	
+	public float dst2(Agent other) {
+		return position.dst2(other.position);
+	}
+	
 	public Set<Faction> getFactions() {
 		return factions.getFactions();
 	}
@@ -220,6 +224,14 @@ public abstract class Agent implements Entity {
 		return target;
 	}
 	
+	public boolean hasTarget() {
+		return target != null;
+	}
+	
+	public boolean canTarget() {
+		return dst2(target) < 100;
+	}
+	
 	public boolean hasPendingAction() {
 		return !actions.isEmpty();
 	}
@@ -255,6 +267,11 @@ public abstract class Agent implements Entity {
 			// kill the agent
 			followers.clear();
 			enemies.clear();
+			target = null;
+		}
+		
+		// remove target if we're too far away from them
+		if (hasTarget() && !canTarget()) {
 			target = null;
 		}
 		
