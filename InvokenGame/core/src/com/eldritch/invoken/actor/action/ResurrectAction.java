@@ -12,7 +12,7 @@ import com.eldritch.invoken.actor.Agent;
 import com.eldritch.invoken.actor.Agent.Direction;
 import com.eldritch.invoken.screens.GameScreen;
 
-public class Fire implements Action {
+public class ResurrectAction implements Action {
 	private final float width;
 	private final float height;
 	private static Map<Direction, Animation> animations = new HashMap<Direction, Animation>();
@@ -21,7 +21,7 @@ public class Fire implements Action {
 	private final Agent target;
 	private float stateTime = 0;
 	
-	public Fire(Agent actor, Agent target) {
+	public ResurrectAction(Agent actor, Agent target) {
 		this.owner = actor;
 		this.target = target;
 		
@@ -56,10 +56,8 @@ public class Fire implements Action {
 
 	@Override
 	public void apply() {
-		if (target != null) {
-			owner.getEnemies().add(target);
-			target.damage(owner, 1);
-		}
+		target.resurrect();
+		owner.addFollower(target);
 	}
 	
 	private Animation getAnimation() {

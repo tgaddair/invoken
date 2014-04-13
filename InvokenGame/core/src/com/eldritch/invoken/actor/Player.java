@@ -5,6 +5,7 @@ import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.actor.ai.AgentMover;
 import com.eldritch.invoken.actor.aug.FireWeapon;
+import com.eldritch.invoken.actor.aug.Resurrect;
 import com.eldritch.invoken.screens.GameScreen;
 
 /** The player character, has state and state time, */
@@ -18,6 +19,7 @@ public class Player extends Agent {
 		mover = new AgentMover(this, getMaxVelocity(), 0.01f);
 		
 		addAugmentation(new FireWeapon());
+		addAugmentation(new Resurrect());
 	}
 	
 	@Override
