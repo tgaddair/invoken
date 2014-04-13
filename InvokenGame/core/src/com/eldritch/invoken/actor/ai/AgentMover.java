@@ -34,6 +34,9 @@ public class AgentMover {
 			// roughly move towards the origin to get us back on track
 			followTarget(velocityDelta, screen);
 			
+			// handle additional targets
+			move(velocity, screen);
+			
 			// check that the tile immediately adjacent in the chosen direction is not an obstacle
 			avoidCollisions(velocityDelta, screen);
 			
@@ -51,6 +54,9 @@ public class AgentMover {
 		
 		resetVelocity();
 		return moving;
+	}
+	
+	protected void move(Vector2 velocity, GameScreen screen) {
 	}
 	
 	private void bound(Vector2 vector, float tol) {

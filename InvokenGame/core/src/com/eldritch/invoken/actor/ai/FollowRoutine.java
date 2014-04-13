@@ -1,6 +1,9 @@
 package com.eldritch.invoken.actor.ai;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
+import com.eldritch.invoken.InvokenGame;
+import com.eldritch.invoken.actor.Agent;
 import com.eldritch.invoken.actor.Npc;
 import com.eldritch.invoken.screens.GameScreen;
 
@@ -15,10 +18,32 @@ public class FollowRoutine implements Routine {
 		this(npc, npc.getMaxVelocity() * 1f, 3, 20);
 	}
 	
-	public FollowRoutine(Npc npc, float maxVelocity, int minDistance, int maxDistance) {
+	public FollowRoutine(final Npc npc, float maxVelocity, int minDistance, int maxDistance) {
 		this.npc = npc;
 		this.maxDistance = maxDistance;
-		mover = new AgentMover(npc, maxVelocity, minDistance);
+		mover = new AgentMover(npc, maxVelocity, minDistance) {
+			protected void move(Vector2 velocity, GameScreen screen) {
+				if (npc.getFollowed() == null) {
+					return;
+				}
+				
+				Vector2 position = npc.getPosition().cpy();
+				Vector2 mass = new Vector2(0, 0);
+				int n = 0;
+				for (Agent agent : npc.getFollowed().getFollowers()) {
+					if (agent != npc && position.dst2(agent.getPosition()) < 1) {
+						mass.add(agent.getPosition());
+						n++;
+					}
+				}
+				
+				if (n > 0) {
+					mass.scl(1f / n);
+					position.sub(mass).scl(2f);
+					velocity.add(position);
+				}
+			}
+		};
 	}
 	
 	@Override

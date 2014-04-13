@@ -100,8 +100,12 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 		player = new Player(20, 15);
 		addActor(player);
 		addActor(new Npc(25, 15));
+		addActor(new Npc(27, 20));
+		addActor(new Npc(27, 10));
 		
 		Gdx.input.setInputProcessor(this);
+		
+		Gdx.app.log(InvokenGame.LOG, "start");
 	}
 
 	private void addActor(Agent actor) {
@@ -133,7 +137,6 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 		// render the player
 		for (Agent actor : entities) {
 			if (actor == player.getTarget()) {
-				//Gdx.app.log(InvokenGame.LOG, "select");
 				Color color = new Color(0x00FA9AFF);
 				if (!actor.isAlive()) {
 					// dark slate blue
