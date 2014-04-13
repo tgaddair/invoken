@@ -52,6 +52,7 @@ public class AttackRoutine implements Routine {
 	@Override
 	public void reset() {
 		elapsed = 0;
+		target = null;
 	}
 	
 	private boolean shouldAssist() {
@@ -89,16 +90,15 @@ public class AttackRoutine implements Routine {
 			target = getEnemy();
 			
 			// no enemy found, check our allies for enemies
-			if (target == null) {
+			if (target == null || !target.isAlive()) {
 				target = getAllyEnemy();
 			}
 			
 			// can't do anything if we are unable to find a target to attack
+			npc.setTarget(target);
 			if (target == null || !target.isAlive()) {
 				return;
 			}
-			
-			npc.setTarget(target);
 		}
 		
 		move(delta, screen);
