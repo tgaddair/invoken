@@ -67,8 +67,8 @@ public abstract class Agent implements Entity {
 
 	private Shotgun weapon;
 	private Agent target;
-	private Shield effect = null;
 	
+	private final Set<Class<?>> toggles = new HashSet<Class<?>>();
 	private final PreparedAugmentations augmentations = new PreparedAugmentations(this);
 	private final int baseHealth = 5;
 	private int health;
@@ -135,12 +135,19 @@ public abstract class Agent implements Entity {
 		followers.add(follower);
 	}
 
-	public void toggleShield() {
-		if (effect == null) {
-			addEffect(new Shield(this));
+	/** returns true if the toggle is on after invoking this method */
+	public boolean toggle(Class<?> clazz) {
+		if (toggles.contains(clazz)) {
+			toggles.remove(clazz);
+			return false;
 		} else {
-			effect = null;
+			toggles.add(clazz);
+			return true;
 		}
+	}
+	
+	public boolean isToggled(Class<?> clazz) {
+		return toggles.contains(clazz);
 	}
 	
 	public void addAction(Action action) {
@@ -150,9 +157,9 @@ public abstract class Agent implements Entity {
 	public void addEffect(Effect effect) {
 		effects.add(effect);
 	}
-
-	public void addEffect(Shield effect) {
-		this.effect = effect;
+	
+	public List<Effect> getEffects() {
+		return effects;
 	}
 
 	public void setPosition(float x, float y) {
@@ -434,10 +441,6 @@ public abstract class Agent implements Entity {
 			if (!effect.isFinished()) {
 				effect.render(delta, renderer);
 			}
-		}
-
-		if (effect != null) {
-			effect.render(delta, renderer);
 		}
 	}
 

@@ -40,13 +40,10 @@ public class Shield implements Effect {
 
 	@Override
 	public boolean isFinished() {
-		// TODO Auto-generated method stub
-		return false;
+		return !actor.isToggled(Shield.class);
 	}
 
 	@Override
 	public void apply(float delta) {
-		// TODO Auto-generated method stub
-		
 	}
 }

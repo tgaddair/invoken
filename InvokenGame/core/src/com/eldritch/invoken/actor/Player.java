@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.actor.ai.AgentMover;
+import com.eldritch.invoken.actor.aug.Barrier;
 import com.eldritch.invoken.actor.aug.FireWeapon;
 import com.eldritch.invoken.actor.aug.Resurrect;
 import com.eldritch.invoken.screens.GameScreen;
@@ -20,6 +21,7 @@ public class Player extends Agent {
 		
 		addAugmentation(new FireWeapon());
 		addAugmentation(new Resurrect());
+		addAugmentation(new Barrier());
 	}
 	
 	@Override

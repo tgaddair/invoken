@@ -19,6 +19,11 @@ public class FireWeapon extends Augmentation {
 		return new FireAction(owner, target);
 	}
 	
+	@Override
+	public boolean isValid(Agent owner, Agent target) {
+		return target != null && target != owner;
+	}
+	
 	public class FireAction implements Action {
 		private final float width;
 		private final float height;
