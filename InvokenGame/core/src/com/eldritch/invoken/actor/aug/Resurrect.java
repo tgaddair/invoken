@@ -12,7 +12,7 @@ public class Resurrect extends Augmentation {
 	
 	@Override
 	public boolean isValid(Agent owner, Agent target) {
-		return target != null && target != owner;
+		return target != null && target != owner && !target.isAlive();
 	}
 	
 	public class ResurrectAction implements Action {
@@ -35,8 +35,10 @@ public class Resurrect extends Augmentation {
 
 		@Override
 		public void apply() {
-			target.resurrect();
-			owner.addFollower(target);
+			if (!target.isAlive()) {
+				target.resurrect();
+				owner.addFollower(target);
+			}
 		}
 	}
 }
