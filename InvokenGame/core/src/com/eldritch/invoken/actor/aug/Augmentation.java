@@ -1,7 +1,7 @@
 package com.eldritch.invoken.actor.aug;
 
+import com.eldritch.invoken.actor.Action;
 import com.eldritch.invoken.actor.Agent;
-import com.eldritch.invoken.actor.action.Action;
 
 public abstract class Augmentation {
 	private int slots;

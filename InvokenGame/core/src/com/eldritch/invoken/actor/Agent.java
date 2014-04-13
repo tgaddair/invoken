@@ -19,8 +19,6 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.eldritch.invoken.InvokenGame;
-import com.eldritch.invoken.actor.action.Action;
-import com.eldritch.invoken.actor.action.FireAction;
 import com.eldritch.invoken.actor.aug.Augmentation;
 import com.eldritch.invoken.actor.weapon.Shotgun;
 import com.eldritch.invoken.effects.Bleed;

@@ -8,7 +8,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.actor.Agent;
 import com.eldritch.invoken.screens.GameScreen;
 
-public class Shield {
+public class Shield implements Effect {
 	private final float width;
 	private final float height;
 	private static Animation animation;
@@ -36,5 +36,17 @@ public class Shield {
 		batch.begin();
 		batch.draw(frame, position.x - width / 2, position.y - height / 2, width, height);
 		batch.end();
+	}
+
+	@Override
+	public boolean isFinished() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void apply(float delta) {
+		// TODO Auto-generated method stub
+		
 	}
 }

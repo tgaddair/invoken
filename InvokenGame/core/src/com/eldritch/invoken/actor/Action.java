@@ -1,4 +1,4 @@
-package com.eldritch.invoken.actor.action;
+package com.eldritch.invoken.actor;
 
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 

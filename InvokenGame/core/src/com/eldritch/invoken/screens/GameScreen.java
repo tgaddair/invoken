@@ -200,10 +200,10 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 			player.useAugmentation(0);
 			return true;
 		case Keys.NUM_2:
-			player.resurrectTarget();
+			player.useAugmentation(1);
 			return true;
 		case Keys.NUM_3:
-			player.toggleShield();
+			//player.useAugmentation(2);
 			return true;
 		default:
 			return false;
