@@ -1,7 +1,9 @@
 package com.eldritch.invoken.actor;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.badlogic.gdx.Gdx;
 import com.eldritch.invoken.InvokenGame;
@@ -14,24 +16,38 @@ import com.eldritch.invoken.actor.aug.FireWeapon;
 import com.eldritch.invoken.screens.GameScreen;
 
 public class Npc extends Agent {
+	private final Map<Agent, Float> relations = new HashMap<Agent, Float>();
 	private final List<Routine> routines = new ArrayList<Routine>();
 	private Routine routine;
 	private Agent followed = null;
 	
 	public Npc(int x, int y) {
 		super("sprite/eru_centurion", x, y);
-		routine = new IdleRoutine(this);
 		
+		// routines
+		routine = new IdleRoutine(this);
 		routines.add(new AttackRoutine(this));
 		routines.add(new FollowRoutine(this));
 		routines.add(new PatrolRoutine(this));
 		routines.add(routine); // idle is fallback
 		
+		// debug augs
 		addAugmentation(new FireWeapon());
 	}
 	
 	@Override
 	protected void takeAction(float delta, GameScreen screen) {
+		// update dispositions
+		for (Agent agent : screen.getActors()) {
+			if (agent != this && !relations.containsKey(agent)) {
+				float disp = getDisposition(agent);
+				relations.put(agent, disp);
+				if (disp < 0) {
+					addEnemy(agent);
+				}
+			}
+		}
+		
 		if (routine.isFinished()) {
 //			Gdx.app.log(InvokenGame.LOG, "FINISHED");
 			for (Routine r : routines) {

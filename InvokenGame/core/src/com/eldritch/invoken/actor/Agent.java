@@ -20,10 +20,11 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.actor.aug.Augmentation;
+import com.eldritch.invoken.actor.factions.Faction;
+import com.eldritch.invoken.actor.factions.FactionManager;
 import com.eldritch.invoken.actor.weapon.Shotgun;
 import com.eldritch.invoken.effects.Bleed;
 import com.eldritch.invoken.effects.Effect;
-import com.eldritch.invoken.effects.Shield;
 import com.eldritch.invoken.screens.GameScreen;
 
 public abstract class Agent implements Entity {
@@ -58,6 +59,7 @@ public abstract class Agent implements Entity {
 	float deathTime = 0;
 	float stateTime = 0;
 	
+	private final FactionManager factions = new FactionManager(this);
 	private final LinkedList<Action> actions = new LinkedList<Action>();
 	private final List<Effect> effects = new LinkedList<Effect>();
 	private Action action = null;
@@ -93,6 +95,22 @@ public abstract class Agent implements Entity {
 		weapon = new Shotgun(this);
 	}
 	
+	public Set<Faction> getFactions() {
+		return factions.getFactions();
+	}
+	
+	public void addFaction(Faction faction, int rank, int reputation) {
+		factions.addFaction(faction, rank, reputation);
+	}
+	
+	public int getReputation(Faction faction) {
+		return factions.getReputation(faction);
+	}
+	
+	public float getDisposition(Agent other) {
+		return factions.getDisposition(other);
+	}
+	
 	public void useAugmentation(int index) {
 		augmentations.use(index);
 	}
@@ -107,6 +125,10 @@ public abstract class Agent implements Entity {
 	
 	public Set<Agent> getEnemies() {
 		return enemies;
+	}
+	
+	public void addEnemy(Agent other) {
+		enemies.add(other);
 	}
 	
 	public boolean isAlive() {

@@ -30,6 +30,7 @@ import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.actor.Agent;
 import com.eldritch.invoken.actor.Npc;
 import com.eldritch.invoken.actor.Player;
+import com.eldritch.invoken.actor.factions.Faction;
 
 public class GameScreen extends AbstractScreen implements InputProcessor {
 	public static final AssetManager textureManager = new AssetManager();
@@ -95,17 +96,33 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 		
 		// load the selector
 		selector = new TextureRegion(new Texture("sprite/selection.png"));
+		
+		// debug factions
+		Faction playerFaction = new Faction("Player");
+		Faction eruFaction = new Faction("House Eru");
+		playerFaction.addRelation(eruFaction, -10);
+		eruFaction.addRelation(playerFaction, -50);
 
 		// create the Player we want to move around the world
 		player = new Player(20, 15);
+		player.addFaction(playerFaction, 9, 0);
 		addActor(player);
-		addActor(new Npc(25, 15));
-		addActor(new Npc(27, 20));
-		addActor(new Npc(27, 10));
+		
+		// create test NPCs
+		addActor(createTestNpc(25, 15, eruFaction));
+		addActor(createTestNpc(27, 20, eruFaction));
+		addActor(createTestNpc(27, 10, eruFaction));
 		
 		Gdx.input.setInputProcessor(this);
-		
 		Gdx.app.log(InvokenGame.LOG, "start");
+	}
+	
+	private Npc createTestNpc(int x, int y, Faction... factions) {
+		Npc npc = new Npc(x, y);
+		for (Faction faction : factions) {
+			npc.addFaction(faction, 3, 0);
+		}
+		return npc;
 	}
 
 	private void addActor(Agent actor) {
