@@ -68,11 +68,6 @@ public class Player extends Agent {
 	public void select(Agent other) {
 		setTarget(other);
 	}
-	
-	@Override
-	public void setFollowing(Agent actor) {
-		// does nothing, but may be useful in the future for certain missions
-	}
 
 	private boolean isTouched(float startX, float endX) {
 		// check if any finger is touch the area between startX and endX

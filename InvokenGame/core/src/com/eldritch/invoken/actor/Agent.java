@@ -64,6 +64,7 @@ public abstract class Agent implements Entity {
 	private final List<Effect> effects = new LinkedList<Effect>();
 	private Action action = null;
 	
+	private Agent followed = null;
 	private final List<Agent> followers = new ArrayList<Agent>();
 	private final Set<Agent> enemies = new HashSet<Agent>();
 
@@ -160,6 +161,18 @@ public abstract class Agent implements Entity {
 		follower.setFollowing(this);
 		followers.add(follower);
 	}
+	
+	public void setFollowing(Agent actor) {
+		followed = actor;
+	}
+	
+	public Agent getFollowed() {
+		return followed;
+	}
+	
+	public boolean isFollowing(Agent agent) {
+		return getFollowed() == agent;
+	}
 
 	/** returns true if the toggle is on after invoking this method */
 	public boolean toggle(Class<?> clazz) {
@@ -235,6 +248,12 @@ public abstract class Agent implements Entity {
 	public boolean hasPendingAction() {
 		return !actions.isEmpty();
 	}
+	
+	protected void onDeath() {
+		followers.clear();
+		enemies.clear();
+		target = null;
+	}
 
 	public void update(float delta, GameScreen screen) {
 		if (delta == 0)
@@ -265,9 +284,7 @@ public abstract class Agent implements Entity {
 			takeAction(delta, screen);
 		} else if (deathTime == 0) {
 			// kill the agent
-			followers.clear();
-			enemies.clear();
-			target = null;
+			onDeath();
 		}
 		
 		// remove target if we're too far away from them
@@ -533,8 +550,6 @@ public abstract class Agent implements Entity {
 	}
 
 	protected abstract void takeAction(float delta, GameScreen screen);
-	
-	public abstract void setFollowing(Agent actor);
 	
 	public static Animation getAnimation(String assetName) {
 		TextureRegion[][] regions = GameScreen.getRegions(assetName, 48, 48);

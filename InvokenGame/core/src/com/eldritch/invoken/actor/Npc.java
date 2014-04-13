@@ -2,6 +2,7 @@ package com.eldritch.invoken.actor;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -20,7 +21,6 @@ public class Npc extends Agent {
 	private final Map<Agent, Float> relations = new HashMap<Agent, Float>();
 	private final List<Routine> routines = new ArrayList<Routine>();
 	private Routine routine;
-	private Agent followed = null;
 	
 	public Npc(int x, int y) {
 		super("sprite/eru_centurion", x, y);
@@ -38,19 +38,28 @@ public class Npc extends Agent {
 	
 	@Override
 	protected void takeAction(float delta, GameScreen screen) {
-		// update dispositions
-		for (Agent agent : screen.getActors()) {
-			if (agent != this && agent.isAlive() && !relations.containsKey(agent)) {
-				float disp = getDisposition(agent);
-				relations.put(agent, disp);
+		// cleanup state
+		Iterator<Entry<Agent, Float>> it = relations.entrySet().iterator();
+		while (it.hasNext()) {
+			Entry<Agent, Float> entry = it.next();
+			if (!entry.getKey().isAlive()) {
+				it.remove();
 			}
 		}
 		
-		// handle behavior for the dispositions
-		for (Entry<Agent, Float> entry : relations.entrySet()) {
-			// make sure we're close enough to notice this agent
-			if (dst2(entry.getKey()) < 5 && entry.getValue() < 0) {
-				addEnemy(entry.getKey());
+		// update dispositions for neighbors
+		for (Agent agent : screen.getActors()) {
+			if (dst2(agent) < 50) {
+				if (agent != this && agent.isAlive()) {
+					if (!relations.containsKey(agent)) {
+						relations.put(agent, getDisposition(agent));
+					}
+					
+					// add enemies and allies
+					if (relations.get(agent) < 0) {
+						addEnemy(agent);
+					}
+				}
 			}
 		}
 		
@@ -78,12 +87,13 @@ public class Npc extends Agent {
 		routine.takeAction(delta, screen);
 	}
 	
-	@Override
-	public void setFollowing(Agent actor) {
-		followed = actor;
+	public Map<Agent, Float> getRelations() {
+		return relations;
 	}
 	
-	public Agent getFollowed() {
-		return followed;
+	@Override
+	protected void onDeath() {
+		super.onDeath();
+		relations.clear();
 	}
 }

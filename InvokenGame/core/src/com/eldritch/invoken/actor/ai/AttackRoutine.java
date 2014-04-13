@@ -1,5 +1,7 @@
 package com.eldritch.invoken.actor.ai;
 
+import java.util.Map.Entry;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.InvokenGame;
@@ -44,21 +46,51 @@ public class AttackRoutine implements Routine {
 
 	@Override
 	public boolean isValid() {
-		return !npc.getEnemies().isEmpty();
+		return !npc.getEnemies().isEmpty() || shouldAssist();
 	}
 	
 	@Override
 	public void reset() {
 		elapsed = 0;
 	}
+	
+	private boolean shouldAssist() {
+		for (Entry<Agent, Float> entry : npc.getRelations().entrySet()) {
+			if (entry.getValue() > 0) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	private Agent getEnemy() {
+		for (Agent agent : npc.getEnemies()) {
+			return agent;
+		}
+		return null;
+	}
+	
+	private Agent getAllyEnemy() {
+		for (Entry<Agent, Float> entry : npc.getRelations().entrySet()) {
+			if (entry.getValue() > 0 && !entry.getKey().getEnemies().isEmpty()) {
+				for (Agent agent : entry.getKey().getEnemies()) {
+					return agent;
+				}
+			}
+		}
+		return null;
+	}
 
 	@Override
 	public void takeAction(float delta, GameScreen screen) {
 		// update target enemy
 		if (target == null || !target.isAlive()) {
-			for (Agent agent : npc.getEnemies()) {
-				target = agent;
-				break;
+			// get one of our enemies
+			target = getEnemy();
+			
+			// no enemy found, check our allies for enemies
+			if (target == null) {
+				target = getAllyEnemy();
 			}
 			
 			// can't do anything if we are unable to find a target to attack

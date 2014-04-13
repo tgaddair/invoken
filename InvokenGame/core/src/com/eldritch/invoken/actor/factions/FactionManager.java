@@ -33,6 +33,12 @@ public class FactionManager {
 	}
 	
 	public float getDisposition(Agent other) {
+		// special case for followers
+		if (agent.isFollowing(other)) {
+			return 100;
+		}
+		
+		// calculate disposition from factions
 		float reaction = 0;
 		for (Faction faction : getFactions()) {
 			for (Faction otherFaction : other.getFactions()) {

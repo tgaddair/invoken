@@ -104,7 +104,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 		eruFaction.addRelation(playerFaction, -50);
 
 		// create the Player we want to move around the world
-		player = new Player(20, 15);
+		player = new Player(15, 10);
 		player.addFaction(playerFaction, 9, 0);
 		addActor(player);
 		
