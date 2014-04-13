@@ -56,7 +56,7 @@ public class AttackRoutine implements Routine {
 	
 	private boolean shouldAssist() {
 		for (Entry<Agent, Float> entry : npc.getRelations().entrySet()) {
-			if (entry.getValue() > 0) {
+			if (entry.getValue() > 0 && !entry.getKey().getEnemies().isEmpty()) {
 				return true;
 			}
 		}
