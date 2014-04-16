@@ -100,8 +100,11 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 		// debug factions
 		Faction playerFaction = new Faction("Player");
 		Faction eruFaction = new Faction("House Eru");
+		Faction imperialFaction = new Faction("Icarian Empire");
 		playerFaction.addRelation(eruFaction, -10);
 		eruFaction.addRelation(playerFaction, -50);
+		eruFaction.addRelation(imperialFaction, -50);
+		imperialFaction.addRelation(eruFaction, -50);
 
 		// create the Player we want to move around the world
 		player = new Player(15, 10);
@@ -109,16 +112,22 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 		addActor(player);
 		
 		// create test NPCs
-		addActor(createTestNpc(25, 15, eruFaction));
-		addActor(createTestNpc(27, 20, eruFaction));
-		addActor(createTestNpc(27, 10, eruFaction));
+		String asset = "sprite/eru_centurion";
+		addActor(createTestNpc(25, 15, asset, eruFaction));
+		addActor(createTestNpc(27, 20, asset, eruFaction));
+		addActor(createTestNpc(27, 10, asset, eruFaction));
+		
+		asset = "sprite/imperial_agent";
+		addActor(createTestNpc(10, 10, asset, imperialFaction));
+		addActor(createTestNpc(10, 12, asset, imperialFaction));
+		addActor(createTestNpc(12, 8, asset, imperialFaction));
 		
 		Gdx.input.setInputProcessor(this);
 		Gdx.app.log(InvokenGame.LOG, "start");
 	}
 	
-	private Npc createTestNpc(int x, int y, Faction... factions) {
-		Npc npc = new Npc(x, y);
+	private Npc createTestNpc(int x, int y, String asset, Faction... factions) {
+		Npc npc = new Npc(x, y, asset);
 		for (Faction faction : factions) {
 			npc.addFaction(faction, 3, 0);
 		}

@@ -99,6 +99,15 @@ public class AttackRoutine implements Routine {
 			if (target == null || !target.isAlive()) {
 				return;
 			}
+		} else {
+			// consider changing targets
+			for (Agent agent : npc.getEnemies()) {
+				if (npc.dst2(agent) < npc.dst2(target)) {
+					// attack the closer enemy
+					target = agent;
+					npc.setTarget(target);
+				}
+			}
 		}
 		
 		move(delta, screen);
