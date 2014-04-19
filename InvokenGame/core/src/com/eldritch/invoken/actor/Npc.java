@@ -22,8 +22,8 @@ public class Npc extends Agent {
 	private final List<Routine> routines = new ArrayList<Routine>();
 	private Routine routine;
 	
-	public Npc(int x, int y, String asset) {
-		super(asset, x, y);
+	public Npc(int x, int y, Profession profession, String asset) {
+		super(asset, x, y, profession);
 		
 		// routines
 		routine = new IdleRoutine(this);
@@ -31,9 +31,6 @@ public class Npc extends Agent {
 		routines.add(new FollowRoutine(this));
 		routines.add(new PatrolRoutine(this));
 		routines.add(routine); // idle is fallback
-		
-		// debug augs
-		addAugmentation(new FireWeapon());
 	}
 	
 	@Override

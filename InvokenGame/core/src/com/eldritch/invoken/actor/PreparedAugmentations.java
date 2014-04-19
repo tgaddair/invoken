@@ -14,7 +14,9 @@ public class PreparedAugmentations {
 	}
 	
 	public void use(int index) {
-		augs.get(index).invoke(owner, owner.getTarget());
+		if (index < augs.size()) {
+			augs.get(index).invoke(owner, owner.getTarget());
+		}
 	}
 	
 	public void addAugmentation(Augmentation aug) {

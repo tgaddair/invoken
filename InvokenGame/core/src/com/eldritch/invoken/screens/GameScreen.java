@@ -32,6 +32,8 @@ import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.actor.Agent;
 import com.eldritch.invoken.actor.Npc;
 import com.eldritch.invoken.actor.Player;
+import com.eldritch.invoken.actor.Profession.Centurion;
+import com.eldritch.invoken.actor.Profession.Inquisitor;
 import com.eldritch.invoken.actor.factions.Faction;
 
 public class GameScreen extends AbstractScreen implements InputProcessor {
@@ -109,7 +111,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 		imperialFaction.addRelation(eruFaction, -50);
 
 		// create the Player we want to move around the world
-		player = new Player(15, 10);
+		player = new Player(new Inquisitor(), 15, 10);
 		player.addFaction(playerFaction, 9, 0);
 		addActor(player);
 		
@@ -129,7 +131,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 	}
 	
 	private Npc createTestNpc(int x, int y, String asset, Faction... factions) {
-		Npc npc = new Npc(x, y, asset);
+		Npc npc = new Npc(x, y, new Centurion(), asset);
 		for (Faction faction : factions) {
 			npc.addFaction(faction, 3, 0);
 		}
@@ -246,9 +248,6 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 			return true;
 		case Keys.NUM_4:
 			player.useAugmentation(3);
-			return true;
-		case Keys.NUM_5:
-			player.useAugmentation(4);
 			return true;
 		default:
 			return false;

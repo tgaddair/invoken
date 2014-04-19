@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.actor.ai.AgentMover;
+import com.eldritch.invoken.actor.aug.Augmentation;
 import com.eldritch.invoken.actor.aug.Barrier;
 import com.eldritch.invoken.actor.aug.Command;
 import com.eldritch.invoken.actor.aug.FireWeapon;
@@ -17,15 +18,9 @@ public class Player extends Agent {
 	private final Vector2 targetCoord = new Vector2();
 	private boolean moving = false;
 	
-	public Player(int x, int y) {
-		super("sprite/main", x, y);
+	public Player(Profession profession, int x, int y) {
+		super("sprite/main", x, y, profession);
 		mover = new AgentMover(this, getMaxVelocity(), 0.01f);
-		
-		addAugmentation(new FireWeapon());
-		addAugmentation(new Resurrect());
-		addAugmentation(new Barrier());
-		addAugmentation(new Command());
-		addAugmentation(new Paralyze());
 	}
 	
 	@Override

@@ -45,6 +45,7 @@ public abstract class Agent implements Entity {
 		Explore, Combat
 	}
 
+	private final Profession profession;
 	private final float width;
 	private final float height;
 
@@ -78,7 +79,7 @@ public abstract class Agent implements Entity {
 	private final int baseHealth = 5;
 	private int health;
 
-	public Agent(String assetPath, int x, int y) {
+	public Agent(String assetPath, int x, int y, Profession profession) {
 		setPosition(x, y);
 		animations.put(Activity.Explore, getAnimations(assetPath + "/walk.png"));
 		animations.put(Activity.Combat, getAnimations(assetPath + "/shoot.png"));
@@ -91,6 +92,11 @@ public abstract class Agent implements Entity {
 		// size into world units (1 unit == 32 pixels)
 		width = 1 / 32f * 48; // regions[0][0].getRegionWidth();
 		height = 1 / 32f * 48; // regions[0][0].getRegionHeight();
+		
+		this.profession = profession;
+		for (Augmentation aug : profession.getStartingAugmentations()) {
+			addAugmentation(aug);
+		}
 		
 		health = baseHealth;
 		
