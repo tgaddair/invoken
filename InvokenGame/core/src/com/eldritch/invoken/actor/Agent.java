@@ -165,8 +165,10 @@ public abstract class Agent implements Entity {
 		return delta;
 	}
 	
-	public void heal(float value) {
-		health += value;
+	public float heal(float value) {
+		float delta = Math.max(Math.min(value, baseHealth - health), 0);
+		health += delta;
+		return delta;
 	}
 	
 	public void resurrect() {
