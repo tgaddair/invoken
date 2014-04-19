@@ -10,7 +10,7 @@ import com.eldritch.invoken.actor.Agent;
 public class BasicEffect implements Effect {
 	private final float width;
 	private final float height;
-	private static Animation animation;
+	private Animation animation;
 	
 	private final Agent actor;
 	private float stateTime = 0;
