@@ -7,6 +7,7 @@ import com.eldritch.invoken.actor.ai.AgentMover;
 import com.eldritch.invoken.actor.aug.Barrier;
 import com.eldritch.invoken.actor.aug.Command;
 import com.eldritch.invoken.actor.aug.FireWeapon;
+import com.eldritch.invoken.actor.aug.Paralyze;
 import com.eldritch.invoken.actor.aug.Resurrect;
 import com.eldritch.invoken.screens.GameScreen;
 
@@ -24,6 +25,7 @@ public class Player extends Agent {
 		addAugmentation(new Resurrect());
 		addAugmentation(new Barrier());
 		addAugmentation(new Command());
+		addAugmentation(new Paralyze());
 	}
 	
 	@Override

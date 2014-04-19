@@ -67,6 +67,8 @@ public abstract class Agent implements Entity {
 	private Agent followed = null;
 	private final List<Agent> followers = new ArrayList<Agent>();
 	private final Set<Agent> enemies = new HashSet<Agent>();
+	private boolean confused = false;
+	private boolean paralyzed = false;
 
 	private Shotgun weapon;
 	private Agent target;
@@ -155,6 +157,14 @@ public abstract class Agent implements Entity {
 	public void resurrect() {
 		health = baseHealth;
 		deathTime = 0;
+	}
+	
+	public void setConfused(boolean confused) {
+		this.confused = confused;
+	}
+	
+	public void setParalyzed(boolean paralyzed) {
+		this.paralyzed = paralyzed;
 	}
 	
 	public void addFollower(Agent follower) {
@@ -266,6 +276,20 @@ public abstract class Agent implements Entity {
 		enemies.clear();
 		target = null;
 	}
+	
+	protected void attemptTakeAction(float delta, GameScreen screen) {
+		if (paralyzed) {
+			// can't do anything when paralyzed
+			return;
+		}
+		
+		if (confused) {
+			// cannot take a conscious action when confused, must delegate to the confusion handler
+		} else {
+			// no disorienting effects, so take conscious action
+			takeAction(delta, screen);
+		}
+	}
 
 	public void update(float delta, GameScreen screen) {
 		if (delta == 0)
@@ -294,7 +318,7 @@ public abstract class Agent implements Entity {
 			}
 			
 			// take conscious action
-			takeAction(delta, screen);
+			attemptTakeAction(delta, screen);
 		} else if (deathTime == 0) {
 			// kill the agent
 			onDeath();
