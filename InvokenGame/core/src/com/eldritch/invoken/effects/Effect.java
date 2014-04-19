@@ -7,5 +7,7 @@ public interface Effect {
 	
 	void apply(float delta);
 	
+	void dispel();
+	
 	void render(float delta, OrthogonalTiledMapRenderer renderer);
 }

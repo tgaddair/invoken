@@ -35,6 +35,10 @@ public class BasicEffect implements Effect {
 	}
 	
 	@Override
+	public void dispel() {
+	}
+	
+	@Override
 	public void render(float delta, OrthogonalTiledMapRenderer renderer) {
 		TextureRegion frame = animation.getKeyFrame(stateTime);
 		Vector2 position = actor.getPosition();

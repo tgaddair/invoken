@@ -244,6 +244,9 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 		case Keys.NUM_3:
 			player.useAugmentation(2);
 			return true;
+		case Keys.NUM_4:
+			player.useAugmentation(3);
+			return true;
 		default:
 			return false;
 		}

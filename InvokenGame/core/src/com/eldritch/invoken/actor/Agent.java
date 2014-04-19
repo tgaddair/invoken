@@ -162,8 +162,20 @@ public abstract class Agent implements Entity {
 		followers.add(follower);
 	}
 	
+	public void removeFollower(Agent follower) {
+		follower.stopFollowing(this);
+		followers.remove(follower);
+	}
+	
 	public void setFollowing(Agent actor) {
 		followed = actor;
+	}
+	
+	public void stopFollowing(Agent actor) {
+		// perform this check to avoid canceling the following of a different actor
+		if (followed == actor) {
+			followed = null;
+		}
 	}
 	
 	public Agent getFollowed() {
@@ -267,6 +279,7 @@ public abstract class Agent implements Entity {
 			if (!effect.isFinished()) {
 				effect.apply(delta);
 			} else {
+				effect.dispel();
 				it.remove();
 			}
 		}
