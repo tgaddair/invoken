@@ -5,6 +5,7 @@ import java.util.List;
 import com.eldritch.invoken.actor.aug.Augmentation;
 import com.eldritch.invoken.actor.aug.Barrier;
 import com.eldritch.invoken.actor.aug.Command;
+import com.eldritch.invoken.actor.aug.Drain;
 import com.eldritch.invoken.actor.aug.FireWeapon;
 import com.eldritch.invoken.actor.aug.Paralyze;
 import com.eldritch.invoken.actor.aug.Resurrect;
@@ -23,7 +24,7 @@ public interface Profession {
 	public static class Executor implements Profession {
 		@Override
 		public List<Augmentation> getStartingAugmentations() {
-			return ImmutableList.<Augmentation>of(new FireWeapon(), new Barrier());
+			return ImmutableList.<Augmentation>of(new FireWeapon(), new Barrier(), new Drain());
 		}
 	}
 	
@@ -44,7 +45,7 @@ public interface Profession {
 	public static class Architect implements Profession {
 		@Override
 		public List<Augmentation> getStartingAugmentations() {
-			return ImmutableList.<Augmentation>of(new Resurrect());
+			return ImmutableList.<Augmentation>of(new Drain(), new Resurrect());
 		}
 	}
 	
@@ -58,7 +59,7 @@ public interface Profession {
 	public static class Inquisitor implements Profession {
 		@Override
 		public List<Augmentation> getStartingAugmentations() {
-			return ImmutableList.<Augmentation>of(new Paralyze(), new Command());
+			return ImmutableList.<Augmentation>of(new Drain(), new Paralyze(), new Command());
 		}
 	}
 	

@@ -11,6 +11,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.actor.Action;
 import com.eldritch.invoken.actor.Agent;
 import com.eldritch.invoken.actor.Agent.Direction;
+import com.eldritch.invoken.effects.Bleed;
 import com.eldritch.invoken.screens.GameScreen;
 
 public class FireWeapon extends Augmentation {
@@ -70,7 +71,7 @@ public class FireWeapon extends Augmentation {
 		public void apply() {
 			if (target != null) {
 				owner.getEnemies().add(target);
-				target.damage(owner, 1);
+				target.addEffect(new Bleed(owner, target, 1));
 			}
 		}
 		

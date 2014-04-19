@@ -12,6 +12,6 @@ public class Shield extends BasicEffect {
 	
 	@Override
 	public boolean isFinished() {
-		return !getOwner().isToggled(Shield.class);
+		return !getTarget().isToggled(Shield.class);
 	}
 }

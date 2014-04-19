@@ -4,7 +4,22 @@ import com.eldritch.invoken.actor.Agent;
 import com.eldritch.invoken.screens.GameScreen;
 
 public class Bleed extends BasicEffect {
-	public Bleed(Agent actor) {
-		super(actor, GameScreen.getRegions("sprite/effects/bleed.png", 48, 48)[0]);
+	private final Agent source;
+	private final float magnitude;
+	private boolean applied = false;
+	
+	public Bleed(Agent actor, Agent target, float magnitude) {
+		super(target, GameScreen.getRegions("sprite/effects/bleed.png", 48, 48)[0]);
+		this.source = actor;
+		this.magnitude = magnitude;
+	}
+	
+	@Override
+	public void apply(float delta) {
+		super.apply(delta);
+		if (!applied) {
+			getTarget().damage(source, magnitude);
+			applied = true;
+		}
 	}
 }

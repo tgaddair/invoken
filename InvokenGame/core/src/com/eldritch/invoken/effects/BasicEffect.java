@@ -54,7 +54,7 @@ public class BasicEffect implements Effect {
 		return animation.isAnimationFinished(stateTime);
 	}
 	
-	protected Agent getOwner() {
+	protected Agent getTarget() {
 		return actor;
 	}
 	

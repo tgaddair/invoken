@@ -77,7 +77,7 @@ public abstract class Agent implements Entity {
 	private final Set<Class<?>> toggles = new HashSet<Class<?>>();
 	private final PreparedAugmentations augmentations = new PreparedAugmentations(this);
 	private final int baseHealth = 5;
-	private int health;
+	private float health;
 
 	public Agent(String assetPath, int x, int y, Profession profession) {
 		setPosition(x, y);
@@ -148,16 +148,21 @@ public abstract class Agent implements Entity {
 		return health > 0;
 	}
 	
-	public void damage(Agent source, int value) {
+	public float damage(Agent source, float value) {
 		if (isAlive()) {
 			enemies.add(source);
 		}
-		damage(value);
+		return damage(value);
 	}
 	
-	public void damage(int value) {
-		health -= value;
-		addEffect(new Bleed(this));
+	public float damage(float value) {
+		float delta = Math.max(Math.min(value, health), 0);
+		health -= delta;
+		return delta;
+	}
+	
+	public void heal(float value) {
+		health += value;
 	}
 	
 	public void resurrect() {
