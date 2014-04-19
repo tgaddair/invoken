@@ -57,4 +57,8 @@ public class BasicEffect implements Effect {
 	protected Agent getOwner() {
 		return actor;
 	}
+	
+	protected float getStateTime() {
+		return stateTime;
+	}
 }
