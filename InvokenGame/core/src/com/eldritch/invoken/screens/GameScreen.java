@@ -1,6 +1,8 @@
 package com.eldritch.invoken.screens;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import com.badlogic.gdx.Gdx;
@@ -142,7 +144,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 	public void render(float delta) {
 		Gdx.gl.glClearColor(0f / 255f, 0f / 255f, 0f / 255f, 1f);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
+		
 		// update the player (process input, collision detection, position
 		// update)
 		for (Agent actor : entities) {
@@ -159,8 +161,16 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 		// camera sees and render the map
 		renderer.setView(camera);
 		renderer.render();
+		
+		// sort drawables by descending y
+		Collections.sort(entities, new Comparator<Agent>() {
+			@Override
+			public int compare(Agent a1, Agent a2) {
+				return Float.compare(a2.getPosition().y, a1.getPosition().y);
+			}
+		});
 
-		// render the player
+		// render the drawables
 		for (Agent actor : entities) {
 			if (actor == player.getTarget()) {
 				Color color = new Color(0x00FA9AFF);
