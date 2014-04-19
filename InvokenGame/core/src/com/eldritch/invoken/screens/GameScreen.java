@@ -181,6 +181,9 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 					color = new Color(0x483D8BFF);
 				}
 				drawCentered(selector, actor.getPosition(), color);
+				drawStats(actor);
+			} else if (actor == player) {
+				drawStats(actor);
 			}
 			actor.render(delta, renderer);
 		}
@@ -200,6 +203,16 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 		batch.draw(region, position.x - w / 2, position.y - h / 2 - 0.2f, w, h);
 		batch.end();
 		batch.setColor(Color.WHITE);
+	}
+	
+	private void drawStats(Agent agent) {
+		Vector2 position = agent.getPosition();
+		float h = agent.getHeight() / 2;
+		Vector3 screen = camera.project(new Vector3(position.x, position.y + h, 0));
+		
+		batch.begin();
+		font.draw(batch, String.format("%.2f", agent.getHealth()), screen.x, screen.y);
+		batch.end();
 	}
 
 	public List<Agent> getActors() {

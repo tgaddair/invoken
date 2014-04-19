@@ -148,6 +148,10 @@ public abstract class Agent implements Entity {
 		return health > 0;
 	}
 	
+	public float getHealth() {
+		return health;
+	}
+	
 	public float damage(Agent source, float value) {
 		if (isAlive()) {
 			enemies.add(source);
@@ -589,11 +593,11 @@ public abstract class Agent implements Entity {
 		this.state = state;
 	}
 
-	protected float getWidth() {
+	public float getWidth() {
 		return width;
 	}
 
-	protected float getHeight() {
+	public float getHeight() {
 		return height;
 	}
 
