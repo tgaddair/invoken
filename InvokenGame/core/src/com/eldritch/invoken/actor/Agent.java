@@ -28,7 +28,7 @@ import com.eldritch.invoken.screens.GameScreen;
 
 public abstract class Agent implements Entity {
 	static AssetManager assetManager = new AssetManager();
-	static float MAX_VELOCITY = 10f;
+	static float MAX_VELOCITY = 8f;
 	static float JUMP_VELOCITY = 40f;
 	static float DAMPING = 0.87f;
 	static int PX = 64;

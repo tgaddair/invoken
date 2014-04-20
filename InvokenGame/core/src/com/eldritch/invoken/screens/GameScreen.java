@@ -19,7 +19,6 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
@@ -37,6 +36,7 @@ import com.eldritch.invoken.actor.Player;
 import com.eldritch.invoken.actor.Profession.Centurion;
 import com.eldritch.invoken.actor.Profession.Inquisitor;
 import com.eldritch.invoken.actor.factions.Faction;
+import com.google.common.primitives.Ints;
 
 public class GameScreen extends AbstractScreen implements InputProcessor {
 	public static final AssetManager textureManager = new AssetManager();
@@ -60,6 +60,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 	private SpriteBatch batch;
 	private Array<Rectangle> tiles = new Array<Rectangle>();
 	
+	private int[] overlays;
 	private int collisionIndex;
 
 	public GameScreen(InvokenGame game) {
@@ -85,7 +86,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false, (w / h) * 10, 10);
-		camera.zoom = 1.25f;
+		camera.zoom = 1.5f;
 		camera.update();
 
 		font = new BitmapFont();
@@ -100,19 +101,21 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 		assetManager.finishLoading();
 		map = assetManager.get(mapAsset);
 		
-		// find the collision layer
+		// find layers we care about
+		List<Integer> overlayList = new ArrayList<Integer>();
 		for (int i = 0; i < map.getLayers().getCount(); i++) {
 			TiledMapTileLayer layer = (TiledMapTileLayer) map.getLayers().get(i);
 			if (layer.getName().equals("collision")) {
 				layer.setVisible(false);
 				collisionIndex = i;
-				break;
+			} else if (layer.getName().equals("overlay") || layer.getName().equals("trim")) {
+				// overlays are rendered above all objects always
+				overlayList.add(i);
 			}
 		}
+		overlays = Ints.toArray(overlayList);
 		
 		// objects are rendered by y-ordering with other entities
-		
-		// overlays are rendered above all objects always
 		
 		float unitScale = 1 / 32f;
 		renderer = new OrthogonalTiledMapRenderer(map, unitScale);
@@ -233,12 +236,15 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 					color = new Color(0x483D8BFF);
 				}
 				drawCentered(selector, actor.getPosition(), color);
-				drawStats(actor);
-			} else if (actor == player) {
-				drawStats(actor);
 			}
 			actor.render(delta, renderer);
 		}
+		
+		// render the overlay layer
+		renderer.render(overlays);
+		
+		// draw stats
+		drawStats();
 
 		batch.begin();
 		font.draw(batch, "FPS: " + Gdx.graphics.getFramesPerSecond(), 10, 20);
@@ -255,6 +261,14 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 		batch.draw(region, position.x - w / 2, position.y - h / 2 - 0.4f, w, h);
 		batch.end();
 		batch.setColor(Color.WHITE);
+	}
+	
+	private void drawStats() {
+		for (Agent actor : entities) {
+			if (actor == player.getTarget() || actor == player) {
+				drawStats(actor);
+			}
+		}
 	}
 	
 	private void drawStats(Agent agent) {
