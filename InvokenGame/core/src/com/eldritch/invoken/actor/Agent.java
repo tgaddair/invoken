@@ -31,6 +31,7 @@ public abstract class Agent implements Entity {
 	static float MAX_VELOCITY = 10f;
 	static float JUMP_VELOCITY = 40f;
 	static float DAMPING = 0.87f;
+	static int PX = 64;
 
 	public enum Direction {
 		Up, Left, Down, Right
@@ -74,7 +75,7 @@ public abstract class Agent implements Entity {
 	private Agent target;
 	private final Set<Class<?>> toggles = new HashSet<Class<?>>();
 
-	public Agent(String assetPath, int x, int y, Profession profession, int level) {
+	public Agent(String assetPath, float x, float y, Profession profession, int level) {
 		setPosition(x, y);
 		animations.put(Activity.Explore, getAnimations(assetPath + "/walk.png"));
 		animations.put(Activity.Combat, getAnimations(assetPath + "/shoot.png"));
@@ -85,8 +86,8 @@ public abstract class Agent implements Entity {
 		// figure out the width and height of the player for collision
 		// detection and rendering by converting a player frames pixel
 		// size into world units (1 unit == 32 pixels)
-		width = 1 / 32f * 48; // regions[0][0].getRegionWidth();
-		height = 1 / 32f * 48; // regions[0][0].getRegionHeight();
+		width = 1 / 32f * PX; // regions[0][0].getRegionWidth();
+		height = 1 / 32f * PX; // regions[0][0].getRegionHeight();
 		
 		// for debug purposes
 		weapon = new Shotgun(this);
@@ -622,7 +623,7 @@ public abstract class Agent implements Entity {
 	protected abstract void takeAction(float delta, GameScreen screen);
 	
 	public static Animation getAnimation(String assetName) {
-		TextureRegion[][] regions = GameScreen.getRegions(assetName, 48, 48);
+		TextureRegion[][] regions = GameScreen.getRegions(assetName, PX, PX);
 		Animation anim = new Animation(0.15f, regions[0]);
 		return anim;
 	}
@@ -631,7 +632,7 @@ public abstract class Agent implements Entity {
 		Map<Direction, Animation> animations = new HashMap<Direction, Animation>();
 
 		// up, left, down, right
-		TextureRegion[][] regions = GameScreen.getRegions(assetName, 48, 48);
+		TextureRegion[][] regions = GameScreen.getRegions(assetName, PX, PX);
 		for (Direction d : Direction.values()) {
 			Animation anim = new Animation(0.15f, regions[d.ordinal()]);
 			anim.setPlayMode(Animation.PlayMode.LOOP_PINGPONG);

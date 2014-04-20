@@ -107,7 +107,7 @@ public abstract class Profession {
 		
 		@Override
 		public List<Augmentation> getStartingAugmentations() {
-			return ImmutableList.<Augmentation>of(new FireWeapon(), new Barrier(), new Drain());
+			return ImmutableList.<Augmentation>of(new FireWeapon(), new Drain(), new Barrier());
 		}
 	}
 	

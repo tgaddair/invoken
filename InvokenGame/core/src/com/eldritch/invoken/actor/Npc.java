@@ -22,7 +22,7 @@ public class Npc extends Agent {
 	private final List<Routine> routines = new ArrayList<Routine>();
 	private Routine routine;
 	
-	public Npc(Profession profession, int level, int x, int y, String asset) {
+	public Npc(Profession profession, int level, float x, float y, String asset) {
 		super(asset, x, y, profession, level);
 		
 		// routines

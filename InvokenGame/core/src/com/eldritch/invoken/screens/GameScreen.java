@@ -3,6 +3,7 @@ package com.eldritch.invoken.screens;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.LinkedList;
 import java.util.List;
 
 import com.badlogic.gdx.Gdx;
@@ -18,6 +19,7 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
@@ -57,6 +59,8 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 	private BitmapFont font;
 	private SpriteBatch batch;
 	private Array<Rectangle> tiles = new Array<Rectangle>();
+	
+	private int collisionIndex;
 
 	public GameScreen(InvokenGame game) {
 		super(game);
@@ -81,20 +85,35 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false, (w / h) * 10, 10);
-		camera.zoom = 1.0f;
+		camera.zoom = 1.25f;
 		camera.update();
 
 		font = new BitmapFont();
 		batch = new SpriteBatch();
 
 		// load the map, set the unit scale to 1/32 (1 unit == 32 pixels)
+		String mapAsset = "maps/underground.tmx";
 		assetManager = new AssetManager();
 		assetManager.setLoader(TiledMap.class, new TmxMapLoader(
 				new InternalFileHandleResolver()));
-		assetManager.load("maps/example_woodland.tmx", TiledMap.class);
+		assetManager.load(mapAsset, TiledMap.class);
 		assetManager.finishLoading();
-		map = assetManager.get("maps/example_woodland.tmx");
-
+		map = assetManager.get(mapAsset);
+		
+		// find the collision layer
+		for (int i = 0; i < map.getLayers().getCount(); i++) {
+			TiledMapTileLayer layer = (TiledMapTileLayer) map.getLayers().get(i);
+			if (layer.getName().equals("collision")) {
+				layer.setVisible(false);
+				collisionIndex = i;
+				break;
+			}
+		}
+		
+		// objects are rendered by y-ordering with other entities
+		
+		// overlays are rendered above all objects always
+		
 		float unitScale = 1 / 32f;
 		renderer = new OrthogonalTiledMapRenderer(map, unitScale);
 		
@@ -111,27 +130,60 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 		imperialFaction.addRelation(eruFaction, -50);
 
 		// create the Player we want to move around the world
-		player = new Player(new Inquisitor(), 10, 15, 10);
+		Vector2 spawn = getSpawnLocation();
+		player = new Player(new Inquisitor(), 10, spawn.x, spawn.y);
 		player.addFaction(playerFaction, 9, 0);
 		addActor(player);
 		
-		// create test NPCs
-		String asset = "sprite/eru_centurion";
-		addActor(createTestNpc(25, 15, asset, eruFaction));
-		addActor(createTestNpc(27, 20, asset, eruFaction));
-		addActor(createTestNpc(27, 10, asset, eruFaction));
+		// find spawn nodes
+		LinkedList<Vector2> spawnNodes = getSpawnNodes();
 		
-		asset = "sprite/imperial_agent";
-		addActor(createTestNpc(10, 10, asset, imperialFaction));
-		addActor(createTestNpc(10, 12, asset, imperialFaction));
-		addActor(createTestNpc(12, 8, asset, imperialFaction));
+		// create test NPCs
+		String asset = "sprite/imperial_agent";
+		addActor(createTestNpc(spawnNodes.poll(), asset, imperialFaction));
+		addActor(createTestNpc(spawnNodes.poll(), asset, imperialFaction));
+		addActor(createTestNpc(spawnNodes.poll(), asset, imperialFaction));
+		
+		asset = "sprite/eru_centurion";
+		addActor(createTestNpc(spawnNodes.poll(), asset, eruFaction));
+		addActor(createTestNpc(spawnNodes.poll(), asset, eruFaction));
+		addActor(createTestNpc(spawnNodes.poll(), asset, eruFaction));
 		
 		Gdx.input.setInputProcessor(this);
 		Gdx.app.log(InvokenGame.LOG, "start");
 	}
 	
-	private Npc createTestNpc(int x, int y, String asset, Faction... factions) {
-		Npc npc = new Npc(new Centurion(), 10, x, y, asset);
+	private LinkedList<Vector2> getSpawnNodes() {
+		LinkedList<Vector2> list = new LinkedList<Vector2>();
+		TiledMapTileLayer spawnLayer = (TiledMapTileLayer) map.getLayers().get("spawn");
+		spawnLayer.setVisible(false);
+		for (int x = 0; x < spawnLayer.getWidth(); x++) {
+			for (int y = 0; y < spawnLayer.getHeight(); y++) {
+				Cell cell = spawnLayer.getCell(x, y);
+				if (cell != null) {
+					list.add( new Vector2(x, y));
+				}
+			}
+		}
+		return list;
+	}
+	
+	private Vector2 getSpawnLocation() {
+		TiledMapTileLayer spawnLayer = (TiledMapTileLayer) map.getLayers().get("player");
+		spawnLayer.setVisible(false);
+		for (int x = 0; x < spawnLayer.getWidth(); x++) {
+			for (int y = 0; y < spawnLayer.getHeight(); y++) {
+				Cell cell = spawnLayer.getCell(x, y);
+				if (cell != null) {
+					return new Vector2(x, y);
+				}
+			}
+		}
+		return Vector2.Zero;
+	}
+	
+	private Npc createTestNpc(Vector2 position, String asset, Faction... factions) {
+		Npc npc = new Npc(new Centurion(), 10, position.x, position.y, asset);
 		for (Faction faction : factions) {
 			npc.addFaction(faction, 3, 0);
 		}
@@ -200,7 +252,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 		Batch batch = renderer.getSpriteBatch();
 		batch.setColor(color);
 		batch.begin();
-		batch.draw(region, position.x - w / 2, position.y - h / 2 - 0.2f, w, h);
+		batch.draw(region, position.x - w / 2, position.y - h / 2 - 0.4f, w, h);
 		batch.end();
 		batch.setColor(Color.WHITE);
 	}
@@ -220,13 +272,13 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 	}
 	
 	public boolean isObstacle(int x, int y) {
-		TiledMapTileLayer layer = (TiledMapTileLayer) map.getLayers().get(1);
+		TiledMapTileLayer layer = (TiledMapTileLayer) map.getLayers().get(collisionIndex);
 		return layer.getCell(x, y) != null;
 	}
 
 	public Array<Rectangle> getTiles(int startX, int startY, int endX,
 			int endY, Array<Rectangle> tiles) {
-		TiledMapTileLayer layer = (TiledMapTileLayer) map.getLayers().get(1);
+		TiledMapTileLayer layer = (TiledMapTileLayer) map.getLayers().get(collisionIndex);
 		rectPool.freeAll(tiles);
 		tiles.clear();
 		for (int y = startY; y <= endY; y++) {
