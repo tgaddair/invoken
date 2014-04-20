@@ -3,7 +3,6 @@ package com.eldritch.invoken.actor;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.eldritch.invoken.actor.Agent.SkillState;
 import com.eldritch.invoken.actor.aug.Augmentation;
 import com.eldritch.scifirpg.proto.Actors.ActorParams.Skill;
 import com.eldritch.scifirpg.proto.Disciplines.Discipline;
@@ -88,5 +87,27 @@ public class AgentStats {
     
     public int getCharisma() {
         return skills.get(Discipline.CHARISMA).getLevel();
+    }
+    
+	public static class SkillState {
+        private int level;
+        private int xp;
+
+        public SkillState(Skill skill) {
+            this.level = skill.getLevel();
+            this.xp = skill.getXp();
+        }
+
+        public int getLevel() {
+            return level;
+        }
+
+        public void addXp(int delta) {
+            xp += delta;
+        }
+
+        public int getXp() {
+            return xp;
+        }
     }
 }

@@ -613,26 +613,4 @@ public abstract class Agent implements Entity {
 
 		return animations;
 	}
-	
-	public static class SkillState {
-        private int level;
-        private int xp;
-
-        public SkillState(Skill skill) {
-            this.level = skill.getLevel();
-            this.xp = skill.getXp();
-        }
-
-        public int getLevel() {
-            return level;
-        }
-
-        public void addXp(int delta) {
-            xp += delta;
-        }
-
-        public int getXp() {
-            return xp;
-        }
-    }
 }
