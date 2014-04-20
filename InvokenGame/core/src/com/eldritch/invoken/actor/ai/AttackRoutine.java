@@ -12,9 +12,6 @@ import com.eldritch.invoken.screens.GameScreen;
 public class AttackRoutine implements Routine {
 	private final Npc npc;
 
-	/** don't get any closer to the enemy than this */
-	private final int minDistance;
-
 	/** how long we move in a single direction before turning */
 	private final Vector2 velocity = new Vector2();
 	
@@ -22,12 +19,7 @@ public class AttackRoutine implements Routine {
 	private float elapsed = 0;
 
 	public AttackRoutine(Npc npc) {
-		this(npc, 10);
-	}
-
-	public AttackRoutine(Npc npc, int minDistance) {
 		this.npc = npc;
-		this.minDistance = minDistance;
 	}
 
 	@Override
@@ -89,12 +81,6 @@ public class AttackRoutine implements Routine {
 			if (target == null || !target.isAlive()) {
 				target = getAllyEnemy();
 			}
-			
-			// can't do anything if we are unable to find a target to attack
-			npc.setTarget(target);
-			if (target == null || !target.isAlive()) {
-				return;
-			}
 		} else {
 			// consider changing targets
 			for (Agent agent : npc.getEnemies()) {
@@ -104,6 +90,12 @@ public class AttackRoutine implements Routine {
 					npc.setTarget(target);
 				}
 			}
+		}
+		
+		npc.setTarget(target);
+		if (target == null || !target.isAlive()) {
+			// can't do anything if we are unable to find a target to attack
+			return;
 		}
 		
 		move(delta, screen);
@@ -211,6 +203,8 @@ public class AttackRoutine implements Routine {
 	}
 
 	private boolean shouldFlee() {
+		// don't get any closer to the enemy than this
+		float minDistance = npc.getStats().getMaxTargetDistance() * 0.4f;
 		return getTargetPosition().dst2(npc.getPosition()) <= minDistance;
 	}
 }
