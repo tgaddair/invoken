@@ -80,4 +80,8 @@ public class InvokenGame extends Game {
 		Gdx.app.log(InvokenGame.LOG, "Setting screen: "
 				+ screen.getClass().getSimpleName());
 	}
+	
+	public static void log(String text) {
+		Gdx.app.log(InvokenGame.LOG, text);
+	}
 }

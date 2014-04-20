@@ -20,6 +20,11 @@ public class Commanded implements Effect {
 	public boolean isFinished() {
 		return stateTime > duration;
 	}
+	
+	@Override
+	public boolean succeeds() {
+		return true;
+	}
 
 	@Override
 	public void apply(float delta) {

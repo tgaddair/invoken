@@ -1,6 +1,8 @@
 package com.eldritch.invoken.effects;
 
+import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.actor.Agent;
+import com.eldritch.invoken.actor.AgentStats;
 import com.eldritch.invoken.screens.GameScreen;
 
 public class Bleed extends BasicEffect {
@@ -12,6 +14,18 @@ public class Bleed extends BasicEffect {
 		super(target, GameScreen.getRegions("sprite/effects/bleed.png", 48, 48)[0]);
 		this.source = actor;
 		this.magnitude = magnitude;
+	}
+	
+	@Override
+	public boolean succeeds() {
+		AgentStats sourceStats = source.getStats();
+		AgentStats targetStats = getTarget().getStats();
+		float chance = 
+				sourceStats.getAccuracy()
+				* source.getWeaponAccuracy()
+				* (1.0f - targetStats.getDefense());
+		InvokenGame.log("chance: " + chance);
+		return Math.random() <= chance;
 	}
 	
 	@Override

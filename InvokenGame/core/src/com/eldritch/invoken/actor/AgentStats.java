@@ -89,6 +89,46 @@ public class AgentStats {
         return skills.get(Discipline.CHARISMA).getLevel();
     }
     
+    public float getAccuracy() {
+    	return 0.75f + getWarfare() / 100f;
+    }
+    
+    public float getWillpower() {
+    	return 0.75f + getAutomata() / 100f;
+    }
+    
+    public float getDeception() {
+    	return 0.75f + getSubterfuge() / 100f;
+    }
+    
+    public float getDefense() {
+    	return Math.min(getDefenseBonus(), 1.0f);
+    }
+    
+    public float getResistance() {
+    	return Math.min(getAutomata() / 100f + getResistanceBonus(), 1.0f);
+    }
+    
+    public float getPerception() {
+    	return Math.min(getSubterfuge() / 100f + getAlertness() + getPerceptionBonus(), 1.0f);
+    }
+    
+    public float getDefenseBonus() {
+    	return 0;
+    }
+    
+    public float getResistanceBonus() {
+    	return 0;
+    }
+    
+    public float getPerceptionBonus() {
+    	return 0;
+    }
+    
+    public float getAlertness() {
+    	return 0;
+    }
+    
 	public static class SkillState {
         private int level;
         private int xp;

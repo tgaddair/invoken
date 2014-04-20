@@ -222,7 +222,9 @@ public abstract class Agent implements Entity {
 	}
 	
 	public void addEffect(Effect effect) {
-		effects.add(effect);
+		if (effect.succeeds()) {
+			effects.add(effect);
+		}
 	}
 	
 	public List<Effect> getEffects() {
@@ -582,6 +584,15 @@ public abstract class Agent implements Entity {
 
 	protected void setState(State state) {
 		this.state = state;
+	}
+	
+	public float getWeaponAccuracy() {
+		// TODO separate weapon class
+		return 0.65f;
+	}
+	
+	public AgentStats getStats() {
+		return stats;
 	}
 
 	public float getWidth() {
