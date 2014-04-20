@@ -23,7 +23,7 @@ public class Commanded implements Effect {
 	
 	@Override
 	public boolean succeeds() {
-		return true;
+		return Math.random() <= master.getExecuteChance(target);
 	}
 
 	@Override

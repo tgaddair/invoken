@@ -27,6 +27,11 @@ public class Draining extends BasicEffect {
 	public boolean isFinished() {
 		return getStateTime() > duration;
 	}
+	
+	@Override
+	public boolean succeeds() {
+		return Math.random() <= source.getExecuteChance(getTarget());
+	}
 
 	@Override
 	public void apply(float delta) {

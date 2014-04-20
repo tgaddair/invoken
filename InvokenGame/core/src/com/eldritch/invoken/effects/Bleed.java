@@ -17,13 +17,7 @@ public class Bleed extends BasicEffect {
 	
 	@Override
 	public boolean succeeds() {
-		AgentStats sourceStats = source.getStats();
-		AgentStats targetStats = getTarget().getStats();
-		float chance = 
-				sourceStats.getAccuracy()
-				* source.getWeaponAccuracy()
-				* (1.0f - targetStats.getDefense());
-		return Math.random() <= chance;
+		return Math.random() <= source.getAttackChance(getTarget());
 	}
 	
 	@Override

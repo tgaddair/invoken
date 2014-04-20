@@ -95,11 +95,11 @@ public class AgentStats {
     }
     
     public float getWillpower() {
-    	return 0.75f + getAutomata() / 100f;
+    	return 0.5f + getAutomata() / 100f;
     }
     
     public float getDeception() {
-    	return 0.75f + getSubterfuge() / 100f;
+    	return 0.5f + getSubterfuge() / 100f;
     }
     
     public float getDefense() {
