@@ -25,8 +25,6 @@ import com.eldritch.invoken.actor.factions.FactionManager;
 import com.eldritch.invoken.actor.weapon.Shotgun;
 import com.eldritch.invoken.effects.Effect;
 import com.eldritch.invoken.screens.GameScreen;
-import com.eldritch.scifirpg.proto.Actors.ActorParams.Skill;
-import com.eldritch.scifirpg.proto.Disciplines.Discipline;
 
 public abstract class Agent implements Entity {
 	static AssetManager assetManager = new AssetManager();
@@ -70,7 +68,7 @@ public abstract class Agent implements Entity {
 	private final List<Agent> followers = new ArrayList<Agent>();
 	private final Set<Agent> enemies = new HashSet<Agent>();
 	private boolean confused = false;
-	private boolean paralyzed = false;
+	private int paralyzed = 0;
 
 	private Shotgun weapon;
 	private Agent target;
@@ -169,8 +167,16 @@ public abstract class Agent implements Entity {
 		this.confused = confused;
 	}
 	
+	public boolean isParalyzed() {
+		return paralyzed > 0;
+	}
+	
 	public void setParalyzed(boolean paralyzed) {
-		this.paralyzed = paralyzed;
+		if (paralyzed) {
+			this.paralyzed++;
+		} else {
+			this.paralyzed--;
+		}
 	}
 	
 	public void addFollower(Agent follower) {
@@ -298,7 +304,7 @@ public abstract class Agent implements Entity {
 	}
 	
 	protected void attemptTakeAction(float delta, GameScreen screen) {
-		if (paralyzed) {
+		if (isParalyzed()) {
 			// can't do anything when paralyzed
 			return;
 		}
