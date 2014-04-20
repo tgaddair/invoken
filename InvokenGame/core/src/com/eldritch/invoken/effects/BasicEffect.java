@@ -28,11 +28,6 @@ public class BasicEffect implements Effect {
 		width = 1 / 32f * region[0].getRegionWidth();
 		height = 1 / 32f * region[0].getRegionHeight();
 	}
-
-	@Override
-	public boolean succeeds() {
-		return true;
-	}
 	
 	@Override
 	public void apply(float delta) {

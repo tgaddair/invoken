@@ -16,11 +16,6 @@ public class Bleed extends BasicEffect {
 	}
 	
 	@Override
-	public boolean succeeds() {
-		return Math.random() <= source.getAttackChance(getTarget());
-	}
-	
-	@Override
 	public void apply(float delta) {
 		super.apply(delta);
 		if (!applied) {

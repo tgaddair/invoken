@@ -20,11 +20,6 @@ public class Commanded implements Effect {
 	public boolean isFinished() {
 		return stateTime > duration;
 	}
-	
-	@Override
-	public boolean succeeds() {
-		return Math.random() <= master.getExecuteChance(target);
-	}
 
 	@Override
 	public void apply(float delta) {

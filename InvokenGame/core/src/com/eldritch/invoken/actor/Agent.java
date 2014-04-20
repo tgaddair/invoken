@@ -228,9 +228,7 @@ public abstract class Agent implements Entity {
 	}
 	
 	public void addEffect(Effect effect) {
-		if (effect.succeeds()) {
-			effects.add(effect);
-		}
+		effects.add(effect);
 	}
 	
 	public List<Effect> getEffects() {
