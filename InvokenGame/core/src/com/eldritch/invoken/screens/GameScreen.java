@@ -111,7 +111,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 		imperialFaction.addRelation(eruFaction, -50);
 
 		// create the Player we want to move around the world
-		player = new Player(new Inquisitor(), 15, 10);
+		player = new Player(new Inquisitor(), 10, 15, 10);
 		player.addFaction(playerFaction, 9, 0);
 		addActor(player);
 		
@@ -131,7 +131,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 	}
 	
 	private Npc createTestNpc(int x, int y, String asset, Faction... factions) {
-		Npc npc = new Npc(x, y, new Centurion(), asset);
+		Npc npc = new Npc(new Centurion(), 10, x, y, asset);
 		for (Faction faction : factions) {
 			npc.addFaction(faction, 3, 0);
 		}

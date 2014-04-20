@@ -18,8 +18,8 @@ public class Player extends Agent {
 	private final Vector2 targetCoord = new Vector2();
 	private boolean moving = false;
 	
-	public Player(Profession profession, int x, int y) {
-		super("sprite/main", x, y, profession);
+	public Player(Profession profession, int level, int x, int y) {
+		super("sprite/main", x, y, profession, level);
 		mover = new AgentMover(this, getMaxVelocity(), 0.01f);
 	}
 	

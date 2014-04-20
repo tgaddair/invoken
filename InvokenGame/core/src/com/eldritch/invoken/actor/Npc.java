@@ -22,8 +22,8 @@ public class Npc extends Agent {
 	private final List<Routine> routines = new ArrayList<Routine>();
 	private Routine routine;
 	
-	public Npc(int x, int y, Profession profession, String asset) {
-		super(asset, x, y, profession);
+	public Npc(Profession profession, int level, int x, int y, String asset) {
+		super(asset, x, y, profession, level);
 		
 		// routines
 		routine = new IdleRoutine(this);

@@ -23,9 +23,10 @@ import com.eldritch.invoken.actor.aug.Augmentation;
 import com.eldritch.invoken.actor.factions.Faction;
 import com.eldritch.invoken.actor.factions.FactionManager;
 import com.eldritch.invoken.actor.weapon.Shotgun;
-import com.eldritch.invoken.effects.Bleed;
 import com.eldritch.invoken.effects.Effect;
 import com.eldritch.invoken.screens.GameScreen;
+import com.eldritch.scifirpg.proto.Actors.ActorParams.Skill;
+import com.eldritch.scifirpg.proto.Disciplines.Discipline;
 
 public abstract class Agent implements Entity {
 	static AssetManager assetManager = new AssetManager();
@@ -45,7 +46,7 @@ public abstract class Agent implements Entity {
 		Explore, Combat
 	}
 
-	private final Profession profession;
+	private final AgentStats stats;
 	private final float width;
 	private final float height;
 
@@ -73,13 +74,9 @@ public abstract class Agent implements Entity {
 
 	private Shotgun weapon;
 	private Agent target;
-	
 	private final Set<Class<?>> toggles = new HashSet<Class<?>>();
-	private final PreparedAugmentations augmentations = new PreparedAugmentations(this);
-	private final int baseHealth = 5;
-	private float health;
 
-	public Agent(String assetPath, int x, int y, Profession profession) {
+	public Agent(String assetPath, int x, int y, Profession profession, int level) {
 		setPosition(x, y);
 		animations.put(Activity.Explore, getAnimations(assetPath + "/walk.png"));
 		animations.put(Activity.Combat, getAnimations(assetPath + "/shoot.png"));
@@ -93,15 +90,11 @@ public abstract class Agent implements Entity {
 		width = 1 / 32f * 48; // regions[0][0].getRegionWidth();
 		height = 1 / 32f * 48; // regions[0][0].getRegionHeight();
 		
-		this.profession = profession;
-		for (Augmentation aug : profession.getStartingAugmentations()) {
-			addAugmentation(aug);
-		}
-		
-		health = baseHealth;
-		
 		// for debug purposes
 		weapon = new Shotgun(this);
+		
+		// health, level, augmentations, etc.
+		stats = new AgentStats(this, profession, level);
 	}
 	
 	public float dst2(Agent other) {
@@ -125,11 +118,11 @@ public abstract class Agent implements Entity {
 	}
 	
 	public void useAugmentation(int index) {
-		augmentations.use(index);
+		stats.useAugmentation(index);
 	}
 	
 	public void addAugmentation(Augmentation aug) {
-		augmentations.addAugmentation(aug);
+		stats.addAugmentation(aug);
 	}
 	
 	public List<Agent> getFollowers() {
@@ -145,11 +138,11 @@ public abstract class Agent implements Entity {
 	}
 	
 	public boolean isAlive() {
-		return health > 0;
+		return stats.isAlive();
 	}
 	
 	public float getHealth() {
-		return health;
+		return stats.getHealth();
 	}
 	
 	public float damage(Agent source, float value) {
@@ -160,19 +153,15 @@ public abstract class Agent implements Entity {
 	}
 	
 	public float damage(float value) {
-		float delta = Math.max(Math.min(value, health), 0);
-		health -= delta;
-		return delta;
+		return stats.damage(value);
 	}
 	
 	public float heal(float value) {
-		float delta = Math.max(Math.min(value, baseHealth - health), 0);
-		health += delta;
-		return delta;
+		return stats.heal(value);
 	}
 	
 	public void resurrect() {
-		health = baseHealth;
+		stats.resetHealth();
 		deathTime = 0;
 	}
 	
@@ -624,4 +613,26 @@ public abstract class Agent implements Entity {
 
 		return animations;
 	}
+	
+	public static class SkillState {
+        private int level;
+        private int xp;
+
+        public SkillState(Skill skill) {
+            this.level = skill.getLevel();
+            this.xp = skill.getXp();
+        }
+
+        public int getLevel() {
+            return level;
+        }
+
+        public void addXp(int delta) {
+            xp += delta;
+        }
+
+        public int getXp() {
+            return xp;
+        }
+    }
 }
