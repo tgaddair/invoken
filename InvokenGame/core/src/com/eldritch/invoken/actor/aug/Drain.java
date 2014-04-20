@@ -36,7 +36,7 @@ public class Drain extends Augmentation {
 
 		@Override
 		public void apply() {
-			target.addEffect(new Draining(owner, target, 1, 2));
+			target.addEffect(new Draining(owner, target, 5, 2));
 		}
 	}
 }
