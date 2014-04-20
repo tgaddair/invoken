@@ -3,6 +3,7 @@ package com.eldritch.invoken.actor;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.actor.aug.Augmentation;
 import com.eldritch.scifirpg.proto.Actors.ActorParams.Skill;
 import com.eldritch.scifirpg.proto.Disciplines.Discipline;
@@ -128,6 +129,10 @@ public class AgentStats {
     public float getAlertness() {
     	return 0;
     }
+    
+	public float getMaxTargetDistance() {
+		return 250 * getPerception();
+	}
     
 	public static class SkillState {
         private int level;

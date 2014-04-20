@@ -12,11 +12,8 @@ import com.eldritch.invoken.screens.GameScreen;
 public class AttackRoutine implements Routine {
 	private final Npc npc;
 
-	/** don't get any close to the enemy than this */
+	/** don't get any closer to the enemy than this */
 	private final int minDistance;
-
-	/** pursue the enemy if they're farther away than this */
-	private final int maxDistance;
 
 	/** how long we move in a single direction before turning */
 	private final Vector2 velocity = new Vector2();
@@ -25,13 +22,12 @@ public class AttackRoutine implements Routine {
 	private float elapsed = 0;
 
 	public AttackRoutine(Npc npc) {
-		this(npc, 10, 20);
+		this(npc, 10);
 	}
 
-	public AttackRoutine(Npc npc, int minDistance, int maxDistance) {
+	public AttackRoutine(Npc npc, int minDistance) {
 		this.npc = npc;
 		this.minDistance = minDistance;
-		this.maxDistance = maxDistance;
 	}
 
 	@Override
@@ -209,6 +205,8 @@ public class AttackRoutine implements Routine {
 	}
 
 	private boolean shouldPursue() {
+		// don't wait till we've lost them in our sights
+		float maxDistance = npc.getStats().getMaxTargetDistance() * 0.8f;
 		return getTargetPosition().dst2(npc.getPosition()) >= maxDistance;
 	}
 
