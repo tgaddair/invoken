@@ -13,7 +13,7 @@ public class Paralyzed extends BasicEffect {
 		super(target, GameScreen.getRegions("sprite/effects/paralyzed.png", 48, 48)[0],
 				Animation.PlayMode.LOOP);
 		this.agent = agent;
-		this.duration = duration;
+		this.duration = duration * agent.getExecuteScale(target);
 	}
 
 	@Override

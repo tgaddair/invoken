@@ -19,7 +19,7 @@ public class Draining extends BasicEffect {
 		super(target, GameScreen.getRegions("sprite/effects/draining.png", 48, 48)[0],
 				Animation.PlayMode.LOOP);
 		this.source = actor;
-		this.magnitude = magnitude;
+		this.magnitude = magnitude * actor.getExecuteScale(target);
 		this.duration = duration;
 	}
 

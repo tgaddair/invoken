@@ -1,7 +1,6 @@
 package com.eldritch.invoken.effects;
 
 import com.eldritch.invoken.actor.Agent;
-import com.eldritch.invoken.actor.AgentStats;
 import com.eldritch.invoken.screens.GameScreen;
 
 public class Bleed extends BasicEffect {
@@ -12,7 +11,7 @@ public class Bleed extends BasicEffect {
 	public Bleed(Agent actor, Agent target, float magnitude) {
 		super(target, GameScreen.getRegions("sprite/effects/bleed.png", 48, 48)[0]);
 		this.source = actor;
-		this.magnitude = magnitude;
+		this.magnitude = magnitude * actor.getAttackScale(target);
 	}
 	
 	@Override

@@ -279,15 +279,15 @@ public abstract class Agent implements Entity {
 		return dst2(target) < 100;
 	}
 	
-	public float getAttackChance(Agent other) {
+	public float getAttackScale(Agent other) {
 		return stats.getAccuracy() * getWeaponAccuracy() * (1.0f - other.getStats().getDefense());
 	}
 	
-	public float getExecuteChance(Agent other) {
+	public float getExecuteScale(Agent other) {
 		return stats.getWillpower() * (1.0f - other.getStats().getResistance());
 	}
 	
-	public float getDeceiveChance(Agent other) {
+	public float getDeceiveScale(Agent other) {
 		return stats.getDeception() * (1.0f - other.getStats().getPerception());
 	}
 	
