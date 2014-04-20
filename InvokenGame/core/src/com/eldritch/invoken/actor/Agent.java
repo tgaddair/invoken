@@ -272,7 +272,7 @@ public abstract class Agent implements Entity {
 	}
 	
 	public boolean canTarget() {
-		return dst2(target) < stats.getMaxTargetDistance();
+		return dst2(target) < 100;
 	}
 	
 	public boolean hasPendingAction() {
