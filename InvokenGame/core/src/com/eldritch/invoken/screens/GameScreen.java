@@ -127,10 +127,13 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 		Faction playerFaction = new Faction("Player");
 		Faction eruFaction = new Faction("House Eru");
 		Faction imperialFaction = new Faction("Icarian Empire");
-		playerFaction.addRelation(eruFaction, -10);
-		eruFaction.addRelation(playerFaction, -50);
-		eruFaction.addRelation(imperialFaction, -50);
-		imperialFaction.addRelation(eruFaction, -50);
+		Faction gangFaction = new Faction("Gang");
+		playerFaction.addRelation(gangFaction, -10);
+		eruFaction.addRelation(gangFaction, -50);
+		imperialFaction.addRelation(gangFaction, -50);
+		gangFaction.addRelation(playerFaction, -50);
+		gangFaction.addRelation(imperialFaction, -50);
+		gangFaction.addRelation(eruFaction, -50);
 
 		// create the Player we want to move around the world
 		Vector2 spawn = getSpawnLocation();
@@ -142,15 +145,24 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 		LinkedList<Vector2> spawnNodes = getSpawnNodes();
 		
 		// create test NPCs
-		String asset = "sprite/imperial_agent";
+		String asset = "sprite/eru_centurion";
+		addActor(createTestNpc(spawnNodes.poll(), asset, eruFaction));
+		addActor(createTestNpc(spawnNodes.poll(), asset, eruFaction));
+		addActor(createTestNpc(spawnNodes.poll(), asset, eruFaction));
+		
+		asset = "sprite/imperial_agent";
 		addActor(createTestNpc(spawnNodes.poll(), asset, imperialFaction));
 		addActor(createTestNpc(spawnNodes.poll(), asset, imperialFaction));
 		addActor(createTestNpc(spawnNodes.poll(), asset, imperialFaction));
 		
-		asset = "sprite/eru_centurion";
-		addActor(createTestNpc(spawnNodes.poll(), asset, eruFaction));
-		addActor(createTestNpc(spawnNodes.poll(), asset, eruFaction));
-		addActor(createTestNpc(spawnNodes.poll(), asset, eruFaction));
+		asset = "sprite/punk";
+		addActor(createTestNpc(spawnNodes.poll(), asset, gangFaction));
+		addActor(createTestNpc(spawnNodes.poll(), asset, gangFaction));
+		addActor(createTestNpc(spawnNodes.poll(), asset, gangFaction));
+		addActor(createTestNpc(spawnNodes.poll(), asset, gangFaction));
+		addActor(createTestNpc(spawnNodes.poll(), asset, gangFaction));
+		addActor(createTestNpc(spawnNodes.poll(), asset, gangFaction));
+
 		
 		Gdx.input.setInputProcessor(this);
 		Gdx.app.log(InvokenGame.LOG, "start");

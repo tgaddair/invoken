@@ -104,6 +104,11 @@ public class AttackRoutine implements Routine {
 	
 	private void attack(float delta, GameScreen screen) {
 		elapsed += delta;
+		if (npc.getTarget() == null || !npc.canTarget()) {
+			// can't attack invalid targets
+			return;
+		}
+		
 //		Gdx.app.log(InvokenGame.LOG, "elapsed: " + elapsed);
 		if (!npc.hasPendingAction() && elapsed >= 1) {
 			npc.useAugmentation(0);

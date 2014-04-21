@@ -277,7 +277,7 @@ public abstract class Agent implements Entity {
 	}
 	
 	public boolean canTarget() {
-		return dst2(target) < 100;
+		return dst2(target) < 175;
 	}
 	
 	public float getAttackScale(Agent other) {
