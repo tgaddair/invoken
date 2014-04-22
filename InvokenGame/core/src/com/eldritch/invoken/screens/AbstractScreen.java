@@ -91,6 +91,10 @@ public abstract class AbstractScreen implements Screen {
 		}
 		return table;
 	}
+	
+	protected Stage getStage() {
+		return stage;
+	}
 
 	// Screen implementation
 

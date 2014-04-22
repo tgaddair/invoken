@@ -27,6 +27,7 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
 import com.eldritch.invoken.InvokenGame;
@@ -36,6 +37,7 @@ import com.eldritch.invoken.actor.Player;
 import com.eldritch.invoken.actor.Profession.Centurion;
 import com.eldritch.invoken.actor.Profession.Inquisitor;
 import com.eldritch.invoken.actor.factions.Faction;
+import com.eldritch.invoken.ui.DialogueMenu;
 import com.google.common.primitives.Ints;
 
 public class GameScreen extends AbstractScreen implements InputProcessor {
@@ -47,6 +49,8 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 			return new Rectangle();
 		}
 	};
+	
+	private final DialogueMenu dialogue;
 
 	private Player player;
 	private final List<Agent> entities = new ArrayList<Agent>();
@@ -65,6 +69,8 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 
 	public GameScreen(InvokenGame game) {
 		super(game);
+		dialogue = new DialogueMenu(getSkin());
+		stage.addActor(dialogue.getTable());
 	}
 
 	public static Pool<Rectangle> getRectPool() {
@@ -257,9 +263,15 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 		
 		// draw stats
 		drawStats();
+		
+		// render the HUD
+		stage.act(delta);
+		stage.draw();
 
 		batch.begin();
-		font.draw(batch, "FPS: " + Gdx.graphics.getFramesPerSecond(), 10, 20);
+		font.draw(batch,
+				"FPS: " + Gdx.graphics.getFramesPerSecond(),
+				10, MENU_VIEWPORT_HEIGHT - 10);
 		batch.end();
 	}
 	
