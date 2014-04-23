@@ -5,7 +5,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.eldritch.invoken.screens.AbstractScreen;
 
 public class DialogueMenu {
@@ -14,7 +13,7 @@ public class DialogueMenu {
 	public DialogueMenu(Skin skin) {
 	    container = new Table(skin);
 	    container.setHeight(AbstractScreen.MENU_VIEWPORT_HEIGHT / 2);
-	    container.setWidth(AbstractScreen.MENU_VIEWPORT_WIDTH);
+	    container.setWidth(AbstractScreen.MENU_VIEWPORT_WIDTH - 25);
 		container.bottom();
 
 	    Table table = new Table(skin);
@@ -29,7 +28,7 @@ public class DialogueMenu {
 		label.setWrap(true);
 		label.setWidth(100);
 		table.add(label).width(
-				AbstractScreen.MENU_VIEWPORT_WIDTH - 25).padLeft(25).padRight(25).padBottom(10);
+				AbstractScreen.MENU_VIEWPORT_WIDTH - 50).padLeft(25).padRight(25).padBottom(10);
 		
 		TextButton choice1 = new TextButton("Yes, I agree.", skin);
 		table.row();
