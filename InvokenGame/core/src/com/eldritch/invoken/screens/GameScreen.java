@@ -364,6 +364,11 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 
 	@Override
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+		// Buttons take priority
+		if (stage.touchDown(screenX, screenY, pointer, button)) {
+			return true;
+		}
+		
 		Vector3 world = camera.unproject(new Vector3(screenX, screenY, 0));
 		for (Agent entity : entities) {
 			if (entity.contains(world.x, world.y)) {
@@ -378,6 +383,10 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 
 	@Override
 	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+		if (stage.touchUp(screenX, screenY, pointer, button)) {
+			return true;
+		}
+		
 		Vector3 world = camera.unproject(new Vector3(screenX, screenY, 0));
 		for (Agent entity : entities) {
 			if (entity.contains(world.x, world.y)) {

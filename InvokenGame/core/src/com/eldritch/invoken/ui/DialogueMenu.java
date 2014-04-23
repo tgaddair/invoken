@@ -3,6 +3,7 @@ package com.eldritch.invoken.ui;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.eldritch.invoken.screens.AbstractScreen;
 
@@ -32,6 +33,14 @@ public class DialogueMenu {
 		label.setWidth(100); // or even as low as 10
 		table.add(label).width(
 				AbstractScreen.MENU_VIEWPORT_WIDTH - 25).padLeft(25).padRight(25).padBottom(10);
+		
+		TextButton choice1 = new TextButton("Yes, I agree.", skin);
+		table.row();
+		table.add(choice1).left().padLeft(25).padRight(25).padBottom(10);
+		
+		TextButton choice2 = new TextButton("No, I cannot do that.", skin);
+		table.row();
+		table.add(choice2).left().padLeft(25).padRight(25).padBottom(10);
 	}
 	
 	public Table getTable() {
