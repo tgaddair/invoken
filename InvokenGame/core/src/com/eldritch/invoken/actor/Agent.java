@@ -378,10 +378,8 @@ public abstract class Agent implements Entity {
 		Activity last = activity;
 		if (!isAlive()) {
 			activity = Activity.Death;
-		} else if (enemies.isEmpty()) {
-			activity = Activity.Explore;
 		} else {
-			activity = Activity.Combat;
+			activity = Activity.Explore;
 		}
 
 		// reset state if the activity was changed
