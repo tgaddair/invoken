@@ -5,6 +5,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.eldritch.invoken.actor.Player;
 import com.eldritch.invoken.screens.AbstractScreen;
 
 public class DialogueMenu {
@@ -40,6 +41,12 @@ public class DialogueMenu {
 		
 		container.add(scroll).expand().fill();
 		container.setVisible(false);
+	}
+	
+	public void update(Player player) {
+		if (player.inDialogue()) {
+			container.setVisible(true);
+		}
 	}
 	
 	public Table getTable() {

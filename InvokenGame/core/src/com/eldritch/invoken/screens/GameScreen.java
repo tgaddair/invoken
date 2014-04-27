@@ -231,6 +231,9 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 			player.moveTo(world.x, world.y);
 		}
 		
+		// update dialogue menu
+		dialogue.update(player);
+		
 		// update the player (process input, collision detection, position
 		// update)
 		for (Agent actor : entities) {
@@ -375,7 +378,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 
 	@Override
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-		// buttons take priority
+		// UI takes priority
 		if (stage.touchDown(screenX, screenY, pointer, button)) {
 			return true;
 		}
@@ -409,9 +412,13 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 		Vector3 world = camera.unproject(new Vector3(screenX, screenY, 0));
 		for (Agent entity : entities) {
 			if (entity.contains(world.x, world.y)) {
-				// toggle selection
-				Agent selected = player.getTarget() != entity ? entity : null;
-				player.select(selected);
+				if (player.getTarget() == entity) {
+					// already selected -> start dialogue
+					player.setDialogue(entity);
+				} else {
+					// initial selection -> set target
+					player.setTarget(entity);
+				}
 				selection = true;
 				break;
 			}
