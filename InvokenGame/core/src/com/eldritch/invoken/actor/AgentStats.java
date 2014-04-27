@@ -3,7 +3,6 @@ package com.eldritch.invoken.actor;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.actor.aug.Augmentation;
 import com.eldritch.scifirpg.proto.Actors.ActorParams.Skill;
 import com.eldritch.scifirpg.proto.Disciplines.Discipline;
@@ -72,6 +71,10 @@ public class AgentStats {
 		float delta = Math.max(Math.min(value, getBaseHealth() - health), 0);
 		health += delta;
 		return delta;
+	}
+	
+	public int getSkillLevel(Discipline d) {
+		return skills.get(d).getLevel();
 	}
 	
 	public int getWarfare() {

@@ -2,9 +2,11 @@ package com.eldritch.invoken.actor;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Map.Entry;
 
 import com.badlogic.gdx.Gdx;
@@ -16,8 +18,15 @@ import com.eldritch.invoken.actor.ai.PatrolRoutine;
 import com.eldritch.invoken.actor.ai.Routine;
 import com.eldritch.invoken.actor.aug.FireWeapon;
 import com.eldritch.invoken.screens.GameScreen;
+import com.eldritch.invoken.util.PrerequisiteVerifier;
+import com.eldritch.scifirpg.proto.Actors.DialogueTree;
+import com.eldritch.scifirpg.proto.Actors.DialogueTree.Choice;
+import com.eldritch.scifirpg.proto.Actors.DialogueTree.Response;
+import com.eldritch.scifirpg.proto.Prerequisites.Prerequisite;
+import com.eldritch.scifirpg.proto.Prerequisites.Standing;
 
 public class Npc extends Agent {
+	private final DialogueVerifier dialogueVerifier = new DialogueVerifier();
 	private final Map<Agent, Float> relations = new HashMap<Agent, Float>();
 	private final List<Routine> routines = new ArrayList<Routine>();
 	private Routine routine;
@@ -93,4 +102,84 @@ public class Npc extends Agent {
 		super.onDeath();
 		relations.clear();
 	}
+	
+	public List<Choice> getChoicesFor(Response response) {
+        List<Choice> choices = new ArrayList<Choice>();
+        for (Choice choice : response.getChoiceList()) {
+            if (dialogueVerifier.isValid(choice)) {
+                choices.add(choice);
+            }
+        }
+        return choices;
+    }
+    
+    public Response getResponseFor(Choice choice) {
+//        Set<String> successors = new HashSet<String>(choice.getSuccessorIdList());
+//        for (Response r : data.getDialogue().getDialogueList()) {
+//            if (successors.contains(r.getId()) && dialogueVerifier.isValid(r)) {
+//                return r;
+//            }
+//        }
+        return null;
+    }
+    
+    public boolean hasGreeting() {
+        // TODO this could be more efficient
+        return getGreeting() != null;
+    }
+    
+    public Response getGreeting() {
+//        if (scenario.hasDialogue()) {
+//            Response greeting = getGreetingFor(scenario.getDialogue());
+//            if (greeting != null) {
+//                return greeting;
+//            }
+//        }
+//        return getGreetingFor(data.getDialogue());
+    	return null;
+    }
+    
+    private Response getGreetingFor(DialogueTree tree) {
+        for (Response r : tree.getDialogueList()) {
+            if (r.getGreeting() && dialogueVerifier.isValid(r)) {
+                return r;
+            }
+        }
+        return null;
+    }
+    
+    public int getInfluence(Agent other) {
+        // TODO
+        return 0;
+    }
+    
+    public Standing getStanding(Agent other) {
+        // TODO
+        return Standing.NEUTRAL;
+    }
+    
+    public class DialogueVerifier extends PrerequisiteVerifier {
+        @Override
+        protected boolean verifyInfluence(Prerequisite prereq, Agent actor) {
+            int value = getInfluence(actor);
+            return verifyBetween(prereq, value);
+        }
+        
+        @Override
+        protected boolean verifyStanding(Prerequisite prereq, Agent actor) {
+            Standing value = getStanding(actor);
+            boolean has = value == Standing.valueOf(prereq.getTarget());
+            return verifyHas(prereq, has);
+        }
+        
+        public boolean isValid(Response r) {
+//            return verify(r.getPrereqList(), model);
+        	return true;
+        }
+        
+        public boolean isValid(Choice c) {
+//            return verify(c.getPrereqList(), model);
+        	return true;
+        }
+    }
 }
