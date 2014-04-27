@@ -1,8 +1,7 @@
 package com.eldritch.invoken.actor.aug;
 
-import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
-import com.eldritch.invoken.actor.Action;
 import com.eldritch.invoken.actor.Agent;
+import com.eldritch.invoken.actor.Agent.Activity;
 
 public class Resurrect extends Augmentation {
 	@Override
@@ -15,22 +14,12 @@ public class Resurrect extends Augmentation {
 		return target != null && target != owner && !target.isAlive();
 	}
 	
-	public class ResurrectAction implements Action {
-		private final Agent owner;
+	public class ResurrectAction extends AnimatedAction {
 		private final Agent target;
 		
 		public ResurrectAction(Agent actor, Agent target) {
-			this.owner = actor;
+			super(actor, Activity.Cast);
 			this.target = target;
-		}
-		
-		@Override
-		public void render(float delta, OrthogonalTiledMapRenderer renderer) {
-		}
-
-		@Override
-		public boolean isFinished() {
-			return true;
 		}
 
 		@Override

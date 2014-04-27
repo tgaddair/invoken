@@ -20,6 +20,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.eldritch.invoken.InvokenGame;
+import com.eldritch.invoken.actor.aug.Action;
 import com.eldritch.invoken.actor.aug.Augmentation;
 import com.eldritch.invoken.actor.factions.Faction;
 import com.eldritch.invoken.actor.factions.FactionManager;
@@ -42,7 +43,7 @@ public abstract class Agent implements Entity {
 		Standing, Moving
 	}
 
-	enum Activity {
+	public enum Activity {
 		Explore, Combat, Cast, Thrust, Swipe, Death
 	}
 
@@ -254,6 +255,10 @@ public abstract class Agent implements Entity {
 	}
 
 	public Animation getAnimation(Direction direction) {
+		return animations.get(activity).get(direction);
+	}
+	
+	public Animation getAnimation(Activity activity) {
 		return animations.get(activity).get(direction);
 	}
 
@@ -513,6 +518,34 @@ public abstract class Agent implements Entity {
 	}
 
 	public void render(float delta, OrthogonalTiledMapRenderer renderer) {
+		if (isAlive()) {
+			// only take actions when alive
+			if (action != null) {
+				// let the action handle the specific animation rendering
+				action.render(delta, renderer);
+			} else {
+				// defer rendering to owner
+				render(renderer);
+			}
+			
+			// render weapon
+			// TODO: move this into the FireWeapon action
+			if (activity == Activity.Combat && weapon != null) {
+				weapon.render(delta, renderer);
+			}
+		} else {
+			render(renderer);
+		}
+		
+		// render all unfinished effects
+		for (Effect effect : effects) {
+			if (!effect.isFinished()) {
+				effect.render(delta, renderer);
+			}
+		}
+	}
+	
+	public void render(OrthogonalTiledMapRenderer renderer) {
 		// based on the actor state, get the animation frame
 		TextureRegion frame = null;
 		
@@ -526,30 +559,15 @@ public abstract class Agent implements Entity {
 		// draw the actor, depending on the current velocity
 		// on the x-axis, draw the actor facing either right
 		// or left
+		render(frame, renderer);
+	}
+	
+	public void render(TextureRegion frame, OrthogonalTiledMapRenderer renderer) {
 		Batch batch = renderer.getSpriteBatch();
 		batch.begin();
 		batch.draw(frame, position.x - getWidth() / 2, position.y - getHeight()
 				/ 2, getWidth(), getHeight());
 		batch.end();
-		
-		if (isAlive()) {
-			// only take actions when alive
-			if (activity == Activity.Combat && weapon != null) {
-				weapon.render(delta, renderer);
-			}
-			
-			// render the current action if one exists
-			if (action != null) {
-				action.render(delta, renderer);
-			}
-		}
-		
-		// render all unfinished effects
-		for (Effect effect : effects) {
-			if (!effect.isFinished()) {
-				effect.render(delta, renderer);
-			}
-		}
 	}
 
 	public Array<Rectangle> getCollisionActors(GameScreen screen) {

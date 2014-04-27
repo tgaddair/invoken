@@ -8,8 +8,8 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
-import com.eldritch.invoken.actor.Action;
 import com.eldritch.invoken.actor.Agent;
+import com.eldritch.invoken.actor.Agent.Activity;
 import com.eldritch.invoken.actor.Agent.Direction;
 import com.eldritch.invoken.effects.Bleed;
 import com.eldritch.invoken.screens.GameScreen;
@@ -25,17 +25,14 @@ public class FireWeapon extends Augmentation {
 		return target != null && target != owner;
 	}
 	
-	public class FireAction implements Action {
+	public class FireAction extends AnimatedAction {
+		private final Agent target;
 		private final float width;
 		private final float height;
 		private final Map<Direction, Animation> animations = new HashMap<Direction, Animation>();
 		
-		private final Agent owner;
-		private final Agent target;
-		private float stateTime = 0;
-		
 		public FireAction(Agent actor, Agent target) {
-			this.owner = actor;
+			super(actor, Activity.Combat);
 			this.target = target;
 			
 			TextureRegion[][] regions = GameScreen.getRegions(
@@ -52,7 +49,8 @@ public class FireWeapon extends Augmentation {
 		
 		@Override
 		public void render(float delta, OrthogonalTiledMapRenderer renderer) {
-			stateTime += delta;
+			super.render(delta, renderer);
+			
 			TextureRegion frame = getAnimation().getKeyFrame(stateTime);
 			Vector2 position = owner.getPosition();
 			

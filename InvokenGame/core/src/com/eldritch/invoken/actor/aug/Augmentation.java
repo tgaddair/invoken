@@ -1,6 +1,5 @@
 package com.eldritch.invoken.actor.aug;
 
-import com.eldritch.invoken.actor.Action;
 import com.eldritch.invoken.actor.Agent;
 
 public abstract class Augmentation {

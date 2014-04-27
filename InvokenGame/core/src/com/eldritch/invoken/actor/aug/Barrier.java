@@ -1,8 +1,7 @@
 package com.eldritch.invoken.actor.aug;
 
-import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
-import com.eldritch.invoken.actor.Action;
 import com.eldritch.invoken.actor.Agent;
+import com.eldritch.invoken.actor.Agent.Activity;
 import com.eldritch.invoken.effects.Shield;
 
 public class Barrier extends Augmentation {
@@ -16,20 +15,9 @@ public class Barrier extends Augmentation {
 		return true;
 	}
 	
-	public class ShieldAction implements Action {
-		private final Agent owner;
-		
+	public class ShieldAction extends AnimatedAction {
 		public ShieldAction(Agent actor) {
-			this.owner = actor;
-		}
-		
-		@Override
-		public void render(float delta, OrthogonalTiledMapRenderer renderer) {
-		}
-
-		@Override
-		public boolean isFinished() {
-			return true;
+			super(actor, Activity.Cast);
 		}
 
 		@Override

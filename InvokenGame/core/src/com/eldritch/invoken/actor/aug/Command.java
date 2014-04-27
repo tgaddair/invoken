@@ -1,8 +1,7 @@
 package com.eldritch.invoken.actor.aug;
 
-import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
-import com.eldritch.invoken.actor.Action;
 import com.eldritch.invoken.actor.Agent;
+import com.eldritch.invoken.actor.Agent.Activity;
 import com.eldritch.invoken.effects.Commanded;
 
 public class Command extends Augmentation {
@@ -16,22 +15,12 @@ public class Command extends Augmentation {
 		return target != null && target != owner && target.isAlive();
 	}
 	
-	public class CommandAction implements Action {
-		private final Agent owner;
+	public class CommandAction extends AnimatedAction {
 		private final Agent target;
 		
 		public CommandAction(Agent actor, Agent target) {
-			this.owner = actor;
+			super(actor, Activity.Swipe);
 			this.target = target;
-		}
-		
-		@Override
-		public void render(float delta, OrthogonalTiledMapRenderer renderer) {
-		}
-
-		@Override
-		public boolean isFinished() {
-			return true;
 		}
 
 		@Override
