@@ -57,7 +57,10 @@ public class Player extends Agent {
 	public void moveTo(float x, float y) {
 		targetCoord.x = x;
 		targetCoord.y = y;
-		moving = true;
+	}
+	
+	public void setMoving(boolean moving) {
+		this.moving = moving;
 	}
 	
 	public boolean isMoving() {

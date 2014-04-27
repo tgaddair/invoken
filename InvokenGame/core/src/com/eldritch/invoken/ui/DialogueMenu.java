@@ -39,6 +39,7 @@ public class DialogueMenu {
 		table.add(choice2).left().padLeft(25).padRight(25).padBottom(10);
 		
 		container.add(scroll).expand().fill();
+		container.setVisible(false);
 	}
 	
 	public Table getTable() {

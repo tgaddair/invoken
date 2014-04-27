@@ -27,7 +27,6 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
 import com.eldritch.invoken.InvokenGame;
@@ -66,6 +65,11 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 	
 	private int[] overlays;
 	private int collisionIndex;
+	
+	// for clicks and drags
+	boolean playerClicked = false;
+	int targetX;
+	int targetY;
 
 	public GameScreen(InvokenGame game) {
 		super(game);
@@ -151,12 +155,14 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 		LinkedList<Vector2> spawnNodes = getSpawnNodes();
 		
 		// create test NPCs
-		String asset = "sprite/characters/centurion.png";
-		addActor(createTestNpc(spawnNodes.poll(), asset, eruFaction));
+		String asset = "sprite/characters/executor.png";
 		addActor(createTestNpc(spawnNodes.poll(), asset, eruFaction));
 		addActor(createTestNpc(spawnNodes.poll(), asset, eruFaction));
 		
-		asset = "sprite/characters/agent.png";
+		asset = "sprite/characters/inquisitor.png";
+		addActor(createTestNpc(spawnNodes.poll(), asset, eruFaction));
+		
+		asset = "sprite/characters/centurion.png";
 		addActor(createTestNpc(spawnNodes.poll(), asset, imperialFaction));
 		addActor(createTestNpc(spawnNodes.poll(), asset, imperialFaction));
 		addActor(createTestNpc(spawnNodes.poll(), asset, imperialFaction));
@@ -169,7 +175,6 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 		addActor(createTestNpc(spawnNodes.poll(), asset, gangFaction));
 		addActor(createTestNpc(spawnNodes.poll(), asset, gangFaction));
 
-		
 		Gdx.input.setInputProcessor(this);
 		Gdx.app.log(InvokenGame.LOG, "start");
 	}
@@ -219,6 +224,12 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 	public void render(float delta) {
 		Gdx.gl.glClearColor(0f / 255f, 0f / 255f, 0f / 255f, 1f);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+		
+		// update player movement location
+		if (player.isMoving()) {
+			Vector3 world = camera.unproject(new Vector3(targetX, targetY, 0));
+			player.moveTo(world.x, world.y);
+		}
 		
 		// update the player (process input, collision detection, position
 		// update)
@@ -364,7 +375,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 
 	@Override
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-		// Buttons take priority
+		// buttons take priority
 		if (stage.touchDown(screenX, screenY, pointer, button)) {
 			return true;
 		}
@@ -372,28 +383,11 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 		Vector3 world = camera.unproject(new Vector3(screenX, screenY, 0));
 		for (Agent entity : entities) {
 			if (entity.contains(world.x, world.y)) {
+				if (entity == player) {
+					playerClicked = true;
+					return true;
+				}
 				return false;
-			}
-		}
-		
-		// otherwise, move to the indicated position
-		player.moveTo(world.x, world.y);
-		return true;
-	}
-
-	@Override
-	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-		if (stage.touchUp(screenX, screenY, pointer, button)) {
-			return true;
-		}
-		
-		Vector3 world = camera.unproject(new Vector3(screenX, screenY, 0));
-		for (Agent entity : entities) {
-			if (entity.contains(world.x, world.y)) {
-				// toggle selection
-				Agent selected = player.getTarget() != entity ? entity : null;
-				player.select(selected);
-				return true;
 			}
 		}
 		
@@ -401,10 +395,43 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 	}
 
 	@Override
+	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+		// let UI handle first
+		if (stage.touchUp(screenX, screenY, pointer, button)) {
+			return true;
+		}
+		
+		// always stop moving when no longer being dragged
+		player.setMoving(false);
+		
+		// handle entity selection
+		boolean selection = false;
+		Vector3 world = camera.unproject(new Vector3(screenX, screenY, 0));
+		for (Agent entity : entities) {
+			if (entity.contains(world.x, world.y)) {
+				// toggle selection
+				Agent selected = player.getTarget() != entity ? entity : null;
+				player.select(selected);
+				selection = true;
+				break;
+			}
+		}
+		
+		if (!playerClicked && !selection) {
+			// clicked on a non-interactive object, so deselect
+			player.select(null);
+		}
+		playerClicked = false;
+		
+		return selection;
+	}
+
+	@Override
 	public boolean touchDragged(int screenX, int screenY, int pointer) {
-		if (player.isMoving()) {
-			Vector3 world = camera.unproject(new Vector3(screenX, screenY, 0));
-			player.moveTo(world.x, world.y);
+		if (playerClicked) {
+			targetX = screenX;
+			targetY = screenY;
+			player.setMoving(true);
 			return true;
 		}
 		return false;
