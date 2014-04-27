@@ -58,12 +58,12 @@ public abstract class Agent implements Entity {
 	Direction direction = Direction.Down;
 	private final Map<Activity, Map<Direction, Animation>> animations;
 	float stateTime = 0;
-	
+
 	private final FactionManager factions = new FactionManager(this);
 	private final LinkedList<Action> actions = new LinkedList<Action>();
 	private final List<Effect> effects = new LinkedList<Effect>();
 	private Action action = null;
-	
+
 	private Agent followed = null;
 	private final List<Agent> followers = new ArrayList<Agent>();
 	private final Set<Agent> enemies = new HashSet<Agent>();
@@ -74,7 +74,8 @@ public abstract class Agent implements Entity {
 	private Agent target;
 	private final Set<Class<?>> toggles = new HashSet<Class<?>>();
 
-	public Agent(String assetPath, float x, float y, Profession profession, int level) {
+	public Agent(String assetPath, float x, float y, Profession profession,
+			int level) {
 		setPosition(x, y);
 		animations = getAllAnimations(assetPath);
 
@@ -83,89 +84,89 @@ public abstract class Agent implements Entity {
 		// size into world units (1 unit == 32 pixels)
 		width = 1 / 32f * PX; // regions[0][0].getRegionWidth();
 		height = 1 / 32f * PX; // regions[0][0].getRegionHeight();
-		
+
 		// for debug purposes
 		weapon = new Shotgun(this);
-		
+
 		// health, level, augmentations, etc.
 		stats = new AgentStats(this, profession, level);
 	}
-	
+
 	public float dst2(Agent other) {
 		return position.dst2(other.position);
 	}
-	
+
 	public Set<Faction> getFactions() {
 		return factions.getFactions();
 	}
-	
+
 	public void addFaction(Faction faction, int rank, int reputation) {
 		factions.addFaction(faction, rank, reputation);
 	}
-	
+
 	public int getReputation(Faction faction) {
 		return factions.getReputation(faction);
 	}
-	
+
 	public float getDisposition(Agent other) {
 		return factions.getDisposition(other);
 	}
-	
+
 	public void useAugmentation(int index) {
 		stats.useAugmentation(index);
 	}
-	
+
 	public void addAugmentation(Augmentation aug) {
 		stats.addAugmentation(aug);
 	}
-	
+
 	public List<Agent> getFollowers() {
 		return followers;
 	}
-	
+
 	public Set<Agent> getEnemies() {
 		return enemies;
 	}
-	
+
 	public void addEnemy(Agent other) {
 		enemies.add(other);
 	}
-	
+
 	public boolean isAlive() {
 		return stats.isAlive();
 	}
-	
+
 	public float getHealth() {
 		return stats.getHealth();
 	}
-	
+
 	public float damage(Agent source, float value) {
 		if (isAlive()) {
 			enemies.add(source);
 		}
 		return damage(value);
 	}
-	
+
 	public float damage(float value) {
 		return stats.damage(value);
 	}
-	
+
 	public float heal(float value) {
 		return stats.heal(value);
 	}
-	
+
 	public void resurrect() {
 		stats.resetHealth();
 	}
-	
+
 	public void setConfused(boolean confused) {
 		this.confused = confused;
 	}
-	
+
 	public boolean isParalyzed() {
 		return paralyzed > 0;
 	}
-	
+
 	public void setParalyzed(boolean paralyzed) {
 		if (paralyzed) {
 			this.paralyzed++;
@@ -173,32 +174,33 @@ public abstract class Agent implements Entity {
 			this.paralyzed--;
 		}
 	}
-	
+
 	public void addFollower(Agent follower) {
 		follower.setFollowing(this);
 		followers.add(follower);
 	}
-	
+
 	public void removeFollower(Agent follower) {
 		follower.stopFollowing(this);
 		followers.remove(follower);
 	}
-	
+
 	public void setFollowing(Agent actor) {
 		followed = actor;
 	}
-	
+
 	public void stopFollowing(Agent actor) {
-		// perform this check to avoid canceling the following of a different actor
+		// perform this check to avoid canceling the following of a different
+		// actor
 		if (followed == actor) {
 			followed = null;
 		}
 	}
-	
+
 	public Agent getFollowed() {
 		return followed;
 	}
-	
+
 	public boolean isFollowing(Agent agent) {
 		return getFollowed() == agent;
 	}
@@ -213,19 +215,19 @@ public abstract class Agent implements Entity {
 			return true;
 		}
 	}
-	
+
 	public boolean isToggled(Class<?> clazz) {
 		return toggles.contains(clazz);
 	}
-	
+
 	public void addAction(Action action) {
 		actions.add(action);
 	}
-	
+
 	public void addEffect(Effect effect) {
 		effects.add(effect);
 	}
-	
+
 	public List<Effect> getEffects() {
 		return effects;
 	}
@@ -249,7 +251,7 @@ public abstract class Agent implements Entity {
 	public float getMaxVelocity() {
 		return MAX_VELOCITY;
 	}
-	
+
 	public Direction getDirection() {
 		return direction;
 	}
@@ -257,7 +259,7 @@ public abstract class Agent implements Entity {
 	public Animation getAnimation(Direction direction) {
 		return animations.get(activity).get(direction);
 	}
-	
+
 	public Animation getAnimation(Activity activity) {
 		return animations.get(activity).get(direction);
 	}
@@ -265,49 +267,51 @@ public abstract class Agent implements Entity {
 	public void setTarget(Agent target) {
 		this.target = target;
 	}
-	
+
 	public Agent getTarget() {
 		return target;
 	}
-	
+
 	public boolean hasTarget() {
 		return target != null;
 	}
-	
+
 	public boolean canTarget() {
 		return dst2(target) < 175;
 	}
-	
+
 	public float getAttackScale(Agent other) {
-		return stats.getAccuracy() * getWeaponAccuracy() * (1.0f - other.getStats().getDefense());
+		return stats.getAccuracy() * getWeaponAccuracy()
+				* (1.0f - other.getStats().getDefense());
 	}
-	
+
 	public float getExecuteScale(Agent other) {
 		return stats.getWillpower() * (1.0f - other.getStats().getResistance());
 	}
-	
+
 	public float getDeceiveScale(Agent other) {
 		return stats.getDeception() * (1.0f - other.getStats().getPerception());
 	}
-	
+
 	public boolean hasPendingAction() {
 		return !actions.isEmpty();
 	}
-	
+
 	protected void onDeath() {
 		followers.clear();
 		enemies.clear();
 		target = null;
 	}
-	
+
 	protected void attemptTakeAction(float delta, GameScreen screen) {
 		if (isParalyzed()) {
 			// can't do anything when paralyzed
 			return;
 		}
-		
+
 		if (confused) {
-			// cannot take a conscious action when confused, must delegate to the confusion handler
+			// cannot take a conscious action when confused, must delegate to
+			// the confusion handler
 		} else {
 			// no disorienting effects, so take conscious action
 			takeAction(delta, screen);
@@ -318,7 +322,7 @@ public abstract class Agent implements Entity {
 		if (delta == 0)
 			return;
 		stateTime += delta;
-		
+
 		// apply all active effects, remove any that are finished
 		Iterator<Effect> it = effects.iterator();
 		while (it.hasNext()) {
@@ -330,28 +334,28 @@ public abstract class Agent implements Entity {
 				it.remove();
 			}
 		}
-		
+
 		if (isAlive()) {
 			// handle the action queue
-			if (action == null || action.isFinished()) {
+			if (!actionInProgress()) {
 				action = actions.poll();
 				if (action != null) {
 					action.apply();
 				}
 			}
-			
+
 			// take conscious action
 			attemptTakeAction(delta, screen);
 		} else if (activity != Activity.Death) {
 			// kill the agent
 			onDeath();
 		}
-		
+
 		// remove target if we're too far away from them
 		if (hasTarget() && !canTarget()) {
 			target = null;
 		}
-		
+
 		// update followers
 		Iterator<Agent> followerIterator = followers.iterator();
 		while (followerIterator.hasNext()) {
@@ -360,7 +364,7 @@ public abstract class Agent implements Entity {
 				followerIterator.remove();
 			}
 		}
-		
+
 		// update enemies
 		Iterator<Agent> enemyIterator = enemies.iterator();
 		while (enemyIterator.hasNext()) {
@@ -369,7 +373,7 @@ public abstract class Agent implements Entity {
 				enemyIterator.remove();
 			}
 		}
-		
+
 		// set activity
 		Activity last = activity;
 		if (!isAlive()) {
@@ -379,12 +383,25 @@ public abstract class Agent implements Entity {
 		} else {
 			activity = Activity.Combat;
 		}
-		
+
 		// reset state if the activity was changed
 		if (activity != last) {
 			stateTime = 0;
 		}
+		
+		if (actionInProgress()) {
+			velocity.x = 0;
+			velocity.y = 0;
+		} else {
+			move(delta, screen);
+		}
+	}
+	
+	private boolean actionInProgress() {
+		return action != null && !action.isFinished();
+	}
 
+	private void move(float delta, GameScreen screen) {
 		// clamp the velocity to the maximum
 		if (Math.abs(velocity.x) > MAX_VELOCITY) {
 			velocity.x = Math.signum(velocity.x) * MAX_VELOCITY;
@@ -488,13 +505,13 @@ public abstract class Agent implements Entity {
 		velocity.x *= DAMPING;
 		velocity.y *= DAMPING;
 	}
-	
+
 	public float getX1() {
-		return position.x - getWidth() / 2; 
+		return position.x - getWidth() / 2;
 	}
-	
+
 	public float getY1() {
-		return position.y - getWidth() / 2; 
+		return position.y - getWidth() / 2;
 	}
 
 	private Direction getDominantDirection(float x, float y) {
@@ -527,7 +544,7 @@ public abstract class Agent implements Entity {
 				// defer rendering to owner
 				render(renderer);
 			}
-			
+
 			// render weapon
 			// TODO: move this into the FireWeapon action
 			if (activity == Activity.Combat && weapon != null) {
@@ -536,7 +553,7 @@ public abstract class Agent implements Entity {
 		} else {
 			render(renderer);
 		}
-		
+
 		// render all unfinished effects
 		for (Effect effect : effects) {
 			if (!effect.isFinished()) {
@@ -544,24 +561,24 @@ public abstract class Agent implements Entity {
 			}
 		}
 	}
-	
+
 	public void render(OrthogonalTiledMapRenderer renderer) {
 		// based on the actor state, get the animation frame
 		TextureRegion frame = null;
-		
+
 		if (state == State.Standing && activity == Activity.Explore) {
 			frame = getAnimation(direction).getKeyFrames()[0];
 		} else {
 			Animation animation = getAnimation(direction);
 			frame = animation.getKeyFrame(stateTime);
 		}
-		
+
 		// draw the actor, depending on the current velocity
 		// on the x-axis, draw the actor facing either right
 		// or left
 		render(frame, renderer);
 	}
-	
+
 	public void render(TextureRegion frame, OrthogonalTiledMapRenderer renderer) {
 		Batch batch = renderer.getSpriteBatch();
 		batch.begin();
@@ -610,12 +627,12 @@ public abstract class Agent implements Entity {
 	protected void setState(State state) {
 		this.state = state;
 	}
-	
+
 	public float getWeaponAccuracy() {
 		// TODO separate weapon class
 		return 0.65f;
 	}
-	
+
 	public AgentStats getStats() {
 		return stats;
 	}
@@ -629,7 +646,7 @@ public abstract class Agent implements Entity {
 	}
 
 	protected abstract void takeAction(float delta, GameScreen screen);
-	
+
 	public static Animation getAnimation(String assetName) {
 		TextureRegion[][] regions = GameScreen.getRegions(assetName, PX, PX);
 		Animation anim = new Animation(0.15f, regions[0]);
@@ -649,52 +666,56 @@ public abstract class Agent implements Entity {
 
 		return animations;
 	}
-	
-	public static Map<Activity, Map<Direction, Animation>> getAllAnimations(String assetName) {
-		Map<Activity, Map<Direction, Animation>> animations = 
-				new HashMap<Activity, Map<Direction, Animation>>();
+
+	public static Map<Activity, Map<Direction, Animation>> getAllAnimations(
+			String assetName) {
+		Map<Activity, Map<Direction, Animation>> animations = new HashMap<Activity, Map<Direction, Animation>>();
 		TextureRegion[][] regions = GameScreen.getRegions(assetName, PX, PX);
-		
+
 		// cast
 		int offset = 0;
 		animations.put(Activity.Cast, getAnimations(regions, 7, offset));
-		
+
 		// thrust
 		offset += Direction.values().length;
 		animations.put(Activity.Thrust, getAnimations(regions, 8, offset));
-		
+
 		// walk
 		offset += Direction.values().length;
 		animations.put(Activity.Explore, getAnimations(regions, 9, offset));
-		
+
 		// swipe
 		offset += Direction.values().length;
 		animations.put(Activity.Swipe, getAnimations(regions, 6, offset));
-		
+
 		// shoot
 		offset += Direction.values().length;
 		animations.put(Activity.Combat, getAnimations(regions, 13, offset));
-		
+
 		// hurt
 		offset += Direction.values().length;
-		animations.put(Activity.Death, getAnimations(regions, 6, offset,
-				false, Animation.PlayMode.NORMAL));
+		animations.put(
+				Activity.Death,
+				getAnimations(regions, 6, offset, false,
+						Animation.PlayMode.NORMAL));
 
 		return animations;
 	}
-	
+
 	private static Map<Direction, Animation> getAnimations(
 			TextureRegion[][] regions, int length, int offset) {
-		return getAnimations(regions, length, offset, true, Animation.PlayMode.LOOP);
+		return getAnimations(regions, length, offset, true,
+				Animation.PlayMode.LOOP);
 	}
-	
+
 	private static Map<Direction, Animation> getAnimations(
 			TextureRegion[][] regions, int length, int offset,
 			boolean increment, Animation.PlayMode playMode) {
 		int index = offset;
 		Map<Direction, Animation> directions = new HashMap<Direction, Animation>();
 		for (Direction d : Direction.values()) {
-			TextureRegion[] textures = Arrays.copyOfRange(regions[index], 0, length);
+			TextureRegion[] textures = Arrays.copyOfRange(regions[index], 0,
+					length);
 			Animation anim = new Animation(0.15f, textures);
 			anim.setPlayMode(playMode);
 			directions.put(d, anim);
