@@ -151,17 +151,17 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 		LinkedList<Vector2> spawnNodes = getSpawnNodes();
 		
 		// create test NPCs
-		String asset = "sprite/eru_centurion";
+		String asset = "sprite/characters/centurion.png";
 		addActor(createTestNpc(spawnNodes.poll(), asset, eruFaction));
 		addActor(createTestNpc(spawnNodes.poll(), asset, eruFaction));
 		addActor(createTestNpc(spawnNodes.poll(), asset, eruFaction));
 		
-		asset = "sprite/imperial_agent";
+		asset = "sprite/characters/agent.png";
 		addActor(createTestNpc(spawnNodes.poll(), asset, imperialFaction));
 		addActor(createTestNpc(spawnNodes.poll(), asset, imperialFaction));
 		addActor(createTestNpc(spawnNodes.poll(), asset, imperialFaction));
 		
-		asset = "sprite/punk";
+		asset = "sprite/characters/punk.png";
 		addActor(createTestNpc(spawnNodes.poll(), asset, gangFaction));
 		addActor(createTestNpc(spawnNodes.poll(), asset, gangFaction));
 		addActor(createTestNpc(spawnNodes.poll(), asset, gangFaction));

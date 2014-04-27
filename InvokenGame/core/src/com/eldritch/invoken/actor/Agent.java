@@ -1,6 +1,7 @@
 package com.eldritch.invoken.actor;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -42,7 +43,7 @@ public abstract class Agent implements Entity {
 	}
 
 	enum Activity {
-		Explore, Combat
+		Explore, Combat, Cast, Thrust, Swipe, Death
 	}
 
 	private final AgentStats stats;
@@ -54,10 +55,7 @@ public abstract class Agent implements Entity {
 	State state = State.Moving;
 	Activity activity = Activity.Explore;
 	Direction direction = Direction.Down;
-	private final Map<Activity, Map<Direction, Animation>> animations =
-			new HashMap<Activity, Map<Direction, Animation>>();
-	private final Animation deathAnimation;
-	float deathTime = 0;
+	private final Map<Activity, Map<Direction, Animation>> animations;
 	float stateTime = 0;
 	
 	private final FactionManager factions = new FactionManager(this);
@@ -77,11 +75,7 @@ public abstract class Agent implements Entity {
 
 	public Agent(String assetPath, float x, float y, Profession profession, int level) {
 		setPosition(x, y);
-		animations.put(Activity.Explore, getAnimations(assetPath + "/walk.png"));
-		animations.put(Activity.Combat, getAnimations(assetPath + "/shoot.png"));
-		
-		deathAnimation = getAnimation(assetPath + "/hurt.png");
-		deathAnimation.setPlayMode(Animation.PlayMode.NORMAL);
+		animations = getAllAnimations(assetPath);
 
 		// figure out the width and height of the player for collision
 		// detection and rendering by converting a player frames pixel
@@ -161,7 +155,6 @@ public abstract class Agent implements Entity {
 	
 	public void resurrect() {
 		stats.resetHealth();
-		deathTime = 0;
 	}
 	
 	public void setConfused(boolean confused) {
@@ -344,7 +337,7 @@ public abstract class Agent implements Entity {
 			
 			// take conscious action
 			attemptTakeAction(delta, screen);
-		} else if (deathTime == 0) {
+		} else if (activity != Activity.Death) {
 			// kill the agent
 			onDeath();
 		}
@@ -373,10 +366,18 @@ public abstract class Agent implements Entity {
 		}
 		
 		// set activity
-		if (enemies.isEmpty()) {
+		Activity last = activity;
+		if (!isAlive()) {
+			activity = Activity.Death;
+		} else if (enemies.isEmpty()) {
 			activity = Activity.Explore;
 		} else {
 			activity = Activity.Combat;
+		}
+		
+		// reset state if the activity was changed
+		if (activity != last) {
+			stateTime = 0;
 		}
 
 		// clamp the velocity to the maximum
@@ -515,22 +516,11 @@ public abstract class Agent implements Entity {
 		// based on the actor state, get the animation frame
 		TextureRegion frame = null;
 		
-		int index = 0;
-		if (isAlive()) {
-			switch (state) {
-			case Standing:
-				frame = getAnimation(direction).getKeyFrames()[0];
-				break;
-			case Moving: {
-				Animation animation = getAnimation(direction);
-				frame = animation.getKeyFrame(stateTime);
-				index = animation.getKeyFrameIndex(stateTime);
-				break;
-			}
-			}
+		if (state == State.Standing && activity == Activity.Explore) {
+			frame = getAnimation(direction).getKeyFrames()[0];
 		} else {
-			deathTime += delta;
-			frame = deathAnimation.getKeyFrame(deathTime);
+			Animation animation = getAnimation(direction);
+			frame = animation.getKeyFrame(stateTime);
 		}
 		
 		// draw the actor, depending on the current velocity
@@ -545,7 +535,7 @@ public abstract class Agent implements Entity {
 		if (isAlive()) {
 			// only take actions when alive
 			if (activity == Activity.Combat && weapon != null) {
-				weapon.render(index, renderer);
+				weapon.render(delta, renderer);
 			}
 			
 			// render the current action if one exists
@@ -640,5 +630,60 @@ public abstract class Agent implements Entity {
 		}
 
 		return animations;
+	}
+	
+	public static Map<Activity, Map<Direction, Animation>> getAllAnimations(String assetName) {
+		Map<Activity, Map<Direction, Animation>> animations = 
+				new HashMap<Activity, Map<Direction, Animation>>();
+		TextureRegion[][] regions = GameScreen.getRegions(assetName, PX, PX);
+		
+		// cast
+		int offset = 0;
+		animations.put(Activity.Cast, getAnimations(regions, 7, offset));
+		
+		// thrust
+		offset += Direction.values().length;
+		animations.put(Activity.Thrust, getAnimations(regions, 8, offset));
+		
+		// walk
+		offset += Direction.values().length;
+		animations.put(Activity.Explore, getAnimations(regions, 9, offset));
+		
+		// swipe
+		offset += Direction.values().length;
+		animations.put(Activity.Swipe, getAnimations(regions, 6, offset));
+		
+		// shoot
+		offset += Direction.values().length;
+		animations.put(Activity.Combat, getAnimations(regions, 13, offset));
+		
+		// hurt
+		offset += Direction.values().length;
+		animations.put(Activity.Death, getAnimations(regions, 6, offset,
+				false, Animation.PlayMode.NORMAL));
+
+		return animations;
+	}
+	
+	private static Map<Direction, Animation> getAnimations(
+			TextureRegion[][] regions, int length, int offset) {
+		return getAnimations(regions, length, offset, true, Animation.PlayMode.LOOP);
+	}
+	
+	private static Map<Direction, Animation> getAnimations(
+			TextureRegion[][] regions, int length, int offset,
+			boolean increment, Animation.PlayMode playMode) {
+		int index = offset;
+		Map<Direction, Animation> directions = new HashMap<Direction, Animation>();
+		for (Direction d : Direction.values()) {
+			TextureRegion[] textures = Arrays.copyOfRange(regions[index], 0, length);
+			Animation anim = new Animation(0.15f, textures);
+			anim.setPlayMode(playMode);
+			directions.put(d, anim);
+			if (increment) {
+				index++;
+			}
+		}
+		return directions;
 	}
 }

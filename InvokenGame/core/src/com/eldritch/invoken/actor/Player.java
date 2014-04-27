@@ -19,7 +19,7 @@ public class Player extends Agent {
 	private boolean moving = false;
 	
 	public Player(Profession profession, int level, float x, float y) {
-		super("sprite/main", x, y, profession, level);
+		super("sprite/characters/agent.png", x, y, profession, level);
 		mover = new AgentMover(this, getMaxVelocity(), 0.01f);
 	}
 	

@@ -17,6 +17,7 @@ public class Shotgun {
 	private static Map<Direction, Animation> animations = new HashMap<Direction, Animation>();
 	
 	private final Agent actor;
+	private float stateTime = 0;
 	
 	public Shotgun(Agent actor) {
 		this.actor = actor;
@@ -26,8 +27,9 @@ public class Shotgun {
 		height = 1 / 32f * 48;
 	}
 	
-	public void render(int index, OrthogonalTiledMapRenderer renderer) {
-		TextureRegion frame = getAnimation().getKeyFrames()[index];
+	public void render(float delta, OrthogonalTiledMapRenderer renderer) {
+		stateTime += delta;
+		TextureRegion frame = getAnimation().getKeyFrame(stateTime);
 		Vector2 position = actor.getPosition();
 		
 		Batch batch = renderer.getSpriteBatch();
