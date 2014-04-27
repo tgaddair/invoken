@@ -22,7 +22,7 @@ public class FireWeapon extends Augmentation {
 	
 	@Override
 	public boolean isValid(Agent owner, Agent target) {
-		return target != null && target != owner;
+		return target != null && target != owner && owner.hasWeapon();
 	}
 	
 	public class FireAction extends AnimatedAction {
@@ -58,6 +58,9 @@ public class FireWeapon extends Augmentation {
 			batch.begin();
 			batch.draw(frame, position.x - width / 2, position.y - height / 2, width, height);
 			batch.end();
+			
+			// render weapon
+			owner.getWeapon().render(delta, renderer);
 		}
 
 		@Override

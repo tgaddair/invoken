@@ -396,10 +396,6 @@ public abstract class Agent implements Entity {
 			move(delta, screen);
 		}
 	}
-	
-	private boolean actionInProgress() {
-		return action != null && !action.isFinished();
-	}
 
 	private void move(float delta, GameScreen screen) {
 		// clamp the velocity to the maximum
@@ -505,6 +501,10 @@ public abstract class Agent implements Entity {
 		velocity.x *= DAMPING;
 		velocity.y *= DAMPING;
 	}
+	
+	private boolean actionInProgress() {
+		return action != null && !action.isFinished();
+	}
 
 	public float getX1() {
 		return position.x - getWidth() / 2;
@@ -543,12 +543,6 @@ public abstract class Agent implements Entity {
 			} else {
 				// defer rendering to owner
 				render(renderer);
-			}
-
-			// render weapon
-			// TODO: move this into the FireWeapon action
-			if (activity == Activity.Combat && weapon != null) {
-				weapon.render(delta, renderer);
 			}
 		} else {
 			render(renderer);
@@ -631,6 +625,14 @@ public abstract class Agent implements Entity {
 	public float getWeaponAccuracy() {
 		// TODO separate weapon class
 		return 0.65f;
+	}
+	
+	public boolean hasWeapon() {
+		return weapon != null;
+	}
+	
+	public Shotgun getWeapon() {
+		return weapon;
 	}
 
 	public AgentStats getStats() {
