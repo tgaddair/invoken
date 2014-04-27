@@ -17,7 +17,6 @@ public class Player extends Agent {
 	private final AgentMover mover;
 	private final Vector2 targetCoord = new Vector2();
 	private boolean moving = false;
-	private Agent dialoguer = null;
 	
 	public Player(Profession profession, int level, float x, float y) {
 		super("sprite/characters/normal.png", x, y, profession, level);
@@ -70,18 +69,6 @@ public class Player extends Agent {
 	
 	public void select(Agent other) {
 		setTarget(other);
-	}
-	
-	public void setDialogue(Agent other) {
-		dialoguer = other;
-	}
-	
-	public Agent getDialoguer() {
-		return dialoguer;
-	}
-	
-	public boolean inDialogue() {
-		return dialoguer != null;
 	}
 
 	private boolean isTouched(float startX, float endX) {

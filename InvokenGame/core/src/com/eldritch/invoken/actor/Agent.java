@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
@@ -48,6 +47,7 @@ public abstract class Agent implements Entity {
 	}
 
 	private final AgentStats stats;
+	private final DialogueManager dialogue;
 	private final float width;
 	private final float height;
 
@@ -90,6 +90,15 @@ public abstract class Agent implements Entity {
 
 		// health, level, augmentations, etc.
 		stats = new AgentStats(this, profession, level);
+		dialogue = new DialogueManager();
+	}
+	
+	public boolean inDialogue() {
+		return dialogue.inDialogue();
+	}
+	
+	public void setDialogue(Agent other) {
+		dialogue.setDialogue(other);
 	}
 
 	public float dst2(Agent other) {
