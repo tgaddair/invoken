@@ -69,6 +69,10 @@ public class Player extends Agent {
 	
 	public void select(Agent other) {
 		setTarget(other);
+		if (other == null) {
+			// exit dialogue if allowed
+			setDialogue(null);
+		}
 	}
 	
 	public void reselect(Agent other) {

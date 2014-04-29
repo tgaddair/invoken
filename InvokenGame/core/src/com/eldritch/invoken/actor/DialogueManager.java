@@ -1,9 +1,11 @@
 package com.eldritch.invoken.actor;
 
+import com.eldritch.scifirpg.proto.Actors.DialogueTree.Choice;
 import com.eldritch.scifirpg.proto.Actors.DialogueTree.Response;
 
 public class DialogueManager {
 	Npc dialoguer = null;
+	boolean finished = true;
 	
 	public void setDialogue(Npc other) {
 		dialoguer = other;
@@ -19,5 +21,9 @@ public class DialogueManager {
 	
 	public Response getGreeting() {
 		return dialoguer.getGreeting();
+	}
+	
+	public Response getResponseFor(Choice choice) {
+		return dialoguer.getResponseFor(choice);
 	}
 }

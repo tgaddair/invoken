@@ -52,10 +52,10 @@ public class DialogueMenu {
 	}
 	
 	private void setup(DialogueManager dialogue) {
-		setup(dialogue.getDialoguer(), dialogue.getGreeting());
+		setup(dialogue, dialogue.getGreeting());
 	}
 	
-	private void setup(Npc npc, Response response) {
+	private void setup(DialogueManager manager, Response response) {
 		if (response != null) {
 			InvokenGame.log("Dialogue: " + response.getText());
 			
@@ -64,8 +64,9 @@ public class DialogueMenu {
 			
 			// add new content
 			addLabel(response.getText());
+			Npc npc = manager.getDialoguer();
 			for (final Choice c : npc.getChoicesFor(response)) {
-				addChoiceButton(c, npc);
+				addChoiceButton(c, manager);
 			}
 		} else {
 			// end of conversation
@@ -91,12 +92,13 @@ public class DialogueMenu {
 				AbstractScreen.MENU_VIEWPORT_WIDTH - 50).padLeft(25).padRight(25).padBottom(10);
 	}
 	
-	private void addChoiceButton(final Choice c, final Npc npc) {
+	private void addChoiceButton(final Choice c, final DialogueManager manager) {
 		TextButton choice = new TextButton(c.getText(), skin);
 		choice.addListener(new DefaultInputListener() {
 			@Override
 			public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-				setup(npc, npc.getResponseFor(c));
+				Npc npc = manager.getDialoguer();
+				setup(manager, manager.getResponseFor(c));
 			}
 		});
 		table.row();
