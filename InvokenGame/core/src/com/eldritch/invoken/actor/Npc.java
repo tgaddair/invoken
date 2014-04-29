@@ -113,6 +113,11 @@ public class Npc extends Agent {
 		routine.takeAction(delta, screen);
 	}
 	
+	@Override
+	public void handleInteract(Agent other) {
+		other.setDialogue(this);
+	}
+	
 	public Map<Agent, Float> getRelations() {
 		return relations;
 	}

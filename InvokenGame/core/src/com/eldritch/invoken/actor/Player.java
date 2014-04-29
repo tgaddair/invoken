@@ -70,6 +70,15 @@ public class Player extends Agent {
 	public void select(Agent other) {
 		setTarget(other);
 	}
+	
+	public void reselect(Agent other) {
+		other.handleInteract(this);
+	}
+	
+	@Override
+	public void handleInteract(Agent other) {
+		// do nothing
+	}
 
 	private boolean isTouched(float startX, float endX) {
 		// check if any finger is touch the area between startX and endX

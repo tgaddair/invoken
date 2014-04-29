@@ -1,13 +1,13 @@
 package com.eldritch.invoken.actor;
 
 public class DialogueManager {
-	Agent dialoguer = null;
+	Npc dialoguer = null;
 	
-	public void setDialogue(Agent other) {
+	public void setDialogue(Npc other) {
 		dialoguer = other;
 	}
 	
-	public Agent getDialoguer() {
+	public Npc getDialoguer() {
 		return dialoguer;
 	}
 	

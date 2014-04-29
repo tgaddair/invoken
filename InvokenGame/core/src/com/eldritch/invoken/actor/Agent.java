@@ -22,7 +22,6 @@ import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.actor.aug.Action;
 import com.eldritch.invoken.actor.aug.Augmentation;
 import com.eldritch.invoken.actor.factions.Faction;
-import com.eldritch.invoken.actor.factions.FactionManager;
 import com.eldritch.invoken.actor.weapon.Shotgun;
 import com.eldritch.invoken.effects.Effect;
 import com.eldritch.invoken.screens.GameScreen;
@@ -112,7 +111,7 @@ public abstract class Agent implements Entity {
 		return dialogue.inDialogue();
 	}
 	
-	public void setDialogue(Agent other) {
+	public void setDialogue(Npc other) {
 		dialogue.setDialogue(other);
 	}
 
@@ -670,6 +669,8 @@ public abstract class Agent implements Entity {
 	}
 
 	protected abstract void takeAction(float delta, GameScreen screen);
+	
+	protected abstract void handleInteract(Agent agent);
 
 	public static Animation getAnimation(String assetName) {
 		TextureRegion[][] regions = GameScreen.getRegions(assetName, PX, PX);

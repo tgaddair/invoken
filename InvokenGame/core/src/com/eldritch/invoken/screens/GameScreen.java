@@ -412,12 +412,12 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 		Vector3 world = camera.unproject(new Vector3(screenX, screenY, 0));
 		for (Agent entity : entities) {
 			if (entity.contains(world.x, world.y)) {
-				if (player.getTarget() == entity) {
-					// already selected -> start dialogue
-					player.setDialogue(entity);
-				} else {
+				if (player.getTarget() != entity) {
 					// initial selection -> set target
-					player.setTarget(entity);
+					player.select(entity);
+				} else {
+					// already selected -> start dialogue
+					player.reselect(entity);
 				}
 				selection = true;
 				break;
