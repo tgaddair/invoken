@@ -6,6 +6,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.actor.DialogueManager;
 import com.eldritch.invoken.actor.Npc;
 import com.eldritch.invoken.actor.Player;
@@ -18,6 +19,7 @@ public class DialogueMenu {
 	private final Table container;
 	private final Table table;
 	private final Skin skin;
+	private boolean active = false;
 	
 	public DialogueMenu(Skin skin) {
 	    container = new Table(skin);
@@ -39,8 +41,13 @@ public class DialogueMenu {
 	
 	public void update(Player player) {
 		if (player.inDialogue()) {
-			container.setVisible(true);
-			setup(player.getDialogue());
+			if (!active) {
+				container.setVisible(true);
+				active = true;
+				setup(player.getDialogue());
+			}
+		} else {
+			endDialogue();
 		}
 	}
 	
@@ -50,6 +57,8 @@ public class DialogueMenu {
 	
 	private void setup(Npc npc, Response response) {
 		if (response != null) {
+			InvokenGame.log("Dialogue: " + response.getText());
+			
 			// remove old content
 			table.clear();
 			
@@ -60,13 +69,18 @@ public class DialogueMenu {
 			}
 		} else {
 			// end of conversation
-			container.setVisible(false);
-			// TODO: end dialogue with player
+			endDialogue();
 		}
 	}
 	
 	public Table getTable() {
 		return container;
+	}
+	
+	private void endDialogue() {
+		container.setVisible(false);
+		active = false;
+		// TODO: end dialogue with player
 	}
 	
 	private void addLabel(String text) {

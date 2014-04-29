@@ -156,7 +156,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 		
 		// create test NPCs
 		String asset = "sprite/characters/executor.png";
-		addActor(createTestNpc(spawnNodes.poll(), asset, eruFaction));
+		addActor(createTestNpc(spawnNodes.poll(), "QuarantineEruSentry", asset));
 		addActor(createTestNpc(spawnNodes.poll(), asset, eruFaction));
 		
 		asset = "sprite/characters/inquisitor.png";
@@ -206,6 +206,10 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 			}
 		}
 		return Vector2.Zero;
+	}
+	
+	private Npc createTestNpc(Vector2 position, String path, String asset) {
+		return new Npc(InvokenGame.ACTOR_READER.readAsset(path), position.x, position.y, asset);
 	}
 	
 	private Npc createTestNpc(Vector2 position, String asset, Faction... factions) {

@@ -24,10 +24,14 @@ import com.eldritch.scifirpg.proto.Actors.NonPlayerActor;
 import com.eldritch.scifirpg.proto.Actors.DialogueTree.Choice;
 import com.eldritch.scifirpg.proto.Actors.DialogueTree.Response;
 import com.eldritch.scifirpg.proto.Augmentations.Augmentation;
+import com.eldritch.scifirpg.proto.Locations.Encounter.ActorParams.ActorScenario;
 import com.eldritch.scifirpg.proto.Prerequisites.Prerequisite;
 import com.eldritch.scifirpg.proto.Prerequisites.Standing;
+import com.google.common.base.Optional;
 
 public class Npc extends Agent {
+	private final NonPlayerActor data;
+    private final Optional<ActorScenario> scenario;
 	private final DialogueVerifier dialogueVerifier = new DialogueVerifier();
 	private final Map<Agent, Float> relations = new HashMap<Agent, Float>();
 	private final List<Routine> routines = new ArrayList<Routine>();
@@ -35,6 +39,8 @@ public class Npc extends Agent {
 	
 	public Npc(NonPlayerActor data, float x, float y, String asset) {
 		super(asset, x, y, data.getParams());
+		this.data = data;
+		scenario = Optional.absent();
 		
 		// construct augs and items by randomly sampling from available
 //        for (String augId : info.getKnownAugmentations()) {
@@ -53,6 +59,8 @@ public class Npc extends Agent {
 	
 	public Npc(Profession profession, int level, float x, float y, String asset) {
 		super(asset, x, y, profession, level);
+		data = null;
+		scenario = Optional.absent();
 		
 		// routines
 		routine = new IdleRoutine(this);
@@ -139,12 +147,12 @@ public class Npc extends Agent {
     }
     
     public Response getResponseFor(Choice choice) {
-//        Set<String> successors = new HashSet<String>(choice.getSuccessorIdList());
-//        for (Response r : data.getDialogue().getDialogueList()) {
-//            if (successors.contains(r.getId()) && dialogueVerifier.isValid(r)) {
-//                return r;
-//            }
-//        }
+        Set<String> successors = new HashSet<String>(choice.getSuccessorIdList());
+        for (Response r : data.getDialogue().getDialogueList()) {
+            if (successors.contains(r.getId()) && dialogueVerifier.isValid(r)) {
+                return r;
+            }
+        }
         return null;
     }
     
@@ -160,8 +168,7 @@ public class Npc extends Agent {
 //                return greeting;
 //            }
 //        }
-//        return getGreetingFor(data.getDialogue());
-    	return null;
+        return getGreetingFor(data.getDialogue());
     }
     
     private Response getGreetingFor(DialogueTree tree) {
