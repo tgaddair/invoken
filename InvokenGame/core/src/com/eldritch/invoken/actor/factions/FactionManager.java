@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.actor.Agent;
 
 public class FactionManager {
@@ -12,6 +13,12 @@ public class FactionManager {
 	
 	public FactionManager(Agent agent) {
 		this.agent = agent;
+	}
+	
+	public void addFaction(com.eldritch.scifirpg.proto.Actors.ActorParams.FactionStatus status) {
+		Faction faction = Faction.fromProto(
+				InvokenGame.FACTION_READER.readAsset(status.getFactionId()));
+		addFaction(faction, status.getRank(), status.getReputation());
 	}
 	
 	public void addFaction(Faction faction, int rank, int reputation) {

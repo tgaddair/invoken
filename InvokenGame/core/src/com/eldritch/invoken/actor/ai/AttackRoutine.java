@@ -203,13 +203,13 @@ public class AttackRoutine implements Routine {
 
 	private boolean shouldPursue() {
 		// don't wait till we've lost them in our sights
-		float maxDistance = npc.getStats().getMaxTargetDistance() * 0.8f;
+		float maxDistance = npc.getInfo().getMaxTargetDistance() * 0.8f;
 		return getTargetPosition().dst2(npc.getPosition()) >= maxDistance;
 	}
 
 	private boolean shouldFlee() {
 		// don't get any closer to the enemy than this
-		float minDistance = npc.getStats().getMaxTargetDistance() * 0.4f;
+		float minDistance = npc.getInfo().getMaxTargetDistance() * 0.4f;
 		return getTargetPosition().dst2(npc.getPosition()) <= minDistance;
 	}
 }

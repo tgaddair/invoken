@@ -26,6 +26,7 @@ import com.eldritch.invoken.actor.factions.FactionManager;
 import com.eldritch.invoken.actor.weapon.Shotgun;
 import com.eldritch.invoken.effects.Effect;
 import com.eldritch.invoken.screens.GameScreen;
+import com.eldritch.scifirpg.proto.Actors.ActorParams;
 
 public abstract class Agent implements Entity {
 	static AssetManager assetManager = new AssetManager();
@@ -46,7 +47,7 @@ public abstract class Agent implements Entity {
 		Explore, Combat, Cast, Thrust, Swipe, Death
 	}
 
-	private final AgentStats stats;
+	final AgentInfo info;
 	private final DialogueManager dialogue;
 	private final float width;
 	private final float height;
@@ -59,7 +60,6 @@ public abstract class Agent implements Entity {
 	private final Map<Activity, Map<Direction, Animation>> animations;
 	float stateTime = 0;
 
-	private final FactionManager factions = new FactionManager(this);
 	private final LinkedList<Action> actions = new LinkedList<Action>();
 	private final List<Effect> effects = new LinkedList<Effect>();
 	private Action action = null;
@@ -73,6 +73,21 @@ public abstract class Agent implements Entity {
 	private Shotgun weapon;
 	private Agent target;
 	private final Set<Class<?>> toggles = new HashSet<Class<?>>();
+	
+	public Agent(String assetPath, float x, float y, ActorParams params) {
+		setPosition(x, y);
+		animations = getAllAnimations(assetPath);
+
+		// figure out the width and height of the player for collision
+		// detection and rendering by converting a player frames pixel
+		// size into world units (1 unit == 32 pixels)
+		width = 1 / 32f * PX; // regions[0][0].getRegionWidth();
+		height = 1 / 32f * PX; // regions[0][0].getRegionHeight();
+		
+		// health, level, augmentations, etc.
+		info = new AgentInfo(this, params);
+		dialogue = new DialogueManager();
+	}
 
 	public Agent(String assetPath, float x, float y, Profession profession,
 			int level) {
@@ -89,7 +104,7 @@ public abstract class Agent implements Entity {
 		weapon = new Shotgun(this);
 
 		// health, level, augmentations, etc.
-		stats = new AgentStats(this, profession, level);
+		info = new AgentInfo(this, profession, level);
 		dialogue = new DialogueManager();
 	}
 	
@@ -106,27 +121,27 @@ public abstract class Agent implements Entity {
 	}
 
 	public Set<Faction> getFactions() {
-		return factions.getFactions();
+		return info.factions.getFactions();
 	}
 
 	public void addFaction(Faction faction, int rank, int reputation) {
-		factions.addFaction(faction, rank, reputation);
+		info.factions.addFaction(faction, rank, reputation);
 	}
 
 	public int getReputation(Faction faction) {
-		return factions.getReputation(faction);
+		return info.factions.getReputation(faction);
 	}
 
 	public float getDisposition(Agent other) {
-		return factions.getDisposition(other);
+		return info.factions.getDisposition(other);
 	}
 
 	public void useAugmentation(int index) {
-		stats.useAugmentation(index);
+		info.useAugmentation(index);
 	}
 
 	public void addAugmentation(Augmentation aug) {
-		stats.addAugmentation(aug);
+		info.addAugmentation(aug);
 	}
 
 	public List<Agent> getFollowers() {
@@ -142,11 +157,11 @@ public abstract class Agent implements Entity {
 	}
 
 	public boolean isAlive() {
-		return stats.isAlive();
+		return info.isAlive();
 	}
 
 	public float getHealth() {
-		return stats.getHealth();
+		return info.getHealth();
 	}
 
 	public float damage(Agent source, float value) {
@@ -157,15 +172,15 @@ public abstract class Agent implements Entity {
 	}
 
 	public float damage(float value) {
-		return stats.damage(value);
+		return info.damage(value);
 	}
 
 	public float heal(float value) {
-		return stats.heal(value);
+		return info.heal(value);
 	}
 
 	public void resurrect() {
-		stats.resetHealth();
+		info.resetHealth();
 	}
 
 	public void setConfused(boolean confused) {
@@ -290,16 +305,16 @@ public abstract class Agent implements Entity {
 	}
 
 	public float getAttackScale(Agent other) {
-		return stats.getAccuracy() * getWeaponAccuracy()
-				* (1.0f - other.getStats().getDefense());
+		return info.getAccuracy() * getWeaponAccuracy()
+				* (1.0f - other.getInfo().getDefense());
 	}
 
 	public float getExecuteScale(Agent other) {
-		return stats.getWillpower() * (1.0f - other.getStats().getResistance());
+		return info.getWillpower() * (1.0f - other.getInfo().getResistance());
 	}
 
 	public float getDeceiveScale(Agent other) {
-		return stats.getDeception() * (1.0f - other.getStats().getPerception());
+		return info.getDeception() * (1.0f - other.getInfo().getPerception());
 	}
 
 	public boolean hasPendingAction() {
@@ -642,8 +657,8 @@ public abstract class Agent implements Entity {
 		return weapon;
 	}
 
-	public AgentStats getStats() {
-		return stats;
+	public AgentInfo getInfo() {
+		return info;
 	}
 
 	public float getWidth() {

@@ -206,4 +206,31 @@ public abstract class Profession {
 			return ImmutableList.<Augmentation>of(new FireWeapon());
 		}
 	}
+	
+	public static Profession fromProto(com.eldritch.scifirpg.proto.Disciplines.Profession p) {
+		switch (p) {
+			case CENTURION:
+				return new Centurion();
+			case EXECUTOR:
+				return new Executor();
+			case ASSASSIN:
+				return new Assassin();
+			case WARDEN:
+				return new Warden();
+			case ARCHITECT:
+				return new Architect();
+			case GHOST:
+				return new Ghost();
+			case INQUISITOR:
+				return new Inquisitor();
+			case INFILTRATOR:
+				return new Infiltrator();
+			case AGENT:
+				return new Agent();
+			case BROKER:
+				return new Broker();
+			default:
+				throw new IllegalArgumentException("Unrecognized Profession: " + p);
+		}
+	}
 }

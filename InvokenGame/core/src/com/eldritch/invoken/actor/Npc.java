@@ -20,8 +20,10 @@ import com.eldritch.invoken.actor.aug.FireWeapon;
 import com.eldritch.invoken.screens.GameScreen;
 import com.eldritch.invoken.util.PrerequisiteVerifier;
 import com.eldritch.scifirpg.proto.Actors.DialogueTree;
+import com.eldritch.scifirpg.proto.Actors.NonPlayerActor;
 import com.eldritch.scifirpg.proto.Actors.DialogueTree.Choice;
 import com.eldritch.scifirpg.proto.Actors.DialogueTree.Response;
+import com.eldritch.scifirpg.proto.Augmentations.Augmentation;
 import com.eldritch.scifirpg.proto.Prerequisites.Prerequisite;
 import com.eldritch.scifirpg.proto.Prerequisites.Standing;
 
@@ -30,6 +32,24 @@ public class Npc extends Agent {
 	private final Map<Agent, Float> relations = new HashMap<Agent, Float>();
 	private final List<Routine> routines = new ArrayList<Routine>();
 	private Routine routine;
+	
+	public Npc(NonPlayerActor data, float x, float y, String asset) {
+		super(asset, x, y, data.getParams());
+		
+		// construct augs and items by randomly sampling from available
+//        for (String augId : info.getKnownAugmentations()) {
+//            Augmentation aug = InvokenGame.AUG_READER.readAsset(augId);
+//            stage(new ActiveAugmentation(aug, this, 20));
+//        }
+		
+		// routines
+		// TODO: add these to proto to make them modular for NPCs
+		routine = new IdleRoutine(this);
+		routines.add(new AttackRoutine(this));
+		routines.add(new FollowRoutine(this));
+		routines.add(new PatrolRoutine(this));
+		routines.add(routine); // idle is fallback
+	}
 	
 	public Npc(Profession profession, int level, float x, float y, String asset) {
 		super(asset, x, y, profession, level);

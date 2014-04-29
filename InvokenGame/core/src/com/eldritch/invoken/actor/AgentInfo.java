@@ -1,23 +1,59 @@
 package com.eldritch.invoken.actor;
 
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
+import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.actor.aug.Augmentation;
+import com.eldritch.invoken.actor.factions.FactionManager;
+import com.eldritch.scifirpg.proto.Actors.ActorParams;
+import com.eldritch.scifirpg.proto.Actors.ActorParams.FactionStatus;
+import com.eldritch.scifirpg.proto.Actors.ActorParams.InventoryItem;
 import com.eldritch.scifirpg.proto.Actors.ActorParams.Skill;
 import com.eldritch.scifirpg.proto.Disciplines.Discipline;
+import com.eldritch.scifirpg.proto.Items.Item;
 
-public class AgentStats {
-	private final Agent agent;
+public class AgentInfo {
 	final Profession profession;
+	final FactionManager factions;
+	private final Map<String, ItemState> inventory = new HashMap<String, ItemState>();
 	final Map<Discipline, SkillState> skills = new HashMap<Discipline, SkillState>();
+	final Set<String> knownAugmentations = new HashSet<String>();
 	
 	final PreparedAugmentations augmentations;
 	float health;
 	int level;
 	
-	public AgentStats(Agent agent, Profession profession, int level) {
-		this.agent = agent;
+	public AgentInfo(Agent agent, ActorParams params) {
+		augmentations = new PreparedAugmentations(agent);
+		profession = Profession.fromProto(params.getProfession());
+		factions = new FactionManager(agent);
+		
+		for (Augmentation aug : profession.getStartingAugmentations()) {
+			addAugmentation(aug);
+		}
+		for (FactionStatus status : params.getFactionStatusList()) {
+			factions.addFaction(status);
+        }
+        for (InventoryItem item : params.getInventoryItemList()) {
+            inventory.put(item.getItemId(), new ItemState(item));
+        }
+		for (Skill skill : params.getSkillList()) {
+            skills.put(skill.getDiscipline(), new SkillState(skill));
+        }
+		for (String knownAug : params.getKnownAugIdList()) {
+            knownAugmentations.add(knownAug);
+        }
+		
+		// post init basic state
+		health = getBaseHealth();
+		this.level = params.getLevel();
+	}
+	
+	public AgentInfo(Agent agent, Profession profession, int level) {
 		augmentations = new PreparedAugmentations(agent);
 		
 		this.profession = profession;
@@ -31,7 +67,13 @@ public class AgentStats {
 		// post init basic state
 		health = getBaseHealth();
 		this.level = level;
+		
+		factions = new FactionManager(agent);
 	}
+	
+	public Collection<String> getKnownAugmentations() {
+        return knownAugmentations;
+    }
 	
 	public void useAugmentation(int index) {
 		augmentations.use(index);
@@ -156,6 +198,38 @@ public class AgentStats {
 
         public int getXp() {
             return xp;
+        }
+    }
+	
+	public static class ItemState {
+        private final Item item;
+        private int count;
+
+        public ItemState(Item item, int count) {
+            this.item = item;
+            this.count = count;
+        }
+
+        public ItemState(InventoryItem item) {
+            this.item = InvokenGame.ITEM_READER.readAsset(item.getItemId());
+            count = item.getCount();
+        }
+
+        public Item getItem() {
+            return item;
+        }
+
+        public void add(int c) {
+            count += c;
+        }
+
+        public void remove(int c) {
+            // Can't have negative count
+            count = Math.max(count - c, 0);
+        }
+
+        public int getCount() {
+            return count;
         }
     }
 }
