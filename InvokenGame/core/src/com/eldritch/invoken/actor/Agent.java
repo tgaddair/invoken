@@ -107,6 +107,10 @@ public abstract class Agent implements Entity {
 		dialogue = new DialogueManager();
 	}
 	
+	public DialogueManager getDialogue() {
+		return dialogue;
+	}
+	
 	public boolean inDialogue() {
 		return dialogue.inDialogue();
 	}

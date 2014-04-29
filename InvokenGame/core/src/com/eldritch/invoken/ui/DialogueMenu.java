@@ -1,15 +1,23 @@
 package com.eldritch.invoken.ui;
 
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.eldritch.invoken.actor.DialogueManager;
+import com.eldritch.invoken.actor.Npc;
 import com.eldritch.invoken.actor.Player;
 import com.eldritch.invoken.screens.AbstractScreen;
+import com.eldritch.invoken.util.DefaultInputListener;
+import com.eldritch.scifirpg.proto.Actors.DialogueTree.Choice;
+import com.eldritch.scifirpg.proto.Actors.DialogueTree.Response;
 
 public class DialogueMenu {
 	private final Table container;
+	private final Table table;
+	private final Skin skin;
 	
 	public DialogueMenu(Skin skin) {
 	    container = new Table(skin);
@@ -17,28 +25,14 @@ public class DialogueMenu {
 	    container.setWidth(AbstractScreen.MENU_VIEWPORT_WIDTH - 25);
 		container.bottom();
 
-	    Table table = new Table(skin);
+	    table = new Table(skin);
 		table.bottom();
+		
+		this.skin = skin;
 		
 		// TODO translucent background
 //		ScrollPane scroll = new ScrollPane(table, skin);
 		ScrollPane scroll = new ScrollPane(table);
-		
-	    String text = "This is a test showing a really long line of dialogue that might be seen in the game when speaking to some random NPC you encounter.";
-		Label label = new Label(text, skin);
-		label.setWrap(true);
-		label.setWidth(100);
-		table.add(label).width(
-				AbstractScreen.MENU_VIEWPORT_WIDTH - 50).padLeft(25).padRight(25).padBottom(10);
-		
-		TextButton choice1 = new TextButton("Yes, I agree.", skin);
-		table.row();
-		table.add(choice1).left().padLeft(25).padRight(25).padBottom(10);
-		
-		TextButton choice2 = new TextButton("No, I cannot do that.", skin);
-		table.row();
-		table.add(choice2).left().padLeft(25).padRight(25).padBottom(10);
-		
 		container.add(scroll).expand().fill();
 		container.setVisible(false);
 	}
@@ -46,10 +40,52 @@ public class DialogueMenu {
 	public void update(Player player) {
 		if (player.inDialogue()) {
 			container.setVisible(true);
+			setup(player.getDialogue());
+		}
+	}
+	
+	private void setup(DialogueManager dialogue) {
+		setup(dialogue.getDialoguer(), dialogue.getGreeting());
+	}
+	
+	private void setup(Npc npc, Response response) {
+		if (response != null) {
+			// remove old content
+			table.clear();
+			
+			// add new content
+			addLabel(response.getText());
+			for (final Choice c : npc.getChoicesFor(response)) {
+				addChoiceButton(c, npc);
+			}
+		} else {
+			// end of conversation
+			container.setVisible(false);
+			// TODO: end dialogue with player
 		}
 	}
 	
 	public Table getTable() {
 		return container;
+	}
+	
+	private void addLabel(String text) {
+		Label label = new Label(text, skin);
+		label.setWrap(true);
+		label.setWidth(100);
+		table.add(label).width(
+				AbstractScreen.MENU_VIEWPORT_WIDTH - 50).padLeft(25).padRight(25).padBottom(10);
+	}
+	
+	private void addChoiceButton(final Choice c, final Npc npc) {
+		TextButton choice = new TextButton(c.getText(), skin);
+		choice.addListener(new DefaultInputListener() {
+			@Override
+			public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+				setup(npc, npc.getResponseFor(c));
+			}
+		});
+		table.row();
+		table.add(choice).left().padLeft(25).padRight(25).padBottom(10);
 	}
 }
