@@ -86,6 +86,9 @@ public abstract class Agent implements Entity {
 		// health, level, augmentations, etc.
 		info = new AgentInfo(this, params);
 		dialogue = new DialogueManager();
+		
+		// for debug purposes
+		weapon = new Shotgun(this);
 	}
 
 	public Agent(String assetPath, float x, float y, Profession profession,
@@ -245,6 +248,12 @@ public abstract class Agent implements Entity {
 
 	public boolean isToggled(Class<?> clazz) {
 		return toggles.contains(clazz);
+	}
+	
+	public boolean canAddAction() {
+		// only add actions if there are none in the queue, meaning either none or one is in
+		// progress
+		return actions.isEmpty();
 	}
 
 	public void addAction(Action action) {
