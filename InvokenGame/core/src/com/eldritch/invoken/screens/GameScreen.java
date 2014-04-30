@@ -157,23 +157,23 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 		// create test NPCs
 		String asset = "sprite/characters/executor.png";
 		addActor(createTestNpc(spawnNodes.poll(), "QuarantineEruSentry", asset));
-		addActor(createTestNpc(spawnNodes.poll(), asset, eruFaction));
+		addActor(createTestNpc(spawnNodes.poll(), "EruCenturion", asset));
 		
 		asset = "sprite/characters/inquisitor.png";
-		addActor(createTestNpc(spawnNodes.poll(), asset, eruFaction));
+		addActor(createTestNpc(spawnNodes.poll(), "InquisitorGoth", asset));
 		
 		asset = "sprite/characters/centurion.png";
-		addActor(createTestNpc(spawnNodes.poll(), asset, imperialFaction));
-		addActor(createTestNpc(spawnNodes.poll(), asset, imperialFaction));
-		addActor(createTestNpc(spawnNodes.poll(), asset, imperialFaction));
+		addActor(createTestNpc(spawnNodes.poll(), "IcarianEnforcer", asset));
+		addActor(createTestNpc(spawnNodes.poll(), "IcarianEnforcer", asset));
+		addActor(createTestNpc(spawnNodes.poll(), "IcarianEnforcer", asset));
 		
 		asset = "sprite/characters/punk.png";
-		addActor(createTestNpc(spawnNodes.poll(), asset, gangFaction));
-		addActor(createTestNpc(spawnNodes.poll(), asset, gangFaction));
-		addActor(createTestNpc(spawnNodes.poll(), asset, gangFaction));
-		addActor(createTestNpc(spawnNodes.poll(), asset, gangFaction));
-		addActor(createTestNpc(spawnNodes.poll(), asset, gangFaction));
-		addActor(createTestNpc(spawnNodes.poll(), asset, gangFaction));
+		addActor(createTestNpc(spawnNodes.poll(), "StreetThug", asset));
+		addActor(createTestNpc(spawnNodes.poll(), "StreetThug", asset));
+		addActor(createTestNpc(spawnNodes.poll(), "StreetThug", asset));
+		addActor(createTestNpc(spawnNodes.poll(), "StreetThug", asset));
+		addActor(createTestNpc(spawnNodes.poll(), "StreetThug", asset));
+		addActor(createTestNpc(spawnNodes.poll(), "StreetThug", asset));
 
 		Gdx.input.setInputProcessor(this);
 		Gdx.app.log(InvokenGame.LOG, "start");
