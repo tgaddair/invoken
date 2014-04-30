@@ -6,7 +6,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.actor.DialogueManager;
 import com.eldritch.invoken.actor.Npc;
 import com.eldritch.invoken.actor.Player;
@@ -57,8 +56,6 @@ public class DialogueMenu {
 	
 	private void setup(DialogueManager manager, Response response) {
 		if (response != null) {
-			InvokenGame.log("Dialogue: " + response.getText());
-			
 			// remove old content
 			table.clear();
 			
@@ -97,7 +94,6 @@ public class DialogueMenu {
 		choice.addListener(new DefaultInputListener() {
 			@Override
 			public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-				Npc npc = manager.getDialoguer();
 				setup(manager, manager.getResponseFor(c));
 			}
 		});

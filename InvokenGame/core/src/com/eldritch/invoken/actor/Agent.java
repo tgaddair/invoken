@@ -114,6 +114,10 @@ public abstract class Agent implements Entity {
 		return dialogue;
 	}
 	
+	public void loot(Npc other) {
+		
+	}
+	
 	public boolean inDialogue() {
 		return dialogue.inDialogue();
 	}

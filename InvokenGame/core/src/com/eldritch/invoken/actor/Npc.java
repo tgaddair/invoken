@@ -112,6 +112,8 @@ public class Npc extends Agent {
 	public void handleInteract(Agent other) {
 		if (isAlive()) {
 			other.setDialogue(this);
+		} else {
+			other.loot(this);
 		}
 	}
 	
