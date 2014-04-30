@@ -211,14 +211,6 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 	private Npc createTestNpc(Vector2 position, String path, String asset) {
 		return new Npc(InvokenGame.ACTOR_READER.readAsset(path), position.x, position.y, asset);
 	}
-	
-	private Npc createTestNpc(Vector2 position, String asset, Faction... factions) {
-		Npc npc = new Npc(new Centurion(), 10, position.x, position.y, asset);
-		for (Faction faction : factions) {
-			npc.addFaction(faction, 3, 0);
-		}
-		return npc;
-	}
 
 	private void addActor(Agent actor) {
 		entities.add(actor);
