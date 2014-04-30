@@ -57,19 +57,6 @@ public class Npc extends Agent {
 		routines.add(routine); // idle is fallback
 	}
 	
-	public Npc(Profession profession, int level, float x, float y, String asset) {
-		super(asset, x, y, profession, level);
-		data = null;
-		scenario = Optional.absent();
-		
-		// routines
-		routine = new IdleRoutine(this);
-		routines.add(new AttackRoutine(this));
-		routines.add(new FollowRoutine(this));
-		routines.add(new PatrolRoutine(this));
-		routines.add(routine); // idle is fallback
-	}
-	
 	@Override
 	protected void takeAction(float delta, GameScreen screen) {
 		// cleanup state

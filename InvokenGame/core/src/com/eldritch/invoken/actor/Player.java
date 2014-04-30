@@ -4,12 +4,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.actor.ai.AgentMover;
-import com.eldritch.invoken.actor.aug.Augmentation;
-import com.eldritch.invoken.actor.aug.Barrier;
-import com.eldritch.invoken.actor.aug.Command;
-import com.eldritch.invoken.actor.aug.FireWeapon;
-import com.eldritch.invoken.actor.aug.Paralyze;
-import com.eldritch.invoken.actor.aug.Resurrect;
 import com.eldritch.invoken.screens.GameScreen;
 
 /** The player character, has state and state time, */
