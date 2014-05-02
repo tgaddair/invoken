@@ -47,7 +47,6 @@ public abstract class Agent implements Entity {
 	}
 
 	final AgentInfo info;
-	private final DialogueManager dialogue;
 	private final float width;
 	private final float height;
 
@@ -71,6 +70,7 @@ public abstract class Agent implements Entity {
 
 	private Shotgun weapon;
 	private Agent target;
+	private Npc interactor;
 	private final Set<Class<?>> toggles = new HashSet<Class<?>>();
 	
 	public Agent(String assetPath, float x, float y, ActorParams params) {
@@ -85,7 +85,6 @@ public abstract class Agent implements Entity {
 		
 		// health, level, augmentations, etc.
 		info = new AgentInfo(this, params);
-		dialogue = new DialogueManager();
 		
 		// for debug purposes
 		weapon = new Shotgun(this);
@@ -107,23 +106,10 @@ public abstract class Agent implements Entity {
 
 		// health, level, augmentations, etc.
 		info = new AgentInfo(this, profession, level);
-		dialogue = new DialogueManager();
-	}
-	
-	public DialogueManager getDialogue() {
-		return dialogue;
-	}
-	
-	public void loot(Npc other) {
-		
 	}
 	
 	public boolean inDialogue() {
-		return dialogue.inDialogue();
-	}
-	
-	public void setDialogue(Npc other) {
-		dialogue.setDialogue(other);
+		return interactor != null && interactor.isAlive();
 	}
 
 	public float dst2(Agent other) {
@@ -302,6 +288,18 @@ public abstract class Agent implements Entity {
 
 	public Animation getAnimation(Activity activity) {
 		return animations.get(activity).get(direction);
+	}
+	
+	public void interact(Npc other) {
+		interactor = other;
+	}
+	
+	public Npc getInteractor() {
+		return interactor;
+	}
+	
+	public boolean isInteracting() {
+		return interactor != null;
 	}
 
 	public void setTarget(Agent target) {

@@ -43,27 +43,26 @@ public class DialogueMenu {
 			if (!active) {
 				container.setVisible(true);
 				active = true;
-				setup(player.getDialogue());
+				setup(player.getInteractor());
 			}
 		} else {
 			endDialogue();
 		}
 	}
 	
-	private void setup(DialogueManager dialogue) {
-		setup(dialogue, dialogue.getGreeting());
+	private void setup(Npc npc) {
+		setup(npc, npc.getGreeting());
 	}
 	
-	private void setup(DialogueManager manager, Response response) {
+	private void setup(Npc npc, Response response) {
 		if (response != null) {
 			// remove old content
 			table.clear();
 			
 			// add new content
 			addLabel(response.getText());
-			Npc npc = manager.getDialoguer();
 			for (final Choice c : npc.getChoicesFor(response)) {
-				addChoiceButton(c, manager);
+				addChoiceButton(c, npc);
 			}
 		} else {
 			// end of conversation
@@ -89,12 +88,12 @@ public class DialogueMenu {
 				AbstractScreen.MENU_VIEWPORT_WIDTH - 50).padLeft(25).padRight(25).padBottom(10);
 	}
 	
-	private void addChoiceButton(final Choice c, final DialogueManager manager) {
+	private void addChoiceButton(final Choice c, final Npc npc) {
 		TextButton choice = new TextButton(c.getText(), skin);
 		choice.addListener(new DefaultInputListener() {
 			@Override
 			public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-				setup(manager, manager.getResponseFor(c));
+				setup(npc, npc.getResponseFor(c));
 			}
 		});
 		table.row();

@@ -31,4 +31,7 @@ public abstract class AnimatedAction implements Action {
 	public boolean isAnimated() {
 		return true;
 	}
+	
+	// TODO: implement apply method, which applies a list of effects
+	// allow Augmentation proto to specify which Action type it uses for its animation
 }

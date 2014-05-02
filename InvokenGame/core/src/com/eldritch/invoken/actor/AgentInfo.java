@@ -71,6 +71,10 @@ public class AgentInfo {
 		factions = new FactionManager(agent);
 	}
 	
+	public Collection<ItemState> getInventoryItems() {
+		return inventory.values();
+	}
+	
 	public Collection<String> getKnownAugmentations() {
         return knownAugmentations;
     }

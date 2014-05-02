@@ -110,11 +110,7 @@ public class Npc extends Agent {
 	
 	@Override
 	public void handleInteract(Agent other) {
-		if (isAlive()) {
-			other.setDialogue(this);
-		} else {
-			other.loot(this);
-		}
+		other.interact(this);
 	}
 	
 	public Map<Agent, Float> getRelations() {

@@ -3,6 +3,8 @@ package com.eldritch.invoken.actor;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.math.Vector2;
+import com.eldritch.invoken.InvokenGame;
+import com.eldritch.invoken.actor.AgentInfo.ItemState;
 import com.eldritch.invoken.actor.ai.AgentMover;
 import com.eldritch.invoken.screens.GameScreen;
 
@@ -63,14 +65,18 @@ public class Player extends Agent {
 	
 	public void select(Agent other) {
 		setTarget(other);
-		if (other == null) {
-			// exit dialogue if allowed
-			setDialogue(null);
-		}
+		interact(null);
 	}
 	
 	public void reselect(Agent other) {
 		other.handleInteract(this);
+	}
+	
+	public void showInventory() {
+		InvokenGame.log("Player Inventory:");
+		for (ItemState item : info.getInventoryItems()) {
+			InvokenGame.log(String.format("%s (%d)", item.getItem(), item.getCount()));
+		}
 	}
 	
 	@Override
