@@ -6,7 +6,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.eldritch.invoken.actor.DialogueManager;
 import com.eldritch.invoken.actor.Npc;
 import com.eldritch.invoken.actor.Player;
 import com.eldritch.invoken.screens.AbstractScreen;

@@ -107,10 +107,6 @@ public abstract class Agent implements Entity {
 		// health, level, augmentations, etc.
 		info = new AgentInfo(this, profession, level);
 	}
-	
-	public boolean inDialogue() {
-		return interactor != null && interactor.isAlive();
-	}
 
 	public float dst2(Agent other) {
 		return position.dst2(other.position);
@@ -300,6 +296,14 @@ public abstract class Agent implements Entity {
 	
 	public boolean isInteracting() {
 		return interactor != null;
+	}
+	
+	public boolean inDialogue() {
+		return interactor != null && interactor.isAlive();
+	}
+	
+	public boolean isLooting() {
+		return interactor != null && !interactor.isAlive();
 	}
 
 	public void setTarget(Agent target) {

@@ -33,10 +33,10 @@ import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.actor.Agent;
 import com.eldritch.invoken.actor.Npc;
 import com.eldritch.invoken.actor.Player;
-import com.eldritch.invoken.actor.Profession.Centurion;
 import com.eldritch.invoken.actor.Profession.Inquisitor;
 import com.eldritch.invoken.actor.factions.Faction;
 import com.eldritch.invoken.ui.DialogueMenu;
+import com.eldritch.invoken.ui.LootMenu;
 import com.google.common.primitives.Ints;
 
 public class GameScreen extends AbstractScreen implements InputProcessor {
@@ -50,6 +50,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 	};
 	
 	private final DialogueMenu dialogue;
+	private final LootMenu loot;
 
 	private Player player;
 	private final List<Agent> entities = new ArrayList<Agent>();
@@ -74,7 +75,9 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 	public GameScreen(InvokenGame game) {
 		super(game);
 		dialogue = new DialogueMenu(getSkin());
+		loot = new LootMenu(getSkin());
 		stage.addActor(dialogue.getTable());
+		stage.addActor(loot.getTable());
 	}
 
 	public static Pool<Rectangle> getRectPool() {
@@ -227,8 +230,9 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 			player.moveTo(world.x, world.y);
 		}
 		
-		// update dialogue menu
+		// update UI menus
 		dialogue.update(player);
+		loot.update(player);
 		
 		// update the player (process input, collision detection, position
 		// update)
@@ -415,7 +419,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 					// initial selection -> set target
 					player.select(entity);
 				} else {
-					// already selected -> start dialogue
+					// already selected -> start interaction
 					player.reselect(entity);
 				}
 				selection = true;
