@@ -75,6 +75,56 @@ public class AgentInfo {
 		return inventory.values();
 	}
 	
+	public int getItemCount(Item item) {
+		return getItemCount(item.getId());
+	}
+	
+	public int getItemCount(String itemId) {
+        if (!inventory.containsKey(itemId)) {
+            return 0;
+        }
+        return inventory.get(itemId).getCount();
+    }
+	
+	public void addItem(Item item) {
+		addItem(item, 1);
+	}
+	
+	public void addItem(Item item, int count) {
+        if (!inventory.containsKey(item.getId())) {
+            inventory.put(item.getId(), new ItemState(item, count));
+        } else {
+            inventory.get(item.getId()).add(count);
+        }
+    }
+	
+	public void removeItem(Item item) {
+		removeItem(item.getId(), 1);
+	}
+	
+	/**
+     * Remove the requested number of instances of the given item from the
+     * actor's inventory. If the number requested is greater than or equal to
+     * the number available, or if count == -1, then we remove all and unequip.
+     */
+    public void removeItem(String itemId, int count) {
+        int available = getItemCount(itemId);
+        if (available == 0) {
+            // nothing to remove
+            return;
+        }
+
+        if (count >= available || count == -1) {
+            // remove all and unequip
+//            Item item = inventory.get(itemId).getItem();
+//            equipped.remove(item);
+            inventory.remove(itemId);
+        } else {
+            // decrement counters
+            inventory.get(itemId).remove(count);
+        }
+    }
+	
 	public Collection<String> getKnownAugmentations() {
         return knownAugmentations;
     }

@@ -10,7 +10,7 @@ import com.eldritch.invoken.actor.Npc;
 import com.eldritch.invoken.actor.Player;
 import com.eldritch.invoken.screens.AbstractScreen;
 import com.eldritch.invoken.util.DefaultInputListener;
-import com.eldritch.scifirpg.proto.Actors.DialogueTree.Choice;
+import com.eldritch.scifirpg.proto.Items.Item;
 
 public class LootMenu {
 	private final Table container;
@@ -22,8 +22,8 @@ public class LootMenu {
 		this.skin = skin;
 	    container = new Table(skin);
 	    container.setHeight(AbstractScreen.MENU_VIEWPORT_HEIGHT - 100);
-	    container.setWidth(AbstractScreen.MENU_VIEWPORT_WIDTH / 4);
-		container.bottom();
+	    container.setWidth(AbstractScreen.MENU_VIEWPORT_WIDTH / 3);
+		container.center();
 
 	    table = new Table(skin);
 		table.center();
@@ -42,29 +42,44 @@ public class LootMenu {
 			if (!active) {
 				container.setVisible(true);
 				active = true;
-				setup(player.getInteractor());
+				setup(player, player.getInteractor());
 			}
 		} else {
 			exitMenu();
 		}
 	}
 	
-	public void setup(Npc npc) {
+	public void setup(Player player, Npc npc) {
+		table.clear();
 		for (ItemState item : npc.getInfo().getInventoryItems()) {
-			addItemButton(item);
+			addItemButton(item, player, npc);
 		}
 	}
 	
-	private void addItemButton(final ItemState item) {
-		String text = String.format("%s (%d)", item.getItem().getName(), item.getCount());
-		TextButton choice = new TextButton(text, skin);
-		choice.addListener(new DefaultInputListener() {
+	private void addItemButton(ItemState itemState, final Player player, final Npc npc) {
+		final Item item = itemState.getItem();
+		final TextButton itemButton = new TextButton(getText(item, itemState.getCount()), skin);
+		itemButton.addListener(new DefaultInputListener() {
 			@Override
 			public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+				npc.getInfo().removeItem(item);
+				player.getInfo().addItem(item);
+				
+				// update button with new count
+				int count = npc.getInfo().getItemCount(item);
+				if (count > 0) {
+					itemButton.setText(getText(item, count));
+				} else {
+					itemButton.setVisible(false);
+				}
 			}
 		});
 		table.row();
-		table.add(choice).left().padLeft(25).padRight(25).padBottom(10);
+		table.add(itemButton).fillX().padLeft(25).padRight(25).padBottom(10);
+	}
+	
+	private String getText(Item item, int count) {
+		return String.format("%s (%d)", item.getName(), count);
 	}
 	
 	private void exitMenu() {
