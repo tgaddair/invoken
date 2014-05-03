@@ -1,7 +1,5 @@
 package com.eldritch.invoken.actor.aug;
 
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.eldritch.invoken.actor.Agent;
 import com.eldritch.invoken.actor.Agent.Activity;
 
@@ -16,10 +14,18 @@ public abstract class AnimatedAction implements Action {
 	}
 	
 	@Override
-	public void render(float delta, OrthogonalTiledMapRenderer renderer) {
+	public void update(float delta) {
 		stateTime += delta;
-		TextureRegion frame = owner.getAnimation(activity).getKeyFrame(stateTime);
-		owner.render(frame, renderer);
+	}
+	
+	@Override
+	public float getStateTime() {
+		return stateTime;
+	}
+	
+	@Override
+	public Activity getActivity() {
+		return activity;
 	}
 
 	@Override

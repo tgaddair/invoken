@@ -18,11 +18,10 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
-import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.actor.aug.Action;
 import com.eldritch.invoken.actor.aug.Augmentation;
 import com.eldritch.invoken.actor.factions.Faction;
-import com.eldritch.invoken.actor.weapon.Shotgun;
+import com.eldritch.invoken.actor.items.RangedWeapon;
 import com.eldritch.invoken.effects.Effect;
 import com.eldritch.invoken.screens.GameScreen;
 import com.eldritch.scifirpg.proto.Actors.ActorParams;
@@ -32,7 +31,7 @@ public abstract class Agent implements Entity {
 	static float MAX_VELOCITY = 8f;
 	static float JUMP_VELOCITY = 40f;
 	static float DAMPING = 0.87f;
-	static int PX = 64;
+	public static int PX = 64;
 
 	public enum Direction {
 		Up, Left, Down, Right
@@ -68,7 +67,6 @@ public abstract class Agent implements Entity {
 	private boolean confused = false;
 	private int paralyzed = 0;
 
-	private Shotgun weapon;
 	private Agent target;
 	private Npc interactor;
 	private final Set<Class<?>> toggles = new HashSet<Class<?>>();
@@ -85,9 +83,6 @@ public abstract class Agent implements Entity {
 		
 		// health, level, augmentations, etc.
 		info = new AgentInfo(this, params);
-		
-		// for debug purposes
-		weapon = new Shotgun(this);
 	}
 
 	public Agent(String assetPath, float x, float y, Profession profession,
@@ -100,9 +95,6 @@ public abstract class Agent implements Entity {
 		// size into world units (1 unit == 32 pixels)
 		width = 1 / 32f * PX; // regions[0][0].getRegionWidth();
 		height = 1 / 32f * PX; // regions[0][0].getRegionHeight();
-
-		// for debug purposes
-		weapon = new Shotgun(this);
 
 		// health, level, augmentations, etc.
 		info = new AgentInfo(this, profession, level);
@@ -379,7 +371,9 @@ public abstract class Agent implements Entity {
 
 		if (isAlive()) {
 			// handle the action queue
-			if (!actionInProgress()) {
+			if (actionInProgress()) {
+				action.update(delta);
+			} else {
 				action = actions.poll();
 				if (action != null) {
 					action.apply();
@@ -575,18 +569,7 @@ public abstract class Agent implements Entity {
 	}
 
 	public void render(float delta, OrthogonalTiledMapRenderer renderer) {
-		if (isAlive()) {
-			// only take actions when alive
-			if (action != null) {
-				// let the action handle the specific animation rendering
-				action.render(delta, renderer);
-			} else {
-				// defer rendering to owner
-				render(renderer);
-			}
-		} else {
-			render(renderer);
-		}
+		render(renderer);
 
 		// render all unfinished effects
 		for (Effect effect : effects) {
@@ -597,23 +580,27 @@ public abstract class Agent implements Entity {
 	}
 
 	public void render(OrthogonalTiledMapRenderer renderer) {
-		// based on the actor state, get the animation frame
-		TextureRegion frame = null;
-
-		if (state == State.Standing && activity == Activity.Explore) {
-			frame = getAnimation(direction).getKeyFrames()[0];
-		} else {
-			Animation animation = getAnimation(direction);
-			frame = animation.getKeyFrame(stateTime);
+		Activity activity = this.activity;
+		float stateTime = this.stateTime;
+		if (isAlive() && action != null) {
+			stateTime = action.getStateTime();
+			activity = action.getActivity();
+		} else if (state == State.Standing && activity == Activity.Explore) {
+			stateTime = 0;
 		}
 
 		// draw the actor, depending on the current velocity
 		// on the x-axis, draw the actor facing either right
 		// or left
-		render(frame, renderer);
+		render(activity, direction, stateTime, renderer);
+		
+		// render equipment
 	}
 
-	public void render(TextureRegion frame, OrthogonalTiledMapRenderer renderer) {
+	private void render(Activity activity, Direction direction, float stateTime,
+			OrthogonalTiledMapRenderer renderer) {
+		// based on the actor state, get the animation frame
+		TextureRegion frame = animations.get(activity).get(direction).getKeyFrame(stateTime);
 		Batch batch = renderer.getSpriteBatch();
 		batch.begin();
 		batch.draw(frame, position.x - getWidth() / 2, position.y - getHeight()
@@ -668,11 +655,11 @@ public abstract class Agent implements Entity {
 	}
 	
 	public boolean hasWeapon() {
-		return weapon != null;
+		return info.getInventory().hasWeapon();
 	}
 	
-	public Shotgun getWeapon() {
-		return weapon;
+	public RangedWeapon getWeapon() {
+		return info.getInventory().getWeapon();
 	}
 
 	public AgentInfo getInfo() {

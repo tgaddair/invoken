@@ -5,11 +5,23 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.eldritch.invoken.InvokenGame;
+import com.eldritch.invoken.actor.items.RangedWeapon;
 import com.eldritch.scifirpg.proto.Actors.ActorParams.InventoryItem;
 import com.eldritch.scifirpg.proto.Items.Item;
 
 public class Inventory {
 	private final Map<String, ItemState> items = new HashMap<String, Inventory.ItemState>();
+	
+	// equipment
+	private RangedWeapon rangedWeapon;
+	
+	public boolean hasWeapon() {
+		return rangedWeapon != null;
+	}
+	
+	public RangedWeapon getWeapon() {
+		return rangedWeapon;
+	}
 	
 	public void add(InventoryItem item) {
 		items.put(item.getItemId(), new Inventory.ItemState(item));

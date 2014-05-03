@@ -47,21 +47,21 @@ public class FireWeapon extends Augmentation {
 			height = 1 / 32f * regions[0][0].getRegionHeight();
 		}
 		
-		@Override
-		public void render(float delta, OrthogonalTiledMapRenderer renderer) {
-			super.render(delta, renderer);
-			
-			TextureRegion frame = getAnimation().getKeyFrame(stateTime);
-			Vector2 position = owner.getPosition();
-			
-			Batch batch = renderer.getSpriteBatch();
-			batch.begin();
-			batch.draw(frame, position.x - width / 2, position.y - height / 2, width, height);
-			batch.end();
-			
-			// render weapon
-			owner.getWeapon().render(delta, renderer);
-		}
+//		@Override
+//		public void update(float delta, OrthogonalTiledMapRenderer renderer) {
+//			super.render(delta, renderer);
+//			
+//			TextureRegion frame = getAnimation().getKeyFrame(stateTime);
+//			Vector2 position = owner.getPosition();
+//			
+//			Batch batch = renderer.getSpriteBatch();
+//			batch.begin();
+//			batch.draw(frame, position.x - width / 2, position.y - height / 2, width, height);
+//			batch.end();
+//			
+//			// render weapon
+//			owner.getWeapon().render(owner, delta, renderer);
+//		}
 
 		@Override
 		public boolean isFinished() {
