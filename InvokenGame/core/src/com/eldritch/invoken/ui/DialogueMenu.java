@@ -22,7 +22,7 @@ public class DialogueMenu {
 	public DialogueMenu(Skin skin) {
 	    container = new Table(skin);
 	    container.setHeight(AbstractScreen.MENU_VIEWPORT_HEIGHT / 2);
-	    container.setWidth(AbstractScreen.MENU_VIEWPORT_WIDTH - 25);
+	    container.setWidth(AbstractScreen.MENU_VIEWPORT_WIDTH);
 		container.bottom();
 
 	    table = new Table(skin);
@@ -31,9 +31,8 @@ public class DialogueMenu {
 		this.skin = skin;
 		
 		// TODO translucent background
-//		ScrollPane scroll = new ScrollPane(table, skin);
-		ScrollPane scroll = new ScrollPane(table);
-		container.add(scroll).expand().fill();
+		ScrollPane scroll = new ScrollPane(table, skin);
+		container.add(scroll).expand().fillX().bottom();
 		container.setVisible(false);
 	}
 	
@@ -84,7 +83,7 @@ public class DialogueMenu {
 		label.setWrap(true);
 		label.setWidth(100);
 		table.add(label).width(
-				AbstractScreen.MENU_VIEWPORT_WIDTH - 50).padLeft(25).padRight(25).padBottom(10);
+				AbstractScreen.MENU_VIEWPORT_WIDTH - 25).padLeft(5).padRight(5).padBottom(5);
 	}
 	
 	private void addChoiceButton(final Choice c, final Npc npc) {

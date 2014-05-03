@@ -23,10 +23,13 @@ public class LootMenu {
 	    container = new Table(skin);
 	    container.setHeight(AbstractScreen.MENU_VIEWPORT_HEIGHT - 100);
 	    container.setWidth(AbstractScreen.MENU_VIEWPORT_WIDTH / 3);
+	    container.setPosition(
+	    		AbstractScreen.MENU_VIEWPORT_WIDTH / 2 - container.getWidth() / 2,
+	    		AbstractScreen.MENU_VIEWPORT_HEIGHT / 2 - container.getHeight() / 2);
 		container.center();
 
 	    table = new Table(skin);
-		table.center();
+		table.top();
 		
 		ScrollPane scroll = new ScrollPane(table, skin);
 		container.add(scroll).expand().fill();
@@ -75,7 +78,7 @@ public class LootMenu {
 			}
 		});
 		table.row();
-		table.add(itemButton).fillX().padLeft(25).padRight(25).padBottom(10);
+		table.add(itemButton).expandX().fillX().padLeft(5).padRight(5).padBottom(5).padTop(5);
 	}
 	
 	private String getText(Item item, int count) {
