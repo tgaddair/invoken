@@ -6,24 +6,23 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.eldritch.invoken.actor.Inventory;
-import com.eldritch.invoken.actor.Inventory.ItemState;
-import com.eldritch.invoken.actor.Npc;
 import com.eldritch.invoken.actor.Player;
 import com.eldritch.invoken.screens.AbstractScreen;
 import com.eldritch.invoken.util.DefaultInputListener;
 import com.eldritch.scifirpg.proto.Items.Item;
 
-public class LootMenu {
+public class InventoryMenu {
 	private final Table container;
 	private final Table table;
 	private final Skin skin;
-	private boolean active = false;
+	private final Player player;
 	
-	public LootMenu(Skin skin) {
+	public InventoryMenu(Player player, Skin skin) {
+		this.player = player;
 		this.skin = skin;
 	    container = new Table(skin);
 	    container.setHeight(AbstractScreen.MENU_VIEWPORT_HEIGHT - 100);
-	    container.setWidth(AbstractScreen.MENU_VIEWPORT_WIDTH / 3);
+	    container.setWidth(AbstractScreen.MENU_VIEWPORT_WIDTH - 100);
 	    container.setPosition(
 	    		AbstractScreen.MENU_VIEWPORT_WIDTH / 2 - container.getWidth() / 2,
 	    		AbstractScreen.MENU_VIEWPORT_HEIGHT / 2 - container.getHeight() / 2);
@@ -41,41 +40,31 @@ public class LootMenu {
 		return container;
 	}
 	
-	public void update(Player player) {
-		if (player.isLooting()) {
-			if (!active) {
-				container.setVisible(true);
-				active = true;
-				setup(player, player.getInteractor());
-			}
-		} else {
-			exitMenu();
+	public void toggle() {
+		show(!container.isVisible());
+	}
+	
+	public void show(boolean visible) {
+		container.setVisible(visible);
+		if (visible) {
+			refresh();
 		}
 	}
 	
-	public void setup(Player player, Npc npc) {
+	public void refresh() {
 		table.clear();
-		for (Inventory.ItemState item : npc.getInfo().getInventory().getItems()) {
-			addItemButton(item, player, npc);
+		for (Inventory.ItemState item : player.getInfo().getInventory().getItems()) {
+			addItemButton(item);
 		}
 	}
 	
-	private void addItemButton(Inventory.ItemState itemState, final Player player, final Npc npc) {
+	private void addItemButton(Inventory.ItemState itemState) {
 		final Item item = itemState.getItem();
 		final TextButton itemButton = new TextButton(getText(item, itemState.getCount()), skin);
 		itemButton.addListener(new DefaultInputListener() {
 			@Override
 			public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-				npc.getInfo().getInventory().removeItem(item);
-				player.getInfo().getInventory().addItem(item);
-				
-				// update button with new count
-				int count = npc.getInfo().getInventory().getItemCount(item);
-				if (count > 0) {
-					itemButton.setText(getText(item, count));
-				} else {
-					itemButton.setVisible(false);
-				}
+//				player.getInfo().equip(item);
 			}
 		});
 		table.row();
@@ -84,10 +73,5 @@ public class LootMenu {
 	
 	private String getText(Item item, int count) {
 		return String.format("%s (%d)", item.getName(), count);
-	}
-	
-	private void exitMenu() {
-		container.setVisible(false);
-		active = false;
 	}
 }

@@ -6,7 +6,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.actor.aug.Augmentation;
 import com.eldritch.invoken.actor.factions.FactionManager;
 import com.eldritch.scifirpg.proto.Actors.ActorParams;
@@ -14,12 +13,11 @@ import com.eldritch.scifirpg.proto.Actors.ActorParams.FactionStatus;
 import com.eldritch.scifirpg.proto.Actors.ActorParams.InventoryItem;
 import com.eldritch.scifirpg.proto.Actors.ActorParams.Skill;
 import com.eldritch.scifirpg.proto.Disciplines.Discipline;
-import com.eldritch.scifirpg.proto.Items.Item;
 
 public class AgentInfo {
 	final Profession profession;
 	final FactionManager factions;
-	private final Map<String, ItemState> inventory = new HashMap<String, ItemState>();
+	private final Inventory inventory = new Inventory();
 	final Map<Discipline, SkillState> skills = new HashMap<Discipline, SkillState>();
 	final Set<String> knownAugmentations = new HashSet<String>();
 	
@@ -39,7 +37,7 @@ public class AgentInfo {
 			factions.addFaction(status);
         }
         for (InventoryItem item : params.getInventoryItemList()) {
-            inventory.put(item.getItemId(), new ItemState(item));
+        	inventory.add(item);
         }
 		for (Skill skill : params.getSkillList()) {
             skills.put(skill.getDiscipline(), new SkillState(skill));
@@ -71,59 +69,9 @@ public class AgentInfo {
 		factions = new FactionManager(agent);
 	}
 	
-	public Collection<ItemState> getInventoryItems() {
-		return inventory.values();
+	public Inventory getInventory() {
+		return inventory;
 	}
-	
-	public int getItemCount(Item item) {
-		return getItemCount(item.getId());
-	}
-	
-	public int getItemCount(String itemId) {
-        if (!inventory.containsKey(itemId)) {
-            return 0;
-        }
-        return inventory.get(itemId).getCount();
-    }
-	
-	public void addItem(Item item) {
-		addItem(item, 1);
-	}
-	
-	public void addItem(Item item, int count) {
-        if (!inventory.containsKey(item.getId())) {
-            inventory.put(item.getId(), new ItemState(item, count));
-        } else {
-            inventory.get(item.getId()).add(count);
-        }
-    }
-	
-	public void removeItem(Item item) {
-		removeItem(item.getId(), 1);
-	}
-	
-	/**
-     * Remove the requested number of instances of the given item from the
-     * actor's inventory. If the number requested is greater than or equal to
-     * the number available, or if count == -1, then we remove all and unequip.
-     */
-    public void removeItem(String itemId, int count) {
-        int available = getItemCount(itemId);
-        if (available == 0) {
-            // nothing to remove
-            return;
-        }
-
-        if (count >= available || count == -1) {
-            // remove all and unequip
-//            Item item = inventory.get(itemId).getItem();
-//            equipped.remove(item);
-            inventory.remove(itemId);
-        } else {
-            // decrement counters
-            inventory.get(itemId).remove(count);
-        }
-    }
 	
 	public Collection<String> getKnownAugmentations() {
         return knownAugmentations;
@@ -252,38 +200,6 @@ public class AgentInfo {
 
         public int getXp() {
             return xp;
-        }
-    }
-	
-	public static class ItemState {
-        private final Item item;
-        private int count;
-
-        public ItemState(Item item, int count) {
-            this.item = item;
-            this.count = count;
-        }
-
-        public ItemState(InventoryItem item) {
-            this.item = InvokenGame.ITEM_READER.readAsset(item.getItemId());
-            count = item.getCount();
-        }
-
-        public Item getItem() {
-            return item;
-        }
-
-        public void add(int c) {
-            count += c;
-        }
-
-        public void remove(int c) {
-            // Can't have negative count
-            count = Math.max(count - c, 0);
-        }
-
-        public int getCount() {
-            return count;
         }
     }
 }

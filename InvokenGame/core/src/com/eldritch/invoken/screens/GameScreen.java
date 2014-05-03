@@ -36,6 +36,7 @@ import com.eldritch.invoken.actor.Player;
 import com.eldritch.invoken.actor.Profession.Inquisitor;
 import com.eldritch.invoken.actor.factions.Faction;
 import com.eldritch.invoken.ui.DialogueMenu;
+import com.eldritch.invoken.ui.InventoryMenu;
 import com.eldritch.invoken.ui.LootMenu;
 import com.google.common.primitives.Ints;
 
@@ -51,6 +52,8 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 	
 	private final DialogueMenu dialogue;
 	private final LootMenu loot;
+	
+	private InventoryMenu inventoryMenu;
 
 	private Player player;
 	private final List<Agent> entities = new ArrayList<Agent>();
@@ -153,6 +156,10 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 		player = new Player(new Inquisitor(), 10, spawn.x, spawn.y);
 		player.addFaction(playerFaction, 9, 0);
 		addActor(player);
+		
+		// create player menus
+		inventoryMenu = new InventoryMenu(player, getSkin());
+		stage.addActor(inventoryMenu.getTable());
 		
 		// find spawn nodes
 		LinkedList<Vector2> spawnNodes = getSpawnNodes();
@@ -367,7 +374,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 			player.useAugmentation(3);
 			return true;
 		case Keys.I:
-			player.showInventory();
+			inventoryMenu.toggle();
 			return true;
 		default:
 			return false;
