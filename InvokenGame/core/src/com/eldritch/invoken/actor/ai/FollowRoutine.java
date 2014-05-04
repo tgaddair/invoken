@@ -70,7 +70,7 @@ public class FollowRoutine implements Routine {
 			// TODO teleport to target
 		}
 		
-		mover.takeAction(delta, npc.getClearTarget(screen), screen);
+		mover.takeAction(delta, npc.getClearTarget(getTarget(), screen), screen);
 	}
 	
 	public Vector2 getTarget() {
