@@ -2,7 +2,7 @@ package com.eldritch.invoken.actor.ai;
 
 import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.actor.Agent;
-import com.eldritch.invoken.screens.GameScreen;
+import com.eldritch.invoken.encounter.Location;
 
 public class AgentMover {
 	private final Agent agent;
@@ -24,7 +24,7 @@ public class AgentMover {
 	}
 	
 	/** returns true if the agent is still moving towards its target, false if reached */
-	public boolean takeAction(float delta, Vector2 targetCoord, GameScreen screen) {
+	public boolean takeAction(float delta, Vector2 targetCoord, Location screen) {
 		target = targetCoord;
 		
 		boolean moving = true;
@@ -56,7 +56,7 @@ public class AgentMover {
 		return moving;
 	}
 	
-	protected void move(Vector2 velocity, GameScreen screen) {
+	protected void move(Vector2 velocity, Location screen) {
 	}
 	
 	private void bound(Vector2 vector, float tol) {
@@ -64,7 +64,7 @@ public class AgentMover {
 		vector.y = Math.min(Math.max(vector.y, -tol), tol);
 	}
 	
-	private void followTarget(Vector2 velocity, GameScreen screen) {
+	private void followTarget(Vector2 velocity, Location screen) {
 		Vector2 position = agent.getPosition();
 		float dx = target.x - position.x;
 		float dy = target.y - position.y;
@@ -80,7 +80,7 @@ public class AgentMover {
 		}
 	}
 	
-	private void avoidCollisions(Vector2 velocity, GameScreen screen) {
+	private void avoidCollisions(Vector2 velocity, Location screen) {
 		Vector2 position = agent.getPosition().cpy();
 		int i1 = (int) position.x - 1;
 		int i2 = (int) position.x + 1;

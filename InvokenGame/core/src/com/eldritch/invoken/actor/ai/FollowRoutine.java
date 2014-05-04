@@ -3,7 +3,7 @@ package com.eldritch.invoken.actor.ai;
 import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.actor.Agent;
 import com.eldritch.invoken.actor.Npc;
-import com.eldritch.invoken.screens.GameScreen;
+import com.eldritch.invoken.encounter.Location;
 
 public class FollowRoutine implements Routine {
 	private final Npc npc;
@@ -20,7 +20,7 @@ public class FollowRoutine implements Routine {
 		this.npc = npc;
 		this.maxDistance = maxDistance;
 		mover = new AgentMover(npc, maxVelocity, minDistance) {
-			protected void move(Vector2 velocity, GameScreen screen) {
+			protected void move(Vector2 velocity, Location screen) {
 				if (npc.getFollowed() == null) {
 					return;
 				}
@@ -65,7 +65,7 @@ public class FollowRoutine implements Routine {
 	}
 	
 	@Override
-	public void takeAction(float delta, GameScreen screen) {
+	public void takeAction(float delta, Location screen) {
 		if (isStuck()) {
 			// TODO teleport to target
 		}

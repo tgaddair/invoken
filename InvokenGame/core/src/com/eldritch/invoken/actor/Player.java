@@ -6,7 +6,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.actor.Inventory.ItemState;
 import com.eldritch.invoken.actor.ai.AgentMover;
-import com.eldritch.invoken.screens.GameScreen;
+import com.eldritch.invoken.encounter.Location;
 
 /** The player character, has state and state time, */
 public class Player extends Agent {
@@ -20,7 +20,7 @@ public class Player extends Agent {
 	}
 	
 	@Override
-	protected void takeAction(float delta, GameScreen screen) {
+	protected void takeAction(float delta, Location screen) {
 		if (moving) {
 			moving = mover.takeAction(delta, targetCoord, screen);
 		}

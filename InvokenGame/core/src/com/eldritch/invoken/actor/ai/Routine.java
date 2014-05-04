@@ -1,6 +1,6 @@
 package com.eldritch.invoken.actor.ai;
 
-import com.eldritch.invoken.screens.GameScreen;
+import com.eldritch.invoken.encounter.Location;
 
 public interface Routine {
 	boolean isFinished();
@@ -11,5 +11,5 @@ public interface Routine {
 	
 	void reset();
 	
-	void takeAction(float delta, GameScreen screen);
+	void takeAction(float delta, Location screen);
 }

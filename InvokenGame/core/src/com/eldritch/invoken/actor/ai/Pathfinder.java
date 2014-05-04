@@ -1,7 +1,7 @@
 package com.eldritch.invoken.actor.ai;
 
 import com.badlogic.gdx.math.Vector2;
-import com.eldritch.invoken.screens.GameScreen;
+import com.eldritch.invoken.encounter.Location;
 
 public class Pathfinder {
 	private final Vector2 temp = new Vector2();
@@ -12,7 +12,7 @@ public class Pathfinder {
 	}
 
 	public Vector2 getTarget(Vector2 origin, Vector2 destination,
-			GameScreen screen) {
+			Location screen) {
 		if (target == null || origin.dst2(target) < 2) {
 			// keep pursuing our previous target until we reach it
 			target = destination;
@@ -46,7 +46,7 @@ public class Pathfinder {
 		return target;
 	}
 
-	private boolean isClear(Vector2 origin, Vector2 unit, GameScreen screen) {
+	private boolean isClear(Vector2 origin, Vector2 unit, Location screen) {
 		float x = origin.x;
 		float y = origin.y;
 		for (int i = 0; i < 5; i++) {

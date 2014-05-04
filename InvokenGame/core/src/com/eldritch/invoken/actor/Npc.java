@@ -18,7 +18,7 @@ import com.eldritch.invoken.actor.ai.IdleRoutine;
 import com.eldritch.invoken.actor.ai.Pathfinder;
 import com.eldritch.invoken.actor.ai.PatrolRoutine;
 import com.eldritch.invoken.actor.ai.Routine;
-import com.eldritch.invoken.screens.GameScreen;
+import com.eldritch.invoken.encounter.Location;
 import com.eldritch.invoken.util.PrerequisiteVerifier;
 import com.eldritch.scifirpg.proto.Actors.DialogueTree;
 import com.eldritch.scifirpg.proto.Actors.NonPlayerActor;
@@ -64,7 +64,7 @@ public class Npc extends Agent {
 	}
 	
 	@Override
-	protected void takeAction(float delta, GameScreen screen) {
+	protected void takeAction(float delta, Location screen) {
 		// cleanup state
 		Iterator<Entry<Agent, Float>> it = relations.entrySet().iterator();
 		while (it.hasNext()) {
@@ -110,11 +110,11 @@ public class Npc extends Agent {
 		routine.takeAction(delta, screen);
 	}
 	
-	public Vector2 getClearTarget(GameScreen screen) {
+	public Vector2 getClearTarget(Location screen) {
 		return getClearTarget(getTarget().getPosition(), screen);
 	}
 	
-	public Vector2 getClearTarget(Vector2 target, GameScreen screen) {
+	public Vector2 getClearTarget(Vector2 target, Location screen) {
 		return pathfinder.getTarget(getPosition(), target, screen);
 	}
 	

@@ -24,6 +24,7 @@ import com.eldritch.invoken.actor.factions.Faction;
 import com.eldritch.invoken.actor.items.Outfit;
 import com.eldritch.invoken.actor.items.RangedWeapon;
 import com.eldritch.invoken.effects.Effect;
+import com.eldritch.invoken.encounter.Location;
 import com.eldritch.invoken.screens.GameScreen;
 import com.eldritch.scifirpg.proto.Actors.ActorParams;
 
@@ -341,7 +342,7 @@ public abstract class Agent implements Entity {
         target = null;
     }
 
-    protected void attemptTakeAction(float delta, GameScreen screen) {
+    protected void attemptTakeAction(float delta, Location screen) {
         if (isParalyzed()) {
             // can't do anything when paralyzed
             return;
@@ -356,7 +357,7 @@ public abstract class Agent implements Entity {
         }
     }
 
-    public void update(float delta, GameScreen screen) {
+    public void update(float delta, Location screen) {
         if (delta == 0)
             return;
         stateTime += delta;
@@ -435,7 +436,7 @@ public abstract class Agent implements Entity {
         }
     }
 
-    private void move(float delta, GameScreen screen) {
+    private void move(float delta, Location screen) {
         // clamp the velocity to the maximum
         if (Math.abs(velocity.x) > MAX_VELOCITY) {
             velocity.x = Math.signum(velocity.x) * MAX_VELOCITY;
@@ -475,7 +476,7 @@ public abstract class Agent implements Entity {
         // if the actor is moving right, check the tiles to the right of
         // it's
         // right bounding box edge, otherwise check the ones to the left
-        Rectangle actorRect = GameScreen.getRectPool().obtain();
+        Rectangle actorRect = Location.getRectPool().obtain();
         getBoundingBox(actorRect);
 
         float relativeX = actorRect.x - actorRect.width / 2;
@@ -526,7 +527,7 @@ public abstract class Agent implements Entity {
         }
         actorRect.y = oldY;
 
-        GameScreen.getRectPool().free(actorRect);
+        Location.getRectPool().free(actorRect);
 
         // unscale the velocity by the inverse delta time and set
         // the latest position
@@ -539,7 +540,7 @@ public abstract class Agent implements Entity {
         velocity.y *= DAMPING;
     }
     
-    private Array<Agent> getCollisionActors(GameScreen screen) {
+    private Array<Agent> getCollisionActors(Location screen) {
         Array<Agent> agents = new Array<Agent>();
         for (Agent other : screen.getActors()) {
             // only collide with enemies
@@ -564,9 +565,9 @@ public abstract class Agent implements Entity {
     }
     
     private boolean collidesWith(Rectangle actorRect) {
-        Rectangle rect = getBoundingBox(GameScreen.getRectPool().obtain());
+        Rectangle rect = getBoundingBox(Location.getRectPool().obtain());
         boolean result = actorRect.overlaps(rect);
-        GameScreen.getRectPool().free(rect);
+        Location.getRectPool().free(rect);
         return result;
     }
 
@@ -703,7 +704,7 @@ public abstract class Agent implements Entity {
         return height;
     }
 
-    protected abstract void takeAction(float delta, GameScreen screen);
+    protected abstract void takeAction(float delta, Location screen);
 
     protected abstract void handleInteract(Agent agent);
 

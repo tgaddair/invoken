@@ -1,7 +1,7 @@
 package com.eldritch.invoken.actor.ai;
 
 import com.eldritch.invoken.actor.Agent;
-import com.eldritch.invoken.screens.GameScreen;
+import com.eldritch.invoken.encounter.Location;
 
 public class IdleRoutine implements Routine {
 	private final Agent actor;
@@ -35,7 +35,7 @@ public class IdleRoutine implements Routine {
 	}
 
 	@Override
-	public void takeAction(float delta, GameScreen screen) {
+	public void takeAction(float delta, Location screen) {
 		if (isFinished()) {
 			elapsed = 0;
 		}

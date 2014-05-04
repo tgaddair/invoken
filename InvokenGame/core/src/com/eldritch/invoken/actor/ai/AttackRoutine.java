@@ -6,7 +6,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.actor.Agent;
 import com.eldritch.invoken.actor.Npc;
-import com.eldritch.invoken.screens.GameScreen;
+import com.eldritch.invoken.encounter.Location;
 
 public class AttackRoutine implements Routine {
 	private final Npc npc;
@@ -70,7 +70,7 @@ public class AttackRoutine implements Routine {
 	}
 
 	@Override
-	public void takeAction(float delta, GameScreen screen) {
+	public void takeAction(float delta, Location screen) {
 		// update target enemy
 		if (target == null || !target.isAlive()) {
 			// get one of our enemies
@@ -101,7 +101,7 @@ public class AttackRoutine implements Routine {
 		attack(delta, screen);
 	}
 
-	private void attack(float delta, GameScreen screen) {
+	private void attack(float delta, Location screen) {
 		elapsed += delta;
 		if (npc.getTarget() == null || !npc.canTarget()) {
 			// can't attack invalid targets
@@ -115,7 +115,7 @@ public class AttackRoutine implements Routine {
 		}
 	}
 
-	private void move(float delta, GameScreen screen) {
+	private void move(float delta, Location screen) {
 		Vector2 velocityDelta = new Vector2(0, 0);
 		if (shouldPursue()) {
 			pursueTarget(npc.getClearTarget(screen), velocityDelta, screen);
@@ -143,16 +143,16 @@ public class AttackRoutine implements Routine {
 		vector.y = Math.min(Math.max(vector.y, -tol), tol);
 	}
 
-	private void pursueTarget(Vector2 destination, Vector2 velocity, GameScreen screen) {
+	private void pursueTarget(Vector2 destination, Vector2 velocity, Location screen) {
 		adjustVelocity(npc.getPosition(), destination, velocity, screen);
 	}
 
-	private void fleeTarget(Vector2 destination, Vector2 velocity, GameScreen screen) {
+	private void fleeTarget(Vector2 destination, Vector2 velocity, Location screen) {
 		adjustVelocity(destination, npc.getPosition(), velocity, screen);
 	}
 
 	private void adjustVelocity(Vector2 position, Vector2 target,
-			Vector2 velocity, GameScreen screen) {
+			Vector2 velocity, Location screen) {
 		float dx = target.x - position.x;
 		float dy = target.y - position.y;
 
@@ -167,7 +167,7 @@ public class AttackRoutine implements Routine {
 		}
 	}
 
-	private void avoidCollisions(Vector2 velocity, GameScreen screen) {
+	private void avoidCollisions(Vector2 velocity, Location screen) {
 		Vector2 position = npc.getPosition().cpy();
 		int i1 = (int) position.x - 1;
 		int i2 = (int) position.x + 1;
