@@ -64,7 +64,7 @@ public class InventoryMenu {
 		itemButton.addListener(new DefaultInputListener() {
 			@Override
 			public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-//				player.getInfo().equip(item);
+				player.getInfo().getInventory().equip(item);
 			}
 		});
 		table.row();

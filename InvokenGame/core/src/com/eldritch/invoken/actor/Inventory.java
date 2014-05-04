@@ -64,6 +64,10 @@ public class Inventory {
 		item.equipFrom(this);
 	}
 	
+	public void unequip(Item item) {
+		item.unequipFrom(this);
+	}
+	
 	public void addItem(Item item) {
 		addItem(item, 1);
 	}
