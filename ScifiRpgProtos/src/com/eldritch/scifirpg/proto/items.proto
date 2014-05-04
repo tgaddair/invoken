@@ -40,6 +40,7 @@ message Item {
 	// Some items can only be removed from the inventory as part of a specific Outcome.
 	required bool droppable = 5 [default = true];
 	optional bool hidden = 8 [default = false];
+	optional bool covers = 12 [default = false]; // only for outfits
 
 	optional string asset = 11;
 }
