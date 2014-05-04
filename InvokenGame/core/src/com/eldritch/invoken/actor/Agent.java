@@ -176,8 +176,9 @@ public abstract class Agent implements Entity {
         return paralyzed > 0;
     }
 
-    public void setParalyzed(boolean paralyzed) {
+    public void setParalyzed(Agent source, boolean paralyzed) {
         if (paralyzed) {
+            addEnemy(source);
             this.paralyzed++;
         } else {
             this.paralyzed--;

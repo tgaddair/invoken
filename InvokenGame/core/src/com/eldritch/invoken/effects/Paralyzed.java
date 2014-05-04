@@ -25,13 +25,13 @@ public class Paralyzed extends BasicEffect {
 	public void apply(float delta) {
 		super.apply(delta);
 		if (!applied) {
-			getTarget().setParalyzed(true);
+			getTarget().setParalyzed(agent, true);
 			applied = true;
 		}
 	}
 	
 	@Override
 	public void dispel() {
-		getTarget().setParalyzed(false);
+		getTarget().setParalyzed(agent, false);
 	}
 }
