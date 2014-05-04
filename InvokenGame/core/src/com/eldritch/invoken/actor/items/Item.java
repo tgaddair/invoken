@@ -15,13 +15,15 @@ public abstract class Item {
 	private final float width;
 	private final float height;
 	
-	public Item(com.eldritch.scifirpg.proto.Items.Item data, float width, float height) {
+	public Item(com.eldritch.scifirpg.proto.Items.Item data, int px) {
 		this.data = data;
-		this.width = width;
-		this.height = height;
+		this.width = 1 / 32f * px;
+		this.height = 1 / 32f * px;
 	}
 	
 	public abstract void equipFrom(Inventory inventory);
+	
+	public abstract void unequipFrom(Inventory inventory);
 	
 	public void render(Agent agent, Activity activity, float stateTime,
 			OrthogonalTiledMapRenderer renderer) {

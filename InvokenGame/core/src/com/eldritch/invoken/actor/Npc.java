@@ -11,6 +11,7 @@ import java.util.Map.Entry;
 
 import com.badlogic.gdx.Gdx;
 import com.eldritch.invoken.InvokenGame;
+import com.eldritch.invoken.actor.Inventory.ItemState;
 import com.eldritch.invoken.actor.ai.AttackRoutine;
 import com.eldritch.invoken.actor.ai.FollowRoutine;
 import com.eldritch.invoken.actor.ai.IdleRoutine;
@@ -41,6 +42,11 @@ public class Npc extends Agent {
 		super(asset, x, y, data.getParams());
 		this.data = data;
 		scenario = Optional.absent();
+		
+		// equip items
+		for (ItemState item : info.getInventory().getItems()) {
+			info.getInventory().equip(item.getItem());
+		}
 		
 		// construct augs and items by randomly sampling from available
 //        for (String augId : info.getKnownAugmentations()) {

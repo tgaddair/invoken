@@ -60,6 +60,10 @@ public class Inventory {
         return items.get(itemId).getCount();
     }
 	
+	public void equip(Item item) {
+		item.equipFrom(this);
+	}
+	
 	public void addItem(Item item) {
 		addItem(item, 1);
 	}
@@ -90,8 +94,8 @@ public class Inventory {
 
         if (count >= available || count == -1) {
             // remove all and unequip
-//            Item item = inventory.get(itemId).getItem();
-//            equipped.remove(item);
+            Item item = items.get(itemId).getItem();
+            item.unequipFrom(this);
         	items.remove(itemId);
         } else {
             // decrement counters

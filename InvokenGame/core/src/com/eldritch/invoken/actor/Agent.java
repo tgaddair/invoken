@@ -78,8 +78,8 @@ public abstract class Agent implements Entity {
 		// figure out the width and height of the player for collision
 		// detection and rendering by converting a player frames pixel
 		// size into world units (1 unit == 32 pixels)
-		width = 1 / 32f * PX; // regions[0][0].getRegionWidth();
-		height = 1 / 32f * PX; // regions[0][0].getRegionHeight();
+		width = 1 / 32f * PX;
+		height = 1 / 32f * PX;
 		
 		// health, level, augmentations, etc.
 		info = new AgentInfo(this, params);
@@ -595,6 +595,9 @@ public abstract class Agent implements Entity {
 		render(activity, direction, stateTime, renderer);
 		
 		// render equipment
+		if (info.getInventory().hasOutfit()) {
+			info.getInventory().getOutfit().render(this, activity, stateTime, renderer);
+		}
 		
 		// render action effects
 		if (actionInProgress()) {

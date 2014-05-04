@@ -12,8 +12,8 @@ public class Outfit extends Item {
 	private final Map<Activity, Map<Direction, Animation>> animations;
 	
 	public Outfit(com.eldritch.scifirpg.proto.Items.Item item) {
-		super(item, Agent.PX, Agent.PX);
-		animations = Agent.getAllAnimations(item.getAsset());
+		super(item, Agent.PX);
+		animations = Agent.getAllAnimations(getAssetPath(item.getAsset()));
 	}
 	
 	@Override
@@ -22,7 +22,18 @@ public class Outfit extends Item {
 	}
 	
 	@Override
+	public void unequipFrom(Inventory inventory) {
+		if (inventory.getOutfit() == this) {
+			inventory.setOutfit(null);
+		}
+	}
+	
+	@Override
 	protected Animation getAnimation(Activity activity, Direction direction) {
 		return animations.get(activity).get(direction);
+	}
+	
+	private static String getAssetPath(String basename) {
+		return String.format("sprite/items/outfits/%s.png", basename);
 	}
 }

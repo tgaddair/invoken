@@ -13,13 +13,20 @@ public class RangedWeapon extends Item {
 	private static Map<Direction, Animation> animations = new HashMap<Direction, Animation>();
 	
 	public RangedWeapon(com.eldritch.scifirpg.proto.Items.Item item) {
-		super(item, 1 / 32f * 48, 1 / 32f * 48);
-		animations = Agent.getAnimations("sprite/weapons/shotgun.png");
+		super(item, 48);
+		animations = Agent.getAnimations("sprite/items/weapons/shotgun.png");
 	}
 	
 	@Override
 	public void equipFrom(Inventory inventory) {
 		inventory.setWeapon(this);
+	}
+	
+	@Override
+	public void unequipFrom(Inventory inventory) {
+		if (inventory.getWeapon() == this) {
+			inventory.setWeapon(null);
+		}
 	}
 	
 	@Override
