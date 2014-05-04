@@ -14,8 +14,8 @@ public class Player extends Agent {
 	private final Vector2 targetCoord = new Vector2();
 	private boolean moving = false;
 	
-	public Player(Profession profession, int level, float x, float y) {
-		super("sprite/characters/normal.png", x, y, profession, level);
+	public Player(Profession profession, int level, float x, float y, String body) {
+		super(body, x, y, profession, level);
 		mover = new AgentMover(this, getMaxVelocity(), 0.01f);
 	}
 	

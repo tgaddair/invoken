@@ -35,6 +35,7 @@ import com.eldritch.invoken.actor.Npc;
 import com.eldritch.invoken.actor.Player;
 import com.eldritch.invoken.actor.Profession.Inquisitor;
 import com.eldritch.invoken.actor.factions.Faction;
+import com.eldritch.invoken.actor.items.Item;
 import com.eldritch.invoken.ui.DialogueMenu;
 import com.eldritch.invoken.ui.InventoryMenu;
 import com.eldritch.invoken.ui.LootMenu;
@@ -153,8 +154,13 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 
 		// create the Player we want to move around the world
 		Vector2 spawn = getSpawnLocation();
-		player = new Player(new Inquisitor(), 10, spawn.x, spawn.y);
+		player = new Player(new Inquisitor(), 10, spawn.x, spawn.y,
+				"sprite/characters/light-blue-hair.png");
 		player.addFaction(playerFaction, 9, 0);
+		
+		Item outfit = Item.fromProto(InvokenGame.ITEM_READER.readAsset("IcarianOperativeExosuit"));
+		player.getInfo().getInventory().addItem(outfit);
+		player.getInfo().getInventory().equip(outfit);
 		addActor(player);
 		
 		// create player menus
