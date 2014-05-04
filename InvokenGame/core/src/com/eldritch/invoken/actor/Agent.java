@@ -474,21 +474,18 @@ public abstract class Agent implements Entity {
 		// right bounding box edge, otherwise check the ones to the left
 		Array<Rectangle> actorRects = getCollisionActors(screen);
 
-		float relativeX = getX1();
-		float relativeY = getY1();
-
 		Rectangle actorRect = GameScreen.getRectPool().obtain();
 		getBoundingBox(actorRect);
-
+		
+		float relativeX = actorRect.x - actorRect.width / 2;
+		float relativeY = actorRect.y - actorRect.height / 2;
 		int startX, startY, endX, endY;
-		startX = endX = (int) (relativeX + getWidth() + velocity.x);
-		if (velocity.x > 0) {
-			startX = endX = (int) (relativeX + getWidth() + velocity.x);
-		} else {
-			startX = endX = (int) (relativeX + velocity.x);
-		}
+		
+		// handle x-axis collisions
+		startX = (int) (relativeX);
+		endX = (int) (relativeX + getWidth());
 		startY = (int) (relativeY);
-		endY = (int) (relativeY + getHeight());
+		endY = (int) (relativeY + actorRect.height);
 		screen.getTiles(startX, startY, endX, endY, screen.getTiles());
 
 		Array<Rectangle> rects = new Array<Rectangle>();
@@ -505,24 +502,27 @@ public abstract class Agent implements Entity {
 		}
 		actorRect.x = oldX;
 
-		// always check collisions with the bottom of the bounding box
-		startY = endY = (int) (relativeY + velocity.y);
+		// handle y-axis collisions
+		startY = (int) (relativeY);
+		endY = (int) (relativeY + getHeight());
 		startX = (int) (relativeX);
-		endX = (int) (relativeX + getWidth());
+		endX = (int) (relativeX + actorRect.width);
 		screen.getTiles(startX, startY, endX, endY, screen.getTiles());
-		actorRect.y += velocity.y;
 
 		rects.clear();
 		rects.addAll(screen.getTiles());
 		rects.addAll(actorRects);
 
+		float oldY = actorRect.y;
+		actorRect.y += velocity.y;
 		for (Rectangle tile : rects) {
 			if (actorRect.overlaps(tile)) {
 				velocity.y = 0;
 				break;
 			}
 		}
-		// actorRect.y = relativeY;
+		actorRect.y = oldY;
+		
 		GameScreen.getRectPool().free(actorRect);
 		GameScreen.getRectPool().freeAll(actorRects);
 
@@ -646,8 +646,8 @@ public abstract class Agent implements Entity {
 	}
 
 	public Rectangle getBoundingBox(Rectangle rect) {
-		rect.set(position.x - getWidth() / 8, position.y - getHeight() / 2,
-				getWidth() / 4, getHeight() / 4);
+		rect.set(position.x - getWidth() / 4, position.y - getHeight() / 2,
+				getWidth() / 2, getHeight() / 4);
 		return rect;
 	}
 
