@@ -52,7 +52,7 @@ public class Location {
 	    this.player = player;
 	    
 		// load the map, set the unit scale to 1/32 (1 unit == 32 pixels)
-		String mapAsset = "maps/NostorraUnderworks.tmx";
+		String mapAsset = String.format("maps/%s.tmx", data.getId());
 		AssetManager assetManager = new AssetManager();
 		assetManager.setLoader(TiledMap.class, new TmxMapLoader(
 				new InternalFileHandleResolver()));
@@ -67,7 +67,8 @@ public class Location {
 			if (layer.getName().equals("collision")) {
 				layer.setVisible(false);
 				collisionIndex = i;
-			} else if (layer.getName().equals("overlay") || layer.getName().equals("trim")) {
+			} else if (layer.getName().equals("overlay") ||
+			        layer.getName().equals("overlay-trim")) {
 				// overlays are rendered above all objects always
 				overlayList.add(i);
 			}
@@ -87,9 +88,8 @@ public class Location {
 		String asset = "sprite/characters/male-fair.png";
 		for (Encounter proto : data.getEncounterList()) {
 		    if (proto.getType() == Encounter.Type.ACTOR) {
-		        LinkedList<Vector2> spawnNodes = getSpawnNodes(proto.getId());
-		        
 		        // create NPCs
+		        LinkedList<Vector2> spawnNodes = getSpawnNodes(proto.getId());
 		        for (ActorScenario scenario : proto.getActorParams().getActorScenarioList()) {
 		            addActor(createTestNpc(spawnNodes.poll(), scenario.getActorId(), asset));
 		        }

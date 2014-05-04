@@ -80,7 +80,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 		player.getInfo().getInventory().equip(outfit);
 		
 		location = new Location(
-		        InvokenGame.LOCATION_READER.readAsset("NostorraUnderworks"), player);
+		        InvokenGame.LOCATION_READER.readAsset("NostorraPlaza"), player);
 		
 		// create player menus
 		inventoryMenu = new InventoryMenu(player, getSkin());
