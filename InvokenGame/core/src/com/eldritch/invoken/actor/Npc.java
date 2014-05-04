@@ -9,22 +9,20 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
-import com.badlogic.gdx.Gdx;
-import com.eldritch.invoken.InvokenGame;
+import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.actor.Inventory.ItemState;
 import com.eldritch.invoken.actor.ai.AttackRoutine;
 import com.eldritch.invoken.actor.ai.FollowRoutine;
 import com.eldritch.invoken.actor.ai.IdleRoutine;
+import com.eldritch.invoken.actor.ai.Pathfinder;
 import com.eldritch.invoken.actor.ai.PatrolRoutine;
 import com.eldritch.invoken.actor.ai.Routine;
-import com.eldritch.invoken.actor.aug.FireWeapon;
 import com.eldritch.invoken.screens.GameScreen;
 import com.eldritch.invoken.util.PrerequisiteVerifier;
 import com.eldritch.scifirpg.proto.Actors.DialogueTree;
 import com.eldritch.scifirpg.proto.Actors.NonPlayerActor;
 import com.eldritch.scifirpg.proto.Actors.DialogueTree.Choice;
 import com.eldritch.scifirpg.proto.Actors.DialogueTree.Response;
-import com.eldritch.scifirpg.proto.Augmentations.Augmentation;
 import com.eldritch.scifirpg.proto.Locations.Encounter.ActorParams.ActorScenario;
 import com.eldritch.scifirpg.proto.Prerequisites.Prerequisite;
 import com.eldritch.scifirpg.proto.Prerequisites.Standing;
@@ -34,6 +32,7 @@ public class Npc extends Agent {
 	private final NonPlayerActor data;
     private final Optional<ActorScenario> scenario;
 	private final DialogueVerifier dialogueVerifier = new DialogueVerifier();
+	final Pathfinder pathfinder = new Pathfinder();
 	private final Map<Agent, Float> relations = new HashMap<Agent, Float>();
 	private final List<Routine> routines = new ArrayList<Routine>();
 	private Routine routine;
@@ -95,8 +94,7 @@ public class Npc extends Agent {
 			for (Routine r : routines) {
 				if (r.isValid()) {
 //					Gdx.app.log(InvokenGame.LOG, "routine: " + r);
-					routine = r;
-					routine.reset();
+					setRoutine(r);
 					break;
 				}
 			}
@@ -104,14 +102,27 @@ public class Npc extends Agent {
 			for (Routine r : routines) {
 				if (r.canInterrupt() && r.isValid()) {
 					if (r != routine) {
-						routine = r;
-						routine.reset();
+						setRoutine(r);
 					}
 					break;
 				}
 			}
 		}
 		routine.takeAction(delta, screen);
+	}
+	
+	public Vector2 getClearTarget(GameScreen screen) {
+		return getClearTarget(getTarget().getPosition(), screen);
+	}
+	
+	public Vector2 getClearTarget(Vector2 target, GameScreen screen) {
+		return pathfinder.getTarget(getPosition(), target, screen);
+	}
+	
+	private void setRoutine(Routine routine) {
+		this.routine = routine;
+		pathfinder.reset();
+		routine.reset();
 	}
 	
 	@Override

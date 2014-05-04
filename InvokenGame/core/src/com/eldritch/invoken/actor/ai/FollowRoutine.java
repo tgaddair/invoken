@@ -1,8 +1,6 @@
 package com.eldritch.invoken.actor.ai;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
-import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.actor.Agent;
 import com.eldritch.invoken.actor.Npc;
 import com.eldritch.invoken.screens.GameScreen;
@@ -72,7 +70,7 @@ public class FollowRoutine implements Routine {
 			// TODO teleport to target
 		}
 		
-		mover.takeAction(delta, getTarget(), screen);
+		mover.takeAction(delta, npc.getClearTarget(screen), screen);
 	}
 	
 	public Vector2 getTarget() {

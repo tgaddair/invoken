@@ -2,10 +2,11 @@ package com.eldritch.invoken.actor.ai;
 
 import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.actor.Agent;
+import com.eldritch.invoken.actor.Npc;
 import com.eldritch.invoken.screens.GameScreen;
 
 public class PatrolRoutine implements Routine {
-	private final Agent actor;
+	private final Npc actor;
 	
 	/** cannot stray too far from the origin location, or we're wandering, not patrolling */
 	private final Vector2 origin;
@@ -18,11 +19,11 @@ public class PatrolRoutine implements Routine {
 	private float xVelocity;
 	private float yVelocity;
 	
-	public PatrolRoutine(Agent actor) {
+	public PatrolRoutine(Npc actor) {
 		this(actor, actor.getMaxVelocity() / 4, 10, 3);
 	}
 	
-	public PatrolRoutine(Agent actor, float maxVelocity, int maxDistance, int duration) {
+	public PatrolRoutine(Npc actor, float maxVelocity, int maxDistance, int duration) {
 		this.actor = actor;
 		this.origin = actor.getPosition().cpy();
 		this.maxDistance = maxDistance;
@@ -74,6 +75,7 @@ public class PatrolRoutine implements Routine {
 		} else if (hasStrayed()) {
 			// roughly move towards the origin to get us back on track
 			Vector2 position = actor.getPosition();
+			Vector2 target = actor.getClearTarget(origin, screen);
 			float dx = origin.x - position.x;
 			float dy = origin.y - position.y;
 			

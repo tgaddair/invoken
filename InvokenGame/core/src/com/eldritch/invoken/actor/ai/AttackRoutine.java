@@ -8,7 +8,6 @@ import com.eldritch.invoken.actor.Npc;
 import com.eldritch.invoken.screens.GameScreen;
 
 public class AttackRoutine implements Routine {
-	private final Pathfinder pathfinder = new Pathfinder();
 	private final Npc npc;
 
 	/** how long we move in a single direction before turning */
@@ -117,13 +116,10 @@ public class AttackRoutine implements Routine {
 
 	private void move(float delta, GameScreen screen) {
 		Vector2 velocityDelta = new Vector2(0, 0);
-
-		Vector2 destination = pathfinder.getTarget(npc.getPosition(),
-				target.getPosition(), screen);
 		if (shouldPursue()) {
-			pursueTarget(destination, velocityDelta, screen);
+			pursueTarget(npc.getClearTarget(screen), velocityDelta, screen);
 		} else if (shouldFlee()) {
-			fleeTarget(destination, velocityDelta, screen);
+			fleeTarget(getTargetPosition(), velocityDelta, screen);
 		}
 
 		// check that the tile immediately adjacent in the chosen direction is
