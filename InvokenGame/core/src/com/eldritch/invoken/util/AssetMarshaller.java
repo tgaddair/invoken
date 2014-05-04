@@ -1,30 +1,29 @@
 package com.eldritch.invoken.util;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
 import com.eldritch.invoken.InvokenGame;
 import com.google.protobuf.Message;
 
 public abstract class AssetMarshaller<T extends Message> {
 	public T readAsset(String assetId) {
-		File file = new File(getFilename(getAssetDirectory(), assetId));
+	    FileHandle file = Gdx.files.internal(getFilename(getAssetDirectory(), assetId));
 		return readAsset(file);
 	}
 	
-	private T readAsset(File assetFile) {
+	private T readAsset(FileHandle handle) {
 		try {
-			FileInputStream fis = new FileInputStream(assetFile);
+			InputStream is = handle.read();
 			try {
-				return readFrom(fis);
+				return readFrom(is);
 			} finally {
-				fis.close();
+			    is.close();
 			}
 		} catch (IOException ex) {
-			Gdx.app.error(InvokenGame.LOG, "Failed reading " + assetFile, ex);
+			Gdx.app.error(InvokenGame.LOG, "Failed reading " + handle.name(), ex);
 			return null;
 		}
 	}
@@ -34,7 +33,7 @@ public abstract class AssetMarshaller<T extends Message> {
 	}
 	
 	private String getTopAssetDirectory() {
-		return "C:/Users/Travis/repos/data";
+		return "data";
 	}
 	
 	protected abstract String getAssetDirectory();
