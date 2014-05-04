@@ -80,7 +80,6 @@ public class Npc extends Agent {
 				if (agent != this && agent.isAlive()) {
 					if (!relations.containsKey(agent)) {
 						relations.put(agent, getDisposition(agent));
-						InvokenGame.log("disposition: " + getDisposition(agent));
 					}
 					
 					// add enemies and allies

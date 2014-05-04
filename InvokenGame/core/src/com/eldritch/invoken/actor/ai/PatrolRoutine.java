@@ -76,15 +76,10 @@ public class PatrolRoutine implements Routine {
 			// roughly move towards the origin to get us back on track
 			Vector2 position = actor.getPosition();
 			Vector2 target = actor.getClearTarget(origin, screen);
-			float dx = origin.x - position.x;
-			float dy = origin.y - position.y;
-			
-			xVelocity = yVelocity = 0;
-			if (Math.abs(dx) > Math.abs(dy)) {
-				xVelocity = Math.signum(dx) * maxVelocity;
-			} else {
-				yVelocity = Math.signum(dy) * maxVelocity;
-			}
+			float dx = target.x - position.x;
+			float dy = target.y - position.y;
+			xVelocity = Math.signum(dx) * maxVelocity;
+			yVelocity = Math.signum(dy) * maxVelocity;
 		} else {
 			// keep going in our patrol direction
 			elapsed += delta;
