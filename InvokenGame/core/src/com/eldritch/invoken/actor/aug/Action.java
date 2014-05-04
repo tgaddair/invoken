@@ -1,5 +1,6 @@
 package com.eldritch.invoken.actor.aug;
 
+import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.eldritch.invoken.actor.Agent.Activity;
 
 public interface Action {
@@ -10,6 +11,8 @@ public interface Action {
 	void apply();
 	
 	void update(float delta);
+	
+	void render(OrthogonalTiledMapRenderer renderer);
 	
 	float getStateTime();
 	

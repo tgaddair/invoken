@@ -5,15 +5,29 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.eldritch.invoken.InvokenGame;
+import com.eldritch.invoken.actor.items.Item;
+import com.eldritch.invoken.actor.items.Outfit;
 import com.eldritch.invoken.actor.items.RangedWeapon;
 import com.eldritch.scifirpg.proto.Actors.ActorParams.InventoryItem;
-import com.eldritch.scifirpg.proto.Items.Item;
 
 public class Inventory {
 	private final Map<String, ItemState> items = new HashMap<String, Inventory.ItemState>();
 	
 	// equipment
+	private Outfit outfit;
 	private RangedWeapon rangedWeapon;
+	
+	public boolean hasOutfit() {
+		return outfit != null;
+	}
+	
+	public Outfit getOutfit() {
+		return outfit;
+	}
+	
+	public void setOutfit(Outfit outfit) {
+		this.outfit = outfit;
+	}
 	
 	public boolean hasWeapon() {
 		return rangedWeapon != null;
@@ -21,6 +35,10 @@ public class Inventory {
 	
 	public RangedWeapon getWeapon() {
 		return rangedWeapon;
+	}
+	
+	public void setWeapon(RangedWeapon weapon) {
+		this.rangedWeapon = weapon;
 	}
 	
 	public void add(InventoryItem item) {
@@ -91,7 +109,7 @@ public class Inventory {
 	    }
 	
 	    public ItemState(InventoryItem item) {
-	        this.item = InvokenGame.ITEM_READER.readAsset(item.getItemId());
+	        this.item = Item.fromProto(InvokenGame.ITEM_READER.readAsset(item.getItemId()));
 	        count = item.getCount();
 	    }
 	

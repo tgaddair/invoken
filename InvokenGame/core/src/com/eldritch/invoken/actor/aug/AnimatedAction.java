@@ -1,5 +1,6 @@
 package com.eldritch.invoken.actor.aug;
 
+import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.eldritch.invoken.actor.Agent;
 import com.eldritch.invoken.actor.Agent.Activity;
 
@@ -16,6 +17,11 @@ public abstract class AnimatedAction implements Action {
 	@Override
 	public void update(float delta) {
 		stateTime += delta;
+	}
+	
+	@Override
+	public void render(OrthogonalTiledMapRenderer renderer) {
+		// do nothing
 	}
 	
 	@Override

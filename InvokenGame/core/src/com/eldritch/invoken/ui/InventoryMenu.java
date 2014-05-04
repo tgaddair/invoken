@@ -7,9 +7,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.eldritch.invoken.actor.Inventory;
 import com.eldritch.invoken.actor.Player;
+import com.eldritch.invoken.actor.items.Item;
 import com.eldritch.invoken.screens.AbstractScreen;
 import com.eldritch.invoken.util.DefaultInputListener;
-import com.eldritch.scifirpg.proto.Items.Item;
 
 public class InventoryMenu {
 	private final Table container;

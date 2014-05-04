@@ -582,7 +582,7 @@ public abstract class Agent implements Entity {
 	public void render(OrthogonalTiledMapRenderer renderer) {
 		Activity activity = this.activity;
 		float stateTime = this.stateTime;
-		if (isAlive() && action != null) {
+		if (isAlive() && actionInProgress()) {
 			stateTime = action.getStateTime();
 			activity = action.getActivity();
 		} else if (state == State.Standing && activity == Activity.Explore) {
@@ -595,6 +595,11 @@ public abstract class Agent implements Entity {
 		render(activity, direction, stateTime, renderer);
 		
 		// render equipment
+		
+		// render action effects
+		if (actionInProgress()) {
+			action.render(renderer);
+		}
 	}
 
 	private void render(Activity activity, Direction direction, float stateTime,
