@@ -110,6 +110,10 @@ public class Npc extends Agent {
 		routine.takeAction(delta, screen);
 	}
 	
+	public Pathfinder getPathfinder() {
+	    return pathfinder;
+	}
+	
 	public Vector2 getClearTarget(Location screen) {
 		return getClearTarget(getTarget().getPosition(), screen);
 	}

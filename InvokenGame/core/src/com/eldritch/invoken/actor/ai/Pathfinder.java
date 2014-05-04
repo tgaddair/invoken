@@ -23,12 +23,7 @@ public class Pathfinder {
 		double angle = Math.PI / 4;
 		angle *= Math.random() < 0.5 ? -1 : 1;
 		while (!valid && angle < 2 * Math.PI && angle > -2 * Math.PI) {
-			// define our unit of movement for checking obstacle collisions
-			temp.x = target.x;
-			temp.y = target.y;
-			temp.sub(origin).nor();
-
-			valid = isClear(origin, temp, screen);
+			valid = isClear(origin, target, screen);
 			if (!valid) {
 				// obstacle in the way, so rotate in the opposite direction
 				target = rotate(target, origin, angle);
@@ -45,14 +40,24 @@ public class Pathfinder {
 		// found a valid path
 		return target;
 	}
-
-	private boolean isClear(Vector2 origin, Vector2 unit, Location screen) {
+	
+	/**
+	 * Returns true if the path from origin to destination is clear (no obstacles) with respect to
+	 * the location.
+	 */
+	public boolean isClear(Vector2 origin, Vector2 destination, Location location) {
+	    // define our unit of movement for checking obstacle collisions
+	    Vector2 unit = temp;
+        temp.x = destination.x;
+        temp.y = destination.y;
+        temp.sub(origin).nor();
+        
 		float x = origin.x;
 		float y = origin.y;
 		for (int i = 0; i < 5; i++) {
 			x += unit.x;
 			y += unit.y;
-			if (screen.isObstacle((int) x, (int) y)) {
+			if (location.isObstacle((int) x, (int) y)) {
 				return false;
 			}
 		}
