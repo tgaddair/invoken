@@ -63,11 +63,11 @@ public class Pathfinder {
 		result = result.sub(pivot);
 
 		// rotate point
-		Vector2 newTarget = new Vector2(
-				result.x * c - result.y * s, result.x * s + result.y * c);
+		result.x = result.x * c - result.y * s;
+		result.y = result.x * s + result.y * c;
 
 		// translate point back:
-		result = newTarget.add(pivot);
+		result = result.add(pivot);
 		return result;
 	}
 }
