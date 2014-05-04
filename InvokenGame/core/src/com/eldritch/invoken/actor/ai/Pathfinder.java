@@ -13,20 +13,24 @@ public class Pathfinder {
 
 	public Vector2 getTarget(Vector2 origin, Vector2 destination,
 			GameScreen screen) {
-		if (target == null || origin.dst2(target) < 1) {
+		if (target == null || origin.dst2(target) < 2) {
+			// keep pursuing our previous target until we reach it
 			target = destination;
 		}
 		
+		// find a valid target
 		boolean valid = false;
 		double angle = Math.PI / 4;
 		angle *= Math.random() < 0.5 ? -1 : 1;
 		while (!valid && angle < 2 * Math.PI && angle > -2 * Math.PI) {
+			// define our unit of movement for checking obstacle collisions
 			temp.x = target.x;
 			temp.y = target.y;
 			temp.sub(origin).nor();
 
 			valid = isClear(origin, temp, screen);
 			if (!valid) {
+				// obstacle in the way, so rotate in the opposite direction
 				target = rotate(target, origin, angle);
 				angle *= -2;
 			}
@@ -38,6 +42,7 @@ public class Pathfinder {
 			return origin;
 		}
 
+		// found a valid path
 		return target;
 	}
 

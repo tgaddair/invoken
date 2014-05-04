@@ -28,7 +28,7 @@ public class Faction {
 	}
 	
 	public boolean hasRelation(Faction other) {
-		return relations.containsKey(other.id);
+		return relations.containsKey(other.id) || other.id.equals(this.id);
 	}
 	
 	public int getRelation(Faction other) {
@@ -36,6 +36,10 @@ public class Faction {
 	}
 	
 	public int getRelation(String factionId) {
+		if (factionId.equals(this.id)) {
+			// always have +3 reaction to members of the same faction
+			return 3;
+		}
 		if (relations.containsKey(factionId)) {
 			return relations.get(factionId);
 		}

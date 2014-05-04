@@ -10,6 +10,7 @@ import java.util.Set;
 import java.util.Map.Entry;
 
 import com.badlogic.gdx.math.Vector2;
+import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.actor.Inventory.ItemState;
 import com.eldritch.invoken.actor.ai.AttackRoutine;
 import com.eldritch.invoken.actor.ai.FollowRoutine;
@@ -79,6 +80,7 @@ public class Npc extends Agent {
 				if (agent != this && agent.isAlive()) {
 					if (!relations.containsKey(agent)) {
 						relations.put(agent, getDisposition(agent));
+						InvokenGame.log("disposition: " + getDisposition(agent));
 					}
 					
 					// add enemies and allies
@@ -90,10 +92,8 @@ public class Npc extends Agent {
 		}
 		
 		if (routine.isFinished()) {
-//			Gdx.app.log(InvokenGame.LOG, "FINISHED");
 			for (Routine r : routines) {
 				if (r.isValid()) {
-//					Gdx.app.log(InvokenGame.LOG, "routine: " + r);
 					setRoutine(r);
 					break;
 				}
