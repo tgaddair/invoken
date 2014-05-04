@@ -83,6 +83,7 @@ public class ItemTable extends MajorAssetTable<Item> {
 		private final DamageModTable damageModTable = new DamageModTable();
 		private final JCheckBox droppableCheck = new JCheckBox("", true);
 		private final JCheckBox hiddenCheck = new JCheckBox();
+		private final JCheckBox coversCheck = new JCheckBox();
 		private final JTextField assetField = new JTextField();
 
 		public ItemEditorPanel(ItemTable owner, JFrame frame, Optional<Item> prev) {
@@ -116,6 +117,9 @@ public class ItemTable extends MajorAssetTable<Item> {
 			builder.append("Hidden:", hiddenCheck);
 			builder.nextLine();
 			
+			builder.append("Covers:", coversCheck);
+			builder.nextLine();
+			
 			builder.appendRow("fill:120dlu");
 			builder.append("Effects:", new AssetTablePanel(effectTable));
 			builder.nextLine();
@@ -145,6 +149,7 @@ public class ItemTable extends MajorAssetTable<Item> {
 				valueField.setText(item.getValue() + "");
 				droppableCheck.setSelected(item.getDroppable());
 				hiddenCheck.setSelected(item.getHidden());
+				coversCheck.setSelected(item.getCovers());
 				for (Effect asset : item.getEffectList()) {
 					effectTable.addAsset(asset);
 				}
@@ -172,6 +177,7 @@ public class ItemTable extends MajorAssetTable<Item> {
 					.setType((Type) typeBox.getSelectedItem())
 					.setDroppable(droppableCheck.isSelected())
 					.setHidden(hiddenCheck.isSelected())
+					.setCovers(coversCheck.isSelected())
 					.addAllEffect(effectTable.getAssets())
 					.addAllRequirement(requirementTable.getAssets())
 					.addAllDamageModifier(damageModTable.getAssets())
