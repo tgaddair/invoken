@@ -46,6 +46,10 @@ public abstract class Item {
 		return data.getName();
 	}
 	
+	public com.eldritch.scifirpg.proto.Items.Item getData() {
+		return data;
+	}
+	
 	public static Item fromProto(com.eldritch.scifirpg.proto.Items.Item item) {
 		switch (item.getType()) {
 			case MELEE_WEAPON:

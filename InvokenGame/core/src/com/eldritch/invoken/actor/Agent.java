@@ -21,6 +21,7 @@ import com.badlogic.gdx.utils.Array;
 import com.eldritch.invoken.actor.aug.Action;
 import com.eldritch.invoken.actor.aug.Augmentation;
 import com.eldritch.invoken.actor.factions.Faction;
+import com.eldritch.invoken.actor.items.Outfit;
 import com.eldritch.invoken.actor.items.RangedWeapon;
 import com.eldritch.invoken.effects.Effect;
 import com.eldritch.invoken.screens.GameScreen;
@@ -589,14 +590,18 @@ public abstract class Agent implements Entity {
 			stateTime = 0;
 		}
 
-		// draw the actor, depending on the current velocity
-		// on the x-axis, draw the actor facing either right
-		// or left
-		render(activity, direction, stateTime, renderer);
-		
 		// render equipment
 		if (info.getInventory().hasOutfit()) {
-			info.getInventory().getOutfit().render(this, activity, stateTime, renderer);
+			Outfit outfit = info.getInventory().getOutfit();
+			if (!outfit.covers()) {
+				// draw the actor, depending on the current velocity
+				// on the x-axis, draw the actor facing either right
+				// or left
+				render(activity, direction, stateTime, renderer);
+			}
+			outfit.render(this, activity, stateTime, renderer);
+		} else {
+			render(activity, direction, stateTime, renderer);
 		}
 		
 		// render action effects

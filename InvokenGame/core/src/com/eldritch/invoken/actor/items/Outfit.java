@@ -16,6 +16,10 @@ public class Outfit extends Item {
 		animations = Agent.getAllAnimations(getAssetPath(item.getAsset()));
 	}
 	
+	public boolean covers() {
+		return getData().getCovers();
+	}
+	
 	@Override
 	public void equipFrom(Inventory inventory) {
 		inventory.setOutfit(this);
