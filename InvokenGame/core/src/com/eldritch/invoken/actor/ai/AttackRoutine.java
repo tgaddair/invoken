@@ -2,19 +2,18 @@ package com.eldritch.invoken.actor.ai;
 
 import java.util.Map.Entry;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
-import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.actor.Agent;
 import com.eldritch.invoken.actor.Npc;
 import com.eldritch.invoken.screens.GameScreen;
 
 public class AttackRoutine implements Routine {
+	private final Pathfinder pathfinder = new Pathfinder();
 	private final Npc npc;
 
 	/** how long we move in a single direction before turning */
 	private final Vector2 velocity = new Vector2();
-	
+
 	private Agent target = null;
 	private float elapsed = 0;
 
@@ -26,7 +25,7 @@ public class AttackRoutine implements Routine {
 	public boolean isFinished() {
 		return !isValid();
 	}
-	
+
 	@Override
 	public boolean canInterrupt() {
 		return true;
@@ -36,13 +35,13 @@ public class AttackRoutine implements Routine {
 	public boolean isValid() {
 		return !npc.getEnemies().isEmpty() || shouldAssist();
 	}
-	
+
 	@Override
 	public void reset() {
 		elapsed = 0;
 		target = null;
 	}
-	
+
 	private boolean shouldAssist() {
 		for (Entry<Agent, Float> entry : npc.getRelations().entrySet()) {
 			if (entry.getValue() > 0 && !entry.getKey().getEnemies().isEmpty()) {
@@ -51,14 +50,14 @@ public class AttackRoutine implements Routine {
 		}
 		return false;
 	}
-	
+
 	private Agent getEnemy() {
 		for (Agent agent : npc.getEnemies()) {
 			return agent;
 		}
 		return null;
 	}
-	
+
 	private Agent getAllyEnemy() {
 		for (Entry<Agent, Float> entry : npc.getRelations().entrySet()) {
 			if (entry.getValue() > 0 && !entry.getKey().getEnemies().isEmpty()) {
@@ -76,7 +75,7 @@ public class AttackRoutine implements Routine {
 		if (target == null || !target.isAlive()) {
 			// get one of our enemies
 			target = getEnemy();
-			
+
 			// no enemy found, check our allies for enemies
 			if (target == null || !target.isAlive()) {
 				target = getAllyEnemy();
@@ -91,37 +90,40 @@ public class AttackRoutine implements Routine {
 				}
 			}
 		}
-		
+
 		npc.setTarget(target);
 		if (target == null || !target.isAlive()) {
 			// can't do anything if we are unable to find a target to attack
 			return;
 		}
-		
+
 		move(delta, screen);
 		attack(delta, screen);
 	}
-	
+
 	private void attack(float delta, GameScreen screen) {
 		elapsed += delta;
 		if (npc.getTarget() == null || !npc.canTarget()) {
 			// can't attack invalid targets
 			return;
 		}
-		
-//		Gdx.app.log(InvokenGame.LOG, "elapsed: " + elapsed);
+
+		// Gdx.app.log(InvokenGame.LOG, "elapsed: " + elapsed);
 		if (!npc.hasPendingAction() && elapsed >= 1) {
 			npc.useAugmentation(0);
 			elapsed = 0;
 		}
 	}
-	
+
 	private void move(float delta, GameScreen screen) {
 		Vector2 velocityDelta = new Vector2(0, 0);
+
+		Vector2 destination = pathfinder.getTarget(npc.getPosition(),
+				target.getPosition(), screen);
 		if (shouldPursue()) {
-			pursueTarget(velocityDelta, screen);
+			pursueTarget(destination, velocityDelta, screen);
 		} else if (shouldFlee()) {
-			fleeTarget(velocityDelta, screen);
+			fleeTarget(destination, velocityDelta, screen);
 		}
 
 		// check that the tile immediately adjacent in the chosen direction is
@@ -144,14 +146,14 @@ public class AttackRoutine implements Routine {
 		vector.y = Math.min(Math.max(vector.y, -tol), tol);
 	}
 
-	private void pursueTarget(Vector2 velocity, GameScreen screen) {
-		adjustVelocity(npc.getPosition(), getTargetPosition(), velocity, screen);
+	private void pursueTarget(Vector2 destination, Vector2 velocity, GameScreen screen) {
+		adjustVelocity(npc.getPosition(), destination, velocity, screen);
 	}
-	
-	private void fleeTarget(Vector2 velocity, GameScreen screen) {
-		adjustVelocity(getTargetPosition(), npc.getPosition(), velocity, screen);
+
+	private void fleeTarget(Vector2 destination, Vector2 velocity, GameScreen screen) {
+		adjustVelocity(destination, npc.getPosition(), velocity, screen);
 	}
-	
+
 	private void adjustVelocity(Vector2 position, Vector2 target,
 			Vector2 velocity, GameScreen screen) {
 		float dx = target.x - position.x;

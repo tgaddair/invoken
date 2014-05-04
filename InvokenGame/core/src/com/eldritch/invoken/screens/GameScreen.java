@@ -34,7 +34,6 @@ import com.eldritch.invoken.actor.Agent;
 import com.eldritch.invoken.actor.Npc;
 import com.eldritch.invoken.actor.Player;
 import com.eldritch.invoken.actor.Profession.Inquisitor;
-import com.eldritch.invoken.actor.factions.Faction;
 import com.eldritch.invoken.actor.items.Item;
 import com.eldritch.invoken.ui.DialogueMenu;
 import com.eldritch.invoken.ui.InventoryMenu;
@@ -140,23 +139,11 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 		// load the selector
 		selector = new TextureRegion(new Texture("sprite/selection.png"));
 		
-		// debug factions
-		Faction playerFaction = new Faction("Player");
-		Faction eruFaction = new Faction("House Eru");
-		Faction imperialFaction = new Faction("Icarian Empire");
-		Faction gangFaction = new Faction("Gang");
-		playerFaction.addRelation(gangFaction, -10);
-		eruFaction.addRelation(gangFaction, -50);
-		imperialFaction.addRelation(gangFaction, -50);
-		gangFaction.addRelation(playerFaction, -50);
-		gangFaction.addRelation(imperialFaction, -50);
-		gangFaction.addRelation(eruFaction, -50);
-
 		// create the Player we want to move around the world
 		Vector2 spawn = getSpawnLocation();
-		player = new Player(new Inquisitor(), 10, spawn.x, spawn.y,
+		player = new Player(new Inquisitor(), 100, spawn.x, spawn.y,
 				"sprite/characters/light-blue-hair.png");
-		player.addFaction(playerFaction, 9, 0);
+//		player.addFaction(playerFaction, 9, 0);
 		
 		Item outfit = Item.fromProto(InvokenGame.ITEM_READER.readAsset("IcarianOperativeExosuit"));
 		player.getInfo().getInventory().addItem(outfit);
