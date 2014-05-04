@@ -78,7 +78,9 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 		Item outfit = Item.fromProto(InvokenGame.ITEM_READER.readAsset("IcarianOperativeExosuit"));
 		player.getInfo().getInventory().addItem(outfit);
 		player.getInfo().getInventory().equip(outfit);
-		location = new Location(player);
+		
+		location = new Location(
+		        InvokenGame.LOCATION_READER.readAsset("NostorraUnderworks"), player);
 		
 		// create player menus
 		inventoryMenu = new InventoryMenu(player, getSkin());

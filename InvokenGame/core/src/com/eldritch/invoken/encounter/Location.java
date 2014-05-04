@@ -26,6 +26,8 @@ import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.actor.Agent;
 import com.eldritch.invoken.actor.Npc;
 import com.eldritch.invoken.actor.Player;
+import com.eldritch.scifirpg.proto.Locations.Encounter;
+import com.eldritch.scifirpg.proto.Locations.Encounter.ActorParams.ActorScenario;
 import com.google.common.primitives.Ints;
 
 public class Location {
@@ -46,11 +48,11 @@ public class Location {
 	private int[] overlays;
 	private int collisionIndex;
 
-	public Location(Player player) {
+	public Location(com.eldritch.scifirpg.proto.Locations.Location data, Player player) {
 	    this.player = player;
 	    
 		// load the map, set the unit scale to 1/32 (1 unit == 32 pixels)
-		String mapAsset = "maps/underground.tmx";
+		String mapAsset = "maps/NostorraUnderworks.tmx";
 		AssetManager assetManager = new AssetManager();
 		assetManager.setLoader(TiledMap.class, new TmxMapLoader(
 				new InternalFileHandleResolver()));
@@ -82,25 +84,17 @@ public class Location {
 		addActor(player);
 		
 		// find spawn nodes
-		LinkedList<Vector2> spawnNodes = getSpawnNodes();
-		
-		// create test NPCs
 		String asset = "sprite/characters/male-fair.png";
-		addActor(createTestNpc(spawnNodes.poll(), "QuarantineEruSentry", asset));
-		addActor(createTestNpc(spawnNodes.poll(), "EruCenturion", asset));
-		
-		addActor(createTestNpc(spawnNodes.poll(), "InquisitorGoth", asset));
-		
-		addActor(createTestNpc(spawnNodes.poll(), "IcarianEnforcer", asset));
-		addActor(createTestNpc(spawnNodes.poll(), "IcarianEnforcer", asset));
-		addActor(createTestNpc(spawnNodes.poll(), "IcarianEnforcer", asset));
-		
-		addActor(createTestNpc(spawnNodes.poll(), "StreetThug", asset));
-		addActor(createTestNpc(spawnNodes.poll(), "StreetThug", asset));
-		addActor(createTestNpc(spawnNodes.poll(), "StreetThug", asset));
-		addActor(createTestNpc(spawnNodes.poll(), "StreetThug", asset));
-		addActor(createTestNpc(spawnNodes.poll(), "StreetThug", asset));
-		addActor(createTestNpc(spawnNodes.poll(), "StreetThug", asset));
+		for (Encounter proto : data.getEncounterList()) {
+		    if (proto.getType() == Encounter.Type.ACTOR) {
+		        LinkedList<Vector2> spawnNodes = getSpawnNodes(proto.getId());
+		        
+		        // create NPCs
+		        for (ActorScenario scenario : proto.getActorParams().getActorScenarioList()) {
+		            addActor(createTestNpc(spawnNodes.poll(), scenario.getActorId(), asset));
+		        }
+		    }
+		}
 
 		Gdx.app.log(InvokenGame.LOG, "start");
 	}
@@ -113,9 +107,10 @@ public class Location {
         return tiles;
     }
 	
-	private LinkedList<Vector2> getSpawnNodes() {
+	private LinkedList<Vector2> getSpawnNodes(String encounter) {
 		LinkedList<Vector2> list = new LinkedList<Vector2>();
-		TiledMapTileLayer spawnLayer = (TiledMapTileLayer) map.getLayers().get("spawn");
+		TiledMapTileLayer spawnLayer = (TiledMapTileLayer) map.getLayers().get(
+		        "Encounter-" + encounter);
 		spawnLayer.setVisible(false);
 		for (int x = 0; x < spawnLayer.getWidth(); x++) {
 			for (int y = 0; y < spawnLayer.getHeight(); y++) {
