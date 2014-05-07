@@ -13,6 +13,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.actor.Inventory.ItemState;
 import com.eldritch.invoken.actor.ai.AttackRoutine;
+import com.eldritch.invoken.actor.ai.Behavior;
 import com.eldritch.invoken.actor.ai.FollowRoutine;
 import com.eldritch.invoken.actor.ai.IdleRoutine;
 import com.eldritch.invoken.actor.ai.Pathfinder;
@@ -33,6 +34,7 @@ public class Npc extends Agent {
 	private final NonPlayerActor data;
     private final Optional<ActorScenario> scenario;
 	private final DialogueVerifier dialogueVerifier = new DialogueVerifier();
+	private final Behavior behavior;
 	final Pathfinder pathfinder = new Pathfinder();
 	private final Map<Agent, Float> relations = new HashMap<Agent, Float>();
 	private final List<Routine> routines = new ArrayList<Routine>();
@@ -42,6 +44,7 @@ public class Npc extends Agent {
 		super(asset, x, y, data.getParams());
 		this.data = data;
 		scenario = Optional.absent();
+		behavior = new Behavior(this, data);
 		
 		// equip items
 		for (ItemState item : info.getInventory().getItems()) {
@@ -108,6 +111,10 @@ public class Npc extends Agent {
 			}
 		}
 		routine.takeAction(delta, screen);
+	}
+	
+	public Behavior getBehavior() {
+	    return behavior;
 	}
 	
 	public Pathfinder getPathfinder() {

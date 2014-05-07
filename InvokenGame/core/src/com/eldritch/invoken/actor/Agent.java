@@ -132,6 +132,10 @@ public abstract class Agent implements Entity {
     public List<Agent> getFollowers() {
         return followers;
     }
+    
+    public boolean hostileTo(Agent other) {
+        return enemies.contains(other);
+    }
 
     public Set<Agent> getEnemies() {
         return enemies;

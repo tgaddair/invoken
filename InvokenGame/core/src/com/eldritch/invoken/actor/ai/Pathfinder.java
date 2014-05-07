@@ -64,19 +64,22 @@ public class Pathfinder {
 		return true;
 	}
 
-	private Vector2 rotate(Vector2 source, Vector2 pivot, double angle) {
+	/**
+	 * Rotates the source position around the pivot (origin) by the angle.
+	 */
+	public Vector2 rotate(Vector2 source, Vector2 pivot, double angle) {
 		Vector2 result = source.cpy();
 		float s = (float) Math.sin(angle);
 		float c = (float) Math.cos(angle);
 
-		// translate point back to origin:
+		// translate point back to origin
 		result = result.sub(pivot);
 
 		// rotate point
 		result.x = result.x * c - result.y * s;
 		result.y = result.x * s + result.y * c;
 
-		// translate point back:
+		// translate point back
 		result = result.add(pivot);
 		return result;
 	}

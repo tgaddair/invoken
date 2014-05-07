@@ -69,6 +69,10 @@ public class AgentInfo {
 		factions = new FactionManager(agent);
 	}
 	
+	public int getLevel() {
+	    return level;
+	}
+	
 	public Inventory getInventory() {
 		return inventory;
 	}
