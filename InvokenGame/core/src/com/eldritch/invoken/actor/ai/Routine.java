@@ -11,5 +11,5 @@ public interface Routine {
 	
 	void reset();
 	
-	void takeAction(float delta, Location screen);
+	void takeAction(float delta, Location location);
 }

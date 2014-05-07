@@ -14,6 +14,7 @@ import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.actor.Inventory.ItemState;
 import com.eldritch.invoken.actor.ai.AttackRoutine;
 import com.eldritch.invoken.actor.ai.Behavior;
+import com.eldritch.invoken.actor.ai.FleeRoutine;
 import com.eldritch.invoken.actor.ai.FollowRoutine;
 import com.eldritch.invoken.actor.ai.IdleRoutine;
 import com.eldritch.invoken.actor.ai.Pathfinder;
@@ -40,7 +41,7 @@ public class Npc extends Agent {
 	private final List<Routine> routines = new ArrayList<Routine>();
 	private Routine routine;
 	
-	public Npc(NonPlayerActor data, float x, float y, String asset) {
+	public Npc(NonPlayerActor data, float x, float y, String asset, Location location) {
 		super(asset, x, y, data.getParams());
 		this.data = data;
 		scenario = Optional.absent();
@@ -60,6 +61,7 @@ public class Npc extends Agent {
 		// routines
 		// TODO: add these to proto to make them modular for NPCs
 		routine = new IdleRoutine(this);
+		routines.add(new FleeRoutine(this, location));
 		routines.add(new AttackRoutine(this));
 		routines.add(new FollowRoutine(this));
 		routines.add(new PatrolRoutine(this));

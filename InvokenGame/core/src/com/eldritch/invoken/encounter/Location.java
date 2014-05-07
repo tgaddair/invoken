@@ -138,7 +138,8 @@ public class Location {
 	}
 	
 	private Npc createTestNpc(Vector2 position, String path, String asset) {
-		return new Npc(InvokenGame.ACTOR_READER.readAsset(path), position.x, position.y, asset);
+		return new Npc(
+		        InvokenGame.ACTOR_READER.readAsset(path), position.x, position.y, asset, this);
 	}
 
 	private void addActor(Agent actor) {

@@ -24,7 +24,7 @@ public class Behavior {
         confidence = actor.getConfidence();
     }
     
-    public boolean shouldFlee() {
+    public boolean shouldFlee(Collection<Agent> actors) {
         if (aggression == Aggression.FRENZIED) {
             // frenzied NPCs never flee
             return false;
@@ -40,6 +40,16 @@ public class Behavior {
                 return true;
             }
         }
+        
+        // finally, we should also flee if one of our allies in combat and we cannot help
+        for (Agent agent : actors) {
+            if (shouldAssistAgainst(agent, actors)) {
+                if (!willingToAttack(agent)) {
+                    return true;
+                }
+            }
+        }
+        
         return false;
     }
     
@@ -47,6 +57,13 @@ public class Behavior {
         for (Agent enemy : npc.getEnemies()) {
             if (!willingToAttack(enemy)) {
                 targets.add(enemy);
+            }
+        }
+        for (Agent agent : actors) {
+            if (shouldAssistAgainst(agent, actors)) {
+                if (!willingToAttack(agent)) {
+                    targets.add(agent);
+                }
             }
         }
     }
@@ -85,11 +102,7 @@ public class Behavior {
             return false;
         }
         for (Agent agent : actors) {
-            if (agent.getEnemies().isEmpty()) {
-                // not in combat, so no need to assist someone attacking them
-                continue;
-            }
-            if (obligatedToAttack(agent, actors)) {
+            if (shouldAssistAgainst(agent, actors)) {
                 // we are obligated to attack this character given our assistance
                 if (willingToAttack(agent)) {
                     return true;
@@ -102,17 +115,21 @@ public class Behavior {
     public void getAssistTargets(Collection<Agent> actors, Collection<Agent> targets) {
         for (Agent agent : actors) {
             if (npc.hostileTo(agent) || wantsToAttack(agent)) {
-                if (agent.getEnemies().isEmpty()) {
-                    // not in combat, so no need to assist someone attacking them
-                    continue;
-                }
-                if (obligatedToAttack(agent, actors)) {
+                if (shouldAssistAgainst(agent, actors)) {
                     if (willingToAttack(agent)) {
                         targets.add(agent);
                     }
                 }
             }
         }
+    }
+    
+    private boolean shouldAssistAgainst(Agent enemy, Collection<Agent> actors) {
+        if (enemy.getEnemies().isEmpty()) {
+            // not in combat, so no need to assist someone attacking them
+            return false;
+        }
+        return obligatedToAttack(enemy, actors);
     }
     
     /**

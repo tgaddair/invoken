@@ -1,9 +1,6 @@
 package com.eldritch.invoken.actor.ai;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import com.badlogic.gdx.math.Vector2;
@@ -12,12 +9,13 @@ import com.eldritch.invoken.actor.Npc;
 import com.eldritch.invoken.encounter.Location;
 
 public class FleeRoutine extends MovementRoutine {
+    private final Location location;
 	private final Set<Agent> targets = new HashSet<Agent>();
 	private Agent target = null;
-	private float elapsed = 0;
 
-	public FleeRoutine(Npc npc) {
+	public FleeRoutine(Npc npc, Location location) {
 		super(npc);
+		this.location = location;
 	}
 
 	@Override
@@ -32,12 +30,11 @@ public class FleeRoutine extends MovementRoutine {
 
 	@Override
 	public boolean isValid() {
-		return npc.getBehavior().shouldFlee();
+		return npc.getBehavior().shouldFlee(location.getActors());
 	}
 
 	@Override
 	public void reset() {
-		elapsed = 0;
 		target = null;
 	}
 	
@@ -61,6 +58,7 @@ public class FleeRoutine extends MovementRoutine {
 	        }
 	    }
 
+	    npc.setTarget(null);
 	    if (target == null) {
 			// can't do anything if we are unable to find a target to attack
 			return;

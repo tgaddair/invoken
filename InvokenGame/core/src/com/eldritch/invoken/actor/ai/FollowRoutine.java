@@ -46,7 +46,7 @@ public class FollowRoutine implements Routine {
 	
 	@Override
 	public boolean isFinished() {
-		return !isValid();
+	    return npc.getFollowed() == null;
 	}
 	
 	@Override
