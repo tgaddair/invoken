@@ -1,5 +1,8 @@
 package com.eldritch.invoken.actor.ai;
 
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.Map.Entry;
 
 import com.badlogic.gdx.math.Vector2;
@@ -7,12 +10,13 @@ import com.eldritch.invoken.actor.Agent;
 import com.eldritch.invoken.actor.Npc;
 import com.eldritch.invoken.encounter.Location;
 
-public class AttackRoutine extends MovementRoutine {
+public abstract class AttackRoutine extends MovementRoutine {
+    private final Set<Agent> targets = new HashSet<Agent>();
 	private Agent target = null;
 	private float elapsed = 0;
 
-	public AttackRoutine(Npc npc) {
-	    super(npc);
+	public AttackRoutine(Npc npc, Location location) {
+	    super(npc, location);
 	}
 
 	@Override
@@ -26,54 +30,23 @@ public class AttackRoutine extends MovementRoutine {
 	}
 
 	@Override
-	public boolean isValid() {
-		return !npc.getEnemies().isEmpty() || shouldAssist();
-	}
-
-	@Override
 	public void reset() {
 		elapsed = 0;
 		target = null;
 	}
-
-	private boolean shouldAssist() {
-		for (Entry<Agent, Float> entry : npc.getRelations().entrySet()) {
-			if (entry.getValue() > 0 && !entry.getKey().getEnemies().isEmpty()) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	private Agent getEnemy() {
-		for (Agent agent : npc.getEnemies()) {
-			return agent;
-		}
-		return null;
-	}
-
-	private Agent getAllyEnemy() {
-		for (Entry<Agent, Float> entry : npc.getRelations().entrySet()) {
-			if (entry.getValue() > 0 && !entry.getKey().getEnemies().isEmpty()) {
-				for (Agent agent : entry.getKey().getEnemies()) {
-					return agent;
-				}
-			}
-		}
-		return null;
-	}
+	
+	protected abstract void fillTargets(Collection<Agent> targets);
 
 	@Override
 	public void takeAction(float delta, Location screen) {
 		// update target enemy
 		if (target == null || !target.isAlive()) {
 			// get one of our enemies
-			target = getEnemy();
-
-			// no enemy found, check our allies for enemies
-			if (target == null || !target.isAlive()) {
-				target = getAllyEnemy();
-			}
+		    fillTargets(targets);
+		    for (Agent enemy : targets) {
+			    target = enemy;
+			    break;
+		    }
 		} else {
 			// consider changing targets
 			for (Agent agent : npc.getEnemies()) {

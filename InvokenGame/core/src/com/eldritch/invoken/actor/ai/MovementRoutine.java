@@ -6,12 +6,14 @@ import com.eldritch.invoken.encounter.Location;
 
 public abstract class MovementRoutine implements Routine {
     protected final Npc npc;
+    protected final Location location;
     
     /** how long we move in a single direction before turning */
     private final Vector2 velocity = new Vector2();
     
-    public MovementRoutine(Npc npc) {
+    public MovementRoutine(Npc npc, Location location) {
         this.npc = npc;
+        this.location = location;
     }
     
     protected abstract void doMove(Vector2 velocityDelta, Location screen);

@@ -12,6 +12,8 @@ import java.util.Map.Entry;
 import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.actor.Inventory.ItemState;
+import com.eldritch.invoken.actor.ai.AssaultRoutine;
+import com.eldritch.invoken.actor.ai.AssistRoutine;
 import com.eldritch.invoken.actor.ai.AttackRoutine;
 import com.eldritch.invoken.actor.ai.Behavior;
 import com.eldritch.invoken.actor.ai.FleeRoutine;
@@ -62,7 +64,8 @@ public class Npc extends Agent {
 		// TODO: add these to proto to make them modular for NPCs
 		routine = new IdleRoutine(this);
 		routines.add(new FleeRoutine(this, location));
-		routines.add(new AttackRoutine(this));
+		routines.add(new AssaultRoutine(this, location));
+		routines.add(new AssistRoutine(this, location));
 		routines.add(new FollowRoutine(this));
 		routines.add(new PatrolRoutine(this));
 		routines.add(routine); // idle is fallback
@@ -144,6 +147,13 @@ public class Npc extends Agent {
 	
 	public Map<Agent, Float> getRelations() {
 		return relations;
+	}
+	
+	public float getRelation(Agent agent) {
+	    if (!relations.containsKey(agent)) {
+            relations.put(agent, getDisposition(agent));
+        }
+	    return relations.get(agent);
 	}
 	
 	@Override

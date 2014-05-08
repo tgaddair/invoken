@@ -9,13 +9,11 @@ import com.eldritch.invoken.actor.Npc;
 import com.eldritch.invoken.encounter.Location;
 
 public class FleeRoutine extends MovementRoutine {
-    private final Location location;
 	private final Set<Agent> targets = new HashSet<Agent>();
 	private Agent target = null;
 
 	public FleeRoutine(Npc npc, Location location) {
-		super(npc);
-		this.location = location;
+		super(npc, location);
 	}
 
 	@Override
@@ -45,6 +43,7 @@ public class FleeRoutine extends MovementRoutine {
 	@Override
 	public void takeAction(float delta, Location location) {
 	    // update valid flee targets
+	    targets.clear();
 	    npc.getBehavior().getFleeTargets(location.getActors(), targets);
 	    
 	    // choose a target to flee from

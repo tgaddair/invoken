@@ -2,6 +2,7 @@ package com.eldritch.invoken.actor.ai;
 
 import java.util.Collection;
 
+import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.actor.Agent;
 import com.eldritch.invoken.actor.Npc;
 import com.eldritch.scifirpg.proto.Actors.NonPlayerActor;
@@ -163,7 +164,7 @@ public class Behavior {
      * Returns true if our aggression dictates we should attack given our reaction.
      */
     private boolean wantsToAttack(Agent other) {
-        float reaction = npc.getDisposition(other);
+        float reaction = npc.getRelation(other);
         if (isEnemyGiven(reaction)) {
             if (aggression.ordinal() >= Aggression.AGGRESSIVE_VALUE) {
                 // aggressive actors attack enemies on sight
@@ -195,10 +196,11 @@ public class Behavior {
         }
         
         // we're at least loyal to our allies, so consider the situation
-        float otherReaction = npc.getDisposition(other);
+        float otherReaction = npc.getRelation(other);
+//        InvokenGame.log("relation: " + otherReaction);
         for (Agent agent : actors) {
             if (agent.hostileTo(other)) {
-                float reaction = npc.getDisposition(agent);
+                float reaction = npc.getRelation(agent);
                 if (isAllyGiven(reaction) && reaction > otherReaction) {
                     // an ally of ours is attacking other, and we like this ally more than
                     // we like other
