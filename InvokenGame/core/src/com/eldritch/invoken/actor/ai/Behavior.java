@@ -212,6 +212,11 @@ public class Behavior {
      * Returns true if our confidence dictates we should attack given our level.
      */
     private boolean willingToAttack(Agent other) {
+        if (aggression == Aggression.FRENZIED) {
+            // frenzied actors attack anyone on sight
+            return true;
+        }
+        
         switch (confidence) {
             case COWARDLY:
                 // cowards never attack
