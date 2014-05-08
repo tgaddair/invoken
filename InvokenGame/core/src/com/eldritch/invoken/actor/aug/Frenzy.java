@@ -2,12 +2,12 @@ package com.eldritch.invoken.actor.aug;
 
 import com.eldritch.invoken.actor.Agent;
 import com.eldritch.invoken.actor.Agent.Activity;
-import com.eldritch.invoken.effects.Commanded;
+import com.eldritch.invoken.effects.Frenzied;
 
-public class Command extends Augmentation {
+public class Frenzy extends Augmentation {
 	@Override
 	public Action getAction(Agent owner, Agent target) {
-		return new CommandAction(owner, target);
+		return new FrenzyAction(owner, target);
 	}
 	
 	@Override
@@ -15,17 +15,17 @@ public class Command extends Augmentation {
 		return target != null && target != owner && target.isAlive();
 	}
 	
-	public class CommandAction extends AnimatedAction {
+	public class FrenzyAction extends AnimatedAction {
 		private final Agent target;
 		
-		public CommandAction(Agent actor, Agent target) {
+		public FrenzyAction(Agent actor, Agent target) {
 			super(actor, Activity.Swipe);
 			this.target = target;
 		}
 
 		@Override
 		public void apply() {
-			target.addEffect(new Commanded(owner, target, 3));
+			target.addEffect(new Frenzied(owner, target, 3));
 		}
 	}
 }

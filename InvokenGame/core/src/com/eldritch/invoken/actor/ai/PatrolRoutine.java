@@ -87,7 +87,7 @@ public class PatrolRoutine implements Routine {
 			    Vector2 target = actor.getClearTarget(origin, screen);
 	            float dx = target.x - position.x;
 	            float dy = target.y - position.y;
-	            if (Math.abs(Math.abs(dx) - Math.abs(dy)) < 0.5) {
+	            if (Math.abs(Math.abs(dx) - Math.abs(dy)) < 0.01) {
 	                // prevents flickering when moving along the diagonal
 	                xVelocity = Math.signum(dx) * maxVelocity;
 	                yVelocity = Math.signum(dy) * maxVelocity;

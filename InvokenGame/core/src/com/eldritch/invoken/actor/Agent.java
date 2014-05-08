@@ -197,10 +197,8 @@ public abstract class Agent implements Entity {
         info.resetHealth();
     }
 
-    public void setConfused(boolean confused) {
-        this.confused = confused;
-    }
-
+    public abstract void setConfused(boolean confused);
+    
     public boolean isParalyzed() {
         return paralyzed > 0;
     }

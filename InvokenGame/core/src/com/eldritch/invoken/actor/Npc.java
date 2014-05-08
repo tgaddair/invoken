@@ -26,6 +26,7 @@ import com.eldritch.scifirpg.proto.Actors.DialogueTree;
 import com.eldritch.scifirpg.proto.Actors.NonPlayerActor;
 import com.eldritch.scifirpg.proto.Actors.DialogueTree.Choice;
 import com.eldritch.scifirpg.proto.Actors.DialogueTree.Response;
+import com.eldritch.scifirpg.proto.Actors.NonPlayerActor.Aggression;
 import com.eldritch.scifirpg.proto.Locations.Encounter.ActorParams.ActorScenario;
 import com.eldritch.scifirpg.proto.Prerequisites.Prerequisite;
 import com.eldritch.scifirpg.proto.Prerequisites.Standing;
@@ -99,6 +100,15 @@ public class Npc extends Agent {
 		}
 		routine.takeAction(delta, screen);
 	}
+	
+	@Override
+    public void setConfused(boolean confused) {
+	    if (confused) {
+	        behavior.setAggression(Aggression.FRENZIED);
+	    } else {
+	        behavior.resetAggression();
+	    }
+    }
 	
 	public Behavior getBehavior() {
 	    return behavior;

@@ -16,12 +16,31 @@ public class Behavior {
     private Assistance assistance;
     private Confidence confidence;
     
+    // counters for handling multiple applications of the same effect
+    private int aggressionCounter = 0;
+    
     public Behavior(Npc npc, NonPlayerActor actor) {
         this.npc = npc;
         baseData = actor;
         aggression = actor.getAggression();
         assistance = actor.getAssistance();
         confidence = actor.getConfidence();
+    }
+    
+    public void setAggression(Aggression aggression) {
+        aggressionCounter++;
+        this.aggression = aggression;
+    }
+    
+    public void resetAggression() {
+        aggressionCounter--;
+        if (aggressionCounter <= 0) {
+            this.aggression = baseData.getAggression();
+        }
+    }
+    
+    public Aggression getAggression() {
+        return aggression;
     }
     
     public boolean shouldFlee(Collection<Agent> actors) {
