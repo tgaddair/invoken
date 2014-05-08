@@ -29,7 +29,7 @@ public class Behavior {
             // frenzied NPCs never flee
             return false;
         }
-        if (!npc.hasEnemies() && confidence == Confidence.COWARDLY) {
+        if (npc.hasEnemies() && confidence == Confidence.COWARDLY) {
             // cowardly NPCs that are not frenzied flee before enemies
             return true;
         }
