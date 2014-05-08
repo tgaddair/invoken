@@ -83,7 +83,7 @@ public class FleeRoutine extends MovementRoutine {
 
 	private boolean shouldFlee() {
 		// don't get any closer to the enemy than this
-		float minDistance = target.getInfo().getMaxTargetDistance() * 0.4f;
+		float minDistance = target.getInfo().getMaxTargetDistance();
 		return getTargetPosition().dst2(npc.getPosition()) <= minDistance;
 	}
 }

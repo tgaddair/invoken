@@ -18,6 +18,7 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
+import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.actor.aug.Action;
 import com.eldritch.invoken.actor.aug.Augmentation;
 import com.eldritch.invoken.actor.factions.Faction;
@@ -65,7 +66,9 @@ public abstract class Agent implements Entity {
 
     private Agent followed = null;
     private final List<Agent> followers = new ArrayList<Agent>();
-    private final Set<Agent> enemies = new HashSet<Agent>();
+    
+    // hostilities: enemy -> provoked
+    private final Map<Agent, Boolean> hostilities = new HashMap<Agent, Boolean>();
     private boolean confused = false;
     private int paralyzed = 0;
 
@@ -133,16 +136,38 @@ public abstract class Agent implements Entity {
         return followers;
     }
     
+    public boolean assaultedBy(Agent other) {
+        return hostilities.containsKey(other) && hostilities.get(other);
+    }
+    
     public boolean hostileTo(Agent other) {
-        return enemies.contains(other);
+        return hostilities.containsKey(other);
+    }
+    
+    public Iterable<Agent> getEnemies() {
+        return hostilities.keySet();
+    }
+    
+    public boolean hasEnemies() {
+        return !hostilities.isEmpty();
     }
 
-    public Set<Agent> getEnemies() {
-        return enemies;
-    }
-
-    public void addEnemy(Agent other) {
-        enemies.add(other);
+    public void addEnemy(Agent other, boolean attacked) {
+        if (hostilities.containsKey(other)) {
+            // we've already added them as an enemy, so don't do so again
+            return;
+        }
+        
+        if (attacked) {
+            // we've been attacked
+            // mark this hostility as provoked if we didn't assault them prior
+            hostilities.put(other, !other.assaultedBy(this));
+            other.addEnemy(this, false);
+        } else {
+            // we're attacking them
+            // mark this hostility as unprovoked
+            hostilities.put(other, false);
+        }
     }
 
     public boolean isAlive() {
@@ -155,7 +180,7 @@ public abstract class Agent implements Entity {
 
     public float damage(Agent source, float value) {
         if (isAlive()) {
-            enemies.add(source);
+            addEnemy(source, true);
         }
         return damage(value);
     }
@@ -182,7 +207,7 @@ public abstract class Agent implements Entity {
 
     public void setParalyzed(Agent source, boolean paralyzed) {
         if (paralyzed) {
-            addEnemy(source);
+            addEnemy(source, true);
             this.paralyzed++;
         } else {
             this.paralyzed--;
@@ -343,7 +368,7 @@ public abstract class Agent implements Entity {
 
     protected void onDeath() {
         followers.clear();
-        enemies.clear();
+        hostilities.clear();
         target = null;
     }
 
@@ -412,7 +437,7 @@ public abstract class Agent implements Entity {
         }
 
         // update enemies
-        Iterator<Agent> enemyIterator = enemies.iterator();
+        Iterator<Agent> enemyIterator = hostilities.keySet().iterator();
         while (enemyIterator.hasNext()) {
             Agent enemy = enemyIterator.next();
             if (!enemy.isAlive()) {

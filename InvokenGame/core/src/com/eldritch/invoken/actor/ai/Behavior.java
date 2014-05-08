@@ -2,7 +2,6 @@ package com.eldritch.invoken.actor.ai;
 
 import java.util.Collection;
 
-import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.actor.Agent;
 import com.eldritch.invoken.actor.Npc;
 import com.eldritch.scifirpg.proto.Actors.NonPlayerActor;
@@ -30,7 +29,7 @@ public class Behavior {
             // frenzied NPCs never flee
             return false;
         }
-        if (!npc.getEnemies().isEmpty() && confidence == Confidence.COWARDLY) {
+        if (!npc.hasEnemies() && confidence == Confidence.COWARDLY) {
             // cowardly NPCs that are not frenzied flee before enemies
             return true;
         }
@@ -115,18 +114,16 @@ public class Behavior {
     
     public void getAssistTargets(Collection<Agent> actors, Collection<Agent> targets) {
         for (Agent agent : actors) {
-            if (npc.hostileTo(agent) || wantsToAttack(agent)) {
-                if (shouldAssistAgainst(agent, actors)) {
-                    if (willingToAttack(agent)) {
-                        targets.add(agent);
-                    }
+            if (shouldAssistAgainst(agent, actors)) {
+                if (willingToAttack(agent)) {
+                    targets.add(agent);
                 }
             }
         }
     }
     
     private boolean shouldAssistAgainst(Agent enemy, Collection<Agent> actors) {
-        if (enemy.getEnemies().isEmpty()) {
+        if (!enemy.hasEnemies()) {
             // not in combat, so no need to assist someone attacking them
             return false;
         }
@@ -134,36 +131,14 @@ public class Behavior {
     }
     
     /**
-     * Returns true if we will attack other given all the actors in the scene.
-     */
-    public boolean willAttack(Agent other, Collection<Agent> actors) {
-        if (aggression == Aggression.FRENZIED) {
-            // frenzied NPCs always attack anyone
-            return true;
-        }
-        if (confidence == Confidence.COWARDLY) {
-            // cowardly NPCs that are not frenzied never attack anyone
-            return false;
-        }
-        if (npc.hostileTo(other) && aggression != Aggression.PACIFIST) {
-            // if they attacked us, and we're not a pacifist, then attack them back
-            return true;
-        }
-        
-        // we're not a coward and we haven't been attack by this actor
-        if (wantsToAttack(other) || obligatedToAttack(other, actors)) {
-            if (willingToAttack(other)) {
-                return true;
-            }
-        }
-        
-        return false;
-    }
-    
-    /**
      * Returns true if our aggression dictates we should attack given our reaction.
      */
     private boolean wantsToAttack(Agent other) {
+        if (aggression == Aggression.FRENZIED) {
+            // frenzied actors attack anyone on sight
+            return true;
+        }
+        
         float reaction = npc.getRelation(other);
         if (isEnemyGiven(reaction)) {
             if (aggression.ordinal() >= Aggression.AGGRESSIVE_VALUE) {
@@ -174,12 +149,6 @@ public class Behavior {
         if (isNeutralGiven(reaction)) {
             if (aggression.ordinal() >= Aggression.HOSTILE_VALUE) {
                 // hostile actors attack non-allies on sight
-                return true;
-            }
-        }
-        if (isAllyGiven(reaction)) {
-            if (aggression.ordinal() >= Aggression.FRENZIED_VALUE) {
-                // frenzied actors attack anyone on sight
                 return true;
             }
         }
@@ -197,18 +166,20 @@ public class Behavior {
         
         // we're at least loyal to our allies, so consider the situation
         float otherReaction = npc.getRelation(other);
-//        InvokenGame.log("relation: " + otherReaction);
         for (Agent agent : actors) {
             if (agent.hostileTo(other)) {
                 float reaction = npc.getRelation(agent);
-                if (isAllyGiven(reaction) && reaction > otherReaction) {
-                    // an ally of ours is attacking other, and we like this ally more than
-                    // we like other
+                if (isAllyGiven(reaction) && !isAllyGiven(otherReaction)) {
+                    // support allies against non-allies
                     return true;
-                } else if (!isEnemyGiven(reaction) && reaction > otherReaction) {
-                    // we at least like this character more than the other one
-                    if (assistance == Assistance.CHIVALRIC) {
-                        // chivalric actors assist non-enemies
+                } else if (agent.assaultedBy(other)) {
+                    // assist allies when attacked
+                    if (isAllyGiven(reaction)) {
+                        return true;
+                    }
+                    
+                    // chivalric agents assist non-enemies when they're attacked
+                    if (assistance == Assistance.CHIVALRIC || !isEnemyGiven(reaction)) {
                         return true;
                     }
                 }

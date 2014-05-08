@@ -10,11 +10,9 @@ import java.util.Set;
 import java.util.Map.Entry;
 
 import com.badlogic.gdx.math.Vector2;
-import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.actor.Inventory.ItemState;
 import com.eldritch.invoken.actor.ai.AssaultRoutine;
 import com.eldritch.invoken.actor.ai.AssistRoutine;
-import com.eldritch.invoken.actor.ai.AttackRoutine;
 import com.eldritch.invoken.actor.ai.Behavior;
 import com.eldritch.invoken.actor.ai.FleeRoutine;
 import com.eldritch.invoken.actor.ai.FollowRoutine;
@@ -79,22 +77,6 @@ public class Npc extends Agent {
 			Entry<Agent, Float> entry = it.next();
 			if (!entry.getKey().isAlive()) {
 				it.remove();
-			}
-		}
-		
-		// update dispositions for neighbors
-		for (Agent agent : screen.getActors()) {
-			if (dst2(agent) < 50) {
-				if (agent != this && agent.isAlive()) {
-					if (!relations.containsKey(agent)) {
-						relations.put(agent, getDisposition(agent));
-					}
-					
-					// add enemies and allies
-					if (relations.get(agent) < 0) {
-						addEnemy(agent);
-					}
-				}
 			}
 		}
 		

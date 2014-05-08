@@ -3,7 +3,6 @@ package com.eldritch.invoken.actor.ai;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.Map.Entry;
 
 import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.actor.Agent;

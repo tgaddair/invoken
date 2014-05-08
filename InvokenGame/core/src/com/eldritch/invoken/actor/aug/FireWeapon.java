@@ -71,7 +71,6 @@ public class FireWeapon extends Augmentation {
 		@Override
 		public void apply() {
 			if (target != null) {
-				owner.getEnemies().add(target);
 				target.addEffect(new Bleed(owner, target, 5));
 			}
 		}
