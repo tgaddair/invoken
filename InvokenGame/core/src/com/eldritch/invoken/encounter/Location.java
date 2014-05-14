@@ -205,6 +205,17 @@ public class Location {
 		return entities;
 	}
 	
+	public List<Agent> getNeighbors(Npc agent) {
+	    List<Agent> neighbors = agent.getNeighbors();
+	    neighbors.clear();
+	    for (Agent other : getActors()) {
+	        if (agent.canTarget(other)) {
+	            neighbors.add(other);
+	        }
+	    }
+	    return neighbors;
+	}
+	
 	public List<Agent> getEntities() {
 	    return entities;
 	}

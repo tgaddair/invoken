@@ -29,7 +29,7 @@ public class FleeRoutine extends MovementRoutine {
 
 	@Override
 	public boolean isValid() {
-		return npc.getBehavior().shouldFlee(location.getActors());
+		return npc.getBehavior().shouldFlee(npc.getNeighbors());
 	}
 
 	@Override
@@ -45,7 +45,7 @@ public class FleeRoutine extends MovementRoutine {
 	public void takeAction(float delta, Location location) {
 	    // update valid flee targets
 	    targets.clear();
-	    npc.getBehavior().getFleeTargets(location.getActors(), targets);
+	    npc.getBehavior().getFleeTargets(npc.getNeighbors(), targets);
 	    
 	    // choose a target to flee from
 	    if (target == null || targetIsInvalid()) {

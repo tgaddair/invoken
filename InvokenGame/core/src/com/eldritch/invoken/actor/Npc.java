@@ -40,6 +40,9 @@ public class Npc extends Agent {
 	final Pathfinder pathfinder = new Pathfinder();
 	private final Map<Agent, Float> relations = new HashMap<Agent, Float>();
 	private final List<Routine> routines = new ArrayList<Routine>();
+	
+	// used in AI routine calculations to determine things like the target
+	private final List<Agent> neighbors = new ArrayList<Agent>();
 	private Routine routine;
 	
 	public Npc(NonPlayerActor data, float x, float y, String asset, Location location) {
@@ -81,6 +84,10 @@ public class Npc extends Agent {
 			}
 		}
 		
+		// update neighbors
+		screen.getNeighbors(this);
+		
+		// update routine
 		if (routine.isFinished()) {
 			for (Routine r : routines) {
 				if (r.isValid()) {
@@ -109,6 +116,10 @@ public class Npc extends Agent {
 	        behavior.resetAggression();
 	    }
     }
+	
+	public List<Agent> getNeighbors() {
+	    return neighbors;
+	}
 	
 	public Behavior getBehavior() {
 	    return behavior;

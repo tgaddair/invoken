@@ -345,7 +345,11 @@ public abstract class Agent implements Entity {
     }
 
     public boolean canTarget() {
-        return dst2(target) < 175;
+        return canTarget(target);
+    }
+    
+    public boolean canTarget(Agent other) {
+        return dst2(other) < 175;
     }
 
     public float getAttackScale(Agent other) {
@@ -676,7 +680,7 @@ public abstract class Agent implements Entity {
         }
 
         // render action effects
-        if (actionInProgress()) {
+        if (actionInProgress() && isAlive()) {
             action.render(renderer);
         }
     }

@@ -14,12 +14,12 @@ public class AssaultRoutine extends AttackRoutine {
     
     @Override
     public boolean isValid() {
-        return npc.getBehavior().shouldAssault(location.getActors());
+        return npc.getBehavior().shouldAssault(npc.getNeighbors());
     }
 
     @Override
     protected void fillTargets(Collection<Agent> targets) {
         targets.clear();
-        npc.getBehavior().getAssaultTargets(location.getActors(), targets);
+        npc.getBehavior().getAssaultTargets(npc.getNeighbors(), targets);
     }
 }
