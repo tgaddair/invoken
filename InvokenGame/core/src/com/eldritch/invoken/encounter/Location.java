@@ -209,7 +209,7 @@ public class Location {
 	    List<Agent> neighbors = agent.getNeighbors();
 	    neighbors.clear();
 	    for (Agent other : getActors()) {
-	        if (agent.canTarget(other)) {
+	        if (agent != other && agent.canTarget(other)) {
 	            neighbors.add(other);
 	        }
 	    }

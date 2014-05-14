@@ -2,7 +2,6 @@ package com.eldritch.invoken.actor.ai;
 
 import java.util.Collection;
 
-import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.actor.Agent;
 import com.eldritch.invoken.actor.Npc;
 import com.eldritch.invoken.encounter.Location;
