@@ -19,7 +19,8 @@ import com.eldritch.invoken.encounter.Location;
 
 public class LocationGenerator {
     private static final int PX = 32;
-    private static final int MAX_LEAF_SIZE = 20;
+    private static final int SCALE = 2;
+    private static final int MAX_LEAF_SIZE = 35;
     private final TextureAtlas atlas;
 
     public LocationGenerator() {
@@ -27,10 +28,10 @@ public class LocationGenerator {
     }
 
     public Location generate(Player player) {
-        int width = 50;
-        int height = 50;
+        int width = 100;
+        int height = 100;
         TiledMap map = getBaseMap(width, height);
-        List<Leaf> leafs = createLeaves(width, height);
+        List<Leaf> leafs = createLeaves(width / SCALE, height / SCALE);
 
         // create layers
         map.getLayers().add(createBaseLayer(leafs, width, height));
@@ -61,7 +62,7 @@ public class LocationGenerator {
         TiledMapTile tile = new StaticTiledMapTile(region);
         Cell cell = new Cell();
         cell.setTile(tile);
-        layer.setCell(10, 10, cell);
+        layer.setCell(50, 50, cell);
 
         return layer;
     }
@@ -74,9 +75,15 @@ public class LocationGenerator {
         InvokenGame.log(String.format("left %d, right %d, top %d, bottom %d", left, right, top, bottom));
         for (int i = left; i <= right; i++) {
             for (int j = top; j <= bottom; j++) {
-                Cell cell = new Cell();
-                cell.setTile(tile);
-                layer.setCell(i, j, cell);
+                int startX = i * SCALE;
+                int startY = j * SCALE;
+                for (int x = 0; x < SCALE; x++) {
+                    for (int y = 0; y < SCALE; y++) {
+                        Cell cell = new Cell();
+                        cell.setTile(tile);
+                        layer.setCell(startX + x, startY + y, cell);
+                    }
+                }
             }
         }
     }

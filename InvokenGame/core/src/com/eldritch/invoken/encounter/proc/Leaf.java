@@ -6,7 +6,6 @@ import java.util.Random;
 
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import com.eldritch.invoken.InvokenGame;
 
 public class Leaf {
     private static final int MIN_LEAF_SIZE = 6;
@@ -195,7 +194,6 @@ public class Leaf {
     }
 
     private int randomNumber(int min, int max) {
-        max += 1;
-        return rand.nextInt(max - min) + min;
+        return rand.nextInt(max - min + 1) + min;
     }
 }
