@@ -13,6 +13,7 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
 import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
 import com.badlogic.gdx.math.Rectangle;
+import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.actor.Player;
 import com.eldritch.invoken.encounter.Location;
 
@@ -20,7 +21,7 @@ public class LocationGenerator {
     private static final int PX = 32;
     private static final int MAX_LEAF_SIZE = 20;
     private final TextureAtlas atlas;
-    
+
     public LocationGenerator() {
         atlas = new TextureAtlas(Gdx.files.internal("image-atlases/pages.atlas"));
     }
@@ -35,8 +36,8 @@ public class LocationGenerator {
         map.getLayers().add(createBaseLayer(leafs, width, height));
         map.getLayers().add(createSpawnLayer(width, height));
 
-        com.eldritch.scifirpg.proto.Locations.Location proto = 
-                com.eldritch.scifirpg.proto.Locations.Location.getDefaultInstance();
+        com.eldritch.scifirpg.proto.Locations.Location proto = com.eldritch.scifirpg.proto.Locations.Location
+                .getDefaultInstance();
         return new Location(proto, player, map);
     }
 
@@ -49,20 +50,35 @@ public class LocationGenerator {
         mapProperties.put("tileheight", PX);
         return map;
     }
-    
+
     private TiledMapTileLayer createSpawnLayer(int width, int height) {
         TiledMapTileLayer layer = new TiledMapTileLayer(width, height, PX, PX);
         layer.setVisible(false);
         layer.setOpacity(1.0f);
         layer.setName("player");
-        
+
         AtlasRegion region = getAtlas().findRegion("test-biome/floor1");
         TiledMapTile tile = new StaticTiledMapTile(region);
         Cell cell = new Cell();
         cell.setTile(tile);
         layer.setCell(10, 10, cell);
-        
+
         return layer;
+    }
+    
+    private void addRoom(Rectangle room, TiledMapTileLayer layer, TiledMapTile tile) {
+        int left = (int) room.x;
+        int right = (int) (room.x + room.width);
+        int top = (int) room.y;
+        int bottom = (int) (room.y + room.height);
+        InvokenGame.log(String.format("left %d, right %d, top %d, bottom %d", left, right, top, bottom));
+        for (int i = left; i <= right; i++) {
+            for (int j = top; j <= bottom; j++) {
+                Cell cell = new Cell();
+                cell.setTile(tile);
+                layer.setCell(i, j, cell);
+            }
+        }
     }
 
     private TiledMapTileLayer createBaseLayer(List<Leaf> leafs, int width, int height) {
@@ -74,20 +90,18 @@ public class LocationGenerator {
         AtlasRegion region = getAtlas().findRegion("test-biome/floor1");
         TiledMapTile tile = new StaticTiledMapTile(region);
 
+        int rooms = 0;
         for (Leaf leaf : leafs) {
-            Rectangle room = leaf.room;
-            int left = (int) room.x;
-            int right = (int) (room.x + room.width);
-            int top = (int) room.y;
-            int bottom = (int) (room.y + room.height);
-            for (int i = left; i <= right; i++) {
-                for (int j = top; j <= bottom; j++) {
-                    Cell cell = new Cell();
-                    cell.setTile(tile);
-                    layer.setCell(i, j, cell);
-                }
+            if (leaf.room != null) {
+                rooms++;
+                addRoom(leaf.room, layer, tile);
+            }
+            for (Rectangle hall : leaf.halls) {
+                rooms++;
+                addRoom(hall, layer, tile);
             }
         }
+        InvokenGame.log("rooms: " + rooms);
 
         return layer;
     }
@@ -99,26 +113,28 @@ public class LocationGenerator {
         Leaf root = new Leaf(0, 0, width, height);
         leafs.add(root);
 
-        boolean did_split = true;
-        // we loop through every Leaf in our Vector over and over again, until
-        // no more Leafs can be split.
-        while (did_split) {
-            did_split = false;
+        boolean didSplit = true;
+        // we loop through every Leaf in our Vector over and over again, until no more Leafs can be
+        // split.
+        while (didSplit) {
+            didSplit = false;
+            List<Leaf> newLeaves = new ArrayList<Leaf>();
             for (Leaf l : leafs) {
                 // if this Leaf is not already split...
                 if (l.leftChild == null && l.rightChild == null) {
                     // if this Leaf is too big, or 75% chance...
                     if (l.width > MAX_LEAF_SIZE || l.height > MAX_LEAF_SIZE || Math.random() > 0.25) {
                         if (l.split()) { // split the Leaf!
-                            // if we did split, push the child leafs to the
-                            // Vector so we can loop into them next
-                            leafs.add(l.leftChild);
-                            leafs.add(l.rightChild);
-                            did_split = true;
+                            // if we did split, push the child leafs to the list so we can loop into
+                            // them next
+                            newLeaves.add(l.leftChild);
+                            newLeaves.add(l.rightChild);
+                            didSplit = true;
                         }
                     }
                 }
             }
+            leafs.addAll(newLeaves);
         }
 
         // next, iterate through each Leaf and create a room in each one.

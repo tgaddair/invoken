@@ -18,6 +18,7 @@ import com.eldritch.invoken.actor.Player;
 import com.eldritch.invoken.actor.Profession.Inquisitor;
 import com.eldritch.invoken.actor.items.Item;
 import com.eldritch.invoken.encounter.Location;
+import com.eldritch.invoken.encounter.proc.LocationGenerator;
 import com.eldritch.invoken.ui.DialogueMenu;
 import com.eldritch.invoken.ui.InventoryMenu;
 import com.eldritch.invoken.ui.LootMenu;
@@ -79,8 +80,11 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 		player.getInfo().getInventory().addItem(outfit);
 		player.getInfo().getInventory().equip(outfit);
 		
-		location = new Location(
-		        InvokenGame.LOCATION_READER.readAsset("NostorraPlaza"), player);
+//		location = new Location(
+//		        InvokenGame.LOCATION_READER.readAsset("NostorraPlaza"), player);
+		
+		LocationGenerator generator = new LocationGenerator();
+		location = generator.generate(player);
 		
 		// create player menus
 		inventoryMenu = new InventoryMenu(player, getSkin());

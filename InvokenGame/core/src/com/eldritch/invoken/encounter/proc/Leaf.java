@@ -6,6 +6,7 @@ import java.util.Random;
 
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.eldritch.invoken.InvokenGame;
 
 public class Leaf {
     private static final int MIN_LEAF_SIZE = 6;
@@ -91,9 +92,10 @@ public class Leaf {
 
             // place the room within the Leaf, but don't put it right
             // against the side of the Leaf (that would merge rooms together)
-            int x = (int) roomSize.x;
-            int y = (int) roomSize.y;
-            roomPos = new Vector2(randomNumber(1, width - x - 1), randomNumber(1, height - y - 1));
+            int sizeX = (int) roomSize.x;
+            int sizeY = (int) roomSize.y;
+            roomPos = new Vector2(
+                    randomNumber(1, width - sizeX - 1), randomNumber(1, height - sizeY - 1));
             room = new Rectangle(x + roomPos.x, y + roomPos.y, roomSize.x, roomSize.y);
         }
     }
@@ -193,6 +195,7 @@ public class Leaf {
     }
 
     private int randomNumber(int min, int max) {
+        max += 1;
         return rand.nextInt(max - min) + min;
     }
 }
