@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.actor.Agent;
 import com.eldritch.invoken.actor.Agent.Activity;
@@ -70,9 +71,14 @@ public class FireWeapon extends Augmentation {
 
 		@Override
 		public void apply() {
-			if (target != null) {
+			if (target != null && hitTarget()) {
 				target.addEffect(new Bleed(owner, target, 5));
 			}
+		}
+		
+		private boolean hitTarget() {
+		    //return Intersector.intersectLinePolygon(p1, p2, polygon);
+		    return true;
 		}
 		
 		private Animation getAnimation() {

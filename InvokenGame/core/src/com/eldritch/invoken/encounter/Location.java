@@ -39,9 +39,9 @@ public class Location {
 	};
 	
 	private final Player player;
+	private final TiledMap map;
 	private final List<Agent> entities = new ArrayList<Agent>();
 
-	private TiledMap map;
 	private OrthogonalTiledMapRenderer renderer;
 	private Array<Rectangle> tiles = new Array<Rectangle>();
 	
@@ -49,16 +49,13 @@ public class Location {
 	private int collisionIndex;
 
 	public Location(com.eldritch.scifirpg.proto.Locations.Location data, Player player) {
+	    this(data, player, readMap(data));
+	}
+	
+	public Location(com.eldritch.scifirpg.proto.Locations.Location data, Player player,
+	        TiledMap map) {
 	    this.player = player;
-	    
-		// load the map, set the unit scale to 1/32 (1 unit == 32 pixels)
-		String mapAsset = String.format("maps/%s.tmx", data.getId());
-		AssetManager assetManager = new AssetManager();
-		assetManager.setLoader(TiledMap.class, new TmxMapLoader(
-				new InternalFileHandleResolver()));
-		assetManager.load(mapAsset, TiledMap.class);
-		assetManager.finishLoading();
-		map = assetManager.get(mapAsset);
+	    this.map = map;
 		
 		// find layers we care about
 		List<Integer> overlayList = new ArrayList<Integer>();
@@ -242,4 +239,15 @@ public class Location {
 		}
 		return tiles;
 	}
+	
+    private static TiledMap readMap(com.eldritch.scifirpg.proto.Locations.Location data) {
+        // load the map, set the unit scale to 1/32 (1 unit == 32 pixels)
+        String mapAsset = String.format("maps/%s.tmx", data.getId());
+        AssetManager assetManager = new AssetManager();
+        assetManager.setLoader(TiledMap.class, new TmxMapLoader(
+                new InternalFileHandleResolver()));
+        assetManager.load(mapAsset, TiledMap.class);
+        assetManager.finishLoading();
+        return assetManager.get(mapAsset);
+    }
 }
