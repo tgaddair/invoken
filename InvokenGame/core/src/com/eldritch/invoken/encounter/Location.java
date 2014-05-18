@@ -26,6 +26,8 @@ import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.actor.Agent;
 import com.eldritch.invoken.actor.Npc;
 import com.eldritch.invoken.actor.Player;
+import com.eldritch.invoken.gfx.Light;
+import com.eldritch.invoken.gfx.LightManager;
 import com.eldritch.scifirpg.proto.Locations.Encounter;
 import com.eldritch.scifirpg.proto.Locations.Encounter.ActorParams.ActorScenario;
 import com.google.common.primitives.Ints;
@@ -41,6 +43,7 @@ public class Location {
     private final Player player;
     private final TiledMap map;
     private final List<Agent> entities = new ArrayList<Agent>();
+    private final LightManager lightManager = new LightManager();
 
     private OrthogonalTiledMapRenderer renderer;
     private Array<Rectangle> tiles = new Array<Rectangle>();
@@ -78,6 +81,7 @@ public class Location {
         Vector2 spawn = getSpawnLocation();
         player.setPosition(spawn.x, spawn.y);
         addActor(player);
+        lightManager.addLight(new Light(player));
 
         // find spawn nodes
         String asset = "sprite/characters/male-fair.png";
@@ -140,7 +144,7 @@ public class Location {
     private void addActor(Agent actor) {
         entities.add(actor);
     }
-
+    
     public void render(float delta, OrthographicCamera camera, TextureRegion selector) {
         // update the player (process input, collision detection, position
         // update)
@@ -159,7 +163,7 @@ public class Location {
         // camera sees and render the map
         renderer.setView(camera);
         renderer.render();
-
+        
         // sort drawables by descending y
         Collections.sort(entities, new Comparator<Agent>() {
             @Override
@@ -167,7 +171,10 @@ public class Location {
                 return Float.compare(a2.getPosition().y, a1.getPosition().y);
             }
         });
-
+        
+        // draw lights
+        lightManager.render(renderer, delta);
+        
         // render the drawables
         for (Agent actor : entities) {
             if (actor == player.getTarget()) {

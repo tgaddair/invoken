@@ -41,8 +41,10 @@ public class LocationGenerator {
         map.getLayers().add(base);
         map.getLayers().add(createTrimLayer(base));
         map.getLayers().add(createOverlayLayer(base));
-        map.getLayers().add(createCollisionLayer(base));
-        map.getLayers().add(createSpawnLayer(width, height));
+        
+        TiledMapTileLayer collision = createCollisionLayer(base);
+        map.getLayers().add(collision);
+        map.getLayers().add(createSpawnLayer(base, collision, width, height));
 
         com.eldritch.scifirpg.proto.Locations.Location proto = 
                 com.eldritch.scifirpg.proto.Locations.Location.getDefaultInstance();
@@ -59,15 +61,26 @@ public class LocationGenerator {
         return map;
     }
 
-    private TiledMapTileLayer createSpawnLayer(int width, int height) {
+    private TiledMapTileLayer createSpawnLayer(TiledMapTileLayer base, TiledMapTileLayer collision,
+            int width, int height) {
         TiledMapTileLayer layer = new TiledMapTileLayer(width, height, PX, PX);
         layer.setVisible(false);
         layer.setOpacity(1.0f);
         layer.setName("player");
-
-        AtlasRegion region = getAtlas().findRegion("test-biome/floor1");
+        
+        AtlasRegion region = atlas.findRegion("test-biome/floor1");
         TiledMapTile tile = new StaticTiledMapTile(region);
-        addCell(layer, tile, 50, 50);
+        
+        for (int x = 0; x < base.getWidth(); x++) {
+            for (int y = 0; y < base.getHeight(); y++) {
+                Cell cell = base.getCell(x, y);
+                Cell collisionCell = collision.getCell(x, y);
+                if (cell != null && cell.getTile() == ground && collisionCell == null) {
+                    addCell(layer, tile, x + 1, y + 1);
+                    break;
+                }
+            }
+        }
 
         return layer;
     }
