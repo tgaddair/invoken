@@ -307,7 +307,7 @@ public class LocationGenerator {
                 // if this Leaf is not already split...
                 if (l.leftChild == null && l.rightChild == null) {
                     // if this Leaf is too big, or 75% chance...
-                    if (l.width > MAX_LEAF_SIZE || l.height > MAX_LEAF_SIZE || Math.random() > 0.25) {
+                    if (l.width > MAX_LEAF_SIZE || l.height > MAX_LEAF_SIZE || Math.random() < 0.75) {
                         if (l.split()) { // split the Leaf!
                             // if we did split, push the child leafs to the list so we can loop into
                             // them next

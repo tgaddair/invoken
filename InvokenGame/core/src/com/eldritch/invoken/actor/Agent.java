@@ -519,7 +519,7 @@ public abstract class Agent implements Entity {
         startX = (int) (relativeX);
         endX = (int) (relativeX + getWidth());
         startY = (int) (relativeY);
-        endY = (int) (relativeY + actorRect.height);
+        endY = (int) (relativeY + getHeight());
         screen.getTiles(startX, startY, endX, endY, screen.getTiles());
 
         Array<Agent> agents = getCollisionActors(screen);
@@ -542,7 +542,7 @@ public abstract class Agent implements Entity {
         startY = (int) (relativeY);
         endY = (int) (relativeY + getHeight());
         startX = (int) (relativeX);
-        endX = (int) (relativeX + actorRect.width);
+        endX = (int) (relativeX + getWidth());
         screen.getTiles(startX, startY, endX, endY, screen.getTiles());
 
         float oldY = actorRect.y;
