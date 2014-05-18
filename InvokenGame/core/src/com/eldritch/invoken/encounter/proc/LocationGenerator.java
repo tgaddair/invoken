@@ -13,6 +13,7 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
 import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.actor.Player;
 import com.eldritch.invoken.encounter.Location;
@@ -22,9 +23,13 @@ public class LocationGenerator {
     private static final int SCALE = 2;
     private static final int MAX_LEAF_SIZE = 35;
     private final TextureAtlas atlas;
+    private final TiledMapTile ground;
 
     public LocationGenerator() {
         atlas = new TextureAtlas(Gdx.files.internal("image-atlases/pages.atlas"));
+
+        AtlasRegion region = atlas.findRegion("test-biome/floor4");
+        ground = new StaticTiledMapTile(region);
     }
 
     public Location generate(Player player) {
@@ -34,7 +39,10 @@ public class LocationGenerator {
         List<Leaf> leafs = createLeaves(width / SCALE, height / SCALE);
 
         // create layers
-        map.getLayers().add(createBaseLayer(leafs, width, height));
+        TiledMapTileLayer base = createBaseLayer(leafs, width, height);
+        map.getLayers().add(base);
+        map.getLayers().add(createTrimLayer(base));
+        map.getLayers().add(createOverlayLayer(base));
         map.getLayers().add(createSpawnLayer(width, height));
 
         com.eldritch.scifirpg.proto.Locations.Location proto = com.eldritch.scifirpg.proto.Locations.Location
@@ -60,32 +68,9 @@ public class LocationGenerator {
 
         AtlasRegion region = getAtlas().findRegion("test-biome/floor1");
         TiledMapTile tile = new StaticTiledMapTile(region);
-        Cell cell = new Cell();
-        cell.setTile(tile);
-        layer.setCell(50, 50, cell);
+        addCell(layer, tile, 50, 50);
 
         return layer;
-    }
-    
-    private void addRoom(Rectangle room, TiledMapTileLayer layer, TiledMapTile tile) {
-        int left = (int) room.x;
-        int right = (int) (room.x + room.width);
-        int top = (int) room.y;
-        int bottom = (int) (room.y + room.height);
-        InvokenGame.log(String.format("left %d, right %d, top %d, bottom %d", left, right, top, bottom));
-        for (int i = left; i <= right; i++) {
-            for (int j = top; j <= bottom; j++) {
-                int startX = i * SCALE;
-                int startY = j * SCALE;
-                for (int x = 0; x < SCALE; x++) {
-                    for (int y = 0; y < SCALE; y++) {
-                        Cell cell = new Cell();
-                        cell.setTile(tile);
-                        layer.setCell(startX + x, startY + y, cell);
-                    }
-                }
-            }
-        }
     }
 
     private TiledMapTileLayer createBaseLayer(List<Leaf> leafs, int width, int height) {
@@ -94,23 +79,117 @@ public class LocationGenerator {
         layer.setOpacity(1.0f);
         layer.setName("base");
 
-        AtlasRegion region = getAtlas().findRegion("test-biome/floor1");
-        TiledMapTile tile = new StaticTiledMapTile(region);
-
-        int rooms = 0;
         for (Leaf leaf : leafs) {
             if (leaf.room != null) {
-                rooms++;
-                addRoom(leaf.room, layer, tile);
+                addRoom(leaf.room, layer, ground);
             }
             for (Rectangle hall : leaf.halls) {
-                rooms++;
-                addRoom(hall, layer, tile);
+                addRoom(hall, layer, ground);
             }
         }
-        InvokenGame.log("rooms: " + rooms);
+
+        // add walls
+        addWalls(layer);
 
         return layer;
+    }
+
+    private TiledMapTileLayer createTrimLayer(TiledMapTileLayer base) {
+        TiledMapTileLayer layer = new TiledMapTileLayer(base.getWidth(), base.getHeight(), PX, PX);
+        layer.setVisible(true);
+        layer.setOpacity(1.0f);
+        layer.setName("trim");
+
+        TiledMapTile leftTrim = new StaticTiledMapTile(atlas.findRegion("test-biome/left-trim"));
+        TiledMapTile rightTrim = new StaticTiledMapTile(atlas.findRegion("test-biome/right-trim"));
+
+        for (int x = 0; x < base.getWidth(); x++) {
+            for (int y = 0; y < base.getHeight(); y++) {
+                Cell cell = base.getCell(x, y);
+                if (cell != null) {
+                    if (x - 1 >= 0 && base.getCell(x - 1, y) == null) {
+                        // empty space to the left
+                        addCell(layer, leftTrim, x - 1, y);
+                    }
+                    if (x + 1 < base.getWidth() && base.getCell(x + 1, y) == null) {
+                        // empty space to the right
+                        addCell(layer, rightTrim, x + 1, y);
+                    }
+                }
+            }
+        }
+
+        return layer;
+    }
+    
+    private TiledMapTileLayer createOverlayLayer(TiledMapTileLayer base) {
+        TiledMapTileLayer layer = new TiledMapTileLayer(base.getWidth(), base.getHeight(), PX, PX);
+        layer.setVisible(true);
+        layer.setOpacity(1.0f);
+        layer.setName("overlay");
+
+        TiledMapTile belowTrim = new StaticTiledMapTile(atlas.findRegion("test-biome/below-trim"));
+
+        for (int x = 0; x < base.getWidth(); x++) {
+            for (int y = 0; y < base.getHeight(); y++) {
+                Cell cell = base.getCell(x, y);
+                if (cell != null) {
+                    if (y - 1 >= 0 && base.getCell(x, y - 1) == null) {
+                        // empty space below
+                        addCell(layer, belowTrim, x, y - 1);
+                    }
+                }
+            }
+        }
+
+        return layer;
+    }
+
+    private void addWalls(TiledMapTileLayer layer) {
+        TiledMapTile midWallTop = new StaticTiledMapTile(
+                atlas.findRegion("test-biome/mid-wall-top"));
+        TiledMapTile midWallCenter = new StaticTiledMapTile(
+                atlas.findRegion("test-biome/mid-wall-center"));
+        TiledMapTile midWallBottom = new StaticTiledMapTile(
+                atlas.findRegion("test-biome/mid-wall-bottom"));
+
+        for (int x = 0; x < layer.getWidth(); x++) {
+            for (int y = 0; y < layer.getHeight(); y++) {
+                Cell cell = layer.getCell(x, y);
+                if (cell != null && cell.getTile() == ground) {
+                    // check for empty space above
+                    if (y + 3 < layer.getHeight() && layer.getCell(x, y + 3) == null) {
+                        addCell(layer, midWallBottom, x, y + 1);
+                        addCell(layer, midWallCenter, x, y + 2);
+                        addCell(layer, midWallTop, x, y + 3);
+                    }
+                }
+            }
+        }
+    }
+
+    private void addRoom(Rectangle room, TiledMapTileLayer layer, TiledMapTile tile) {
+        int left = (int) room.x;
+        int right = (int) (room.x + room.width);
+        int top = (int) room.y;
+        int bottom = (int) (room.y + room.height);
+        for (int i = left; i <= right; i++) {
+            for (int j = top; j <= bottom; j++) {
+                int startX = i * SCALE;
+                int startY = j * SCALE;
+                for (int x = 0; x < SCALE; x++) {
+                    for (int y = 0; y < SCALE; y++) {
+                        addCell(layer, tile, startX + x, startY + y);
+                    }
+                }
+            }
+        }
+    }
+
+    private void addCell(TiledMapTileLayer layer, TiledMapTile tile, int x, int y) {
+        Cell cell = new Cell();
+        cell.setTile(tile);
+        layer.setCell(x, y, cell);
     }
 
     private List<Leaf> createLeaves(int width, int height) {
