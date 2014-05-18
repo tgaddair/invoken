@@ -158,6 +158,9 @@ public class Location {
         camera.position.x = Math.round(position.x * scale) / scale;
         camera.position.y = Math.round(position.y * scale) / scale;
         camera.update();
+        
+        // draw lights
+        lightManager.render(renderer, delta);
 
         // set the tile map render view based on what the
         // camera sees and render the map
@@ -171,9 +174,6 @@ public class Location {
                 return Float.compare(a2.getPosition().y, a1.getPosition().y);
             }
         });
-        
-        // draw lights
-        lightManager.render(renderer, delta);
         
         // render the drawables
         for (Agent actor : entities) {
