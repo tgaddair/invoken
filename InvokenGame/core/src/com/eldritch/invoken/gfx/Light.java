@@ -19,7 +19,7 @@ public abstract class Light {
 
     public void render(Batch batch, float zAngle) {
         float lightSize = oscillate
-                ? (magnitude + 0.25f * (float) Math.sin(zAngle) + .2f * MathUtils.random())
+                ? (magnitude * 0.75f + 0.25f * (float) Math.sin(zAngle) + .2f * MathUtils.random())
                 : magnitude;
         Vector2 position = getPosition();
         batch.draw(light,
@@ -37,7 +37,7 @@ public abstract class Light {
         private final Agent owner;
         
         public AgentLight(Agent owner) {
-            super(20, false);
+            super(15, false);
             this.owner = owner;
         }
 
@@ -51,7 +51,7 @@ public abstract class Light {
         private final Vector2 position;
         
         public StaticLight(Vector2 position) {
-            super(10, Math.random() < .15);
+            super(10, Math.random() < 0.2);
             this.position = position;
         }
 
