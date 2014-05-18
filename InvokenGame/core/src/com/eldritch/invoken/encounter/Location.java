@@ -27,6 +27,7 @@ import com.eldritch.invoken.actor.Agent;
 import com.eldritch.invoken.actor.Npc;
 import com.eldritch.invoken.actor.Player;
 import com.eldritch.invoken.gfx.Light;
+import com.eldritch.invoken.gfx.Light.AgentLight;
 import com.eldritch.invoken.gfx.LightManager;
 import com.eldritch.scifirpg.proto.Locations.Encounter;
 import com.eldritch.scifirpg.proto.Locations.Encounter.ActorParams.ActorScenario;
@@ -81,7 +82,7 @@ public class Location {
         Vector2 spawn = getSpawnLocation();
         player.setPosition(spawn.x, spawn.y);
         addActor(player);
-        lightManager.addLight(new Light(player));
+        lightManager.addLight(new AgentLight(player));
 
         // find spawn nodes
         String asset = "sprite/characters/male-fair.png";
@@ -96,6 +97,12 @@ public class Location {
         }
 
         Gdx.app.log(InvokenGame.LOG, "start");
+    }
+    
+    public void addLights(List<Light> lights) {
+        for (Light light : lights) {
+            this.lightManager.addLight(light);
+        }
     }
 
     public static Pool<Rectangle> getRectPool() {

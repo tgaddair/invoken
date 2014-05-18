@@ -13,8 +13,11 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
 import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.actor.Player;
 import com.eldritch.invoken.encounter.Location;
+import com.eldritch.invoken.gfx.Light;
+import com.eldritch.invoken.gfx.Light.StaticLight;
 
 public class LocationGenerator {
     private static final int PX = 32;
@@ -22,12 +25,15 @@ public class LocationGenerator {
     private static final int MAX_LEAF_SIZE = 35;
     private final TextureAtlas atlas;
     private final TiledMapTile ground;
+    private final TiledMapTile midWallCenter;
 
     public LocationGenerator() {
         atlas = new TextureAtlas(Gdx.files.internal("image-atlases/pages.atlas"));
 
         AtlasRegion region = atlas.findRegion("test-biome/floor4");
         ground = new StaticTiledMapTile(region);
+        midWallCenter = new StaticTiledMapTile(
+                atlas.findRegion("test-biome/mid-wall-center"));
     }
 
     public Location generate(Player player) {
@@ -35,11 +41,16 @@ public class LocationGenerator {
         int height = 100;
         TiledMap map = getBaseMap(width, height);
         List<Leaf> leafs = createLeaves(width / SCALE, height / SCALE);
+        
+        List<Light> lights = new ArrayList<Light>();
 
         // create layers
         TiledMapTileLayer base = createBaseLayer(leafs, width, height);
         map.getLayers().add(base);
-        map.getLayers().add(createTrimLayer(base));
+        
+        TiledMapTileLayer trim = createTrimLayer(base);
+        addLights(trim, base, lights);
+        map.getLayers().add(trim);
         map.getLayers().add(createOverlayLayer(base));
         
         TiledMapTileLayer collision = createCollisionLayer(base);
@@ -48,7 +59,9 @@ public class LocationGenerator {
 
         com.eldritch.scifirpg.proto.Locations.Location proto = 
                 com.eldritch.scifirpg.proto.Locations.Location.getDefaultInstance();
-        return new Location(proto, player, map);
+        Location location = new Location(proto, player, map);
+        location.addLights(lights);
+        return location;
     }
 
     private TiledMap getBaseMap(int width, int height) {
@@ -114,7 +127,7 @@ public class LocationGenerator {
 
         TiledMapTile leftTrim = new StaticTiledMapTile(atlas.findRegion("test-biome/left-trim"));
         TiledMapTile rightTrim = new StaticTiledMapTile(atlas.findRegion("test-biome/right-trim"));
-
+        
         for (int x = 0; x < base.getWidth(); x++) {
             for (int y = 0; y < base.getHeight(); y++) {
                 Cell cell = base.getCell(x, y);
@@ -132,6 +145,28 @@ public class LocationGenerator {
         }
 
         return layer;
+    }
+    
+    private void addLights(TiledMapTileLayer layer, TiledMapTileLayer base, List<Light> lights) {
+        TiledMapTile light = new StaticTiledMapTile(atlas.findRegion("test-biome/light1"));
+        for (int y = 0; y < base.getHeight(); y++) {
+            // scan by row so we can properly distribute lights
+            int lastLight = 0;
+            for (int x = 0; x < base.getWidth(); x++) {
+                Cell cell = base.getCell(x, y);
+                if (cell != null && cell.getTile() == midWallCenter) {
+                    // with some probability, add a light to the wall
+                    if (lastLight == 1 && Math.random() < 0.75) {
+                        addCell(layer, light, x, y);
+                        lights.add(new StaticLight(new Vector2(x, y)));
+                    }
+                    lastLight = (lastLight + 1) % 5;
+                } else {
+                    // distribute along consecutive walls, so reset when there's a gap
+                    lastLight = 0;
+                }
+            }
+        }
     }
     
     private TiledMapTileLayer createOverlayLayer(TiledMapTileLayer base) {
@@ -179,8 +214,6 @@ public class LocationGenerator {
     private void addWalls(TiledMapTileLayer layer) {
         TiledMapTile midWallTop = new StaticTiledMapTile(
                 atlas.findRegion("test-biome/mid-wall-top"));
-        TiledMapTile midWallCenter = new StaticTiledMapTile(
-                atlas.findRegion("test-biome/mid-wall-center"));
         TiledMapTile midWallBottom = new StaticTiledMapTile(
                 atlas.findRegion("test-biome/mid-wall-bottom"));
 

@@ -16,8 +16,8 @@ import com.eldritch.invoken.screens.AbstractScreen;
 
 public class LightManager {
     // values passed to the shader
-    public static final float ambientIntensity = .7f;
-    public static final Vector3 ambientColor = new Vector3(0.3f, 0.3f, 0.7f);
+    public static final float ambientIntensity = .4f;
+    public static final Vector3 ambientColor = new Vector3(0.72f, 0.25f, 0.05f);
 
     // used to make the light flicker
     public static final float zSpeed = 15.0f;
@@ -32,7 +32,7 @@ public class LightManager {
     final String defaultPixelShader = new FileHandle("shader/defaultPixelShader.glsl").readString();
     final String ambientPixelShader = new FileHandle("shader/ambientPixelShader.glsl").readString();
     final String vertexShader = new FileHandle("shader/vertexShader.glsl").readString();
-    final String lightPixelShader =  new FileHandle("shader/lightPixelShader.glsl").readString();
+    final String lightPixelShader = new FileHandle("shader/lightPixelShader.glsl").readString();
     final String finalPixelShader = new FileHandle("shader/pixelShader.glsl").readString();
 
     private final List<Light> lights = new ArrayList<Light>();
@@ -44,10 +44,10 @@ public class LightManager {
         ambientShader = new ShaderProgram(vertexShader, ambientPixelShader);
         lightShader = new ShaderProgram(vertexShader, lightPixelShader);
         finalShader = new ShaderProgram(vertexShader, finalPixelShader);
-        
+
         ambientShader.begin();
-        ambientShader.setUniformf("ambientColor", ambientColor.x, ambientColor.y,
-                ambientColor.z, ambientIntensity);
+        ambientShader.setUniformf("ambientColor", ambientColor.x, ambientColor.y, ambientColor.z,
+                ambientIntensity);
         ambientShader.end();
 
         lightShader.begin();
@@ -102,11 +102,10 @@ public class LightManager {
         fbo.getColorBufferTexture().bind(1); // this is important! bind the FBO to the 2nd texture
                                              // unit
         for (Light light : lights) {
+            // we force the binding of a texture on first texture unit to avoid artifacts
+            // this is because our default and ambient shaders don't use multi-texturing...
+            // you can basically bind anything, it doesn't matter
             light.bind(0);
         }
-        // light.bind(0); //we force the binding of a texture on first texture unit to avoid
-        // artefacts
-        // this is because our default and ambiant shader dont use multi texturing...
-        // youc can basically bind anything, it doesnt matter
     }
 }
