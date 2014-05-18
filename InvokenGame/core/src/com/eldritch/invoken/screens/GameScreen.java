@@ -24,6 +24,9 @@ import com.eldritch.invoken.ui.InventoryMenu;
 import com.eldritch.invoken.ui.LootMenu;
 
 public class GameScreen extends AbstractScreen implements InputProcessor {
+    public static final float MIN_ZOOM = 1.0f;
+    public static final float MAX_ZOOM = 10.0f; // for debug purposes; 2 or 1.5 is more reasonable
+    
 	public static final AssetManager textureManager = new AssetManager();
 	
 	private final DialogueMenu dialogue;
@@ -252,7 +255,10 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 
 	@Override
 	public boolean scrolled(int amount) {
-		return false;
+	    float zoom = camera.zoom + amount * 0.1f;
+	    zoom = Math.min(Math.max(zoom, MIN_ZOOM), MAX_ZOOM);
+	    camera.zoom = zoom;
+		return true;
 	}
 	
 	public static TextureRegion[][] getRegions(String assetName, int w, int h) {
