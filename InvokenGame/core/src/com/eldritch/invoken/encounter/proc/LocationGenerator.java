@@ -13,8 +13,6 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
 import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
 import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.math.Vector2;
-import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.actor.Player;
 import com.eldritch.invoken.encounter.Location;
 
@@ -43,10 +41,11 @@ public class LocationGenerator {
         map.getLayers().add(base);
         map.getLayers().add(createTrimLayer(base));
         map.getLayers().add(createOverlayLayer(base));
+        map.getLayers().add(createCollisionLayer(base));
         map.getLayers().add(createSpawnLayer(width, height));
 
-        com.eldritch.scifirpg.proto.Locations.Location proto = com.eldritch.scifirpg.proto.Locations.Location
-                .getDefaultInstance();
+        com.eldritch.scifirpg.proto.Locations.Location proto = 
+                com.eldritch.scifirpg.proto.Locations.Location.getDefaultInstance();
         return new Location(proto, player, map);
     }
 
@@ -129,7 +128,6 @@ public class LocationGenerator {
         layer.setName("overlay");
 
         TiledMapTile belowTrim = new StaticTiledMapTile(atlas.findRegion("test-biome/below-trim"));
-
         for (int x = 0; x < base.getWidth(); x++) {
             for (int y = 0; y < base.getHeight(); y++) {
                 Cell cell = base.getCell(x, y);
@@ -138,6 +136,26 @@ public class LocationGenerator {
                         // empty space below
                         addCell(layer, belowTrim, x, y - 1);
                     }
+                }
+            }
+        }
+
+        return layer;
+    }
+    
+    private TiledMapTileLayer createCollisionLayer(TiledMapTileLayer base) {
+        TiledMapTileLayer layer = new TiledMapTileLayer(base.getWidth(), base.getHeight(), PX, PX);
+        layer.setVisible(true);
+        layer.setOpacity(1.0f);
+        layer.setName("collision");
+
+        TiledMapTile collision = new StaticTiledMapTile(atlas.findRegion("markers/collision"));
+        for (int x = 0; x < base.getWidth(); x++) {
+            for (int y = 0; y < base.getHeight(); y++) {
+                Cell cell = base.getCell(x, y);
+                if (cell == null || cell.getTile() != ground) {
+                    // empty space
+                    addCell(layer, collision, x, y);
                 }
             }
         }
