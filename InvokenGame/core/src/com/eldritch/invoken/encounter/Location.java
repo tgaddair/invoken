@@ -150,8 +150,9 @@ public class Location {
 
         // let the camera follow the player
         Vector2 position = player.getPosition();
-        camera.position.x = position.x;
-        camera.position.y = position.y;
+        float scale = 32;
+        camera.position.x = Math.round(position.x * scale) / scale;
+        camera.position.y = Math.round(position.y * scale) / scale;
         camera.update();
 
         // set the tile map render view based on what the
