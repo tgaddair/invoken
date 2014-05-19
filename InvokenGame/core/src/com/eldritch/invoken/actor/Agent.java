@@ -15,6 +15,7 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
@@ -344,12 +345,32 @@ public abstract class Agent implements Entity {
         return target != null;
     }
 
-    public boolean canTarget() {
-        return canTarget(target);
+    public boolean canTarget(Location location) {
+        return canTarget(target, location);
     }
     
-    public boolean canTarget(Agent other) {
-        return dst2(other) < 175;
+    public boolean canTarget(Agent other, Location location) {
+        // within distance
+        boolean success = dst2(other) < 175;
+        
+        // field of view: compute angle between character-character and forward vectors
+        
+        // view obstruction: intersect character-character segment with collision tiles
+        int startX = (int) Math.floor(Math.min(position.x, other.position.x));
+        int startY = (int) Math.floor(Math.min(position.y, other.position.y));
+        int endX = (int) Math.ceil(Math.max(position.x, other.position.x));
+        int endY = (int) Math.ceil(Math.max(position.y, other.position.y));
+        Array<Rectangle> tiles = location.getTiles(startX, startY, endX, endY);
+        Vector2 tmp = new Vector2();
+        for (Rectangle tile : tiles) {
+            float r = Math.max(tile.width, tile.height);
+            if (Intersector.intersectSegmentCircle(
+                    position, other.position, tile.getCenter(tmp), r)) {
+                return false;
+            }
+        }
+        
+        return success;
     }
 
     public float getAttackScale(Agent other) {
@@ -389,7 +410,7 @@ public abstract class Agent implements Entity {
         }
     }
 
-    public void update(float delta, Location screen) {
+    public void update(float delta, Location location) {
         if (delta == 0)
             return;
         stateTime += delta;
@@ -418,14 +439,14 @@ public abstract class Agent implements Entity {
             }
 
             // take conscious action
-            attemptTakeAction(delta, screen);
+            attemptTakeAction(delta, location);
         } else if (activity != Activity.Death) {
             // kill the agent
             onDeath();
         }
 
         // remove target if we're too far away from them
-        if (hasTarget() && !canTarget()) {
+        if (hasTarget() && !canTarget(location)) {
             target = null;
         }
 
@@ -464,7 +485,7 @@ public abstract class Agent implements Entity {
             velocity.x = 0;
             velocity.y = 0;
         } else {
-            move(delta, screen);
+            move(delta, location);
         }
     }
 

@@ -74,9 +74,9 @@ public abstract class AttackRoutine extends MovementRoutine {
         return current;
     }
 
-    private void attack(float delta, Location screen) {
+    private void attack(float delta, Location location) {
         elapsed += delta;
-        if (npc.getTarget() == null || !npc.canTarget()) {
+        if (npc.getTarget() == null || !npc.canTarget(location)) {
             // can't attack invalid targets
             return;
         }
@@ -89,11 +89,11 @@ public abstract class AttackRoutine extends MovementRoutine {
     }
 
     @Override
-    protected void doMove(Vector2 velocityDelta, Location screen) {
+    protected void doMove(Vector2 velocityDelta, Location location) {
         if (shouldPursue()) {
-            pursueTarget(npc.getClearTarget(screen), velocityDelta, screen);
+            pursueTarget(npc.getClearTarget(location), velocityDelta, location);
         } else if (shouldFlee()) {
-            fleeTarget(getTargetPosition(), velocityDelta, screen);
+            fleeTarget(getTargetPosition(), velocityDelta, location);
         }
     }
 

@@ -230,7 +230,7 @@ public class Location {
     public List<Agent> getNeighbors(Agent agent, List<Agent> neighbors, List<Agent> actors) {
         neighbors.clear();
         for (Agent other : actors) {
-            if (agent != other && agent.canTarget(other)) {
+            if (agent != other && agent.canTarget(other, this)) {
                 neighbors.add(other);
             }
         }
@@ -240,6 +240,10 @@ public class Location {
     public boolean isObstacle(int x, int y) {
         TiledMapTileLayer layer = (TiledMapTileLayer) map.getLayers().get(collisionIndex);
         return layer.getCell(x, y) != null;
+    }
+    
+    public Array<Rectangle> getTiles(int startX, int startY, int endX, int endY) {
+        return getTiles(startX, startY, endX, endY, getTiles());
     }
 
     public Array<Rectangle> getTiles(int startX, int startY, int endX, int endY,
