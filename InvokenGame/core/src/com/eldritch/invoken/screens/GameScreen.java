@@ -65,7 +65,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false, (w / h) * 10, 10);
-		camera.zoom = 1.5f;
+		camera.zoom = 1.25f;
 		camera.update();
 
 		font = new BitmapFont();
@@ -87,7 +87,8 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 //		        InvokenGame.LOCATION_READER.readAsset("NostorraPlaza"), player);
 		
 		LocationGenerator generator = new LocationGenerator();
-		location = generator.generate(player);
+		location = generator.generate(
+		        InvokenGame.LOCATION_READER.readAsset("NostorraUnderworks"), player);
 		
 		// create player menus
 		inventoryMenu = new InventoryMenu(player, getSkin());

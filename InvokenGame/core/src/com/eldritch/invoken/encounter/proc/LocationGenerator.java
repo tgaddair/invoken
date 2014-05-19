@@ -2,6 +2,7 @@ package com.eldritch.invoken.encounter.proc;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -15,15 +16,19 @@ import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.InvokenGame;
+import com.eldritch.invoken.actor.Agent;
 import com.eldritch.invoken.actor.Player;
 import com.eldritch.invoken.encounter.Location;
 import com.eldritch.invoken.gfx.Light;
 import com.eldritch.invoken.gfx.Light.StaticLight;
+import com.eldritch.scifirpg.proto.Locations.Encounter;
+import com.eldritch.scifirpg.proto.Locations.Encounter.ActorParams.ActorScenario;
 
 public class LocationGenerator {
     private static final int PX = 32;
     private static final int SCALE = 2;
     private static final int MAX_LEAF_SIZE = 35;
+    private final Random rand = new Random();
     private final TextureAtlas atlas;
     private final TiledMapTile ground;
     private final TiledMapTile midWallCenter;
@@ -40,7 +45,7 @@ public class LocationGenerator {
         rightTrim = new StaticTiledMapTile(atlas.findRegion("test-biome/right-trim"));
     }
 
-    public Location generate(Player player) {
+    public Location generate(com.eldritch.scifirpg.proto.Locations.Location proto, Player player) {
         int width = 100;
         int height = 100;
         TiledMap map = getBaseMap(width, height);
@@ -55,7 +60,7 @@ public class LocationGenerator {
         TiledMapTileLayer trim = createTrimLayer(base);
         addLights(trim, base, lights);
         map.getLayers().add(trim);
-        
+
         TiledMapTileLayer overlay = createOverlayLayer(base);
         map.getLayers().add(overlay);
         map.getLayers().add(createOverlayTrimLayer(base, overlay));
@@ -64,11 +69,59 @@ public class LocationGenerator {
         map.getLayers().add(collision);
         map.getLayers().add(createSpawnLayer(base, collision, width, height));
 
-        com.eldritch.scifirpg.proto.Locations.Location proto = com.eldritch.scifirpg.proto.Locations.Location
-                .getDefaultInstance();
         Location location = new Location(proto, player, map);
         location.addLights(lights);
+
+        List<Agent> entities = createEntities(base, leafs, proto.getEncounterList(), location);
+        location.addEntities(entities);
+
         return location;
+    }
+
+    private List<Agent> createEntities(TiledMapTileLayer layer, List<Leaf> leafs,
+            List<Encounter> encounters, Location location) {
+        List<Agent> entities = new ArrayList<Agent>();
+
+        double total = getTotalWeight(encounters);
+        for (Leaf leaf : leafs) {
+            if (leaf.room != null) {
+                addEncounter(leaf, entities, encounters, location, layer, total);
+            }
+        }
+
+        return entities;
+    }
+
+    private void addEncounter(Leaf leaf, List<Agent> entities, List<Encounter> encounters,
+            Location location, TiledMapTileLayer layer, double total) {
+        String asset = "sprite/characters/male-fair.png"; // TODO: add to proto
+        double target = Math.random() * total;
+        double sum = 0.0;
+        for (Encounter encounter : encounters) {
+            if (encounter.getType() == Encounter.Type.ACTOR) {
+                sum += encounter.getWeight();
+                if (sum >= target) {
+                    for (ActorScenario scenario : encounter.getActorParams().getActorScenarioList()) {
+                        Vector2 position = getPoint(leaf.room);
+                        if (layer.getCell((int) position.x, (int) position.y) != null) {
+                            entities.add(location.createTestNpc(position, scenario.getActorId(),
+                                    asset));
+                        }
+                    }
+                    return;
+                }
+            }
+        }
+    }
+
+    private double getTotalWeight(List<Encounter> encounters) {
+        double total = 0.0;
+        for (Encounter encounter : encounters) {
+            if (encounter.getType() == Encounter.Type.ACTOR) {
+                total += encounter.getWeight();
+            }
+        }
+        return total;
     }
 
     private TiledMap getBaseMap(int width, int height) {
@@ -203,7 +256,7 @@ public class LocationGenerator {
         layer.setVisible(true);
         layer.setOpacity(1.0f);
         layer.setName("overlay-trim");
-        
+
         TiledMapTile overlayLeftTrim = new StaticTiledMapTile(
                 atlas.findRegion("test-biome/overlay-left-trim"));
         TiledMapTile overlayRightTrim = new StaticTiledMapTile(
@@ -294,6 +347,18 @@ public class LocationGenerator {
                 }
             }
         }
+    }
+
+    public Vector2 getPoint(Rectangle rect) {
+        int left = (int) rect.x * SCALE;
+        int right = (int) (left + rect.width * SCALE);
+        int top = (int) rect.y * SCALE;
+        int bottom = (int) (top + rect.height * SCALE);
+        return new Vector2(randomNumber(left + 1, right - 2), randomNumber(top + 1, bottom - 2));
+    }
+
+    private int randomNumber(int min, int max) {
+        return rand.nextInt(max - min + 1) + min;
     }
 
     private void addRoom(Rectangle room, TiledMapTileLayer layer, TiledMapTile tile) {

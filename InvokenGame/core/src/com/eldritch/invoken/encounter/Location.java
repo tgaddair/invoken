@@ -6,7 +6,6 @@ import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
 import com.badlogic.gdx.graphics.Color;
@@ -44,6 +43,7 @@ public class Location {
     private final Player player;
     private final TiledMap map;
     private final List<Agent> entities = new ArrayList<Agent>();
+    private final List<Agent> activeEntities = new ArrayList<Agent>();
     private final LightManager lightManager = new LightManager();
 
     private OrthogonalTiledMapRenderer renderer;
@@ -56,7 +56,8 @@ public class Location {
         this(data, player, readMap(data));
     }
 
-    public Location(com.eldritch.scifirpg.proto.Locations.Location data, Player player, TiledMap map) {
+    public Location(com.eldritch.scifirpg.proto.Locations.Location data, Player player,
+            TiledMap map) {
         this.player = player;
         this.map = map;
 
@@ -83,37 +84,27 @@ public class Location {
         player.setPosition(spawn.x, spawn.y);
         addActor(player);
         lightManager.addLight(new AgentLight(player));
+    }
+    
+    public void addEntities(List<Agent> entities) {
+        this.entities.addAll(entities);
+    }
 
+    public void addEntities(com.eldritch.scifirpg.proto.Locations.Location data, TiledMap map) {
         // find spawn nodes
         String asset = "sprite/characters/male-fair.png";
         for (Encounter proto : data.getEncounterList()) {
             if (proto.getType() == Encounter.Type.ACTOR) {
                 // create NPCs
-                LinkedList<Vector2> spawnNodes = getSpawnNodes(proto.getId());
+                LinkedList<Vector2> spawnNodes = getSpawnNodes(proto.getId(), map);
                 for (ActorScenario scenario : proto.getActorParams().getActorScenarioList()) {
                     addActor(createTestNpc(spawnNodes.poll(), scenario.getActorId(), asset));
                 }
             }
         }
-
-        Gdx.app.log(InvokenGame.LOG, "start");
-    }
-    
-    public void addLights(List<Light> lights) {
-        for (Light light : lights) {
-            this.lightManager.addLight(light);
-        }
     }
 
-    public static Pool<Rectangle> getRectPool() {
-        return rectPool;
-    }
-
-    public Array<Rectangle> getTiles() {
-        return tiles;
-    }
-
-    private LinkedList<Vector2> getSpawnNodes(String encounter) {
+    private static LinkedList<Vector2> getSpawnNodes(String encounter, TiledMap map) {
         LinkedList<Vector2> list = new LinkedList<Vector2>();
         TiledMapTileLayer spawnLayer = (TiledMapTileLayer) map.getLayers().get(
                 "Encounter-" + encounter);
@@ -127,6 +118,20 @@ public class Location {
             }
         }
         return list;
+    }
+
+    public void addLights(List<Light> lights) {
+        for (Light light : lights) {
+            this.lightManager.addLight(light);
+        }
+    }
+
+    public static Pool<Rectangle> getRectPool() {
+        return rectPool;
+    }
+
+    public Array<Rectangle> getTiles() {
+        return tiles;
     }
 
     private Vector2 getSpawnLocation() {
@@ -143,29 +148,34 @@ public class Location {
         return Vector2.Zero;
     }
 
-    private Npc createTestNpc(Vector2 position, String path, String asset) {
-        return new Npc(InvokenGame.ACTOR_READER.readAsset(path), position.x, position.y, asset,
+    public Npc createTestNpc(Vector2 position, String path, String asset) {
+        return createTestNpc(position.x, position.y, path, asset);
+    }
+    
+    public Npc createTestNpc(float x, float y, String path, String asset) {
+        return new Npc(InvokenGame.ACTOR_READER.readAsset(path), x, y, asset,
                 this);
     }
 
     private void addActor(Agent actor) {
         entities.add(actor);
     }
-    
+
     public void render(float delta, OrthographicCamera camera, TextureRegion selector) {
-        // update the player (process input, collision detection, position
-        // update)
-        for (Agent actor : entities) {
+        // update the player (process input, collision detection, position update)
+        getNeighbors(player, activeEntities, entities);
+        activeEntities.add(player);
+        for (Agent actor : activeEntities) {
             actor.update(delta, this);
         }
 
         // let the camera follow the player
         Vector2 position = player.getPosition();
-        float scale = 32;
+        float scale = 32 * camera.zoom;
         camera.position.x = Math.round(position.x * scale) / scale;
         camera.position.y = Math.round(position.y * scale) / scale;
         camera.update();
-        
+
         // draw lights
         lightManager.render(renderer, delta);
 
@@ -173,17 +183,17 @@ public class Location {
         // camera sees and render the map
         renderer.setView(camera);
         renderer.render();
-        
+
         // sort drawables by descending y
-        Collections.sort(entities, new Comparator<Agent>() {
+        Collections.sort(activeEntities, new Comparator<Agent>() {
             @Override
             public int compare(Agent a1, Agent a2) {
                 return Float.compare(a2.getPosition().y, a1.getPosition().y);
             }
         });
-        
+
         // render the drawables
-        for (Agent actor : entities) {
+        for (Agent actor : activeEntities) {
             if (actor == player.getTarget()) {
                 Color color = new Color(0x00FA9AFF);
                 if (!actor.isAlive()) {
@@ -212,13 +222,16 @@ public class Location {
     }
 
     public List<Agent> getActors() {
-        return entities;
+        return activeEntities;
     }
 
     public List<Agent> getNeighbors(Npc agent) {
-        List<Agent> neighbors = agent.getNeighbors();
+        return getNeighbors(agent, agent.getNeighbors(), getActors());
+    }
+    
+    public List<Agent> getNeighbors(Agent agent, List<Agent> neighbors, List<Agent> actors) {
         neighbors.clear();
-        for (Agent other : getActors()) {
+        for (Agent other : actors) {
             if (agent != other && agent.canTarget(other)) {
                 neighbors.add(other);
             }
