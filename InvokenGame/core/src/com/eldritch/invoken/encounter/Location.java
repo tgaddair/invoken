@@ -26,7 +26,6 @@ import com.eldritch.invoken.actor.Agent;
 import com.eldritch.invoken.actor.Npc;
 import com.eldritch.invoken.actor.Player;
 import com.eldritch.invoken.gfx.Light;
-import com.eldritch.invoken.gfx.Light.AgentLight;
 import com.eldritch.invoken.gfx.LightManager;
 import com.eldritch.scifirpg.proto.Locations.Encounter;
 import com.eldritch.scifirpg.proto.Locations.Encounter.ActorParams.ActorScenario;
@@ -83,7 +82,6 @@ public class Location {
         Vector2 spawn = getSpawnLocation();
         player.setPosition(spawn.x, spawn.y);
         addActor(player);
-        lightManager.addLight(new AgentLight(player));
     }
     
     public void addEntities(List<Agent> entities) {
@@ -237,10 +235,6 @@ public class Location {
             }
         }
         return neighbors;
-    }
-
-    public List<Agent> getEntities() {
-        return entities;
     }
 
     public boolean isObstacle(int x, int y) {

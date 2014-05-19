@@ -16,8 +16,8 @@ import com.eldritch.invoken.screens.AbstractScreen;
 
 public class LightManager {
     // values passed to the shader
-    public static final float ambientIntensity = .7f;
-    public static final Vector3 ambientColor = new Vector3(0.72f, 0.25f, 0.05f);
+    public static final float ambientIntensity = 0.8f;
+    public static final Vector3 ambientColor = new Vector3(0.7f, 0.7f, 0.9f);
 
     // used to make the light flicker
     public static final float zSpeed = 15.0f;

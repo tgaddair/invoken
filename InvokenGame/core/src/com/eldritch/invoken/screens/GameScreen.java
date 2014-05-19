@@ -131,7 +131,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 	}
 	
 	private void drawStats() {
-		for (Agent actor : location.getEntities()) {
+		for (Agent actor : location.getActors()) {
 			if (actor == player.getTarget() || actor == player) {
 				drawStats(actor);
 			}
@@ -189,7 +189,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 		}
 		
 		Vector3 world = camera.unproject(new Vector3(screenX, screenY, 0));
-		for (Agent entity : location.getEntities()) {
+		for (Agent entity : location.getActors()) {
 			if (entity.contains(world.x, world.y)) {
 				if (entity == player) {
 					playerClicked = true;
@@ -215,7 +215,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 		// handle entity selection
 		boolean selection = false;
 		Vector3 world = camera.unproject(new Vector3(screenX, screenY, 0));
-		for (Agent entity : location.getEntities()) {
+		for (Agent entity : location.getActors()) {
 			if (entity.contains(world.x, world.y)) {
 				if (player.getTarget() != entity) {
 					// initial selection -> set target
