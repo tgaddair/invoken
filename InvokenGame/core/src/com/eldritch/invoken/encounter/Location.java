@@ -161,8 +161,7 @@ public class Location {
 
     public void render(float delta, OrthographicCamera camera, TextureRegion selector) {
         // update the player (process input, collision detection, position update)
-        getNeighbors(player, activeEntities, entities);
-        activeEntities.add(player);
+        resetActiveEntities();
         for (Agent actor : activeEntities) {
             actor.update(delta, this);
         }
@@ -235,6 +234,15 @@ public class Location {
             }
         }
         return neighbors;
+    }
+    
+    private void resetActiveEntities() {
+        activeEntities.clear();
+        for (Agent other : entities) {
+            if (player.dst2(other) < 200) {
+                activeEntities.add(other);
+            }
+        }
     }
 
     public boolean isObstacle(int x, int y) {
