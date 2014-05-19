@@ -67,7 +67,7 @@ public abstract class Agent implements Entity {
 
     private Agent followed = null;
     private final List<Agent> followers = new ArrayList<Agent>();
-    
+
     // hostilities: enemy -> provoked
     private final Map<Agent, Boolean> hostilities = new HashMap<Agent, Boolean>();
     private boolean confused = false;
@@ -136,19 +136,19 @@ public abstract class Agent implements Entity {
     public List<Agent> getFollowers() {
         return followers;
     }
-    
+
     public boolean assaultedBy(Agent other) {
         return hostilities.containsKey(other) && hostilities.get(other);
     }
-    
+
     public boolean hostileTo(Agent other) {
         return hostilities.containsKey(other);
     }
-    
+
     public Iterable<Agent> getEnemies() {
         return hostilities.keySet();
     }
-    
+
     public boolean hasEnemies() {
         return !hostilities.isEmpty();
     }
@@ -158,7 +158,7 @@ public abstract class Agent implements Entity {
             // we've already added them as an enemy, so don't do so again
             return;
         }
-        
+
         if (attacked) {
             // we've been attacked
             // mark this hostility as provoked if we didn't assault them prior
@@ -199,7 +199,7 @@ public abstract class Agent implements Entity {
     }
 
     public abstract void setConfused(boolean confused);
-    
+
     public boolean isParalyzed() {
         return paralyzed > 0;
     }
@@ -284,7 +284,7 @@ public abstract class Agent implements Entity {
     public Vector2 getPosition() {
         return position;
     }
-    
+
     public void addVelocity(float x, float y) {
         velocity.add(x, y);
     }
@@ -348,13 +348,21 @@ public abstract class Agent implements Entity {
     public boolean canTarget(Location location) {
         return canTarget(target, location);
     }
-    
+
     public boolean canTarget(Agent other, Location location) {
-        // within distance
-        boolean success = dst2(other) < 175;
-        
+        // within distance constraint
+        if (dst2(other) > 175) {
+            return false;
+        }
+
         // field of view: compute angle between character-character and forward vectors
-        
+        Vector2 a = getForwardVector();
+        Vector2 b = other.position.cpy().sub(position).nor();
+        double theta = Math.atan2(a.x * b.y - a.y * b.x, a.x * b.x + a.y * b.y);
+        if (Math.abs(theta) > Math.PI / 2) {
+            return false;
+        }
+
         // view obstruction: intersect character-character segment with collision tiles
         int startX = (int) Math.floor(Math.min(position.x, other.position.x));
         int startY = (int) Math.floor(Math.min(position.y, other.position.y));
@@ -364,13 +372,13 @@ public abstract class Agent implements Entity {
         Vector2 tmp = new Vector2();
         for (Rectangle tile : tiles) {
             float r = Math.max(tile.width, tile.height);
-            if (Intersector.intersectSegmentCircle(
-                    position, other.position, tile.getCenter(tmp), r)) {
+            if (Intersector
+                    .intersectSegmentCircle(position, other.position, tile.getCenter(tmp), r)) {
                 return false;
             }
         }
-        
-        return success;
+
+        return true;
     }
 
     public float getAttackScale(Agent other) {
@@ -592,7 +600,7 @@ public abstract class Agent implements Entity {
         velocity.x *= DAMPING;
         velocity.y *= DAMPING;
     }
-    
+
     private Array<Agent> getCollisionActors(Location screen) {
         Array<Agent> agents = new Array<Agent>();
         for (Agent other : screen.getActors()) {
@@ -616,7 +624,7 @@ public abstract class Agent implements Entity {
         }
         return agents;
     }
-    
+
     private boolean collidesWith(Rectangle actorRect) {
         Rectangle rect = getBoundingBox(Location.getRectPool().obtain());
         boolean result = actorRect.overlaps(rect);
@@ -643,6 +651,25 @@ public abstract class Agent implements Entity {
 
     public float getY1() {
         return position.y - getWidth() / 2;
+    }
+
+    private Vector2 getForwardVector() {
+        Vector2 result = new Vector2();
+        switch (direction) {
+            case Left:
+                result.set(-1, 0);
+                break;
+            case Right:
+                result.set(1, 0);
+                break;
+            case Down:
+                result.set(0, -1);
+                break;
+            case Up:
+                result.set(0, 1);
+                break;
+        }
+        return result;
     }
 
     private Direction getDominantDirection(float x, float y) {
