@@ -157,16 +157,20 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 	public boolean keyUp(int keycode) {
 		switch (keycode) {
 		case Keys.NUM_1:
-			player.useAugmentation(0);
+//			player.useAugmentation(0);
+		    player.getAugmentations().toggleActiveAugmentation(0);
 			return true;
 		case Keys.NUM_2:
-			player.useAugmentation(1);
+//			player.useAugmentation(1);
+		    player.getAugmentations().toggleActiveAugmentation(1);
 			return true;
 		case Keys.NUM_3:
-			player.useAugmentation(2);
+//			player.useAugmentation(2);
+		    player.getAugmentations().toggleActiveAugmentation(2);
 			return true;
 		case Keys.NUM_4:
-			player.useAugmentation(3);
+//			player.useAugmentation(3);
+		    player.getAugmentations().toggleActiveAugmentation(3);
 			return true;
 		case Keys.I:
 			inventoryMenu.toggle();
@@ -217,7 +221,10 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 		Vector3 world = camera.unproject(new Vector3(screenX, screenY, 0));
 		for (Agent entity : location.getActors()) {
 			if (entity.contains(world.x, world.y)) {
-				if (player.getTarget() != entity) {
+			    if (player.getAugmentations().hasActiveAugmentation()) {
+			        player.select(entity);
+                    player.getAugmentations().useActiveAugmentation();
+                } else if (player.getTarget() != entity) {
 					// initial selection -> set target
 					player.select(entity);
 				} else {

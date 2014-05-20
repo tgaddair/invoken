@@ -9,7 +9,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
+import com.badlogic.gdx.math.Intersector;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Array;
 import com.eldritch.invoken.actor.Inventory.ItemState;
 import com.eldritch.invoken.actor.ai.AssaultRoutine;
 import com.eldritch.invoken.actor.ai.AssistRoutine;
@@ -115,6 +118,38 @@ public class Npc extends Agent {
 	    } else {
 	        behavior.resetAggression();
 	    }
+    }
+	
+	public boolean canTarget(Agent other, Location location) {
+        // within distance constraint
+        if (!super.canTarget(other, location)) {
+            return false;
+        }
+
+        // field of view: compute angle between character-character and forward vectors
+        Vector2 a = getForwardVector();
+        Vector2 b = other.position.cpy().sub(position).nor();
+        double theta = Math.atan2(a.x * b.y - a.y * b.x, a.x * b.x + a.y * b.y);
+        if (Math.abs(theta) > Math.PI / 2) {
+            return false;
+        }
+
+        // view obstruction: intersect character-character segment with collision tiles
+        int startX = (int) Math.floor(Math.min(position.x, other.position.x));
+        int startY = (int) Math.floor(Math.min(position.y, other.position.y));
+        int endX = (int) Math.ceil(Math.max(position.x, other.position.x));
+        int endY = (int) Math.ceil(Math.max(position.y, other.position.y));
+        Array<Rectangle> tiles = location.getTiles(startX, startY, endX, endY);
+        Vector2 tmp = new Vector2();
+        for (Rectangle tile : tiles) {
+            float r = Math.max(tile.width, tile.height);
+            if (Intersector
+                    .intersectSegmentCircle(position, other.position, tile.getCenter(tmp), r)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 	
 	public List<Agent> getNeighbors() {

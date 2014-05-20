@@ -124,6 +124,10 @@ public abstract class Agent implements Entity {
     public float getDisposition(Agent other) {
         return info.factions.getDisposition(other);
     }
+    
+    public PreparedAugmentations getAugmentations() {
+        return info.augmentations;
+    }
 
     public void useAugmentation(int index) {
         info.useAugmentation(index);
@@ -354,30 +358,6 @@ public abstract class Agent implements Entity {
         if (dst2(other) > 175) {
             return false;
         }
-
-        // field of view: compute angle between character-character and forward vectors
-        Vector2 a = getForwardVector();
-        Vector2 b = other.position.cpy().sub(position).nor();
-        double theta = Math.atan2(a.x * b.y - a.y * b.x, a.x * b.x + a.y * b.y);
-        if (Math.abs(theta) > Math.PI / 2) {
-            return false;
-        }
-
-        // view obstruction: intersect character-character segment with collision tiles
-        int startX = (int) Math.floor(Math.min(position.x, other.position.x));
-        int startY = (int) Math.floor(Math.min(position.y, other.position.y));
-        int endX = (int) Math.ceil(Math.max(position.x, other.position.x));
-        int endY = (int) Math.ceil(Math.max(position.y, other.position.y));
-        Array<Rectangle> tiles = location.getTiles(startX, startY, endX, endY);
-        Vector2 tmp = new Vector2();
-        for (Rectangle tile : tiles) {
-            float r = Math.max(tile.width, tile.height);
-            if (Intersector
-                    .intersectSegmentCircle(position, other.position, tile.getCenter(tmp), r)) {
-                return false;
-            }
-        }
-
         return true;
     }
 
@@ -653,7 +633,7 @@ public abstract class Agent implements Entity {
         return position.y - getWidth() / 2;
     }
 
-    private Vector2 getForwardVector() {
+    protected Vector2 getForwardVector() {
         Vector2 result = new Vector2();
         switch (direction) {
             case Left:
