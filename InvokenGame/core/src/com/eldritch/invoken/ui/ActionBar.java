@@ -4,12 +4,14 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.eldritch.invoken.actor.Player;
 import com.eldritch.invoken.actor.PreparedAugmentations;
 import com.eldritch.invoken.actor.aug.Augmentation;
 import com.eldritch.invoken.screens.AbstractScreen;
+import com.eldritch.invoken.util.DefaultInputListener;
 
 public class ActionBar {
     private final Map<Augmentation, Image> images = new HashMap<Augmentation, Image>();
@@ -25,8 +27,14 @@ public class ActionBar {
         container.setWidth(AbstractScreen.MENU_VIEWPORT_WIDTH);
         container.bottom();
         
-        for (Augmentation aug : augmentations.getAugmentations()) {
+        for (final Augmentation aug : augmentations.getAugmentations()) {
             Image image = new Image(aug.getIcon());
+            image.addListener(new DefaultInputListener() {
+                @Override
+                public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                    augmentations.toggleActiveAugmentation(aug);
+                }
+            });
             images.put(aug, image);
             container.add(image);
         }

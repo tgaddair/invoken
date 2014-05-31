@@ -32,12 +32,16 @@ public class PreparedAugmentations {
 	
 	public void toggleActiveAugmentation(int index) {
 	    if (index < augs.size()) {
-	        if (augs.get(index) != activeAugmentation) {
-	            setActiveAugmentation(augs.get(index));
-	        } else {
-	            clearActiveAugmentation();
-	        }
+	        toggleActiveAugmentation(augs.get(index));
 	    }
+	}
+	
+	public void toggleActiveAugmentation(Augmentation aug) {
+	    if (aug != activeAugmentation) {
+            setActiveAugmentation(aug);
+        } else {
+            clearActiveAugmentation();
+        }
 	}
 	
 	public void clearActiveAugmentation() {
