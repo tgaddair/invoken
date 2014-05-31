@@ -19,6 +19,7 @@ import com.eldritch.invoken.actor.Profession.Inquisitor;
 import com.eldritch.invoken.actor.items.Item;
 import com.eldritch.invoken.encounter.Location;
 import com.eldritch.invoken.encounter.proc.LocationGenerator;
+import com.eldritch.invoken.ui.ActionBar;
 import com.eldritch.invoken.ui.DialogueMenu;
 import com.eldritch.invoken.ui.InventoryMenu;
 import com.eldritch.invoken.ui.LootMenu;
@@ -31,6 +32,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 	
 	private final DialogueMenu dialogue;
 	private final LootMenu loot;
+	private ActionBar actionBar;
 	private InventoryMenu inventoryMenu;
 
 	private Player player;
@@ -91,7 +93,9 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 		        InvokenGame.LOCATION_READER.readAsset("NostorraUnderworks"), player);
 		
 		// create player menus
+		actionBar = new ActionBar(player);
 		inventoryMenu = new InventoryMenu(player, getSkin());
+		stage.addActor(actionBar.getTable());
 		stage.addActor(inventoryMenu.getTable());
 
 		Gdx.input.setInputProcessor(this);
@@ -110,6 +114,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         }
 		
 		// update UI menus
+        actionBar.update();
 		dialogue.update(player);
 		loot.update(player);
 		
@@ -270,13 +275,14 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 	}
 	
 	public static TextureRegion[][] getRegions(String assetName, int w, int h) {
-		// load the character frames, split them, and assign them to
-		// Animations
-		if (!textureManager.isLoaded(assetName, Texture.class)) {
-			textureManager.load(assetName, Texture.class);
-			textureManager.finishLoading();
-		}
-		Texture texture = textureManager.get(assetName, Texture.class);
-		return TextureRegion.split(texture, w, h);
+		return TextureRegion.split(getTexture(assetName), w, h);
+	}
+	
+	public static Texture getTexture(String assetName) {
+	    if (!textureManager.isLoaded(assetName, Texture.class)) {
+            textureManager.load(assetName, Texture.class);
+            textureManager.finishLoading();
+        }
+	    return textureManager.get(assetName, Texture.class);
 	}
 }

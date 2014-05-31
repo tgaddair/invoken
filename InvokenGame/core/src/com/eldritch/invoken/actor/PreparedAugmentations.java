@@ -14,6 +14,14 @@ public class PreparedAugmentations {
 		this.owner = owner;
 	}
 	
+	public Iterable<Augmentation> getAugmentations() {
+	    return augs;
+	}
+	
+	public Augmentation getActiveAugmentation() {
+	    return activeAugmentation;
+	}
+	
 	public void addAugmentation(Augmentation aug) {
 		augs.add(aug);
 	}

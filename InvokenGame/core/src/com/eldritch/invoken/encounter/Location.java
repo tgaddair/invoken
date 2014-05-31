@@ -174,7 +174,7 @@ public class Location {
         camera.update();
 
         // draw lights
-        lightManager.render(renderer, delta);
+        //lightManager.render(renderer, delta);
 
         // set the tile map render view based on what the
         // camera sees and render the map

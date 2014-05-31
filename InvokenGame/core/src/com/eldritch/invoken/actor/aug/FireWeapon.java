@@ -16,6 +16,10 @@ import com.eldritch.invoken.effects.Bleed;
 import com.eldritch.invoken.screens.GameScreen;
 
 public class FireWeapon extends Augmentation {
+    public FireWeapon() {
+        super("fire");
+    }
+    
 	@Override
 	public Action getAction(Agent owner, Agent target) {
 		return new FireAction(owner, target);

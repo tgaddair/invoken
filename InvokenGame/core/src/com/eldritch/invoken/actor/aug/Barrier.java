@@ -5,6 +5,10 @@ import com.eldritch.invoken.actor.Agent.Activity;
 import com.eldritch.invoken.effects.Shield;
 
 public class Barrier extends Augmentation {
+    public Barrier() {
+        super("barrier");
+    }
+    
 	@Override
 	public Action getAction(Agent owner, Agent target) {
 		return new ShieldAction(owner);

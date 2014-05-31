@@ -5,6 +5,10 @@ import com.eldritch.invoken.actor.Agent.Activity;
 import com.eldritch.invoken.effects.Frenzied;
 
 public class Frenzy extends Augmentation {
+    public Frenzy() {
+        super("frenzy");
+    }
+    
 	@Override
 	public Action getAction(Agent owner, Agent target) {
 		return new FrenzyAction(owner, target);

@@ -5,6 +5,10 @@ import com.eldritch.invoken.actor.Agent.Activity;
 import com.eldritch.invoken.effects.Draining;
 
 public class Drain extends Augmentation {
+    public Drain() {
+        super("drain");
+    }
+    
 	@Override
 	public Action getAction(Agent owner, Agent target) {
 		return new DrainAction(owner, target);

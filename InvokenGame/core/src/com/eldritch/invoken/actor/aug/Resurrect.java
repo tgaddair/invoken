@@ -4,6 +4,10 @@ import com.eldritch.invoken.actor.Agent;
 import com.eldritch.invoken.actor.Agent.Activity;
 
 public class Resurrect extends Augmentation {
+    public Resurrect() {
+        super("resurrect");
+    }
+    
 	@Override
 	public Action getAction(Agent owner, Agent target) {
 		return new ResurrectAction(owner, target);

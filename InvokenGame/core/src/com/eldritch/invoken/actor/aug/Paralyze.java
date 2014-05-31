@@ -5,6 +5,10 @@ import com.eldritch.invoken.actor.Agent.Activity;
 import com.eldritch.invoken.effects.Paralyzed;
 
 public class Paralyze extends Augmentation {
+    public Paralyze() {
+        super("paralyze");
+    }
+    
 	@Override
 	public Action getAction(Agent owner, Agent target) {
 		return new ParalyzeAction(owner, target);
