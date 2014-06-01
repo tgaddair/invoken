@@ -35,7 +35,7 @@ public class ActionBar {
                 }
             });
             images.put(aug, image);
-            container.add(image);
+            container.add(image).padLeft(10).padRight(10).padBottom(10);
         }
     }
     
