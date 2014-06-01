@@ -60,8 +60,8 @@ public abstract class Projectile extends CollisionEntity implements TemporaryEnt
     public void render(float delta, OrthogonalTiledMapRenderer renderer) {
         Batch batch = renderer.getSpriteBatch();
         batch.begin();
-        batch.draw(getTexture(stateTime), position.x - 0.5f, position.y - 0.5f, 0.5f, 0.5f,
-                getWidth(), getHeight(), 1f, 1f, velocity.angle());
+        batch.draw(getTexture(stateTime), position.x - getWidth() * 0.5f, position.y - getHeight()
+                * 0.5f, 0.5f, 0.5f, getWidth(), getHeight(), 1f, 1f, velocity.angle());
         batch.end();
     }
 

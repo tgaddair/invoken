@@ -43,7 +43,7 @@ public class Drain extends Augmentation {
 
     public static class DrainBullet extends Projectile {
         private static final TextureRegion[] regions = GameScreen.getRegions(
-                "sprite/effects/drain-attack.png", 64, 64)[0];
+                "sprite/effects/drain-attack.png", 32, 32)[0];
         private final Animation animation;
 
         public DrainBullet() {
