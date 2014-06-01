@@ -2,7 +2,6 @@ package com.eldritch.invoken.ui;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;

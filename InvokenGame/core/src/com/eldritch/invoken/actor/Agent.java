@@ -398,6 +398,7 @@ public abstract class Agent implements Entity {
         }
     }
 
+    @Override
     public void update(float delta, Location location) {
         if (delta == 0)
             return;
@@ -422,7 +423,7 @@ public abstract class Agent implements Entity {
             } else {
                 action = actions.poll();
                 if (action != null) {
-                    action.apply();
+                    action.apply(location);
                 }
             }
 
@@ -672,6 +673,7 @@ public abstract class Agent implements Entity {
         }
     }
 
+    @Override
     public void render(float delta, OrthogonalTiledMapRenderer renderer) {
         render(renderer);
 

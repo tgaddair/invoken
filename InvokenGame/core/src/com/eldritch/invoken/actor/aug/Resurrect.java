@@ -2,6 +2,7 @@ package com.eldritch.invoken.actor.aug;
 
 import com.eldritch.invoken.actor.Agent;
 import com.eldritch.invoken.actor.Agent.Activity;
+import com.eldritch.invoken.encounter.Location;
 
 public class Resurrect extends Augmentation {
     public Resurrect() {
@@ -27,7 +28,7 @@ public class Resurrect extends Augmentation {
 		}
 
 		@Override
-		public void apply() {
+		public void apply(Location location) {
 			if (!target.isAlive()) {
 				target.resurrect();
 				owner.addFollower(target);

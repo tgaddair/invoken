@@ -3,6 +3,7 @@ package com.eldritch.invoken.actor.aug;
 import com.eldritch.invoken.actor.Agent;
 import com.eldritch.invoken.actor.Agent.Activity;
 import com.eldritch.invoken.effects.Paralyzed;
+import com.eldritch.invoken.encounter.Location;
 
 public class Paralyze extends Augmentation {
     public Paralyze() {
@@ -28,7 +29,7 @@ public class Paralyze extends Augmentation {
 		}
 
 		@Override
-		public void apply() {
+		public void apply(Location location) {
 			target.addEffect(new Paralyzed(owner, target, 3));
 		}
 	}

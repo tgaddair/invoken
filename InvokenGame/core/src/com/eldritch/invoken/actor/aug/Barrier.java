@@ -3,6 +3,7 @@ package com.eldritch.invoken.actor.aug;
 import com.eldritch.invoken.actor.Agent;
 import com.eldritch.invoken.actor.Agent.Activity;
 import com.eldritch.invoken.effects.Shield;
+import com.eldritch.invoken.encounter.Location;
 
 public class Barrier extends Augmentation {
     public Barrier() {
@@ -25,7 +26,7 @@ public class Barrier extends Augmentation {
 		}
 
 		@Override
-		public void apply() {
+		public void apply(Location location) {
 			if (owner.toggle(Shield.class)) {
 				owner.addEffect(new Shield(owner));
 			}

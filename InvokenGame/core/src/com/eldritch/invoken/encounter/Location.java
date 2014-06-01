@@ -3,6 +3,7 @@ package com.eldritch.invoken.encounter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -25,6 +26,7 @@ import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.actor.Agent;
 import com.eldritch.invoken.actor.Npc;
 import com.eldritch.invoken.actor.Player;
+import com.eldritch.invoken.actor.TemporaryEntity;
 import com.eldritch.invoken.gfx.Light;
 import com.eldritch.invoken.gfx.LightManager;
 import com.eldritch.scifirpg.proto.Locations.Encounter;
@@ -43,6 +45,7 @@ public class Location {
     private final TiledMap map;
     private final List<Agent> entities = new ArrayList<Agent>();
     private final List<Agent> activeEntities = new ArrayList<Agent>();
+    private final List<TemporaryEntity> tempEntities = new ArrayList<TemporaryEntity>();
     private final LightManager lightManager = new LightManager();
 
     private OrthogonalTiledMapRenderer renderer;
@@ -82,6 +85,10 @@ public class Location {
         Vector2 spawn = getSpawnLocation();
         player.setPosition(spawn.x, spawn.y);
         addActor(player);
+    }
+    
+    public void addEntity(TemporaryEntity entity) {
+        tempEntities.add(entity);
     }
     
     public void addEntities(List<Agent> entities) {
@@ -165,6 +172,14 @@ public class Location {
         for (Agent actor : activeEntities) {
             actor.update(delta, this);
         }
+        Iterator<TemporaryEntity> it = tempEntities.iterator();
+        while (it.hasNext()) {
+            TemporaryEntity entity = it.next();
+            entity.update(delta, this);
+            if (entity.isFinished()) {
+                it.remove();
+            }
+        }
 
         // let the camera follow the player
         Vector2 position = player.getPosition();
@@ -200,6 +215,9 @@ public class Location {
                 drawCentered(selector, actor.getPosition(), color);
             }
             actor.render(delta, renderer);
+        }
+        for (TemporaryEntity entity : tempEntities) {
+            entity.render(delta, renderer);
         }
 
         // render the overlay layer
