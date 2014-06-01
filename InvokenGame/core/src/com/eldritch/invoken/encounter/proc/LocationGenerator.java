@@ -465,16 +465,17 @@ public class LocationGenerator {
         addCell(overlayTrim, tile, x, y + 2, cells);
         addCell(overlayTrim, top, x, y + 3, cells);
         
-        // add collision
-        addCell(collision, collider, x, y - 1, cells);
-        addCell(collision, collider, x, y, cells);
-        addCell(collision, collider, x, y + 1, cells);
-        addCell(collision, collider, x, y + 2, cells);
-        addCell(collision, collider, x, y + 3, cells);
+        // add collision if absent so we don't delete collision cells when the door comes down
+        addCellIfAbsent(collision, collider, x, y - 2, cells);
+        addCellIfAbsent(collision, collider, x, y - 1, cells);
+        addCellIfAbsent(collision, collider, x, y, cells);
+        addCellIfAbsent(collision, collider, x, y + 1, cells);
+        addCellIfAbsent(collision, collider, x, y + 2, cells);
+        addCellIfAbsent(collision, collider, x, y + 3, cells);
         
         // add activator
-        activators.add(new DoorActivator(x - 1, y + 2, cells));
-        addCell(trim, doorActivator, x - 1, y + 2);
+        activators.add(new DoorActivator(x, y + 2, cells));
+        addCell(trim, doorActivator, x, y + 2);
         cells.clear();
     }
     
@@ -494,12 +495,6 @@ public class LocationGenerator {
     private boolean isWall(int x, int y, TiledMapTileLayer layer) {
         return inBounds(x, y, layer) 
                 && layer.getCell(x, y) != null && layer.getCell(x, y).getTile() != ground;
-    }
-    
-    private boolean isDoor(int x, int y, TiledMapTileLayer layer) {
-        return inBounds(x, y, layer) && layer.getCell(x, y) != null
-                && (layer.getCell(x, y).getTile() == doorLeft
-                || layer.getCell(x, y).getTile() == doorRight);
     }
 
     public Vector2 getPoint(Rectangle rect) {
@@ -552,6 +547,13 @@ public class LocationGenerator {
             List<RemovableCell> cells) {
         Cell cell = addCell(layer, tile, x, y);
         cells.add(new RemovableCell(cell, layer, x, y));
+    }
+    
+    private void addCellIfAbsent(TiledMapTileLayer layer, TiledMapTile tile, int x, int y,
+            List<RemovableCell> cells) {
+        if (layer.getCell(x, y) == null) {
+            addCell(layer, tile, x, y, cells);
+        }
     }
 
     private List<Leaf> createLeaves(int width, int height) {
