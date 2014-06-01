@@ -7,14 +7,12 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Pool;
 import com.eldritch.invoken.actor.Agent;
 import com.eldritch.invoken.actor.Agent.Activity;
 import com.eldritch.invoken.actor.Agent.Direction;
-import com.eldritch.invoken.actor.CollisionEntity;
-import com.eldritch.invoken.actor.TemporaryEntity;
+import com.eldritch.invoken.actor.Projectile;
 import com.eldritch.invoken.effects.Bleed;
 import com.eldritch.invoken.encounter.Location;
 import com.eldritch.invoken.screens.GameScreen;
@@ -97,72 +95,26 @@ public class FireWeapon extends Augmentation {
         }
     }
 
-    public static class Bullet extends CollisionEntity implements TemporaryEntity {
-        public Bullet() {
-            super(1, 1);
-        }
-
+    public static class Bullet extends Projectile {
         private static final TextureRegion texture = new TextureRegion(
                 GameScreen.getTexture("sprite/effects/bullet-blue.png"));
-        private Agent owner;
-        private boolean finished;
-
-        public void setup(Agent source, Agent target) {
-            owner = source;
-            finished = false;
-            position.set(source.getForwardVector().scl(0.5f).add(source.getPosition()));
-            velocity.set(target.getPosition());
-            velocity.sub(source.getPosition());
-            velocity.nor();
+        
+        public Bullet() {
+            super(1, 1, 15);
         }
-
+        
         @Override
-        public void update(float delta, Location location) {
-            float scale = 15 * delta;
-            velocity.scl(scale);
-            position.add(velocity);
-            velocity.scl(1 / scale);
-
-            float x = position.x + velocity.x * 0.5f;
-            float y = position.y + velocity.y * 0.5f;
-            for (Agent agent : getCollisionActors(location)) {
-                if (agent.collidesWith(x, y)) {
-                    apply(agent);
-                    return;
-                }
-            }
-
-            location.getTiles((int) (x - 1), (int) (y - 1), (int) (x + 1), (int) (y + 1),
-                    location.getTiles());
-            for (Rectangle tile : location.getTiles()) {
-                if (tile.contains(x, y)) {
-                    finish();
-                    return;
-                }
-            }
-        }
-
-        @Override
-        public void render(float delta, OrthogonalTiledMapRenderer renderer) {
-            Batch batch = renderer.getSpriteBatch();
-            batch.begin();
-            batch.draw(texture, position.x - 0.5f, position.y - 0.5f, 0.5f, 0.5f, 1f, 1f, 1f, 1f,
-                    velocity.angle());
-            batch.end();
-        }
-
-        @Override
-        public boolean isFinished() {
-            return finished;
-        }
-
-        private void apply(Agent target) {
+        protected void apply(Agent owner, Agent target) {
             target.addEffect(new Bleed(owner, target, 5));
-            finish();
         }
 
-        private void finish() {
-            finished = true;
+        @Override
+        protected TextureRegion getTexture(float stateTime) {
+            return texture;
+        }
+
+        @Override
+        protected void free() {
             bulletPool.free(this);
         }
     }
