@@ -35,6 +35,10 @@ public class LocationGenerator {
     private final TiledMapTile rightTrim;
     private final TiledMapTile doorLeft;
     private final TiledMapTile doorRight;
+    private final TiledMapTile doorOverLeft;
+    private final TiledMapTile doorOverRight;
+    private final TiledMapTile doorOverLeftTop;
+    private final TiledMapTile doorOverRightTop;
 
     public LocationGenerator() {
         atlas = new TextureAtlas(Gdx.files.internal("image-atlases/pages.atlas"));
@@ -48,6 +52,14 @@ public class LocationGenerator {
                 atlas.findRegion("test-biome/door-front-bottom-left"));
         doorRight = new StaticTiledMapTile(
                 atlas.findRegion("test-biome/door-front-bottom-right"));
+        doorOverLeft = new StaticTiledMapTile(
+                atlas.findRegion("test-biome/door-over-left"));
+        doorOverRight = new StaticTiledMapTile(
+                atlas.findRegion("test-biome/door-over-right"));
+        doorOverLeftTop = new StaticTiledMapTile(
+                atlas.findRegion("test-biome/door-over-left-top"));
+        doorOverRightTop = new StaticTiledMapTile(
+                atlas.findRegion("test-biome/door-over-right-top"));
     }
 
     public Location generate(com.eldritch.scifirpg.proto.Locations.Location proto, Player player) {
@@ -287,7 +299,7 @@ public class LocationGenerator {
             }
         }
         
-//        addTrimDoors(layer, base);
+        addTrimDoors(layer, base);
 
         return layer;
     }
@@ -398,36 +410,26 @@ public class LocationGenerator {
     }
     
     private void addTrimDoors(TiledMapTileLayer layer, TiledMapTileLayer base) {
-        TiledMapTile doorUpperLeft = new StaticTiledMapTile(
-                atlas.findRegion("test-biome/door-over-top-left"));
-        TiledMapTile doorUpperRight = new StaticTiledMapTile(
-                atlas.findRegion("test-biome/door-over-top-right"));
-        TiledMapTile doorLowerLeft = new StaticTiledMapTile(
-                atlas.findRegion("test-biome/door-over-bottom-left"));
-        TiledMapTile doorLowerRight = new StaticTiledMapTile(
-                atlas.findRegion("test-biome/door-over-bottom-right"));
-        
         for (int x = 0; x < layer.getWidth(); x++) {
             for (int y = 0; y < layer.getHeight(); y++) {
                 Cell cell = base.getCell(x, y);
                 if (cell != null && cell.getTile() == ground) {
                     // wall up, wall down
                     if (hasCell(x, y - 2, layer) && isWall(x, y + 1, base)) {
-                        System.out.println("wall");
                         if (isGround(x - 1, y - 2, base) && isGround(x - 1, y + 1, base)) {
-                            System.out.println("room left");
                             // room left
-                            addCell(layer, doorLowerRight, x, y - 1);
-                            addCell(layer, doorUpperRight, x, y);
-                            addCell(layer, doorLowerRight, x, y + 1);
-                            addCell(layer, doorUpperRight, x, y + 2);
+                            addCell(layer, doorOverLeft, x, y - 1);
+                            addCell(layer, doorOverLeft, x, y);
+                            addCell(layer, doorOverLeft, x, y + 1);
+                            addCell(layer, doorOverLeft, x, y + 2);
+                            addCell(layer, doorOverLeftTop, x, y + 3);
                         } else if (isGround(x + 1, y - 2, base) && isGround(x + 1, y + 1, base)) {
-                            System.out.println("room right");
                             // room right
-                            addCell(layer, doorLowerLeft, x, y - 1);
-                            addCell(layer, doorUpperLeft, x, y);
-                            addCell(layer, doorLowerLeft, x, y + 1);
-                            addCell(layer, doorUpperLeft, x, y + 2);
+                            addCell(layer, doorOverRight, x, y - 1);
+                            addCell(layer, doorOverRight, x, y);
+                            addCell(layer, doorOverRight, x, y + 1);
+                            addCell(layer, doorOverRight, x, y + 2);
+                            addCell(layer, doorOverRightTop, x, y + 3);
                         }
                     }
                 }
