@@ -15,11 +15,9 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
-import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
-import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.actor.aug.Action;
 import com.eldritch.invoken.actor.aug.Augmentation;
 import com.eldritch.invoken.actor.factions.Faction;
@@ -30,7 +28,7 @@ import com.eldritch.invoken.encounter.Location;
 import com.eldritch.invoken.screens.GameScreen;
 import com.eldritch.scifirpg.proto.Actors.ActorParams;
 
-public abstract class Agent implements Entity {
+public abstract class Agent extends CollisionEntity {
     static AssetManager assetManager = new AssetManager();
     static float MAX_VELOCITY = 8f;
     static float JUMP_VELOCITY = 40f;
@@ -50,11 +48,6 @@ public abstract class Agent implements Entity {
     }
 
     final AgentInfo info;
-    private final float width;
-    private final float height;
-
-    final Vector2 position = new Vector2();
-    final Vector2 velocity = new Vector2();
     State state = State.Moving;
     Activity activity = Activity.Explore;
     Direction direction = Direction.Down;
@@ -78,28 +71,21 @@ public abstract class Agent implements Entity {
     private final Set<Class<?>> toggles = new HashSet<Class<?>>();
 
     public Agent(String assetPath, float x, float y, ActorParams params) {
-        setPosition(x, y);
-        animations = getAllAnimations(assetPath);
-
         // figure out the width and height of the player for collision
         // detection and rendering by converting a player frames pixel
         // size into world units (1 unit == 32 pixels)
-        width = 1 / 32f * PX;
-        height = 1 / 32f * PX;
+        super(1 / 32f * PX, 1 / 32f * PX);
+        setPosition(x, y);
+        animations = getAllAnimations(assetPath);
 
         // health, level, augmentations, etc.
         info = new AgentInfo(this, params);
     }
 
     public Agent(String assetPath, float x, float y, Profession profession, int level) {
+        super(1 / 32f * PX, 1 / 32f * PX);
         setPosition(x, y);
         animations = getAllAnimations(assetPath);
-
-        // figure out the width and height of the player for collision
-        // detection and rendering by converting a player frames pixel
-        // size into world units (1 unit == 32 pixels)
-        width = 1 / 32f * PX; // regions[0][0].getRegionWidth();
-        height = 1 / 32f * PX; // regions[0][0].getRegionHeight();
 
         // health, level, augmentations, etc.
         info = new AgentInfo(this, profession, level);
@@ -581,29 +567,12 @@ public abstract class Agent implements Entity {
         velocity.x *= DAMPING;
         velocity.y *= DAMPING;
     }
-
-    private Array<Agent> getCollisionActors(Location screen) {
-        Array<Agent> agents = new Array<Agent>();
-        for (Agent other : screen.getActors()) {
-            // only collide with enemies
-            if (other == this)
-                continue;
-
-            // avoid sqrt because it is relatively expensive and unnecessary
-            float a = position.x - other.position.x;
-            float b = position.y - other.position.y;
-            float distance = a * a + b * b;
-
-            // our tolerance is the combined radii of both actors
-            float w = getWidth() / 2 + other.getWidth() / 2;
-            float h = getHeight() / 2 + other.getHeight() / 2;
-            float tol = w * w + h * h;
-
-            if (distance <= tol) {
-                agents.add(other);
-            }
-        }
-        return agents;
+    
+    public boolean collidesWith(float x, float y) {
+        Rectangle rect = getBoundingBox(Location.getRectPool().obtain());
+        boolean result = rect.contains(x, y);
+        Location.getRectPool().free(rect);
+        return result;
     }
 
     private boolean collidesWith(Rectangle actorRect) {
@@ -756,14 +725,6 @@ public abstract class Agent implements Entity {
 
     public AgentInfo getInfo() {
         return info;
-    }
-
-    public float getWidth() {
-        return width;
-    }
-
-    public float getHeight() {
-        return height;
     }
 
     protected abstract void takeAction(float delta, Location screen);

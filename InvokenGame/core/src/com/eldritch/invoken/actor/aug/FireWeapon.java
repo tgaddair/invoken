@@ -3,17 +3,17 @@ package com.eldritch.invoken.actor.aug;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Pool;
 import com.eldritch.invoken.actor.Agent;
 import com.eldritch.invoken.actor.Agent.Activity;
 import com.eldritch.invoken.actor.Agent.Direction;
-import com.eldritch.invoken.actor.Entity;
+import com.eldritch.invoken.actor.CollisionEntity;
 import com.eldritch.invoken.actor.TemporaryEntity;
 import com.eldritch.invoken.effects.Bleed;
 import com.eldritch.invoken.encounter.Location;
@@ -97,11 +97,13 @@ public class FireWeapon extends Augmentation {
         }
     }
 
-    public static class Bullet implements TemporaryEntity {
+    public static class Bullet extends CollisionEntity implements TemporaryEntity {
+        public Bullet() {
+            super(1, 1);
+        }
+
         private static final TextureRegion texture = new TextureRegion(
                 GameScreen.getTexture("sprite/effects/bullet-blue.png"));
-        private final Vector2 position = new Vector2();
-        private final Vector2 velocity = new Vector2();
         private Agent owner;
         private boolean finished;
 
@@ -121,11 +123,21 @@ public class FireWeapon extends Augmentation {
             position.add(velocity);
             velocity.scl(1 / scale);
 
-            for (Agent agent : location.getActors()) {
-                if (agent.getPosition().dst2(
-                        position.x + velocity.x * 0.5f,
-                        position.y + velocity.y * 0.5f) < 0.1) {
+            float x = position.x + velocity.x * 0.5f;
+            float y = position.y + velocity.y * 0.5f;
+            for (Agent agent : getCollisionActors(location)) {
+                if (agent.collidesWith(x, y)) {
                     apply(agent);
+                    return;
+                }
+            }
+
+            location.getTiles((int) (x - 1), (int) (y - 1), (int) (x + 1), (int) (y + 1),
+                    location.getTiles());
+            for (Rectangle tile : location.getTiles()) {
+                if (tile.contains(x, y)) {
+                    finish();
+                    return;
                 }
             }
         }
@@ -146,6 +158,10 @@ public class FireWeapon extends Augmentation {
 
         private void apply(Agent target) {
             target.addEffect(new Bleed(owner, target, 5));
+            finish();
+        }
+
+        private void finish() {
             finished = true;
             bulletPool.free(this);
         }
