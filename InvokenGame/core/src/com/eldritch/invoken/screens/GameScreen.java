@@ -17,6 +17,7 @@ import com.eldritch.invoken.actor.Agent;
 import com.eldritch.invoken.actor.Player;
 import com.eldritch.invoken.actor.Profession.Inquisitor;
 import com.eldritch.invoken.actor.items.Item;
+import com.eldritch.invoken.encounter.Activator;
 import com.eldritch.invoken.encounter.Location;
 import com.eldritch.invoken.encounter.proc.LocationGenerator;
 import com.eldritch.invoken.ui.ActionBar;
@@ -240,6 +241,14 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 				break;
 			}
 		}
+		
+		// handle activators
+		for (Activator activator : location.getActivators()) {
+            if (activator.click(world.x, world.y)) {
+                selection = true;
+                break;
+            }
+        }
 		
 		if (!playerClicked && !selection) {
 			// clicked on a non-interactive object, so deselect

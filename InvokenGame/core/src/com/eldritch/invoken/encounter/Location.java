@@ -46,6 +46,7 @@ public class Location {
     private final List<Agent> entities = new ArrayList<Agent>();
     private final List<Agent> activeEntities = new ArrayList<Agent>();
     private final List<TemporaryEntity> tempEntities = new ArrayList<TemporaryEntity>();
+    private final List<Activator> activators = new ArrayList<Activator>();
     private final LightManager lightManager = new LightManager();
 
     private OrthogonalTiledMapRenderer renderer;
@@ -93,6 +94,10 @@ public class Location {
     
     public void addEntities(List<Agent> entities) {
         this.entities.addAll(entities);
+    }
+    
+    public void addActivators(List<Activator> activators) {
+        this.activators.addAll(activators);
     }
 
     public void addEntities(com.eldritch.scifirpg.proto.Locations.Location data, TiledMap map) {
@@ -238,6 +243,10 @@ public class Location {
 
     public List<Agent> getActors() {
         return activeEntities;
+    }
+    
+    public List<Activator> getActivators() {
+        return activators;
     }
 
     public List<Agent> getNeighbors(Npc agent) {
