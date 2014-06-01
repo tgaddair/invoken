@@ -156,7 +156,7 @@ public class LocationGenerator {
 
         // add walls
         addWalls(layer);
-        addDoors(layer);
+//        addDoors(layer);
 
         return layer;
     }
@@ -286,6 +286,8 @@ public class LocationGenerator {
                 }
             }
         }
+        
+//        addTrimDoors(layer, base);
 
         return layer;
     }
@@ -361,7 +363,7 @@ public class LocationGenerator {
             for (int y = 0; y < layer.getHeight(); y++) {
                 Cell cell = layer.getCell(x, y);
                 if (cell != null && cell.getTile() == ground) {
-                    // wall two to the left, wall to the right
+                    // wall to the left, wall to the right
                     if (isWall(x - 4, y, layer) && isWall(x + 1, y, layer)) {
                         if (isGround(x - 4, y - 1, layer) && isGround(x + 1, y - 1, layer)) {
                             // room below
@@ -395,8 +397,50 @@ public class LocationGenerator {
         }
     }
     
+    private void addTrimDoors(TiledMapTileLayer layer, TiledMapTileLayer base) {
+        TiledMapTile doorUpperLeft = new StaticTiledMapTile(
+                atlas.findRegion("test-biome/door-over-top-left"));
+        TiledMapTile doorUpperRight = new StaticTiledMapTile(
+                atlas.findRegion("test-biome/door-over-top-right"));
+        TiledMapTile doorLowerLeft = new StaticTiledMapTile(
+                atlas.findRegion("test-biome/door-over-bottom-left"));
+        TiledMapTile doorLowerRight = new StaticTiledMapTile(
+                atlas.findRegion("test-biome/door-over-bottom-right"));
+        
+        for (int x = 0; x < layer.getWidth(); x++) {
+            for (int y = 0; y < layer.getHeight(); y++) {
+                Cell cell = base.getCell(x, y);
+                if (cell != null && cell.getTile() == ground) {
+                    // wall up, wall down
+                    if (hasCell(x, y - 2, layer) && isWall(x, y + 1, base)) {
+                        System.out.println("wall");
+                        if (isGround(x - 1, y - 2, base) && isGround(x - 1, y + 1, base)) {
+                            System.out.println("room left");
+                            // room left
+                            addCell(layer, doorLowerRight, x, y - 1);
+                            addCell(layer, doorUpperRight, x, y);
+                            addCell(layer, doorLowerRight, x, y + 1);
+                            addCell(layer, doorUpperRight, x, y + 2);
+                        } else if (isGround(x + 1, y - 2, base) && isGround(x + 1, y + 1, base)) {
+                            System.out.println("room right");
+                            // room right
+                            addCell(layer, doorLowerLeft, x, y - 1);
+                            addCell(layer, doorUpperLeft, x, y);
+                            addCell(layer, doorLowerLeft, x, y + 1);
+                            addCell(layer, doorUpperLeft, x, y + 2);
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
     private boolean inBounds(int x, int y, TiledMapTileLayer layer) {
         return x >= 0 && x < layer.getWidth() && y >= 0 && y < layer.getHeight();
+    }
+    
+    private boolean hasCell(int x, int y, TiledMapTileLayer layer) {
+        return inBounds(x, y, layer) && layer.getCell(x, y) != null;
     }
     
     private boolean isGround(int x, int y, TiledMapTileLayer layer) {

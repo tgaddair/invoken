@@ -37,8 +37,8 @@ public abstract class Projectile extends CollisionEntity implements TemporaryEnt
         position.add(velocity);
         velocity.scl(1 / scale);
 
-        float x = position.x + velocity.x * 0.5f;
-        float y = position.y + velocity.y * 0.5f;
+        float x = position.x + velocity.x * 0.25f;
+        float y = position.y + velocity.y * 0.25f;
         for (Agent agent : getCollisionActors(location)) {
             if (agent != owner && agent.collidesWith(x, y)) {
                 apply(agent);
