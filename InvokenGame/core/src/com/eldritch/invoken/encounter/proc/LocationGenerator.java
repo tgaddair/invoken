@@ -15,7 +15,6 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
 import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.actor.Agent;
 import com.eldritch.invoken.actor.Player;
 import com.eldritch.invoken.encounter.Location;
@@ -34,6 +33,8 @@ public class LocationGenerator {
     private final TiledMapTile midWallCenter;
     private final TiledMapTile leftTrim;
     private final TiledMapTile rightTrim;
+    private final TiledMapTile doorLeft;
+    private final TiledMapTile doorRight;
 
     public LocationGenerator() {
         atlas = new TextureAtlas(Gdx.files.internal("image-atlases/pages.atlas"));
@@ -43,6 +44,10 @@ public class LocationGenerator {
         midWallCenter = new StaticTiledMapTile(atlas.findRegion("test-biome/mid-wall-center"));
         leftTrim = new StaticTiledMapTile(atlas.findRegion("test-biome/left-trim"));
         rightTrim = new StaticTiledMapTile(atlas.findRegion("test-biome/right-trim"));
+        doorLeft = new StaticTiledMapTile(
+                atlas.findRegion("test-biome/door-front-bottom-left"));
+        doorRight = new StaticTiledMapTile(
+                atlas.findRegion("test-biome/door-front-bottom-right"));
     }
 
     public Location generate(com.eldritch.scifirpg.proto.Locations.Location proto, Player player) {
@@ -151,6 +156,7 @@ public class LocationGenerator {
 
         // add walls
         addWalls(layer);
+        addDoors(layer);
 
         return layer;
     }
@@ -246,6 +252,8 @@ public class LocationGenerator {
                 }
             }
         }
+        
+        addTopDoors(layer, base);
 
         return layer;
     }
@@ -267,13 +275,11 @@ public class LocationGenerator {
             for (int y = 0; y < overlay.getHeight(); y++) {
                 Cell cell = overlay.getCell(x, y);
                 if (cell != null) {
-                    if (x - 1 >= 0 && base.getCell(x - 1, y) != null
-                            && overlay.getCell(x - 1, y) == null) {
+                    if (isGround(x - 1, y, base) && overlay.getCell(x - 1, y) == null) {
                         // left space is ground
                         addCell(layer, overlayRightTrim, x, y);
                     }
-                    if (x + 1 < base.getWidth() && base.getCell(x + 1, y) != null
-                            && overlay.getCell(x + 1, y) == null) {
+                    if (isGround(x + 1, y, base) && overlay.getCell(x + 1, y) == null) {
                         // right space is ground
                         addCell(layer, overlayLeftTrim, x, y);
                     }
@@ -347,6 +353,66 @@ public class LocationGenerator {
                 }
             }
         }
+    }
+    
+    private void addDoors(TiledMapTileLayer layer) {
+        // add front doors
+        for (int x = 0; x < layer.getWidth(); x++) {
+            for (int y = 0; y < layer.getHeight(); y++) {
+                Cell cell = layer.getCell(x, y);
+                if (cell != null && cell.getTile() == ground) {
+                    // wall two to the left, wall to the right
+                    if (isWall(x - 4, y, layer) && isWall(x + 1, y, layer)) {
+                        if (isGround(x - 4, y - 1, layer) && isGround(x + 1, y - 1, layer)) {
+                            // room below
+                            addCell(layer, doorLeft, x - 3, y);
+                            addCell(layer, doorRight, x - 2, y);
+                            addCell(layer, doorLeft, x - 1, y);
+                            addCell(layer, doorRight, x, y);
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    private void addTopDoors(TiledMapTileLayer layer, TiledMapTileLayer base) {
+        TiledMapTile doorTopLeft = new StaticTiledMapTile(
+                atlas.findRegion("test-biome/door-front-top-left"));
+        TiledMapTile doorTopRight = new StaticTiledMapTile(
+                atlas.findRegion("test-biome/door-front-top-right"));
+        
+        // add front doors
+        for (int x = 0; x < layer.getWidth(); x++) {
+            for (int y = 0; y < layer.getHeight(); y++) {
+                if (isDoor(x, y - 1, base) && isDoor(x - 3, y - 1, base)) {
+                    addCell(layer, doorTopLeft, x - 3, y);
+                    addCell(layer, doorTopRight, x - 2, y);
+                    addCell(layer, doorTopLeft, x - 1, y);
+                    addCell(layer, doorTopRight, x, y);
+                }
+            }
+        }
+    }
+    
+    private boolean inBounds(int x, int y, TiledMapTileLayer layer) {
+        return x >= 0 && x < layer.getWidth() && y >= 0 && y < layer.getHeight();
+    }
+    
+    private boolean isGround(int x, int y, TiledMapTileLayer layer) {
+        return inBounds(x, y, layer) 
+                && layer.getCell(x, y) != null && layer.getCell(x, y).getTile() == ground;
+    }
+    
+    private boolean isWall(int x, int y, TiledMapTileLayer layer) {
+        return inBounds(x, y, layer) 
+                && layer.getCell(x, y) != null && layer.getCell(x, y).getTile() != ground;
+    }
+    
+    private boolean isDoor(int x, int y, TiledMapTileLayer layer) {
+        return inBounds(x, y, layer) && layer.getCell(x, y) != null
+                && (layer.getCell(x, y).getTile() == doorLeft
+                || layer.getCell(x, y).getTile() == doorRight);
     }
 
     public Vector2 getPoint(Rectangle rect) {

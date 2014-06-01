@@ -569,6 +569,11 @@ public abstract class Agent extends CollisionEntity {
     }
     
     public boolean collidesWith(float x, float y) {
+        if (!isAlive()) {
+            // cannot collide with a point if not alive
+            return false;
+        }
+        
         Rectangle rect = getLargeBoundingBox(Location.getRectPool().obtain());
         boolean result = rect.contains(x, y);
         Location.getRectPool().free(rect);

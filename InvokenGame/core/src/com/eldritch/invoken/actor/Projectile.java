@@ -54,6 +54,11 @@ public abstract class Projectile extends CollisionEntity implements TemporaryEnt
                 return;
             }
         }
+        
+        // finally, reclaim the projectile if it has been active for more than 10 seconds
+        if (stateTime >= 10) {
+            finish();
+        }
     }
 
     @Override

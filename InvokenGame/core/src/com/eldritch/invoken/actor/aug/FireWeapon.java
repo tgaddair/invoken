@@ -106,7 +106,7 @@ public class FireWeapon extends Augmentation {
                 GameScreen.getTexture("sprite/effects/bullet-blue.png"));
         
         public Bullet() {
-            super(1, 1, 15);
+            super(1, 1, 20);
         }
         
         @Override
