@@ -108,7 +108,7 @@ public class FireWeapon extends Augmentation {
         public void setup(Agent source, Agent target) {
             owner = source;
             finished = false;
-            position.set(source.getPosition());
+            position.set(source.getForwardVector().scl(0.5f).add(source.getPosition()));
             velocity.set(target.getPosition());
             velocity.sub(source.getPosition());
             velocity.nor();

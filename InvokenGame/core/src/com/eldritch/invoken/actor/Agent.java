@@ -634,7 +634,7 @@ public abstract class Agent implements Entity {
         return position.y - getWidth() / 2;
     }
 
-    protected Vector2 getForwardVector() {
+    public Vector2 getForwardVector() {
         Vector2 result = new Vector2();
         switch (direction) {
             case Left:
