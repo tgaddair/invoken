@@ -42,7 +42,8 @@ public class LocationGenerator {
     private final TiledMapTile doorOverRight;
     private final TiledMapTile doorOverLeftTop;
     private final TiledMapTile doorOverRightTop;
-    private final TiledMapTile doorActivator;
+    private final TiledMapTile unlockedDoor;
+    private final TiledMapTile lockedDoor;
     private final TiledMapTile collider;
 
     public LocationGenerator() {
@@ -65,7 +66,8 @@ public class LocationGenerator {
                 atlas.findRegion("test-biome/door-over-left-top"));
         doorOverRightTop = new StaticTiledMapTile(
                 atlas.findRegion("test-biome/door-over-right-top"));
-        doorActivator = new StaticTiledMapTile(atlas.findRegion("test-biome/door-activator"));
+        unlockedDoor = new StaticTiledMapTile(atlas.findRegion("test-biome/door-activator"));
+        lockedDoor = new StaticTiledMapTile(atlas.findRegion("test-biome/door-activator-locked"));
         collider = new StaticTiledMapTile(atlas.findRegion("markers/collision"));
     }
 
@@ -419,8 +421,10 @@ public class LocationGenerator {
                             addCell(collision, collider, x, y, cells);
                             
                             // add activator
-                            activators.add(new DoorActivator(x - 4, y + 1, cells));
-                            addCell(trim, doorActivator, x - 4, y + 1);
+                            DoorActivator activator = new DoorActivator(x - 4, y + 1, cells,
+                                    unlockedDoor, lockedDoor);
+                            activators.add(activator);
+                            trim.setCell(x - 4, y + 1, activator.getCell());
                             cells.clear();
                         }
                     }
@@ -474,8 +478,10 @@ public class LocationGenerator {
         addCellIfAbsent(collision, collider, x, y + 3, cells);
         
         // add activator
-        activators.add(new DoorActivator(x, y + 2, cells));
-        addCell(trim, doorActivator, x, y + 2);
+        DoorActivator activator = new DoorActivator(x, y + 2, cells,
+                unlockedDoor, lockedDoor);
+        activators.add(activator);
+        trim.setCell(x, y + 2, activator.getCell());
         cells.clear();
     }
     
