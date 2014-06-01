@@ -94,6 +94,9 @@ public abstract class AttackRoutine extends MovementRoutine {
             pursueTarget(npc.getClearTarget(location), velocityDelta, location);
         } else if (shouldFlee()) {
             fleeTarget(getTargetPosition(), velocityDelta, location);
+        } else {
+            // side strafe to avoid attack
+            //pursueTarget(npc.getClearTarget(Math.PI / 2, location), velocityDelta, location);
         }
     }
 

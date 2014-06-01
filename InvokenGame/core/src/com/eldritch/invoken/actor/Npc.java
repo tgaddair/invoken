@@ -172,6 +172,11 @@ public class Npc extends Agent {
 		return pathfinder.getTarget(getPosition(), target, screen);
 	}
 	
+	public Vector2 getClearTarget(double theta, Location screen) {
+	    Vector2 target = pathfinder.rotate(getTarget().getPosition(), getPosition(), theta);
+        return pathfinder.getTarget(getPosition(), target, screen);
+    }
+	
 	private void setRoutine(Routine routine) {
 		this.routine = routine;
 		pathfinder.reset();
