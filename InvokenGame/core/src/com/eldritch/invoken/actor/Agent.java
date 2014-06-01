@@ -569,7 +569,7 @@ public abstract class Agent extends CollisionEntity {
     }
     
     public boolean collidesWith(float x, float y) {
-        Rectangle rect = getBoundingBox(Location.getRectPool().obtain());
+        Rectangle rect = getLargeBoundingBox(Location.getRectPool().obtain());
         boolean result = rect.contains(x, y);
         Location.getRectPool().free(rect);
         return result;
@@ -693,6 +693,12 @@ public abstract class Agent extends CollisionEntity {
         batch.draw(frame, position.x - getWidth() / 2, position.y - getHeight() / 2, getWidth(),
                 getHeight());
         batch.end();
+    }
+    
+    public Rectangle getLargeBoundingBox(Rectangle rect) {
+        rect.set(position.x - getWidth() / 2, position.y - getHeight() / 2, getWidth() / 2,
+                getHeight());
+        return rect;
     }
 
     public Rectangle getBoundingBox(Rectangle rect) {
