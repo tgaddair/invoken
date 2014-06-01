@@ -1,22 +1,35 @@
 package com.eldritch.invoken.actor.aug;
 
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.eldritch.invoken.actor.Agent;
 import com.eldritch.invoken.actor.Agent.Activity;
+import com.eldritch.invoken.encounter.Location;
 
 public abstract class AnimatedAction implements Action {
 	final Agent owner;
 	final Activity activity;
 	float stateTime = 0;
+	boolean applied;
 	
 	public AnimatedAction(Agent actor, Activity activity) {
 		this.owner = actor;
 		this.activity = activity;
+		applied = false;
 	}
 	
 	@Override
-	public void update(float delta) {
+	public void update(float delta, Location location) {
 		stateTime += delta;
+		if (!applied && canApply()) {
+		    apply(location);
+		    applied = true;
+		}
+	}
+	
+	protected boolean canApply() {
+	    Animation anim = owner.getAnimation(activity);
+	    return anim.getKeyFrameIndex(stateTime) == anim.getKeyFrames().length / 2;
 	}
 	
 	@Override

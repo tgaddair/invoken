@@ -405,11 +405,11 @@ public abstract class Agent extends CollisionEntity {
         if (isAlive()) {
             // handle the action queue
             if (actionInProgress()) {
-                action.update(delta);
+                action.update(delta, location);
             } else {
                 action = actions.poll();
                 if (action != null) {
-                    action.apply(location);
+                    action.update(delta, location);
                 }
             }
 

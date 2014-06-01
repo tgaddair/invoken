@@ -11,7 +11,7 @@ public interface Action {
 	
 	void apply(Location location);
 	
-	void update(float delta);
+	void update(float delta, Location location);
 	
 	void render(OrthogonalTiledMapRenderer renderer);
 	

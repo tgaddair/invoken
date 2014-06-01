@@ -81,6 +81,12 @@ public class FireWeapon extends Augmentation {
         public boolean isFinished() {
             return getAnimation().isAnimationFinished(stateTime);
         }
+        
+        @Override
+        protected boolean canApply() {
+            Animation anim = getAnimation();
+            return anim.getKeyFrameIndex(stateTime) == 2;
+        }
 
         @Override
         public void apply(Location location) {
