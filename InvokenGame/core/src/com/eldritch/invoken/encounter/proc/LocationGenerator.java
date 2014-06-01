@@ -448,8 +448,9 @@ public class LocationGenerator {
                             // room left
                             addTrimDoor(trim, overlayTrim, collision, doorOverLeft, doorOverLeftTop,
                                     x, y, activators, cells);
-                        } else if (isGround(x + 1, y - 2, base) && isGround(x + 1, y + 1, base)) {
-                            // room right
+                        } else if (isGround(x + 1, y - 2, base) && isGround(x + 1, y + 1, base)
+                                && trim.getCell(x, y + 2) == null) {
+                            // room right and no pre-existing door panel in the way
                             addTrimDoor(trim, overlayTrim, collision,
                                     doorOverRight, doorOverRightTop, x, y, activators, cells);
                         }

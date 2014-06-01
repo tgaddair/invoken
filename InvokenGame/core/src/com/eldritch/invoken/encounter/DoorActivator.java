@@ -42,6 +42,9 @@ public class DoorActivator implements Activator {
     @Override
     public void activate() {
         if (locked) {
+            // unlock
+            locked = false;
+            resetCell();
             return;
         }
         
