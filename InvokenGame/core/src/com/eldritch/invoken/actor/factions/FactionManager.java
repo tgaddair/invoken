@@ -51,7 +51,7 @@ public class FactionManager {
 			for (Faction otherFaction : other.getFactions()) {
 				if (faction.hasRelation(otherFaction)) {
 					float a = getReputation(faction) / 10f;
-					float b = other.getReputation(faction) / 10f;
+					float b = other.getReputation(otherFaction) / 5f;
 					float r = (a + b) * faction.getRelation(otherFaction);
 					reaction += r;
 				}

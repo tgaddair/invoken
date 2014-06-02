@@ -9,6 +9,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
 
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.g2d.Animation;
@@ -18,6 +19,7 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
+import com.eldritch.invoken.actor.ai.Behavior;
 import com.eldritch.invoken.actor.aug.Action;
 import com.eldritch.invoken.actor.aug.Augmentation;
 import com.eldritch.invoken.actor.factions.Faction;
@@ -46,6 +48,10 @@ public abstract class Agent extends CollisionEntity {
     public enum Activity {
         Explore, Combat, Cast, Thrust, Swipe, Death
     }
+    
+    public enum Hostility {
+        Defensive, Assault
+    }
 
     final AgentInfo info;
     State state = State.Moving;
@@ -61,8 +67,12 @@ public abstract class Agent extends CollisionEntity {
     private Agent followed = null;
     private final List<Agent> followers = new ArrayList<Agent>();
 
-    // hostilities: enemy -> provoked
-    private final Map<Agent, Boolean> hostilities = new HashMap<Agent, Boolean>();
+    // hostilities: agents with negative reaction who have attacked us
+    Hostility hostility = Hostility.Defensive;
+    private final Set<Agent> hostilities = new HashSet<Agent>();
+    private final Set<Agent> assaulters = new HashSet<Agent>();
+    private final Map<Agent, Float> relations = new HashMap<Agent, Float>();
+    
     private boolean confused = false;
     private int paralyzed = 0;
 
@@ -128,36 +138,45 @@ public abstract class Agent extends CollisionEntity {
     }
 
     public boolean assaultedBy(Agent other) {
-        return hostilities.containsKey(other) && hostilities.get(other);
+        return assaulters.contains(other);
     }
 
     public boolean hostileTo(Agent other) {
-        return hostilities.containsKey(other);
+        return hostilities.contains(other);
     }
 
     public Iterable<Agent> getEnemies() {
-        return hostilities.keySet();
+        return hostilities;
     }
 
     public boolean hasEnemies() {
         return !hostilities.isEmpty();
     }
 
-    public void addEnemy(Agent other, boolean attacked) {
-        if (hostilities.containsKey(other)) {
-            // we've already added them as an enemy, so don't do so again
-            return;
-        }
-
-        if (attacked) {
-            // we've been attacked
-            // mark this hostility as provoked if we didn't assault them prior
-            hostilities.put(other, !other.assaultedBy(this));
-            other.addEnemy(this, false);
+    public void addEnemy(Agent other, float magnitude) {
+        if (other.assaultedBy(this)) {
+            // we previously assaulted them, so add them as an enemy, but don't adjust our relation
+            hostilities.add(other);
         } else {
-            // we're attacking them
-            // mark this hostility as unprovoked
-            hostilities.put(other, false);
+            float modifier = -magnitude;
+            if (!hostilities.isEmpty()) {
+                // friendly fire is inevitable once bullets start flying, so relax the penalty
+                modifier *= 0.1f;
+            }
+            
+            // lower our disposition
+//            System.out.println(String.format("relation (%s -> %s) : %f, mod=%f", 
+//                    getInfo().getName(), other.getInfo().getName(), getRelation(other), modifier));
+            float relation = changeRelation(other, modifier);
+            if (Behavior.isEnemyGiven(relation) && !hostilities.contains(other)) {
+                // unfriendly, so mark them as an enemy
+                hostilities.add(other);
+                if (hostility == Hostility.Defensive) {
+                    // they attacked us, mark them as an assaulter
+                    other.hostility = Hostility.Assault;
+                    assaulters.add(other);
+                }
+            }
         }
     }
 
@@ -171,7 +190,7 @@ public abstract class Agent extends CollisionEntity {
 
     public float damage(Agent source, float value) {
         if (isAlive()) {
-            addEnemy(source, true);
+            addEnemy(source, value);
         }
         return damage(value);
     }
@@ -196,7 +215,7 @@ public abstract class Agent extends CollisionEntity {
 
     public void setParalyzed(Agent source, boolean paralyzed) {
         if (paralyzed) {
-            addEnemy(source, true);
+            addEnemy(source, 10);
             this.paralyzed++;
         } else {
             this.paralyzed--;
@@ -366,6 +385,7 @@ public abstract class Agent extends CollisionEntity {
     protected void onDeath() {
         followers.clear();
         hostilities.clear();
+        relations.clear();
         target = null;
     }
 
@@ -383,12 +403,40 @@ public abstract class Agent extends CollisionEntity {
             takeAction(delta, screen);
         }
     }
+    
+    public Map<Agent, Float> getRelations() {
+        return relations;
+    }
+    
+    public float getRelation(Agent agent) {
+        if (!relations.containsKey(agent)) {
+            relations.put(agent, getDisposition(agent));
+        }
+        return relations.get(agent);
+    }
+    
+    public float changeRelation(Agent agent, float delta) {
+        float relation = getRelation(agent) + delta;
+        relations.put(agent, relation);
+        return relation;
+    }
 
     @Override
     public void update(float delta, Location location) {
         if (delta == 0)
             return;
         stateTime += delta;
+        
+        // cleanup relations
+        {
+            Iterator<Entry<Agent, Float>> it = relations.entrySet().iterator();
+            while (it.hasNext()) {
+                Entry<Agent, Float> entry = it.next();
+                if (!entry.getKey().isAlive()) {
+                    it.remove();
+                }
+            }
+        }
 
         // apply all active effects, remove any that are finished
         Iterator<Effect> it = effects.iterator();
@@ -435,7 +483,7 @@ public abstract class Agent extends CollisionEntity {
         }
 
         // update enemies
-        Iterator<Agent> enemyIterator = hostilities.keySet().iterator();
+        Iterator<Agent> enemyIterator = hostilities.iterator();
         while (enemyIterator.hasNext()) {
             Agent enemy = enemyIterator.next();
             if (!enemy.isAlive()) {
@@ -736,6 +784,11 @@ public abstract class Agent extends CollisionEntity {
 
     public AgentInfo getInfo() {
         return info;
+    }
+    
+    @Override
+    public String toString() {
+        return info.getName();
     }
 
     protected abstract void takeAction(float delta, Location screen);

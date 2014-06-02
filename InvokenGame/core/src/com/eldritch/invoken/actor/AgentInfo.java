@@ -15,6 +15,8 @@ import com.eldritch.scifirpg.proto.Actors.ActorParams.Skill;
 import com.eldritch.scifirpg.proto.Disciplines.Discipline;
 
 public class AgentInfo {
+    final String name;
+    
 	final Profession profession;
 	final FactionManager factions;
 	private final Inventory inventory = new Inventory();
@@ -26,6 +28,7 @@ public class AgentInfo {
 	int level;
 	
 	public AgentInfo(Agent agent, ActorParams params) {
+	    this.name = params.getName();
 		augmentations = new PreparedAugmentations(agent);
 		profession = Profession.fromProto(params.getProfession());
 		factions = new FactionManager(agent);
@@ -52,6 +55,7 @@ public class AgentInfo {
 	}
 	
 	public AgentInfo(Agent agent, Profession profession, int level) {
+	    this.name = "unknown";
 		augmentations = new PreparedAugmentations(agent);
 		
 		this.profession = profession;
@@ -67,6 +71,10 @@ public class AgentInfo {
 		this.level = level;
 		
 		factions = new FactionManager(agent);
+	}
+	
+	public String getName() {
+	    return name;
 	}
 	
 	public int getLevel() {

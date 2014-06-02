@@ -5,7 +5,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.badlogic.gdx.math.Vector2;
-import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.actor.Agent;
 import com.eldritch.invoken.actor.Npc;
 import com.eldritch.invoken.encounter.Location;

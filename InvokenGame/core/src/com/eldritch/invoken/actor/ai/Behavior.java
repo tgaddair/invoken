@@ -177,21 +177,21 @@ public class Behavior {
     /**
      * Returns true if our assistance dictates we should attack given our reaction.
      */
-    private boolean obligatedToAttack(Agent other, Collection<Agent> actors) {
+    private boolean obligatedToAttack(Agent target, Collection<Agent> actors) {
         if (assistance == Assistance.DETACHED) {
             // detached actors never assist
             return false;
         }
         
         // we're at least loyal to our allies, so consider the situation
-        float otherReaction = npc.getRelation(other);
+        float targetReaction = npc.getRelation(target);
         for (Agent agent : actors) {
-            if (agent.hostileTo(other)) {
+            if (agent.hostileTo(target)) {
                 float reaction = npc.getRelation(agent);
-                if (isAllyGiven(reaction) && !isAllyGiven(otherReaction)) {
+                if (isAllyGiven(reaction) && !isAllyGiven(targetReaction)) {
                     // support allies against non-allies
                     return true;
-                } else if (agent.assaultedBy(other)) {
+                } else if (agent.assaultedBy(target)) {
                     // assist allies when attacked
                     if (isAllyGiven(reaction)) {
                         return true;
@@ -236,15 +236,15 @@ public class Behavior {
         }
     }
     
-    private boolean isEnemyGiven(float reaction) {
+    public static boolean isEnemyGiven(float reaction) {
         return reaction <= -10;
     }
     
-    private boolean isNeutralGiven(float reaction) {
+    public static boolean isNeutralGiven(float reaction) {
         return !isEnemyGiven(reaction) && !isAllyGiven(reaction);
     }
     
-    private boolean isAllyGiven(float reaction) {
+    public static boolean isAllyGiven(float reaction) {
         return reaction >= 10;
     }
 }

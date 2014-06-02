@@ -1,13 +1,9 @@
 package com.eldritch.invoken.actor;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import java.util.Map.Entry;
 
 import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Rectangle;
@@ -41,7 +37,6 @@ public class Npc extends Agent {
 	private final DialogueVerifier dialogueVerifier = new DialogueVerifier();
 	private final Behavior behavior;
 	final Pathfinder pathfinder = new Pathfinder();
-	private final Map<Agent, Float> relations = new HashMap<Agent, Float>();
 	private final List<Routine> routines = new ArrayList<Routine>();
 	
 	// used in AI routine calculations to determine things like the target
@@ -78,15 +73,6 @@ public class Npc extends Agent {
 	
 	@Override
 	protected void takeAction(float delta, Location screen) {
-		// cleanup state
-		Iterator<Entry<Agent, Float>> it = relations.entrySet().iterator();
-		while (it.hasNext()) {
-			Entry<Agent, Float> entry = it.next();
-			if (!entry.getKey().isAlive()) {
-				it.remove();
-			}
-		}
-		
 		// update neighbors
 		screen.getNeighbors(this);
 		
@@ -186,23 +172,6 @@ public class Npc extends Agent {
 	@Override
 	public void handleInteract(Agent other) {
 		other.interact(this);
-	}
-	
-	public Map<Agent, Float> getRelations() {
-		return relations;
-	}
-	
-	public float getRelation(Agent agent) {
-	    if (!relations.containsKey(agent)) {
-            relations.put(agent, getDisposition(agent));
-        }
-	    return relations.get(agent);
-	}
-	
-	@Override
-	protected void onDeath() {
-		super.onDeath();
-		relations.clear();
 	}
 	
 	public List<Choice> getChoicesFor(Response response) {
