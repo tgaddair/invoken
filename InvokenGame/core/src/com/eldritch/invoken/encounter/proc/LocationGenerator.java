@@ -1,8 +1,11 @@
 package com.eldritch.invoken.encounter.proc;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -54,16 +57,11 @@ public class LocationGenerator {
         midWallCenter = new StaticTiledMapTile(atlas.findRegion("test-biome/mid-wall-center"));
         leftTrim = new StaticTiledMapTile(atlas.findRegion("test-biome/left-trim"));
         rightTrim = new StaticTiledMapTile(atlas.findRegion("test-biome/right-trim"));
-        doorLeft = new StaticTiledMapTile(
-                atlas.findRegion("test-biome/door-front-bottom-left"));
-        doorRight = new StaticTiledMapTile(
-                atlas.findRegion("test-biome/door-front-bottom-right"));
-        doorOverLeft = new StaticTiledMapTile(
-                atlas.findRegion("test-biome/door-over-left"));
-        doorOverRight = new StaticTiledMapTile(
-                atlas.findRegion("test-biome/door-over-right"));
-        doorOverLeftTop = new StaticTiledMapTile(
-                atlas.findRegion("test-biome/door-over-left-top"));
+        doorLeft = new StaticTiledMapTile(atlas.findRegion("test-biome/door-front-bottom-left"));
+        doorRight = new StaticTiledMapTile(atlas.findRegion("test-biome/door-front-bottom-right"));
+        doorOverLeft = new StaticTiledMapTile(atlas.findRegion("test-biome/door-over-left"));
+        doorOverRight = new StaticTiledMapTile(atlas.findRegion("test-biome/door-over-right"));
+        doorOverLeftTop = new StaticTiledMapTile(atlas.findRegion("test-biome/door-over-left-top"));
         doorOverRightTop = new StaticTiledMapTile(
                 atlas.findRegion("test-biome/door-over-right-top"));
         unlockedDoor = new StaticTiledMapTile(atlas.findRegion("test-biome/door-activator"));
@@ -94,65 +92,21 @@ public class LocationGenerator {
 
         TiledMapTileLayer collision = createCollisionLayer(base);
         map.getLayers().add(collision);
-        map.getLayers().add(createSpawnLayer(base, collision, width, height));
-        
+        for (TiledMapTileLayer layer : createSpawnLayers(base, leafs, proto.getEncounterList())) {
+            map.getLayers().add(layer);
+        }
+
         List<Activator> activators = new ArrayList<Activator>();
         createDoors(base, trim, overlay, overlayTrim, collision, activators);
 
         Location location = new Location(proto, player, map);
         location.addLights(lights);
 
-        List<Agent> entities = createEntities(base, leafs, proto.getEncounterList(), location);
-        location.addEntities(entities);
+        // List<Agent> entities = createEntities(base, leafs, proto.getEncounterList(), location);
+        // location.addEntities(entities);
         location.addActivators(activators);
 
         return location;
-    }
-
-    private List<Agent> createEntities(TiledMapTileLayer layer, List<Leaf> leafs,
-            List<Encounter> encounters, Location location) {
-        List<Agent> entities = new ArrayList<Agent>();
-
-        double total = getTotalWeight(encounters);
-        for (Leaf leaf : leafs) {
-            if (leaf.room != null) {
-                addEncounter(leaf, entities, encounters, location, layer, total);
-            }
-        }
-
-        return entities;
-    }
-
-    private void addEncounter(Leaf leaf, List<Agent> entities, List<Encounter> encounters,
-            Location location, TiledMapTileLayer layer, double total) {
-        String asset = "sprite/characters/male-fair.png"; // TODO: add to proto
-        double target = Math.random() * total;
-        double sum = 0.0;
-        for (Encounter encounter : encounters) {
-            if (encounter.getType() == Encounter.Type.ACTOR) {
-                sum += encounter.getWeight();
-                if (sum >= target) {
-                    for (ActorScenario scenario : encounter.getActorParams().getActorScenarioList()) {
-                        Vector2 position = getPoint(leaf.room);
-                        if (layer.getCell((int) position.x, (int) position.y) != null) {
-                            entities.add(location.createTestNpc(position, scenario.getActorId(),
-                                    asset));
-                        }
-                    }
-                    return;
-                }
-            }
-        }
-    }
-
-    private double getTotalWeight(List<Encounter> encounters) {
-        double total = 0.0;
-        for (Encounter encounter : encounters) {
-            if (encounter.getType() == Encounter.Type.ACTOR) {
-                total += encounter.getWeight();
-            }
-        }
-        return total;
     }
 
     private TiledMap getBaseMap(int width, int height) {
@@ -309,7 +263,7 @@ public class LocationGenerator {
                 }
             }
         }
-        
+
         return layer;
     }
 
@@ -332,12 +286,14 @@ public class LocationGenerator {
         return layer;
     }
 
-    private TiledMapTileLayer createSpawnLayer(TiledMapTileLayer base, TiledMapTileLayer collision,
-            int width, int height) {
-        TiledMapTileLayer layer = new TiledMapTileLayer(width, height, PX, PX);
-        layer.setVisible(false);
-        layer.setOpacity(1.0f);
-        layer.setName("player");
+    private List<TiledMapTileLayer> createSpawnLayers(TiledMapTileLayer base, List<Leaf> leafs,
+            List<Encounter> encounters) {
+        List<TiledMapTileLayer> layers = new ArrayList<TiledMapTileLayer>();
+        TiledMapTileLayer playerLayer = new TiledMapTileLayer(base.getWidth(), base.getHeight(),
+                PX, PX);
+        playerLayer.setVisible(false);
+        playerLayer.setOpacity(1.0f);
+        playerLayer.setName("player");
 
         AtlasRegion region = atlas.findRegion("test-biome/floor1");
         TiledMapTile tile = new StaticTiledMapTile(region);
@@ -345,15 +301,60 @@ public class LocationGenerator {
         for (int x = 0; x < base.getWidth(); x++) {
             for (int y = 0; y < base.getHeight(); y++) {
                 Cell cell = base.getCell(x, y);
-                Cell collisionCell = collision.getCell(x, y);
-                if (cell != null && cell.getTile() == ground && collisionCell == null) {
-                    addCell(layer, tile, x + 1, y + 1);
+                if (cell != null && cell.getTile() == ground) {
+                    addCell(playerLayer, tile, x + 1, y + 1);
                     break;
                 }
             }
         }
+        layers.add(playerLayer);
 
-        return layer;
+        double total = getTotalWeight(encounters);
+        for (Leaf leaf : leafs) {
+            if (leaf.room != null) {
+                TiledMapTileLayer layer = addEncounter(leaf, encounters, base, total);
+                if (layer != null) {
+                    layers.add(layer);
+                }
+            }
+        }
+
+        return layers;
+    }
+
+    private TiledMapTileLayer addEncounter(Leaf leaf, List<Encounter> encounters,
+            TiledMapTileLayer base, double total) {
+        double target = Math.random() * total;
+        double sum = 0.0;
+        for (Encounter encounter : encounters) {
+            if (encounter.getType() == Encounter.Type.ACTOR) {
+                sum += encounter.getWeight();
+                if (sum >= target) {
+                    TiledMapTileLayer layer = new EncounterLayer(encounter, base.getWidth(),
+                            base.getHeight(), PX, PX);
+                    layer.setVisible(false);
+                    layer.setOpacity(1.0f);
+                    layer.setName("encounter-" + leaf.x + "-" + leaf.y);
+
+                    for (ActorScenario scenario : encounter.getActorParams().getActorScenarioList()) {
+                        NaturalVector2 position = getPoint(leaf.room, base, layer);
+                        addCell(layer, collider, position.x, position.y);
+                    }
+                    return layer;
+                }
+            }
+        }
+        return null;
+    }
+
+    private double getTotalWeight(List<Encounter> encounters) {
+        double total = 0.0;
+        for (Encounter encounter : encounters) {
+            if (encounter.getType() == Encounter.Type.ACTOR) {
+                total += encounter.getWeight();
+            }
+        }
+        return total;
     }
 
     private void addWalls(TiledMapTileLayer layer) {
@@ -376,23 +377,22 @@ public class LocationGenerator {
             }
         }
     }
-    
-    private void createDoors(
-            TiledMapTileLayer base, TiledMapTileLayer trim, TiledMapTileLayer overlay,
-            TiledMapTileLayer overlayTrim, TiledMapTileLayer collision,
+
+    private void createDoors(TiledMapTileLayer base, TiledMapTileLayer trim,
+            TiledMapTileLayer overlay, TiledMapTileLayer overlayTrim, TiledMapTileLayer collision,
             List<Activator> activators) {
         addDoors(base, trim, overlay, collision, activators);
         addTrimDoors(base, trim, overlayTrim, collision, activators);
     }
-    
+
     private void addDoors(TiledMapTileLayer base, TiledMapTileLayer trim,
             TiledMapTileLayer overlay, TiledMapTileLayer collision, List<Activator> activators) {
-        
+
         TiledMapTile doorTopLeft = new StaticTiledMapTile(
                 atlas.findRegion("test-biome/door-front-top-left"));
         TiledMapTile doorTopRight = new StaticTiledMapTile(
                 atlas.findRegion("test-biome/door-front-top-right"));
-        
+
         // add front doors
         List<RemovableCell> cells = new ArrayList<RemovableCell>();
         for (int x = 0; x < base.getWidth(); x++) {
@@ -407,19 +407,19 @@ public class LocationGenerator {
                             addCell(trim, doorRight, x - 2, y, cells);
                             addCell(trim, doorLeft, x - 1, y, cells);
                             addCell(trim, doorRight, x, y, cells);
-                            
+
                             // add overlay
                             addCell(overlay, doorTopLeft, x - 3, y + 1, cells);
                             addCell(overlay, doorTopRight, x - 2, y + 1, cells);
                             addCell(overlay, doorTopLeft, x - 1, y + 1, cells);
                             addCell(overlay, doorTopRight, x, y + 1, cells);
-                            
+
                             // add collision
                             addCell(collision, collider, x - 3, y, cells);
                             addCell(collision, collider, x - 2, y, cells);
                             addCell(collision, collider, x - 1, y, cells);
                             addCell(collision, collider, x, y, cells);
-                            
+
                             // add activator
                             DoorActivator activator = new DoorActivator(x - 4, y + 1, cells,
                                     unlockedDoor, lockedDoor);
@@ -432,11 +432,10 @@ public class LocationGenerator {
             }
         }
     }
-    
+
     private void addTrimDoors(TiledMapTileLayer base, TiledMapTileLayer trim,
-            TiledMapTileLayer overlayTrim, TiledMapTileLayer collision,
-            List<Activator> activators) {
-        
+            TiledMapTileLayer overlayTrim, TiledMapTileLayer collision, List<Activator> activators) {
+
         List<RemovableCell> cells = new ArrayList<RemovableCell>();
         for (int x = 0; x < base.getWidth(); x++) {
             for (int y = 0; y < base.getHeight(); y++) {
@@ -446,20 +445,20 @@ public class LocationGenerator {
                     if (hasCell(x, y - 2, overlayTrim) && isWall(x, y + 1, base)) {
                         if (isGround(x - 1, y - 2, base) && isGround(x - 1, y + 1, base)) {
                             // room left
-                            addTrimDoor(trim, overlayTrim, collision, doorOverLeft, doorOverLeftTop,
-                                    x, y, activators, cells);
+                            addTrimDoor(trim, overlayTrim, collision, doorOverLeft,
+                                    doorOverLeftTop, x, y, activators, cells);
                         } else if (isGround(x + 1, y - 2, base) && isGround(x + 1, y + 1, base)
                                 && trim.getCell(x, y + 2) == null) {
                             // room right and no pre-existing door panel in the way
-                            addTrimDoor(trim, overlayTrim, collision,
-                                    doorOverRight, doorOverRightTop, x, y, activators, cells);
+                            addTrimDoor(trim, overlayTrim, collision, doorOverRight,
+                                    doorOverRightTop, x, y, activators, cells);
                         }
                     }
                 }
             }
         }
     }
-    
+
     private void addTrimDoor(TiledMapTileLayer trim, TiledMapTileLayer overlayTrim,
             TiledMapTileLayer collision, TiledMapTile tile, TiledMapTile top, int x, int y,
             List<Activator> activators, List<RemovableCell> cells) {
@@ -469,7 +468,7 @@ public class LocationGenerator {
         addCell(overlayTrim, tile, x, y + 1, cells);
         addCell(overlayTrim, tile, x, y + 2, cells);
         addCell(overlayTrim, top, x, y + 3, cells);
-        
+
         // add collision if absent so we don't delete collision cells when the door comes down
         addCellIfAbsent(collision, collider, x, y - 2, cells);
         addCellIfAbsent(collision, collider, x, y - 1, cells);
@@ -477,39 +476,111 @@ public class LocationGenerator {
         addCellIfAbsent(collision, collider, x, y + 1, cells);
         addCellIfAbsent(collision, collider, x, y + 2, cells);
         addCellIfAbsent(collision, collider, x, y + 3, cells);
-        
+
         // add activator
-        DoorActivator activator = new DoorActivator(x, y + 2, cells,
-                unlockedDoor, lockedDoor);
+        DoorActivator activator = new DoorActivator(x, y + 2, cells, unlockedDoor, lockedDoor);
         activators.add(activator);
         trim.setCell(x, y + 2, activator.getCell());
         cells.clear();
     }
-    
+
     private boolean inBounds(int x, int y, TiledMapTileLayer layer) {
         return x >= 0 && x < layer.getWidth() && y >= 0 && y < layer.getHeight();
     }
-    
+
     private boolean hasCell(int x, int y, TiledMapTileLayer layer) {
         return inBounds(x, y, layer) && layer.getCell(x, y) != null;
     }
-    
+
     private boolean isGround(int x, int y, TiledMapTileLayer layer) {
-        return inBounds(x, y, layer) 
-                && layer.getCell(x, y) != null && layer.getCell(x, y).getTile() == ground;
-    }
-    
-    private boolean isWall(int x, int y, TiledMapTileLayer layer) {
-        return inBounds(x, y, layer) 
-                && layer.getCell(x, y) != null && layer.getCell(x, y).getTile() != ground;
+        return inBounds(x, y, layer) && layer.getCell(x, y) != null
+                && layer.getCell(x, y).getTile() == ground;
     }
 
-    public Vector2 getPoint(Rectangle rect) {
+    private boolean isWall(int x, int y, TiledMapTileLayer layer) {
+        return inBounds(x, y, layer) && layer.getCell(x, y) != null
+                && layer.getCell(x, y).getTile() != ground;
+    }
+
+    public NaturalVector2 getPoint(Rectangle rect, TiledMapTileLayer base, TiledMapTileLayer layer) {
         int left = (int) rect.x * SCALE;
         int right = (int) (left + rect.width * SCALE);
         int top = (int) rect.y * SCALE;
         int bottom = (int) (top + rect.height * SCALE);
-        return new Vector2(randomNumber(left + 1, right - 2), randomNumber(top + 1, bottom - 2));
+        NaturalVector2 seed = new NaturalVector2(randomNumber(left + 1, right - 2), randomNumber(
+                top + 1, bottom - 2));
+        return getPoint(rect, base, layer, seed);
+    }
+    
+    public NaturalVector2 getPoint(Rectangle rect, TiledMapTileLayer base, TiledMapTileLayer layer, NaturalVector2 seed) {
+        Set<NaturalVector2> visited = new HashSet<NaturalVector2>();
+        LinkedList<NaturalVector2> queue = new LinkedList<NaturalVector2>();
+        
+        queue.add(seed);
+        while (!queue.isEmpty()) {
+            NaturalVector2 point = queue.remove();
+            if (isGround(point.x, point.y, base) && !hasCell(point.x, point.y, layer)) {
+                // valid point: ground and no pre-existing spawn nodes
+                return point;
+            }
+            
+            // bad point, so try all neighbors in breadth-first expansion
+            int x1 = (int) rect.x * SCALE;
+            int x2 = (int) (x1 + rect.width * SCALE);
+            int y1 = (int) rect.y * SCALE;
+            int y2 = (int) (y1 + rect.height * SCALE);
+            for (int dx = -1; dx <= 1; dx++) {
+                for (int dy = -1; dy <= 1; dy++) {
+                    if (dx == 0 && dy == 0) {
+                        continue;
+                    }
+                    
+                    int x = point.x + dx;
+                    int y = point.y + dy;
+                    if (x > x1 && x < x2 && y > y1 && y < y2 && !visited.contains(point)) {
+                        queue.add(new NaturalVector2(x, y));
+                    }
+                }
+            }
+        }
+        
+        // this should never happen
+        return seed;
+    }
+
+    private static class NaturalVector2 {
+        int x;
+        int y;
+
+        public NaturalVector2(int x, int y) {
+            this.x = x;
+            this.y = y;
+        }
+
+        @Override
+        public int hashCode() {
+            final int prime = 31;
+            int result = 1;
+            result = prime * result + x;
+            result = prime * result + y;
+            return result;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj)
+                return true;
+            if (obj == null)
+                return false;
+            if (getClass() != obj.getClass())
+                return false;
+            NaturalVector2 other = (NaturalVector2) obj;
+            if (x != other.x)
+                return false;
+            if (y != other.y)
+                return false;
+            return true;
+        }
     }
 
     private int randomNumber(int min, int max) {
@@ -549,13 +620,13 @@ public class LocationGenerator {
         layer.setCell(x, y, cell);
         return cell;
     }
-    
+
     private void addCell(TiledMapTileLayer layer, TiledMapTile tile, int x, int y,
             List<RemovableCell> cells) {
         Cell cell = addCell(layer, tile, x, y);
         cells.add(new RemovableCell(cell, layer, x, y));
     }
-    
+
     private void addCellIfAbsent(TiledMapTileLayer layer, TiledMapTile tile, int x, int y,
             List<RemovableCell> cells) {
         if (layer.getCell(x, y) == null) {
@@ -602,5 +673,15 @@ public class LocationGenerator {
 
     public TextureAtlas getAtlas() {
         return atlas;
+    }
+
+    public static class EncounterLayer extends TiledMapTileLayer {
+        public final Encounter encounter;
+
+        public EncounterLayer(Encounter encounter, int width, int height, int tileWidth,
+                int tileHeight) {
+            super(width, height, tileWidth, tileHeight);
+            this.encounter = encounter;
+        }
     }
 }

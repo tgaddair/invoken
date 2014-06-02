@@ -15,6 +15,16 @@ public class FactionManager {
 		this.agent = agent;
 	}
 	
+	public void modifyReputation(Agent other, float modifier) {
+	    for (Faction faction : other.getFactions()) {
+	        if (factions.containsKey(faction)) {
+	            FactionStatus status = factions.get(faction);
+	            status.reputation -= modifier;
+	            // TODO emit these changes to the other actors
+	        }
+	    }
+	}
+	
 	public void addFaction(com.eldritch.scifirpg.proto.Actors.ActorParams.FactionStatus status) {
 		Faction faction = Faction.fromProto(
 				InvokenGame.FACTION_READER.readAsset(status.getFactionId()));
@@ -62,7 +72,7 @@ public class FactionManager {
 	
 	private static class FactionStatus {
 		private int rank;
-		private int reputation;
+		private float reputation;
 		
 		public FactionStatus(int rank, int reputation) {
 			this.rank = rank;

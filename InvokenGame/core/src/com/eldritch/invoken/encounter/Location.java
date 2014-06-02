@@ -13,6 +13,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
@@ -27,6 +28,7 @@ import com.eldritch.invoken.actor.Agent;
 import com.eldritch.invoken.actor.Npc;
 import com.eldritch.invoken.actor.Player;
 import com.eldritch.invoken.actor.TemporaryEntity;
+import com.eldritch.invoken.encounter.proc.LocationGenerator.EncounterLayer;
 import com.eldritch.invoken.gfx.Light;
 import com.eldritch.invoken.gfx.LightManager;
 import com.eldritch.scifirpg.proto.Locations.Encounter;
@@ -59,8 +61,7 @@ public class Location {
         this(data, player, readMap(data));
     }
 
-    public Location(com.eldritch.scifirpg.proto.Locations.Location data, Player player,
-            TiledMap map) {
+    public Location(com.eldritch.scifirpg.proto.Locations.Location data, Player player, TiledMap map) {
         this.player = player;
         this.map = map;
 
@@ -86,16 +87,19 @@ public class Location {
         Vector2 spawn = getSpawnLocation();
         player.setPosition(spawn.x, spawn.y);
         addActor(player);
+
+        // add encounters
+        addEntities(data, map);
     }
-    
+
     public void addEntity(TemporaryEntity entity) {
         tempEntities.add(entity);
     }
-    
+
     public void addEntities(List<Agent> entities) {
         this.entities.addAll(entities);
     }
-    
+
     public void addActivators(List<Activator> activators) {
         this.activators.addAll(activators);
     }
@@ -103,25 +107,27 @@ public class Location {
     public void addEntities(com.eldritch.scifirpg.proto.Locations.Location data, TiledMap map) {
         // find spawn nodes
         String asset = "sprite/characters/male-fair.png";
-        for (Encounter proto : data.getEncounterList()) {
-            if (proto.getType() == Encounter.Type.ACTOR) {
-                // create NPCs
-                LinkedList<Vector2> spawnNodes = getSpawnNodes(proto.getId(), map);
-                for (ActorScenario scenario : proto.getActorParams().getActorScenarioList()) {
-                    addActor(createTestNpc(spawnNodes.poll(), scenario.getActorId(), asset));
+        for (MapLayer layer : map.getLayers()) {
+            if (layer instanceof EncounterLayer) {
+                EncounterLayer encounterLayer = (EncounterLayer) layer;
+                Encounter encounter = encounterLayer.encounter;
+                if (encounter.getType() == Encounter.Type.ACTOR) {
+                    // create NPCs
+                    LinkedList<Vector2> spawnNodes = getSpawnNodes(encounterLayer);
+                    for (ActorScenario scenario : encounter.getActorParams().getActorScenarioList()) {
+                        addActor(createTestNpc(spawnNodes.poll(), scenario.getActorId(), asset));
+                    }
                 }
             }
         }
     }
 
-    private static LinkedList<Vector2> getSpawnNodes(String encounter, TiledMap map) {
+    private static LinkedList<Vector2> getSpawnNodes(TiledMapTileLayer layer) {
         LinkedList<Vector2> list = new LinkedList<Vector2>();
-        TiledMapTileLayer spawnLayer = (TiledMapTileLayer) map.getLayers().get(
-                "Encounter-" + encounter);
-        spawnLayer.setVisible(false);
-        for (int x = 0; x < spawnLayer.getWidth(); x++) {
-            for (int y = 0; y < spawnLayer.getHeight(); y++) {
-                Cell cell = spawnLayer.getCell(x, y);
+        layer.setVisible(false);
+        for (int x = 0; x < layer.getWidth(); x++) {
+            for (int y = 0; y < layer.getHeight(); y++) {
+                Cell cell = layer.getCell(x, y);
                 if (cell != null) {
                     list.add(new Vector2(x, y));
                 }
@@ -161,10 +167,9 @@ public class Location {
     public Npc createTestNpc(Vector2 position, String path, String asset) {
         return createTestNpc(position.x, position.y, path, asset);
     }
-    
+
     public Npc createTestNpc(float x, float y, String path, String asset) {
-        return new Npc(InvokenGame.ACTOR_READER.readAsset(path), x, y, asset,
-                this);
+        return new Npc(InvokenGame.ACTOR_READER.readAsset(path), x, y, asset, this);
     }
 
     private void addActor(Agent actor) {
@@ -244,7 +249,7 @@ public class Location {
     public List<Agent> getActors() {
         return activeEntities;
     }
-    
+
     public List<Activator> getActivators() {
         return activators;
     }
@@ -252,7 +257,7 @@ public class Location {
     public List<Agent> getNeighbors(Npc agent) {
         return getNeighbors(agent, agent.getNeighbors(), getActors());
     }
-    
+
     public List<Agent> getNeighbors(Agent agent, List<Agent> neighbors, List<Agent> actors) {
         neighbors.clear();
         for (Agent other : actors) {
@@ -262,7 +267,7 @@ public class Location {
         }
         return neighbors;
     }
-    
+
     private void resetActiveEntities() {
         activeEntities.clear();
         for (Agent other : entities) {
@@ -276,7 +281,7 @@ public class Location {
         TiledMapTileLayer layer = (TiledMapTileLayer) map.getLayers().get(collisionIndex);
         return layer.getCell(x, y) != null;
     }
-    
+
     public Array<Rectangle> getTiles(int startX, int startY, int endX, int endY) {
         return getTiles(startX, startY, endX, endY, getTiles());
     }

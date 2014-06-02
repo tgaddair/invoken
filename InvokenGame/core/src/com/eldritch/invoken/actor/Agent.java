@@ -168,13 +168,15 @@ public abstract class Agent extends CollisionEntity {
 //            System.out.println(String.format("relation (%s -> %s) : %f, mod=%f", 
 //                    getInfo().getName(), other.getInfo().getName(), getRelation(other), modifier));
             float relation = changeRelation(other, modifier);
-            if (Behavior.isEnemyGiven(relation) && !hostilities.contains(other)) {
+            if (Behavior.isEnemyGiven(relation)) {
                 // unfriendly, so mark them as an enemy
                 hostilities.add(other);
                 if (hostility == Hostility.Defensive) {
                     // they attacked us, mark them as an assaulter
                     other.hostility = Hostility.Assault;
                     assaulters.add(other);
+                    
+                    // lower their reputation with all our factions
                 }
             }
         }
