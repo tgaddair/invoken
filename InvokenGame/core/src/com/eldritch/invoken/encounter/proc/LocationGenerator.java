@@ -93,9 +93,7 @@ public class LocationGenerator {
         map.getLayers().add(overlayTrim);
 
         LocationLayer collision = createCollisionLayer(base, map);
-        LocationLayer background = createBackgroundLayer(base, collision, map);
         map.getLayers().add(collision);
-        map.getLayers().add(background);
         for (LocationLayer layer : createSpawnLayers(base, leafs, proto.getEncounterList(), map)) {
             map.getLayers().add(layer);
         }
@@ -277,30 +275,9 @@ public class LocationGenerator {
         for (int x = 0; x < base.getWidth(); x++) {
             for (int y = 0; y < base.getHeight(); y++) {
                 Cell cell = base.getCell(x, y);
-                if (cell == null && hasAdjacentCell(x, y, base)) {
-                    // adjacent ground space
-                    addCell(layer, collider, x, y);
-                }
-            }
-        }
-
-        return layer;
-    }
-    
-    private LocationLayer createBackgroundLayer(LocationLayer base, LocationLayer collision,
-            LocationMap map) {
-        LocationLayer layer = new LocationLayer(base.getWidth(), base.getHeight(), PX, PX, map);
-        layer.setVisible(false);
-        layer.setOpacity(1.0f);
-        layer.setName("background");
-
-        for (int x = 0; x < base.getWidth(); x++) {
-            for (int y = 0; y < base.getHeight(); y++) {
-                Cell cell = base.getCell(x, y);
-                if (cell != null && cell.getTile() != ground && !hasCell(x, y, collision)) {
+                if (cell == null || cell.getTile() != ground) {
                     // non-empty, non-ground space
                     addCell(layer, collider, x, y);
-                    addCell(collision, collider, x, y);
                 }
             }
         }

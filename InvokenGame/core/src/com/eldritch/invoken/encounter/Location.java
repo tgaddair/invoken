@@ -42,7 +42,7 @@ public class Location {
     public static final int PX = 32;
     public static final int MAX_WIDTH = 100;
     public static final int MAX_HEIGHT = 100;
-    
+
     private static Pool<Rectangle> rectPool = new Pool<Rectangle>() {
         @Override
         protected Rectangle newObject() {
@@ -64,14 +64,14 @@ public class Location {
 
     private int[] overlays;
     private int collisionIndex = -1;
-    private int backgroundIndex = -1;
     private final int groundIndex = 0;
 
     public Location(com.eldritch.scifirpg.proto.Locations.Location data, Player player) {
         this(data, player, readMap(data));
     }
 
-    public Location(com.eldritch.scifirpg.proto.Locations.Location data, Player player, LocationMap map) {
+    public Location(com.eldritch.scifirpg.proto.Locations.Location data, Player player,
+            LocationMap map) {
         this.player = player;
         this.map = map;
 
@@ -85,10 +85,7 @@ public class Location {
             } else if (layer.getName().equals("overlay") || layer.getName().equals("overlay-trim")) {
                 // overlays are rendered above all objects always
                 overlayList.add(i);
-            } else if (layer.getName().equals("background")) {
-                layer.setVisible(false);
-                backgroundIndex = i;
-            } 
+            }
         }
         overlays = Ints.toArray(overlayList);
 
@@ -290,30 +287,32 @@ public class Location {
             }
         }
     }
-    
+
     private void resetActiveTiles() {
         map.update(null);
         activeTiles.clear();
-        
+
         Vector2 position = player.getPosition();
         NaturalVector2 origin = NaturalVector2.of((int) position.x, (int) (position.y - 0.5f));
-        
+
         final float layerTileWidth = 1;
         final float layerTileHeight = 1;
 
         Rectangle viewBounds = renderer.getViewBounds();
-        final int x1 = Math.max(0, (int)(viewBounds.x / layerTileWidth) - 1);
-        final int x2 = Math.min(MAX_WIDTH, (int)((viewBounds.x + viewBounds.width + layerTileWidth) / layerTileWidth) + 1);
+        final int x1 = Math.max(0, (int) (viewBounds.x / layerTileWidth) - 1);
+        final int x2 = Math.min(MAX_WIDTH,
+                (int) ((viewBounds.x + viewBounds.width + layerTileWidth) / layerTileWidth) + 1);
 
-        final int y1 = Math.max(0, (int)(viewBounds.y / layerTileHeight) - 1);
-        final int y2 = Math.min(MAX_HEIGHT, (int)((viewBounds.y + viewBounds.height + layerTileHeight) / layerTileHeight) + 1);
-        
+        final int y1 = Math.max(0, (int) (viewBounds.y / layerTileHeight) - 1);
+        final int y2 = Math.min(MAX_HEIGHT,
+                (int) ((viewBounds.y + viewBounds.height + layerTileHeight) / layerTileHeight) + 1);
+
         Set<NaturalVector2> visited = new HashSet<NaturalVector2>();
         LinkedList<NaturalVector2> queue = new LinkedList<NaturalVector2>();
 
         visited.add(origin);
         activeTiles.add(origin);
-        
+
         queue.add(origin);
         while (!queue.isEmpty()) {
             NaturalVector2 point = queue.remove();
@@ -322,46 +321,52 @@ public class Location {
                     if (dx == 0 && dy == 0) {
                         continue;
                     }
-                    
+
                     int x = point.x + dx;
                     int y = point.y + dy;
                     NaturalVector2 neighbor = NaturalVector2.of(x, y);
                     if (x >= x1 && x < x2 && y >= y1 && y < y2 && !visited.contains(neighbor)) {
-                        visited.add(neighbor);
-                        if (isGround(neighbor.x, neighbor.y) || isObstacle(neighbor.x, neighbor.y)) {
-//                            if (!inBackground(neighbor.x, neighbor.y)) {
+                        if (!isObstacle(point) && isGround(point)) {
+                            // ground can spread to anything except collision below
+                            if (dy >= 0 || !isObstacle(neighbor)) {
+                                visited.add(neighbor);
                                 activeTiles.add(neighbor);
-                                if (!isObstacle(neighbor.x, neighbor.y)) {
-                                    queue.add(neighbor);
-                                }
-//                            } else if (neighbor.y > origin.y) {
-//                                activeTiles.add(neighbor);
-//                                queue.add(neighbor);
-//                            }
+                                queue.add(neighbor);
+                            }
+                        } else if (dy == 1 && dx == 0 && isObstacle(point) && isGround(neighbor) && isObstacle(neighbor)) {
+                            // obstacles can spread up to non-ground
+                            visited.add(neighbor);
+                            activeTiles.add(neighbor);
+                            queue.add(neighbor);
                         }
                     }
                 }
             }
         }
-        
+
         map.update(activeTiles);
     }
+
+    public boolean isGround(NaturalVector2 point) {
+        return hasCell(point.x, point.y, groundIndex);
+    }
     
-    public boolean isGround(int x, int y) {
-        return hasCell(x, y, groundIndex);
+    public boolean isObstacle(NaturalVector2 point) {
+        return isObstacle(point.x, point.y);
     }
 
     public boolean isObstacle(int x, int y) {
         return hasCell(x, y, collisionIndex);
     }
     
-    public boolean inBackground(int x, int y) {
-        return hasCell(x, y, backgroundIndex);
-    }
-    
     private boolean hasCell(int x, int y, int layerIndex) {
         TiledMapTileLayer layer = (TiledMapTileLayer) map.getLayers().get(layerIndex);
         return layer.getCell(x, y) != null;
+    }
+    
+    private Cell getCell(NaturalVector2 point, int layerIndex) {
+        TiledMapTileLayer layer = (TiledMapTileLayer) map.getLayers().get(layerIndex);
+        return layer.getCell(point.x, point.y);
     }
 
     public Array<Rectangle> getTiles(int startX, int startY, int endX, int endY) {
