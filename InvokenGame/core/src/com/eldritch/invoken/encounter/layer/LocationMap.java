@@ -1,8 +1,9 @@
-package com.eldritch.invoken.encounter;
+package com.eldritch.invoken.encounter.layer;
 
 import java.util.Set;
 
 import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.eldritch.invoken.encounter.NaturalVector2;
 
 public class LocationMap extends TiledMap {
     private Set<NaturalVector2> activeTiles = null;

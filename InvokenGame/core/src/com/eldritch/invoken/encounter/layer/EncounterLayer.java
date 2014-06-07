@@ -1,6 +1,5 @@
 package com.eldritch.invoken.encounter.layer;
 
-import com.eldritch.invoken.encounter.LocationMap;
 import com.eldritch.scifirpg.proto.Locations.Encounter;
 
 public class EncounterLayer extends LocationLayer {

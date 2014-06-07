@@ -31,6 +31,7 @@ import com.eldritch.invoken.actor.Npc;
 import com.eldritch.invoken.actor.Player;
 import com.eldritch.invoken.actor.TemporaryEntity;
 import com.eldritch.invoken.encounter.layer.EncounterLayer;
+import com.eldritch.invoken.encounter.layer.LocationMap;
 import com.eldritch.invoken.gfx.Light;
 import com.eldritch.invoken.gfx.LightManager;
 import com.eldritch.scifirpg.proto.Locations.Encounter;

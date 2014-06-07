@@ -1,7 +1,6 @@
-package com.eldritch.invoken.encounter;
+package com.eldritch.invoken.encounter.layer;
 
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
-import com.eldritch.invoken.encounter.layer.LocationLayer;
 
 public class RemovableCell {
     private final Cell cell;

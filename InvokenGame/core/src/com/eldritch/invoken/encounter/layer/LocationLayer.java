@@ -1,7 +1,6 @@
 package com.eldritch.invoken.encounter.layer;
 
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
-import com.eldritch.invoken.encounter.LocationMap;
 
 public class LocationLayer extends TiledMapTileLayer {
     private final LocationMap map;

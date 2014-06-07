@@ -7,7 +7,9 @@ import java.util.List;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
 import com.badlogic.gdx.math.Vector2;
+import com.eldritch.invoken.encounter.layer.LocationCell;
 import com.eldritch.invoken.encounter.layer.LocationLayer;
+import com.eldritch.invoken.encounter.layer.RemovableCell;
 
 public class DoorActivator implements Activator {
     private final Cell cell;
