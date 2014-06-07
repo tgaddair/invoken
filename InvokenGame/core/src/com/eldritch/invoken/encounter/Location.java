@@ -328,15 +328,15 @@ public class Location {
                     if (x >= x1 && x < x2 && y >= y1 && y < y2 && !visited.contains(neighbor)) {
                         visited.add(neighbor);
                         if (isGround(neighbor.x, neighbor.y) || isObstacle(neighbor.x, neighbor.y)) {
-                            if (!inBackground(neighbor.x, neighbor.y)) {
+//                            if (!inBackground(neighbor.x, neighbor.y)) {
                                 activeTiles.add(neighbor);
                                 if (!isObstacle(neighbor.x, neighbor.y)) {
                                     queue.add(neighbor);
                                 }
-                            } else if (neighbor.y > origin.y) {
-                                activeTiles.add(neighbor);
-                                queue.add(neighbor);
-                            }
+//                            } else if (neighbor.y > origin.y) {
+//                                activeTiles.add(neighbor);
+//                                queue.add(neighbor);
+//                            }
                         }
                     }
                 }

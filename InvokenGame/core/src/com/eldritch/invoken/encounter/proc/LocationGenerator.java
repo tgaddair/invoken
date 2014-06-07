@@ -20,6 +20,7 @@ import com.eldritch.invoken.actor.Player;
 import com.eldritch.invoken.encounter.Activator;
 import com.eldritch.invoken.encounter.DoorActivator;
 import com.eldritch.invoken.encounter.Location;
+import com.eldritch.invoken.encounter.LocationCell;
 import com.eldritch.invoken.encounter.LocationMap;
 import com.eldritch.invoken.encounter.NaturalVector2;
 import com.eldritch.invoken.encounter.RemovableCell;
@@ -437,7 +438,7 @@ public class LocationGenerator {
 
                             // add activator
                             DoorActivator activator = new DoorActivator(x - 4, y + 1, cells,
-                                    unlockedDoor, lockedDoor);
+                                    unlockedDoor, lockedDoor, trim);
                             activators.add(activator);
                             trim.setCell(x - 4, y + 1, activator.getCell());
                             cells.clear();
@@ -493,7 +494,7 @@ public class LocationGenerator {
         addCellIfAbsent(collision, collider, x, y + 3, cells);
 
         // add activator
-        DoorActivator activator = new DoorActivator(x, y + 2, cells, unlockedDoor, lockedDoor);
+        DoorActivator activator = new DoorActivator(x, y + 2, cells, unlockedDoor, lockedDoor, trim);
         activators.add(activator);
         trim.setCell(x, y + 2, activator.getCell());
         cells.clear();
@@ -616,7 +617,7 @@ public class LocationGenerator {
     }
 
     private Cell addCell(LocationLayer layer, TiledMapTile tile, int x, int y) {
-        Cell cell = new Cell();
+        Cell cell = new LocationCell(NaturalVector2.of(x, y), layer);
         cell.setTile(tile);
         layer.setCell(x, y, cell);
         return cell;

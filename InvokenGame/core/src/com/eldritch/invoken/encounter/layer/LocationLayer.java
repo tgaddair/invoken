@@ -11,15 +11,7 @@ public class LocationLayer extends TiledMapTileLayer {
         this.map = map;
     }
     
-    @Override
-    public Cell getCell(int x, int y) {
-        if (!isVisible(x, y)) {
-            return null;
-        }
-        return super.getCell(x, y);
-    }
-    
-    private boolean isVisible(int x, int y) {
+    public boolean isVisible(int x, int y) {
         return map.isActive(x, y);
     }
 }

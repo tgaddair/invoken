@@ -1,15 +1,15 @@
 package com.eldritch.invoken.encounter;
 
-import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
+import com.eldritch.invoken.encounter.layer.LocationLayer;
 
 public class RemovableCell {
     private final Cell cell;
-    private final TiledMapTileLayer layer;
+    private final LocationLayer layer;
     private final int x;
     private final int y;
     
-    public RemovableCell(Cell cell, TiledMapTileLayer layer, int x, int y) {
+    public RemovableCell(Cell cell, LocationLayer layer, int x, int y) {
         this.cell = cell;
         this.layer = layer;
         this.x = x;
