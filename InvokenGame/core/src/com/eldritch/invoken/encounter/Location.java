@@ -339,7 +339,7 @@ public class Location {
                                 queue.add(neighbor);
                             }
                         } else if (isObstacle(point) && isGround(neighbor) && isObstacle(neighbor)) {
-                            // obstacles can spread up to ground collisions and overlays
+                            // obstacles can spread up to ground collisions
                             if (dy == 1 && dx == 0) {
                                 visited.add(neighbor);
                                 activeTiles.add(neighbor);
@@ -352,6 +352,10 @@ public class Location {
                                 activeTiles.add(neighbor);
                                 queue.add(neighbor);
                             }
+                        } else if (isObstacle(point) && isGround(point) && isOverlay(neighbor)) {
+                            // grounded obstacles can spread to overlays
+                            visited.add(neighbor);
+                            activeTiles.add(neighbor);
                         }
                     }
                 }
