@@ -38,6 +38,7 @@ import com.eldritch.scifirpg.proto.Locations.Encounter.ActorParams.ActorScenario
 import com.google.common.primitives.Ints;
 
 public class Location {
+    public static final int PX = 32;
     public static final int MAX_WIDTH = 100;
     public static final int MAX_HEIGHT = 100;
     
@@ -87,7 +88,7 @@ public class Location {
         overlays = Ints.toArray(overlayList);
 
         // objects are rendered by y-ordering with other entities
-        float unitScale = 1 / 32f;
+        float unitScale = 1.0f / PX;
         renderer = new OrthogonalTiledMapRenderer(map, unitScale);
 
         // spawn and add the player
@@ -201,7 +202,7 @@ public class Location {
 
         // let the camera follow the player
         Vector2 position = player.getPosition();
-        float scale = 32 * camera.zoom;
+        float scale = PX * camera.zoom;
         camera.position.x = Math.round(position.x * scale) / scale;
         camera.position.y = Math.round(position.y * scale) / scale;
         camera.update();
@@ -292,10 +293,15 @@ public class Location {
         Vector2 position = player.getPosition();
         NaturalVector2 origin = NaturalVector2.of((int) position.x, (int) position.y);
         
-        int x1 = Math.max(origin.x - Player.MAX_DST, 0);
-        int x2 = Math.min(origin.x + Player.MAX_DST, MAX_WIDTH - 1);
-        int y1 = Math.max(origin.y - Player.MAX_DST, 0);
-        int y2 = Math.min(origin.y + Player.MAX_DST, MAX_HEIGHT - 1);
+        final float layerTileWidth = 1;
+        final float layerTileHeight = 1;
+
+        Rectangle viewBounds = renderer.getViewBounds();
+        final int x1 = Math.max(0, (int)(viewBounds.x / layerTileWidth));
+        final int x2 = Math.min(MAX_WIDTH, (int)((viewBounds.x + viewBounds.width + layerTileWidth) / layerTileWidth));
+
+        final int y1 = Math.max(0, (int)(viewBounds.y / layerTileHeight));
+        final int y2 = Math.min(MAX_HEIGHT, (int)((viewBounds.y + viewBounds.height + layerTileHeight) / layerTileHeight));
         
         Set<NaturalVector2> visited = new HashSet<NaturalVector2>();
         LinkedList<NaturalVector2> queue = new LinkedList<NaturalVector2>();
@@ -315,7 +321,7 @@ public class Location {
                     int x = point.x + dx;
                     int y = point.y + dy;
                     NaturalVector2 neighbor = NaturalVector2.of(x, y);
-                    if (x >= x1 && x <= x2 && y >= y1 && y <= y2 && !visited.contains(neighbor)) {
+                    if (x >= x1 && x < x2 && y >= y1 && y < y2 && !visited.contains(neighbor)) {
                         visited.add(neighbor);
                         if (isGround(neighbor.x, neighbor.y) || isObstacle(neighbor.x, neighbor.y)) {
                             activeTiles.add(neighbor);
