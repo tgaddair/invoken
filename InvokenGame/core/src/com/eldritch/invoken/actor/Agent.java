@@ -31,6 +31,10 @@ import com.eldritch.invoken.screens.GameScreen;
 import com.eldritch.scifirpg.proto.Actors.ActorParams;
 
 public abstract class Agent extends CollisionEntity {
+    public static final int MAX_DST2 = 175;
+//    public static final int MAX_DST = (int) (Math.sqrt(MAX_DST2) - 1);
+    public static final int MAX_DST = 10;
+    
     static AssetManager assetManager = new AssetManager();
     static float MAX_VELOCITY = 8f;
     static float JUMP_VELOCITY = 40f;
@@ -362,7 +366,7 @@ public abstract class Agent extends CollisionEntity {
 
     public boolean canTarget(Agent other, Location location) {
         // within distance constraint
-        if (dst2(other) > 175) {
+        if (dst2(other) > MAX_DST2) {
             return false;
         }
         return true;

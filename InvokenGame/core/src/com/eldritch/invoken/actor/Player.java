@@ -3,8 +3,6 @@ package com.eldritch.invoken.actor;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.math.Vector2;
-import com.eldritch.invoken.InvokenGame;
-import com.eldritch.invoken.actor.Inventory.ItemState;
 import com.eldritch.invoken.actor.ai.AgentMover;
 import com.eldritch.invoken.encounter.Location;
 

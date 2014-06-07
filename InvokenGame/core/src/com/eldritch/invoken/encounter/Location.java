@@ -3,9 +3,11 @@ package com.eldritch.invoken.encounter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
@@ -47,11 +49,12 @@ public class Location {
     };
 
     private final Player player;
-    private final TiledMap map;
+    private final LocationMap map;
     private final List<Agent> entities = new ArrayList<Agent>();
     private final List<Agent> activeEntities = new ArrayList<Agent>();
     private final List<TemporaryEntity> tempEntities = new ArrayList<TemporaryEntity>();
     private final List<Activator> activators = new ArrayList<Activator>();
+    private final Set<NaturalVector2> activeTiles = new HashSet<NaturalVector2>();
     private final LightManager lightManager = new LightManager();
 
     private OrthogonalTiledMapRenderer renderer;
@@ -59,12 +62,13 @@ public class Location {
 
     private int[] overlays;
     private int collisionIndex = -1;
+    private final int groundIndex = 0;
 
     public Location(com.eldritch.scifirpg.proto.Locations.Location data, Player player) {
         this(data, player, readMap(data));
     }
 
-    public Location(com.eldritch.scifirpg.proto.Locations.Location data, Player player, TiledMap map) {
+    public Location(com.eldritch.scifirpg.proto.Locations.Location data, Player player, LocationMap map) {
         this.player = player;
         this.map = map;
 
@@ -181,6 +185,7 @@ public class Location {
 
     public void render(float delta, OrthographicCamera camera, TextureRegion selector) {
         // update the player (process input, collision detection, position update)
+        resetActiveTiles();
         resetActiveEntities();
         for (Agent actor : activeEntities) {
             actor.update(delta, this);
@@ -279,6 +284,57 @@ public class Location {
             }
         }
     }
+    
+    private void resetActiveTiles() {
+        map.update(null);
+        activeTiles.clear();
+        
+        Vector2 position = player.getPosition();
+        NaturalVector2 origin = NaturalVector2.of((int) position.x, (int) position.y);
+        
+        int x1 = Math.max(origin.x - Player.MAX_DST, 0);
+        int x2 = Math.min(origin.x + Player.MAX_DST, MAX_WIDTH - 1);
+        int y1 = Math.max(origin.y - Player.MAX_DST, 0);
+        int y2 = Math.min(origin.y + Player.MAX_DST, MAX_HEIGHT - 1);
+        
+        Set<NaturalVector2> visited = new HashSet<NaturalVector2>();
+        LinkedList<NaturalVector2> queue = new LinkedList<NaturalVector2>();
+
+        visited.add(origin);
+        activeTiles.add(origin);
+        
+        queue.add(origin);
+        while (!queue.isEmpty()) {
+            NaturalVector2 point = queue.remove();
+            for (int dx = -1; dx <= 1; dx++) {
+                for (int dy = -1; dy <= 1; dy++) {
+                    if (dx == 0 && dy == 0) {
+                        continue;
+                    }
+                    
+                    int x = point.x + dx;
+                    int y = point.y + dy;
+                    NaturalVector2 neighbor = NaturalVector2.of(x, y);
+                    if (x >= x1 && x <= x2 && y >= y1 && y <= y2 && !visited.contains(neighbor)) {
+                        visited.add(neighbor);
+                        if (isGround(neighbor.x, neighbor.y) || isObstacle(neighbor.x, neighbor.y)) {
+                            activeTiles.add(neighbor);
+                            if (!isObstacle(neighbor.x, neighbor.y)) {
+                                queue.add(neighbor);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
+        map.update(activeTiles);
+    }
+    
+    public boolean isGround(int x, int y) {
+        TiledMapTileLayer layer = (TiledMapTileLayer) map.getLayers().get(groundIndex);
+        return layer.getCell(x, y) != null;
+    }
 
     public boolean isObstacle(int x, int y) {
         TiledMapTileLayer layer = (TiledMapTileLayer) map.getLayers().get(collisionIndex);
@@ -311,12 +367,12 @@ public class Location {
         return tiles;
     }
 
-    private static TiledMap readMap(com.eldritch.scifirpg.proto.Locations.Location data) {
+    private static LocationMap readMap(com.eldritch.scifirpg.proto.Locations.Location data) {
         // load the map, set the unit scale to 1/32 (1 unit == 32 pixels)
         String mapAsset = String.format("maps/%s.tmx", data.getId());
         AssetManager assetManager = new AssetManager();
         assetManager.setLoader(TiledMap.class, new TmxMapLoader(new InternalFileHandleResolver()));
-        assetManager.load(mapAsset, TiledMap.class);
+        assetManager.load(mapAsset, LocationMap.class);
         assetManager.finishLoading();
         return assetManager.get(mapAsset);
     }
