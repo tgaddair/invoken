@@ -27,6 +27,7 @@ import com.eldritch.invoken.actor.items.Outfit;
 import com.eldritch.invoken.actor.items.RangedWeapon;
 import com.eldritch.invoken.effects.Effect;
 import com.eldritch.invoken.encounter.Location;
+import com.eldritch.invoken.encounter.NaturalVector2;
 import com.eldritch.invoken.screens.GameScreen;
 import com.eldritch.scifirpg.proto.Actors.ActorParams;
 
@@ -298,6 +299,10 @@ public abstract class Agent extends CollisionEntity {
 
     public Vector2 getPosition() {
         return position;
+    }
+    
+    public NaturalVector2 getCellPosition() {
+        return NaturalVector2.of((int) position.x, (int) position.y);
     }
 
     public void addVelocity(float x, float y) {

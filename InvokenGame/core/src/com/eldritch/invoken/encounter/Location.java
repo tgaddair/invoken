@@ -280,7 +280,7 @@ public class Location {
     private void resetActiveEntities() {
         activeEntities.clear();
         for (Agent other : entities) {
-            if (player.dst2(other) < 200) {
+            if (activeTiles.contains(other.getCellPosition())) {
                 activeEntities.add(other);
             }
         }
@@ -291,17 +291,17 @@ public class Location {
         activeTiles.clear();
         
         Vector2 position = player.getPosition();
-        NaturalVector2 origin = NaturalVector2.of((int) position.x, (int) position.y);
+        NaturalVector2 origin = NaturalVector2.of((int) position.x, (int) (position.y - 0.5f));
         
         final float layerTileWidth = 1;
         final float layerTileHeight = 1;
 
         Rectangle viewBounds = renderer.getViewBounds();
-        final int x1 = Math.max(0, (int)(viewBounds.x / layerTileWidth));
-        final int x2 = Math.min(MAX_WIDTH, (int)((viewBounds.x + viewBounds.width + layerTileWidth) / layerTileWidth));
+        final int x1 = Math.max(0, (int)(viewBounds.x / layerTileWidth) - 1);
+        final int x2 = Math.min(MAX_WIDTH, (int)((viewBounds.x + viewBounds.width + layerTileWidth) / layerTileWidth) + 1);
 
-        final int y1 = Math.max(0, (int)(viewBounds.y / layerTileHeight));
-        final int y2 = Math.min(MAX_HEIGHT, (int)((viewBounds.y + viewBounds.height + layerTileHeight) / layerTileHeight));
+        final int y1 = Math.max(0, (int)(viewBounds.y / layerTileHeight) - 1);
+        final int y2 = Math.min(MAX_HEIGHT, (int)((viewBounds.y + viewBounds.height + layerTileHeight) / layerTileHeight) + 1);
         
         Set<NaturalVector2> visited = new HashSet<NaturalVector2>();
         LinkedList<NaturalVector2> queue = new LinkedList<NaturalVector2>();
