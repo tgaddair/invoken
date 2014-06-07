@@ -64,6 +64,7 @@ public class Location {
 
     private int[] overlays;
     private int collisionIndex = -1;
+    private int overlayIndex = -1;
     private final int groundIndex = 0;
 
     public Location(com.eldritch.scifirpg.proto.Locations.Location data, Player player) {
@@ -82,7 +83,11 @@ public class Location {
             if (layer.getName().equals("collision")) {
                 layer.setVisible(false);
                 collisionIndex = i;
-            } else if (layer.getName().equals("overlay") || layer.getName().equals("overlay-trim")) {
+            } else if (layer.getName().equals("overlay")) {
+                overlayList.add(i);
+                overlayIndex = i;
+                
+            } else if (layer.getName().equals("overlay-trim")) {
                 // overlays are rendered above all objects always
                 overlayList.add(i);
             }
@@ -299,13 +304,13 @@ public class Location {
         final float layerTileHeight = 1;
 
         Rectangle viewBounds = renderer.getViewBounds();
-        final int x1 = Math.max(0, (int) (viewBounds.x / layerTileWidth) - 1);
+        final int x1 = Math.max(0, (int) (viewBounds.x / layerTileWidth));
         final int x2 = Math.min(MAX_WIDTH,
-                (int) ((viewBounds.x + viewBounds.width + layerTileWidth) / layerTileWidth) + 1);
+                (int) ((viewBounds.x + viewBounds.width + layerTileWidth) / layerTileWidth));
 
-        final int y1 = Math.max(0, (int) (viewBounds.y / layerTileHeight) - 1);
+        final int y1 = Math.max(0, (int) (viewBounds.y / layerTileHeight));
         final int y2 = Math.min(MAX_HEIGHT,
-                (int) ((viewBounds.y + viewBounds.height + layerTileHeight) / layerTileHeight) + 1);
+                (int) ((viewBounds.y + viewBounds.height + layerTileHeight) / layerTileHeight));
 
         Set<NaturalVector2> visited = new HashSet<NaturalVector2>();
         LinkedList<NaturalVector2> queue = new LinkedList<NaturalVector2>();
@@ -333,11 +338,20 @@ public class Location {
                                 activeTiles.add(neighbor);
                                 queue.add(neighbor);
                             }
-                        } else if (dy == 1 && dx == 0 && isObstacle(point) && isGround(neighbor) && isObstacle(neighbor)) {
-                            // obstacles can spread up to non-ground
-                            visited.add(neighbor);
-                            activeTiles.add(neighbor);
-                            queue.add(neighbor);
+                        } else if (isObstacle(point) && isGround(neighbor) && isObstacle(neighbor)) {
+                            // obstacles can spread up to ground collisions and overlays
+                            if (dy == 1 && dx == 0) {
+                                visited.add(neighbor);
+                                activeTiles.add(neighbor);
+                                queue.add(neighbor);
+                            }
+                        } else if (isObstacle(point) && isGround(point) && !isGround(neighbor) && isObstacle(neighbor)) {
+                            // grounded obstacles can spread sideways to non-ground obstacles
+                            if (dy == 0 && dx != 0) {
+                                visited.add(neighbor);
+                                activeTiles.add(neighbor);
+                                queue.add(neighbor);
+                            }
                         }
                     }
                 }
@@ -357,6 +371,10 @@ public class Location {
 
     public boolean isObstacle(int x, int y) {
         return hasCell(x, y, collisionIndex);
+    }
+    
+    public boolean isOverlay(NaturalVector2 point) {
+        return hasCell(point.x, point.y, overlayIndex);
     }
     
     private boolean hasCell(int x, int y, int layerIndex) {
