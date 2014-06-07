@@ -63,6 +63,7 @@ public class Location {
 
     private int[] overlays;
     private int collisionIndex = -1;
+    private int backgroundIndex = -1;
     private final int groundIndex = 0;
 
     public Location(com.eldritch.scifirpg.proto.Locations.Location data, Player player) {
@@ -83,7 +84,10 @@ public class Location {
             } else if (layer.getName().equals("overlay") || layer.getName().equals("overlay-trim")) {
                 // overlays are rendered above all objects always
                 overlayList.add(i);
-            }
+            } else if (layer.getName().equals("background")) {
+                layer.setVisible(false);
+                backgroundIndex = i;
+            } 
         }
         overlays = Ints.toArray(overlayList);
 
@@ -324,8 +328,13 @@ public class Location {
                     if (x >= x1 && x < x2 && y >= y1 && y < y2 && !visited.contains(neighbor)) {
                         visited.add(neighbor);
                         if (isGround(neighbor.x, neighbor.y) || isObstacle(neighbor.x, neighbor.y)) {
-                            activeTiles.add(neighbor);
-                            if (!isObstacle(neighbor.x, neighbor.y)) {
+                            if (!inBackground(neighbor.x, neighbor.y)) {
+                                activeTiles.add(neighbor);
+                                if (!isObstacle(neighbor.x, neighbor.y)) {
+                                    queue.add(neighbor);
+                                }
+                            } else if (neighbor.y > origin.y) {
+                                activeTiles.add(neighbor);
                                 queue.add(neighbor);
                             }
                         }
@@ -338,12 +347,19 @@ public class Location {
     }
     
     public boolean isGround(int x, int y) {
-        TiledMapTileLayer layer = (TiledMapTileLayer) map.getLayers().get(groundIndex);
-        return layer.getCell(x, y) != null;
+        return hasCell(x, y, groundIndex);
     }
 
     public boolean isObstacle(int x, int y) {
-        TiledMapTileLayer layer = (TiledMapTileLayer) map.getLayers().get(collisionIndex);
+        return hasCell(x, y, collisionIndex);
+    }
+    
+    public boolean inBackground(int x, int y) {
+        return hasCell(x, y, backgroundIndex);
+    }
+    
+    private boolean hasCell(int x, int y, int layerIndex) {
+        TiledMapTileLayer layer = (TiledMapTileLayer) map.getLayers().get(layerIndex);
         return layer.getCell(x, y) != null;
     }
 
