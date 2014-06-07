@@ -112,14 +112,6 @@ public class Npc extends Agent {
             return false;
         }
 
-        // field of view: compute angle between character-character and forward vectors
-        Vector2 a = getForwardVector();
-        Vector2 b = other.position.cpy().sub(position).nor();
-        double theta = Math.atan2(a.x * b.y - a.y * b.x, a.x * b.x + a.y * b.y);
-        if (Math.abs(theta) > Math.PI / 2) {
-            return false;
-        }
-
         // view obstruction: intersect character-character segment with collision tiles
         int startX = (int) Math.floor(Math.min(position.x, other.position.x));
         int startY = (int) Math.floor(Math.min(position.y, other.position.y));
@@ -137,6 +129,14 @@ public class Npc extends Agent {
 
         return true;
     }
+	
+	public boolean inFieldOfView(Agent other) {
+	 // field of view: compute angle between character-character and forward vectors
+        Vector2 a = getForwardVector();
+        Vector2 b = other.position.cpy().sub(position).nor();
+        double theta = Math.atan2(a.x * b.y - a.y * b.x, a.x * b.x + a.y * b.y);
+        return Math.abs(theta) <= Math.PI / 2;
+	}
 	
 	public List<Agent> getNeighbors() {
 	    return neighbors;

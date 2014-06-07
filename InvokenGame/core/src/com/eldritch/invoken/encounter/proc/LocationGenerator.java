@@ -18,12 +18,13 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
 import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import com.eldritch.invoken.actor.Agent;
 import com.eldritch.invoken.actor.Player;
 import com.eldritch.invoken.encounter.Activator;
 import com.eldritch.invoken.encounter.DoorActivator;
 import com.eldritch.invoken.encounter.Location;
+import com.eldritch.invoken.encounter.NaturalVector2;
 import com.eldritch.invoken.encounter.RemovableCell;
+import com.eldritch.invoken.encounter.layer.EncounterLayer;
 import com.eldritch.invoken.gfx.Light;
 import com.eldritch.invoken.gfx.Light.StaticLight;
 import com.eldritch.scifirpg.proto.Locations.Encounter;
@@ -70,8 +71,8 @@ public class LocationGenerator {
     }
 
     public Location generate(com.eldritch.scifirpg.proto.Locations.Location proto, Player player) {
-        int width = 100;
-        int height = 100;
+        int width = Location.MAX_WIDTH;
+        int height = Location.MAX_HEIGHT;
         TiledMap map = getBaseMap(width, height);
         List<Leaf> leafs = createLeaves(width / SCALE, height / SCALE);
 
@@ -101,9 +102,6 @@ public class LocationGenerator {
 
         Location location = new Location(proto, player, map);
         location.addLights(lights);
-
-        // List<Agent> entities = createEntities(base, leafs, proto.getEncounterList(), location);
-        // location.addEntities(entities);
         location.addActivators(activators);
 
         return location;
@@ -289,32 +287,26 @@ public class LocationGenerator {
     private List<TiledMapTileLayer> createSpawnLayers(TiledMapTileLayer base, List<Leaf> leafs,
             List<Encounter> encounters) {
         List<TiledMapTileLayer> layers = new ArrayList<TiledMapTileLayer>();
-        TiledMapTileLayer playerLayer = new TiledMapTileLayer(base.getWidth(), base.getHeight(),
-                PX, PX);
-        playerLayer.setVisible(false);
-        playerLayer.setOpacity(1.0f);
-        playerLayer.setName("player");
-
-        AtlasRegion region = atlas.findRegion("test-biome/floor1");
-        TiledMapTile tile = new StaticTiledMapTile(region);
-
-        for (int x = 0; x < base.getWidth(); x++) {
-            for (int y = 0; y < base.getHeight(); y++) {
-                Cell cell = base.getCell(x, y);
-                if (cell != null && cell.getTile() == ground) {
-                    addCell(playerLayer, tile, x + 1, y + 1);
-                    break;
-                }
-            }
-        }
-        layers.add(playerLayer);
-
+        TiledMapTileLayer playerLayer = null;
         double total = getTotalWeight(encounters);
         for (Leaf leaf : leafs) {
             if (leaf.room != null) {
-                TiledMapTileLayer layer = addEncounter(leaf, encounters, base, total);
-                if (layer != null) {
-                    layers.add(layer);
+                if (playerLayer == null) {
+                    playerLayer = new TiledMapTileLayer(base.getWidth(), base.getHeight(),
+                            PX, PX);
+                    playerLayer.setVisible(false);
+                    playerLayer.setOpacity(1.0f);
+                    playerLayer.setName("player");
+                    
+                    NaturalVector2 position = getPoint(leaf.room, base, playerLayer);
+                    addCell(playerLayer, collider, position.x, position.y);
+                    
+                    layers.add(playerLayer);
+                } else {
+                    TiledMapTileLayer layer = addEncounter(leaf, encounters, base, total);
+                    if (layer != null) {
+                        layers.add(layer);
+                    }
                 }
             }
         }
@@ -507,15 +499,16 @@ public class LocationGenerator {
         int right = (int) (left + rect.width * SCALE);
         int top = (int) rect.y * SCALE;
         int bottom = (int) (top + rect.height * SCALE);
-        NaturalVector2 seed = new NaturalVector2(randomNumber(left + 1, right - 2), randomNumber(
+        NaturalVector2 seed = NaturalVector2.of(randomNumber(left + 1, right - 2), randomNumber(
                 top + 1, bottom - 2));
         return getPoint(rect, base, layer, seed);
     }
-    
-    public NaturalVector2 getPoint(Rectangle rect, TiledMapTileLayer base, TiledMapTileLayer layer, NaturalVector2 seed) {
+
+    public NaturalVector2 getPoint(Rectangle rect, TiledMapTileLayer base, TiledMapTileLayer layer,
+            NaturalVector2 seed) {
         Set<NaturalVector2> visited = new HashSet<NaturalVector2>();
         LinkedList<NaturalVector2> queue = new LinkedList<NaturalVector2>();
-        
+
         queue.add(seed);
         while (!queue.isEmpty()) {
             NaturalVector2 point = queue.remove();
@@ -523,7 +516,7 @@ public class LocationGenerator {
                 // valid point: ground and no pre-existing spawn nodes
                 return point;
             }
-            
+
             // bad point, so try all neighbors in breadth-first expansion
             int x1 = (int) rect.x * SCALE;
             int x2 = (int) (x1 + rect.width * SCALE);
@@ -534,53 +527,18 @@ public class LocationGenerator {
                     if (dx == 0 && dy == 0) {
                         continue;
                     }
-                    
+
                     int x = point.x + dx;
                     int y = point.y + dy;
                     if (x > x1 && x < x2 && y > y1 && y < y2 && !visited.contains(point)) {
-                        queue.add(new NaturalVector2(x, y));
+                        queue.add(NaturalVector2.of(x, y));
                     }
                 }
             }
         }
-        
+
         // this should never happen
         return seed;
-    }
-
-    private static class NaturalVector2 {
-        int x;
-        int y;
-
-        public NaturalVector2(int x, int y) {
-            this.x = x;
-            this.y = y;
-        }
-
-        @Override
-        public int hashCode() {
-            final int prime = 31;
-            int result = 1;
-            result = prime * result + x;
-            result = prime * result + y;
-            return result;
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj)
-                return true;
-            if (obj == null)
-                return false;
-            if (getClass() != obj.getClass())
-                return false;
-            NaturalVector2 other = (NaturalVector2) obj;
-            if (x != other.x)
-                return false;
-            if (y != other.y)
-                return false;
-            return true;
-        }
     }
 
     private int randomNumber(int min, int max) {
@@ -673,15 +631,5 @@ public class LocationGenerator {
 
     public TextureAtlas getAtlas() {
         return atlas;
-    }
-
-    public static class EncounterLayer extends TiledMapTileLayer {
-        public final Encounter encounter;
-
-        public EncounterLayer(Encounter encounter, int width, int height, int tileWidth,
-                int tileHeight) {
-            super(width, height, tileWidth, tileHeight);
-            this.encounter = encounter;
-        }
     }
 }

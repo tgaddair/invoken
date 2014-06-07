@@ -28,7 +28,7 @@ import com.eldritch.invoken.actor.Agent;
 import com.eldritch.invoken.actor.Npc;
 import com.eldritch.invoken.actor.Player;
 import com.eldritch.invoken.actor.TemporaryEntity;
-import com.eldritch.invoken.encounter.proc.LocationGenerator.EncounterLayer;
+import com.eldritch.invoken.encounter.layer.EncounterLayer;
 import com.eldritch.invoken.gfx.Light;
 import com.eldritch.invoken.gfx.LightManager;
 import com.eldritch.scifirpg.proto.Locations.Encounter;
@@ -36,6 +36,9 @@ import com.eldritch.scifirpg.proto.Locations.Encounter.ActorParams.ActorScenario
 import com.google.common.primitives.Ints;
 
 public class Location {
+    public static final int MAX_WIDTH = 100;
+    public static final int MAX_HEIGHT = 100;
+    
     private static Pool<Rectangle> rectPool = new Pool<Rectangle>() {
         @Override
         protected Rectangle newObject() {
