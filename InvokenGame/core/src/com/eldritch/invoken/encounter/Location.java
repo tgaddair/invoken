@@ -86,7 +86,7 @@ public class Location {
             } else if (layer.getName().equals("overlay")) {
                 overlayList.add(i);
                 overlayIndex = i;
-                
+
             } else if (layer.getName().equals("overlay-trim")) {
                 // overlays are rendered above all objects always
                 overlayList.add(i);
@@ -288,6 +288,7 @@ public class Location {
         activeEntities.clear();
         for (Agent other : entities) {
             if (activeTiles.contains(other.getCellPosition())) {
+                // TODO: or other is in combat and distance to player is less than some threshold
                 activeEntities.add(other);
             }
         }
@@ -345,7 +346,8 @@ public class Location {
                                 activeTiles.add(neighbor);
                                 queue.add(neighbor);
                             }
-                        } else if (isObstacle(point) && isGround(point) && !isGround(neighbor) && isObstacle(neighbor)) {
+                        } else if (isObstacle(point) && isGround(point) && !isGround(neighbor)
+                                && isObstacle(neighbor)) {
                             // grounded obstacles can spread sideways to non-ground obstacles
                             if (dy == 0 && dx != 0) {
                                 visited.add(neighbor);
@@ -353,7 +355,8 @@ public class Location {
                                 queue.add(neighbor);
                             }
                         } else if (isObstacle(point) && isGround(point) && isOverlay(neighbor)) {
-                            // grounded obstacles can spread to overlays
+                            // grounded obstacles can spread to overlays, but overlays cannot
+                            // spread further
                             visited.add(neighbor);
                             activeTiles.add(neighbor);
                         }
@@ -368,7 +371,7 @@ public class Location {
     public boolean isGround(NaturalVector2 point) {
         return hasCell(point.x, point.y, groundIndex);
     }
-    
+
     public boolean isObstacle(NaturalVector2 point) {
         return isObstacle(point.x, point.y);
     }
@@ -376,16 +379,16 @@ public class Location {
     public boolean isObstacle(int x, int y) {
         return hasCell(x, y, collisionIndex);
     }
-    
+
     public boolean isOverlay(NaturalVector2 point) {
         return hasCell(point.x, point.y, overlayIndex);
     }
-    
+
     private boolean hasCell(int x, int y, int layerIndex) {
         TiledMapTileLayer layer = (TiledMapTileLayer) map.getLayers().get(layerIndex);
         return layer.getCell(x, y) != null;
     }
-    
+
     private Cell getCell(NaturalVector2 point, int layerIndex) {
         TiledMapTileLayer layer = (TiledMapTileLayer) map.getLayers().get(layerIndex);
         return layer.getCell(point.x, point.y);

@@ -1,2 +1,29 @@
 **/bin
 **/src-gen
+**/.settings
+android/gen/
+
+## GWT
+war/
+html/war/gwt_bree/
+html/gwt-unitCache/
+.apt_generated/
+html/war/WEB-INF/deploy/
+html/war/WEB-INF/classes/
+.gwt/
+gwt-unitCache/
+www-test/
+.gwt-tmp/
+
+## Java
+*.class
+*.war
+*.ear
+hs_err_pid*
+
+## Eclipse
+tmp/
+*.tmp
+*.bak
+*.swp
+*~.nib
