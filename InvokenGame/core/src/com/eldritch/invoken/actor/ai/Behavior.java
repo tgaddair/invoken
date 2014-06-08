@@ -91,7 +91,7 @@ public class Behavior {
         // assume we should not flee, we check that first
         if (aggression == Aggression.FRENZIED) {
             // frenzied NPCs always attack anyone
-            return true;
+            return !actors.isEmpty();
         }
         for (Agent agent : actors) {
             if (npc.hostileTo(agent) || wantsToAttack(agent)) {

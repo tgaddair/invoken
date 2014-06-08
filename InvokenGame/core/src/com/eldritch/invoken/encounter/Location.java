@@ -121,7 +121,6 @@ public class Location {
 
     public void addEntities(com.eldritch.scifirpg.proto.Locations.Location data, TiledMap map) {
         // find spawn nodes
-        String asset = "sprite/characters/male-fair.png";
         for (MapLayer layer : map.getLayers()) {
             if (layer instanceof EncounterLayer) {
                 EncounterLayer encounterLayer = (EncounterLayer) layer;
@@ -130,7 +129,7 @@ public class Location {
                     // create NPCs
                     LinkedList<Vector2> spawnNodes = getSpawnNodes(encounterLayer);
                     for (ActorScenario scenario : encounter.getActorParams().getActorScenarioList()) {
-                        addActor(createTestNpc(spawnNodes.poll(), scenario.getActorId(), asset));
+                        addActor(createTestNpc(spawnNodes.poll(), scenario.getActorId()));
                     }
                 }
             }
@@ -179,12 +178,12 @@ public class Location {
         return Vector2.Zero;
     }
 
-    public Npc createTestNpc(Vector2 position, String path, String asset) {
-        return createTestNpc(position.x, position.y, path, asset);
+    public Npc createTestNpc(Vector2 position, String id) {
+        return createTestNpc(position.x, position.y, id);
     }
 
-    public Npc createTestNpc(float x, float y, String path, String asset) {
-        return new Npc(InvokenGame.ACTOR_READER.readAsset(path), x, y, asset, this);
+    public Npc createTestNpc(float x, float y, String id) {
+        return Npc.create(InvokenGame.ACTOR_READER.readAsset(id), x, y, this);
     }
 
     private void addActor(Agent actor) {

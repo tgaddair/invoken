@@ -21,6 +21,7 @@ import com.eldritch.invoken.actor.ai.PatrolRoutine;
 import com.eldritch.invoken.actor.ai.Routine;
 import com.eldritch.invoken.encounter.Location;
 import com.eldritch.invoken.util.PrerequisiteVerifier;
+import com.eldritch.scifirpg.proto.Actors.ActorParams.Species;
 import com.eldritch.scifirpg.proto.Actors.DialogueTree;
 import com.eldritch.scifirpg.proto.Actors.NonPlayerActor;
 import com.eldritch.scifirpg.proto.Actors.DialogueTree.Choice;
@@ -250,6 +251,18 @@ public class Npc extends Agent {
         public boolean isValid(Choice c) {
 //            return verify(c.getPrereqList(), model);
         	return true;
+        }
+    }
+    
+    public static Npc create(NonPlayerActor data, float x, float y, Location location) {
+        Species species = data.getParams().getSpecies();
+        switch (species) {
+            case HUMAN:
+                return new Npc(data, x, y, "sprite/characters/male-fair.png", location);
+            case UNDEAD:
+                return new Npc(data, x, y, "sprite/characters/hollow-zombie.png", location);
+            default:
+                throw new IllegalArgumentException("unrecognized species: " + species);
         }
     }
 }
