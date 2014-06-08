@@ -53,19 +53,27 @@ public class PreparedAugmentations {
 	}
 	
 	public void useActiveAugmentation() {
+	    useActiveAugmentation(false);
+	}
+	
+	public void useActiveAugmentation(boolean queued) {
 	    if (activeAugmentation != null) {
-	        use(activeAugmentation);
+	        use(activeAugmentation, queued);
 	    }
 	}
 	
     public void use(int index) {
+        use(index, false);
+    }
+    
+    public void use(int index, boolean queued) {
         if (index < augs.size()) {
-            use(augs.get(index));
+            use(augs.get(index), queued);
         }
     }
     
-    public void use(Augmentation aug) {
-        if (owner.canAddAction()) {
+    public void use(Augmentation aug, boolean queued) {
+        if (queued || owner.canAddAction()) {
             aug.invoke(owner, owner.getTarget());
         }
     }

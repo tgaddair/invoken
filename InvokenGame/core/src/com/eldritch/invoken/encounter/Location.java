@@ -191,19 +191,23 @@ public class Location {
         entities.add(actor);
     }
 
-    public void render(float delta, OrthographicCamera camera, TextureRegion selector) {
+    public void render(float delta, OrthographicCamera camera, TextureRegion selector,
+            boolean paused) {
+        
         // update the player (process input, collision detection, position update)
         resetActiveTiles();
         resetActiveEntities();
-        for (Agent actor : activeEntities) {
-            actor.update(delta, this);
-        }
-        Iterator<TemporaryEntity> it = tempEntities.iterator();
-        while (it.hasNext()) {
-            TemporaryEntity entity = it.next();
-            entity.update(delta, this);
-            if (entity.isFinished()) {
-                it.remove();
+        if (!paused) {
+            for (Agent actor : activeEntities) {
+                actor.update(delta, this);
+            }
+            Iterator<TemporaryEntity> it = tempEntities.iterator();
+            while (it.hasNext()) {
+                TemporaryEntity entity = it.next();
+                entity.update(delta, this);
+                if (entity.isFinished()) {
+                    it.remove();
+                }
             }
         }
 
