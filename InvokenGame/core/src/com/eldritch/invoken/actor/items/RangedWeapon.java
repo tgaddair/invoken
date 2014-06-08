@@ -19,13 +19,13 @@ public class RangedWeapon extends Item {
 	
 	@Override
 	public void equipFrom(Inventory inventory) {
-		inventory.setWeapon(this);
+		inventory.setRangedWeapon(this);
 	}
 	
 	@Override
 	public void unequipFrom(Inventory inventory) {
-		if (inventory.getWeapon() == this) {
-			inventory.setWeapon(null);
+		if (inventory.getRangedWeapon() == this) {
+			inventory.setRangedWeapon(null);
 		}
 	}
 	

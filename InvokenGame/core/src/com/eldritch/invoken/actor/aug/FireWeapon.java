@@ -36,7 +36,7 @@ public class FireWeapon extends Augmentation {
 
     @Override
     public boolean isValid(Agent owner, Agent target) {
-        return target != null && target != owner && owner.hasWeapon();
+        return target != null && target != owner && owner.getInventory().hasRangedWeapon();
     }
 
     public class FireAction extends AnimatedAction {
@@ -74,14 +74,15 @@ public class FireWeapon extends Augmentation {
             batch.end();
 
             // render weapon
-            owner.getWeapon().render(owner, Activity.Combat, getStateTime(), renderer);
+            owner.getInventory().getRangedWeapon()
+                    .render(owner, Activity.Combat, getStateTime(), renderer);
         }
 
         @Override
         public boolean isFinished() {
             return getAnimation().isAnimationFinished(stateTime);
         }
-        
+
         @Override
         protected boolean canApply() {
             Animation anim = getAnimation();
@@ -104,11 +105,11 @@ public class FireWeapon extends Augmentation {
     public static class Bullet extends Projectile {
         private static final TextureRegion texture = new TextureRegion(
                 GameScreen.getTexture("sprite/effects/bullet-blue.png"));
-        
+
         public Bullet() {
             super(1, 1, 20);
         }
-        
+
         @Override
         protected void apply(Agent owner, Agent target) {
             target.addEffect(new Bleed(owner, target, 5));

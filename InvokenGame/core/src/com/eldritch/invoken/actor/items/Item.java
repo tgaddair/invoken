@@ -27,6 +27,11 @@ public abstract class Item {
 	
 	public void render(Agent agent, Activity activity, float stateTime,
 			OrthogonalTiledMapRenderer renderer) {
+	    if (getAnimation(activity, agent.getDirection()) == null) {
+	        // not all items are rendered
+	        return;
+	    }
+	    
 		TextureRegion frame = getAnimation(activity, agent.getDirection()).getKeyFrame(stateTime);
 		Vector2 position = agent.getPosition();
 		
@@ -53,6 +58,7 @@ public abstract class Item {
 	public static Item fromProto(com.eldritch.scifirpg.proto.Items.Item item) {
 		switch (item.getType()) {
 			case MELEE_WEAPON:
+			    return new MeleeWeapon(item);
 			case RANGED_WEAPON:
 				return new RangedWeapon(item);
 			case HEAVY_WEAPON:

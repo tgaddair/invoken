@@ -24,7 +24,6 @@ import com.eldritch.invoken.actor.aug.Action;
 import com.eldritch.invoken.actor.aug.Augmentation;
 import com.eldritch.invoken.actor.factions.Faction;
 import com.eldritch.invoken.actor.items.Outfit;
-import com.eldritch.invoken.actor.items.RangedWeapon;
 import com.eldritch.invoken.effects.Effect;
 import com.eldritch.invoken.encounter.Location;
 import com.eldritch.invoken.encounter.NaturalVector2;
@@ -33,8 +32,6 @@ import com.eldritch.scifirpg.proto.Actors.ActorParams;
 
 public abstract class Agent extends CollisionEntity {
     public static final int MAX_DST2 = 175;
-//    public static final int MAX_DST = (int) (Math.sqrt(MAX_DST2) - 1);
-    public static final int MAX_DST = 10;
     
     static AssetManager assetManager = new AssetManager();
     static float MAX_VELOCITY = 8f;
@@ -784,13 +781,9 @@ public abstract class Agent extends CollisionEntity {
         // TODO separate weapon class
         return 0.65f;
     }
-
-    public boolean hasWeapon() {
-        return info.getInventory().hasWeapon();
-    }
-
-    public RangedWeapon getWeapon() {
-        return info.getInventory().getWeapon();
+    
+    public Inventory getInventory() {
+        return info.getInventory();
     }
 
     public AgentInfo getInfo() {
