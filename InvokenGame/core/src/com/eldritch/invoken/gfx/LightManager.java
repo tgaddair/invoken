@@ -18,6 +18,7 @@ public class LightManager {
     // values passed to the shader
     public static final float ambientIntensity = 0.8f;
     public static final Vector3 ambientColor = new Vector3(0.7f, 0.7f, 0.9f);
+    public static final Vector3 pauseColor = new Vector3(0.3f, 0.6f, 0.9f);
 
     // used to make the light flicker
     public static final float zSpeed = 15.0f;
@@ -25,9 +26,8 @@ public class LightManager {
     public float zAngle;
 
     private ShaderProgram defaultShader;
-    private ShaderProgram ambientShader;
-    private ShaderProgram lightShader;
     private ShaderProgram finalShader;
+    private ShaderProgram pauseShader;
 
     final String defaultPixelShader = new FileHandle("shader/defaultPixelShader.glsl").readString();
     final String ambientPixelShader = new FileHandle("shader/ambientPixelShader.glsl").readString();
@@ -41,44 +41,37 @@ public class LightManager {
     public LightManager() {
         ShaderProgram.pedantic = false;
         defaultShader = new ShaderProgram(vertexShader, defaultPixelShader);
-        ambientShader = new ShaderProgram(vertexShader, ambientPixelShader);
-        lightShader = new ShaderProgram(vertexShader, lightPixelShader);
-        finalShader = new ShaderProgram(vertexShader, finalPixelShader);
-
-        ambientShader.begin();
-        ambientShader.setUniformf("ambientColor", ambientColor.x, ambientColor.y, ambientColor.z,
-                ambientIntensity);
-        ambientShader.end();
-
-        lightShader.begin();
-        lightShader.setUniformi("u_lightmap", 1);
-        lightShader.end();
-
-        finalShader.begin();
-        finalShader.setUniformi("u_lightmap", 1);
-        finalShader.setUniformf("ambientColor", ambientColor.x, ambientColor.y, ambientColor.z,
-                ambientIntensity);
-        finalShader.end();
+        finalShader = createShader(finalPixelShader, ambientColor, ambientIntensity);
+        pauseShader = createShader(finalPixelShader, pauseColor, ambientIntensity * 2);
 
         int w = AbstractScreen.MENU_VIEWPORT_WIDTH;
         int h = AbstractScreen.MENU_VIEWPORT_HEIGHT;
 
         fbo = new FrameBuffer(Format.RGBA8888, w, h, false);
-
-        lightShader.begin();
-        lightShader.setUniformf("resolution", w, h);
-        lightShader.end();
-
-        finalShader.begin();
-        finalShader.setUniformf("resolution", w, h);
-        finalShader.end();
+    }
+    
+    private ShaderProgram createShader(String pixelShader, Vector3 color, float intensity) {
+        ShaderProgram shader = new ShaderProgram(vertexShader, pixelShader);
+        shader.begin();
+        shader.setUniformi("u_lightmap", 1);
+        shader.setUniformf("ambientColor", color.x, color.y, color.z, intensity);
+        shader.end();
+        
+        int w = AbstractScreen.MENU_VIEWPORT_WIDTH;
+        int h = AbstractScreen.MENU_VIEWPORT_HEIGHT;
+        
+        shader.begin();
+        shader.setUniformf("resolution", w, h);
+        shader.end();
+        
+        return shader;
     }
 
     public void addLight(Light light) {
         lights.add(light);
     }
 
-    public void render(OrthogonalTiledMapRenderer renderer, float delta) {
+    public void render(OrthogonalTiledMapRenderer renderer, float delta, boolean paused) {
         // draw lights to frame buffer
         zAngle += delta * zSpeed;
         while (zAngle > PI2) {
@@ -88,7 +81,7 @@ public class LightManager {
         // draw the light to the FBO
         Batch batch = renderer.getSpriteBatch();
         fbo.begin();
-        batch.setShader(defaultShader);
+        batch.setShader(paused ? pauseShader : defaultShader);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         batch.begin();
         for (Light light : lights) {
@@ -98,7 +91,7 @@ public class LightManager {
         fbo.end();
 
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        batch.setShader(finalShader);
+        batch.setShader(paused ? pauseShader : finalShader);
         fbo.getColorBufferTexture().bind(1); // this is important! bind the FBO to the 2nd texture
                                              // unit
         for (Light light : lights) {
