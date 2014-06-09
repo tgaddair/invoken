@@ -38,6 +38,11 @@ public class FireWeapon extends Augmentation {
     public boolean isValid(Agent owner, Agent target) {
         return target != null && target != owner && owner.getInventory().hasRangedWeapon();
     }
+    
+    @Override
+    public float quality(Agent owner, Agent target, Location location) {
+        return 1;
+    }
 
     public class FireAction extends AnimatedAction {
         private final Agent target;

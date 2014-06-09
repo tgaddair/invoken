@@ -24,6 +24,11 @@ public class Drain extends Augmentation {
     public boolean isValid(Agent owner, Agent target) {
         return target != null && target != owner && target.isAlive();
     }
+    
+    @Override
+    public float quality(Agent owner, Agent target, Location location) {
+        return 1;
+    }
 
     public class DrainAction extends AnimatedAction {
         private final Agent target;

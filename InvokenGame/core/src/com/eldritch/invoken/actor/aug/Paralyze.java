@@ -27,6 +27,11 @@ public class Paralyze extends Augmentation {
 		return target != null && target != owner && target.isAlive();
 	}
 	
+	@Override
+    public float quality(Agent owner, Agent target, Location location) {
+        return 1;
+    }
+	
 	public class ParalyzeAction extends AnimatedAction {
 		private final Agent target;
 		

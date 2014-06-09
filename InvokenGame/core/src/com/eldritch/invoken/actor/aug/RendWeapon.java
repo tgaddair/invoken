@@ -20,6 +20,12 @@ public class RendWeapon extends Augmentation {
     public boolean isValid(Agent owner, Agent target) {
         return target != null && target != owner && owner.getInventory().hasMeleeWeapon();
     }
+    
+    @Override
+    public float quality(Agent owner, Agent target, Location location) {
+        MeleeWeapon weapon = owner.getInventory().getMeleeWeapon();
+        return owner.dst2(target) <= weapon.getRange() ? 1 : 0;
+    }
 
     public class RendAction extends AnimatedAction {
         private final Agent target;

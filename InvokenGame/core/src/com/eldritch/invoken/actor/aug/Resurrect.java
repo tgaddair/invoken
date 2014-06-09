@@ -19,6 +19,11 @@ public class Resurrect extends Augmentation {
 		return target != null && target != owner && !target.isAlive();
 	}
 	
+	@Override
+    public float quality(Agent owner, Agent target, Location location) {
+        return 1;
+    }
+	
 	public class ResurrectAction extends AnimatedAction {
 		private final Agent target;
 		

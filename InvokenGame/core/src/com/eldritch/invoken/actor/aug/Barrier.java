@@ -20,6 +20,11 @@ public class Barrier extends Augmentation {
 		return true;
 	}
 	
+	@Override
+    public float quality(Agent owner, Agent target, Location location) {
+        return 1;
+    }
+	
 	public class ShieldAction extends AnimatedAction {
 		public ShieldAction(Agent actor) {
 			super(actor, Activity.Cast);

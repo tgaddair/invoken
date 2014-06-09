@@ -7,6 +7,7 @@ import java.util.Set;
 import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.actor.Agent;
 import com.eldritch.invoken.actor.Npc;
+import com.eldritch.invoken.actor.aug.Augmentation;
 import com.eldritch.invoken.encounter.Location;
 
 public abstract class AttackRoutine extends MovementRoutine {
@@ -41,7 +42,7 @@ public abstract class AttackRoutine extends MovementRoutine {
         // update target enemy
         fillTargets(targets);
         target = selectTarget();
-        
+
         // update our target
         npc.setTarget(target);
         if (target == null || !target.isAlive()) {
@@ -62,7 +63,7 @@ public abstract class AttackRoutine extends MovementRoutine {
                 // no point in attacking a dead enemy
                 continue;
             }
-            
+
             float distance = npc.dst2(agent);
             if (current == null || distance < bestDistance) {
                 // attack the closer enemy
@@ -80,10 +81,21 @@ public abstract class AttackRoutine extends MovementRoutine {
             return;
         }
 
-        // Gdx.app.log(InvokenGame.LOG, "elapsed: " + elapsed);
         if (!npc.hasPendingAction() && elapsed >= 1) {
-            npc.useAugmentation(0);
-            elapsed = 0;
+            // choose the aug with the highest situational quality score
+            Augmentation chosen = null;
+            for (Augmentation aug : npc.getAugmentations().getAugmentations()) {
+                if (aug.isValid(npc, npc.getTarget())
+                        && aug.quality(npc, npc.getTarget(), location) > 0) {
+                    chosen = aug;
+                }
+            }
+
+            // if an aug was chosen, then go ahead and use it
+            if (chosen != null) {
+                npc.getAugmentations().use(chosen);
+                elapsed = 0;
+            }
         }
     }
 
@@ -95,7 +107,7 @@ public abstract class AttackRoutine extends MovementRoutine {
             fleeTarget(getTargetPosition(), velocityDelta, location);
         } else {
             // side strafe to avoid attack
-            //pursueTarget(npc.getClearTarget(Math.PI / 2, location), velocityDelta, location);
+            // pursueTarget(npc.getClearTarget(Math.PI / 2, location), velocityDelta, location);
         }
     }
 
@@ -110,7 +122,7 @@ public abstract class AttackRoutine extends MovementRoutine {
             // get in closer when a melee weapon is equipped
             maxDistance = 1.5f;
         }
-        
+
         return getTargetPosition().dst2(npc.getPosition()) >= maxDistance;
     }
 

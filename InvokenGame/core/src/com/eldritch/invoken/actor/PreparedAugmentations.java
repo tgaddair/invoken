@@ -18,6 +18,10 @@ public class PreparedAugmentations {
 	    return augs;
 	}
 	
+	public Augmentation getAugmentation(int index) {
+	    return augs.get(index);
+	}
+	
 	public Augmentation getActiveAugmentation() {
 	    return activeAugmentation;
 	}
@@ -70,6 +74,10 @@ public class PreparedAugmentations {
         if (index < augs.size()) {
             use(augs.get(index), queued);
         }
+    }
+    
+    public void use(Augmentation aug) {
+        use(aug, false);
     }
     
     public void use(Augmentation aug, boolean queued) {

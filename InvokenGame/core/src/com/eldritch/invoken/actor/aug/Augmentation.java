@@ -2,6 +2,7 @@ package com.eldritch.invoken.actor.aug;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.eldritch.invoken.actor.Agent;
+import com.eldritch.invoken.encounter.Location;
 import com.eldritch.invoken.screens.GameScreen;
 
 public abstract class Augmentation {
@@ -24,6 +25,8 @@ public abstract class Augmentation {
 	}
 	
 	public abstract boolean isValid(Agent owner, Agent target);
+	
+	public abstract float quality(Agent owner, Agent target, Location location);
 	
 	public abstract Action getAction(Agent owner, Agent target);
 }
