@@ -8,13 +8,16 @@ import com.eldritch.invoken.actor.Agent.Activity;
 import com.eldritch.invoken.actor.Agent.Direction;
 import com.eldritch.invoken.actor.Human;
 import com.eldritch.invoken.actor.Inventory;
+import com.google.common.base.Strings;
 
 public class RangedWeapon extends Item {
-	private static Map<Direction, Animation> animations = new HashMap<Direction, Animation>();
+	private final Map<Direction, Animation> animations = new HashMap<Direction, Animation>();
 	
 	public RangedWeapon(com.eldritch.scifirpg.proto.Items.Item item) {
 		super(item, 48);
-		animations = Human.getAnimations("sprite/items/weapons/shotgun.png");
+		if (!Strings.isNullOrEmpty(item.getAsset())) {
+		    animations.putAll(Human.getAnimations(item.getAsset()));
+		}
 	}
 	
 	@Override
