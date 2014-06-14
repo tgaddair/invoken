@@ -185,8 +185,9 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 		case Keys.BACKSPACE:
 		    if (tacticalPause) {
 		        player.removeAction();
+		        return true;
 		    }
-		    return true;
+		    return false;
 		default:
 			return false;
 		}
@@ -239,7 +240,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
                 } else if (player.getTarget() != entity) {
 					// initial selection -> set target
 					player.select(entity);
-				} else {
+				} else if (!tacticalPause) {
 					// already selected -> start interaction
 					player.reselect(entity);
 				}
