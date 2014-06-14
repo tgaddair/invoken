@@ -4,9 +4,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
-import com.eldritch.invoken.actor.Agent;
 import com.eldritch.invoken.actor.Agent.Activity;
 import com.eldritch.invoken.actor.Agent.Direction;
+import com.eldritch.invoken.actor.Human;
 import com.eldritch.invoken.actor.Inventory;
 
 public class RangedWeapon extends Item {
@@ -14,7 +14,7 @@ public class RangedWeapon extends Item {
 	
 	public RangedWeapon(com.eldritch.scifirpg.proto.Items.Item item) {
 		super(item, 48);
-		animations = Agent.getAnimations("sprite/items/weapons/shotgun.png");
+		animations = Human.getAnimations("sprite/items/weapons/shotgun.png");
 	}
 	
 	@Override

@@ -38,7 +38,6 @@ public abstract class Agent extends CollisionEntity {
     static float MAX_VELOCITY = 8f;
     static float JUMP_VELOCITY = 40f;
     static float DAMPING = 0.87f;
-    public static int PX = 64;
 
     public enum Direction {
         Up, Left, Down, Right
@@ -83,22 +82,21 @@ public abstract class Agent extends CollisionEntity {
     private Npc interactor;
     private final Set<Class<?>> toggles = new HashSet<Class<?>>();
 
-    public Agent(String assetPath, float x, float y, ActorParams params) {
-        // figure out the width and height of the player for collision
-        // detection and rendering by converting a player frames pixel
-        // size into world units (1 unit == 32 pixels)
-        super(1 / 32f * PX, 1 / 32f * PX);
+    public Agent(ActorParams params, float x, float y, float width, float height, 
+            Map<Activity, Map<Direction, Animation>> animations) {
+        super(width, height);
         setPosition(x, y);
-        animations = getAllAnimations(assetPath);
+        this.animations = animations;
 
         // health, level, augmentations, etc.
         info = new AgentInfo(this, params);
     }
 
-    public Agent(String assetPath, float x, float y, Profession profession, int level) {
-        super(1 / 32f * PX, 1 / 32f * PX);
+    public Agent(float x, float y, float width, float height, Profession profession, int level,
+            Map<Activity, Map<Direction, Animation>> animations) {
+        super(width, height);
         setPosition(x, y);
-        animations = getAllAnimations(assetPath);
+        this.animations = animations;
 
         // health, level, augmentations, etc.
         info = new AgentInfo(this, profession, level);
@@ -833,77 +831,4 @@ public abstract class Agent extends CollisionEntity {
     protected abstract void takeAction(float delta, Location screen);
 
     protected abstract void handleInteract(Agent agent);
-
-    public static Animation getAnimation(String assetName) {
-        TextureRegion[][] regions = GameScreen.getRegions(assetName, PX, PX);
-        Animation anim = new Animation(0.15f, regions[0]);
-        return anim;
-    }
-
-    public static Map<Direction, Animation> getAnimations(String assetName) {
-        Map<Direction, Animation> animations = new HashMap<Direction, Animation>();
-
-        // up, left, down, right
-        TextureRegion[][] regions = GameScreen.getRegions(assetName, PX, PX);
-        for (Direction d : Direction.values()) {
-            Animation anim = new Animation(0.15f, regions[d.ordinal()]);
-            anim.setPlayMode(Animation.PlayMode.LOOP_PINGPONG);
-            animations.put(d, anim);
-        }
-
-        return animations;
-    }
-
-    public static Map<Activity, Map<Direction, Animation>> getAllAnimations(String assetName) {
-        Map<Activity, Map<Direction, Animation>> animations = new HashMap<Activity, Map<Direction, Animation>>();
-        TextureRegion[][] regions = GameScreen.getRegions(assetName, PX, PX);
-
-        // cast
-        int offset = 0;
-        animations.put(Activity.Cast, getAnimations(regions, 7, offset));
-
-        // thrust
-        offset += Direction.values().length;
-        animations.put(Activity.Thrust, getAnimations(regions, 8, offset));
-
-        // walk
-        offset += Direction.values().length;
-        animations.put(Activity.Explore, getAnimations(regions, 9, offset));
-
-        // swipe
-        offset += Direction.values().length;
-        animations.put(Activity.Swipe, getAnimations(regions, 6, offset));
-
-        // shoot
-        offset += Direction.values().length;
-        animations.put(Activity.Combat, getAnimations(regions, 13, offset));
-
-        // hurt
-        offset += Direction.values().length;
-        animations.put(Activity.Death,
-                getAnimations(regions, 6, offset, false, Animation.PlayMode.NORMAL));
-
-        return animations;
-    }
-
-    private static Map<Direction, Animation> getAnimations(TextureRegion[][] regions, int length,
-            int offset) {
-        return getAnimations(regions, length, offset, true, Animation.PlayMode.LOOP);
-    }
-
-    private static Map<Direction, Animation> getAnimations(TextureRegion[][] regions, int length,
-            int offset, boolean increment, Animation.PlayMode playMode) {
-        int index = offset;
-        Map<Direction, Animation> directions = new HashMap<Direction, Animation>();
-        for (Direction d : Direction.values()) {
-            TextureRegion[] textures = Arrays.copyOfRange(regions[index], 0, length);
-            Animation anim = new Animation(0.15f, textures);
-            anim.setPlayMode(playMode);
-            directions.put(d, anim);
-            if (increment) {
-                index++;
-            }
-        }
-        return directions;
-    }
 }

@@ -3,8 +3,10 @@ package com.eldritch.invoken.actor;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
@@ -44,8 +46,9 @@ public class Npc extends Agent {
 	private final List<Agent> neighbors = new ArrayList<Agent>();
 	private Routine routine;
 	
-	public Npc(NonPlayerActor data, float x, float y, String asset, Location location) {
-		super(asset, x, y, data.getParams());
+	public Npc(NonPlayerActor data, float x, float y, float width, float height,
+	        Map<Activity, Map<Direction, Animation>> animations, Location location) {
+		super(data.getParams(), x, y, width, height, animations);
 		this.data = data;
 		scenario = Optional.absent();
 		behavior = new Behavior(this, data);
@@ -263,9 +266,11 @@ public class Npc extends Agent {
         Species species = data.getParams().getSpecies();
         switch (species) {
             case HUMAN:
-                return new Npc(data, x, y, "sprite/characters/male-fair.png", location);
+                return new HumanNpc(data, x, y, "sprite/characters/male-fair.png", location);
             case UNDEAD:
-                return new Npc(data, x, y, "sprite/characters/hollow-zombie.png", location);
+                return new HumanNpc(data, x, y, "sprite/characters/hollow-zombie.png", location);
+            case AUTOMATON:
+                return new Automaton(data, x, y, "sprite/characters/automaton/mech1", location);
             default:
                 throw new IllegalArgumentException("unrecognized species: " + species);
         }
