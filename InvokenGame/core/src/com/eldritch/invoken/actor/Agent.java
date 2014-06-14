@@ -309,6 +309,13 @@ public abstract class Agent extends CollisionEntity {
     public void addAction(Action action) {
         actions.add(action);
     }
+    
+    public void removeAction() {
+        if (!actions.isEmpty()) {
+            // remove the most recently added action from the back of the queue
+            actions.removeLast();
+        }
+    }
 
     public void addEffect(Effect effect) {
         effects.add(effect);

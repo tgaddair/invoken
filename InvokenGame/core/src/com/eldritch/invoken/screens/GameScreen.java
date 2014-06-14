@@ -182,6 +182,11 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 		case Keys.SPACE:
 		    tacticalPause = !tacticalPause;
 		    return true;
+		case Keys.BACKSPACE:
+		    if (tacticalPause) {
+		        player.removeAction();
+		    }
+		    return true;
 		default:
 			return false;
 		}
