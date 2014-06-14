@@ -11,7 +11,7 @@ import com.eldritch.scifirpg.proto.Actors.NonPlayerActor;
 
 public class Hollow extends Npc {
     public static float MAX_VELOCITY = 3f;
-    public static int PX = 64;
+    public static int PX = 96;
 
     public Hollow(NonPlayerActor data, float x, float y, String asset, Location location) {
         super(data, x, y, 1 / 32f * PX, 1 / 32f * PX, getAllAnimations(asset), location);
@@ -31,7 +31,7 @@ public class Hollow extends Npc {
         animations.put(Activity.Explore, getAnimations(regions));
         animations.put(Activity.Combat, getAnimations(regions));
         
-        regions = GameScreen.getRegions(assetName + "-attack.png", PX, 96);
+        regions = GameScreen.getRegions(assetName + "-attack.png", PX, 144);
         animations.put(Activity.Swipe, getAnimations(regions));
 
         regions = GameScreen.getRegions(assetName + "-death.png", PX, PX);
