@@ -36,9 +36,6 @@ public class AgentInfo {
 		profession = Profession.fromProto(params.getProfession());
 		factions = new FactionManager(agent);
 		
-		for (Augmentation aug : profession.getStartingAugmentations()) {
-			addAugmentation(aug);
-		}
 		for (FactionStatus status : params.getFactionStatusList()) {
 			factions.addFaction(status);
         }
@@ -55,6 +52,13 @@ public class AgentInfo {
                 addAugmentation(aug);
             }
         }
+		
+		// add default augmentations if not otherwise specified
+		if (knownAugmentations.isEmpty()) {
+    		for (Augmentation aug : profession.getStartingAugmentations()) {
+                addAugmentation(aug);
+            }
+		}
 		
 		// post init basic state
 		health = getBaseHealth();

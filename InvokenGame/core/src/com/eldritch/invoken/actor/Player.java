@@ -25,22 +25,22 @@ public class Player extends Agent {
         }
 
         if (Gdx.input.isKeyPressed(Keys.LEFT) || Gdx.input.isKeyPressed(Keys.A)) {
-            velocity.x = -Agent.MAX_VELOCITY;
+            velocity.x = -getMaxVelocity();
             moving = false;
         }
 
         if (Gdx.input.isKeyPressed(Keys.RIGHT) || Gdx.input.isKeyPressed(Keys.D)) {
-            velocity.x = Agent.MAX_VELOCITY;
+            velocity.x = getMaxVelocity();
             moving = false;
         }
 
         if (Gdx.input.isKeyPressed(Keys.UP) || Gdx.input.isKeyPressed(Keys.W)) {
-            velocity.y = Agent.MAX_VELOCITY;
+            velocity.y = getMaxVelocity();
             moving = false;
         }
 
         if (Gdx.input.isKeyPressed(Keys.DOWN) || Gdx.input.isKeyPressed(Keys.S)) {
-            velocity.y = -Agent.MAX_VELOCITY;
+            velocity.y = -getMaxVelocity();
             moving = false;
         }
     }
@@ -75,6 +75,11 @@ public class Player extends Agent {
     @Override
     public void handleInteract(Agent other) {
         // do nothing
+    }
+    
+    @Override
+    public float getMaxVelocity() {
+        return Human.MAX_VELOCITY;
     }
 
     private boolean isTouched(float startX, float endX) {

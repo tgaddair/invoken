@@ -33,8 +33,6 @@ public abstract class Agent extends CollisionEntity {
     public static final int MAX_DST2 = 175;
     
     static AssetManager assetManager = new AssetManager();
-    static float MAX_VELOCITY = 8f;
-    static float JUMP_VELOCITY = 40f;
     static float DAMPING = 0.87f;
 
     public enum Direction {
@@ -345,10 +343,6 @@ public abstract class Agent extends CollisionEntity {
         return velocity;
     }
 
-    public float getMaxVelocity() {
-        return MAX_VELOCITY;
-    }
-
     public Direction getDirection() {
         return direction;
     }
@@ -553,12 +547,12 @@ public abstract class Agent extends CollisionEntity {
 
     private void move(float delta, Location screen) {
         // clamp the velocity to the maximum
-        if (Math.abs(velocity.x) > MAX_VELOCITY) {
-            velocity.x = Math.signum(velocity.x) * MAX_VELOCITY;
+        if (Math.abs(velocity.x) > getMaxVelocity()) {
+            velocity.x = Math.signum(velocity.x) * getMaxVelocity();
         }
 
-        if (Math.abs(velocity.y) > MAX_VELOCITY) {
-            velocity.y = Math.signum(velocity.y) * MAX_VELOCITY;
+        if (Math.abs(velocity.y) > getMaxVelocity()) {
+            velocity.y = Math.signum(velocity.y) * getMaxVelocity();
         }
 
         // clamp the velocity to 0 if it's < 1, and set the state to
@@ -825,6 +819,8 @@ public abstract class Agent extends CollisionEntity {
     public String toString() {
         return info.getName();
     }
+    
+    public abstract float getMaxVelocity();
 
     protected abstract void takeAction(float delta, Location screen);
 

@@ -8,4 +8,9 @@ public class HumanNpc extends Npc {
         super(data, x, y, Human.getWidth(), Human.getHeight(), Human.getAllAnimations(asset),
                 location);
     }
+    
+    @Override
+    public float getMaxVelocity() {
+        return Human.MAX_VELOCITY;
+    }
 }

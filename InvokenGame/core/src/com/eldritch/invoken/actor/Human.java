@@ -11,6 +11,8 @@ import com.eldritch.invoken.actor.Agent.Direction;
 import com.eldritch.invoken.screens.GameScreen;
 
 public class Human {
+    public static float MAX_VELOCITY = 8f;
+    
     // figure out the width and height of the player for collision
     // detection and rendering by converting a player frames pixel
     // size into world units (1 unit == 32 pixels)
