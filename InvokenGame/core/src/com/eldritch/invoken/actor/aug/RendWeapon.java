@@ -41,10 +41,8 @@ public class RendWeapon extends Augmentation {
         @Override
         public void apply(Location location) {
             MeleeWeapon weapon = owner.getInventory().getMeleeWeapon();
-            strike.set(target.getPosition()).sub(owner.getPosition()).nor();
-            strike.scl((float) Math.sqrt(weapon.getRange()) / 2);
-            strike.add(owner.getPosition());
-            
+            strike.set(owner.getPosition());
+            strike.add(owner.getForwardVector().scl(weapon.getRange() / 2));
             if (strike.dst2(target.getPosition()) <= weapon.getRange()) {
                 target.addEffect(new Bleed(owner, target, weapon.getDamage()));
             }
