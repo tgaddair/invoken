@@ -2,6 +2,7 @@ package com.eldritch.invoken.actor.type;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -81,6 +82,15 @@ public abstract class Npc extends Agent {
 		// update neighbors
 		screen.getNeighbors(this);
 		
+		// update detected set
+		Iterator<Agent> it = detected.iterator();
+		while (it.hasNext()) {
+		    Agent other = it.next();
+		    if (!other.isAlive() || dst2(other) > MAX_DST2 / 2) {
+		        it.remove();
+            }
+		}
+		
 		// update routine
 		if (routine.isFinished()) {
 			for (Routine r : routines) {
@@ -114,8 +124,15 @@ public abstract class Npc extends Agent {
 	@Override
 	public void setTarget(Agent other) {
 	    super.setTarget(other);
-	    detected.add(other);
+	    if (other != null) {
+	        detected.add(other);
+	    }
 	}
+	
+	@Override
+	public boolean inCombat() {
+        return super.inCombat() || !detected.isEmpty();
+    }
 	
 	public boolean canTarget(Agent other, Location location) {
         // within distance constraint
@@ -130,11 +147,7 @@ public abstract class Npc extends Agent {
         
         // recently seen and nearby
         if (detected.contains(other)) {
-            if (dst2(other) < MAX_DST2 / 2) {
-                return true;
-            } else {
-                detected.remove(other);
-            }
+            return true;
         }
 
         // view obstruction: intersect character-character segment with collision tiles

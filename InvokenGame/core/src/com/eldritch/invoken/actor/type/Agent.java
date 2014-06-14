@@ -133,6 +133,10 @@ public abstract class Agent extends CollisionEntity {
     public boolean hasEnemies() {
         return !hostilities.isEmpty();
     }
+    
+    public boolean inCombat() {
+        return hasEnemies();
+    }
 
     public void addEnemy(Agent other, float magnitude) {
         if (other.assaultedBy(this)) {

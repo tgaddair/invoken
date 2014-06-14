@@ -303,8 +303,8 @@ public class Location {
     private void resetActiveEntities() {
         activeEntities.clear();
         for (Agent other : entities) {
-            if (activeTiles.contains(other.getCellPosition())) {
-                // TODO: or other is in combat and distance to player is less than some threshold
+            if (activeTiles.contains(other.getCellPosition()) 
+                    || (other.inCombat() && player.canTarget(other, this))) {
                 activeEntities.add(other);
             }
         }
