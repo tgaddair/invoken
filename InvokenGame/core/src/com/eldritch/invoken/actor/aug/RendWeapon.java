@@ -8,6 +8,8 @@ import com.eldritch.invoken.effects.Bleed;
 import com.eldritch.invoken.encounter.Location;
 
 public class RendWeapon extends Augmentation {
+    private final Vector2 strike = new Vector2();
+    
     public RendWeapon() {
         super("rend");
     }
@@ -39,7 +41,11 @@ public class RendWeapon extends Augmentation {
         @Override
         public void apply(Location location) {
             MeleeWeapon weapon = owner.getInventory().getMeleeWeapon();
-            if (owner.dst2(target) <= weapon.getRange()) {
+            strike.set(target.getPosition()).sub(owner.getPosition()).nor();
+            strike.scl((float) Math.sqrt(weapon.getRange()) / 2);
+            strike.add(owner.getPosition());
+            
+            if (strike.dst2(target.getPosition()) <= weapon.getRange()) {
                 target.addEffect(new Bleed(owner, target, weapon.getDamage()));
             }
         }

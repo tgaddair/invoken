@@ -758,10 +758,11 @@ public abstract class Agent extends CollisionEntity {
             OrthogonalTiledMapRenderer renderer) {
         // based on the actor state, get the animation frame
         TextureRegion frame = animations.get(activity).get(direction).getKeyFrame(stateTime);
+        float width = 1 / 32f * frame.getRegionWidth();
+        float height = 1 / 32f * frame.getRegionHeight();
         Batch batch = renderer.getSpriteBatch();
         batch.begin();
-        batch.draw(frame, position.x - getWidth() / 2, position.y - getHeight() / 2, getWidth(),
-                getHeight());
+        batch.draw(frame, position.x - width / 2, position.y - height / 2, width, height);
         batch.end();
     }
     

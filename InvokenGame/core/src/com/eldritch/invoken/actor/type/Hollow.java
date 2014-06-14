@@ -9,14 +9,14 @@ import com.eldritch.invoken.encounter.Location;
 import com.eldritch.invoken.screens.GameScreen;
 import com.eldritch.scifirpg.proto.Actors.NonPlayerActor;
 
-public class Automaton extends Npc {
-    public static float MAX_VELOCITY = 4f;
+public class Hollow extends Npc {
+    public static float MAX_VELOCITY = 3f;
     public static int PX = 64;
 
-    public Automaton(NonPlayerActor data, float x, float y, String asset, Location location) {
+    public Hollow(NonPlayerActor data, float x, float y, String asset, Location location) {
         super(data, x, y, 1 / 32f * PX, 1 / 32f * PX, getAllAnimations(asset), location);
     }
-    
+
     @Override
     public float getMaxVelocity() {
         return MAX_VELOCITY;
@@ -29,8 +29,10 @@ public class Automaton extends Npc {
         animations.put(Activity.Cast, getAnimations(regions));
         animations.put(Activity.Thrust, getAnimations(regions));
         animations.put(Activity.Explore, getAnimations(regions));
-        animations.put(Activity.Swipe, getAnimations(regions));
         animations.put(Activity.Combat, getAnimations(regions));
+        
+        regions = GameScreen.getRegions(assetName + "-attack.png", PX, 96);
+        animations.put(Activity.Swipe, getAnimations(regions));
 
         regions = GameScreen.getRegions(assetName + "-death.png", PX, PX);
         animations.put(Activity.Death, getAnimations(regions, Animation.PlayMode.NORMAL, false));
