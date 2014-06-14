@@ -34,7 +34,7 @@ import com.eldritch.scifirpg.proto.Prerequisites.Prerequisite;
 import com.eldritch.scifirpg.proto.Prerequisites.Standing;
 import com.google.common.base.Optional;
 
-public class Npc extends Agent {
+public abstract class Npc extends Agent {
 	private final NonPlayerActor data;
     private final Optional<ActorScenario> scenario;
 	private final DialogueVerifier dialogueVerifier = new DialogueVerifier();

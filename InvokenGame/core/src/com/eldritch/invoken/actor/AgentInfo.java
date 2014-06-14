@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.actor.aug.Augmentation;
 import com.eldritch.invoken.actor.factions.FactionManager;
 import com.eldritch.scifirpg.proto.Actors.ActorParams;
@@ -29,6 +30,8 @@ public class AgentInfo {
 	
 	public AgentInfo(Agent agent, ActorParams params) {
 	    this.name = params.getName();
+	    InvokenGame.log("creating: " + name);
+	    
 		augmentations = new PreparedAugmentations(agent);
 		profession = Profession.fromProto(params.getProfession());
 		factions = new FactionManager(agent);
@@ -47,6 +50,10 @@ public class AgentInfo {
         }
 		for (String knownAug : params.getKnownAugIdList()) {
             knownAugmentations.add(knownAug);
+            Augmentation aug = Augmentation.fromProto(InvokenGame.AUG_READER.readAsset(knownAug));
+            if (aug != null) {
+                addAugmentation(aug);
+            }
         }
 		
 		// post init basic state

@@ -1,7 +1,6 @@
 package com.eldritch.invoken.actor;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -28,7 +27,6 @@ import com.eldritch.invoken.actor.items.Outfit;
 import com.eldritch.invoken.effects.Effect;
 import com.eldritch.invoken.encounter.Location;
 import com.eldritch.invoken.encounter.NaturalVector2;
-import com.eldritch.invoken.screens.GameScreen;
 import com.eldritch.scifirpg.proto.Actors.ActorParams;
 
 public abstract class Agent extends CollisionEntity {

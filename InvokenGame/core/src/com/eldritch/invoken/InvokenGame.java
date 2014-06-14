@@ -95,4 +95,8 @@ public class InvokenGame extends Game {
 	public static void log(String text) {
 		Gdx.app.log(InvokenGame.LOG, text);
 	}
+	
+	public static void error(String text, Exception ex) {
+	    Gdx.app.error(InvokenGame.LOG, text, ex);
+	}
 }
