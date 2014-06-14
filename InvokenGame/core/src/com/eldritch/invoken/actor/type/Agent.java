@@ -645,7 +645,7 @@ public abstract class Agent extends CollisionEntity {
         return result;
     }
 
-    private boolean collidesWith(Rectangle actorRect) {
+    public boolean collidesWith(Rectangle actorRect) {
         Rectangle rect = getBoundingBox(Location.getRectPool().obtain());
         boolean result = actorRect.overlaps(rect);
         Location.getRectPool().free(rect);

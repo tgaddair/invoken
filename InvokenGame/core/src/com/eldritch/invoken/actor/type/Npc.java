@@ -41,6 +41,7 @@ public abstract class Npc extends Agent {
 	private final Behavior behavior;
 	final Pathfinder pathfinder = new Pathfinder();
 	private final List<Routine> routines = new ArrayList<Routine>();
+	private final Set<Agent> detected = new HashSet<Agent>();
 	
 	// used in AI routine calculations to determine things like the target
 	private final List<Agent> neighbors = new ArrayList<Agent>();
@@ -110,6 +111,12 @@ public abstract class Npc extends Agent {
 	    }
     }
 	
+	@Override
+	public void setTarget(Agent other) {
+	    super.setTarget(other);
+	    detected.add(other);
+	}
+	
 	public boolean canTarget(Agent other, Location location) {
         // within distance constraint
         if (!super.canTarget(other, location)) {
@@ -119,6 +126,15 @@ public abstract class Npc extends Agent {
         // if we're hostile, then we can target when within range
         if (hostileTo(other)) {
             return true;
+        }
+        
+        // recently seen and nearby
+        if (detected.contains(other)) {
+            if (dst2(other) < MAX_DST2 / 2) {
+                return true;
+            } else {
+                detected.remove(other);
+            }
         }
 
         // view obstruction: intersect character-character segment with collision tiles

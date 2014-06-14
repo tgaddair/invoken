@@ -1,6 +1,8 @@
 package com.eldritch.invoken.actor.ai;
 
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Npc;
 import com.eldritch.invoken.encounter.Location;
 
@@ -78,6 +80,16 @@ public abstract class MovementRoutine implements Routine {
                 }
             }
         }
+        
+        Rectangle actorRect = Location.getRectPool().obtain();
+        npc.getLargeBoundingBox(actorRect);
+        for (Agent neighbor : npc.getNeighbors()) {
+            if (neighbor.collidesWith(actorRect)) {
+                obstacleMass.add(neighbor.getPosition());
+                totalObstacles++;
+            }
+        }
+        Location.getRectPool().free(actorRect);
 
         if (totalObstacles > 0) {
             obstacleMass.scl(1f / totalObstacles);
