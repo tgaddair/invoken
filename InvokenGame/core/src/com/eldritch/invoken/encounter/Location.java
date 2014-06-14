@@ -267,8 +267,8 @@ public class Location {
     }
 
     private void drawCentered(TextureRegion region, Vector2 position, Color color) {
-        float w = 1 / 32f * region.getRegionWidth();
-        float h = 1 / 32f * region.getRegionHeight();
+        float w = 1f / PX * region.getRegionWidth();
+        float h = 1f / PX * region.getRegionHeight();
 
         Batch batch = renderer.getSpriteBatch();
         batch.setColor(color);

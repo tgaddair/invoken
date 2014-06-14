@@ -112,6 +112,11 @@ public class Npc extends Agent {
         if (!super.canTarget(other, location)) {
             return false;
         }
+        
+        // if we're hostile, then we can target when within range
+        if (hostileTo(other)) {
+            return true;
+        }
 
         // view obstruction: intersect character-character segment with collision tiles
         int startX = (int) Math.floor(Math.min(position.x, other.position.x));
