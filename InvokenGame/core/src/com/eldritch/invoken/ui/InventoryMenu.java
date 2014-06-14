@@ -6,8 +6,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.eldritch.invoken.actor.Inventory;
-import com.eldritch.invoken.actor.Player;
 import com.eldritch.invoken.actor.items.Item;
+import com.eldritch.invoken.actor.type.Player;
 import com.eldritch.invoken.screens.AbstractScreen;
 import com.eldritch.invoken.util.DefaultInputListener;
 

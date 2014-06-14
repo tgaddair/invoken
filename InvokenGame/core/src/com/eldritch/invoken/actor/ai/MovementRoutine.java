@@ -1,7 +1,7 @@
 package com.eldritch.invoken.actor.ai;
 
 import com.badlogic.gdx.math.Vector2;
-import com.eldritch.invoken.actor.Npc;
+import com.eldritch.invoken.actor.type.Npc;
 import com.eldritch.invoken.encounter.Location;
 
 public abstract class MovementRoutine implements Routine {

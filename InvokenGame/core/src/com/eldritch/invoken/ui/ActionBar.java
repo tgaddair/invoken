@@ -6,9 +6,9 @@ import java.util.Map;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.eldritch.invoken.actor.Player;
 import com.eldritch.invoken.actor.PreparedAugmentations;
 import com.eldritch.invoken.actor.aug.Augmentation;
+import com.eldritch.invoken.actor.type.Player;
 import com.eldritch.invoken.screens.AbstractScreen;
 import com.eldritch.invoken.util.DefaultInputListener;
 
@@ -19,7 +19,7 @@ public class ActionBar {
     private Augmentation lastActive = null;
     
     public ActionBar(Player player) {
-        augmentations = player.getAugmentations();
+        augmentations = player.getInfo().getAugmentations();
         
         container = new Table();
         container.setHeight(AbstractScreen.MENU_VIEWPORT_HEIGHT / 2);

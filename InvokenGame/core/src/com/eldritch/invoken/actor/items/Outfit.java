@@ -3,10 +3,10 @@ package com.eldritch.invoken.actor.items;
 import java.util.Map;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
-import com.eldritch.invoken.actor.Human;
 import com.eldritch.invoken.actor.Inventory;
-import com.eldritch.invoken.actor.Agent.Activity;
-import com.eldritch.invoken.actor.Agent.Direction;
+import com.eldritch.invoken.actor.type.Human;
+import com.eldritch.invoken.actor.type.Agent.Activity;
+import com.eldritch.invoken.actor.type.Agent.Direction;
 
 public class Outfit extends Item {
 	private final Map<Activity, Map<Direction, Animation>> animations;

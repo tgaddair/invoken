@@ -2,8 +2,8 @@ package com.eldritch.invoken.actor.ai;
 
 import java.util.Collection;
 
-import com.eldritch.invoken.actor.Agent;
-import com.eldritch.invoken.actor.Npc;
+import com.eldritch.invoken.actor.type.Agent;
+import com.eldritch.invoken.actor.type.Npc;
 import com.eldritch.invoken.encounter.Location;
 
 public class AssistRoutine extends AttackRoutine {

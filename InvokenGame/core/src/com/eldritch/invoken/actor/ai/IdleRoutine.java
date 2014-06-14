@@ -1,6 +1,6 @@
 package com.eldritch.invoken.actor.ai;
 
-import com.eldritch.invoken.actor.Agent;
+import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.encounter.Location;
 
 public class IdleRoutine implements Routine {

@@ -1,4 +1,4 @@
-package com.eldritch.invoken.actor;
+package com.eldritch.invoken.actor.type;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -6,8 +6,8 @@ import java.util.Map;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.eldritch.invoken.actor.Agent.Activity;
-import com.eldritch.invoken.actor.Agent.Direction;
+import com.eldritch.invoken.actor.type.Agent.Activity;
+import com.eldritch.invoken.actor.type.Agent.Direction;
 import com.eldritch.invoken.screens.GameScreen;
 
 public class Human {

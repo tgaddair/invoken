@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.eldritch.invoken.actor.aug.Augmentation;
+import com.eldritch.invoken.actor.type.Agent;
 
 public class PreparedAugmentations {
 	private final List<Augmentation> augs = new ArrayList<Augmentation>();

@@ -13,10 +13,10 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.eldritch.invoken.InvokenGame;
-import com.eldritch.invoken.actor.Agent;
-import com.eldritch.invoken.actor.Player;
 import com.eldritch.invoken.actor.Profession.Inquisitor;
 import com.eldritch.invoken.actor.items.Item;
+import com.eldritch.invoken.actor.type.Agent;
+import com.eldritch.invoken.actor.type.Player;
 import com.eldritch.invoken.encounter.Activator;
 import com.eldritch.invoken.encounter.Location;
 import com.eldritch.invoken.encounter.proc.LocationGenerator;
@@ -165,16 +165,16 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 	public boolean keyUp(int keycode) {
 		switch (keycode) {
 		case Keys.NUM_1:
-		    player.getAugmentations().toggleActiveAugmentation(0);
+		    player.getInfo().getAugmentations().toggleActiveAugmentation(0);
 			return true;
 		case Keys.NUM_2:
-		    player.getAugmentations().toggleActiveAugmentation(1);
+		    player.getInfo().getAugmentations().toggleActiveAugmentation(1);
 			return true;
 		case Keys.NUM_3:
-		    player.getAugmentations().toggleActiveAugmentation(2);
+		    player.getInfo().getAugmentations().toggleActiveAugmentation(2);
 			return true;
 		case Keys.NUM_4:
-		    player.getAugmentations().toggleActiveAugmentation(3);
+		    player.getInfo().getAugmentations().toggleActiveAugmentation(3);
 			return true;
 		case Keys.I:
 			inventoryMenu.toggle();
@@ -234,9 +234,9 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 		Vector3 world = camera.unproject(new Vector3(screenX, screenY, 0));
 		for (Agent entity : location.getActors()) {
 			if (entity.contains(world.x, world.y)) {
-			    if (player.getAugmentations().hasActiveAugmentation()) {
+			    if (player.getInfo().getAugmentations().hasActiveAugmentation()) {
 			        player.select(entity);
-                    player.getAugmentations().useActiveAugmentation(tacticalPause);
+                    player.getInfo().getAugmentations().useActiveAugmentation(tacticalPause);
                 } else if (player.getTarget() != entity) {
 					// initial selection -> set target
 					player.select(entity);

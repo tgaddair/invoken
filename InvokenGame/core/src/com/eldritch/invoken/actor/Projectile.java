@@ -4,6 +4,9 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Rectangle;
+import com.eldritch.invoken.actor.type.Agent;
+import com.eldritch.invoken.actor.type.CollisionEntity;
+import com.eldritch.invoken.actor.type.TemporaryEntity;
 import com.eldritch.invoken.encounter.Location;
 
 public abstract class Projectile extends CollisionEntity implements TemporaryEntity {

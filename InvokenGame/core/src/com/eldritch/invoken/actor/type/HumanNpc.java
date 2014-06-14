@@ -1,4 +1,4 @@
-package com.eldritch.invoken.actor;
+package com.eldritch.invoken.actor.type;
 
 import com.eldritch.invoken.encounter.Location;
 import com.eldritch.scifirpg.proto.Actors.NonPlayerActor;

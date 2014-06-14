@@ -4,7 +4,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
-import com.eldritch.invoken.actor.Agent;
+import com.eldritch.invoken.actor.type.Agent;
 
 public abstract class Light {
     private final float magnitude;

@@ -1,7 +1,7 @@
 package com.eldritch.invoken.effects;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
-import com.eldritch.invoken.actor.Agent;
+import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.screens.GameScreen;
 
 public class Paralyzed extends BasicEffect {

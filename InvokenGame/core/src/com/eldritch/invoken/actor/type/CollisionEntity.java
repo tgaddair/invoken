@@ -1,7 +1,8 @@
-package com.eldritch.invoken.actor;
+package com.eldritch.invoken.actor.type;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
+import com.eldritch.invoken.actor.Entity;
 import com.eldritch.invoken.encounter.Location;
 
 public abstract class CollisionEntity implements Entity {

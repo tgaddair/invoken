@@ -8,7 +8,9 @@ import java.util.Set;
 
 import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.actor.aug.Augmentation;
+import com.eldritch.invoken.actor.factions.Faction;
 import com.eldritch.invoken.actor.factions.FactionManager;
+import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.scifirpg.proto.Actors.ActorParams;
 import com.eldritch.scifirpg.proto.Actors.ActorParams.FactionStatus;
 import com.eldritch.scifirpg.proto.Actors.ActorParams.InventoryItem;
@@ -95,6 +97,26 @@ public class AgentInfo {
 	public Inventory getInventory() {
 		return inventory;
 	}
+	
+	public Set<Faction> getFactions() {
+        return factions.getFactions();
+    }
+
+    public void addFaction(Faction faction, int rank, int reputation) {
+        factions.addFaction(faction, rank, reputation);
+    }
+
+    public int getReputation(Faction faction) {
+        return factions.getReputation(faction);
+    }
+
+    public float getDisposition(Agent other) {
+        return factions.getDisposition(other);
+    }
+    
+    public PreparedAugmentations getAugmentations() {
+        return augmentations;
+    }
 	
 	public Collection<String> getKnownAugmentations() {
         return knownAugmentations;

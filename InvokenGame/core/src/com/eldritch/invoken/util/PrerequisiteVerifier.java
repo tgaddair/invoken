@@ -3,8 +3,8 @@ package com.eldritch.invoken.util;
 import java.util.List;
 
 import com.eldritch.invoken.actor.ActorModel;
-import com.eldritch.invoken.actor.Agent;
-import com.eldritch.invoken.actor.Player;
+import com.eldritch.invoken.actor.type.Agent;
+import com.eldritch.invoken.actor.type.Player;
 import com.eldritch.scifirpg.proto.Disciplines.Discipline;
 import com.eldritch.scifirpg.proto.Disciplines.Influence;
 import com.eldritch.scifirpg.proto.Effects.Effect;

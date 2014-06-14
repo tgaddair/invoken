@@ -1,8 +1,8 @@
 package com.eldritch.invoken.actor.aug;
 
 import com.badlogic.gdx.math.Vector2;
-import com.eldritch.invoken.actor.Agent;
-import com.eldritch.invoken.actor.Agent.Activity;
+import com.eldritch.invoken.actor.type.Agent;
+import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.encounter.Location;
 
 public class Resurrect extends Augmentation {

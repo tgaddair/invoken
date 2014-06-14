@@ -1,4 +1,4 @@
-package com.eldritch.invoken.actor;
+package com.eldritch.invoken.actor.type;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,6 +19,10 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
+import com.eldritch.invoken.actor.AgentInfo;
+import com.eldritch.invoken.actor.Inventory;
+import com.eldritch.invoken.actor.PreparedAugmentations;
+import com.eldritch.invoken.actor.Profession;
 import com.eldritch.invoken.actor.ai.Behavior;
 import com.eldritch.invoken.actor.aug.Action;
 import com.eldritch.invoken.actor.aug.Augmentation;
@@ -100,26 +104,6 @@ public abstract class Agent extends CollisionEntity {
 
     public float dst2(Agent other) {
         return position.dst2(other.position);
-    }
-
-    public Set<Faction> getFactions() {
-        return info.factions.getFactions();
-    }
-
-    public void addFaction(Faction faction, int rank, int reputation) {
-        info.factions.addFaction(faction, rank, reputation);
-    }
-
-    public int getReputation(Faction faction) {
-        return info.factions.getReputation(faction);
-    }
-
-    public float getDisposition(Agent other) {
-        return info.factions.getDisposition(other);
-    }
-    
-    public PreparedAugmentations getAugmentations() {
-        return info.augmentations;
     }
 
     public void useAugmentation(int index) {
@@ -443,7 +427,7 @@ public abstract class Agent extends CollisionEntity {
     
     public float getRelation(Agent agent) {
         if (!relations.containsKey(agent)) {
-            relations.put(agent, getDisposition(agent));
+            relations.put(agent, info.getDisposition(agent));
         }
         return relations.get(agent);
     }

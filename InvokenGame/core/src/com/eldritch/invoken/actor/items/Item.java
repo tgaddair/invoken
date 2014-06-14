@@ -5,9 +5,9 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
-import com.eldritch.invoken.actor.Agent;
-import com.eldritch.invoken.actor.Agent.Activity;
-import com.eldritch.invoken.actor.Agent.Direction;
+import com.eldritch.invoken.actor.type.Agent;
+import com.eldritch.invoken.actor.type.Agent.Activity;
+import com.eldritch.invoken.actor.type.Agent.Direction;
 import com.eldritch.invoken.actor.Inventory;
 
 public abstract class Item {

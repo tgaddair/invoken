@@ -2,8 +2,8 @@ package com.eldritch.invoken.actor.aug;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
-import com.eldritch.invoken.actor.Agent;
-import com.eldritch.invoken.actor.Agent.Activity;
+import com.eldritch.invoken.actor.type.Agent;
+import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.encounter.Location;
 
 public abstract class AnimatedAction implements Action {

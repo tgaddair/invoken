@@ -5,9 +5,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.badlogic.gdx.math.Vector2;
-import com.eldritch.invoken.actor.Agent;
-import com.eldritch.invoken.actor.Npc;
 import com.eldritch.invoken.actor.aug.Augmentation;
+import com.eldritch.invoken.actor.type.Agent;
+import com.eldritch.invoken.actor.type.Npc;
 import com.eldritch.invoken.encounter.Location;
 
 public abstract class AttackRoutine extends MovementRoutine {
@@ -84,7 +84,7 @@ public abstract class AttackRoutine extends MovementRoutine {
         if (!npc.hasPendingAction() && elapsed >= 1) {
             // choose the aug with the highest situational quality score
             Augmentation chosen = null;
-            for (Augmentation aug : npc.getAugmentations().getAugmentations()) {
+            for (Augmentation aug : npc.getInfo().getAugmentations().getAugmentations()) {
                 if (aug.isValid(npc, npc.getTarget())
                         && aug.quality(npc, npc.getTarget(), location) > 0) {
                     chosen = aug;
@@ -93,7 +93,7 @@ public abstract class AttackRoutine extends MovementRoutine {
 
             // if an aug was chosen, then go ahead and use it
             if (chosen != null) {
-                npc.getAugmentations().use(chosen);
+                npc.getInfo().getAugmentations().use(chosen);
                 elapsed = 0;
             }
         }

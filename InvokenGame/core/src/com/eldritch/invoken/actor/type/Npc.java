@@ -1,4 +1,4 @@
-package com.eldritch.invoken.actor;
+package com.eldritch.invoken.actor.type;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -11,6 +11,7 @@ import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
+import com.eldritch.invoken.actor.Inventory;
 import com.eldritch.invoken.actor.Inventory.ItemState;
 import com.eldritch.invoken.actor.ai.AssaultRoutine;
 import com.eldritch.invoken.actor.ai.AssistRoutine;
@@ -21,6 +22,8 @@ import com.eldritch.invoken.actor.ai.IdleRoutine;
 import com.eldritch.invoken.actor.ai.Pathfinder;
 import com.eldritch.invoken.actor.ai.PatrolRoutine;
 import com.eldritch.invoken.actor.ai.Routine;
+import com.eldritch.invoken.actor.type.Agent.Activity;
+import com.eldritch.invoken.actor.type.Agent.Direction;
 import com.eldritch.invoken.encounter.Location;
 import com.eldritch.invoken.util.PrerequisiteVerifier;
 import com.eldritch.scifirpg.proto.Actors.ActorParams.Species;

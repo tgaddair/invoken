@@ -5,7 +5,7 @@ import java.util.Map;
 import java.util.Set;
 
 import com.eldritch.invoken.InvokenGame;
-import com.eldritch.invoken.actor.Agent;
+import com.eldritch.invoken.actor.type.Agent;
 
 public class FactionManager {
 	private final Map<Faction, FactionStatus> factions = new HashMap<Faction, FactionStatus>();
@@ -16,7 +16,7 @@ public class FactionManager {
 	}
 	
 	public void modifyReputation(Agent other, float modifier) {
-	    for (Faction faction : other.getFactions()) {
+	    for (Faction faction : other.getInfo().getFactions()) {
 	        if (factions.containsKey(faction)) {
 	            FactionStatus status = factions.get(faction);
 	            status.reputation -= modifier;
@@ -58,10 +58,10 @@ public class FactionManager {
 		// calculate disposition from factions
 		float reaction = 0;
 		for (Faction faction : getFactions()) {
-			for (Faction otherFaction : other.getFactions()) {
+			for (Faction otherFaction : other.getInfo().getFactions()) {
 				if (faction.hasRelation(otherFaction)) {
 					float a = getReputation(faction) / 10f;
-					float b = other.getReputation(otherFaction) / 5f;
+					float b = other.getInfo().getReputation(otherFaction) / 5f;
 					float r = (a + b) * faction.getRelation(otherFaction);
 					reaction += r;
 				}
