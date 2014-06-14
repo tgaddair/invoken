@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
@@ -269,6 +270,33 @@ public abstract class Agent extends CollisionEntity {
 
     public boolean isToggled(Class<?> clazz) {
         return toggles.contains(clazz);
+    }
+    
+    public Iterable<Action> getReverseActions() {
+        // start just after the last element of the list
+        final ListIterator<Action> it = actions.listIterator(actions.size());
+        final Iterator<Action> reverse = new Iterator<Action>() {
+            @Override
+            public boolean hasNext() {
+                return it.hasPrevious();
+            }
+
+            @Override
+            public Action next() {
+                return it.previous();
+            }
+
+            @Override
+            public void remove() {
+                throw new UnsupportedOperationException("Cannot remove from reverse iterator!");
+            }
+        };
+        return new Iterable<Action>() {
+            @Override
+            public Iterator<Action> iterator() {
+                return reverse;
+            }
+        };
     }
 
     public boolean canAddAction() {

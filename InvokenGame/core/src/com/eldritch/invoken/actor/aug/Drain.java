@@ -2,6 +2,7 @@ package com.eldritch.invoken.actor.aug;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Pool;
 import com.eldritch.invoken.actor.Agent;
 import com.eldritch.invoken.actor.Projectile;
@@ -43,6 +44,11 @@ public class Drain extends Augmentation {
             DrainBullet bullet = bulletPool.obtain();
             bullet.setup(owner, target);
             location.addEntity(bullet);
+        }
+        
+        @Override
+        public Vector2 getPosition() {
+            return target.getPosition();
         }
     }
 

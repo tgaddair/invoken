@@ -101,6 +101,11 @@ public class FireWeapon extends Augmentation {
             bullet.setup(owner, target);
             location.addEntity(bullet);
         }
+        
+        @Override
+        public Vector2 getPosition() {
+            return target.getPosition();
+        }
 
         private Animation getAnimation() {
             return animations.get(owner.getDirection());

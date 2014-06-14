@@ -30,6 +30,7 @@ import com.eldritch.invoken.actor.Agent;
 import com.eldritch.invoken.actor.Npc;
 import com.eldritch.invoken.actor.Player;
 import com.eldritch.invoken.actor.TemporaryEntity;
+import com.eldritch.invoken.actor.aug.Action;
 import com.eldritch.invoken.encounter.layer.EncounterLayer;
 import com.eldritch.invoken.encounter.layer.LocationMap;
 import com.eldritch.invoken.gfx.Light;
@@ -49,6 +50,8 @@ public class Location {
             return new Rectangle();
         }
     };
+    
+    private final Color actionsColor = new Color(1, 0, 0, 1);
 
     private final Player player;
     private final LocationMap map;
@@ -224,6 +227,16 @@ public class Location {
         // camera sees and render the map
         renderer.setView(camera);
         renderer.render();
+        
+        if (paused) {
+            // render all pending player actions
+            actionsColor.set(actionsColor.r, actionsColor.g, actionsColor.b, 1);
+            for (Action action : player.getReverseActions()) {
+                drawCentered(selector, action.getPosition(), actionsColor);
+                actionsColor.set(
+                        actionsColor.r, actionsColor.g, actionsColor.b, actionsColor.a * 0.5f);
+            }
+        }
 
         // sort drawables by descending y
         Collections.sort(activeEntities, new Comparator<Agent>() {
@@ -235,7 +248,7 @@ public class Location {
 
         // render the drawables
         for (Agent actor : activeEntities) {
-            if (actor == player.getTarget()) {
+            if (actor == player.getTarget() && !paused) {
                 Color color = new Color(0x00FA9AFF);
                 if (!actor.isAlive()) {
                     // dark slate blue

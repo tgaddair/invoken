@@ -1,5 +1,6 @@
 package com.eldritch.invoken.actor.aug;
 
+import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.actor.Agent;
 import com.eldritch.invoken.actor.Agent.Activity;
 import com.eldritch.invoken.effects.Shield;
@@ -36,5 +37,10 @@ public class Barrier extends Augmentation {
 				owner.addEffect(new Shield(owner));
 			}
 		}
+		
+		@Override
+        public Vector2 getPosition() {
+            return owner.getPosition();
+        }
 	}
 }

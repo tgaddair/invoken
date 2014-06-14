@@ -1,5 +1,6 @@
 package com.eldritch.invoken.actor.aug;
 
+import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.actor.Agent;
 import com.eldritch.invoken.actor.Agent.Activity;
 import com.eldritch.invoken.actor.items.MeleeWeapon;
@@ -41,6 +42,11 @@ public class RendWeapon extends Augmentation {
             if (owner.dst2(target) <= weapon.getRange()) {
                 target.addEffect(new Bleed(owner, target, weapon.getDamage()));
             }
+        }
+        
+        @Override
+        public Vector2 getPosition() {
+            return target.getPosition();
         }
     }
 }
