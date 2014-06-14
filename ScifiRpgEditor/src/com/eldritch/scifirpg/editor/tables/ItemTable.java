@@ -84,6 +84,7 @@ public class ItemTable extends MajorAssetTable<Item> {
 		private final JCheckBox droppableCheck = new JCheckBox("", true);
 		private final JCheckBox hiddenCheck = new JCheckBox();
 		private final JCheckBox coversCheck = new JCheckBox();
+		private final JTextField rangeField = new JTextField();
 		private final JTextField assetField = new JTextField();
 
 		public ItemEditorPanel(ItemTable owner, JFrame frame, Optional<Item> prev) {
@@ -132,6 +133,9 @@ public class ItemTable extends MajorAssetTable<Item> {
 			builder.append("Damage Mods:", new AssetTablePanel(damageModTable));
 			builder.nextLine();
 			
+			builder.append("Range:", rangeField);
+			builder.nextLine();
+			
 			builder.append("Asset:", assetField);
 			builder.nextLine();
 
@@ -159,6 +163,9 @@ public class ItemTable extends MajorAssetTable<Item> {
 				for (DamageMod asset : item.getDamageModifierList()) {
 					damageModTable.addAsset(asset);
 				}
+				if (item.hasRange()) {
+					rangeField.setText(item.getRange() + "");
+				}
 				if (item.hasAsset()) {
 					assetField.setText(item.getAsset());
 				}
@@ -169,7 +176,7 @@ public class ItemTable extends MajorAssetTable<Item> {
 		
 		@Override
 		public Item createAsset() {
-			return Item.newBuilder()
+			Item.Builder item = Item.newBuilder()
 					.setId(idField.getText())
 					.setName(nameField.getText())
 					.setDescription(descriptionField.getText())
@@ -181,8 +188,11 @@ public class ItemTable extends MajorAssetTable<Item> {
 					.addAllEffect(effectTable.getAssets())
 					.addAllRequirement(requirementTable.getAssets())
 					.addAllDamageModifier(damageModTable.getAssets())
-					.setAsset(assetField.getText())
-					.build();
+					.setAsset(assetField.getText());
+			if (!rangeField.getText().isEmpty()) {
+				item.setRange(Double.parseDouble(rangeField.getText()));
+			}
+			return item.build();
 		}
 	}
 	

@@ -8,6 +8,7 @@ import com.eldritch.scifirpg.proto.Items.Item.DamageMod;
 
 public class MeleeWeapon extends Item {
     private final float damage;
+    private final float range;
     
     public MeleeWeapon(com.eldritch.scifirpg.proto.Items.Item item) {
         super(item, 0);
@@ -18,6 +19,7 @@ public class MeleeWeapon extends Item {
             damageSum += mod.getMagnitude();
         }
         this.damage = damageSum;
+        this.range = (float) item.getRange();
     }
     
     @Override
@@ -38,7 +40,7 @@ public class MeleeWeapon extends Item {
     }
     
     public float getRange() {
-        return 1.75f;
+        return range;
     }
     
     public float getDamage() {
