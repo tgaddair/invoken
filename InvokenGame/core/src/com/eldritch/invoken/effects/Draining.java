@@ -4,7 +4,7 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.screens.GameScreen;
 
-public class Draining extends BasicEffect {
+public class Draining extends AnimatedEffect {
 	private final Agent source;
 	private final float magnitude;
 	private final float duration;

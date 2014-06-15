@@ -3,7 +3,7 @@ package com.eldritch.invoken.effects;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.screens.GameScreen;
 
-public class Bleed extends BasicEffect {
+public class Bleed extends AnimatedEffect {
 	private final Agent source;
 	private final float magnitude;
 	private boolean applied = false;

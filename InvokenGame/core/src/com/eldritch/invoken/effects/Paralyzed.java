@@ -4,7 +4,7 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.screens.GameScreen;
 
-public class Paralyzed extends BasicEffect {
+public class Paralyzed extends AnimatedEffect {
 	private final Agent agent;
 	private final float duration;
 	private boolean applied = false;
