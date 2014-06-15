@@ -525,8 +525,8 @@ public abstract class Agent extends CollisionEntity {
         stateTime += delta;
         
         elapsed += delta;
-        if (elapsed >= 1) {
-            // restore 1 unit of energy each second
+        if (elapsed >= 3) {
+            // restore 1 unit of energy every 3 seconds
             info.restore(1);
             elapsed = 0;
         }

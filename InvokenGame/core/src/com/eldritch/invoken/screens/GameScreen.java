@@ -22,6 +22,7 @@ import com.eldritch.invoken.encounter.Location;
 import com.eldritch.invoken.encounter.proc.LocationGenerator;
 import com.eldritch.invoken.ui.ActionBar;
 import com.eldritch.invoken.ui.DialogueMenu;
+import com.eldritch.invoken.ui.EnergyBar;
 import com.eldritch.invoken.ui.InventoryMenu;
 import com.eldritch.invoken.ui.LootMenu;
 
@@ -34,6 +35,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 	private final DialogueMenu dialogue;
 	private final LootMenu loot;
 	private ActionBar actionBar;
+	private EnergyBar energyBar;
 	private InventoryMenu inventoryMenu;
 
 	private Player player;
@@ -101,8 +103,10 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 		
 		// create player menus
 		actionBar = new ActionBar(player);
+		energyBar = new EnergyBar(player, getSkin());
 		inventoryMenu = new InventoryMenu(player, getSkin());
 		stage.addActor(actionBar.getTable());
+		stage.addActor(energyBar);
 		stage.addActor(inventoryMenu.getTable());
 
 		Gdx.input.setInputProcessor(this);
@@ -122,6 +126,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 		
 		// update UI menus
         actionBar.update();
+        energyBar.update();
 		dialogue.update(player);
 		loot.update(player);
 		
