@@ -7,6 +7,12 @@ com.badlogic.gdx.graphics.Color: {
 	maroon: { a: 1, b: 0, g: 0, r: 0.35 },
 	black: { a: 1, b: 0, g: 0, r: 0 }
 },
+com.badlogic.gdx.scenes.scene2d.ui.ProgressBar$ProgressBarStyle: {
+	default-vertical: {
+    background: default-progress-bg,
+    knobBefore: default-progress-vertical
+  },
+},
 com.badlogic.gdx.scenes.scene2d.ui.Button$ButtonStyle: {
 	default: { down: default-button-down, up: default-button-up },
 	toggle: { down: default-button-down, checked: default-button-down, up: default-button-up }
