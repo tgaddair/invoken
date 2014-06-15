@@ -1,5 +1,6 @@
 package com.eldritch.invoken.ui;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
@@ -15,6 +16,8 @@ import com.eldritch.invoken.screens.AbstractScreen;
 import com.eldritch.invoken.util.DefaultInputListener;
 
 public class InventoryMenu {
+    private static final Color EQUIPPED_COLOR = new Color(0x7693E9FF);
+    
     private final Window window;
     private final Table table;
     private final Skin skin;
@@ -72,12 +75,30 @@ public class InventoryMenu {
         for (Inventory.ItemState item : player.getInfo().getInventory().getItems()) {
             addItemButton(item);
         }
+        refreshPortrait();
+    }
+    
+    private void refreshPortrait() {
         splitPane.setFirstWidget(getPlayerView());
+    }
+    
+    private ScrollPane getPlayerView() {
+        return new ScrollPane(new Image(player.getPortrait()));
+    }
+    
+    private void refreshButton(TextButton button, Item item) {
+        Inventory inventory = player.getInfo().getInventory();
+        if (item.isEquipped(inventory)) {
+            button.setColor(EQUIPPED_COLOR);
+        } else {
+            button.setColor(Color.WHITE);
+        }
     }
 
     private void addItemButton(Inventory.ItemState itemState) {
         final Item item = itemState.getItem();
         final TextButton itemButton = new TextButton(getText(item, itemState.getCount()), skin);
+        refreshButton(itemButton, item);
         itemButton.addListener(new DefaultInputListener() {
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
@@ -87,17 +108,14 @@ public class InventoryMenu {
                 } else {
                     inventory.equip(item);
                 }
-                splitPane.setFirstWidget(getPlayerView());
+                refreshPortrait();
+                refreshButton(itemButton, item);
             }
         });
         table.row();
         table.add(itemButton).expandX().fillX().padLeft(5).padRight(5).padBottom(5).padTop(5);
     }
-
-    private ScrollPane getPlayerView() {
-        return new ScrollPane(new Image(player.getPortrait()));
-    }
-
+    
     private String getText(Item item, int count) {
         return String.format("%s (%d)", item.getName(), count);
     }
