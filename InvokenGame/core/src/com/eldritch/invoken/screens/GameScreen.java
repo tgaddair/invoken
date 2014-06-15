@@ -61,8 +61,6 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 		super(game);
 		dialogue = new DialogueMenu(getSkin());
 		loot = new LootMenu(getSkin());
-		stage.addActor(dialogue.getTable());
-		stage.addActor(loot.getTable());
 	}
 
 	@Override
@@ -116,7 +114,9 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 		stage.addActor(energyBar);
 		stage.addActor(playerHealth);
         stage.addActor(selectedHealth);
+        stage.addActor(dialogue.getTable());
 		stage.addActor(inventoryMenu.getTable());
+        stage.addActor(loot.getTable());
 
 		Gdx.input.setInputProcessor(this);
 		Gdx.app.log(InvokenGame.LOG, "start");
@@ -138,7 +138,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         energyBar.update();
         playerHealth.update(player, camera);
         selectedHealth.update(player.getTarget(), camera);
-		dialogue.update(player);
+		dialogue.update(player, camera);
 		loot.update(player);
 		
 		// render the location

@@ -1,11 +1,16 @@
 package com.eldritch.invoken.ui;
 
+import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.Window;
+import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Npc;
 import com.eldritch.invoken.actor.type.Player;
 import com.eldritch.invoken.screens.AbstractScreen;
@@ -14,35 +19,40 @@ import com.eldritch.scifirpg.proto.Actors.DialogueTree.Choice;
 import com.eldritch.scifirpg.proto.Actors.DialogueTree.Response;
 
 public class DialogueMenu {
-	private final Table container;
+//	private final Table container;
 	private final Table table;
+	private final Window bubble;
 	private final Skin skin;
 	private boolean active = false;
 	
 	public DialogueMenu(Skin skin) {
-	    container = new Table(skin);
-	    container.setHeight(AbstractScreen.MENU_VIEWPORT_HEIGHT / 2);
-	    container.setWidth(AbstractScreen.MENU_VIEWPORT_WIDTH);
-		container.bottom();
+//	    container = new Table(skin);
+//	    container.setHeight(AbstractScreen.MENU_VIEWPORT_HEIGHT / 2);
+//	    container.setWidth(AbstractScreen.MENU_VIEWPORT_WIDTH);
+//		container.bottom();
 
 	    table = new Table(skin);
 		table.bottom();
 		
 		this.skin = skin;
 		
-		// TODO translucent background
 		ScrollPane scroll = new ScrollPane(table, skin);
-		container.add(scroll).expand().fillX().bottom();
-		container.setVisible(false);
+//		container.add(scroll).expand().fillX().bottom();
+//		container.setVisible(false);
+		
+		bubble = new Window("", skin);
+		bubble.add(scroll).expand().fill();
+		bubble.setVisible(false);
 	}
 	
-	public void update(Player player) {
+	public void update(Player player, Camera camera) {
 		if (player.inDialogue()) {
 			if (!active) {
-				container.setVisible(true);
+				bubble.setVisible(true);
 				active = true;
 				setup(player.getInteractor());
 			}
+			setPosition(player.getInteractor(), camera);
 		} else {
 			endDialogue();
 		}
@@ -68,12 +78,13 @@ public class DialogueMenu {
 		}
 	}
 	
-	public Table getTable() {
-		return container;
+	public Window getTable() {
+		return bubble;
 	}
 	
 	private void endDialogue() {
-		container.setVisible(false);
+//		container.setVisible(false);
+		bubble.setVisible(false);
 		active = false;
 		// TODO: end dialogue with player
 	}
@@ -96,5 +107,13 @@ public class DialogueMenu {
 		});
 		table.row();
 		table.add(choice).left().padLeft(25).padRight(25).padBottom(10);
+	}
+	
+	private void setPosition(Agent agent, Camera camera) {
+	    Vector2 position = agent.getPosition();
+        float h = agent.getHeight() / 2;
+        float w = agent.getWidth() / 2;
+        Vector3 screen = camera.project(new Vector3(position.x - w, position.y + h, 0));
+        bubble.setPosition(screen.x, screen.y);
 	}
 }
