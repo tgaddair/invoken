@@ -48,6 +48,9 @@ public class Pathfinder {
 	 * the location.
 	 */
 	public boolean isClear(Npc agent, Vector2 origin, Vector2 destination, Location location) {
+	    // record distance to destination
+	    float dst2 = origin.dst2(destination);
+	    
 	    // define our unit of movement for checking obstacle collisions
 	    Vector2 unit = temp;
         temp.x = destination.x;
@@ -59,6 +62,12 @@ public class Pathfinder {
 		for (int i = 0; i < 5; i++) {
 			x += unit.x;
 			y += unit.y;
+			
+			if (origin.dst2(x, y) > dst2) {
+			    // looking past the destination, so we're clear
+			    return true;
+			}
+			
 			if (location.isObstacle((int) x, (int) y)) {
 				return false;
 			}
