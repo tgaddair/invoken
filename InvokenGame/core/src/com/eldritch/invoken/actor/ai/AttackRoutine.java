@@ -82,7 +82,7 @@ public abstract class AttackRoutine extends MovementRoutine {
             return;
         }
 
-        if (!npc.hasPendingAction() && elapsed >= 1) {
+        if (!npc.hasPendingAction()) {
             // choose the aug with the highest situational quality score
             Augmentation chosen = null;
             for (Augmentation aug : npc.getInfo().getAugmentations().getAugmentations()) {
