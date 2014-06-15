@@ -2,6 +2,7 @@ package com.eldritch.invoken.ui;
 
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar;
@@ -43,5 +44,11 @@ public class HealthBar extends ProgressBar {
         float h = agent.getHeight() / 2;
         Vector3 screen = camera.project(new Vector3(position.x, position.y + h, 0));
         setPosition(screen.x, screen.y - 10);
+    }
+    
+    public void draw(Batch batch) {
+        if (isVisible()) {
+            draw(batch, 1.0f);
+        }
     }
 }

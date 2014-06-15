@@ -112,8 +112,6 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 		
 		stage.addActor(actionBar.getTable());
 		stage.addActor(energyBar);
-		stage.addActor(playerHealth);
-        stage.addActor(selectedHealth);
         stage.addActor(dialogue.getTable());
 		stage.addActor(inventoryMenu.getTable());
         stage.addActor(loot.getTable());
@@ -144,8 +142,12 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 		// render the location
 		location.render(delta, camera, selector, tacticalPause);
 		
-		// render dialogue
+		// draw health bars
 		batch.begin();
+		playerHealth.draw(batch);
+		selectedHealth.draw(batch);
+		
+		// render dialogue
 		dialogue.draw(batch);
 		batch.end();
 		
