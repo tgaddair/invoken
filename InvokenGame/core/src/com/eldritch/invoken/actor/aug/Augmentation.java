@@ -18,8 +18,6 @@ public abstract class Augmentation {
 	public void invoke(Agent owner, Agent target) {
 		if (isValid(owner, target)) {
 		    Action action = getAction(owner, target);
-		    System.out.println("energy: " + owner.getInfo().getEnergy());
-		    System.out.println("cost: " + action.getCost());
 		    if (owner.getInfo().getEnergy() >= action.getCost()) {
 		        owner.addAction(action);
 		    }
