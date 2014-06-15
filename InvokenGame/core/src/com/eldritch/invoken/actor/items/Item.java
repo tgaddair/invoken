@@ -43,6 +43,10 @@ public abstract class Item {
 	
 	protected abstract Animation getAnimation(Activity activity, Direction direction);
 	
+	public TextureRegion getPortrait() {
+	    return getAnimation(Activity.Explore, Direction.Right).getKeyFrame(0);
+	}
+	
 	public String getId() {
 		return data.getId();
 	}

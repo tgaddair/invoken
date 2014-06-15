@@ -19,6 +19,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Array;
 import com.eldritch.invoken.actor.AgentInfo;
 import com.eldritch.invoken.actor.Inventory;
@@ -31,11 +32,12 @@ import com.eldritch.invoken.actor.items.Outfit;
 import com.eldritch.invoken.effects.Effect;
 import com.eldritch.invoken.encounter.Location;
 import com.eldritch.invoken.encounter.NaturalVector2;
+import com.eldritch.invoken.ui.MultiTextureRegionDrawable;
 import com.eldritch.scifirpg.proto.Actors.ActorParams;
 
 public abstract class Agent extends CollisionEntity {
     public static final int MAX_DST2 = 175;
-    
+
     static AssetManager assetManager = new AssetManager();
     static float DAMPING = 0.87f;
 
@@ -50,7 +52,7 @@ public abstract class Agent extends CollisionEntity {
     public enum Activity {
         Explore, Combat, Cast, Thrust, Swipe, Death
     }
-    
+
     public enum Hostility {
         Defensive, Assault
     }
@@ -74,17 +76,17 @@ public abstract class Agent extends CollisionEntity {
     private final Set<Agent> hostilities = new HashSet<Agent>();
     private final Set<Agent> assaulters = new HashSet<Agent>();
     private final Map<Agent, Float> relations = new HashMap<Agent, Float>();
-    
+
     private int confused = 0;
     private int paralyzed = 0;
 
     private Agent target;
     private Npc interactor;
     private final Set<Class<?>> toggles = new HashSet<Class<?>>();
-    
+
     private final Color color = new Color(1, 1, 1, 1);
 
-    public Agent(ActorParams params, float x, float y, float width, float height, 
+    public Agent(ActorParams params, float x, float y, float width, float height,
             Map<Activity, Map<Direction, Animation>> animations) {
         super(width, height);
         setPosition(x, y);
@@ -103,11 +105,11 @@ public abstract class Agent extends CollisionEntity {
         // health, level, augmentations, etc.
         info = new AgentInfo(this, profession, level);
     }
-    
+
     public void setRgb(float r, float g, float b) {
         color.set(r, g, b, color.a);
     }
-    
+
     public void setAlpha(float a) {
         color.set(color.r, color.g, color.b, a);
     }
@@ -143,7 +145,7 @@ public abstract class Agent extends CollisionEntity {
     public boolean hasEnemies() {
         return !hostilities.isEmpty();
     }
-    
+
     public boolean inCombat() {
         return hasEnemies();
     }
@@ -158,10 +160,10 @@ public abstract class Agent extends CollisionEntity {
                 // friendly fire is inevitable once bullets start flying, so relax the penalty
                 modifier *= 0.1f;
             }
-            
+
             // lower our disposition
-//            System.out.println(String.format("relation (%s -> %s) : %f, mod=%f", 
-//                    getInfo().getName(), other.getInfo().getName(), getRelation(other), modifier));
+            // System.out.println(String.format("relation (%s -> %s) : %f, mod=%f",
+            // getInfo().getName(), other.getInfo().getName(), getRelation(other), modifier));
             float relation = changeRelation(other, modifier);
             if (Behavior.isEnemyGiven(relation)) {
                 // unfriendly, so mark them as an enemy
@@ -170,7 +172,7 @@ public abstract class Agent extends CollisionEntity {
                     // they attacked us, mark them as an assaulter
                     other.hostility = Hostility.Assault;
                     assaulters.add(other);
-                    
+
                     // lower their reputation with all our factions
                 }
             }
@@ -203,11 +205,11 @@ public abstract class Agent extends CollisionEntity {
     public void resurrect() {
         info.resetHealth();
     }
-    
+
     public float getVisibility() {
         return color.a;
     }
-    
+
     public boolean isConfused() {
         return confused > 0;
     }
@@ -223,7 +225,7 @@ public abstract class Agent extends CollisionEntity {
             }
         }
     }
-    
+
     protected abstract void handleConfusion(boolean confused);
 
     public boolean isParalyzed() {
@@ -268,11 +270,11 @@ public abstract class Agent extends CollisionEntity {
     public boolean isFollowing(Agent agent) {
         return getFollowed() == agent;
     }
-    
+
     public boolean isCloaked() {
         return toggles.contains(Cloak.class);
     }
-    
+
     public void setCloaked(boolean cloaked) {
         if (cloaked) {
             toggles.add(Cloak.class);
@@ -297,7 +299,7 @@ public abstract class Agent extends CollisionEntity {
     public boolean isToggled(Class<?> clazz) {
         return toggles.contains(clazz);
     }
-    
+
     public Iterable<Action> getReverseActions() {
         // start just after the last element of the list
         final ListIterator<Action> it = actions.listIterator(actions.size());
@@ -335,7 +337,7 @@ public abstract class Agent extends CollisionEntity {
     public void addAction(Action action) {
         actions.add(action);
     }
-    
+
     public void removeAction() {
         if (!actions.isEmpty()) {
             // remove the most recently added action from the back of the queue
@@ -358,7 +360,7 @@ public abstract class Agent extends CollisionEntity {
     public Vector2 getPosition() {
         return position;
     }
-    
+
     public NaturalVector2 getCellPosition() {
         return NaturalVector2.of((int) position.x, (int) position.y);
     }
@@ -377,6 +379,20 @@ public abstract class Agent extends CollisionEntity {
 
     public Direction getDirection() {
         return direction;
+    }
+
+    public TextureRegionDrawable getPortrait() {
+        TextureRegion region = animations.get(Activity.Explore).get(Direction.Right).getKeyFrame(0);
+        if (info.getInventory().hasOutfit()) {
+            Outfit outfit = info.getInventory().getOutfit();
+            TextureRegion outfitRegion = outfit.getPortrait();
+            if (outfit.covers()) {
+                return new MultiTextureRegionDrawable(outfitRegion);
+            } else {
+                return new MultiTextureRegionDrawable(region, outfitRegion);
+            }
+        }
+        return new MultiTextureRegionDrawable(region);
     }
 
     public Animation getAnimation(Direction direction) {
@@ -434,11 +450,11 @@ public abstract class Agent extends CollisionEntity {
         }
         return true;
     }
-    
+
     public boolean isVisible(Agent other) {
         return other.getVisibility() >= Math.min(10f / info.getSubterfuge(), 1.0f);
     }
-    
+
     public boolean isNear(Agent other) {
         return dst2(other) <= MAX_DST2;
     }
@@ -482,18 +498,18 @@ public abstract class Agent extends CollisionEntity {
             takeAction(delta, screen);
         }
     }
-    
+
     public Map<Agent, Float> getRelations() {
         return relations;
     }
-    
+
     public float getRelation(Agent agent) {
         if (!relations.containsKey(agent)) {
             relations.put(agent, info.getDisposition(agent));
         }
         return relations.get(agent);
     }
-    
+
     public float changeRelation(Agent agent, float delta) {
         float relation = getRelation(agent) + delta;
         relations.put(agent, relation);
@@ -505,7 +521,7 @@ public abstract class Agent extends CollisionEntity {
         if (delta == 0)
             return;
         stateTime += delta;
-        
+
         // cleanup relations
         {
             Iterator<Entry<Agent, Float>> it = relations.entrySet().iterator();
@@ -537,7 +553,7 @@ public abstract class Agent extends CollisionEntity {
                 action = actions.poll();
                 if (action != null) {
                     // any action breaks cloaking
-                    setCloaked(false); 
+                    setCloaked(false);
                     action.update(delta, location);
                 }
             }
@@ -689,7 +705,7 @@ public abstract class Agent extends CollisionEntity {
 
         // unscale the velocity by the inverse delta time and set
         // the latest position
-//        position.add(velocity);
+        // position.add(velocity);
         velocity.scl(1 / delta);
 
         // Apply damping to the velocity on the x-axis so we don't
@@ -697,13 +713,13 @@ public abstract class Agent extends CollisionEntity {
         velocity.x *= DAMPING;
         velocity.y *= DAMPING;
     }
-    
+
     public boolean collidesWith(float x, float y) {
         if (!isAlive()) {
             // cannot collide with a point if not alive
             return false;
         }
-        
+
         Rectangle rect = getLargeBoundingBox(Location.getRectPool().obtain());
         boolean result = rect.contains(x, y);
         Location.getRectPool().free(rect);
@@ -798,7 +814,7 @@ public abstract class Agent extends CollisionEntity {
         } else if (state == State.Standing && activity == Activity.Explore) {
             stateTime = 0;
         }
-        
+
         // apply color
         Batch batch = renderer.getSpriteBatch();
         batch.setColor(color);
@@ -816,7 +832,7 @@ public abstract class Agent extends CollisionEntity {
         } else {
             render(activity, direction, stateTime, renderer);
         }
-        
+
         // restore original color
         batch.setColor(Color.WHITE);
 
@@ -832,13 +848,13 @@ public abstract class Agent extends CollisionEntity {
         TextureRegion frame = animations.get(activity).get(direction).getKeyFrame(stateTime);
         float width = 1 / 32f * frame.getRegionWidth();
         float height = 1 / 32f * frame.getRegionHeight();
-        
+
         Batch batch = renderer.getSpriteBatch();
         batch.begin();
         batch.draw(frame, position.x - width / 2, position.y - height / 2, width, height);
         batch.end();
     }
-    
+
     public Rectangle getLargeBoundingBox(Rectangle rect) {
         rect.set(position.x - getWidth() / 4, position.y - getHeight() / 2, getWidth() / 2,
                 getHeight());
@@ -864,7 +880,7 @@ public abstract class Agent extends CollisionEntity {
         // TODO separate weapon class
         return 0.65f;
     }
-    
+
     public Inventory getInventory() {
         return info.getInventory();
     }
@@ -872,12 +888,12 @@ public abstract class Agent extends CollisionEntity {
     public AgentInfo getInfo() {
         return info;
     }
-    
+
     @Override
     public String toString() {
         return info.getName();
     }
-    
+
     public abstract float getMaxVelocity();
 
     protected abstract void takeAction(float delta, Location screen);

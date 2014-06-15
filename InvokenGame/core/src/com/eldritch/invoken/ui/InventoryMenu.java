@@ -1,12 +1,15 @@
 package com.eldritch.invoken.ui;
 
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.SplitPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.eldritch.invoken.actor.Inventory;
 import com.eldritch.invoken.actor.items.Item;
+import com.eldritch.invoken.actor.type.Agent.Direction;
 import com.eldritch.invoken.actor.type.Player;
 import com.eldritch.invoken.screens.AbstractScreen;
 import com.eldritch.invoken.util.DefaultInputListener;
@@ -32,7 +35,9 @@ public class InventoryMenu {
 		table.top();
 		
 		ScrollPane scroll = new ScrollPane(table, skin);
-		container.add(scroll).expand().fill();
+		ScrollPane playerView = new ScrollPane(new Image(player.getPortrait()));
+		SplitPane split = new SplitPane(playerView, scroll, false, skin, "default-horizontal");
+		container.add(split).expand().fill();
 		container.setVisible(false);
 	}
 	
