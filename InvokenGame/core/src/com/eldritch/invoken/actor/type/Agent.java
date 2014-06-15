@@ -530,8 +530,8 @@ public abstract class Agent extends CollisionEntity {
 
     private void move(float delta, Location screen) {
         if (actionInProgress()) {
-            velocity.x = 0;
-            velocity.y = 0;
+//            velocity.x = 0;
+//            velocity.y = 0;
         }
         
         // clamp the velocity to the maximum
