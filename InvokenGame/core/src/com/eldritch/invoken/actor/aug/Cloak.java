@@ -22,6 +22,11 @@ public class Cloak extends Augmentation {
     
     @Override
     public float quality(Agent owner, Agent target, Location location) {
+        if (owner.isCloaked()) {
+            // tactically, it never makes sense to turn off cloak
+            return -1f;
+        }
+        
         float score = 0f;
         float dst2 = owner.dst2(target);
         if (dst2 < 50 && dst2 > 5) {

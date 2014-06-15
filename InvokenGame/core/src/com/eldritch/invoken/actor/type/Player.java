@@ -59,9 +59,11 @@ public class Player extends Agent {
         return moving;
     }
 
-    public void select(Agent other) {
-        setTarget(other);
-        interact(null);
+    public void select(Agent other, Location location) {
+        if (other == this || other == null || canTarget(other, location)) {
+            setTarget(other);
+            interact(null);
+        }
     }
 
     public void reselect(Agent other) {

@@ -239,11 +239,11 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 		for (Agent entity : location.getActors()) {
 			if (entity.contains(world.x, world.y)) {
 			    if (player.getInfo().getAugmentations().hasActiveAugmentation()) {
-			        player.select(entity);
+			        player.select(entity, location);
                     player.getInfo().getAugmentations().useActiveAugmentation(tacticalPause);
                 } else if (player.getTarget() != entity) {
 					// initial selection -> set target
-					player.select(entity);
+					player.select(entity, location);
 				} else if (!tacticalPause) {
 					// already selected -> start interaction
 					player.reselect(entity);
@@ -263,7 +263,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 		
 		if (!playerClicked && !selection) {
 			// clicked on a non-interactive object, so deselect
-			player.select(null);
+			player.select(null, location);
 		}
 		playerClicked = false;
 		
