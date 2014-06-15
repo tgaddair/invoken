@@ -21,6 +21,11 @@ public class Outfit extends Item {
 	}
 	
 	@Override
+    public boolean isEquipped(Inventory inventory) {
+        return inventory.getOutfit() == this;
+    }
+	
+	@Override
 	public void equipFrom(Inventory inventory) {
 		inventory.setOutfit(this);
 	}

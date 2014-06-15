@@ -7,15 +7,15 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.SplitPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.eldritch.invoken.actor.Inventory;
 import com.eldritch.invoken.actor.items.Item;
-import com.eldritch.invoken.actor.type.Agent.Direction;
 import com.eldritch.invoken.actor.type.Player;
 import com.eldritch.invoken.screens.AbstractScreen;
 import com.eldritch.invoken.util.DefaultInputListener;
 
 public class InventoryMenu {
-	private final Table container;
+	private final Window window;
 	private final Table table;
 	private final Skin skin;
 	private final Player player;
@@ -23,34 +23,46 @@ public class InventoryMenu {
 	public InventoryMenu(Player player, Skin skin) {
 		this.player = player;
 		this.skin = skin;
-	    container = new Table(skin);
-	    container.setHeight(AbstractScreen.MENU_VIEWPORT_HEIGHT - 100);
-	    container.setWidth(AbstractScreen.MENU_VIEWPORT_WIDTH - 100);
-	    container.setPosition(
-	    		AbstractScreen.MENU_VIEWPORT_WIDTH / 2 - container.getWidth() / 2,
-	    		AbstractScreen.MENU_VIEWPORT_HEIGHT / 2 - container.getHeight() / 2);
-		container.center();
 
 	    table = new Table(skin);
 		table.top();
 		
 		ScrollPane scroll = new ScrollPane(table, skin);
 		ScrollPane playerView = new ScrollPane(new Image(player.getPortrait()));
-		SplitPane split = new SplitPane(playerView, scroll, false, skin, "default-horizontal");
-		container.add(split).expand().fill();
-		container.setVisible(false);
+		SplitPane splitPane = new SplitPane(playerView, scroll, false, skin, "default-horizontal");
+		
+		window = new Window("Inventory", skin);
+		window.setHeight(AbstractScreen.MENU_VIEWPORT_HEIGHT - 100);
+		window.setWidth(AbstractScreen.MENU_VIEWPORT_WIDTH - 100);
+		window.setPosition(
+              AbstractScreen.MENU_VIEWPORT_WIDTH / 2 - window.getWidth() / 2,
+              AbstractScreen.MENU_VIEWPORT_HEIGHT / 2 - window.getHeight() / 2);
+		window.center();
+		
+		TextButton closeButton = new TextButton("X", skin);
+		closeButton.addListener(new DefaultInputListener() {
+            @Override
+            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                show(false);
+            }
+        });
+		
+        window.getButtonTable().add(closeButton).height(window.getPadTop());
+        window.row().fill().expandX();
+        window.add(splitPane).expand().fill();
+        window.setVisible(false);
 	}
 	
-	public Table getTable() {
-		return container;
+	public Window getTable() {
+		return window;
 	}
 	
 	public void toggle() {
-		show(!container.isVisible());
+		show(!window.isVisible());
 	}
 	
 	public void show(boolean visible) {
-		container.setVisible(visible);
+	    window.setVisible(visible);
 		if (visible) {
 			refresh();
 		}
@@ -69,7 +81,12 @@ public class InventoryMenu {
 		itemButton.addListener(new DefaultInputListener() {
 			@Override
 			public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-				player.getInfo().getInventory().equip(item);
+			    Inventory inventory = player.getInfo().getInventory();
+			    if (item.isEquipped(inventory)) {
+			        inventory.unequip(item);
+			    } else {
+			        inventory.equip(item);
+			    }
 			}
 		});
 		table.row();

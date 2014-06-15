@@ -21,6 +21,11 @@ public class RangedWeapon extends Item {
 	}
 	
 	@Override
+    public boolean isEquipped(Inventory inventory) {
+        return inventory.getRangedWeapon() == this;
+    }
+	
+	@Override
 	public void equipFrom(Inventory inventory) {
 		inventory.setRangedWeapon(this);
 	}

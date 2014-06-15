@@ -73,7 +73,7 @@ public class Inventory {
         }
         return items.get(itemId).getCount();
     }
-
+    
     public void equip(Item item) {
         item.equipFrom(this);
     }

@@ -21,6 +21,8 @@ public abstract class Item {
 		this.height = 1 / 32f * px;
 	}
 	
+	public abstract boolean isEquipped(Inventory inventory);
+	
 	public abstract void equipFrom(Inventory inventory);
 	
 	public abstract void unequipFrom(Inventory inventory);
