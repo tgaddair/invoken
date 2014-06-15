@@ -10,7 +10,7 @@ import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Human;
 
 public class HealthBar extends ProgressBar {
-    private static final Color C = new Color(1, 0.3f, 0.3f, 1);
+    private static final Color C = new Color(0xDC143CFF);
     private static final int W = Human.PX - 10;
     
     private Agent agent = null;
@@ -36,6 +36,11 @@ public class HealthBar extends ProgressBar {
         
         if (agent.getInfo().getHealth() != getValue()) {
             setValue(agent.getInfo().getHealth());
+            if (getValue() <= 0) {
+                setDisabled(true);
+            } else if (isDisabled()) {
+                setDisabled(false);
+            }
         }
         
         Vector2 position = agent.getPosition();
