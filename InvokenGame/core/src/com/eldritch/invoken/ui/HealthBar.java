@@ -11,7 +11,7 @@ import com.eldritch.invoken.actor.type.Human;
 
 public class HealthBar extends ProgressBar {
     private static final Color C = new Color(0xDC143CFF);
-    private static final int W = Human.PX - 10;
+    private static final int W = Human.PX - 18;
     
     private Agent agent = null;
     
