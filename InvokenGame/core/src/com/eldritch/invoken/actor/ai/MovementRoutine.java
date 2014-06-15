@@ -20,13 +20,15 @@ public abstract class MovementRoutine implements Routine {
     
     protected abstract void doMove(Vector2 velocityDelta, Location screen);
     
-    protected void move(float delta, Location screen) {
+    protected void move(float delta, Location screen, boolean avoid) {
         Vector2 velocityDelta = new Vector2(0, 0);
         doMove(velocityDelta, screen);
 
         // check that the tile immediately adjacent in the chosen direction is
         // not an obstacle
-        avoidCollisions(velocityDelta, screen);
+        if (avoid) {
+            avoidCollisions(velocityDelta, screen);
+        }
 
         // scale down the previous velocity to reduce the effects of momentum as
         // we're turning

@@ -63,7 +63,7 @@ public class FleeRoutine extends MovementRoutine {
 			return;
 		}
 
-		move(delta, location);
+		move(delta, location, true);
 	}
 
 	@Override

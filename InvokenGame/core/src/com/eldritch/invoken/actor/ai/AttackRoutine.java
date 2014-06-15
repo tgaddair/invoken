@@ -50,7 +50,8 @@ public abstract class AttackRoutine extends MovementRoutine {
             return;
         }
 
-        move(delta, screen);
+        // melee attackers don't avoid obstacles as fiercely
+        move(delta, screen, !npc.getInventory().hasMeleeWeapon());
         attack(delta, screen);
     }
 
