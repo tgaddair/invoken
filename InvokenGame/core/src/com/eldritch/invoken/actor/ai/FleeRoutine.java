@@ -4,7 +4,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.badlogic.gdx.math.Vector2;
-import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Npc;
 import com.eldritch.invoken.encounter.Location;
@@ -73,7 +72,7 @@ public class FleeRoutine extends MovementRoutine {
 		    Vector2 destination = npc.getPathfinder().rotate(
 		            target.getPosition(), npc.getPosition(), Math.PI);
 			pursueTarget(
-			        npc.getPathfinder().getTarget(npc.getPosition(), destination, location),
+			        npc.getPathfinder().getTarget(npc, npc.getPosition(), destination, location),
 			        velocityDelta, location);
 		}
 	}

@@ -193,12 +193,12 @@ public abstract class Npc extends Agent {
 	}
 	
 	public Vector2 getClearTarget(Vector2 target, Location screen) {
-		return pathfinder.getTarget(getPosition(), target, screen);
+		return pathfinder.getTarget(this, getPosition(), target, screen);
 	}
 	
 	public Vector2 getClearTarget(double theta, Location screen) {
 	    Vector2 target = pathfinder.rotate(getTarget().getPosition(), getPosition(), theta);
-        return pathfinder.getTarget(getPosition(), target, screen);
+        return pathfinder.getTarget(this, getPosition(), target, screen);
     }
 	
 	private void setRoutine(Routine routine) {

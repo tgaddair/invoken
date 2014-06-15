@@ -1,6 +1,8 @@
 package com.eldritch.invoken.actor.ai;
 
 import com.badlogic.gdx.math.Vector2;
+import com.eldritch.invoken.actor.type.Agent;
+import com.eldritch.invoken.actor.type.Npc;
 import com.eldritch.invoken.encounter.Location;
 
 public class Pathfinder {
@@ -11,7 +13,7 @@ public class Pathfinder {
 		target = null;
 	}
 
-	public Vector2 getTarget(Vector2 origin, Vector2 destination,
+	public Vector2 getTarget(Npc agent, Vector2 origin, Vector2 destination,
 			Location screen) {
 		if (target == null || origin.dst2(target) < 2) {
 			// keep pursuing our previous target until we reach it
@@ -23,7 +25,7 @@ public class Pathfinder {
 		double angle = Math.PI / 4;
 		angle *= Math.random() < 0.5 ? -1 : 1;
 		while (!valid && angle < 2 * Math.PI && angle > -2 * Math.PI) {
-			valid = isClear(origin, target, screen);
+			valid = isClear(agent, origin, target, screen);
 			if (!valid) {
 				// obstacle in the way, so rotate in the opposite direction
 				target = rotate(target, origin, angle);
@@ -45,7 +47,7 @@ public class Pathfinder {
 	 * Returns true if the path from origin to destination is clear (no obstacles) with respect to
 	 * the location.
 	 */
-	public boolean isClear(Vector2 origin, Vector2 destination, Location location) {
+	public boolean isClear(Npc agent, Vector2 origin, Vector2 destination, Location location) {
 	    // define our unit of movement for checking obstacle collisions
 	    Vector2 unit = temp;
         temp.x = destination.x;
@@ -60,6 +62,11 @@ public class Pathfinder {
 			if (location.isObstacle((int) x, (int) y)) {
 				return false;
 			}
+	        for (Agent neighbor : agent.getNeighbors()) {
+	            if (neighbor != agent.getTarget() && neighbor.collidesWith(x, y)) {
+	                return false;
+	            }
+	        }
 		}
 		return true;
 	}
