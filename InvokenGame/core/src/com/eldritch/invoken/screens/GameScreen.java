@@ -13,7 +13,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.eldritch.invoken.InvokenGame;
-import com.eldritch.invoken.actor.Profession.Inquisitor;
+import com.eldritch.invoken.actor.Profession.Ghost;
 import com.eldritch.invoken.actor.items.Item;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Player;
@@ -80,13 +80,17 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 		selector = new TextureRegion(new Texture("sprite/selection.png"));
 		
 		// create the Player we want to move around the world
-		player = new Player(new Inquisitor(), 25, 0, 0,
+		player = new Player(new Ghost(), 25, 0, 0,
 				"sprite/characters/light-blue-hair.png");
 //		player.addFaction(playerFaction, 9, 0);
 		
 		Item outfit = Item.fromProto(InvokenGame.ITEM_READER.readAsset("IcarianOperativeExosuit"));
 		player.getInfo().getInventory().addItem(outfit);
 		player.getInfo().getInventory().equip(outfit);
+		
+		Item weapon = Item.fromProto(InvokenGame.ITEM_READER.readAsset("AssaultRifle"));
+        player.getInfo().getInventory().addItem(weapon);
+        player.getInfo().getInventory().equip(weapon);
 		
 //		location = new Location(
 //		        InvokenGame.LOCATION_READER.readAsset("NostorraPlaza"), player);

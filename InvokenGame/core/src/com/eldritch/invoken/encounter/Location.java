@@ -304,7 +304,7 @@ public class Location {
         activeEntities.clear();
         for (Agent other : entities) {
             if (activeTiles.contains(other.getCellPosition()) 
-                    || (other.inCombat() && player.canTarget(other, this))) {
+                    || (other.inCombat() && player.isNear(other))) {
                 activeEntities.add(other);
             }
         }

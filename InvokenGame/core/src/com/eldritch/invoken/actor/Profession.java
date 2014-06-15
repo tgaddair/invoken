@@ -11,6 +11,7 @@ import java.util.Random;
 
 import com.eldritch.invoken.actor.aug.Augmentation;
 import com.eldritch.invoken.actor.aug.Barrier;
+import com.eldritch.invoken.actor.aug.Cloak;
 import com.eldritch.invoken.actor.aug.Frenzy;
 import com.eldritch.invoken.actor.aug.Drain;
 import com.eldritch.invoken.actor.aug.FireWeapon;
@@ -156,7 +157,7 @@ public abstract class Profession {
 		
 		@Override
 		public List<Augmentation> getStartingAugmentations() {
-			return ImmutableList.<Augmentation>of(new FireWeapon());
+			return ImmutableList.<Augmentation>of(new FireWeapon(), new Cloak());
 		}
 	}
 	

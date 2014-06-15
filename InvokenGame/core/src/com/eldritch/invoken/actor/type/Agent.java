@@ -26,6 +26,7 @@ import com.eldritch.invoken.actor.Profession;
 import com.eldritch.invoken.actor.ai.Behavior;
 import com.eldritch.invoken.actor.aug.Action;
 import com.eldritch.invoken.actor.aug.Augmentation;
+import com.eldritch.invoken.actor.aug.Cloak;
 import com.eldritch.invoken.actor.items.Outfit;
 import com.eldritch.invoken.effects.Effect;
 import com.eldritch.invoken.encounter.Location;
@@ -203,6 +204,10 @@ public abstract class Agent extends CollisionEntity {
         info.resetHealth();
     }
     
+    public float getVisibility() {
+        return color.a;
+    }
+    
     public boolean isConfused() {
         return confused > 0;
     }
@@ -262,6 +267,20 @@ public abstract class Agent extends CollisionEntity {
 
     public boolean isFollowing(Agent agent) {
         return getFollowed() == agent;
+    }
+    
+    public boolean isCloaked() {
+        return toggles.contains(Cloak.class);
+    }
+    
+    public void setCloaked(boolean cloaked) {
+        if (cloaked) {
+            toggles.add(Cloak.class);
+            setAlpha(0.1f);
+        } else {
+            toggles.remove(Cloak.class);
+            setAlpha(1);
+        }
     }
 
     /** returns true if the toggle is on after invoking this method */
@@ -405,11 +424,23 @@ public abstract class Agent extends CollisionEntity {
     }
 
     public boolean canTarget(Agent other, Location location) {
-        // within distance constraint
-        if (dst2(other) > MAX_DST2) {
+        if (!isNear(other)) {
+            // not within distance constraint
+            return false;
+        }
+        if (!isVisible(other)) {
+            // cannot see visibly
             return false;
         }
         return true;
+    }
+    
+    public boolean isVisible(Agent other) {
+        return other.getVisibility() >= Math.min(10f / info.getSubterfuge(), 1.0f);
+    }
+    
+    public boolean isNear(Agent other) {
+        return dst2(other) <= MAX_DST2;
     }
 
     public float getAttackScale(Agent other) {
@@ -505,6 +536,8 @@ public abstract class Agent extends CollisionEntity {
             } else {
                 action = actions.poll();
                 if (action != null) {
+                    // any action breaks cloaking
+                    setCloaked(false); 
                     action.update(delta, location);
                 }
             }
@@ -516,7 +549,7 @@ public abstract class Agent extends CollisionEntity {
             onDeath();
         }
 
-        // remove target if we're too far away from them
+        // remove target if we can no longer target them
         if (hasTarget() && !canTarget(location)) {
             target = null;
         }
