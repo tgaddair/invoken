@@ -42,5 +42,10 @@ public class Barrier extends Augmentation {
         public Vector2 getPosition() {
             return owner.getPosition();
         }
+
+        @Override
+        public int getCost() {
+            return owner.isToggled(Shield.class) ? 0 : 5;
+        }
 	}
 }

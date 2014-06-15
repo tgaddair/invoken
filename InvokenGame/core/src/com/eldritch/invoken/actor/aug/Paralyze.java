@@ -52,6 +52,11 @@ public class Paralyze extends Augmentation {
         public Vector2 getPosition() {
             return target.getPosition();
         }
+		
+		@Override
+        public int getCost() {
+            return 3;
+        }
 	}
 	
 	public static class ParalyzeBullet extends Projectile {

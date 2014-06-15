@@ -52,5 +52,10 @@ public class Cloak extends Augmentation {
         public Vector2 getPosition() {
             return owner.getPosition();
         }
+        
+        @Override
+        public int getCost() {
+            return owner.isCloaked() ? 0 : 5;
+        }
     }
 }

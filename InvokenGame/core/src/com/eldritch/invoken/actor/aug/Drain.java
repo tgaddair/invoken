@@ -50,6 +50,11 @@ public class Drain extends Augmentation {
         public Vector2 getPosition() {
             return target.getPosition();
         }
+        
+        @Override
+        public int getCost() {
+            return 2;
+        }
     }
 
     public static class DrainBullet extends Projectile {

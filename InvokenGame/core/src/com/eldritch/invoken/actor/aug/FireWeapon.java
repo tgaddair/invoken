@@ -106,6 +106,11 @@ public class FireWeapon extends Augmentation {
         public Vector2 getPosition() {
             return target.getPosition();
         }
+        
+        @Override
+        public int getCost() {
+            return 1;
+        }
 
         private Animation getAnimation() {
             return animations.get(owner.getDirection());

@@ -28,6 +28,7 @@ public class AgentInfo {
 	
 	final PreparedAugmentations augmentations;
 	float health;
+	float energy;
 	int level;
 	
 	public AgentInfo(Agent agent, ActorParams params) {
@@ -64,6 +65,7 @@ public class AgentInfo {
 		
 		// post init basic state
 		health = getBaseHealth();
+		energy = getBaseEnergy();
 		this.level = params.getLevel();
 	}
 	
@@ -81,6 +83,7 @@ public class AgentInfo {
 		
 		// post init basic state
 		health = getBaseHealth();
+		energy = getBaseEnergy();
 		this.level = level;
 		
 		factions = new FactionManager(agent);
@@ -149,6 +152,34 @@ public class AgentInfo {
 	public float getBaseHealth() {
 		return getWarfare();
 	}
+	
+	public void resetEnergy() {
+        setEnergy(getBaseEnergy());
+    }
+    
+    public void setEnergy(float energy) {
+        this.energy = energy;
+    }
+    
+    public float getEnergy() {
+        return energy;
+    }
+	
+	public float getBaseEnergy() {
+        return getAutomata();
+    }
+	
+	public float expend(float value) {
+	    float delta = Math.max(Math.min(value, energy), 0);
+	    energy -= delta;
+        return delta;
+	}
+	
+	public float restore(float value) {
+        float delta = Math.max(Math.min(value, getBaseEnergy() - energy), 0);
+        energy += delta;
+        return delta;
+    }
 	
 	public float damage(float value) {
 		float delta = Math.max(Math.min(value, health), 0);

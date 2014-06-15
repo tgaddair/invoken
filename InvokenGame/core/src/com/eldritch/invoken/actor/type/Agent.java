@@ -63,6 +63,7 @@ public abstract class Agent extends CollisionEntity {
     Direction direction = Direction.Down;
     private final Map<Activity, Map<Direction, Animation>> animations;
     float stateTime = 0;
+    float elapsed = 0;
 
     private final LinkedList<Action> actions = new LinkedList<Action>();
     private final List<Effect> effects = new LinkedList<Effect>();
@@ -336,6 +337,7 @@ public abstract class Agent extends CollisionEntity {
 
     public void addAction(Action action) {
         actions.add(action);
+        info.expend(action.getCost());
     }
 
     public void removeAction() {
@@ -521,6 +523,13 @@ public abstract class Agent extends CollisionEntity {
         if (delta == 0)
             return;
         stateTime += delta;
+        
+        elapsed += delta;
+        if (elapsed >= 1) {
+            // restore 1 unit of energy each second
+            info.restore(1);
+            elapsed = 0;
+        }
 
         // cleanup relations
         {

@@ -45,5 +45,10 @@ public class Resurrect extends Augmentation {
         public Vector2 getPosition() {
             return target.getPosition();
         }
+		
+		@Override
+        public int getCost() {
+            return 5;
+        }
 	}
 }

@@ -16,6 +16,8 @@ public interface Action {
 	
 	void render(OrthogonalTiledMapRenderer renderer);
 	
+	int getCost();
+	
 	float getStateTime();
 	
 	Activity getActivity();
