@@ -74,7 +74,7 @@ public abstract class Agent extends CollisionEntity {
     private final Set<Agent> assaulters = new HashSet<Agent>();
     private final Map<Agent, Float> relations = new HashMap<Agent, Float>();
     
-    private boolean confused = false;
+    private int confused = 0;
     private int paralyzed = 0;
 
     private Agent target;
@@ -202,13 +202,20 @@ public abstract class Agent extends CollisionEntity {
     public void resurrect() {
         info.resetHealth();
     }
+    
+    public boolean isConfused() {
+        return confused > 0;
+    }
 
     public void setConfused(boolean confused) {
-        handleConfusion(confused);
-        if (confused) {
-            setRgb(1, 0, 0);
-        } else {
-            setRgb(1, 1, 1);
+        this.confused += confused ? 1 : -1;
+        if (confused || this.confused == 0) {
+            handleConfusion(confused);
+            if (confused) {
+                setRgb(1, 0, 0);
+            } else {
+                setRgb(1, 1, 1);
+            }
         }
     }
     
@@ -436,7 +443,7 @@ public abstract class Agent extends CollisionEntity {
             return;
         }
 
-        if (confused) {
+        if (isConfused()) {
             // cannot take a conscious action when confused, must delegate to
             // the confusion handler
         } else {
@@ -777,7 +784,7 @@ public abstract class Agent extends CollisionEntity {
             render(activity, direction, stateTime, renderer);
         }
         
-        // end colorizing
+        // restore original color
         batch.setColor(Color.WHITE);
 
         // render action effects
