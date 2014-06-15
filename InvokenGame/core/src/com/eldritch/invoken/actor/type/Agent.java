@@ -12,6 +12,7 @@ import java.util.Set;
 import java.util.Map.Entry;
 
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -79,6 +80,8 @@ public abstract class Agent extends CollisionEntity {
     private Agent target;
     private Npc interactor;
     private final Set<Class<?>> toggles = new HashSet<Class<?>>();
+    
+    private final Color color = new Color(1, 1, 1, 1);
 
     public Agent(ActorParams params, float x, float y, float width, float height, 
             Map<Activity, Map<Direction, Animation>> animations) {
@@ -98,6 +101,14 @@ public abstract class Agent extends CollisionEntity {
 
         // health, level, augmentations, etc.
         info = new AgentInfo(this, profession, level);
+    }
+    
+    public void setRgb(float r, float g, float b) {
+        color.set(r, g, b, color.a);
+    }
+    
+    public void setAlpha(float a) {
+        color.set(color.r, color.g, color.b, a);
     }
 
     public float dst2(Agent other) {
@@ -192,7 +203,16 @@ public abstract class Agent extends CollisionEntity {
         info.resetHealth();
     }
 
-    public abstract void setConfused(boolean confused);
+    public void setConfused(boolean confused) {
+        handleConfusion(confused);
+        if (confused) {
+            setRgb(1, 0, 0);
+        } else {
+            setRgb(1, 1, 1);
+        }
+    }
+    
+    protected abstract void handleConfusion(boolean confused);
 
     public boolean isParalyzed() {
         return paralyzed > 0;
@@ -529,11 +549,6 @@ public abstract class Agent extends CollisionEntity {
     }
 
     private void move(float delta, Location screen) {
-        if (actionInProgress()) {
-//            velocity.x = 0;
-//            velocity.y = 0;
-        }
-        
         // clamp the velocity to the maximum
         if (Math.abs(velocity.x) > getMaxVelocity()) {
             velocity.x = Math.signum(velocity.x) * getMaxVelocity();
@@ -743,6 +758,10 @@ public abstract class Agent extends CollisionEntity {
         } else if (state == State.Standing && activity == Activity.Explore) {
             stateTime = 0;
         }
+        
+        // apply color
+        Batch batch = renderer.getSpriteBatch();
+        batch.setColor(color);
 
         // render equipment
         if (info.getInventory().hasOutfit()) {
@@ -757,6 +776,9 @@ public abstract class Agent extends CollisionEntity {
         } else {
             render(activity, direction, stateTime, renderer);
         }
+        
+        // end colorizing
+        batch.setColor(Color.WHITE);
 
         // render action effects
         if (actionInProgress() && isAlive()) {
@@ -770,6 +792,7 @@ public abstract class Agent extends CollisionEntity {
         TextureRegion frame = animations.get(activity).get(direction).getKeyFrame(stateTime);
         float width = 1 / 32f * frame.getRegionWidth();
         float height = 1 / 32f * frame.getRegionHeight();
+        
         Batch batch = renderer.getSpriteBatch();
         batch.begin();
         batch.draw(frame, position.x - width / 2, position.y - height / 2, width, height);

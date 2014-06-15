@@ -69,7 +69,7 @@ public class Player extends Agent {
     }
 
     @Override
-    public void setConfused(boolean confused) {
+    protected void handleConfusion(boolean confused) {
         // do nothing, for now, will change to make attack at random
     }
 

@@ -111,7 +111,7 @@ public abstract class Npc extends Agent {
 	}
 	
 	@Override
-    public void setConfused(boolean confused) {
+    protected void handleConfusion(boolean confused) {
 	    if (confused) {
 	        behavior.setAggression(Aggression.FRENZIED);
 	    } else {
