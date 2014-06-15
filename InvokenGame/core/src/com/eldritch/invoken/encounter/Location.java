@@ -57,6 +57,7 @@ public class Location {
     private final LocationMap map;
     private final List<Agent> entities = new ArrayList<Agent>();
     private final List<Agent> activeEntities = new ArrayList<Agent>();
+    private final List<Agent> drawableEntities = new ArrayList<Agent>();
     private final List<TemporaryEntity> tempEntities = new ArrayList<TemporaryEntity>();
     private final List<Activator> activators = new ArrayList<Activator>();
     private final Set<NaturalVector2> activeTiles = new HashSet<NaturalVector2>();
@@ -239,7 +240,7 @@ public class Location {
         }
 
         // sort drawables by descending y
-        Collections.sort(activeEntities, new Comparator<Agent>() {
+        Collections.sort(drawableEntities, new Comparator<Agent>() {
             @Override
             public int compare(Agent a1, Agent a2) {
                 return Float.compare(a2.getPosition().y, a1.getPosition().y);
@@ -247,7 +248,7 @@ public class Location {
         });
 
         // render the drawables
-        for (Agent actor : activeEntities) {
+        for (Agent actor : drawableEntities) {
             if (actor == player.getTarget() && !paused) {
                 Color color = new Color(0x00FA9AFF);
                 if (!actor.isAlive()) {
@@ -302,9 +303,12 @@ public class Location {
 
     private void resetActiveEntities() {
         activeEntities.clear();
+        drawableEntities.clear();
         for (Agent other : entities) {
-            if (activeTiles.contains(other.getCellPosition()) 
-                    || (other.inCombat() && player.isNear(other))) {
+            if (activeTiles.contains(other.getCellPosition())) {
+                activeEntities.add(other);
+                drawableEntities.add(other);
+            } else if (other.inCombat() && player.isNear(other)) {
                 activeEntities.add(other);
             }
         }
@@ -403,11 +407,6 @@ public class Location {
     private boolean hasCell(int x, int y, int layerIndex) {
         TiledMapTileLayer layer = (TiledMapTileLayer) map.getLayers().get(layerIndex);
         return layer.getCell(x, y) != null;
-    }
-
-    private Cell getCell(NaturalVector2 point, int layerIndex) {
-        TiledMapTileLayer layer = (TiledMapTileLayer) map.getLayers().get(layerIndex);
-        return layer.getCell(point.x, point.y);
     }
 
     public Array<Rectangle> getTiles(int startX, int startY, int endX, int endY) {
