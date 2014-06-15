@@ -114,6 +114,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 		stage.addActor(energyBar);
 		stage.addActor(playerHealth);
         stage.addActor(selectedHealth);
+        stage.addActor(dialogue.getTable());
 		stage.addActor(inventoryMenu.getTable());
         stage.addActor(loot.getTable());
 
