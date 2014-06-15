@@ -84,7 +84,7 @@ public abstract class MovementRoutine implements Routine {
         Rectangle actorRect = Location.getRectPool().obtain();
         npc.getLargeBoundingBox(actorRect);
         for (Agent neighbor : npc.getNeighbors()) {
-            if (neighbor.collidesWith(actorRect)) {
+            if (neighbor != npc.getTarget() && neighbor.collidesWith(actorRect)) {
                 obstacleMass.add(neighbor.getPosition());
                 totalObstacles++;
             }
@@ -93,7 +93,7 @@ public abstract class MovementRoutine implements Routine {
 
         if (totalObstacles > 0) {
             obstacleMass.scl(1f / totalObstacles);
-            position.sub(obstacleMass).scl(1f);
+            position.sub(obstacleMass).scl(2f);
             velocity.add(position);
         }
     }

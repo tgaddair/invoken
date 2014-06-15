@@ -297,7 +297,7 @@ public abstract class Npc extends Agent {
             case HUMAN:
                 return new HumanNpc(data, x, y, "sprite/characters/male-fair.png", location);
             case UNDEAD:
-                return new HumanNpc(data, x, y, "sprite/characters/hollow-zombie.png", location);
+                return new Undead(data, x, y, "sprite/characters/hollow-zombie.png", location);
             case AUTOMATON:
                 return new Automaton(data, x, y, "sprite/characters/automaton/mech1", location);
             case HOLLOW:
