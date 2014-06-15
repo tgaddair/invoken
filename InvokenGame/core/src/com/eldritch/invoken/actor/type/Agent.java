@@ -21,12 +21,10 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.eldritch.invoken.actor.AgentInfo;
 import com.eldritch.invoken.actor.Inventory;
-import com.eldritch.invoken.actor.PreparedAugmentations;
 import com.eldritch.invoken.actor.Profession;
 import com.eldritch.invoken.actor.ai.Behavior;
 import com.eldritch.invoken.actor.aug.Action;
 import com.eldritch.invoken.actor.aug.Augmentation;
-import com.eldritch.invoken.actor.factions.Faction;
 import com.eldritch.invoken.actor.items.Outfit;
 import com.eldritch.invoken.effects.Effect;
 import com.eldritch.invoken.encounter.Location;
@@ -407,6 +405,8 @@ public abstract class Agent extends CollisionEntity {
         followers.clear();
         hostilities.clear();
         relations.clear();
+        actions.clear();
+        action = null;
         target = null;
     }
 
@@ -525,15 +525,15 @@ public abstract class Agent extends CollisionEntity {
             stateTime = 0;
         }
 
-        if (actionInProgress()) {
-            velocity.x = 0;
-            velocity.y = 0;
-        } else {
-            move(delta, location);
-        }
+        move(delta, location);
     }
 
     private void move(float delta, Location screen) {
+        if (actionInProgress()) {
+            velocity.x = 0;
+            velocity.y = 0;
+        }
+        
         // clamp the velocity to the maximum
         if (Math.abs(velocity.x) > getMaxVelocity()) {
             velocity.x = Math.signum(velocity.x) * getMaxVelocity();
@@ -568,6 +568,9 @@ public abstract class Agent extends CollisionEntity {
         // multiply by delta time so we know how far we go
         // in this frame
         velocity.scl(delta);
+        float lastX = position.x;
+        float lastY = position.y;
+        position.add(velocity);
 
         // perform collision detection & response, on each axis, separately
         // if the actor is moving right, check the tiles to the right of
@@ -588,16 +591,18 @@ public abstract class Agent extends CollisionEntity {
         screen.getTiles(startX, startY, endX, endY, screen.getTiles());
 
         Array<Agent> agents = getCollisionActors(screen);
+        int vScale = 50;
 
         float oldX = actorRect.x;
         actorRect.x += velocity.x;
         if (collidesWith(actorRect, screen.getTiles())) {
             velocity.x = 0;
+            position.x = lastX;
         }
         for (Agent agent : agents) {
             if (agent.collidesWith(actorRect)) {
-                agent.addVelocity(velocity.x * 10, 0);
-                velocity.x = 0;
+                agent.addVelocity(velocity.x * vScale, 0);
+                position.x = lastX;
                 break;
             }
         }
@@ -614,11 +619,12 @@ public abstract class Agent extends CollisionEntity {
         actorRect.y += velocity.y;
         if (collidesWith(actorRect, screen.getTiles())) {
             velocity.y = 0;
+            position.y = lastY;
         }
         for (Agent agent : agents) {
             if (agent.collidesWith(actorRect)) {
-                agent.addVelocity(0, velocity.y * 10);
-                velocity.y = 0;
+                agent.addVelocity(0, velocity.y * vScale);
+                position.y = lastY;
                 break;
             }
         }
@@ -628,7 +634,7 @@ public abstract class Agent extends CollisionEntity {
 
         // unscale the velocity by the inverse delta time and set
         // the latest position
-        position.add(velocity);
+//        position.add(velocity);
         velocity.scl(1 / delta);
 
         // Apply damping to the velocity on the x-axis so we don't
