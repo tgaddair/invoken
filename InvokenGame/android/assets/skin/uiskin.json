@@ -10,7 +10,11 @@ com.badlogic.gdx.graphics.Color: {
 com.badlogic.gdx.scenes.scene2d.ui.ProgressBar$ProgressBarStyle: {
 	default-vertical: {
     background: default-progress-bg,
-    knobBefore: default-progress-vertical
+    knobBefore: default-progress-vertical,
+  },
+	default-horizontal: {
+    background: default-progress-bgh,
+    knobBefore: default-progress-horizontal,
   },
 },
 com.badlogic.gdx.scenes.scene2d.ui.Button$ButtonStyle: {

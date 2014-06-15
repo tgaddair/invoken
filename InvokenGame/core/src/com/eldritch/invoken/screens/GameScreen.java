@@ -23,6 +23,7 @@ import com.eldritch.invoken.encounter.proc.LocationGenerator;
 import com.eldritch.invoken.ui.ActionBar;
 import com.eldritch.invoken.ui.DialogueMenu;
 import com.eldritch.invoken.ui.EnergyBar;
+import com.eldritch.invoken.ui.HealthBar;
 import com.eldritch.invoken.ui.InventoryMenu;
 import com.eldritch.invoken.ui.LootMenu;
 
@@ -37,6 +38,9 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 	private ActionBar actionBar;
 	private EnergyBar energyBar;
 	private InventoryMenu inventoryMenu;
+	
+	private HealthBar playerHealth;
+	private HealthBar selectedHealth;
 
 	private Player player;
 	private Location location;
@@ -105,9 +109,14 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 		actionBar = new ActionBar(player);
 		energyBar = new EnergyBar(player, getSkin());
 		inventoryMenu = new InventoryMenu(player, getSkin());
+		playerHealth = new HealthBar(getSkin());
+		selectedHealth = new HealthBar(getSkin());
+		
 		stage.addActor(actionBar.getTable());
 		stage.addActor(energyBar);
 		stage.addActor(inventoryMenu.getTable());
+		stage.addActor(playerHealth);
+		stage.addActor(selectedHealth);
 
 		Gdx.input.setInputProcessor(this);
 		Gdx.app.log(InvokenGame.LOG, "start");
@@ -129,12 +138,14 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         energyBar.update();
 		dialogue.update(player);
 		loot.update(player);
+		playerHealth.update(player, camera);
+		selectedHealth.update(player.getTarget(), camera);
 		
 		// render the location
 		location.render(delta, camera, selector, tacticalPause);
 		
 		// draw stats
-		drawStats();
+//		drawStats();
 		
 		// render the HUD
 		stage.act(delta);

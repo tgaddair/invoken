@@ -185,11 +185,27 @@ default-progress-bg
   orig: 18, 18
   offset: 0, 0
   index: -1
+default-progress-bgh
+  rotate: false
+  xy: 338, 386
+  size: 6, 6
+  split: 0, 0, 0, 0
+  orig: 6, 6
+  offset: 0, 0
+  index: -1
 default-progress-vertical
   rotate: false
   xy: 356, 386
   size: 18, 18
   split: 0, 0, 0, 0
   orig: 18, 18
+  offset: 0, 0
+  index: -1
+default-progress-horizontal
+  rotate: false
+  xy: 356, 376
+  size: 6, 6
+  split: 0, 0, 0, 0
+  orig: 6, 6
   offset: 0, 0
   index: -1
