@@ -114,9 +114,9 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 		
 		stage.addActor(actionBar.getTable());
 		stage.addActor(energyBar);
-		stage.addActor(inventoryMenu.getTable());
 		stage.addActor(playerHealth);
-		stage.addActor(selectedHealth);
+        stage.addActor(selectedHealth);
+		stage.addActor(inventoryMenu.getTable());
 
 		Gdx.input.setInputProcessor(this);
 		Gdx.app.log(InvokenGame.LOG, "start");
@@ -136,10 +136,10 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 		// update UI menus
         actionBar.update();
         energyBar.update();
+        playerHealth.update(player, camera);
+        selectedHealth.update(player.getTarget(), camera);
 		dialogue.update(player);
 		loot.update(player);
-		playerHealth.update(player, camera);
-		selectedHealth.update(player.getTarget(), camera);
 		
 		// render the location
 		location.render(delta, camera, selector, tacticalPause);
