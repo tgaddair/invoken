@@ -121,7 +121,7 @@ public abstract class AttackRoutine extends MovementRoutine {
         float maxDistance = npc.getInfo().getMaxTargetDistance() * 0.8f;
         if (npc.getInventory().hasMeleeWeapon()) {
             // get in closer when a melee weapon is equipped
-            maxDistance = 1.5f;
+            maxDistance = 1.25f;
         }
 
         return getTargetPosition().dst2(npc.getPosition()) >= maxDistance;

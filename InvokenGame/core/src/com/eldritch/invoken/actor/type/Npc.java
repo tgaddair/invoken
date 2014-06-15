@@ -60,21 +60,19 @@ public abstract class Npc extends Agent {
 			info.getInventory().equip(item.getItem());
 		}
 		
-		// construct augs and items by randomly sampling from available
-//        for (String augId : info.getKnownAugmentations()) {
-//            Augmentation aug = InvokenGame.AUG_READER.readAsset(augId);
-//            stage(new ActiveAugmentation(aug, this, 20));
-//        }
-		
 		// routines
 		// TODO: add these to proto to make them modular for NPCs
-		routine = new IdleRoutine(this);
 		routines.add(new FleeRoutine(this, location));
 		routines.add(new AssaultRoutine(this, location));
 		routines.add(new AssistRoutine(this, location));
 		routines.add(new FollowRoutine(this));
-		routines.add(new PatrolRoutine(this));
-		routines.add(routine); // idle is fallback
+		
+		Routine idle = new IdleRoutine(this);
+        Routine patrol = new PatrolRoutine(this);
+		routines.add(patrol);
+		routines.add(idle); // idle is fallback
+		
+		routine = Math.random() < 0.5 ? idle : patrol;
 	}
 	
 	@Override
