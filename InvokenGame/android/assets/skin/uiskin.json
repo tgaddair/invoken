@@ -35,8 +35,8 @@ com.badlogic.gdx.scenes.scene2d.ui.SelectBox$SelectBoxStyle: {
   }
 },
 com.badlogic.gdx.scenes.scene2d.ui.SplitPane$SplitPaneStyle: {
-	default-vertical: { handle: default-splitpane-vertical },
-	default-horizontal: { handle: default-splitpane }
+	default-vertical: { handle: default-progress-bg },
+	default-horizontal: { handle: default-progress-bgh }
 },
 com.badlogic.gdx.scenes.scene2d.ui.ScrollPane$ScrollPaneStyle: {
 	default: { vScroll: default-slider, hScrollKnob: default-round-large, background: default-rect, hScroll: default-slider, vScrollKnob: default-round-large }

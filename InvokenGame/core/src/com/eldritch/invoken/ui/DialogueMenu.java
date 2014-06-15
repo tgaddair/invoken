@@ -1,6 +1,7 @@
 package com.eldritch.invoken.ui;
 
 import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -17,6 +18,7 @@ import com.eldritch.invoken.screens.AbstractScreen;
 import com.eldritch.invoken.util.DefaultInputListener;
 import com.eldritch.scifirpg.proto.Actors.DialogueTree.Choice;
 import com.eldritch.scifirpg.proto.Actors.DialogueTree.Response;
+import com.esotericsoftware.tablelayout.Cell;
 
 public class DialogueMenu {
 //	private final Table container;
@@ -24,6 +26,7 @@ public class DialogueMenu {
 	private final Window bubble;
 	private final Skin skin;
 	private boolean active = false;
+	private Label label;
 	
 	public DialogueMenu(Skin skin) {
 //	    container = new Table(skin);
@@ -31,7 +34,7 @@ public class DialogueMenu {
 //	    container.setWidth(AbstractScreen.MENU_VIEWPORT_WIDTH);
 //		container.bottom();
 
-	    table = new Table(skin);
+	    table = new Table(null);
 		table.bottom();
 		
 		this.skin = skin;
@@ -39,6 +42,8 @@ public class DialogueMenu {
 		ScrollPane scroll = new ScrollPane(table, skin);
 //		container.add(scroll).expand().fillX().bottom();
 //		container.setVisible(false);
+		
+		label = new Label("", skin);
 		
 		bubble = new Window("", skin);
 		bubble.add(scroll).expand().fill();
@@ -49,6 +54,7 @@ public class DialogueMenu {
 		if (player.inDialogue()) {
 			if (!active) {
 				bubble.setVisible(true);
+				label.setVisible(true);
 				active = true;
 				setup(player.getInteractor());
 			}
@@ -56,6 +62,12 @@ public class DialogueMenu {
 		} else {
 			endDialogue();
 		}
+	}
+	
+	public void draw(Batch batch) {
+	    if (active) {
+	        table.draw(batch, 1.0f);
+	    }
 	}
 	
 	private void setup(Npc npc) {
@@ -85,6 +97,7 @@ public class DialogueMenu {
 	private void endDialogue() {
 //		container.setVisible(false);
 		bubble.setVisible(false);
+		label.setVisible(false);
 		active = false;
 		// TODO: end dialogue with player
 	}
@@ -92,9 +105,13 @@ public class DialogueMenu {
 	private void addLabel(String text) {
 		Label label = new Label(text, skin);
 		label.setWrap(true);
-		label.setWidth(100);
-		table.add(label).width(
-				AbstractScreen.MENU_VIEWPORT_WIDTH - 25).padLeft(5).padRight(5).padBottom(5);
+		label.setWidth(10);
+		label.setHeight(10);
+		
+		@SuppressWarnings("rawtypes")
+        Cell cell = table.add(label).minWidth(250).maxWidth(500);
+		table.pack(); // defines the text width and thus the preferred height
+		cell.height(label.getPrefHeight());
 	}
 	
 	private void addChoiceButton(final Choice c, final Npc npc) {
@@ -114,6 +131,6 @@ public class DialogueMenu {
         float h = agent.getHeight() / 2;
         float w = agent.getWidth() / 2;
         Vector3 screen = camera.project(new Vector3(position.x - w, position.y + h, 0));
-        bubble.setPosition(screen.x, screen.y);
+        table.setPosition(screen.x, screen.y);
 	}
 }

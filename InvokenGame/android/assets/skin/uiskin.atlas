@@ -5,10 +5,11 @@ filter: Nearest,Nearest
 repeat: none
 default-window
   rotate: false
-  xy: 1, 97
-  size: 27, 29
-  split: 4, 3, 20, 3
-  orig: 27, 29
+  xy: 0, 376
+  size: 100, 100
+  split: 20, 55, 20, 20
+  pads: 10, 10, 10, 10
+  orig: 100, 100
   offset: 0, 0
   index: -1
 default-select
