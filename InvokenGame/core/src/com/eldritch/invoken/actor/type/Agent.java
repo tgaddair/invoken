@@ -196,6 +196,7 @@ public abstract class Agent extends CollisionEntity {
     }
 
     public float damage(float value) {
+        setCloaked(false); // damage breaks cloaking
         return info.damage(value);
     }
 

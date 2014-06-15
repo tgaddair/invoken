@@ -36,12 +36,8 @@ public class HealthBar extends ProgressBar {
         
         if (agent.getInfo().getHealth() != getValue()) {
             setValue(agent.getInfo().getHealth());
-            if (getValue() <= 0) {
-                setDisabled(true);
-            } else if (isDisabled()) {
-                setDisabled(false);
-            }
         }
+        setDisabled(!agent.isAlive());
         
         Vector2 position = agent.getPosition();
         float h = agent.getHeight() / 2;

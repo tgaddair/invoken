@@ -21,6 +21,12 @@ public class Automaton extends Npc {
     public float getMaxVelocity() {
         return MAX_VELOCITY;
     }
+    
+    @Override
+    public boolean isVisible(Agent other) {
+        // automatons do not see visible light, but other spectra
+        return true;
+    }
 
     public static Map<Activity, Map<Direction, Animation>> getAllAnimations(String assetName) {
         Map<Activity, Map<Direction, Animation>> animations = new HashMap<Activity, Map<Direction, Animation>>();
