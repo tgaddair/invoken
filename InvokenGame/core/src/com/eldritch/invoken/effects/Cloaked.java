@@ -26,13 +26,19 @@ public class Cloaked extends BasicEffect {
 	
 	@Override
     protected void doApply() {
-        target.setCloaked(true);
+	    target.setCloaked(true);
     }
 
     @Override
     protected void update(float delta) {
+        if (target.getVelocity().isZero()) {
+            // don't bother draining energy while not moving
+            return;
+        }
+        
         elapsed += delta;
-        if (elapsed > 3) {
+        if (elapsed > 1) {
+            // drains continuously while moving
             if (cost <= invoker.getInfo().getEnergy()) {
                 invoker.getInfo().expend(cost);
             } else {

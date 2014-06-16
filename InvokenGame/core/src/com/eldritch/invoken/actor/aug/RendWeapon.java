@@ -25,6 +25,11 @@ public class RendWeapon extends Augmentation {
     }
     
     @Override
+    public int getCost(Agent owner) {
+        return 1;
+    }
+    
+    @Override
     public float quality(Agent owner, Agent target, Location location) {
         MeleeWeapon weapon = owner.getInventory().getMeleeWeapon();
         return owner.dst2(target) <= weapon.getRange() ? 1 : 0;
@@ -34,7 +39,7 @@ public class RendWeapon extends Augmentation {
         private final Agent target;
 
         public RendAction(Agent actor, Agent target) {
-            super(actor, Activity.Swipe);
+            super(actor, Activity.Swipe, RendWeapon.this);
             this.target = target;
         }
 
@@ -51,11 +56,6 @@ public class RendWeapon extends Augmentation {
         @Override
         public Vector2 getPosition() {
             return target.getPosition();
-        }
-        
-        @Override
-        public int getCost() {
-            return 1;
         }
     }
 }

@@ -22,13 +22,18 @@ public class Barrier extends Augmentation {
 	}
 	
 	@Override
+    public int getCost(Agent owner) {
+        return owner.isToggled(Shield.class) ? 0 : 5;
+    }
+	
+	@Override
     public float quality(Agent owner, Agent target, Location location) {
         return 1;
     }
 	
 	public class ShieldAction extends AnimatedAction {
 		public ShieldAction(Agent actor) {
-			super(actor, Activity.Cast);
+			super(actor, Activity.Cast, Barrier.this);
 		}
 
 		@Override
@@ -41,11 +46,6 @@ public class Barrier extends Augmentation {
 		@Override
         public Vector2 getPosition() {
             return owner.getPosition();
-        }
-
-        @Override
-        public int getCost() {
-            return owner.isToggled(Shield.class) ? 0 : 5;
         }
 	}
 }

@@ -331,8 +331,7 @@ public abstract class Agent extends CollisionEntity {
 
     public boolean canAddAction() {
         // only add actions if there are none in the queue, meaning either none
-        // or one is in
-        // progress
+        // or one is in progress
         return actions.isEmpty();
     }
 
@@ -752,7 +751,7 @@ public abstract class Agent extends CollisionEntity {
         return false;
     }
 
-    private boolean actionInProgress() {
+    public boolean actionInProgress() {
         return action != null && !action.isFinished();
     }
 

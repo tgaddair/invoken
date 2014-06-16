@@ -22,14 +22,21 @@ public class Cloak extends Augmentation {
     }
     
     @Override
+    public int getCost(Agent owner) {
+        return owner.isCloaked() ? 0 : 5;
+    }
+    
+    @Override
     public float quality(Agent owner, Agent target, Location location) {
+        float dst2 = owner.dst2(target);
         if (owner.isCloaked()) {
-            // tactically, it never makes sense to turn off cloak
+            if (dst2 > 70) {
+                return 10f;
+            }
             return -1f;
         }
         
         float score = 0f;
-        float dst2 = owner.dst2(target);
         if (dst2 < 50 && dst2 > 5) {
             score = 10f;
         }
@@ -40,7 +47,7 @@ public class Cloak extends Augmentation {
         private final boolean cloaked;
         
         public CloakAction(Agent actor) {
-            super(actor, Activity.Cast);
+            super(actor, Activity.Cast, Cloak.this);
             cloaked = !actor.isCloaked();
         }
 
@@ -56,11 +63,6 @@ public class Cloak extends Augmentation {
         @Override
         public Vector2 getPosition() {
             return owner.getPosition();
-        }
-        
-        @Override
-        public int getCost() {
-            return owner.isCloaked() ? 0 : 5;
         }
     }
 }

@@ -21,6 +21,11 @@ public class Resurrect extends Augmentation {
 	}
 	
 	@Override
+    public int getCost(Agent owner) {
+        return 5;
+    }
+	
+	@Override
     public float quality(Agent owner, Agent target, Location location) {
         return 1;
     }
@@ -29,7 +34,7 @@ public class Resurrect extends Augmentation {
 		private final Agent target;
 		
 		public ResurrectAction(Agent actor, Agent target) {
-			super(actor, Activity.Cast);
+			super(actor, Activity.Cast, Resurrect.this);
 			this.target = target;
 		}
 
@@ -44,11 +49,6 @@ public class Resurrect extends Augmentation {
 		@Override
         public Vector2 getPosition() {
             return target.getPosition();
-        }
-		
-		@Override
-        public int getCost() {
-            return 5;
         }
 	}
 }

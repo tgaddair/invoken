@@ -29,6 +29,11 @@ public class Paralyze extends Augmentation {
 	}
 	
 	@Override
+    public int getCost(Agent owner) {
+        return 3;
+    }
+	
+	@Override
     public float quality(Agent owner, Agent target, Location location) {
         return 1;
     }
@@ -37,7 +42,7 @@ public class Paralyze extends Augmentation {
 		private final Agent target;
 		
 		public ParalyzeAction(Agent actor, Agent target) {
-			super(actor, Activity.Swipe);
+			super(actor, Activity.Swipe, Paralyze.this);
 			this.target = target;
 		}
 
@@ -51,11 +56,6 @@ public class Paralyze extends Augmentation {
 		@Override
         public Vector2 getPosition() {
             return target.getPosition();
-        }
-		
-		@Override
-        public int getCost() {
-            return 3;
         }
 	}
 	

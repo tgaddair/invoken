@@ -82,13 +82,17 @@ public abstract class AttackRoutine extends MovementRoutine {
             return;
         }
 
-        if (!npc.hasPendingAction()) {
+        if (!npc.hasPendingAction() && !npc.actionInProgress()) {
             // choose the aug with the highest situational quality score
             Augmentation chosen = null;
+            float bestQuality = 0; // never choose an aug with quality <= 0
             for (Augmentation aug : npc.getInfo().getAugmentations().getAugmentations()) {
-                if (aug.isValid(npc, npc.getTarget())
-                        && aug.quality(npc, npc.getTarget(), location) > 0) {
-                    chosen = aug;
+                if (aug.hasEnergy(npc) && aug.isValid(npc, npc.getTarget())) {
+                    float quality = aug.quality(npc, npc.getTarget(), location);
+                    if (quality > bestQuality) {
+                        chosen = aug;
+                        bestQuality = quality;
+                    }
                 }
             }
 

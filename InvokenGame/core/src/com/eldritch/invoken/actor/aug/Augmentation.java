@@ -15,10 +15,14 @@ public abstract class Augmentation {
 	    this.icon = GameScreen.getTexture("icon/" + asset + ".png");
 	}
 	
+	public boolean hasEnergy(Agent agent) {
+	    return agent.getInfo().getEnergy() >= getCost(agent);
+	}
+	
 	public void invoke(Agent owner, Agent target) {
 		if (isValid(owner, target)) {
 		    Action action = getAction(owner, target);
-		    if (owner.getInfo().getEnergy() >= action.getCost()) {
+		    if (hasEnergy(owner)) {
 		        owner.addAction(action);
 		    }
 		}
@@ -29,6 +33,8 @@ public abstract class Augmentation {
 	}
 	
 	public abstract boolean isValid(Agent owner, Agent target);
+	
+	public abstract int getCost(Agent owner);
 	
 	public abstract float quality(Agent owner, Agent target, Location location);
 	
@@ -47,5 +53,20 @@ public abstract class Augmentation {
             InvokenGame.error("Unable to find class " + className, e);
         }
 	    return null;
+	}
+	
+	public static abstract class AugmentationAction implements Action {
+	    protected final Agent owner;
+	    private final Augmentation aug;
+	    
+	    public AugmentationAction(Agent owner, Augmentation aug) {
+	        this.owner = owner;
+	        this.aug = aug;
+	    }
+	    
+	    @Override
+	    public int getCost() {
+	        return aug.getCost(owner);
+	    }
 	}
 }

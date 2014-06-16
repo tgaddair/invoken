@@ -27,6 +27,11 @@ public class Drain extends Augmentation {
     }
     
     @Override
+    public int getCost(Agent owner) {
+        return 2;
+    }
+    
+    @Override
     public float quality(Agent owner, Agent target, Location location) {
         return 1;
     }
@@ -35,7 +40,7 @@ public class Drain extends Augmentation {
         private final Agent target;
 
         public DrainAction(Agent actor, Agent target) {
-            super(actor, Activity.Swipe);
+            super(actor, Activity.Swipe, Drain.this);
             this.target = target;
         }
 
@@ -49,11 +54,6 @@ public class Drain extends Augmentation {
         @Override
         public Vector2 getPosition() {
             return target.getPosition();
-        }
-        
-        @Override
-        public int getCost() {
-            return 2;
         }
     }
 

@@ -2,18 +2,18 @@ package com.eldritch.invoken.actor.aug;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import com.eldritch.invoken.actor.aug.Augmentation.AugmentationAction;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.encounter.Location;
 
-public abstract class AnimatedAction implements Action {
-	final Agent owner;
+public abstract class AnimatedAction extends AugmentationAction {
 	final Activity activity;
 	float stateTime = 0;
 	boolean applied;
 	
-	public AnimatedAction(Agent actor, Activity activity) {
-		this.owner = actor;
+	public AnimatedAction(Agent actor, Activity activity, Augmentation aug) {
+	    super(actor, aug);
 		this.activity = activity;
 		applied = false;
 	}

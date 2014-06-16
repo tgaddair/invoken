@@ -28,6 +28,11 @@ public class Frenzy extends Augmentation {
 		return target != null && target != owner && target.isAlive();
 	}
 	
+	@Override
+    public int getCost(Agent owner) {
+        return 2;
+    }
+	
     @Override
     public float quality(Agent owner, Agent target, Location location) {
         return 1;
@@ -37,7 +42,7 @@ public class Frenzy extends Augmentation {
 		private final Agent target;
 		
 		public FrenzyAction(Agent actor, Agent target) {
-			super(actor, Activity.Swipe);
+			super(actor, Activity.Swipe, Frenzy.this);
 			this.target = target;
 		}
 
@@ -51,11 +56,6 @@ public class Frenzy extends Augmentation {
 		@Override
         public Vector2 getPosition() {
             return target.getPosition();
-        }
-		
-		@Override
-        public int getCost() {
-            return 2;
         }
 	}
 	

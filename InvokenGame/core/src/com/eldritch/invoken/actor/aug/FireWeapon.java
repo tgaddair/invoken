@@ -40,6 +40,11 @@ public class FireWeapon extends Augmentation {
     }
     
     @Override
+    public int getCost(Agent owner) {
+        return 1;
+    }
+    
+    @Override
     public float quality(Agent owner, Agent target, Location location) {
         return 1;
     }
@@ -51,7 +56,7 @@ public class FireWeapon extends Augmentation {
         private final Map<Direction, Animation> animations = new HashMap<Direction, Animation>();
 
         public FireAction(Agent actor, Agent target) {
-            super(actor, Activity.Combat);
+            super(actor, Activity.Combat, FireWeapon.this);
             this.target = target;
 
             TextureRegion[][] regions = GameScreen.getRegions("sprite/effects/muzzle-flash.png",
@@ -107,11 +112,6 @@ public class FireWeapon extends Augmentation {
             return target.getPosition();
         }
         
-        @Override
-        public int getCost() {
-            return 1;
-        }
-
         private Animation getAnimation() {
             return animations.get(owner.getDirection());
         }
