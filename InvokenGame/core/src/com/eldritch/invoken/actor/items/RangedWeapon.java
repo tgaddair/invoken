@@ -8,6 +8,7 @@ import com.eldritch.invoken.actor.type.Human;
 import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.actor.type.Agent.Direction;
 import com.eldritch.invoken.actor.Inventory;
+import com.eldritch.scifirpg.proto.Items.Item.DamageMod;
 import com.google.common.base.Strings;
 
 public class RangedWeapon extends Item {
@@ -41,4 +42,16 @@ public class RangedWeapon extends Item {
 	protected Animation getAnimation(Activity activity, Direction direction) {
 		return animations.get(direction);
 	}
+	
+	@Override
+    public String toString() {
+        StringBuilder result = new StringBuilder(String.format("%s\n"
+                + "Range: %.2f\n",
+                super.toString(), data.getRange()));
+        result.append("Damage:");
+        for (DamageMod mod : data.getDamageModifierList()) {
+            result.append(String.format("\n  %s: %d", mod.getDamage(), mod.getMagnitude()));
+        }
+        return result.toString();
+    }
 }

@@ -11,7 +11,7 @@ import com.eldritch.invoken.actor.type.Agent.Direction;
 import com.eldritch.invoken.actor.Inventory;
 
 public abstract class Item {
-	private final com.eldritch.scifirpg.proto.Items.Item data;
+	protected final com.eldritch.scifirpg.proto.Items.Item data;
 	private final float width;
 	private final float height;
 	
@@ -59,6 +59,15 @@ public abstract class Item {
 	
 	public com.eldritch.scifirpg.proto.Items.Item getData() {
 		return data;
+	}
+	
+	@Override
+	public String toString() {
+	    return String.format("Name: %s\n"
+	            + "Type: %s\n"
+	            + "Description: %s\n"
+	            + "Value: %d",
+	            data.getName(), data.getType(), data.getDescription(), data.getValue());
 	}
 	
 	public static Item fromProto(com.eldritch.scifirpg.proto.Items.Item item) {

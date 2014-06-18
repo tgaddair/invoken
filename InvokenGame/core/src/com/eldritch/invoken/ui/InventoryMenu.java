@@ -110,6 +110,7 @@ public class InventoryMenu {
                 }
                 refreshPortrait();
                 refreshButton(itemButton, item);
+                System.out.println(item.toString());
             }
         });
         table.row();
