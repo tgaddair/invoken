@@ -32,6 +32,8 @@ public class AgentInfo {
 	float energy;
 	int level;
 	
+	int activeDefense = 0;
+	
 	public AgentInfo(Agent agent, ActorParams params) {
 	    this.name = params.getName();
 	    InvokenGame.log("creating: " + name);
@@ -238,8 +240,12 @@ public class AgentInfo {
     	return Math.min(getSubterfuge() / 100f + getAlertness() + getPerceptionBonus(), 1.0f);
     }
     
+    public void modActiveDefense(int bonus) {
+        activeDefense += bonus;
+    }
+    
     public float getDefenseBonus() {
-        float bonus = 0;
+        float bonus = activeDefense / 100f;
         if (inventory.hasOutfit()) {
             Outfit outfit = inventory.getOutfit();
             bonus = outfit.getDefense();

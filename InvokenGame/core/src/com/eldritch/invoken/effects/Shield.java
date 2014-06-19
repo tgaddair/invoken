@@ -10,6 +10,16 @@ public class Shield extends AnimatedEffect {
 				Animation.PlayMode.LOOP);
 	}
 	
+    @Override
+    public void doApply() {
+        target.getInfo().modActiveDefense(50);
+    }
+    
+    @Override
+    public void dispel() {
+        target.getInfo().modActiveDefense(-50);
+    }
+    
 	@Override
 	public boolean isFinished() {
 		return !getTarget().isToggled(Shield.class);

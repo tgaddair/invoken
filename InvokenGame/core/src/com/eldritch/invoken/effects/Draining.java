@@ -29,13 +29,15 @@ public class Draining extends AnimatedEffect {
 	}
 
 	@Override
-	public void apply(float delta) {
-		super.apply(delta);
-		
+	public void update(float delta) {
 		// transfer life essence
 		Agent target = getTarget();
 		float damaged = target.damage(source, magnitude * delta);
 		source.heal(damaged);
+	}
+	
+	@Override
+	public void doApply() {
 	}
 	
 	@Override

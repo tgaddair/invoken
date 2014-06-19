@@ -7,7 +7,6 @@ import com.eldritch.invoken.screens.GameScreen;
 public class Paralyzed extends AnimatedEffect {
 	private final Agent agent;
 	private final float duration;
-	private boolean applied = false;
 	
 	public Paralyzed(Agent agent, Agent target, float duration) {
 		super(target, GameScreen.getRegions("sprite/effects/paralyzed.png", 48, 48)[0],
@@ -22,12 +21,8 @@ public class Paralyzed extends AnimatedEffect {
 	}
 
 	@Override
-	public void apply(float delta) {
-		super.apply(delta);
-		if (!applied) {
-			getTarget().setParalyzed(agent, true);
-			applied = true;
-		}
+	public void doApply() {
+		getTarget().setParalyzed(agent, true);
 	}
 	
 	@Override

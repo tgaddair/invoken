@@ -7,20 +7,17 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.actor.type.Agent;
 
-public class AnimatedEffect implements Effect {
+public abstract class AnimatedEffect extends BasicEffect {
 	private final float width;
 	private final float height;
 	private Animation animation;
-	
-	private final Agent actor;
-	private float stateTime = 0;
 	
 	public AnimatedEffect(Agent actor, TextureRegion[] region) {
 		this(actor, region, Animation.PlayMode.NORMAL);
 	}
 	
 	public AnimatedEffect(Agent actor, TextureRegion[] region, Animation.PlayMode playMode) {
-		this.actor = actor;
+	    super(actor);
 		
 		animation = new Animation(0.1f, region);
 		animation.setPlayMode(playMode);
@@ -30,18 +27,13 @@ public class AnimatedEffect implements Effect {
 	}
 	
 	@Override
-	public void apply(float delta) {
-		stateTime += delta;
-	}
-	
-	@Override
-	public void dispel() {
-	}
+    public void update(float delta) {
+    }
 	
 	@Override
 	public void render(float delta, OrthogonalTiledMapRenderer renderer) {
-		TextureRegion frame = animation.getKeyFrame(stateTime);
-		Vector2 position = actor.getPosition();
+		TextureRegion frame = animation.getKeyFrame(getStateTime());
+		Vector2 position = target.getPosition();
 		
 		Batch batch = renderer.getSpriteBatch();
 		batch.begin();
@@ -51,14 +43,6 @@ public class AnimatedEffect implements Effect {
 	
 	@Override
 	public boolean isFinished() {
-		return animation.isAnimationFinished(stateTime);
-	}
-	
-	protected Agent getTarget() {
-		return actor;
-	}
-	
-	protected float getStateTime() {
-		return stateTime;
+		return animation.isAnimationFinished(getStateTime());
 	}
 }

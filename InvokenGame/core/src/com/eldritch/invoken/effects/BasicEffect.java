@@ -27,6 +27,10 @@ public abstract class BasicEffect implements Effect {
     public void render(float delta, OrthogonalTiledMapRenderer renderer) {
     }
     
+    protected Agent getTarget() {
+        return target;
+    }
+    
     protected float getStateTime() {
         return stateTime;
     }
