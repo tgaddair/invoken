@@ -10,6 +10,7 @@ import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.actor.aug.Augmentation;
 import com.eldritch.invoken.actor.factions.Faction;
 import com.eldritch.invoken.actor.factions.FactionManager;
+import com.eldritch.invoken.actor.items.Outfit;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.scifirpg.proto.Actors.ActorParams;
 import com.eldritch.scifirpg.proto.Actors.ActorParams.FactionStatus;
@@ -238,7 +239,12 @@ public class AgentInfo {
     }
     
     public float getDefenseBonus() {
-    	return 0;
+        float bonus = 0;
+        if (inventory.hasOutfit()) {
+            Outfit outfit = inventory.getOutfit();
+            bonus = outfit.getDefense();
+        }
+    	return bonus;
     }
     
     public float getResistanceBonus() {

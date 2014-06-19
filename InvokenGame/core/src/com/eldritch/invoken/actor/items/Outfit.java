@@ -11,14 +11,25 @@ import com.eldritch.scifirpg.proto.Items.Item.DamageMod;
 
 public class Outfit extends Item {
     private final Map<Activity, Map<Direction, Animation>> animations;
+    private final float defense; // percentage
 
     public Outfit(com.eldritch.scifirpg.proto.Items.Item item) {
         super(item, Human.PX);
         animations = Human.getAllAnimations(getAssetPath(item.getAsset()));
+        
+        float damageSum = 0;
+        for (DamageMod mod : item.getDamageModifierList()) {
+            damageSum += mod.getMagnitude();
+        }
+        defense = damageSum / 100;
     }
 
     public boolean covers() {
         return getData().getCovers();
+    }
+    
+    public float getDefense() {
+        return defense;
     }
 
     @Override
