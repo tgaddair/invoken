@@ -5,6 +5,8 @@ import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.screens.GameScreen;
 
 public class Shield extends AnimatedEffect {
+    private final int magnitude = 50;
+    
 	public Shield(Agent actor) {
 		super(actor, GameScreen.getRegions("sprite/effects/shield.png", 96, 96)[2],
 				Animation.PlayMode.LOOP);
@@ -12,12 +14,12 @@ public class Shield extends AnimatedEffect {
 	
     @Override
     public void doApply() {
-        target.getInfo().modActiveDefense(50);
+        target.getInfo().modActiveDefense(magnitude);
     }
     
     @Override
     public void dispel() {
-        target.getInfo().modActiveDefense(-50);
+        target.getInfo().modActiveDefense(-magnitude);
     }
     
 	@Override

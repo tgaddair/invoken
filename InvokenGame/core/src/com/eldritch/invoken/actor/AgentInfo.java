@@ -248,7 +248,7 @@ public class AgentInfo {
         float bonus = activeDefense / 100f;
         if (inventory.hasOutfit()) {
             Outfit outfit = inventory.getOutfit();
-            bonus = outfit.getDefense();
+            bonus += outfit.getDefense();
         }
     	return bonus;
     }

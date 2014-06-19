@@ -21,6 +21,4 @@ public class Bleed extends AnimatedEffect {
 	@Override
     public void dispel() {
     }
-
-    
 }
