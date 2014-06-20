@@ -8,7 +8,7 @@ import com.eldritch.invoken.screens.GameScreen;
 
 public class Shield extends AnimatedEffect {
     private final ProjectileHandler handler = new ShieldProjectileHandler();
-    private final int magnitude = 50;
+    private final int magnitude = 100;
     
 	public Shield(Agent actor) {
 		super(actor, GameScreen.getRegions("sprite/effects/shield.png", 96, 96)[2],
@@ -35,7 +35,10 @@ public class Shield extends AnimatedEffect {
 	private class ShieldProjectileHandler implements ProjectileHandler {
         @Override
         public boolean handle(Projectile projectile) {
-            target.getInfo().expend(magnitude / 10f);
+            target.getInfo().expend(magnitude / 20f);
+            if (target.getInfo().getEnergy() < magnitude / 20f) {
+                target.toggleOff(Shield.class);
+            }
             return false;
         }
 	}

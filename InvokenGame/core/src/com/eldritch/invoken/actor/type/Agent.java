@@ -322,6 +322,14 @@ public abstract class Agent extends CollisionEntity {
             return true;
         }
     }
+    
+    public void toggleOn(Class<?> clazz) {
+        toggles.add(clazz);
+    }
+    
+    public void toggleOff(Class<?> clazz) {
+        toggles.remove(clazz);
+    }
 
     public boolean isToggled(Class<?> clazz) {
         return toggles.contains(clazz);
