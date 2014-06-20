@@ -1,12 +1,9 @@
-package com.eldritch.invoken.actor;
+package com.eldritch.invoken.actor.type;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Rectangle;
-import com.eldritch.invoken.actor.type.Agent;
-import com.eldritch.invoken.actor.type.CollisionEntity;
-import com.eldritch.invoken.actor.type.TemporaryEntity;
 import com.eldritch.invoken.encounter.Location;
 
 public abstract class Projectile extends CollisionEntity implements TemporaryEntity {
@@ -44,7 +41,7 @@ public abstract class Projectile extends CollisionEntity implements TemporaryEnt
         float y = position.y + velocity.y * 0.25f;
         for (Agent agent : getCollisionActors(location)) {
             if (agent != owner && agent.collidesWith(x, y)) {
-                apply(agent);
+                agent.handleProjectile(this);
                 return;
             }
         }
@@ -81,12 +78,7 @@ public abstract class Projectile extends CollisionEntity implements TemporaryEnt
     protected void postRender(Batch batch) {
     }
 
-    @Override
-    public boolean isFinished() {
-        return finished;
-    }
-
-    private void apply(Agent target) {
+    public void apply(Agent target) {
         apply(owner, target);
         finish();
     }
@@ -95,10 +87,19 @@ public abstract class Projectile extends CollisionEntity implements TemporaryEnt
         finished = true;
         free();
     }
+    
+    @Override
+    public boolean isFinished() {
+        return finished;
+    }
 
     protected abstract void apply(Agent owner, Agent target);
 
     protected abstract TextureRegion getTexture(float delta);
 
     protected abstract void free();
+    
+    public static interface ProjectileHandler {
+        boolean handle(Projectile projectile);
+    }
 }

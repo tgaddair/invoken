@@ -29,6 +29,7 @@ import com.eldritch.invoken.actor.aug.Action;
 import com.eldritch.invoken.actor.aug.Augmentation;
 import com.eldritch.invoken.actor.aug.Cloak;
 import com.eldritch.invoken.actor.items.Outfit;
+import com.eldritch.invoken.actor.type.Projectile.ProjectileHandler;
 import com.eldritch.invoken.effects.Effect;
 import com.eldritch.invoken.encounter.Location;
 import com.eldritch.invoken.encounter.NaturalVector2;
@@ -84,6 +85,7 @@ public abstract class Agent extends CollisionEntity {
     private Agent target;
     private Npc interactor;
     private final Set<Class<?>> toggles = new HashSet<Class<?>>();
+    private final Set<ProjectileHandler> projectileHandlers = new HashSet<ProjectileHandler>();
 
     private final Color color = new Color(1, 1, 1, 1);
 
@@ -214,6 +216,29 @@ public abstract class Agent extends CollisionEntity {
 
     public boolean isConfused() {
         return confused > 0;
+    }
+    
+    public void addProjectileHandler(ProjectileHandler handler) {
+        projectileHandlers.add(handler);
+    }
+    
+    public void removeProjectileHandler(ProjectileHandler handler) {
+        projectileHandlers.remove(handler);
+    }
+    
+    public void handleProjectile(Projectile projectile) {
+        boolean handled = false;
+        for (ProjectileHandler handler : projectileHandlers) {
+            boolean result = handler.handle(projectile);
+            if (result) {
+                handled = true;
+                break;
+            }
+        }
+        
+        if (!handled) {
+            projectile.apply(this);
+        }
     }
 
     public void setConfused(boolean confused) {
