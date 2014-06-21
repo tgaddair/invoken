@@ -104,6 +104,10 @@ public class AgentInfo {
 		return inventory;
 	}
 	
+	public FactionManager getFactionManager() {
+	    return factions;
+	}
+	
 	public Set<Faction> getFactions() {
         return factions.getFactions();
     }

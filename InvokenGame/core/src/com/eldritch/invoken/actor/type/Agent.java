@@ -549,6 +549,7 @@ public abstract class Agent extends CollisionEntity {
     public float changeRelation(Agent agent, float delta) {
         float relation = getRelation(agent) + delta;
         relations.put(agent, relation);
+        info.getFactionManager().modifyReputation(agent, delta);
         return relation;
     }
 
