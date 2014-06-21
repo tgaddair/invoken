@@ -8,7 +8,7 @@ import com.eldritch.invoken.encounter.Location;
 
 public class Cloak extends Augmentation {
     public Cloak() {
-        super("cloak");
+        super("cloak", true);
     }
     
     @Override
@@ -54,7 +54,7 @@ public class Cloak extends Augmentation {
         @Override
         public void apply(Location location) {
             if (cloaked) {
-                owner.addEffect(new Cloaked(owner, owner, getCost()));
+                owner.addEffect(new Cloaked(owner, Cloak.this, getCost()));
             } else {
                 owner.setCloaked(false);
             }

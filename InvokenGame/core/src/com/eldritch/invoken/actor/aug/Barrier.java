@@ -8,7 +8,7 @@ import com.eldritch.invoken.encounter.Location;
 
 public class Barrier extends Augmentation {
     public Barrier() {
-        super("barrier");
+        super("barrier", true);
     }
     
 	@Override
@@ -39,7 +39,7 @@ public class Barrier extends Augmentation {
 		@Override
 		public void apply(Location location) {
 			if (owner.toggle(Shield.class)) {
-				owner.addEffect(new Shield(owner));
+				owner.addEffect(new Shield(owner, Barrier.this));
 			}
 		}
 		

@@ -1,16 +1,17 @@
 package com.eldritch.invoken.effects;
 
+import com.eldritch.invoken.actor.aug.Augmentation;
 import com.eldritch.invoken.actor.type.Agent;
 
 public class Cloaked extends BasicEffect {
-    private final Agent invoker;
+    private final Augmentation aug;
     private final int cost;
     private float elapsed = 0;
     private boolean finished = false;
 	
-	public Cloaked(Agent invoker, Agent target, int cost) {
+	public Cloaked(Agent target, Augmentation aug, int cost) {
 	    super(target);
-	    this.invoker = invoker;
+	    this.aug = aug;
 	    this.cost = cost;
 	}
 
@@ -22,6 +23,7 @@ public class Cloaked extends BasicEffect {
 	@Override
 	public void dispel() {
 	    target.setCloaked(false);
+	    target.getInfo().getAugmentations().removeActiveAugmentation(aug);
 	}
 	
 	@Override
@@ -39,8 +41,8 @@ public class Cloaked extends BasicEffect {
         elapsed += delta;
         if (elapsed > 1) {
             // drains continuously while moving
-            if (cost <= invoker.getInfo().getEnergy()) {
-                invoker.getInfo().expend(cost);
+            if (cost <= target.getInfo().getEnergy()) {
+                target.getInfo().expend(cost);
             } else {
                 finished = true;
             }

@@ -1,7 +1,9 @@
 package com.eldritch.invoken.ui;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -16,7 +18,7 @@ public class ActionBar {
     private final Map<Augmentation, Image> images = new HashMap<Augmentation, Image>();
     private final PreparedAugmentations augmentations;
     private final Table container;
-    private Augmentation lastActive = null;
+    private final Set<Augmentation> lastActive = new HashSet<Augmentation>();
     
     public ActionBar(Player player) {
         augmentations = player.getInfo().getAugmentations();
@@ -40,13 +42,19 @@ public class ActionBar {
     }
     
     public void update() {
-        if (lastActive != augmentations.getActiveAugmentation()) {
-            if (lastActive != null) {
-                images.get(lastActive).setColor(1, 1, 1, 1);
-            }
-            lastActive = augmentations.getActiveAugmentation();
-            if (lastActive != null) {
-                images.get(lastActive).setColor(1, 0, 0, 1);
+        for (Augmentation aug : augmentations.getAugmentations()) {
+            if (augmentations.isActive(aug)) {
+                // check to see if this aug is already active to avoid costly color set operation
+                if (!lastActive.contains(aug)) {
+                    // state changed since last update, so change the color
+                    images.get(aug).setColor(1, 0, 0, 1);
+                    lastActive.add(aug);
+                }
+            } else {
+                if (lastActive.contains(aug)) {
+                    images.get(aug).setColor(1, 1, 1, 1);
+                    lastActive.remove(aug);
+                }
             }
         }
     }

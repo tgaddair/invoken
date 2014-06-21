@@ -13,8 +13,8 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.eldritch.invoken.InvokenGame;
+import com.eldritch.invoken.actor.Profession;
 import com.eldritch.invoken.actor.Profession.Executor;
-import com.eldritch.invoken.actor.Profession.Ghost;
 import com.eldritch.invoken.actor.items.Item;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Player;
@@ -85,7 +85,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 		selector = new TextureRegion(new Texture("sprite/selection.png"));
 		
 		// create the Player we want to move around the world
-		player = new Player(new Executor(), 25, 0, 0,
+		player = new Player(Profession.getDefault(), 25, 0, 0,
 				"sprite/characters/light-blue-hair.png");
 //		player.addFaction(playerFaction, 9, 0);
 		

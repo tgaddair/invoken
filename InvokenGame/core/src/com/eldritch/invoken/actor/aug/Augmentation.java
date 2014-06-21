@@ -8,28 +8,40 @@ import com.eldritch.invoken.screens.GameScreen;
 
 public abstract class Augmentation {
     private final Texture icon;
+    private final boolean self;
 	private int slots;
 	private int uses;
 	
 	public Augmentation(String asset) {
+	    this(asset, false);
+	}
+	
+	public Augmentation(String asset, boolean self) {
 	    this.icon = GameScreen.getTexture("icon/" + asset + ".png");
+	    this.self = self;
 	}
 	
 	public boolean hasEnergy(Agent agent) {
 	    return agent.getInfo().getEnergy() >= getCost(agent);
 	}
 	
-	public void invoke(Agent owner, Agent target) {
+	public boolean invoke(Agent owner, Agent target) {
 		if (isValid(owner, target)) {
 		    Action action = getAction(owner, target);
 		    if (hasEnergy(owner)) {
 		        owner.addAction(action);
+		        return true;
 		    }
 		}
+		return false;
 	}
 	
 	public Texture getIcon() {
 	    return icon;
+	}
+	
+	public boolean castsOnSelf() {
+	    return self;
 	}
 	
 	public abstract boolean isValid(Agent owner, Agent target);

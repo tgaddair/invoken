@@ -23,6 +23,10 @@ import com.eldritch.scifirpg.proto.Disciplines.Discipline;
 import com.google.common.collect.ImmutableList;
 
 public abstract class Profession {
+    public static Profession getDefault() {
+        return new Executor();
+    }
+    
 	public static List<Skill> getSorted(List<Skill> skills, final Collection<Discipline> masteries) {
 		Collections.sort(skills, new Comparator<Skill>() {
 			@Override
