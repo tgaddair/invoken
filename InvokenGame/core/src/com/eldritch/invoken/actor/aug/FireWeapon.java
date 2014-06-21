@@ -122,12 +122,12 @@ public class FireWeapon extends Augmentation {
                 GameScreen.getTexture("sprite/effects/bullet-blue.png"));
 
         public Bullet() {
-            super(1, 1, 20);
+            super(1, 1, 20, 5);
         }
 
         @Override
         protected void apply(Agent owner, Agent target) {
-            target.addEffect(new Bleed(owner, target, 5));
+            target.addEffect(new Bleed(owner, target, getDamage(target)));
         }
 
         @Override

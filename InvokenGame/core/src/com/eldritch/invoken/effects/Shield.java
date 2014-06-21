@@ -20,13 +20,11 @@ public class Shield extends AnimatedEffect {
 	
     @Override
     public void doApply() {
-        target.getInfo().modActiveDefense(magnitude);
         target.addProjectileHandler(handler);
     }
     
     @Override
     public void dispel() {
-        target.getInfo().modActiveDefense(-magnitude);
         target.removeProjectileHandler(handler);
         target.getInfo().getAugmentations().removeActiveAugmentation(aug);
     }
@@ -39,9 +37,16 @@ public class Shield extends AnimatedEffect {
 	private class ShieldProjectileHandler implements ProjectileHandler {
         @Override
         public boolean handle(Projectile projectile) {
-            target.getInfo().expend(magnitude / 20f);
-            if (target.getInfo().getEnergy() < magnitude / 20f) {
-                target.toggleOff(Shield.class);
+            float damage = projectile.getDamage(target);
+            if (damage > 0) {
+                System.out.println(damage);
+                target.getInfo().expend(damage);
+                if (target.getInfo().getEnergy() < damage) {
+                    target.toggleOff(Shield.class);
+                }
+                
+                projectile.cancel();
+                return true;
             }
             return false;
         }

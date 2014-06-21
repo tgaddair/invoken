@@ -8,13 +8,23 @@ import com.eldritch.invoken.encounter.Location;
 
 public abstract class Projectile extends CollisionEntity implements TemporaryEntity {
     private final float speed;
+    private final float damage;
     private Agent owner;
     private boolean finished;
     private float stateTime;
 
-    public Projectile(float width, float height, float speed) {
+    public Projectile(float width, float height, float speed, float damage) {
         super(width, height);
         this.speed = speed;
+        this.damage = damage;
+    }
+    
+    public float getSpeed() {
+        return speed;
+    }
+    
+    public float getDamage(Agent target) {
+        return damage * owner.getAttackScale(target);
     }
 
     public void setup(Agent source, Agent target) {
@@ -80,6 +90,10 @@ public abstract class Projectile extends CollisionEntity implements TemporaryEnt
 
     public void apply(Agent target) {
         apply(owner, target);
+        finish();
+    }
+    
+    public void cancel() {
         finish();
     }
 

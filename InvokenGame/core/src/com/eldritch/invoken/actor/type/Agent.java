@@ -517,6 +517,7 @@ public abstract class Agent extends CollisionEntity {
         actions.clear();
         action = null;
         target = null;
+        toggles.clear();
     }
 
     protected void attemptTakeAction(float delta, Location screen) {

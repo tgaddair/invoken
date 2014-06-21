@@ -10,7 +10,7 @@ public class Bleed extends AnimatedEffect {
 	public Bleed(Agent actor, Agent target, float magnitude) {
 		super(target, GameScreen.getRegions("sprite/effects/bleed.png", 48, 48)[0]);
 		this.source = actor;
-		this.magnitude = magnitude * actor.getAttackScale(target);
+		this.magnitude = magnitude;
 	}
 	
 	@Override

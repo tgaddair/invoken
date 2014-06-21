@@ -17,65 +17,66 @@ public class Paralyze extends Augmentation {
     public Paralyze() {
         super("paralyze");
     }
-    
-	@Override
-	public Action getAction(Agent owner, Agent target) {
-		return new ParalyzeAction(owner, target);
-	}
-	
-	@Override
-	public boolean isValid(Agent owner, Agent target) {
-		return target != null && target != owner && target.isAlive();
-	}
-	
-	@Override
+
+    @Override
+    public Action getAction(Agent owner, Agent target) {
+        return new ParalyzeAction(owner, target);
+    }
+
+    @Override
+    public boolean isValid(Agent owner, Agent target) {
+        return target != null && target != owner && target.isAlive();
+    }
+
+    @Override
     public int getCost(Agent owner) {
         return 3;
     }
-	
-	@Override
+
+    @Override
     public float quality(Agent owner, Agent target, Location location) {
         return 1;
     }
-	
-	public class ParalyzeAction extends AnimatedAction {
-		private final Agent target;
-		
-		public ParalyzeAction(Agent actor, Agent target) {
-			super(actor, Activity.Swipe, Paralyze.this);
-			this.target = target;
-		}
 
-		@Override
-		public void apply(Location location) {
-		    ParalyzeBullet bullet = bulletPool.obtain();
+    public class ParalyzeAction extends AnimatedAction {
+        private final Agent target;
+
+        public ParalyzeAction(Agent actor, Agent target) {
+            super(actor, Activity.Swipe, Paralyze.this);
+            this.target = target;
+        }
+
+        @Override
+        public void apply(Location location) {
+            ParalyzeBullet bullet = bulletPool.obtain();
             bullet.setup(owner, target);
             location.addEntity(bullet);
-		}
-		
-		@Override
+        }
+
+        @Override
         public Vector2 getPosition() {
             return target.getPosition();
         }
-	}
-	
-	public static class ParalyzeBullet extends Projectile {
+    }
+
+    public static class ParalyzeBullet extends Projectile {
         private static final TextureRegion[] regions = GameScreen.getRegions(
                 "sprite/effects/drain-attack.png", 32, 32)[0];
         private final Animation animation;
 
         public ParalyzeBullet() {
-            super(1 / 32f * regions[0].getRegionWidth(), 1 / 32f * regions[0].getRegionWidth(), 10);
+            super(1 / 32f * regions[0].getRegionWidth(), 1 / 32f * regions[0].getRegionWidth(), 10,
+                    0);
 
             animation = new Animation(0.1f, regions);
             animation.setPlayMode(Animation.PlayMode.LOOP_PINGPONG);
         }
-        
+
         @Override
         protected void preRender(Batch batch) {
             batch.setColor(Color.GREEN);
         }
-        
+
         @Override
         protected void postRender(Batch batch) {
             batch.setColor(Color.WHITE);

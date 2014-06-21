@@ -25,12 +25,12 @@ public class Drain extends Augmentation {
     public boolean isValid(Agent owner, Agent target) {
         return target != null && target != owner && target.isAlive();
     }
-    
+
     @Override
     public int getCost(Agent owner) {
         return 2;
     }
-    
+
     @Override
     public float quality(Agent owner, Agent target, Location location) {
         return 1;
@@ -50,7 +50,7 @@ public class Drain extends Augmentation {
             bullet.setup(owner, target);
             location.addEntity(bullet);
         }
-        
+
         @Override
         public Vector2 getPosition() {
             return target.getPosition();
@@ -63,7 +63,8 @@ public class Drain extends Augmentation {
         private final Animation animation;
 
         public DrainBullet() {
-            super(1 / 32f * regions[0].getRegionWidth(), 1 / 32f * regions[0].getRegionWidth(), 10);
+            super(1 / 32f * regions[0].getRegionWidth(), 1 / 32f * regions[0].getRegionWidth(), 10,
+                    0);
 
             animation = new Animation(0.1f, regions);
             animation.setPlayMode(Animation.PlayMode.LOOP_PINGPONG);
