@@ -28,6 +28,7 @@ import com.eldritch.invoken.actor.ai.Behavior;
 import com.eldritch.invoken.actor.aug.Action;
 import com.eldritch.invoken.actor.aug.Augmentation;
 import com.eldritch.invoken.actor.aug.Cloak;
+import com.eldritch.invoken.actor.factions.Faction;
 import com.eldritch.invoken.actor.items.Outfit;
 import com.eldritch.invoken.actor.type.Projectile.ProjectileHandler;
 import com.eldritch.invoken.effects.Effect;
@@ -557,6 +558,10 @@ public abstract class Agent extends CollisionEntity {
     public float changeFactionRelations(Agent target, float delta) {
         target.info.getFactionManager().modifyReputationFor(this, delta);
         return getRelation(target);
+    }
+    
+    public void changeFactionStatus(Faction faction, float delta) {
+        info.getFactionManager().modifyReputationFor(faction, delta);
     }
     
     public void updateDisposition(Agent agent) {

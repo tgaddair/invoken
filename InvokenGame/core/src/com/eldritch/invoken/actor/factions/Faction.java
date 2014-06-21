@@ -103,7 +103,7 @@ public class Faction {
         return faction;
     }
     
-    private static Faction of(String id) {
+    public static Faction of(String id) {
         try {
             return factionLoader.get(id);
         } catch (ExecutionException ex) {

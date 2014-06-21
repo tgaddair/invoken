@@ -41,6 +41,19 @@ public class FactionManager {
 	    }
 	}
 	
+	public void modifyReputationFor(Faction faction, float modifier) {
+        FactionStatus status = getStatus(faction);
+        status.reputation += modifier;
+        
+        // notify all faction members
+        Set<Agent> members = new HashSet<Agent>();
+        members.addAll(faction.getMembers());
+        members.remove(agent);
+        for (Agent member : members) {
+            member.updateDisposition(agent);
+        }
+	}
+	
 	public void addFaction(com.eldritch.scifirpg.proto.Actors.ActorParams.FactionStatus status) {
 		Faction faction = Faction.forMember(agent, status.getFactionId());
 		addFaction(faction, status.getRank(), status.getReputation());

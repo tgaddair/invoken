@@ -27,6 +27,7 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
 import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.actor.aug.Action;
+import com.eldritch.invoken.actor.factions.Faction;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Npc;
 import com.eldritch.invoken.actor.type.Player;
@@ -37,6 +38,7 @@ import com.eldritch.invoken.gfx.Light;
 import com.eldritch.invoken.gfx.LightManager;
 import com.eldritch.scifirpg.proto.Locations.Encounter;
 import com.eldritch.scifirpg.proto.Locations.Encounter.ActorParams.ActorScenario;
+import com.google.common.base.Optional;
 import com.google.common.primitives.Ints;
 
 public class Location {
@@ -62,6 +64,8 @@ public class Location {
     private final List<Activator> activators = new ArrayList<Activator>();
     private final Set<NaturalVector2> activeTiles = new HashSet<NaturalVector2>();
     private final LightManager lightManager = new LightManager();
+    
+    private final Optional<Faction> owningFaction;
 
     private OrthogonalTiledMapRenderer renderer;
     private Array<Rectangle> tiles = new Array<Rectangle>();
@@ -79,6 +83,7 @@ public class Location {
             LocationMap map) {
         this.player = player;
         this.map = map;
+        owningFaction = Optional.fromNullable(Faction.of(data.getFactionId()));
 
         // find layers we care about
         List<Integer> overlayList = new ArrayList<Integer>();
@@ -109,6 +114,13 @@ public class Location {
 
         // add encounters
         addEntities(data, map);
+    }
+    
+    public void alertTo(Agent intruder) {
+        if (owningFaction.isPresent()) {
+            Faction faction = owningFaction.get();
+            intruder.changeFactionStatus(faction, -50);
+        }
     }
 
     public void addEntity(TemporaryEntity entity) {
