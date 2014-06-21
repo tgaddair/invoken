@@ -17,6 +17,7 @@ import com.eldritch.scifirpg.proto.Actors.ActorParams.FactionStatus;
 import com.eldritch.scifirpg.proto.Actors.ActorParams.InventoryItem;
 import com.eldritch.scifirpg.proto.Actors.ActorParams.Skill;
 import com.eldritch.scifirpg.proto.Disciplines.Discipline;
+import com.google.common.base.Functions;
 
 public class AgentInfo {
     final String name;
@@ -26,6 +27,7 @@ public class AgentInfo {
 	private final Inventory inventory = new Inventory();
 	final Map<Discipline, SkillState> skills = new HashMap<Discipline, SkillState>();
 	final Set<String> knownAugmentations = new HashSet<String>();
+	final Map<Agent, Float> personalRelations = new HashMap<Agent, Float>();
 	
 	final PreparedAugmentations augmentations;
 	float health;
@@ -119,9 +121,17 @@ public class AgentInfo {
     public int getReputation(Faction faction) {
         return factions.getReputation(faction);
     }
+    
+    public float getPersonalRelation(Agent other) {
+        return Functions.forMap(personalRelations, 0f).apply(other);
+    }
+    
+    public void changePersonalRelation(Agent other, float delta) {
+        personalRelations.put(other, getPersonalRelation(other) + delta);
+    }
 
     public float getDisposition(Agent other) {
-        return factions.getDisposition(other);
+        return getPersonalRelation(other) + factions.getDisposition(other);
     }
     
     public PreparedAugmentations getAugmentations() {

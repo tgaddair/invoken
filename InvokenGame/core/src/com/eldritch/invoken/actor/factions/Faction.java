@@ -1,10 +1,13 @@
 package com.eldritch.invoken.actor.factions;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
 import com.eldritch.invoken.InvokenGame;
+import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.scifirpg.proto.Factions.Faction.Relation;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -27,10 +30,15 @@ public class Faction {
     private final String id;
     private final String name;
     private final Map<String, Integer> relations = new HashMap<String, Integer>();
+    private final Set<Agent> members = new HashSet<Agent>();
 
     private Faction(String id, String name) {
         this.id = id;
         this.name = name;
+    }
+    
+    public Set<Agent> getMembers() {
+        return members;
     }
 
     public void addRelation(Faction other, int reaction) {
@@ -87,6 +95,12 @@ public class Faction {
         } else if (!id.equals(other.id))
             return false;
         return true;
+    }
+    
+    public static Faction forMember(Agent member, String id) {
+        Faction faction = of(id);
+        faction.members.add(member);
+        return faction;
     }
     
     public static Faction of(String id) {

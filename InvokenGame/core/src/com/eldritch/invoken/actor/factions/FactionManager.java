@@ -1,6 +1,7 @@
 package com.eldritch.invoken.actor.factions;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -14,13 +15,29 @@ public class FactionManager {
 		this.agent = agent;
 	}
 	
-	public void modifyReputation(Agent other, float modifier) {
-	    for (Faction faction : other.getInfo().getFactions()) {
+	/**
+	 * Modifies the reputation of our agent with respect to all of other's factions.  After
+	 * updating the status, an event will be broadcast to all faction members instructing them to
+	 * update their disposition for our agent.
+	 * 
+	 * @param target the agent whose disposition towards us changed in some way
+	 * @param modifier how much to change the faction reputation
+	 */
+	public void modifyReputation(Agent target, float modifier) {
+	    Set<Agent> comrades = new HashSet<Agent>();
+	    for (Faction faction : target.getInfo().getFactions()) {
 	        if (factions.containsKey(faction)) {
 	            FactionStatus status = factions.get(faction);
 	            status.reputation -= modifier;
-	            // TODO emit these changes to the other actors
+	            comrades.addAll(faction.getMembers());
 	        }
+	    }
+	    
+	    // update the disposition towards this agent for all our target's comrades
+	    comrades.add(target); // in case it has no factions, we must still update our target
+	    comrades.remove(agent); // don't update ourselves
+	    for (Agent comrade : comrades) {
+	        comrade.updateDisposition(agent);
 	    }
 	}
 	

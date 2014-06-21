@@ -154,6 +154,11 @@ public abstract class Agent extends CollisionEntity {
     }
 
     public void addEnemy(Agent other, float magnitude) {
+        if (hostilities.contains(other)) {
+            // already hostile, so don't bother making it worse
+            return;
+        }
+        
         if (other.assaultedBy(this)) {
             // we previously assaulted them, so add them as an enemy, but don't adjust our relation
             hostilities.add(other);
@@ -175,8 +180,6 @@ public abstract class Agent extends CollisionEntity {
                     // they attacked us, mark them as an assaulter
                     other.hostility = Hostility.Assault;
                     assaulters.add(other);
-
-                    // lower their reputation with all our factions
                 }
             }
         }
@@ -547,12 +550,18 @@ public abstract class Agent extends CollisionEntity {
     }
 
     public float changeRelation(Agent agent, float delta) {
-        float relation = getRelation(agent) + delta;
-        relations.put(agent, relation);
+        info.changePersonalRelation(agent, delta);
         info.getFactionManager().modifyReputation(agent, delta);
-        return relation;
+        return getRelation(agent);
     }
-
+    
+    public void updateDisposition(Agent agent) {
+        if (relations.containsKey(agent)) {
+            // only update the disposition if it was previously calculated
+            relations.put(agent, info.getDisposition(agent));
+        }
+    }
+    
     @Override
     public void update(float delta, Location location) {
         if (delta == 0)
