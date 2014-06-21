@@ -26,15 +26,24 @@ public abstract class Projectile extends CollisionEntity implements TemporaryEnt
     public float getDamage(Agent target) {
         return damage * owner.getAttackScale(target);
     }
-
+    
+    public Agent getOwner() {
+        return owner;
+    }
+    
     public void setup(Agent source, Agent target) {
-        owner = source;
         finished = false;
         stateTime = 0;
 
         position.set(source.getForwardVector().scl(0.5f).add(source.getPosition()));
+        reset(source, target);
+    }
+    
+    public void reset(Agent source, Agent target) {
+        owner = source;
+        
         velocity.set(target.getPosition());
-        velocity.sub(source.getPosition());
+        velocity.sub(position);
         velocity.nor();
     }
 

@@ -7,12 +7,12 @@ import com.eldritch.invoken.actor.type.Projectile;
 import com.eldritch.invoken.actor.type.Projectile.ProjectileHandler;
 import com.eldritch.invoken.screens.GameScreen;
 
-public class Shield extends AnimatedEffect {
+public class Mirroring extends AnimatedEffect {
     private final Augmentation aug;
-    private final ProjectileHandler handler = new ShieldProjectileHandler();
+    private final ProjectileHandler handler = new MirrorProjectileHandler();
     
-	public Shield(Agent actor, Augmentation aug) {
-		super(actor, GameScreen.getRegions("sprite/effects/shield.png", 96, 96)[2],
+	public Mirroring(Agent target, Augmentation aug) {
+		super(target, GameScreen.getRegions("sprite/effects/shield.png", 96, 96)[2],
 				Animation.PlayMode.LOOP);
 		this.aug = aug;
 	}
@@ -30,20 +30,20 @@ public class Shield extends AnimatedEffect {
     
 	@Override
 	public boolean isFinished() {
-		return !getTarget().isToggled(Shield.class);
+		return !getTarget().isToggled(Mirroring.class);
 	}
 	
-	private class ShieldProjectileHandler implements ProjectileHandler {
+	private class MirrorProjectileHandler implements ProjectileHandler {
         @Override
         public boolean handle(Projectile projectile) {
             float damage = projectile.getDamage(target);
             if (damage > 0) {
                 target.getInfo().expend(damage);
                 if (target.getInfo().getEnergy() < damage) {
-                    target.toggleOff(Shield.class);
+                    target.toggleOff(Mirroring.class);
                 }
                 
-                projectile.cancel();
+                projectile.reset(target, projectile.getOwner());
                 return true;
             }
             return false;

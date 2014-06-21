@@ -15,6 +15,7 @@ import com.eldritch.invoken.actor.aug.Cloak;
 import com.eldritch.invoken.actor.aug.Frenzy;
 import com.eldritch.invoken.actor.aug.Drain;
 import com.eldritch.invoken.actor.aug.FireWeapon;
+import com.eldritch.invoken.actor.aug.Mirror;
 import com.eldritch.invoken.actor.aug.Paralyze;
 import com.eldritch.invoken.actor.aug.RendWeapon;
 import com.eldritch.invoken.actor.aug.Resurrect;
@@ -101,7 +102,7 @@ public abstract class Profession {
 		
 		@Override
 		public List<Augmentation> getStartingAugmentations() {
-			return ImmutableList.<Augmentation>of(new FireWeapon());
+			return ImmutableList.<Augmentation>of(new FireWeapon(), new Barrier());
 		}
 	}
 	
@@ -113,7 +114,7 @@ public abstract class Profession {
 		
 		@Override
 		public List<Augmentation> getStartingAugmentations() {
-			return ImmutableList.<Augmentation>of(new FireWeapon(), new Drain(), new Barrier());
+			return ImmutableList.<Augmentation>of(new FireWeapon(), new Drain(), new Mirror());
 		}
 	}
 	
