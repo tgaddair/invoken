@@ -597,20 +597,23 @@ public abstract class Agent extends CollisionEntity {
         }
 
         if (isAlive()) {
-            // handle the action queue
-            if (actionInProgress()) {
-                action.update(delta, location);
-            } else {
-                action = actions.poll();
-                if (action != null) {
-                    // any action breaks cloaking
-                    setCloaked(false);
+            // paralysis prevents actions from continuing
+            if (!isParalyzed()) {
+                // handle the action queue
+                if (actionInProgress()) {
                     action.update(delta, location);
+                } else {
+                    action = actions.poll();
+                    if (action != null) {
+                        // any action breaks cloaking
+                        setCloaked(false);
+                        action.update(delta, location);
+                    }
                 }
+    
+                // take conscious action
+                attemptTakeAction(delta, location);
             }
-
-            // take conscious action
-            attemptTakeAction(delta, location);
         } else if (activity != Activity.Death) {
             // kill the agent
             onDeath();
