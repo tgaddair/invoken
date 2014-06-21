@@ -38,6 +38,7 @@ import com.eldritch.scifirpg.proto.Actors.ActorParams;
 
 public abstract class Agent extends CollisionEntity {
     public static final int MAX_DST2 = 175;
+    public static final int ASSAULT_PENALTY = -50;
 
     static AssetManager assetManager = new AssetManager();
     static float DAMPING = 0.87f;
@@ -180,6 +181,9 @@ public abstract class Agent extends CollisionEntity {
                     // they attacked us, mark them as an assaulter
                     other.hostility = Hostility.Assault;
                     assaulters.add(other);
+                    
+                    // assault carriers a severe penalty for ranking factions
+                    changeFactionRelations(other, ASSAULT_PENALTY);
                 }
             }
         }
@@ -516,7 +520,6 @@ public abstract class Agent extends CollisionEntity {
     protected void onDeath() {
         followers.clear();
         hostilities.clear();
-        relations.clear();
         actions.clear();
         action = null;
         target = null;
@@ -538,22 +541,20 @@ public abstract class Agent extends CollisionEntity {
         }
     }
 
-    public Map<Agent, Float> getRelations() {
-        return relations;
-    }
-
     public float getRelation(Agent agent) {
         if (!relations.containsKey(agent)) {
             relations.put(agent, info.getDisposition(agent));
-            if (agent.getInfo().getName().equals("Player")) {
-                System.out.println("calculate " + this + ": " + relations.get(agent));
-            }
         }
         return relations.get(agent);
     }
 
     public float changeRelation(Agent target, float delta) {
         info.changePersonalRelation(target, delta);
+        updateDisposition(target);
+        return getRelation(target);
+    }
+    
+    public float changeFactionRelations(Agent target, float delta) {
         target.info.getFactionManager().modifyReputationFor(this, delta);
         return getRelation(target);
     }
@@ -562,7 +563,6 @@ public abstract class Agent extends CollisionEntity {
         if (relations.containsKey(agent)) {
             // only update the disposition if it was previously calculated
             relations.put(agent, info.getDisposition(agent));
-            System.out.println(String.format("updated disposition: %s -> %s | %f", this, agent, relations.get(agent)));
         }
     }
     
@@ -577,17 +577,6 @@ public abstract class Agent extends CollisionEntity {
             // restore 1 unit of energy every 3 seconds
             info.restore(1);
             elapsed = 0;
-        }
-
-        // cleanup relations
-        {
-            Iterator<Entry<Agent, Float>> it = relations.entrySet().iterator();
-            while (it.hasNext()) {
-                Entry<Agent, Float> entry = it.next();
-                if (!entry.getKey().isAlive()) {
-                    it.remove();
-                }
-            }
         }
 
         // apply all active effects, remove any that are finished

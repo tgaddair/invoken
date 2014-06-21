@@ -35,7 +35,6 @@ public class FactionManager {
 	    }
 	    
 	    // update the disposition towards this agent for all our target's comrades
-	    comrades.add(target); // in case it has no factions, we must still update our target
 	    comrades.remove(agent); // don't update ourselves
 	    for (Agent comrade : comrades) {
 	        comrade.updateDisposition(agent);

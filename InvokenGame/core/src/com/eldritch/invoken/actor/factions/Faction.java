@@ -38,7 +38,6 @@ public class Faction {
     }
     
     public Set<Agent> getMembers() {
-        System.out.println("members: " + members.size());
         return members;
     }
 
