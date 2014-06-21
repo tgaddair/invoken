@@ -75,7 +75,7 @@ public class AgentInfo {
 	}
 	
 	public AgentInfo(Agent agent, Profession profession, int level) {
-	    this.name = "unknown";
+	    this.name = "Player";
 		augmentations = new PreparedAugmentations(agent);
 		
 		this.profession = profession;
@@ -113,6 +113,10 @@ public class AgentInfo {
 	public Set<Faction> getFactions() {
         return factions.getFactions();
     }
+	
+	public boolean hasRank(Faction faction) {
+	    return factions.getRank(faction) > 0;
+	}
 
     public void addFaction(Faction faction, int rank, int reputation) {
         factions.addFaction(faction, rank, reputation);

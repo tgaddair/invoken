@@ -545,20 +545,24 @@ public abstract class Agent extends CollisionEntity {
     public float getRelation(Agent agent) {
         if (!relations.containsKey(agent)) {
             relations.put(agent, info.getDisposition(agent));
+            if (agent.getInfo().getName().equals("Player")) {
+                System.out.println("calculate " + this + ": " + relations.get(agent));
+            }
         }
         return relations.get(agent);
     }
 
-    public float changeRelation(Agent agent, float delta) {
-        info.changePersonalRelation(agent, delta);
-        info.getFactionManager().modifyReputation(agent, delta);
-        return getRelation(agent);
+    public float changeRelation(Agent target, float delta) {
+        info.changePersonalRelation(target, delta);
+        target.info.getFactionManager().modifyReputationFor(this, delta);
+        return getRelation(target);
     }
     
     public void updateDisposition(Agent agent) {
         if (relations.containsKey(agent)) {
             // only update the disposition if it was previously calculated
             relations.put(agent, info.getDisposition(agent));
+            System.out.println(String.format("updated disposition: %s -> %s | %f", this, agent, relations.get(agent)));
         }
     }
     

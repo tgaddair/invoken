@@ -38,6 +38,7 @@ public class Faction {
     }
     
     public Set<Agent> getMembers() {
+        System.out.println("members: " + members.size());
         return members;
     }
 
@@ -103,7 +104,7 @@ public class Faction {
         return faction;
     }
     
-    public static Faction of(String id) {
+    private static Faction of(String id) {
         try {
             return factionLoader.get(id);
         } catch (ExecutionException ex) {

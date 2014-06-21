@@ -23,13 +23,14 @@ public class FactionManager {
 	 * @param target the agent whose disposition towards us changed in some way
 	 * @param modifier how much to change the faction reputation
 	 */
-	public void modifyReputation(Agent target, float modifier) {
+	public void modifyReputationFor(Agent target, float modifier) {
 	    Set<Agent> comrades = new HashSet<Agent>();
 	    for (Faction faction : target.getInfo().getFactions()) {
-	        if (factions.containsKey(faction)) {
-	            FactionStatus status = factions.get(faction);
-	            status.reputation -= modifier;
-	            comrades.addAll(faction.getMembers());
+	        if (target.getInfo().hasRank(faction)) {
+	            // only modify if we actually hold a rank in this faction
+                FactionStatus status = getStatus(faction);
+                status.reputation += modifier;
+                comrades.addAll(faction.getMembers());
 	        }
 	    }
 	    
@@ -42,7 +43,7 @@ public class FactionManager {
 	}
 	
 	public void addFaction(com.eldritch.scifirpg.proto.Actors.ActorParams.FactionStatus status) {
-		Faction faction = Faction.of(status.getFactionId());
+		Faction faction = Faction.forMember(agent, status.getFactionId());
 		addFaction(faction, status.getRank(), status.getReputation());
 	}
 	
@@ -52,6 +53,13 @@ public class FactionManager {
 	
 	public Set<Faction> getFactions() {
 		return factions.keySet();
+	}
+	
+	public int getRank(Faction faction) {
+	    if (factions.containsKey(faction)) {
+	        return factions.get(faction).rank;
+	    }
+	    return 0;
 	}
 	
 	public int getReputation(Faction faction) {
@@ -83,6 +91,13 @@ public class FactionManager {
 			}
 		}
 		return reaction;
+	}
+	
+	public FactionStatus getStatus(Faction faction) {
+	    if (!factions.containsKey(faction)) {
+	        factions.put(faction, new FactionStatus(0, 0));
+	    }
+	    return factions.get(faction);
 	}
 	
 	private static class FactionStatus {
