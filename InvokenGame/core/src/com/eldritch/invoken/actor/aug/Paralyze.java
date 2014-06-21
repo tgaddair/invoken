@@ -35,7 +35,7 @@ public class Paralyze extends Augmentation {
 
     @Override
     public float quality(Agent owner, Agent target, Location location) {
-        return 1;
+        return !target.isParalyzed() ? 5 : 0;
     }
 
     public class ParalyzeAction extends AnimatedAction {
