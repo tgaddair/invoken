@@ -33,8 +33,8 @@ import com.eldritch.invoken.actor.type.Projectile.ProjectileHandler;
 import com.eldritch.invoken.effects.Effect;
 import com.eldritch.invoken.encounter.Location;
 import com.eldritch.invoken.encounter.NaturalVector2;
+import com.eldritch.invoken.proto.Actors.ActorParams;
 import com.eldritch.invoken.ui.MultiTextureRegionDrawable;
-import com.eldritch.scifirpg.proto.Actors.ActorParams;
 
 public abstract class Agent extends CollisionEntity {
     public static final int MAX_DST2 = 175;

@@ -1,7 +1,7 @@
 package com.eldritch.invoken.actor.type;
 
 import com.eldritch.invoken.encounter.Location;
-import com.eldritch.scifirpg.proto.Actors.NonPlayerActor;
+import com.eldritch.invoken.proto.Actors.NonPlayerActor;
 
 public class Undead extends HumanNpc {
     public static float MAX_VELOCITY = 2f;

@@ -7,13 +7,13 @@ import com.eldritch.invoken.actor.Inventory;
 import com.eldritch.invoken.actor.type.Human;
 import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.actor.type.Agent.Direction;
-import com.eldritch.scifirpg.proto.Items.Item.DamageMod;
+import com.eldritch.invoken.proto.Items.Item.DamageMod;
 
 public class Outfit extends Item {
     private final Map<Activity, Map<Direction, Animation>> animations;
     private final float defense; // percentage
 
-    public Outfit(com.eldritch.scifirpg.proto.Items.Item item) {
+    public Outfit(com.eldritch.invoken.proto.Items.Item item) {
         super(item, Human.PX);
         animations = Human.getAllAnimations(getAssetPath(item.getAsset()));
         

@@ -53,7 +53,7 @@ public abstract class Augmentation {
 	public abstract Action getAction(Agent owner, Agent target);
 	
 	public static Augmentation fromProto(
-	        com.eldritch.scifirpg.proto.Augmentations.Augmentation proto) {
+	        com.eldritch.invoken.proto.Augmentations.Augmentation proto) {
 	    String className = Augmentation.class.getPackage().getName() + "." + proto.getId();
 	    try {
             return (Augmentation) Class.forName(className).newInstance();

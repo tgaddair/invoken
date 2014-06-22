@@ -6,9 +6,9 @@ import java.util.List;
 import java.util.Set;
 
 import com.eldritch.invoken.actor.type.Player;
+import com.eldritch.invoken.proto.Actors.NonPlayerActor;
+import com.eldritch.invoken.proto.Locations.Encounter.ActorParams.ActorScenario;
 import com.eldritch.invoken.util.ActorMarshaller;
-import com.eldritch.scifirpg.proto.Actors.NonPlayerActor;
-import com.eldritch.scifirpg.proto.Locations.Encounter.ActorParams.ActorScenario;
 
 public class ActorModel {
     private final Player player;

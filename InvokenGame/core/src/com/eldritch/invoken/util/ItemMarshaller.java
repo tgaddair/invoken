@@ -3,7 +3,7 @@ package com.eldritch.invoken.util;
 import java.io.IOException;
 import java.io.InputStream;
 
-import com.eldritch.scifirpg.proto.Items.Item;
+import com.eldritch.invoken.proto.Items.Item;
 
 public class ItemMarshaller extends AssetMarshaller<Item> {
     @Override

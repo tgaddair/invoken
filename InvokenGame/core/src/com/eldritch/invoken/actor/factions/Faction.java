@@ -8,7 +8,7 @@ import java.util.concurrent.ExecutionException;
 
 import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.actor.type.Agent;
-import com.eldritch.scifirpg.proto.Factions.Faction.Relation;
+import com.eldritch.invoken.proto.Factions.Faction.Relation;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -17,7 +17,7 @@ public class Faction {
     private static final LoadingCache<String, Faction> factionLoader = CacheBuilder.newBuilder()
             .build(new CacheLoader<String, Faction>() {
                 public Faction load(String id) {
-                    com.eldritch.scifirpg.proto.Factions.Faction proto = InvokenGame.FACTION_READER
+                    com.eldritch.invoken.proto.Factions.Faction proto = InvokenGame.FACTION_READER
                             .readAsset(id);
                     Faction faction = new Faction(proto.getId(), proto.getName());
                     for (Relation relation : proto.getRelationList()) {

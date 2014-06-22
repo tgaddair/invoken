@@ -4,10 +4,10 @@ import java.util.Collection;
 
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Npc;
-import com.eldritch.scifirpg.proto.Actors.NonPlayerActor;
-import com.eldritch.scifirpg.proto.Actors.NonPlayerActor.Aggression;
-import com.eldritch.scifirpg.proto.Actors.NonPlayerActor.Assistance;
-import com.eldritch.scifirpg.proto.Actors.NonPlayerActor.Confidence;
+import com.eldritch.invoken.proto.Actors.NonPlayerActor;
+import com.eldritch.invoken.proto.Actors.NonPlayerActor.Aggression;
+import com.eldritch.invoken.proto.Actors.NonPlayerActor.Assistance;
+import com.eldritch.invoken.proto.Actors.NonPlayerActor.Confidence;
 
 public class Behavior {
     private final Npc npc;

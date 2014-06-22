@@ -11,11 +11,11 @@ import com.eldritch.invoken.actor.type.Agent.Direction;
 import com.eldritch.invoken.actor.Inventory;
 
 public abstract class Item {
-	protected final com.eldritch.scifirpg.proto.Items.Item data;
+	protected final com.eldritch.invoken.proto.Items.Item data;
 	private final float width;
 	private final float height;
 	
-	public Item(com.eldritch.scifirpg.proto.Items.Item data, int px) {
+	public Item(com.eldritch.invoken.proto.Items.Item data, int px) {
 		this.data = data;
 		this.width = 1 / 32f * px;
 		this.height = 1 / 32f * px;
@@ -57,7 +57,7 @@ public abstract class Item {
 		return data.getName();
 	}
 	
-	public com.eldritch.scifirpg.proto.Items.Item getData() {
+	public com.eldritch.invoken.proto.Items.Item getData() {
 		return data;
 	}
 	
@@ -70,7 +70,7 @@ public abstract class Item {
 	            data.getName(), data.getType(), data.getDescription(), data.getValue());
 	}
 	
-	public static Item fromProto(com.eldritch.scifirpg.proto.Items.Item item) {
+	public static Item fromProto(com.eldritch.invoken.proto.Items.Item item) {
 		switch (item.getType()) {
 			case MELEE_WEAPON:
 			    return new MeleeWeapon(item);

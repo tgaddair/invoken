@@ -13,10 +13,10 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Npc;
 import com.eldritch.invoken.actor.type.Player;
+import com.eldritch.invoken.proto.Actors.DialogueTree.Choice;
+import com.eldritch.invoken.proto.Actors.DialogueTree.Response;
 import com.eldritch.invoken.screens.AbstractScreen;
 import com.eldritch.invoken.util.DefaultInputListener;
-import com.eldritch.scifirpg.proto.Actors.DialogueTree.Choice;
-import com.eldritch.scifirpg.proto.Actors.DialogueTree.Response;
 import com.esotericsoftware.tablelayout.Cell;
 
 public class DialogueMenu {

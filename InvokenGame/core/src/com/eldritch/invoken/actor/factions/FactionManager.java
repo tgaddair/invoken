@@ -56,7 +56,7 @@ public class FactionManager {
         }
     }
 
-    public void addFaction(com.eldritch.scifirpg.proto.Actors.ActorParams.FactionStatus status) {
+    public void addFaction(com.eldritch.invoken.proto.Actors.ActorParams.FactionStatus status) {
         Faction faction = Faction.forMember(agent, status.getFactionId());
         addFaction(faction, status.getRank(), status.getReputation());
     }

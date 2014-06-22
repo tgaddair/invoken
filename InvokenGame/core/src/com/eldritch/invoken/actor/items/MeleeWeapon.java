@@ -4,13 +4,13 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.eldritch.invoken.actor.Inventory;
 import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.actor.type.Agent.Direction;
-import com.eldritch.scifirpg.proto.Items.Item.DamageMod;
+import com.eldritch.invoken.proto.Items.Item.DamageMod;
 
 public class MeleeWeapon extends Item {
     private final float damage;
     private final float range;
     
-    public MeleeWeapon(com.eldritch.scifirpg.proto.Items.Item item) {
+    public MeleeWeapon(com.eldritch.invoken.proto.Items.Item item) {
         super(item, 0);
         
         // calculate damage magnitude

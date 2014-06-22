@@ -28,8 +28,8 @@ import com.eldritch.invoken.encounter.layer.LocationMap;
 import com.eldritch.invoken.encounter.layer.RemovableCell;
 import com.eldritch.invoken.gfx.Light;
 import com.eldritch.invoken.gfx.Light.StaticLight;
-import com.eldritch.scifirpg.proto.Locations.Encounter;
-import com.eldritch.scifirpg.proto.Locations.Encounter.ActorParams.ActorScenario;
+import com.eldritch.invoken.proto.Locations.Encounter;
+import com.eldritch.invoken.proto.Locations.Encounter.ActorParams.ActorScenario;
 
 public class LocationGenerator {
     private static final int PX = Location.PX;
@@ -71,7 +71,7 @@ public class LocationGenerator {
         collider = new StaticTiledMapTile(atlas.findRegion("markers/collision"));
     }
 
-    public Location generate(com.eldritch.scifirpg.proto.Locations.Location proto, Player player) {
+    public Location generate(com.eldritch.invoken.proto.Locations.Location proto, Player player) {
         int width = Location.MAX_WIDTH;
         int height = Location.MAX_HEIGHT;
         LocationMap map = getBaseMap(width, height);

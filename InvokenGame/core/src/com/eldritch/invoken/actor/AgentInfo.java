@@ -12,11 +12,11 @@ import com.eldritch.invoken.actor.factions.Faction;
 import com.eldritch.invoken.actor.factions.FactionManager;
 import com.eldritch.invoken.actor.items.Outfit;
 import com.eldritch.invoken.actor.type.Agent;
-import com.eldritch.scifirpg.proto.Actors.ActorParams;
-import com.eldritch.scifirpg.proto.Actors.ActorParams.FactionStatus;
-import com.eldritch.scifirpg.proto.Actors.ActorParams.InventoryItem;
-import com.eldritch.scifirpg.proto.Actors.ActorParams.Skill;
-import com.eldritch.scifirpg.proto.Disciplines.Discipline;
+import com.eldritch.invoken.proto.Actors.ActorParams;
+import com.eldritch.invoken.proto.Actors.ActorParams.FactionStatus;
+import com.eldritch.invoken.proto.Actors.ActorParams.InventoryItem;
+import com.eldritch.invoken.proto.Actors.ActorParams.Skill;
+import com.eldritch.invoken.proto.Disciplines.Discipline;
 import com.google.common.base.Functions;
 
 public class AgentInfo {

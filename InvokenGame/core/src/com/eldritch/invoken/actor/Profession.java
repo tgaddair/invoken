@@ -19,8 +19,8 @@ import com.eldritch.invoken.actor.aug.Mirror;
 import com.eldritch.invoken.actor.aug.Paralyze;
 import com.eldritch.invoken.actor.aug.RendWeapon;
 import com.eldritch.invoken.actor.aug.Resurrect;
-import com.eldritch.scifirpg.proto.Actors.ActorParams.Skill;
-import com.eldritch.scifirpg.proto.Disciplines.Discipline;
+import com.eldritch.invoken.proto.Actors.ActorParams.Skill;
+import com.eldritch.invoken.proto.Disciplines.Discipline;
 import com.google.common.collect.ImmutableList;
 
 public abstract class Profession {
@@ -214,7 +214,7 @@ public abstract class Profession {
 		}
 	}
 	
-	public static Profession fromProto(com.eldritch.scifirpg.proto.Disciplines.Profession p) {
+	public static Profession fromProto(com.eldritch.invoken.proto.Disciplines.Profession p) {
 		switch (p) {
 			case CENTURION:
 				return new Centurion();

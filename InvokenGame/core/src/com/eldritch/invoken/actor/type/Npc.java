@@ -23,16 +23,16 @@ import com.eldritch.invoken.actor.ai.Pathfinder;
 import com.eldritch.invoken.actor.ai.PatrolRoutine;
 import com.eldritch.invoken.actor.ai.Routine;
 import com.eldritch.invoken.encounter.Location;
+import com.eldritch.invoken.proto.Actors.DialogueTree;
+import com.eldritch.invoken.proto.Actors.NonPlayerActor;
+import com.eldritch.invoken.proto.Actors.ActorParams.Species;
+import com.eldritch.invoken.proto.Actors.DialogueTree.Choice;
+import com.eldritch.invoken.proto.Actors.DialogueTree.Response;
+import com.eldritch.invoken.proto.Actors.NonPlayerActor.Aggression;
+import com.eldritch.invoken.proto.Locations.Encounter.ActorParams.ActorScenario;
+import com.eldritch.invoken.proto.Prerequisites.Prerequisite;
+import com.eldritch.invoken.proto.Prerequisites.Standing;
 import com.eldritch.invoken.util.PrerequisiteVerifier;
-import com.eldritch.scifirpg.proto.Actors.ActorParams.Species;
-import com.eldritch.scifirpg.proto.Actors.DialogueTree;
-import com.eldritch.scifirpg.proto.Actors.NonPlayerActor;
-import com.eldritch.scifirpg.proto.Actors.DialogueTree.Choice;
-import com.eldritch.scifirpg.proto.Actors.DialogueTree.Response;
-import com.eldritch.scifirpg.proto.Actors.NonPlayerActor.Aggression;
-import com.eldritch.scifirpg.proto.Locations.Encounter.ActorParams.ActorScenario;
-import com.eldritch.scifirpg.proto.Prerequisites.Prerequisite;
-import com.eldritch.scifirpg.proto.Prerequisites.Standing;
 import com.google.common.base.Optional;
 
 public abstract class Npc extends Agent {

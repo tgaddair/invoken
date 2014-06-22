@@ -9,7 +9,7 @@ import com.eldritch.invoken.actor.items.Item;
 import com.eldritch.invoken.actor.items.MeleeWeapon;
 import com.eldritch.invoken.actor.items.Outfit;
 import com.eldritch.invoken.actor.items.RangedWeapon;
-import com.eldritch.scifirpg.proto.Actors.ActorParams.InventoryItem;
+import com.eldritch.invoken.proto.Actors.ActorParams.InventoryItem;
 
 public class Inventory {
     private final Map<String, ItemState> items = new HashMap<String, Inventory.ItemState>();

@@ -3,7 +3,7 @@ package com.eldritch.invoken.util;
 import java.io.IOException;
 import java.io.InputStream;
 
-import com.eldritch.scifirpg.proto.Factions.Faction;
+import com.eldritch.invoken.proto.Factions.Faction;
 
 public class FactionMarshaller extends AssetMarshaller<Faction> {
     @Override

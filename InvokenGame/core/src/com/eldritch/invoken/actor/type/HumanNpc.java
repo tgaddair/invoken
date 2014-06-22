@@ -1,7 +1,7 @@
 package com.eldritch.invoken.actor.type;
 
 import com.eldritch.invoken.encounter.Location;
-import com.eldritch.scifirpg.proto.Actors.NonPlayerActor;
+import com.eldritch.invoken.proto.Actors.NonPlayerActor;
 
 public class HumanNpc extends Npc {
     public HumanNpc(NonPlayerActor data, float x, float y, String asset, Location location) {

@@ -5,11 +5,11 @@ import java.util.List;
 import com.eldritch.invoken.actor.ActorModel;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Player;
-import com.eldritch.scifirpg.proto.Disciplines.Discipline;
-import com.eldritch.scifirpg.proto.Disciplines.Influence;
-import com.eldritch.scifirpg.proto.Effects.Effect;
-import com.eldritch.scifirpg.proto.Effects.Effect.Range;
-import com.eldritch.scifirpg.proto.Prerequisites.Prerequisite;
+import com.eldritch.invoken.proto.Disciplines.Discipline;
+import com.eldritch.invoken.proto.Disciplines.Influence;
+import com.eldritch.invoken.proto.Effects.Effect;
+import com.eldritch.invoken.proto.Effects.Effect.Range;
+import com.eldritch.invoken.proto.Prerequisites.Prerequisite;
 
 public class PrerequisiteVerifier {
     public boolean verify(List<Prerequisite> prereqs, ActorModel model) {

@@ -8,13 +8,13 @@ import com.eldritch.invoken.actor.type.Human;
 import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.actor.type.Agent.Direction;
 import com.eldritch.invoken.actor.Inventory;
-import com.eldritch.scifirpg.proto.Items.Item.DamageMod;
+import com.eldritch.invoken.proto.Items.Item.DamageMod;
 import com.google.common.base.Strings;
 
 public class RangedWeapon extends Item {
 	private final Map<Direction, Animation> animations = new HashMap<Direction, Animation>();
 	
-	public RangedWeapon(com.eldritch.scifirpg.proto.Items.Item item) {
+	public RangedWeapon(com.eldritch.invoken.proto.Items.Item item) {
 		super(item, 48);
 		if (!Strings.isNullOrEmpty(item.getAsset())) {
 		    animations.putAll(Human.getAnimations(item.getAsset()));

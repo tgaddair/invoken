@@ -6,8 +6,8 @@ import java.util.Map;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.eldritch.invoken.encounter.Location;
+import com.eldritch.invoken.proto.Actors.NonPlayerActor;
 import com.eldritch.invoken.screens.GameScreen;
-import com.eldritch.scifirpg.proto.Actors.NonPlayerActor;
 
 public class Hollow extends Npc {
     public static float MAX_VELOCITY = 3f;

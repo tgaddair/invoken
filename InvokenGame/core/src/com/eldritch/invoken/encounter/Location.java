@@ -21,7 +21,6 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
-import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
@@ -37,8 +36,8 @@ import com.eldritch.invoken.encounter.layer.EncounterLayer;
 import com.eldritch.invoken.encounter.layer.LocationMap;
 import com.eldritch.invoken.gfx.Light;
 import com.eldritch.invoken.gfx.LightManager;
-import com.eldritch.scifirpg.proto.Locations.Encounter;
-import com.eldritch.scifirpg.proto.Locations.Encounter.ActorParams.ActorScenario;
+import com.eldritch.invoken.proto.Locations.Encounter;
+import com.eldritch.invoken.proto.Locations.Encounter.ActorParams.ActorScenario;
 import com.google.common.base.Optional;
 import com.google.common.primitives.Ints;
 
@@ -76,11 +75,11 @@ public class Location {
     private int overlayIndex = -1;
     private final int groundIndex = 0;
 
-    public Location(com.eldritch.scifirpg.proto.Locations.Location data, Player player) {
+    public Location(com.eldritch.invoken.proto.Locations.Location data, Player player) {
         this(data, player, readMap(data));
     }
 
-    public Location(com.eldritch.scifirpg.proto.Locations.Location data, Player player,
+    public Location(com.eldritch.invoken.proto.Locations.Location data, Player player,
             LocationMap map) {
         this.player = player;
         this.map = map;
@@ -136,7 +135,7 @@ public class Location {
         this.activators.addAll(activators);
     }
 
-    public void addEntities(com.eldritch.scifirpg.proto.Locations.Location data, TiledMap map) {
+    public void addEntities(com.eldritch.invoken.proto.Locations.Location data, TiledMap map) {
         // find spawn nodes
         for (MapLayer layer : map.getLayers()) {
             if (layer instanceof EncounterLayer) {
@@ -448,7 +447,7 @@ public class Location {
         return tiles;
     }
 
-    private static LocationMap readMap(com.eldritch.scifirpg.proto.Locations.Location data) {
+    private static LocationMap readMap(com.eldritch.invoken.proto.Locations.Location data) {
         // load the map, set the unit scale to 1/32 (1 unit == 32 pixels)
         String mapAsset = String.format("maps/%s.tmx", data.getId());
         AssetManager assetManager = new AssetManager();
