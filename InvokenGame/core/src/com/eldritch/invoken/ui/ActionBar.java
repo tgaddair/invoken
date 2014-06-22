@@ -24,8 +24,7 @@ public class ActionBar {
         augmentations = player.getInfo().getAugmentations();
         
         container = new Table();
-        container.setHeight(AbstractScreen.MENU_VIEWPORT_HEIGHT / 2);
-        container.setWidth(AbstractScreen.MENU_VIEWPORT_WIDTH);
+        resize(AbstractScreen.MENU_VIEWPORT_WIDTH, AbstractScreen.MENU_VIEWPORT_HEIGHT);
         container.bottom();
         
         for (final Augmentation aug : augmentations.getAugmentations()) {
@@ -57,6 +56,11 @@ public class ActionBar {
                 }
             }
         }
+    }
+    
+    public void resize(int width, int height) {
+        container.setHeight(height / 2);
+        container.setWidth(width);
     }
     
     public Table getTable() {

@@ -159,11 +159,23 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 		stage.act(delta);
 		stage.draw();
 
-		batch.begin();
-		font.draw(batch,
-				"FPS: " + Gdx.graphics.getFramesPerSecond(),
-				10, MENU_VIEWPORT_HEIGHT - 10);
-		batch.end();
+		drawFps();
+	}
+	
+	@Override
+    public void resize(int width, int height) {
+	    super.resize(width, height);
+	    actionBar.resize(width, height);
+        energyBar.resize(width, height);
+        loot.update(player);
+    }
+	
+	private void drawFps() {
+	    batch.begin();
+        font.draw(batch,
+                "FPS: " + Gdx.graphics.getFramesPerSecond(),
+                10, getHeight() - 10);
+        batch.end();
 	}
 	
 	private void drawStats() {
