@@ -12,6 +12,7 @@ public class Player extends Agent {
     private final AgentMover mover;
     private final Vector2 targetCoord = new Vector2();
     private boolean moving = false;
+    private boolean fixedTarget = false;
 
     public Player(Profession profession, int level, float x, float y, String body) {
         super(x, y, Human.getWidth(), Human.getHeight(), profession, level, Human
@@ -23,6 +24,9 @@ public class Player extends Agent {
     protected void takeAction(float delta, Location screen) {
         if (moving) {
             moving = mover.takeAction(delta, targetCoord, screen);
+            if (!moving) {
+                fixedTarget = false;
+            }
         }
 
         if (Gdx.input.isKeyPressed(Keys.LEFT) || Gdx.input.isKeyPressed(Keys.A)) {
@@ -45,18 +49,28 @@ public class Player extends Agent {
             moving = false;
         }
     }
+    
+    public void moveToFixedTarget(float x, float y) {
+        moveTo(x, y);
+        setMoving(true);
+        fixedTarget = true;
+    }
 
     public void moveTo(float x, float y) {
         targetCoord.x = x;
         targetCoord.y = y;
     }
-
+    
     public void setMoving(boolean moving) {
         this.moving = moving;
     }
 
     public boolean isMoving() {
         return moving;
+    }
+    
+    public boolean hasFixedTarget() {
+        return fixedTarget;
     }
 
     public boolean select(Agent other, Location location) {

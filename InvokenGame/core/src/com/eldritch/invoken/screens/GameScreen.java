@@ -14,7 +14,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.actor.Profession;
-import com.eldritch.invoken.actor.Profession.Executor;
 import com.eldritch.invoken.actor.items.Item;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Player;
@@ -127,7 +126,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		
 		// update player movement location
-        if (player.isMoving()) {
+        if (player.isMoving() && !player.hasFixedTarget()) {
             Vector3 world = camera.unproject(new Vector3(targetX, targetY, 0));
             player.moveTo(world.x, world.y);
         }
@@ -304,6 +303,12 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 			player.select(null, location);
 		}
 		playerClicked = false;
+		
+		if (!selection && !player.getInfo().getAugmentations().hasActiveAugmentation()) {
+		    // move to destination
+		    player.moveToFixedTarget(world.x, world.y);
+		    selection = true;
+		}
 		
 		return selection;
 	}
