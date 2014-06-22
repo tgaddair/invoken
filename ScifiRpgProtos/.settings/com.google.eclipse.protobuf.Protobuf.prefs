@@ -1,5 +1,5 @@
 compiler.compileProtoFiles=true
-compiler.enableProjectSettings=true
+compiler.descriptorFilePath=/Users/travis/bin/include/google/protobuf/descriptor.proto
 compiler.javaCodeGenerationEnabled=true
 compiler.protocFilePath=C\:\\Users\\Travis\\Apps\\proto\\protoc.exe
 eclipse.preferences.version=1
