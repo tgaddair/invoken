@@ -21,11 +21,7 @@ public class LootMenu {
 	public LootMenu(Skin skin) {
 		this.skin = skin;
 	    container = new Table(skin);
-	    container.setHeight(AbstractScreen.MENU_VIEWPORT_HEIGHT - 100);
-	    container.setWidth(AbstractScreen.MENU_VIEWPORT_WIDTH / 3);
-	    container.setPosition(
-	    		AbstractScreen.MENU_VIEWPORT_WIDTH / 2 - container.getWidth() / 2,
-	    		AbstractScreen.MENU_VIEWPORT_HEIGHT / 2 - container.getHeight() / 2);
+	    resize(AbstractScreen.MENU_VIEWPORT_WIDTH, AbstractScreen.MENU_VIEWPORT_HEIGHT);
 		container.center();
 
 	    table = new Table(skin);
@@ -50,6 +46,14 @@ public class LootMenu {
 		} else {
 			exitMenu();
 		}
+	}
+	
+	public void resize(int width, int height) {
+	    container.setHeight(height - 100);
+        container.setWidth(width / 3);
+        container.setPosition(
+                width / 2 - container.getWidth() / 2,
+                height / 2 - container.getHeight() / 2);
 	}
 	
 	public void setup(Player player, Npc npc) {
