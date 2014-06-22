@@ -825,6 +825,11 @@ public abstract class Agent extends CollisionEntity {
         }
         return result;
     }
+    
+    public Vector2 getBackwardVector() {
+        // used for wall normals
+        return getForwardVector().scl(-1);
+    }
 
     private Direction getDominantDirection(float x, float y) {
         if (Math.abs(x) > Math.abs(y)) {

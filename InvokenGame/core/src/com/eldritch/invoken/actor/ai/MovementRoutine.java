@@ -1,10 +1,12 @@
 package com.eldritch.invoken.actor.ai;
 
+import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import com.eldritch.invoken.actor.type.Agent;
+import com.badlogic.gdx.utils.Array;
 import com.eldritch.invoken.actor.type.Npc;
 import com.eldritch.invoken.encounter.Location;
+import com.eldritch.invoken.encounter.NaturalVector2;
 
 public abstract class MovementRoutine implements Routine {
     protected final Npc npc;
@@ -24,15 +26,17 @@ public abstract class MovementRoutine implements Routine {
         Vector2 velocityDelta = new Vector2(0, 0);
         doMove(velocityDelta, screen);
 
-        // check that the tile immediately adjacent in the chosen direction is
-        // not an obstacle
-        if (avoid) {
-            avoidCollisions(velocityDelta, screen);
-        }
-
         // scale down the previous velocity to reduce the effects of momentum as
         // we're turning
         velocity.scl(0.75f);
+        
+        if (npc.getTarget() != null) {
+            Vector2 steeringForce = avoidWalls(npc.getPosition(), npc.getTarget().getPosition(), screen);
+            if (steeringForce != null) {
+//                System.out.println("steering: " + steeringForce);
+                velocityDelta.add(steeringForce);
+            }
+        }
 
         // add our velocity delta and clamp it to the max velocity
         velocity.add(velocityDelta);
@@ -64,40 +68,41 @@ public abstract class MovementRoutine implements Routine {
             velocity.y += dy;
         }
     }
-
-    private void avoidCollisions(Vector2 velocity, Location screen) {
-        Vector2 position = npc.getPosition().cpy();
-        int i1 = (int) position.x - 1;
-        int i2 = (int) position.x + 1;
-        int j1 = (int) position.y - 1;
-        int j2 = (int) position.y + 1;
-
-        Vector2 obstacleMass = new Vector2(0, 0);
-        int totalObstacles = 0;
-        for (int i = i1; i <= i2; i++) {
-            for (int j = j1; j <= j2; j++) {
-                if (screen.isObstacle(i, j)) {
-                    obstacleMass.add(i, j);
-                    totalObstacles++;
+    
+    private Vector2 avoidWalls(Vector2 source, Vector2 target, Location location) {
+        // this will hold an index into the vector of walls
+        NaturalVector2 closestWall = null;
+        float minOvershoot = 0;
+        
+        // examine each feeler in turn
+        int startX = (int) Math.floor(Math.min(source.x, target.x));
+        int startY = (int) Math.floor(Math.min(source.y, target.y));
+        int endX = (int) Math.ceil(Math.max(source.x, target.x));
+        int endY = (int) Math.ceil(Math.max(source.y, target.y));
+        Array<Rectangle> tiles = location.getTiles(startX, startY, endX, endY);
+        
+        Vector2 tmp = new Vector2();
+        Vector2 tmpDisplace = new Vector2();
+        for (Rectangle tile : tiles) {
+            float r = Math.max(tile.width, tile.height);
+            Vector2 center = tile.getCenter(tmp);
+            
+            float overshoot = Intersector
+                    .intersectSegmentCircleDisplace(source, target, center, r, tmpDisplace);
+            if (overshoot < Float.POSITIVE_INFINITY) {
+                // intersection detected
+                if (closestWall == null || overshoot < minOvershoot) {
+                    closestWall = NaturalVector2.of((int) tile.x, (int) tile.y);
+                    minOvershoot = overshoot;
                 }
             }
         }
         
-        Rectangle actorRect = Location.getRectPool().obtain();
-        npc.getLargeBoundingBox(actorRect);
-        for (Agent neighbor : npc.getNeighbors()) {
-            if (neighbor != npc.getTarget() && neighbor.collidesWith(actorRect)) {
-                obstacleMass.add(neighbor.getPosition());
-                totalObstacles++;
-            }
+        Vector2 steeringForce = null;
+        if (closestWall != null) {
+            steeringForce = npc.getBackwardVector().scl(minOvershoot * 5);
         }
-        Location.getRectPool().free(actorRect);
-
-        if (totalObstacles > 0) {
-            obstacleMass.scl(1f / totalObstacles);
-            position.sub(obstacleMass).scl(2f);
-            velocity.add(position);
-        }
+        return steeringForce;
     }
 
     private void resetVelocity() {
