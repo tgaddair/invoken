@@ -67,6 +67,7 @@ project(":android") {
 
     dependencies {
         compile project(":core")
+        compile project(":protos")
         compile "com.badlogicgames.gdx:gdx-backend-android:$gdxVersion"        
         natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-x86"
         natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-armeabi"
