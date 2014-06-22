@@ -7,6 +7,7 @@ import java.util.List;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
 import com.badlogic.gdx.math.Vector2;
+import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.encounter.layer.LocationCell;
 import com.eldritch.invoken.encounter.layer.LocationLayer;
 import com.eldritch.invoken.encounter.layer.RemovableCell;
@@ -33,21 +34,22 @@ public class DoorActivator implements Activator {
     }
 
     @Override
-    public boolean click(float x, float y) {
+    public boolean click(Agent agent, Location location, float x, float y) {
         boolean clicked = x >= position.x && x <= position.x + 1 && y >= position.y
                 && y <= position.y + 1;
         if (clicked) {
-            activate();
+            activate(agent, location);
         }
         return clicked;
     }
 
     @Override
-    public void activate() {
+    public void activate(Agent agent, Location location) {
         if (locked) {
             // unlock
             locked = false;
             resetCell();
+            location.alertTo(agent);
             return;
         }
         
