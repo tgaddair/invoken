@@ -42,11 +42,7 @@ public class LightManager {
         defaultShader = new ShaderProgram(vertexShader, defaultPixelShader);
         finalShader = createShader(finalPixelShader, ambientColor, ambientIntensity);
         pauseShader = createShader(finalPixelShader, pauseColor, ambientIntensity * 2);
-
-        int w = AbstractScreen.MENU_VIEWPORT_WIDTH;
-        int h = AbstractScreen.MENU_VIEWPORT_HEIGHT;
-
-        fbo = new FrameBuffer(Format.RGBA8888, w, h, false);
+        resize(AbstractScreen.MENU_VIEWPORT_WIDTH, AbstractScreen.MENU_VIEWPORT_HEIGHT);
     }
     
     private ShaderProgram createShader(String pixelShader, Vector3 color, float intensity) {
@@ -64,6 +60,22 @@ public class LightManager {
         shader.end();
         
         return shader;
+    }
+    
+    public void resize(int width, int height) {
+        resize(defaultShader);
+        resize(finalShader);
+        resize(pauseShader);
+        fbo = new FrameBuffer(Format.RGBA8888, width, height, false);
+    }
+    
+    private void resize(ShaderProgram shader) {
+        int w = AbstractScreen.MENU_VIEWPORT_WIDTH;
+        int h = AbstractScreen.MENU_VIEWPORT_HEIGHT;
+        
+        shader.begin();
+        shader.setUniformf("resolution", w, h);
+        shader.end();
     }
 
     public void addLight(Light light) {

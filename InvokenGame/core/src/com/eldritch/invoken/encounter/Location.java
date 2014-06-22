@@ -165,6 +165,10 @@ public class Location {
         }
         return list;
     }
+    
+    public void resize(int width, int height) {
+        lightManager.resize(width, height);
+    }
 
     public void addLights(List<Light> lights) {
         for (Light light : lights) {

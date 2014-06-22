@@ -168,6 +168,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 	    actionBar.resize(width, height);
         energyBar.resize(width, height);
         loot.update(player);
+        location.resize(width, height);
     }
 	
 	private void drawFps() {
