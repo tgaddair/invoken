@@ -101,22 +101,25 @@ public class FactionManager {
                 // about others in relation to it
                 float a = getReputation(faction) / 20f;
                 
-                // find a faction we have a reaction towards
-                for (Faction otherFaction : other.getInfo().getFactions()) {
-                    if (faction.hasRelation(otherFaction)) {
-                        // we care more about how our target is perceived by the related faction
-                        float b = other.getInfo().getReputation(otherFaction) / 10f;
-                        float f = faction.getRelation(otherFaction);
-                        
-                        // check if they're hated by a faction we hate
-                        if (b < 0 && f < 0) {
-                            // scale down "the enemy of my enemy is my friend" bonus
-                            b /= 5;
+                // only consider factions we're currently on good terms with
+                if (a > 0) {
+                    // find a faction we have a reaction towards
+                    for (Faction otherFaction : other.getInfo().getFactions()) {
+                        if (faction.hasRelation(otherFaction)) {
+                            // we care more about how our target is perceived by the related faction
+                            float b = other.getInfo().getReputation(otherFaction) / 10f;
+                            float f = faction.getRelation(otherFaction);
+
+                            // check if they're hated by a faction we hate
+                            if (b < 0 && f < 0) {
+                                // scale down "the enemy of my enemy is my friend" bonus
+                                b /= 5;
+                            }
+
+                            // r: [-100, 100]
+                            float r = a * b * f;
+                            reaction += r;
                         }
-                        
-                        // r: [-100, 100]
-                        float r = a * b * f;
-                        reaction += r;
                     }
                 }
             }
