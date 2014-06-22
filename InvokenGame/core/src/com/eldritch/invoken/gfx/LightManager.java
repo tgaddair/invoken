@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.g2d.Batch;
@@ -29,11 +28,11 @@ public class LightManager {
     private ShaderProgram finalShader;
     private ShaderProgram pauseShader;
 
-    final String defaultPixelShader = new FileHandle("shader/defaultPixelShader.glsl").readString();
-    final String ambientPixelShader = new FileHandle("shader/ambientPixelShader.glsl").readString();
-    final String vertexShader = new FileHandle("shader/vertexShader.glsl").readString();
-    final String lightPixelShader = new FileHandle("shader/lightPixelShader.glsl").readString();
-    final String finalPixelShader = new FileHandle("shader/pixelShader.glsl").readString();
+    final String defaultPixelShader = Gdx.files.internal("shader/defaultPixelShader.glsl").readString();
+    final String ambientPixelShader = Gdx.files.internal("shader/ambientPixelShader.glsl").readString();
+    final String vertexShader = Gdx.files.internal("shader/vertexShader.glsl").readString();
+    final String lightPixelShader = Gdx.files.internal("shader/lightPixelShader.glsl").readString();
+    final String finalPixelShader = Gdx.files.internal("shader/pixelShader.glsl").readString();
 
     private final List<Light> lights = new ArrayList<Light>();
     private FrameBuffer fbo;
