@@ -86,12 +86,16 @@ public class LocationGenerator {
         LocationLayer trim = createTrimLayer(base, map);
         addLights(trim, base, lights);
         map.getLayers().add(trim);
+        
+        // add furniture
+        IcarianFurnitureGenerator furnitureGenerator = new IcarianFurnitureGenerator(atlas);
+        map.getLayers().add(furnitureGenerator.generateClutter(base, ground, map));
 
         LocationLayer overlay = createOverlayLayer(base, map);
         map.getLayers().add(overlay);
         LocationLayer overlayTrim = createOverlayTrimLayer(base, overlay, map);
         map.getLayers().add(overlayTrim);
-
+        
         LocationLayer collision = createCollisionLayer(base, map);
         map.getLayers().add(collision);
         for (LocationLayer layer : createSpawnLayers(base, leafs, proto.getEncounterList(), map)) {
@@ -100,7 +104,7 @@ public class LocationGenerator {
 
         List<Activator> activators = new ArrayList<Activator>();
         createDoors(base, trim, overlay, overlayTrim, collision, activators);
-
+        
         Location location = new Location(proto, player, map);
         location.addLights(lights);
         location.addActivators(activators);
@@ -593,7 +597,7 @@ public class LocationGenerator {
         return x > 0 && x < (w - 1) && y > 0 && y < (h - 3);
     }
 
-    private Cell addCell(LocationLayer layer, TiledMapTile tile, int x, int y) {
+    static Cell addCell(LocationLayer layer, TiledMapTile tile, int x, int y) {
         Cell cell = new LocationCell(NaturalVector2.of(x, y), layer);
         cell.setTile(tile);
         layer.setCell(x, y, cell);

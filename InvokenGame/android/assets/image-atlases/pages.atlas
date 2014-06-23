@@ -431,6 +431,41 @@ test-biome/door-activator-locked
   orig: 32, 32
   offset: 0, 0
   index: -1
+test-biome/furn-cache-sm
+  rotate: false
+  xy: 288, 320
+  size: 96, 32
+  orig: 96, 32
+  offset: 0, 0
+  index: -1
+test-biome/furn-cache-lg
+  rotate: false
+  xy: 384, 320
+  size: 128, 32
+  orig: 128, 32
+  offset: 0, 0
+  index: -1
+test-biome/furn-server1
+  rotate: false
+  xy: 288, 352
+  size: 32, 64
+  orig: 32, 64
+  offset: 0, 0
+  index: -1
+test-biome/furn-server2
+  rotate: false
+  xy: 320, 352
+  size: 32, 64
+  orig: 32, 64
+  offset: 0, 0
+  index: -1
+test-biome/furn-server3
+  rotate: false
+  xy: 352, 352
+  size: 32, 64
+  orig: 32, 64
+  offset: 0, 0
+  index: -1
 markers/collision
   rotate: false
   xy: 0, 704
