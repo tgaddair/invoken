@@ -36,6 +36,8 @@ public class LightManager {
 
     private final List<Light> lights = new ArrayList<Light>();
     private FrameBuffer fbo;
+    private int width;
+    private int height;
 
     public LightManager() {
         ShaderProgram.pedantic = false;
@@ -51,18 +53,13 @@ public class LightManager {
         shader.setUniformi("u_lightmap", 1);
         shader.setUniformf("ambientColor", color.x, color.y, color.z, intensity);
         shader.end();
-        
-        int w = AbstractScreen.MENU_VIEWPORT_WIDTH;
-        int h = AbstractScreen.MENU_VIEWPORT_HEIGHT;
-        
-        shader.begin();
-        shader.setUniformf("resolution", w, h);
-        shader.end();
-        
         return shader;
     }
     
     public void resize(int width, int height) {
+        this.width = width;
+        this.height = height;
+        
         resize(defaultShader);
         resize(finalShader);
         resize(pauseShader);
@@ -70,11 +67,8 @@ public class LightManager {
     }
     
     private void resize(ShaderProgram shader) {
-        int w = AbstractScreen.MENU_VIEWPORT_WIDTH;
-        int h = AbstractScreen.MENU_VIEWPORT_HEIGHT;
-        
         shader.begin();
-        shader.setUniformf("resolution", w, h);
+        shader.setUniformf("resolution", width, height);
         shader.end();
     }
 
