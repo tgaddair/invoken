@@ -66,7 +66,6 @@ public class LocationGenerator {
         map.getLayers().add(base);
 
         LocationLayer trim = createTrimLayer(base, map);
-        addLights(trim, base, lights);
         map.getLayers().add(trim);
         
         LocationLayer overlay = createOverlayLayer(base, map);
@@ -88,6 +87,7 @@ public class LocationGenerator {
         furnitureGenerator.createDoors(base, trim, overlay, overlayTrim, collision, activators);
         
         // lights
+        furnitureGenerator.addLights(trim, base, lights, midWallCenter);
         
         // clutter
         map.getLayers().add(furnitureGenerator.generateClutter(base, ground, map));
@@ -177,28 +177,6 @@ public class LocationGenerator {
         }
 
         return layer;
-    }
-
-    private void addLights(LocationLayer layer, LocationLayer base, List<Light> lights) {
-        TiledMapTile light = new StaticTiledMapTile(atlas.findRegion("test-biome/light1"));
-        for (int y = 0; y < base.getHeight(); y++) {
-            // scan by row so we can properly distribute lights
-            int lastLight = 0;
-            for (int x = 0; x < base.getWidth(); x++) {
-                Cell cell = base.getCell(x, y);
-                if (cell != null && cell.getTile() == midWallCenter) {
-                    // with some probability, add a light to the wall
-                    if (lastLight == 1 && Math.random() < 0.75) {
-                        addCell(layer, light, x, y);
-                        lights.add(new StaticLight(new Vector2(x + 0.5f, y + 0.5f)));
-                    }
-                    lastLight = (lastLight + 1) % 5;
-                } else {
-                    // distribute along consecutive walls, so reset when there's a gap
-                    lastLight = 0;
-                }
-            }
-        }
     }
 
     private LocationLayer createOverlayLayer(LocationLayer base, LocationMap map) {

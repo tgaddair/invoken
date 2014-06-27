@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
 import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
+import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.encounter.Activator;
 import com.eldritch.invoken.encounter.DoorActivator;
 import com.eldritch.invoken.encounter.NaturalVector2;
@@ -17,6 +18,8 @@ import com.eldritch.invoken.encounter.layer.LocationLayer.CollisionLayer;
 import com.eldritch.invoken.encounter.layer.LocationCell;
 import com.eldritch.invoken.encounter.layer.LocationMap;
 import com.eldritch.invoken.encounter.layer.RemovableCell;
+import com.eldritch.invoken.gfx.Light;
+import com.eldritch.invoken.gfx.Light.StaticLight;
 
 public abstract class FurnitureGenerator {
     private final Set<NaturalVector2> marked = new HashSet<NaturalVector2>();
@@ -43,6 +46,28 @@ public abstract class FurnitureGenerator {
                 atlas.findRegion("test-biome/door-over-right-top"));
         unlockedDoor = new StaticTiledMapTile(atlas.findRegion("test-biome/door-activator"));
         lockedDoor = new StaticTiledMapTile(atlas.findRegion("test-biome/door-activator-locked"));
+    }
+    
+    public void addLights(LocationLayer layer, LocationLayer base, List<Light> lights, TiledMapTile placer) {
+        TiledMapTile light = new StaticTiledMapTile(atlas.findRegion("test-biome/light1"));
+        for (int y = 0; y < base.getHeight(); y++) {
+            // scan by row so we can properly distribute lights
+            int lastLight = 0;
+            for (int x = 0; x < base.getWidth(); x++) {
+                Cell cell = base.getCell(x, y);
+                if (cell != null && cell.getTile() == placer) {
+                    // with some probability, add a light to the wall
+                    if (lastLight == 1 && Math.random() < 0.75) {
+                        addCell(layer, light, x, y);
+                        lights.add(new StaticLight(new Vector2(x + 0.5f, y + 0.5f)));
+                    }
+                    lastLight = (lastLight + 1) % 5;
+                } else {
+                    // distribute along consecutive walls, so reset when there's a gap
+                    lastLight = 0;
+                }
+            }
+        }
     }
     
     public void createDoors(LocationLayer base, LocationLayer trim,
