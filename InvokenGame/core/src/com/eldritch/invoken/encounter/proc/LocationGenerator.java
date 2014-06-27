@@ -18,12 +18,12 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.actor.type.Player;
 import com.eldritch.invoken.encounter.Activator;
-import com.eldritch.invoken.encounter.DoorActivator;
 import com.eldritch.invoken.encounter.Location;
 import com.eldritch.invoken.encounter.NaturalVector2;
 import com.eldritch.invoken.encounter.layer.EncounterLayer;
 import com.eldritch.invoken.encounter.layer.LocationCell;
 import com.eldritch.invoken.encounter.layer.LocationLayer;
+import com.eldritch.invoken.encounter.layer.LocationLayer.CollisionLayer;
 import com.eldritch.invoken.encounter.layer.LocationMap;
 import com.eldritch.invoken.encounter.layer.RemovableCell;
 import com.eldritch.invoken.gfx.Light;
@@ -41,14 +41,6 @@ public class LocationGenerator {
     private final TiledMapTile midWallCenter;
     private final TiledMapTile leftTrim;
     private final TiledMapTile rightTrim;
-    private final TiledMapTile doorLeft;
-    private final TiledMapTile doorRight;
-    private final TiledMapTile doorOverLeft;
-    private final TiledMapTile doorOverRight;
-    private final TiledMapTile doorOverLeftTop;
-    private final TiledMapTile doorOverRightTop;
-    private final TiledMapTile unlockedDoor;
-    private final TiledMapTile lockedDoor;
     private final TiledMapTile collider;
 
     public LocationGenerator() {
@@ -59,15 +51,6 @@ public class LocationGenerator {
         midWallCenter = new StaticTiledMapTile(atlas.findRegion("test-biome/mid-wall-center"));
         leftTrim = new StaticTiledMapTile(atlas.findRegion("test-biome/left-trim"));
         rightTrim = new StaticTiledMapTile(atlas.findRegion("test-biome/right-trim"));
-        doorLeft = new StaticTiledMapTile(atlas.findRegion("test-biome/door-front-bottom-left"));
-        doorRight = new StaticTiledMapTile(atlas.findRegion("test-biome/door-front-bottom-right"));
-        doorOverLeft = new StaticTiledMapTile(atlas.findRegion("test-biome/door-over-left"));
-        doorOverRight = new StaticTiledMapTile(atlas.findRegion("test-biome/door-over-right"));
-        doorOverLeftTop = new StaticTiledMapTile(atlas.findRegion("test-biome/door-over-left-top"));
-        doorOverRightTop = new StaticTiledMapTile(
-                atlas.findRegion("test-biome/door-over-right-top"));
-        unlockedDoor = new StaticTiledMapTile(atlas.findRegion("test-biome/door-activator"));
-        lockedDoor = new StaticTiledMapTile(atlas.findRegion("test-biome/door-activator-locked"));
         collider = new StaticTiledMapTile(atlas.findRegion("markers/collision"));
     }
 
@@ -96,14 +79,14 @@ public class LocationGenerator {
         LocationLayer overlayTrim = createOverlayTrimLayer(base, overlay, map);
         map.getLayers().add(overlayTrim);
         
-        LocationLayer collision = createCollisionLayer(base, map);
+        CollisionLayer collision = createCollisionLayer(base, map);
         map.getLayers().add(collision);
         for (LocationLayer layer : createSpawnLayers(base, leafs, proto.getEncounterList(), map)) {
             map.getLayers().add(layer);
         }
 
         List<Activator> activators = new ArrayList<Activator>();
-        createDoors(base, trim, overlay, overlayTrim, collision, activators);
+        furnitureGenerator.createDoors(base, trim, overlay, overlayTrim, collision, activators);
         
         Location location = new Location(proto, player, map);
         location.addLights(lights);
@@ -113,7 +96,7 @@ public class LocationGenerator {
     }
 
     private LocationMap getBaseMap(int width, int height) {
-        LocationMap map = new LocationMap();
+        LocationMap map = new LocationMap(ground);
         MapProperties mapProperties = map.getProperties();
         mapProperties.put("width", width);
         mapProperties.put("height", height);
@@ -255,11 +238,11 @@ public class LocationGenerator {
             for (int y = 0; y < overlay.getHeight(); y++) {
                 Cell cell = overlay.getCell(x, y);
                 if (cell != null) {
-                    if (isGround(x - 1, y, base) && overlay.getCell(x - 1, y) == null) {
+                    if (base.isGround(x - 1, y) && overlay.getCell(x - 1, y) == null) {
                         // left space is ground
                         addCell(layer, overlayRightTrim, x, y);
                     }
-                    if (isGround(x + 1, y, base) && overlay.getCell(x + 1, y) == null) {
+                    if (base.isGround(x + 1, y) && overlay.getCell(x + 1, y) == null) {
                         // right space is ground
                         addCell(layer, overlayLeftTrim, x, y);
                     }
@@ -270,8 +253,8 @@ public class LocationGenerator {
         return layer;
     }
 
-    private LocationLayer createCollisionLayer(LocationLayer base, LocationMap map) {
-        LocationLayer layer = new LocationLayer(base.getWidth(), base.getHeight(), PX, PX, map);
+    private CollisionLayer createCollisionLayer(LocationLayer base, LocationMap map) {
+        CollisionLayer layer = new CollisionLayer(base.getWidth(), base.getHeight(), PX, PX, map, collider);
         layer.setVisible(false);
         layer.setOpacity(1.0f);
         layer.setName("collision");
@@ -375,147 +358,6 @@ public class LocationGenerator {
         }
     }
 
-    private void createDoors(LocationLayer base, LocationLayer trim,
-            LocationLayer overlay, LocationLayer overlayTrim, LocationLayer collision,
-            List<Activator> activators) {
-        addDoors(base, trim, overlay, collision, activators);
-        addTrimDoors(base, trim, overlayTrim, collision, activators);
-    }
-
-    private void addDoors(LocationLayer base, LocationLayer trim,
-            LocationLayer overlay, LocationLayer collision, List<Activator> activators) {
-
-        TiledMapTile doorTopLeft = new StaticTiledMapTile(
-                atlas.findRegion("test-biome/door-front-top-left"));
-        TiledMapTile doorTopRight = new StaticTiledMapTile(
-                atlas.findRegion("test-biome/door-front-top-right"));
-
-        // add front doors
-        List<RemovableCell> cells = new ArrayList<RemovableCell>();
-        for (int x = 0; x < base.getWidth(); x++) {
-            for (int y = 0; y < base.getHeight(); y++) {
-                Cell cell = base.getCell(x, y);
-                if (cell != null && cell.getTile() == ground) {
-                    // wall to the left, wall to the right
-                    if (isWall(x - 4, y, base) && isWall(x + 1, y, base)) {
-                        if (isGround(x - 4, y - 1, base) && isGround(x + 1, y - 1, base)) {
-                            // room below
-                            addCell(trim, doorLeft, x - 3, y, cells);
-                            addCell(trim, doorRight, x - 2, y, cells);
-                            addCell(trim, doorLeft, x - 1, y, cells);
-                            addCell(trim, doorRight, x, y, cells);
-
-                            // add overlay
-                            addCell(overlay, doorTopLeft, x - 3, y + 1, cells);
-                            addCell(overlay, doorTopRight, x - 2, y + 1, cells);
-                            addCell(overlay, doorTopLeft, x - 1, y + 1, cells);
-                            addCell(overlay, doorTopRight, x, y + 1, cells);
-
-                            // add collision
-                            addCell(collision, collider, x - 3, y, cells);
-                            addCell(collision, collider, x - 2, y, cells);
-                            addCell(collision, collider, x - 1, y, cells);
-                            addCell(collision, collider, x, y, cells);
-
-                            // add activator
-                            DoorActivator activator = new DoorActivator(x - 4, y + 1, cells,
-                                    unlockedDoor, lockedDoor, trim);
-                            activators.add(activator);
-                            trim.setCell(x - 4, y + 1, activator.getCell());
-                            cells.clear();
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    private void addTrimDoors(LocationLayer base, LocationLayer trim,
-            LocationLayer overlayTrim, LocationLayer collision, List<Activator> activators) {
-
-        List<RemovableCell> cells = new ArrayList<RemovableCell>();
-        for (int x = 0; x < base.getWidth(); x++) {
-            for (int y = 0; y < base.getHeight(); y++) {
-                Cell cell = base.getCell(x, y);
-                if (cell != null && cell.getTile() == ground) {
-                    // wall up, wall down
-                    if (hasCell(x, y - 2, overlayTrim) && isWall(x, y + 1, base)) {
-                        if (isGround(x - 1, y - 2, base) && isGround(x - 1, y + 1, base)) {
-                            // room left
-                            addTrimDoor(trim, overlayTrim, collision, doorOverLeft,
-                                    doorOverLeftTop, x, y, activators, cells);
-                        } else if (isGround(x + 1, y - 2, base) && isGround(x + 1, y + 1, base)
-                                && trim.getCell(x, y + 2) == null) {
-                            // room right and no pre-existing door panel in the way
-                            addTrimDoor(trim, overlayTrim, collision, doorOverRight,
-                                    doorOverRightTop, x, y, activators, cells);
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    private void addTrimDoor(LocationLayer trim, LocationLayer overlayTrim,
-            LocationLayer collision, TiledMapTile tile, TiledMapTile top, int x, int y,
-            List<Activator> activators, List<RemovableCell> cells) {
-        // add the doors
-        addCell(overlayTrim, tile, x, y - 1, cells);
-        addCell(overlayTrim, tile, x, y, cells);
-        addCell(overlayTrim, tile, x, y + 1, cells);
-        addCell(overlayTrim, tile, x, y + 2, cells);
-        addCell(overlayTrim, top, x, y + 3, cells);
-
-        // add collision if absent so we don't delete collision cells when the door comes down
-        addCellIfAbsent(collision, collider, x, y - 2, cells);
-        addCellIfAbsent(collision, collider, x, y - 1, cells);
-        addCellIfAbsent(collision, collider, x, y, cells);
-        addCellIfAbsent(collision, collider, x, y + 1, cells);
-        addCellIfAbsent(collision, collider, x, y + 2, cells);
-        addCellIfAbsent(collision, collider, x, y + 3, cells);
-
-        // add activator
-        DoorActivator activator = new DoorActivator(x, y + 2, cells, unlockedDoor, lockedDoor, trim);
-        activators.add(activator);
-        trim.setCell(x, y + 2, activator.getCell());
-        cells.clear();
-    }
-
-    private boolean inBounds(int x, int y, LocationLayer layer) {
-        return x >= 0 && x < layer.getWidth() && y >= 0 && y < layer.getHeight();
-    }
-
-    private boolean hasCell(int x, int y, LocationLayer layer) {
-        return inBounds(x, y, layer) && layer.getCell(x, y) != null;
-    }
-    
-    private boolean hasAdjacentCell(int x0, int y0, LocationLayer layer) {
-        for (int dx = -1; dx <= 1; dx++) {
-            for (int dy = -1; dy <= 1; dy++) {
-                if (dx == 0 && dy == 0) {
-                    continue;
-                }
-                
-                int x = x0 + dx;
-                int y = y0 + dy;
-                if (hasCell(x, y, layer)) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    private boolean isGround(int x, int y, LocationLayer layer) {
-        return inBounds(x, y, layer) && layer.getCell(x, y) != null
-                && layer.getCell(x, y).getTile() == ground;
-    }
-
-    private boolean isWall(int x, int y, LocationLayer layer) {
-        return inBounds(x, y, layer) && layer.getCell(x, y) != null
-                && layer.getCell(x, y).getTile() != ground;
-    }
-
     public NaturalVector2 getPoint(Rectangle rect, LocationLayer base, LocationLayer layer) {
         int left = (int) rect.x * SCALE;
         int right = (int) (left + rect.width * SCALE);
@@ -535,7 +377,7 @@ public class LocationGenerator {
         visited.add(seed);
         while (!queue.isEmpty()) {
             NaturalVector2 point = queue.remove();
-            if (isGround(point.x, point.y, base) && !hasCell(point.x, point.y, layer)) {
+            if (base.isGround(point.x, point.y) && !layer.hasCell(point.x, point.y)) {
                 // valid point: ground and no pre-existing spawn nodes
                 return point;
             }
@@ -604,17 +446,10 @@ public class LocationGenerator {
         return cell;
     }
 
-    private void addCell(LocationLayer layer, TiledMapTile tile, int x, int y,
+    public static void addCell(LocationLayer layer, TiledMapTile tile, int x, int y,
             List<RemovableCell> cells) {
         Cell cell = addCell(layer, tile, x, y);
         cells.add(new RemovableCell(cell, layer, x, y));
-    }
-
-    private void addCellIfAbsent(LocationLayer layer, TiledMapTile tile, int x, int y,
-            List<RemovableCell> cells) {
-        if (layer.getCell(x, y) == null) {
-            addCell(layer, tile, x, y, cells);
-        }
     }
 
     private List<Leaf> createLeaves(int width, int height) {

@@ -15,7 +15,8 @@ import com.eldritch.invoken.screens.AbstractScreen;
 
 public class LightManager {
     // values passed to the shader
-    public static final float ambientIntensity = 0.8f;
+//    public static final float ambientIntensity = 0.8f;
+    public static final float ambientIntensity = 1.25f;
     public static final Vector3 ambientColor = new Vector3(0.7f, 0.7f, 0.9f);
     public static final Vector3 pauseColor = new Vector3(0.3f, 0.6f, 0.9f);
 

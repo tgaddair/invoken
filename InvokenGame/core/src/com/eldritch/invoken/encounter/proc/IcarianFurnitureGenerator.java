@@ -1,7 +1,9 @@
 package com.eldritch.invoken.encounter.proc;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -9,13 +11,16 @@ import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
 import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
 import com.eldritch.invoken.encounter.Location;
+import com.eldritch.invoken.encounter.NaturalVector2;
 import com.eldritch.invoken.encounter.layer.LocationLayer;
 import com.eldritch.invoken.encounter.layer.LocationMap;
 
-public class IcarianFurnitureGenerator implements FurnitureGenerator {
+public class IcarianFurnitureGenerator extends FurnitureGenerator {
+    // tiles for different furniture pieces
     private final List<MultiTileStatic> servers = new ArrayList<MultiTileStatic>();
 
     public IcarianFurnitureGenerator(TextureAtlas atlas) {
+        super(atlas);
         servers.add(new MultiTileStatic(atlas.findRegion("test-biome/furn-server1")));
         servers.add(new MultiTileStatic(atlas.findRegion("test-biome/furn-server2")));
         servers.add(new MultiTileStatic(atlas.findRegion("test-biome/furn-server3")));
