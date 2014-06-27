@@ -439,17 +439,11 @@ public class LocationGenerator {
         return x > 0 && x < (w - 1) && y > 0 && y < (h - 3);
     }
 
-    static Cell addCell(LocationLayer layer, TiledMapTile tile, int x, int y) {
+    private static Cell addCell(LocationLayer layer, TiledMapTile tile, int x, int y) {
         Cell cell = new LocationCell(NaturalVector2.of(x, y), layer);
         cell.setTile(tile);
         layer.setCell(x, y, cell);
         return cell;
-    }
-
-    public static void addCell(LocationLayer layer, TiledMapTile tile, int x, int y,
-            List<RemovableCell> cells) {
-        Cell cell = addCell(layer, tile, x, y);
-        cells.add(new RemovableCell(cell, layer, x, y));
     }
 
     private List<Leaf> createLeaves(int width, int height) {

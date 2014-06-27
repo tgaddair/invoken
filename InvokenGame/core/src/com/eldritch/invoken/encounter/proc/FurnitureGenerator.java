@@ -14,6 +14,7 @@ import com.eldritch.invoken.encounter.DoorActivator;
 import com.eldritch.invoken.encounter.NaturalVector2;
 import com.eldritch.invoken.encounter.layer.LocationLayer;
 import com.eldritch.invoken.encounter.layer.LocationLayer.CollisionLayer;
+import com.eldritch.invoken.encounter.layer.LocationCell;
 import com.eldritch.invoken.encounter.layer.LocationMap;
 import com.eldritch.invoken.encounter.layer.RemovableCell;
 
@@ -44,6 +45,10 @@ public abstract class FurnitureGenerator {
         lockedDoor = new StaticTiledMapTile(atlas.findRegion("test-biome/door-activator-locked"));
     }
     
+    private void mark(int x, int y) {
+        marked.add(NaturalVector2.of(x, y));
+    }
+    
     public void createDoors(LocationLayer base, LocationLayer trim,
             LocationLayer overlay, LocationLayer overlayTrim, CollisionLayer collision,
             List<Activator> activators) {
@@ -69,28 +74,29 @@ public abstract class FurnitureGenerator {
                     if (base.isWall(x - 4, y) && base.isWall(x + 1, y)) {
                         if (base.isGround(x - 4, y - 1) && base.isGround(x + 1, y - 1)) {
                             // room below
-                            LocationGenerator.addCell(trim, doorLeft, x - 3, y, cells);
-                            LocationGenerator.addCell(trim, doorRight, x - 2, y, cells);
-                            LocationGenerator.addCell(trim, doorLeft, x - 1, y, cells);
-                            LocationGenerator.addCell(trim, doorRight, x, y, cells);
+                            addCell(trim, doorLeft, x - 3, y, cells);
+                            addCell(trim, doorRight, x - 2, y, cells);
+                            addCell(trim, doorLeft, x - 1, y, cells);
+                            addCell(trim, doorRight, x, y, cells);
 
                             // add overlay
-                            LocationGenerator.addCell(overlay, doorTopLeft, x - 3, y + 1, cells);
-                            LocationGenerator.addCell(overlay, doorTopRight, x - 2, y + 1, cells);
-                            LocationGenerator.addCell(overlay, doorTopLeft, x - 1, y + 1, cells);
-                            LocationGenerator.addCell(overlay, doorTopRight, x, y + 1, cells);
+                            addCell(overlay, doorTopLeft, x - 3, y + 1, cells);
+                            addCell(overlay, doorTopRight, x - 2, y + 1, cells);
+                            addCell(overlay, doorTopLeft, x - 1, y + 1, cells);
+                            addCell(overlay, doorTopRight, x, y + 1, cells);
 
                             // add collision
-                            collision.addCell(x - 3, y, cells);
-                            collision.addCell(x - 2, y, cells);
-                            collision.addCell(x - 1, y, cells);
-                            collision.addCell(x, y, cells);
+                            collision.addCell(x - 3, y, cells, this);
+                            collision.addCell(x - 2, y, cells, this);
+                            collision.addCell(x - 1, y, cells, this);
+                            collision.addCell(x, y, cells, this);
 
                             // add activator
                             DoorActivator activator = new DoorActivator(x - 4, y + 1, cells,
                                     unlockedDoor, lockedDoor, trim);
                             activators.add(activator);
                             trim.setCell(x - 4, y + 1, activator.getCell());
+                            mark(x - 4, y + 1);
                             cells.clear();
                         }
                     }
@@ -129,25 +135,45 @@ public abstract class FurnitureGenerator {
             CollisionLayer collision, TiledMapTile tile, TiledMapTile top, int x, int y,
             List<Activator> activators, List<RemovableCell> cells) {
         // add the doors
-        LocationGenerator.addCell(overlayTrim, tile, x, y - 1, cells);
-        LocationGenerator.addCell(overlayTrim, tile, x, y, cells);
-        LocationGenerator.addCell(overlayTrim, tile, x, y + 1, cells);
-        LocationGenerator.addCell(overlayTrim, tile, x, y + 2, cells);
-        LocationGenerator.addCell(overlayTrim, top, x, y + 3, cells);
+        addCell(overlayTrim, tile, x, y - 1, cells);
+        addCell(overlayTrim, tile, x, y, cells);
+        addCell(overlayTrim, tile, x, y + 1, cells);
+        addCell(overlayTrim, tile, x, y + 2, cells);
+        addCell(overlayTrim, top, x, y + 3, cells);
 
         // add collision if absent so we don't delete collision cells when the door comes down
-        collision.addCellIfAbsent(x, y - 2, cells);
-        collision.addCellIfAbsent(x, y - 1, cells);
-        collision.addCellIfAbsent(x, y, cells);
-        collision.addCellIfAbsent(x, y + 1, cells);
-        collision.addCellIfAbsent(x, y + 2, cells);
-        collision.addCellIfAbsent(x, y + 3, cells);
+        collision.addCellIfAbsent(x, y - 2, cells, this);
+        collision.addCellIfAbsent(x, y - 1, cells, this);
+        collision.addCellIfAbsent(x, y, cells, this);
+        collision.addCellIfAbsent(x, y + 1, cells, this);
+        collision.addCellIfAbsent(x, y + 2, cells, this);
+        collision.addCellIfAbsent(x, y + 3, cells, this);
 
         // add activator
         DoorActivator activator = new DoorActivator(x, y + 2, cells, unlockedDoor, lockedDoor, trim);
         activators.add(activator);
         trim.setCell(x, y + 2, activator.getCell());
+        mark(x, y + 2);
         cells.clear();
+    }
+    
+    public boolean isMarked(int x, int y) {
+        return marked.contains(NaturalVector2.of(x, y));
+    }
+    
+    public Cell addCell(LocationLayer layer, TiledMapTile tile, int x, int y) {
+        Cell cell = new LocationCell(NaturalVector2.of(x, y), layer);
+        cell.setTile(tile);
+        layer.setCell(x, y, cell);
+        mark(x, y);
+        return cell;
+    }
+
+    public void addCell(LocationLayer layer, TiledMapTile tile, int x, int y,
+            List<RemovableCell> cells) {
+        Cell cell = addCell(layer, tile, x, y);
+        cells.add(new RemovableCell(cell, layer, x, y));
+        mark(x,  y);
     }
     
     public abstract LocationLayer generateClutter(LocationLayer base, TiledMapTile ground, LocationMap map);

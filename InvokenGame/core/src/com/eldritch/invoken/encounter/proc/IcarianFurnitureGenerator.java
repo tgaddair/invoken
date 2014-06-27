@@ -71,7 +71,7 @@ public class IcarianFurnitureGenerator extends FurnitureGenerator {
         return servers.get(index);
     }
 
-    public static class MultiTileStatic {
+    public class MultiTileStatic {
         private final TiledMapTile[][] tiles;
 
         public MultiTileStatic(TextureRegion texture) {
@@ -88,7 +88,7 @@ public class IcarianFurnitureGenerator extends FurnitureGenerator {
         public void addTo(LocationLayer layer, int x, int y) {
             for (int i = 0; i < tiles.length; i++) {
                 for (int j = 0; j < tiles[i].length; j++) {
-                    LocationGenerator.addCell(layer, tiles[i][j], x + j, y - i);
+                    addCell(layer, tiles[i][j], x + j, y - i);
                 }
             }
         }

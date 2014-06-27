@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
+import com.eldritch.invoken.encounter.proc.FurnitureGenerator;
 import com.eldritch.invoken.encounter.proc.LocationGenerator;
 
 public class LocationLayer extends TiledMapTileLayer {
@@ -64,14 +65,14 @@ public class LocationLayer extends TiledMapTileLayer {
             this.collider = collider;
         }
         
-        public void addCell(int x, int y, List<RemovableCell> cells) {
-            LocationGenerator.addCell(this, collider, x, y, cells);
+        public void addCell(int x, int y, List<RemovableCell> cells, FurnitureGenerator generator) {
+            generator.addCell(this, collider, x, y, cells);
         }
 
         public void addCellIfAbsent(int x, int y,
-                List<RemovableCell> cells) {
+                List<RemovableCell> cells, FurnitureGenerator generator) {
             if (getCell(x, y) == null) {
-                LocationGenerator.addCell(this, collider, x, y, cells);
+                generator.addCell(this, collider, x, y, cells);
             }
         }
     }
