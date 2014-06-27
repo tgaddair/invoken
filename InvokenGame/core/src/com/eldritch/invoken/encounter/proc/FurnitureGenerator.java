@@ -45,10 +45,6 @@ public abstract class FurnitureGenerator {
         lockedDoor = new StaticTiledMapTile(atlas.findRegion("test-biome/door-activator-locked"));
     }
     
-    private void mark(int x, int y) {
-        marked.add(NaturalVector2.of(x, y));
-    }
-    
     public void createDoors(LocationLayer base, LocationLayer trim,
             LocationLayer overlay, LocationLayer overlayTrim, CollisionLayer collision,
             List<Activator> activators) {
@@ -157,6 +153,10 @@ public abstract class FurnitureGenerator {
         cells.clear();
     }
     
+    private void mark(int x, int y) {
+        marked.add(NaturalVector2.of(x, y));
+    }
+    
     public boolean isMarked(int x, int y) {
         return marked.contains(NaturalVector2.of(x, y));
     }
@@ -173,7 +173,7 @@ public abstract class FurnitureGenerator {
             List<RemovableCell> cells) {
         Cell cell = addCell(layer, tile, x, y);
         cells.add(new RemovableCell(cell, layer, x, y));
-        mark(x,  y);
+        mark(x, y);
     }
     
     public abstract LocationLayer generateClutter(LocationLayer base, TiledMapTile ground, LocationMap map);

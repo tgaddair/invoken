@@ -25,7 +25,6 @@ import com.eldritch.invoken.encounter.layer.LocationCell;
 import com.eldritch.invoken.encounter.layer.LocationLayer;
 import com.eldritch.invoken.encounter.layer.LocationLayer.CollisionLayer;
 import com.eldritch.invoken.encounter.layer.LocationMap;
-import com.eldritch.invoken.encounter.layer.RemovableCell;
 import com.eldritch.invoken.gfx.Light;
 import com.eldritch.invoken.gfx.Light.StaticLight;
 import com.eldritch.invoken.proto.Locations.Encounter;
@@ -70,10 +69,6 @@ public class LocationGenerator {
         addLights(trim, base, lights);
         map.getLayers().add(trim);
         
-        // add furniture
-        IcarianFurnitureGenerator furnitureGenerator = new IcarianFurnitureGenerator(atlas);
-        map.getLayers().add(furnitureGenerator.generateClutter(base, ground, map));
-
         LocationLayer overlay = createOverlayLayer(base, map);
         map.getLayers().add(overlay);
         LocationLayer overlayTrim = createOverlayTrimLayer(base, overlay, map);
@@ -85,8 +80,17 @@ public class LocationGenerator {
             map.getLayers().add(layer);
         }
 
+        // add furniture
         List<Activator> activators = new ArrayList<Activator>();
+        IcarianFurnitureGenerator furnitureGenerator = new IcarianFurnitureGenerator(atlas);
+        
+        // doors
         furnitureGenerator.createDoors(base, trim, overlay, overlayTrim, collision, activators);
+        
+        // lights
+        
+        // clutter
+        map.getLayers().add(furnitureGenerator.generateClutter(base, ground, map));
         
         Location location = new Location(proto, player, map);
         location.addLights(lights);

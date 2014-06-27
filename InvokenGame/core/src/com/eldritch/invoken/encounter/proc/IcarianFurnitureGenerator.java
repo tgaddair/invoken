@@ -39,7 +39,8 @@ public class IcarianFurnitureGenerator extends FurnitureGenerator {
                 Cell c1 = base.getCell(x, y);
                 Cell c2 = base.getCell(x, y - 1);
                 if (c1 != null && c1.getTile() != ground && c2 != null && c2.getTile() == ground) {
-                    if (shouldPlaceServer(x, y)) {
+                    MultiTileStatic server = getServer();
+                    if (shouldPlaceServer(server, x, y + 1)) {
                         getServer().addTo(layer, x, y + 1);
                     }
                 }
@@ -51,7 +52,11 @@ public class IcarianFurnitureGenerator extends FurnitureGenerator {
     
     private int lastX = 0;
     
-    private boolean shouldPlaceServer(int x, int y) {
+    private boolean shouldPlaceServer(MultiTileStatic server, int x, int y) {
+        if (!server.canPlaceAt(x, y)) {
+            return false;
+        }
+        
         boolean result = false;
         if (x == lastX + 1) {
             // high probability of placing another
@@ -91,6 +96,17 @@ public class IcarianFurnitureGenerator extends FurnitureGenerator {
                     addCell(layer, tiles[i][j], x + j, y - i);
                 }
             }
+        }
+        
+        public boolean canPlaceAt(int x, int y) {
+            for (int i = 0; i < tiles.length; i++) {
+                for (int j = 0; j < tiles[i].length; j++) {
+                    if (isMarked(x + j, y - i)) {
+                        return false;
+                    }
+                }
+            }
+            return true;
         }
     }
 }
