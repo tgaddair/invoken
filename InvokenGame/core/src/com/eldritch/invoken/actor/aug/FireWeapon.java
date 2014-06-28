@@ -17,7 +17,7 @@ import com.eldritch.invoken.effects.Bleed;
 import com.eldritch.invoken.encounter.Location;
 import com.eldritch.invoken.screens.GameScreen;
 
-public class FireWeapon extends Augmentation {
+public class FireWeapon extends ProjectileAugmentation {
     private static Pool<Bullet> bulletPool = new Pool<Bullet>() {
         @Override
         protected Bullet newObject() {
@@ -30,13 +30,18 @@ public class FireWeapon extends Augmentation {
     }
 
     @Override
-    public Action getAction(Agent owner, Agent target, Vector2 position) {
+    public Action getAction(Agent owner, Vector2 target) {
         return new FireAction(owner, target);
+    }
+    
+    @Override
+    public boolean isValid(Agent owner, Vector2 target) {
+        return super.isValid(owner, target) && owner.getInventory().hasRangedWeapon();
     }
 
     @Override
     public boolean isValid(Agent owner, Agent target) {
-        return target != null && target != owner && owner.getInventory().hasRangedWeapon();
+        return super.isValid(owner, target) && owner.getInventory().hasRangedWeapon();
     }
     
     @Override
@@ -50,12 +55,12 @@ public class FireWeapon extends Augmentation {
     }
 
     public class FireAction extends AnimatedAction {
-        private final Agent target;
+        private final Vector2 target;
         private final float width;
         private final float height;
         private final Map<Direction, Animation> animations = new HashMap<Direction, Animation>();
 
-        public FireAction(Agent actor, Agent target) {
+        public FireAction(Agent actor, Vector2 target) {
             super(actor, Activity.Combat, FireWeapon.this);
             this.target = target;
 
@@ -109,7 +114,7 @@ public class FireWeapon extends Augmentation {
         
         @Override
         public Vector2 getPosition() {
-            return target.getPosition();
+            return target;
         }
         
         private Animation getAnimation() {

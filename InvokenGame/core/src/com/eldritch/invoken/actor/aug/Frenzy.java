@@ -13,19 +13,14 @@ import com.eldritch.invoken.effects.Frenzied;
 import com.eldritch.invoken.encounter.Location;
 import com.eldritch.invoken.screens.GameScreen;
 
-public class Frenzy extends Augmentation {
+public class Frenzy extends ProjectileAugmentation {
     public Frenzy() {
         super("frenzy");
     }
     
 	@Override
-	public Action getAction(Agent owner, Agent target, Vector2 position) {
+	public Action getAction(Agent owner, Vector2 target) {
 		return new FrenzyAction(owner, target);
-	}
-	
-	@Override
-	public boolean isValid(Agent owner, Agent target) {
-		return target != null && target != owner && target.isAlive();
 	}
 	
 	@Override
@@ -39,9 +34,9 @@ public class Frenzy extends Augmentation {
     }
 	
 	public class FrenzyAction extends AnimatedAction {
-		private final Agent target;
+		private final Vector2 target;
 		
-		public FrenzyAction(Agent actor, Agent target) {
+		public FrenzyAction(Agent actor, Vector2 target) {
 			super(actor, Activity.Swipe, Frenzy.this);
 			this.target = target;
 		}
@@ -55,7 +50,7 @@ public class Frenzy extends Augmentation {
 		
 		@Override
         public Vector2 getPosition() {
-            return target.getPosition();
+            return target;
         }
 	}
 	

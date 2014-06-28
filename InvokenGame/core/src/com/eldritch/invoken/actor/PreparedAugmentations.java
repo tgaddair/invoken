@@ -118,12 +118,15 @@ public class PreparedAugmentations {
     }
     
     public boolean use(Augmentation aug, boolean queued) {
-        return use(aug, owner.getTarget().getPosition(), queued);
+        if (queued || owner.canAddAction()) {
+            return aug.invoke(owner, owner.getTarget());
+        }
+        return false;
     }
     
     public boolean use(Augmentation aug, Vector2 position, boolean queued) {
         if (queued || owner.canAddAction()) {
-            return aug.invoke(owner, owner.getTarget(), position);
+            return aug.invoke(owner, position);
         }
         return false;
     }

@@ -12,14 +12,24 @@ public class Barrier extends Augmentation {
     }
     
 	@Override
-	public Action getAction(Agent owner, Agent target, Vector2 position) {
+	public Action getAction(Agent owner, Agent target) {
 		return new ShieldAction(owner);
 	}
+	
+	@Override
+    public Action getAction(Agent owner, Vector2 target) {
+        return new ShieldAction(owner);
+    }
 	
 	@Override
 	public boolean isValid(Agent owner, Agent target) {
 		return true;
 	}
+	
+	@Override
+    public boolean isValid(Agent owner, Vector2 target) {
+        return true;
+    }
 	
 	@Override
     public int getCost(Agent owner) {

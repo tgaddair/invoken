@@ -43,7 +43,7 @@ public class Mirroring extends AnimatedEffect {
                     target.toggleOff(Mirroring.class);
                 }
                 
-                projectile.reset(target, projectile.getOwner());
+                projectile.reset(target, projectile.getOwner().getPosition());
                 return true;
             }
             return false;

@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.encounter.Location;
 
 public abstract class Projectile extends CollisionEntity implements TemporaryEntity {
@@ -32,6 +33,10 @@ public abstract class Projectile extends CollisionEntity implements TemporaryEnt
     }
     
     public void setup(Agent source, Agent target) {
+        setup(source, target.getPosition());
+    }
+    
+    public void setup(Agent source, Vector2 target) {
         finished = false;
         stateTime = 0;
 
@@ -39,10 +44,10 @@ public abstract class Projectile extends CollisionEntity implements TemporaryEnt
         reset(source, target);
     }
     
-    public void reset(Agent source, Agent target) {
+    public void reset(Agent source, Vector2 target) {
         owner = source;
         
-        velocity.set(target.getPosition());
+        velocity.set(target);
         velocity.sub(position);
         velocity.nor();
     }

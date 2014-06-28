@@ -15,13 +15,24 @@ public class RendWeapon extends Augmentation {
     }
 
     @Override
-    public Action getAction(Agent owner, Agent target, Vector2 position) {
+    public Action getAction(Agent owner, Agent target) {
         return new RendAction(owner, target);
+    }
+    
+    @Override
+    public Action getAction(Agent owner, Vector2 target) {
+        // TODO: use bounding box to check for target in strike zone
+        return getAction(owner, owner.getTarget());
     }
 
     @Override
     public boolean isValid(Agent owner, Agent target) {
         return target != null && target != owner && owner.getInventory().hasMeleeWeapon();
+    }
+    
+    @Override
+    public boolean isValid(Agent owner, Vector2 target) {
+        return isValid(owner, owner.getTarget());
     }
     
     @Override

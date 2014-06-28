@@ -11,19 +11,14 @@ import com.eldritch.invoken.effects.Draining;
 import com.eldritch.invoken.encounter.Location;
 import com.eldritch.invoken.screens.GameScreen;
 
-public class Drain extends Augmentation {
+public class Drain extends ProjectileAugmentation {
     public Drain() {
         super("drain");
     }
 
     @Override
-    public Action getAction(Agent owner, Agent target, Vector2 position) {
+    public Action getAction(Agent owner, Vector2 target) {
         return new DrainAction(owner, target);
-    }
-
-    @Override
-    public boolean isValid(Agent owner, Agent target) {
-        return target != null && target != owner && target.isAlive();
     }
 
     @Override
@@ -37,9 +32,9 @@ public class Drain extends Augmentation {
     }
 
     public class DrainAction extends AnimatedAction {
-        private final Agent target;
+        private final Vector2 target;
 
-        public DrainAction(Agent actor, Agent target) {
+        public DrainAction(Agent actor, Vector2 target) {
             super(actor, Activity.Swipe, Drain.this);
             this.target = target;
         }
@@ -53,7 +48,7 @@ public class Drain extends Augmentation {
 
         @Override
         public Vector2 getPosition() {
-            return target.getPosition();
+            return target;
         }
     }
 

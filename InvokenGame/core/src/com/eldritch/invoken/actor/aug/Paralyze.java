@@ -13,19 +13,14 @@ import com.eldritch.invoken.effects.Paralyzed;
 import com.eldritch.invoken.encounter.Location;
 import com.eldritch.invoken.screens.GameScreen;
 
-public class Paralyze extends Augmentation {
+public class Paralyze extends ProjectileAugmentation {
     public Paralyze() {
         super("paralyze");
     }
 
     @Override
-    public Action getAction(Agent owner, Agent target, Vector2 position) {
+    public Action getAction(Agent owner, Vector2 target) {
         return new ParalyzeAction(owner, target);
-    }
-
-    @Override
-    public boolean isValid(Agent owner, Agent target) {
-        return target != null && target != owner && target.isAlive();
     }
 
     @Override
@@ -39,9 +34,9 @@ public class Paralyze extends Augmentation {
     }
 
     public class ParalyzeAction extends AnimatedAction {
-        private final Agent target;
+        private final Vector2 target;
 
-        public ParalyzeAction(Agent actor, Agent target) {
+        public ParalyzeAction(Agent actor, Vector2 target) {
             super(actor, Activity.Swipe, Paralyze.this);
             this.target = target;
         }
@@ -55,7 +50,7 @@ public class Paralyze extends Augmentation {
 
         @Override
         public Vector2 getPosition() {
-            return target.getPosition();
+            return target;
         }
     }
 

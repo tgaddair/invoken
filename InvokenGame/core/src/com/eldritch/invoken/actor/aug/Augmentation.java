@@ -26,15 +26,28 @@ public abstract class Augmentation {
 	    return agent.getInfo().getEnergy() >= getCost(agent);
 	}
 	
-	public boolean invoke(Agent owner, Agent target, Vector2 position) {
+	public boolean invoke(Agent owner, Agent target) {
 		if (isValid(owner, target)) {
-		    Action action = getAction(owner, target, position);
-		    if (hasEnergy(owner)) {
-		        owner.addAction(action);
-		        return true;
-		    }
+		    Action action = getAction(owner, target);
+		    return invoke(owner, action);
 		}
 		return false;
+	}
+	
+	public boolean invoke(Agent owner, Vector2 target) {
+        if (isValid(owner, target)) {
+            Action action = getAction(owner, target);
+            return invoke(owner, action);
+        }
+        return false;
+    }
+	
+	private boolean invoke(Agent owner, Action action) {
+	    if (hasEnergy(owner)) {
+            owner.addAction(action);
+            return true;
+        }
+	    return false;
 	}
 	
 	public Texture getIcon() {
@@ -47,11 +60,15 @@ public abstract class Augmentation {
 	
 	public abstract boolean isValid(Agent owner, Agent target);
 	
+	public abstract boolean isValid(Agent owner, Vector2 target);
+	
 	public abstract int getCost(Agent owner);
 	
 	public abstract float quality(Agent owner, Agent target, Location location);
 	
-	public abstract Action getAction(Agent owner, Agent target, Vector2 position);
+	public abstract Action getAction(Agent owner, Agent target);
+	
+	public abstract Action getAction(Agent owner, Vector2 target);
 	
 	public static Augmentation fromProto(
 	        com.eldritch.invoken.proto.Augmentations.Augmentation proto) {

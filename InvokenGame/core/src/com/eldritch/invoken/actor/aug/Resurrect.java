@@ -11,14 +11,24 @@ public class Resurrect extends Augmentation {
     }
     
 	@Override
-	public Action getAction(Agent owner, Agent target, Vector2 position) {
+	public Action getAction(Agent owner, Agent target) {
 		return new ResurrectAction(owner, target);
 	}
+	
+	@Override
+    public Action getAction(Agent owner, Vector2 target) {
+        return getAction(owner, owner.getTarget());
+    }
 	
 	@Override
 	public boolean isValid(Agent owner, Agent target) {
 		return target != null && target != owner && !target.isAlive();
 	}
+	
+	@Override
+    public boolean isValid(Agent owner, Vector2 target) {
+        return isValid(owner, owner.getTarget());
+    }
 	
 	@Override
     public int getCost(Agent owner) {
