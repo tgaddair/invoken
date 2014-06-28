@@ -1,9 +1,7 @@
 package com.eldritch.invoken.encounter.proc;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -11,29 +9,43 @@ import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
 import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
 import com.eldritch.invoken.encounter.Location;
-import com.eldritch.invoken.encounter.NaturalVector2;
 import com.eldritch.invoken.encounter.layer.LocationLayer;
 import com.eldritch.invoken.encounter.layer.LocationMap;
 
 public class IcarianFurnitureGenerator extends FurnitureGenerator {
     // tiles for different furniture pieces
     private final List<MultiTileStatic> servers = new ArrayList<MultiTileStatic>();
+    private final MultiTileStatic table;
+    private final MultiTileStatic cover;
+    
+    private int lastServerX = 0;
 
-    public IcarianFurnitureGenerator(TextureAtlas atlas) {
-        super(atlas);
+    public IcarianFurnitureGenerator(TextureAtlas atlas, TiledMapTile ground) {
+        super(atlas, ground);
         servers.add(new MultiTileStatic(atlas.findRegion("test-biome/furn-server1")));
         servers.add(new MultiTileStatic(atlas.findRegion("test-biome/furn-server2")));
         servers.add(new MultiTileStatic(atlas.findRegion("test-biome/furn-server3")));
+        table = new MultiTileStatic(atlas.findRegion("test-biome/furn-table1"));
+        cover = new MultiTileStatic(atlas.findRegion("test-biome/furn-core1"));
     }
 
     @Override
-    public LocationLayer generateClutter(LocationLayer base, TiledMapTile ground, LocationMap map) {
+    public LocationLayer generateClutter(LocationLayer base, LocationMap map) {
         LocationLayer layer = new LocationLayer(base.getWidth(), base.getHeight(),
                 (int) base.getTileWidth(), (int) base.getTileHeight(), map);
         layer.setVisible(true);
         layer.setOpacity(1.0f);
         layer.setName("clutter");
 
+        // add clutter types
+        placeServers(base, layer);
+//        placeTables(base, layer);
+//        placeCover(base, layer);
+        
+        return layer;
+    }
+    
+    private void placeServers(LocationLayer base, LocationLayer layer) {
         for (int x = 0; x < base.getWidth(); x++) {
             for (int y = 0; y < base.getHeight(); y++) {
                 Cell c1 = base.getCell(x, y);
@@ -46,11 +58,35 @@ public class IcarianFurnitureGenerator extends FurnitureGenerator {
                 }
             }
         }
-        
-        return layer;
     }
     
-    private int lastX = 0;
+    private void placeTables(LocationLayer base, LocationLayer layer) {
+        for (int x = 0; x < base.getWidth(); x++) {
+            for (int y = 0; y < base.getHeight(); y++) {
+                Cell cell = base.getCell(x, y);
+                if (base.isGround(cell) && Math.random() < 0.1) {
+                    MultiTileStatic table = makeTable();
+                    if (table.canPlaceAt(x,  y)) {
+                        table.addTo(layer, x, y);
+                    }
+                }
+            }
+        }
+    }
+    
+    private void placeCover(LocationLayer base, LocationLayer layer) {
+        for (int x = 0; x < base.getWidth(); x++) {
+            for (int y = 0; y < base.getHeight(); y++) {
+                Cell cell = base.getCell(x, y);
+                if (base.isGround(cell) && Math.random() < 0.1) {
+                    MultiTileStatic cover = makeCover();
+                    if (cover.canPlaceAt(x,  y)) {
+                        cover.addTo(layer, x, y);
+                    }
+                }
+            }
+        }
+    }
     
     private boolean shouldPlaceServer(MultiTileStatic server, int x, int y) {
         if (!server.canPlaceAt(x, y)) {
@@ -58,17 +94,25 @@ public class IcarianFurnitureGenerator extends FurnitureGenerator {
         }
         
         boolean result = false;
-        if (x == lastX + 1) {
+        if (x == lastServerX + 1) {
             // high probability of placing another
-            result = Math.random() < 0.75;
+            result = Math.random() < 0.7;
         } else {
-            result = Math.random() < 0.2;
+            result = Math.random() < 0.1;
         }
         
         if (result) {
-            lastX = x;
+            lastServerX = x;
         }
         return result;
+    }
+    
+    private MultiTileStatic makeCover() {
+        return cover;
+    }
+    
+    private MultiTileStatic makeTable() {
+        return table;
     }
     
     private MultiTileStatic getServer() {

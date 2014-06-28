@@ -466,6 +466,20 @@ test-biome/furn-server3
   orig: 32, 64
   offset: 0, 0
   index: -1
+test-biome/furn-core1
+  rotate: false
+  xy: 384, 352
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+test-biome/furn-table1
+  rotate: false
+  xy: 0, 0
+  size: 96, 96
+  orig: 96, 96
+  offset: 0, 0
+  index: -1
 markers/collision
   rotate: false
   xy: 0, 704

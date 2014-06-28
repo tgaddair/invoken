@@ -24,6 +24,7 @@ import com.eldritch.invoken.gfx.Light.StaticLight;
 public abstract class FurnitureGenerator {
     private final Set<NaturalVector2> marked = new HashSet<NaturalVector2>();
     private final TextureAtlas atlas;
+    protected final TiledMapTile ground;
     
     // door tiles
     private final TiledMapTile doorLeft;
@@ -35,8 +36,9 @@ public abstract class FurnitureGenerator {
     private final TiledMapTile unlockedDoor;
     private final TiledMapTile lockedDoor;
     
-    public FurnitureGenerator(TextureAtlas atlas) {
+    public FurnitureGenerator(TextureAtlas atlas, TiledMapTile ground) {
         this.atlas = atlas;
+        this.ground = ground;
         doorLeft = new StaticTiledMapTile(atlas.findRegion("test-biome/door-front-bottom-left"));
         doorRight = new StaticTiledMapTile(atlas.findRegion("test-biome/door-front-bottom-right"));
         doorOverLeft = new StaticTiledMapTile(atlas.findRegion("test-biome/door-over-left"));
@@ -201,5 +203,5 @@ public abstract class FurnitureGenerator {
         mark(x, y);
     }
     
-    public abstract LocationLayer generateClutter(LocationLayer base, TiledMapTile ground, LocationMap map);
+    public abstract LocationLayer generateClutter(LocationLayer base, LocationMap map);
 }

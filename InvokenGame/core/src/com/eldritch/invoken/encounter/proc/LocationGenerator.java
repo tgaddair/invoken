@@ -81,7 +81,7 @@ public class LocationGenerator {
 
         // add furniture
         List<Activator> activators = new ArrayList<Activator>();
-        IcarianFurnitureGenerator furnitureGenerator = new IcarianFurnitureGenerator(atlas);
+        IcarianFurnitureGenerator furnitureGenerator = new IcarianFurnitureGenerator(atlas, ground);
         
         // doors
         furnitureGenerator.createDoors(base, trim, overlay, overlayTrim, collision, activators);
@@ -90,7 +90,7 @@ public class LocationGenerator {
         furnitureGenerator.addLights(trim, base, lights, midWallCenter);
         
         // clutter
-        map.getLayers().add(furnitureGenerator.generateClutter(base, ground, map));
+        map.getLayers().add(furnitureGenerator.generateClutter(base, map));
         
         Location location = new Location(proto, player, map);
         location.addLights(lights);
