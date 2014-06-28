@@ -834,6 +834,14 @@ public abstract class Agent extends CollisionEntity {
         // used for wall normals
         return getForwardVector().scl(-1);
     }
+    
+    public Vector2 getHeading() {
+        return getVelocity().cpy().nor();
+    }
+    
+    public Vector2 getReverseHeading() {
+        return getHeading().scl(-1);
+    }
 
     private Direction getDominantDirection(float x, float y) {
         if (Math.abs(x) > Math.abs(y)) {

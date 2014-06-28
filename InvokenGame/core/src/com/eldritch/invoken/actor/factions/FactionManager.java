@@ -110,14 +110,15 @@ public class FactionManager {
                             float b = other.getInfo().getReputation(otherFaction) / 10f;
                             float f = faction.getRelation(otherFaction);
 
+                            // r: [-100, 100]
+                            float r = a * b * f;
+                            
                             // check if they're hated by a faction we hate
                             if (b < 0 && f < 0) {
                                 // scale down "the enemy of my enemy is my friend" bonus
-                                b /= 5;
+                                r = Math.min(r, 5);
                             }
-
-                            // r: [-100, 100]
-                            float r = a * b * f;
+                            
                             reaction += r;
                         }
                     }
