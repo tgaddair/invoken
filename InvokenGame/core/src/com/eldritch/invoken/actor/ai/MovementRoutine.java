@@ -4,11 +4,20 @@ import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
+import com.eldritch.invoken.actor.pathfinding.FleeBehavior;
+import com.eldritch.invoken.actor.pathfinding.SeekBehavior;
+import com.eldritch.invoken.actor.pathfinding.SteeringBehavior;
+import com.eldritch.invoken.actor.pathfinding.SteeringManager;
 import com.eldritch.invoken.actor.type.Npc;
 import com.eldritch.invoken.encounter.Location;
 import com.eldritch.invoken.encounter.NaturalVector2;
+import com.google.common.collect.Lists;
 
 public abstract class MovementRoutine implements Routine {
+    private final SteeringManager steering;
+    private final SeekBehavior seek;
+    private final FleeBehavior flee;
+    
     protected final Npc npc;
     protected final Location location;
     
@@ -18,11 +27,28 @@ public abstract class MovementRoutine implements Routine {
     public MovementRoutine(Npc npc, Location location) {
         this.npc = npc;
         this.location = location;
+        
+        seek = new SeekBehavior(npc);
+        flee = new FleeBehavior(npc);
+        steering = new SteeringManager(npc, Lists.<SteeringBehavior>newArrayList(seek, flee));
+    }
+    
+    protected void setSeek(boolean enabled) {
+        seek.setEnabled(enabled);
+    }
+    
+    protected void setFlee(boolean enabled) {
+        flee.setEnabled(enabled);
     }
     
     protected abstract void doMove(Vector2 velocityDelta, Location screen);
     
     protected void move(float delta, Location screen, boolean avoid) {
+        steering.steer();
+        if (true) {
+            return;
+        }
+        
         Vector2 velocityDelta = new Vector2(0, 0);
         doMove(velocityDelta, screen);
 

@@ -15,6 +15,10 @@ public class Pathfinder {
 
 	public Vector2 getTarget(Npc agent, Vector2 origin, Vector2 destination,
 			Location screen) {
+	    if (true) {
+	        return destination;
+	    }
+	    
 		if (target == null || origin.dst2(target) < 2) {
 			// keep pursuing our previous target until we reach it
 			target = destination;

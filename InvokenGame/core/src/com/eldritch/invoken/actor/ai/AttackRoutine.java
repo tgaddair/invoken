@@ -49,6 +49,15 @@ public abstract class AttackRoutine extends MovementRoutine {
             // can't do anything if we are unable to find a target to attack
             return;
         }
+        
+        // enable/disable movement behaviors
+        if (npc.getInventory().hasMeleeWeapon()) {
+            setSeek(true);
+            setFlee(false);
+        } else {
+            setSeek(shouldPursue());
+            setFlee(shouldFlee());
+        }
 
         // melee attackers don't avoid obstacles as fiercely
         move(delta, screen, !npc.getInventory().hasMeleeWeapon());

@@ -406,6 +406,10 @@ public abstract class Agent extends CollisionEntity {
     public NaturalVector2 getCellPosition() {
         return NaturalVector2.of((int) position.x, (int) position.y);
     }
+    
+    public void applyForce(Vector2 force) {
+        velocity.add(force);
+    }
 
     public void addVelocity(float x, float y) {
         velocity.add(x, y);
