@@ -11,6 +11,7 @@ import com.eldritch.invoken.encounter.Location;
 public class Player extends Agent {
     private final AgentMover mover;
     private final Vector2 targetCoord = new Vector2();
+    private boolean holding = false;
     private boolean moving = false;
     private boolean fixedTarget = false;
 
@@ -48,6 +49,14 @@ public class Player extends Agent {
             velocity.y = -getMaxVelocity();
             moving = false;
         }
+    }
+    
+    public boolean holdingPosition() {
+        return holding;
+    }
+    
+    public void holdPosition(boolean hold) {
+        this.holding = hold;
     }
     
     public void moveToFixedTarget(float x, float y) {

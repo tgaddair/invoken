@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.actor.aug.Augmentation;
 import com.eldritch.invoken.actor.type.Agent;
 
@@ -95,6 +96,12 @@ public class PreparedAugmentations {
 	    }
 	}
 	
+	public void useActiveAugmentation(Vector2 position, boolean queued) {
+        if (activeAugmentation != null) {
+            use(activeAugmentation, position, queued);
+        }
+    }
+	
     public boolean use(int index) {
         return use(index, false);
     }
@@ -111,8 +118,12 @@ public class PreparedAugmentations {
     }
     
     public boolean use(Augmentation aug, boolean queued) {
+        return use(aug, owner.getTarget().getPosition(), queued);
+    }
+    
+    public boolean use(Augmentation aug, Vector2 position, boolean queued) {
         if (queued || owner.canAddAction()) {
-            return aug.invoke(owner, owner.getTarget());
+            return aug.invoke(owner, owner.getTarget(), position);
         }
         return false;
     }

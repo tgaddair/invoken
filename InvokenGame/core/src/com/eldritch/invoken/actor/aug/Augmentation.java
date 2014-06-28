@@ -1,6 +1,7 @@
 package com.eldritch.invoken.actor.aug;
 
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.encounter.Location;
@@ -25,9 +26,9 @@ public abstract class Augmentation {
 	    return agent.getInfo().getEnergy() >= getCost(agent);
 	}
 	
-	public boolean invoke(Agent owner, Agent target) {
+	public boolean invoke(Agent owner, Agent target, Vector2 position) {
 		if (isValid(owner, target)) {
-		    Action action = getAction(owner, target);
+		    Action action = getAction(owner, target, position);
 		    if (hasEnergy(owner)) {
 		        owner.addAction(action);
 		        return true;
@@ -50,7 +51,7 @@ public abstract class Augmentation {
 	
 	public abstract float quality(Agent owner, Agent target, Location location);
 	
-	public abstract Action getAction(Agent owner, Agent target);
+	public abstract Action getAction(Agent owner, Agent target, Vector2 position);
 	
 	public static Augmentation fromProto(
 	        com.eldritch.invoken.proto.Augmentations.Augmentation proto) {

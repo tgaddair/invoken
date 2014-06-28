@@ -198,6 +198,11 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 
 	@Override
 	public boolean keyDown(int keycode) {
+	    switch (keycode) {
+	        case Keys.SHIFT_LEFT:
+	            player.holdPosition(true);
+	            return true;
+	    }
 		return false;
 	}
 
@@ -221,6 +226,9 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 			return true;
 		case Keys.SPACE:
 		    tacticalPause = !tacticalPause;
+		    return true;
+		case Keys.SHIFT_LEFT:
+		    player.holdPosition(false);
 		    return true;
 		case Keys.BACKSPACE:
 		    if (tacticalPause) {
@@ -304,9 +312,15 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 		}
 		playerClicked = false;
 		
-		if (!selection && !player.getInfo().getAugmentations().hasActiveAugmentation()) {
-		    // move to destination
-		    player.moveToFixedTarget(world.x, world.y);
+		if (!selection) {
+		    // click on arbitrary position
+		    if (player.holdingPosition()) {
+		        player.getInfo().getAugmentations().useActiveAugmentation(
+		                new Vector2(world.x, world.y), tacticalPause);
+		    } else {
+		        // move to destination
+                player.moveToFixedTarget(world.x, world.y);
+		    }
 		    selection = true;
 		}
 		

@@ -12,7 +12,7 @@ public class Cloak extends Augmentation {
     }
     
     @Override
-    public Action getAction(Agent owner, Agent target) {
+    public Action getAction(Agent owner, Agent target, Vector2 position) {
         return new CloakAction(owner);
     }
     
