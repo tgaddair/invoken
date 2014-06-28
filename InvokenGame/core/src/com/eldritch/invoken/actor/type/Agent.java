@@ -586,6 +586,8 @@ public abstract class Agent extends CollisionEntity {
             info.restore(1);
             elapsed = 0;
         }
+        
+        updateHeading();
 
         // apply all active effects, remove any that are finished
         Iterator<Effect> it = effects.iterator();
@@ -833,14 +835,6 @@ public abstract class Agent extends CollisionEntity {
     public Vector2 getBackwardVector() {
         // used for wall normals
         return getForwardVector().scl(-1);
-    }
-    
-    public Vector2 getHeading() {
-        return getVelocity().cpy().nor();
-    }
-    
-    public Vector2 getReverseHeading() {
-        return getHeading().scl(-1);
     }
 
     private Direction getDominantDirection(float x, float y) {

@@ -8,6 +8,7 @@ import com.eldritch.invoken.encounter.Location;
 public abstract class CollisionEntity implements Entity {
     protected final Vector2 position = new Vector2();
     protected final Vector2 velocity = new Vector2();
+    protected final Vector2 heading = new Vector2();
     private final float width;
     private final float height;
     
@@ -38,6 +39,20 @@ public abstract class CollisionEntity implements Entity {
             }
         }
         return agents;
+    }
+    
+    protected void updateHeading() {
+        if (velocity.len2() > 1E-6) {
+            heading.set(velocity).nor();
+        }
+    }
+    
+    public Vector2 getHeading() {
+        return heading.cpy();
+    }
+    
+    public Vector2 getReverseHeading() {
+        return getHeading().scl(-1);
     }
     
     public float getWidth() {
