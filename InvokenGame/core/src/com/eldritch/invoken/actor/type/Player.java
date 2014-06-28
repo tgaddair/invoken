@@ -57,6 +57,9 @@ public class Player extends Agent {
     
     public void holdPosition(boolean hold) {
         this.holding = hold;
+        if (hold) {
+            setMoving(false);
+        }
     }
     
     public void moveToFixedTarget(float x, float y) {
