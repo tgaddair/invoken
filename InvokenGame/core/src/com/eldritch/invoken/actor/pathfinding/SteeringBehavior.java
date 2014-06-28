@@ -4,7 +4,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.encounter.Location;
 
 public interface SteeringBehavior {
-    Vector2 getForce(Location location);
+    Vector2 getForce(Vector2 target, Location location);
     
     double getPriority();
     

@@ -1,4 +1,4 @@
-package com.eldritch.invoken.actor.ai;
+package com.eldritch.invoken.actor.pathfinding;
 
 import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.actor.type.Agent;
@@ -15,10 +15,6 @@ public class Pathfinder {
 
 	public Vector2 getTarget(Npc agent, Vector2 origin, Vector2 destination,
 			Location screen) {
-	    if (true) {
-	        return destination;
-	    }
-	    
 		if (target == null || origin.dst2(target) < 2) {
 			// keep pursuing our previous target until we reach it
 			target = destination;

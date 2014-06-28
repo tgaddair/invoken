@@ -45,32 +45,8 @@ public abstract class MovementRoutine implements Routine {
     
     protected abstract void doMove(Vector2 velocityDelta, Location screen);
     
-    protected void move(float delta, Location location, boolean avoid) {
-        steering.steer(location);
-        if (true) {
-            return;
-        }
-        
-        Vector2 velocityDelta = new Vector2(0, 0);
-        doMove(velocityDelta, location);
-
-        // scale down the previous velocity to reduce the effects of momentum as
-        // we're turning
-        velocity.scl(0.75f);
-        
-        if (npc.getTarget() != null) {
-            Vector2 steeringForce = avoidWalls(npc.getPosition(), npc.getTarget().getPosition(), location);
-            if (steeringForce != null) {
-//                System.out.println("steering: " + steeringForce);
-                velocityDelta.add(steeringForce);
-            }
-        }
-
-        // add our velocity delta and clamp it to the max velocity
-        velocity.add(velocityDelta);
-        bound(velocity, npc.getMaxVelocity());
-
-        resetVelocity();
+    protected void move(Vector2 target, float delta, Location location) {
+        steering.steer(target, location);
     }
 
     protected void pursueTarget(Vector2 destination, Vector2 velocity, Location screen) {

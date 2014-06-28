@@ -25,17 +25,17 @@ public class SteeringManager {
         });
     }
     
-    public void steer(Location location) {
-        Vector2 force = getForce(location);
+    public void steer(Vector2 target, Location location) {
+        Vector2 force = getForce(target, location);
         agent.applyForce(force);
     }
     
-    private Vector2 getForce(Location location) {
+    private Vector2 getForce(Vector2 target, Location location) {
         Vector2 steeringForce = new Vector2();
         
         for (SteeringBehavior behavior : behaviors) {
             if (behavior.isEnabled()) {
-                Vector2 force = behavior.getForce(location);
+                Vector2 force = behavior.getForce(target, location);
                 if (!accumulate(steeringForce, force)) {
                     return steeringForce;
                 }

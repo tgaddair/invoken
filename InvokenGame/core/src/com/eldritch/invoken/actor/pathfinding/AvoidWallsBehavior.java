@@ -16,12 +16,9 @@ public class AvoidWallsBehavior extends AbstractSteeringBehavior {
     }
 
     @Override
-    public Vector2 getForce(Location location) {
+    public Vector2 getForce(Vector2 target, Location location) {
         Npc npc = getNpc();
         Vector2 source = npc.getPosition();
-        
-        // look 3 units out for the primary target feeler
-        Vector2 target = npc.getHeading().scl(5).add(source);
 
         // this will hold an index into the vector of walls
         NaturalVector2 closestWall = null;

@@ -10,10 +10,10 @@ public class SeekBehavior extends AbstractSteeringBehavior {
     }
     
     @Override
-    public Vector2 getForce(Location location) {
+    public Vector2 getForce(Vector2 target, Location location) {
         Npc agent = getNpc();
         Vector2 position = agent.getPosition();
-        Vector2 target = agent.getTarget().getPosition().cpy();
+        target = target.cpy();
         Vector2 desired = target.sub(position).nor().scl(agent.getMaxVelocity());
         return desired.sub(agent.getVelocity());
     }

@@ -63,7 +63,10 @@ public class FleeRoutine extends MovementRoutine {
 			return;
 		}
 
-		move(delta, location, true);
+	    Vector2 destination = npc.getPathfinder().rotate(
+                target.getPosition(), npc.getPosition(), Math.PI);
+		move(npc.getPathfinder().getTarget(
+		        npc, npc.getPosition(), destination, location), delta, location);
 	}
 
 	@Override
