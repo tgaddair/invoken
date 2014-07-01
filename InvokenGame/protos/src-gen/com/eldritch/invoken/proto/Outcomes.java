@@ -776,7 +776,7 @@ public final class Outcomes {
                 com.eldritch.invoken.proto.Outcomes.Outcome.class, com.eldritch.invoken.proto.Outcomes.Outcome.Builder.class);
       }
 
-      // Construct using com.eldritch.scifirpg.proto.Outcomes.Outcome.newBuilder()
+      // Construct using com.eldritch.invoken.proto.Outcomes.Outcome.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -1141,7 +1141,7 @@ public final class Outcomes {
       "\007\022\023\n\017INFLUENCE_RESET\020\010\022\020\n\014START_COMBAT\020\n" +
       "\022\016\n\nADD_MARKER\020\013\022\021\n\rREMOVE_MARKER\020\014\022\010\n\004K",
       "ILL\020\r\022\021\n\rGAIN_FOLLOWER\020\016\022\021\n\rLOSE_FOLLOWE" +
-      "R\020\017B\035\n\033com.eldritch.scifirpg.proto"
+      "R\020\017B\034\n\032com.eldritch.invoken.proto"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {

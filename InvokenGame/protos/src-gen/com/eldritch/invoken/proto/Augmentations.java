@@ -127,12 +127,12 @@ public final class Augmentations {
     /**
      * <code>repeated .scifirpg.Effect effect = 8;</code>
      */
-    java.util.List<com.eldritch.invoken.proto.Effects.Effect> 
+    java.util.List<com.eldritch.scifirpg.proto.Effects.Effect> 
         getEffectList();
     /**
      * <code>repeated .scifirpg.Effect effect = 8;</code>
      */
-    com.eldritch.invoken.proto.Effects.Effect getEffect(int index);
+    com.eldritch.scifirpg.proto.Effects.Effect getEffect(int index);
     /**
      * <code>repeated .scifirpg.Effect effect = 8;</code>
      */
@@ -140,12 +140,12 @@ public final class Augmentations {
     /**
      * <code>repeated .scifirpg.Effect effect = 8;</code>
      */
-    java.util.List<? extends com.eldritch.invoken.proto.Effects.EffectOrBuilder> 
+    java.util.List<? extends com.eldritch.scifirpg.proto.Effects.EffectOrBuilder> 
         getEffectOrBuilderList();
     /**
      * <code>repeated .scifirpg.Effect effect = 8;</code>
      */
-    com.eldritch.invoken.proto.Effects.EffectOrBuilder getEffectOrBuilder(
+    com.eldritch.scifirpg.proto.Effects.EffectOrBuilder getEffectOrBuilder(
         int index);
   }
   /**
@@ -245,10 +245,10 @@ public final class Augmentations {
             }
             case 66: {
               if (!((mutable_bitField0_ & 0x00000080) == 0x00000080)) {
-                effect_ = new java.util.ArrayList<com.eldritch.invoken.proto.Effects.Effect>();
+                effect_ = new java.util.ArrayList<com.eldritch.scifirpg.proto.Effects.Effect>();
                 mutable_bitField0_ |= 0x00000080;
               }
-              effect_.add(input.readMessage(com.eldritch.invoken.proto.Effects.Effect.PARSER, extensionRegistry));
+              effect_.add(input.readMessage(com.eldritch.scifirpg.proto.Effects.Effect.PARSER, extensionRegistry));
               break;
             }
           }
@@ -490,7 +490,7 @@ public final class Augmentations {
       /**
        * <code>required .scifirpg.Discipline discipline = 1;</code>
        */
-      com.eldritch.invoken.proto.Disciplines.Discipline getDiscipline();
+      com.eldritch.scifirpg.proto.Disciplines.Discipline getDiscipline();
 
       // required int32 value = 2;
       /**
@@ -565,7 +565,7 @@ public final class Augmentations {
               }
               case 8: {
                 int rawValue = input.readEnum();
-                com.eldritch.invoken.proto.Disciplines.Discipline value = com.eldritch.invoken.proto.Disciplines.Discipline.valueOf(rawValue);
+                com.eldritch.scifirpg.proto.Disciplines.Discipline value = com.eldritch.scifirpg.proto.Disciplines.Discipline.valueOf(rawValue);
                 if (value == null) {
                   unknownFields.mergeVarintField(1, rawValue);
                 } else {
@@ -626,7 +626,7 @@ public final class Augmentations {
       private int bitField0_;
       // required .scifirpg.Discipline discipline = 1;
       public static final int DISCIPLINE_FIELD_NUMBER = 1;
-      private com.eldritch.invoken.proto.Disciplines.Discipline discipline_;
+      private com.eldritch.scifirpg.proto.Disciplines.Discipline discipline_;
       /**
        * <code>required .scifirpg.Discipline discipline = 1;</code>
        */
@@ -636,7 +636,7 @@ public final class Augmentations {
       /**
        * <code>required .scifirpg.Discipline discipline = 1;</code>
        */
-      public com.eldritch.invoken.proto.Disciplines.Discipline getDiscipline() {
+      public com.eldritch.scifirpg.proto.Disciplines.Discipline getDiscipline() {
         return discipline_;
       }
 
@@ -673,7 +673,7 @@ public final class Augmentations {
       }
 
       private void initFields() {
-        discipline_ = com.eldritch.invoken.proto.Disciplines.Discipline.WARFARE;
+        discipline_ = com.eldritch.scifirpg.proto.Disciplines.Discipline.WARFARE;
         value_ = 0;
         slots_ = 0;
       }
@@ -827,7 +827,7 @@ public final class Augmentations {
                   com.eldritch.invoken.proto.Augmentations.Augmentation.Requirement.class, com.eldritch.invoken.proto.Augmentations.Augmentation.Requirement.Builder.class);
         }
 
-        // Construct using com.eldritch.scifirpg.proto.Augmentations.Augmentation.Requirement.newBuilder()
+        // Construct using com.eldritch.invoken.proto.Augmentations.Augmentation.Requirement.newBuilder()
         private Builder() {
           maybeForceBuilderInitialization();
         }
@@ -847,7 +847,7 @@ public final class Augmentations {
 
         public Builder clear() {
           super.clear();
-          discipline_ = com.eldritch.invoken.proto.Disciplines.Discipline.WARFARE;
+          discipline_ = com.eldritch.scifirpg.proto.Disciplines.Discipline.WARFARE;
           bitField0_ = (bitField0_ & ~0x00000001);
           value_ = 0;
           bitField0_ = (bitField0_ & ~0x00000002);
@@ -958,7 +958,7 @@ public final class Augmentations {
         private int bitField0_;
 
         // required .scifirpg.Discipline discipline = 1;
-        private com.eldritch.invoken.proto.Disciplines.Discipline discipline_ = com.eldritch.invoken.proto.Disciplines.Discipline.WARFARE;
+        private com.eldritch.scifirpg.proto.Disciplines.Discipline discipline_ = com.eldritch.scifirpg.proto.Disciplines.Discipline.WARFARE;
         /**
          * <code>required .scifirpg.Discipline discipline = 1;</code>
          */
@@ -968,13 +968,13 @@ public final class Augmentations {
         /**
          * <code>required .scifirpg.Discipline discipline = 1;</code>
          */
-        public com.eldritch.invoken.proto.Disciplines.Discipline getDiscipline() {
+        public com.eldritch.scifirpg.proto.Disciplines.Discipline getDiscipline() {
           return discipline_;
         }
         /**
          * <code>required .scifirpg.Discipline discipline = 1;</code>
          */
-        public Builder setDiscipline(com.eldritch.invoken.proto.Disciplines.Discipline value) {
+        public Builder setDiscipline(com.eldritch.scifirpg.proto.Disciplines.Discipline value) {
           if (value == null) {
             throw new NullPointerException();
           }
@@ -988,7 +988,7 @@ public final class Augmentations {
          */
         public Builder clearDiscipline() {
           bitField0_ = (bitField0_ & ~0x00000001);
-          discipline_ = com.eldritch.invoken.proto.Disciplines.Discipline.WARFARE;
+          discipline_ = com.eldritch.scifirpg.proto.Disciplines.Discipline.WARFARE;
           onChanged();
           return this;
         }
@@ -1298,17 +1298,17 @@ public final class Augmentations {
 
     // repeated .scifirpg.Effect effect = 8;
     public static final int EFFECT_FIELD_NUMBER = 8;
-    private java.util.List<com.eldritch.invoken.proto.Effects.Effect> effect_;
+    private java.util.List<com.eldritch.scifirpg.proto.Effects.Effect> effect_;
     /**
      * <code>repeated .scifirpg.Effect effect = 8;</code>
      */
-    public java.util.List<com.eldritch.invoken.proto.Effects.Effect> getEffectList() {
+    public java.util.List<com.eldritch.scifirpg.proto.Effects.Effect> getEffectList() {
       return effect_;
     }
     /**
      * <code>repeated .scifirpg.Effect effect = 8;</code>
      */
-    public java.util.List<? extends com.eldritch.invoken.proto.Effects.EffectOrBuilder> 
+    public java.util.List<? extends com.eldritch.scifirpg.proto.Effects.EffectOrBuilder> 
         getEffectOrBuilderList() {
       return effect_;
     }
@@ -1321,13 +1321,13 @@ public final class Augmentations {
     /**
      * <code>repeated .scifirpg.Effect effect = 8;</code>
      */
-    public com.eldritch.invoken.proto.Effects.Effect getEffect(int index) {
+    public com.eldritch.scifirpg.proto.Effects.Effect getEffect(int index) {
       return effect_.get(index);
     }
     /**
      * <code>repeated .scifirpg.Effect effect = 8;</code>
      */
-    public com.eldritch.invoken.proto.Effects.EffectOrBuilder getEffectOrBuilder(
+    public com.eldritch.scifirpg.proto.Effects.EffectOrBuilder getEffectOrBuilder(
         int index) {
       return effect_.get(index);
     }
@@ -1537,7 +1537,7 @@ public final class Augmentations {
                 com.eldritch.invoken.proto.Augmentations.Augmentation.class, com.eldritch.invoken.proto.Augmentations.Augmentation.Builder.class);
       }
 
-      // Construct using com.eldritch.scifirpg.proto.Augmentations.Augmentation.newBuilder()
+      // Construct using com.eldritch.invoken.proto.Augmentations.Augmentation.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -2383,22 +2383,22 @@ public final class Augmentations {
       }
 
       // repeated .scifirpg.Effect effect = 8;
-      private java.util.List<com.eldritch.invoken.proto.Effects.Effect> effect_ =
+      private java.util.List<com.eldritch.scifirpg.proto.Effects.Effect> effect_ =
         java.util.Collections.emptyList();
       private void ensureEffectIsMutable() {
         if (!((bitField0_ & 0x00000080) == 0x00000080)) {
-          effect_ = new java.util.ArrayList<com.eldritch.invoken.proto.Effects.Effect>(effect_);
+          effect_ = new java.util.ArrayList<com.eldritch.scifirpg.proto.Effects.Effect>(effect_);
           bitField0_ |= 0x00000080;
          }
       }
 
       private com.google.protobuf.RepeatedFieldBuilder<
-          com.eldritch.invoken.proto.Effects.Effect, com.eldritch.invoken.proto.Effects.Effect.Builder, com.eldritch.invoken.proto.Effects.EffectOrBuilder> effectBuilder_;
+          com.eldritch.scifirpg.proto.Effects.Effect, com.eldritch.scifirpg.proto.Effects.Effect.Builder, com.eldritch.scifirpg.proto.Effects.EffectOrBuilder> effectBuilder_;
 
       /**
        * <code>repeated .scifirpg.Effect effect = 8;</code>
        */
-      public java.util.List<com.eldritch.invoken.proto.Effects.Effect> getEffectList() {
+      public java.util.List<com.eldritch.scifirpg.proto.Effects.Effect> getEffectList() {
         if (effectBuilder_ == null) {
           return java.util.Collections.unmodifiableList(effect_);
         } else {
@@ -2418,7 +2418,7 @@ public final class Augmentations {
       /**
        * <code>repeated .scifirpg.Effect effect = 8;</code>
        */
-      public com.eldritch.invoken.proto.Effects.Effect getEffect(int index) {
+      public com.eldritch.scifirpg.proto.Effects.Effect getEffect(int index) {
         if (effectBuilder_ == null) {
           return effect_.get(index);
         } else {
@@ -2429,7 +2429,7 @@ public final class Augmentations {
        * <code>repeated .scifirpg.Effect effect = 8;</code>
        */
       public Builder setEffect(
-          int index, com.eldritch.invoken.proto.Effects.Effect value) {
+          int index, com.eldritch.scifirpg.proto.Effects.Effect value) {
         if (effectBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -2446,7 +2446,7 @@ public final class Augmentations {
        * <code>repeated .scifirpg.Effect effect = 8;</code>
        */
       public Builder setEffect(
-          int index, com.eldritch.invoken.proto.Effects.Effect.Builder builderForValue) {
+          int index, com.eldritch.scifirpg.proto.Effects.Effect.Builder builderForValue) {
         if (effectBuilder_ == null) {
           ensureEffectIsMutable();
           effect_.set(index, builderForValue.build());
@@ -2459,7 +2459,7 @@ public final class Augmentations {
       /**
        * <code>repeated .scifirpg.Effect effect = 8;</code>
        */
-      public Builder addEffect(com.eldritch.invoken.proto.Effects.Effect value) {
+      public Builder addEffect(com.eldritch.scifirpg.proto.Effects.Effect value) {
         if (effectBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -2476,7 +2476,7 @@ public final class Augmentations {
        * <code>repeated .scifirpg.Effect effect = 8;</code>
        */
       public Builder addEffect(
-          int index, com.eldritch.invoken.proto.Effects.Effect value) {
+          int index, com.eldritch.scifirpg.proto.Effects.Effect value) {
         if (effectBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -2493,7 +2493,7 @@ public final class Augmentations {
        * <code>repeated .scifirpg.Effect effect = 8;</code>
        */
       public Builder addEffect(
-          com.eldritch.invoken.proto.Effects.Effect.Builder builderForValue) {
+          com.eldritch.scifirpg.proto.Effects.Effect.Builder builderForValue) {
         if (effectBuilder_ == null) {
           ensureEffectIsMutable();
           effect_.add(builderForValue.build());
@@ -2507,7 +2507,7 @@ public final class Augmentations {
        * <code>repeated .scifirpg.Effect effect = 8;</code>
        */
       public Builder addEffect(
-          int index, com.eldritch.invoken.proto.Effects.Effect.Builder builderForValue) {
+          int index, com.eldritch.scifirpg.proto.Effects.Effect.Builder builderForValue) {
         if (effectBuilder_ == null) {
           ensureEffectIsMutable();
           effect_.add(index, builderForValue.build());
@@ -2521,7 +2521,7 @@ public final class Augmentations {
        * <code>repeated .scifirpg.Effect effect = 8;</code>
        */
       public Builder addAllEffect(
-          java.lang.Iterable<? extends com.eldritch.invoken.proto.Effects.Effect> values) {
+          java.lang.Iterable<? extends com.eldritch.scifirpg.proto.Effects.Effect> values) {
         if (effectBuilder_ == null) {
           ensureEffectIsMutable();
           super.addAll(values, effect_);
@@ -2560,14 +2560,14 @@ public final class Augmentations {
       /**
        * <code>repeated .scifirpg.Effect effect = 8;</code>
        */
-      public com.eldritch.invoken.proto.Effects.Effect.Builder getEffectBuilder(
+      public com.eldritch.scifirpg.proto.Effects.Effect.Builder getEffectBuilder(
           int index) {
         return getEffectFieldBuilder().getBuilder(index);
       }
       /**
        * <code>repeated .scifirpg.Effect effect = 8;</code>
        */
-      public com.eldritch.invoken.proto.Effects.EffectOrBuilder getEffectOrBuilder(
+      public com.eldritch.scifirpg.proto.Effects.EffectOrBuilder getEffectOrBuilder(
           int index) {
         if (effectBuilder_ == null) {
           return effect_.get(index);  } else {
@@ -2577,7 +2577,7 @@ public final class Augmentations {
       /**
        * <code>repeated .scifirpg.Effect effect = 8;</code>
        */
-      public java.util.List<? extends com.eldritch.invoken.proto.Effects.EffectOrBuilder> 
+      public java.util.List<? extends com.eldritch.scifirpg.proto.Effects.EffectOrBuilder> 
            getEffectOrBuilderList() {
         if (effectBuilder_ != null) {
           return effectBuilder_.getMessageOrBuilderList();
@@ -2588,31 +2588,31 @@ public final class Augmentations {
       /**
        * <code>repeated .scifirpg.Effect effect = 8;</code>
        */
-      public com.eldritch.invoken.proto.Effects.Effect.Builder addEffectBuilder() {
+      public com.eldritch.scifirpg.proto.Effects.Effect.Builder addEffectBuilder() {
         return getEffectFieldBuilder().addBuilder(
-            com.eldritch.invoken.proto.Effects.Effect.getDefaultInstance());
+            com.eldritch.scifirpg.proto.Effects.Effect.getDefaultInstance());
       }
       /**
        * <code>repeated .scifirpg.Effect effect = 8;</code>
        */
-      public com.eldritch.invoken.proto.Effects.Effect.Builder addEffectBuilder(
+      public com.eldritch.scifirpg.proto.Effects.Effect.Builder addEffectBuilder(
           int index) {
         return getEffectFieldBuilder().addBuilder(
-            index, com.eldritch.invoken.proto.Effects.Effect.getDefaultInstance());
+            index, com.eldritch.scifirpg.proto.Effects.Effect.getDefaultInstance());
       }
       /**
        * <code>repeated .scifirpg.Effect effect = 8;</code>
        */
-      public java.util.List<com.eldritch.invoken.proto.Effects.Effect.Builder> 
+      public java.util.List<com.eldritch.scifirpg.proto.Effects.Effect.Builder> 
            getEffectBuilderList() {
         return getEffectFieldBuilder().getBuilderList();
       }
       private com.google.protobuf.RepeatedFieldBuilder<
-          com.eldritch.invoken.proto.Effects.Effect, com.eldritch.invoken.proto.Effects.Effect.Builder, com.eldritch.invoken.proto.Effects.EffectOrBuilder> 
+          com.eldritch.scifirpg.proto.Effects.Effect, com.eldritch.scifirpg.proto.Effects.Effect.Builder, com.eldritch.scifirpg.proto.Effects.EffectOrBuilder> 
           getEffectFieldBuilder() {
         if (effectBuilder_ == null) {
           effectBuilder_ = new com.google.protobuf.RepeatedFieldBuilder<
-              com.eldritch.invoken.proto.Effects.Effect, com.eldritch.invoken.proto.Effects.Effect.Builder, com.eldritch.invoken.proto.Effects.EffectOrBuilder>(
+              com.eldritch.scifirpg.proto.Effects.Effect, com.eldritch.scifirpg.proto.Effects.Effect.Builder, com.eldritch.scifirpg.proto.Effects.EffectOrBuilder>(
                   effect_,
                   ((bitField0_ & 0x00000080) == 0x00000080),
                   getParentForChildren(),
@@ -2667,8 +2667,8 @@ public final class Augmentations {
       "scipline\022\r\n\005value\030\002 \002(\005\022\r\n\005slots\030\003 \002(\005\"^" +
       "\n\004Type\022\n\n\006ATTACK\020\000\022\013\n\007DECEIVE\020\001\022\013\n\007EXECU" +
       "TE\020\002\022\014\n\010DIALOGUE\020\003\022\013\n\007COUNTER\020\004\022\010\n\004TRAP\020" +
-      "\005\022\013\n\007PASSIVE\020\006B\035\n\033com.eldritch.scifirpg." +
-      "proto"
+      "\005\022\013\n\007PASSIVE\020\006B\034\n\032com.eldritch.invoken.p" +
+      "roto"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
@@ -2693,9 +2693,9 @@ public final class Augmentations {
     com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
-          com.eldritch.invoken.proto.Disciplines.getDescriptor(),
-          com.eldritch.invoken.proto.Effects.getDescriptor(),
-          com.eldritch.invoken.proto.Prerequisites.getDescriptor(),
+          com.eldritch.scifirpg.proto.Disciplines.getDescriptor(),
+          com.eldritch.scifirpg.proto.Effects.getDescriptor(),
+          com.eldritch.scifirpg.proto.Prerequisites.getDescriptor(),
         }, assigner);
   }
 

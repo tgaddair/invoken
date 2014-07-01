@@ -1,7 +1,7 @@
 syntax = "proto2";
 
 package scifirpg;
-option java_package = "com.eldritch.scifirpg.proto";
+option java_package = "com.eldritch.invoken.proto";
 
 enum Discipline {
 	// Determines max health

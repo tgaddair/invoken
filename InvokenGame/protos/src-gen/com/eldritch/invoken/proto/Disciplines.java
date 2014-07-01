@@ -833,8 +833,8 @@ public final class Disciplines {
       "\022\014\n\010ILLUSION\020\004\022\013\n\007EMPATHY\020\005*u\n\tInfluence" +
       "\022\016\n\nPERSUASION\020\000\022\013\n\007BRIBERY\020\001\022\r\n\tSEDUCTI" +
       "ON\020\002\022\014\n\010DEMAGOGY\020\003\022\020\n\014INTIMIDATION\020\004\022\014\n\010" +
-      "BLUFFING\020\005\022\016\n\nDOMINATION\020\006B\035\n\033com.eldrit" +
-      "ch.scifirpg.proto"
+      "BLUFFING\020\005\022\016\n\nDOMINATION\020\006B\034\n\032com.eldrit" +
+      "ch.invoken.proto"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {

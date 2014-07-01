@@ -1841,7 +1841,7 @@ public final class Effects {
                 com.eldritch.invoken.proto.Effects.Effect.class, com.eldritch.invoken.proto.Effects.Effect.Builder.class);
       }
 
-      // Construct using com.eldritch.scifirpg.proto.Effects.Effect.newBuilder()
+      // Construct using com.eldritch.invoken.proto.Effects.Effect.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -2552,8 +2552,8 @@ public final class Effects {
       "LLIED\020\005\022\014\n\010TARGETER\020\006\022\016\n\nSPREAD_ALL\020\007\022\022\n" +
       "\016SPREAD_HOSTILE\020\010*N\n\nDamageType\022\014\n\010PHYSI" +
       "CAL\020\000\022\013\n\007THERMAL\020\001\022\017\n\013RADIOACTIVE\020\002\022\t\n\005T" +
-      "OXIC\020\003\022\t\n\005VIRAL\020\004B\035\n\033com.eldritch.scifir" +
-      "pg.proto"
+      "OXIC\020\003\022\t\n\005VIRAL\020\004B\034\n\032com.eldritch.invoke" +
+      "n.proto"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {

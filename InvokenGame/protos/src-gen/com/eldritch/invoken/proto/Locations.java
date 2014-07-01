@@ -702,7 +702,7 @@ public final class Locations {
                 com.eldritch.invoken.proto.Locations.Location.class, com.eldritch.invoken.proto.Locations.Location.Builder.class);
       }
 
-      // Construct using com.eldritch.scifirpg.proto.Locations.Location.newBuilder()
+      // Construct using com.eldritch.invoken.proto.Locations.Location.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -1635,12 +1635,12 @@ public final class Locations {
     /**
      * <code>repeated .scifirpg.Prerequisite prereq = 6;</code>
      */
-    java.util.List<com.eldritch.invoken.proto.Prerequisites.Prerequisite> 
+    java.util.List<com.eldritch.scifirpg.proto.Prerequisites.Prerequisite> 
         getPrereqList();
     /**
      * <code>repeated .scifirpg.Prerequisite prereq = 6;</code>
      */
-    com.eldritch.invoken.proto.Prerequisites.Prerequisite getPrereq(int index);
+    com.eldritch.scifirpg.proto.Prerequisites.Prerequisite getPrereq(int index);
     /**
      * <code>repeated .scifirpg.Prerequisite prereq = 6;</code>
      */
@@ -1648,12 +1648,12 @@ public final class Locations {
     /**
      * <code>repeated .scifirpg.Prerequisite prereq = 6;</code>
      */
-    java.util.List<? extends com.eldritch.invoken.proto.Prerequisites.PrerequisiteOrBuilder> 
+    java.util.List<? extends com.eldritch.scifirpg.proto.Prerequisites.PrerequisiteOrBuilder> 
         getPrereqOrBuilderList();
     /**
      * <code>repeated .scifirpg.Prerequisite prereq = 6;</code>
      */
-    com.eldritch.invoken.proto.Prerequisites.PrerequisiteOrBuilder getPrereqOrBuilder(
+    com.eldritch.scifirpg.proto.Prerequisites.PrerequisiteOrBuilder getPrereqOrBuilder(
         int index);
 
     // optional string successor_id = 12;
@@ -1853,10 +1853,10 @@ public final class Locations {
             }
             case 50: {
               if (!((mutable_bitField0_ & 0x00000020) == 0x00000020)) {
-                prereq_ = new java.util.ArrayList<com.eldritch.invoken.proto.Prerequisites.Prerequisite>();
+                prereq_ = new java.util.ArrayList<com.eldritch.scifirpg.proto.Prerequisites.Prerequisite>();
                 mutable_bitField0_ |= 0x00000020;
               }
-              prereq_.add(input.readMessage(com.eldritch.invoken.proto.Prerequisites.Prerequisite.PARSER, extensionRegistry));
+              prereq_.add(input.readMessage(com.eldritch.scifirpg.proto.Prerequisites.Prerequisite.PARSER, extensionRegistry));
               break;
             }
             case 56: {
@@ -2085,12 +2085,12 @@ public final class Locations {
       /**
        * <code>repeated .scifirpg.Outcome outcome = 2;</code>
        */
-      java.util.List<com.eldritch.invoken.proto.Outcomes.Outcome> 
+      java.util.List<com.eldritch.scifirpg.proto.Outcomes.Outcome> 
           getOutcomeList();
       /**
        * <code>repeated .scifirpg.Outcome outcome = 2;</code>
        */
-      com.eldritch.invoken.proto.Outcomes.Outcome getOutcome(int index);
+      com.eldritch.scifirpg.proto.Outcomes.Outcome getOutcome(int index);
       /**
        * <code>repeated .scifirpg.Outcome outcome = 2;</code>
        */
@@ -2098,12 +2098,12 @@ public final class Locations {
       /**
        * <code>repeated .scifirpg.Outcome outcome = 2;</code>
        */
-      java.util.List<? extends com.eldritch.invoken.proto.Outcomes.OutcomeOrBuilder> 
+      java.util.List<? extends com.eldritch.scifirpg.proto.Outcomes.OutcomeOrBuilder> 
           getOutcomeOrBuilderList();
       /**
        * <code>repeated .scifirpg.Outcome outcome = 2;</code>
        */
-      com.eldritch.invoken.proto.Outcomes.OutcomeOrBuilder getOutcomeOrBuilder(
+      com.eldritch.scifirpg.proto.Outcomes.OutcomeOrBuilder getOutcomeOrBuilder(
           int index);
 
       // optional bool rest = 3 [default = false];
@@ -2182,10 +2182,10 @@ public final class Locations {
               }
               case 18: {
                 if (!((mutable_bitField0_ & 0x00000002) == 0x00000002)) {
-                  outcome_ = new java.util.ArrayList<com.eldritch.invoken.proto.Outcomes.Outcome>();
+                  outcome_ = new java.util.ArrayList<com.eldritch.scifirpg.proto.Outcomes.Outcome>();
                   mutable_bitField0_ |= 0x00000002;
                 }
-                outcome_.add(input.readMessage(com.eldritch.invoken.proto.Outcomes.Outcome.PARSER, extensionRegistry));
+                outcome_.add(input.readMessage(com.eldritch.scifirpg.proto.Outcomes.Outcome.PARSER, extensionRegistry));
                 break;
               }
               case 24: {
@@ -2281,17 +2281,17 @@ public final class Locations {
 
       // repeated .scifirpg.Outcome outcome = 2;
       public static final int OUTCOME_FIELD_NUMBER = 2;
-      private java.util.List<com.eldritch.invoken.proto.Outcomes.Outcome> outcome_;
+      private java.util.List<com.eldritch.scifirpg.proto.Outcomes.Outcome> outcome_;
       /**
        * <code>repeated .scifirpg.Outcome outcome = 2;</code>
        */
-      public java.util.List<com.eldritch.invoken.proto.Outcomes.Outcome> getOutcomeList() {
+      public java.util.List<com.eldritch.scifirpg.proto.Outcomes.Outcome> getOutcomeList() {
         return outcome_;
       }
       /**
        * <code>repeated .scifirpg.Outcome outcome = 2;</code>
        */
-      public java.util.List<? extends com.eldritch.invoken.proto.Outcomes.OutcomeOrBuilder> 
+      public java.util.List<? extends com.eldritch.scifirpg.proto.Outcomes.OutcomeOrBuilder> 
           getOutcomeOrBuilderList() {
         return outcome_;
       }
@@ -2304,13 +2304,13 @@ public final class Locations {
       /**
        * <code>repeated .scifirpg.Outcome outcome = 2;</code>
        */
-      public com.eldritch.invoken.proto.Outcomes.Outcome getOutcome(int index) {
+      public com.eldritch.scifirpg.proto.Outcomes.Outcome getOutcome(int index) {
         return outcome_.get(index);
       }
       /**
        * <code>repeated .scifirpg.Outcome outcome = 2;</code>
        */
-      public com.eldritch.invoken.proto.Outcomes.OutcomeOrBuilder getOutcomeOrBuilder(
+      public com.eldritch.scifirpg.proto.Outcomes.OutcomeOrBuilder getOutcomeOrBuilder(
           int index) {
         return outcome_.get(index);
       }
@@ -2492,7 +2492,7 @@ public final class Locations {
                   com.eldritch.invoken.proto.Locations.Encounter.StaticParams.class, com.eldritch.invoken.proto.Locations.Encounter.StaticParams.Builder.class);
         }
 
-        // Construct using com.eldritch.scifirpg.proto.Locations.Encounter.StaticParams.newBuilder()
+        // Construct using com.eldritch.invoken.proto.Locations.Encounter.StaticParams.newBuilder()
         private Builder() {
           maybeForceBuilderInitialization();
         }
@@ -2730,22 +2730,22 @@ public final class Locations {
         }
 
         // repeated .scifirpg.Outcome outcome = 2;
-        private java.util.List<com.eldritch.invoken.proto.Outcomes.Outcome> outcome_ =
+        private java.util.List<com.eldritch.scifirpg.proto.Outcomes.Outcome> outcome_ =
           java.util.Collections.emptyList();
         private void ensureOutcomeIsMutable() {
           if (!((bitField0_ & 0x00000002) == 0x00000002)) {
-            outcome_ = new java.util.ArrayList<com.eldritch.invoken.proto.Outcomes.Outcome>(outcome_);
+            outcome_ = new java.util.ArrayList<com.eldritch.scifirpg.proto.Outcomes.Outcome>(outcome_);
             bitField0_ |= 0x00000002;
            }
         }
 
         private com.google.protobuf.RepeatedFieldBuilder<
-            com.eldritch.invoken.proto.Outcomes.Outcome, com.eldritch.invoken.proto.Outcomes.Outcome.Builder, com.eldritch.invoken.proto.Outcomes.OutcomeOrBuilder> outcomeBuilder_;
+            com.eldritch.scifirpg.proto.Outcomes.Outcome, com.eldritch.scifirpg.proto.Outcomes.Outcome.Builder, com.eldritch.scifirpg.proto.Outcomes.OutcomeOrBuilder> outcomeBuilder_;
 
         /**
          * <code>repeated .scifirpg.Outcome outcome = 2;</code>
          */
-        public java.util.List<com.eldritch.invoken.proto.Outcomes.Outcome> getOutcomeList() {
+        public java.util.List<com.eldritch.scifirpg.proto.Outcomes.Outcome> getOutcomeList() {
           if (outcomeBuilder_ == null) {
             return java.util.Collections.unmodifiableList(outcome_);
           } else {
@@ -2765,7 +2765,7 @@ public final class Locations {
         /**
          * <code>repeated .scifirpg.Outcome outcome = 2;</code>
          */
-        public com.eldritch.invoken.proto.Outcomes.Outcome getOutcome(int index) {
+        public com.eldritch.scifirpg.proto.Outcomes.Outcome getOutcome(int index) {
           if (outcomeBuilder_ == null) {
             return outcome_.get(index);
           } else {
@@ -2776,7 +2776,7 @@ public final class Locations {
          * <code>repeated .scifirpg.Outcome outcome = 2;</code>
          */
         public Builder setOutcome(
-            int index, com.eldritch.invoken.proto.Outcomes.Outcome value) {
+            int index, com.eldritch.scifirpg.proto.Outcomes.Outcome value) {
           if (outcomeBuilder_ == null) {
             if (value == null) {
               throw new NullPointerException();
@@ -2793,7 +2793,7 @@ public final class Locations {
          * <code>repeated .scifirpg.Outcome outcome = 2;</code>
          */
         public Builder setOutcome(
-            int index, com.eldritch.invoken.proto.Outcomes.Outcome.Builder builderForValue) {
+            int index, com.eldritch.scifirpg.proto.Outcomes.Outcome.Builder builderForValue) {
           if (outcomeBuilder_ == null) {
             ensureOutcomeIsMutable();
             outcome_.set(index, builderForValue.build());
@@ -2806,7 +2806,7 @@ public final class Locations {
         /**
          * <code>repeated .scifirpg.Outcome outcome = 2;</code>
          */
-        public Builder addOutcome(com.eldritch.invoken.proto.Outcomes.Outcome value) {
+        public Builder addOutcome(com.eldritch.scifirpg.proto.Outcomes.Outcome value) {
           if (outcomeBuilder_ == null) {
             if (value == null) {
               throw new NullPointerException();
@@ -2823,7 +2823,7 @@ public final class Locations {
          * <code>repeated .scifirpg.Outcome outcome = 2;</code>
          */
         public Builder addOutcome(
-            int index, com.eldritch.invoken.proto.Outcomes.Outcome value) {
+            int index, com.eldritch.scifirpg.proto.Outcomes.Outcome value) {
           if (outcomeBuilder_ == null) {
             if (value == null) {
               throw new NullPointerException();
@@ -2840,7 +2840,7 @@ public final class Locations {
          * <code>repeated .scifirpg.Outcome outcome = 2;</code>
          */
         public Builder addOutcome(
-            com.eldritch.invoken.proto.Outcomes.Outcome.Builder builderForValue) {
+            com.eldritch.scifirpg.proto.Outcomes.Outcome.Builder builderForValue) {
           if (outcomeBuilder_ == null) {
             ensureOutcomeIsMutable();
             outcome_.add(builderForValue.build());
@@ -2854,7 +2854,7 @@ public final class Locations {
          * <code>repeated .scifirpg.Outcome outcome = 2;</code>
          */
         public Builder addOutcome(
-            int index, com.eldritch.invoken.proto.Outcomes.Outcome.Builder builderForValue) {
+            int index, com.eldritch.scifirpg.proto.Outcomes.Outcome.Builder builderForValue) {
           if (outcomeBuilder_ == null) {
             ensureOutcomeIsMutable();
             outcome_.add(index, builderForValue.build());
@@ -2868,7 +2868,7 @@ public final class Locations {
          * <code>repeated .scifirpg.Outcome outcome = 2;</code>
          */
         public Builder addAllOutcome(
-            java.lang.Iterable<? extends com.eldritch.invoken.proto.Outcomes.Outcome> values) {
+            java.lang.Iterable<? extends com.eldritch.scifirpg.proto.Outcomes.Outcome> values) {
           if (outcomeBuilder_ == null) {
             ensureOutcomeIsMutable();
             super.addAll(values, outcome_);
@@ -2907,14 +2907,14 @@ public final class Locations {
         /**
          * <code>repeated .scifirpg.Outcome outcome = 2;</code>
          */
-        public com.eldritch.invoken.proto.Outcomes.Outcome.Builder getOutcomeBuilder(
+        public com.eldritch.scifirpg.proto.Outcomes.Outcome.Builder getOutcomeBuilder(
             int index) {
           return getOutcomeFieldBuilder().getBuilder(index);
         }
         /**
          * <code>repeated .scifirpg.Outcome outcome = 2;</code>
          */
-        public com.eldritch.invoken.proto.Outcomes.OutcomeOrBuilder getOutcomeOrBuilder(
+        public com.eldritch.scifirpg.proto.Outcomes.OutcomeOrBuilder getOutcomeOrBuilder(
             int index) {
           if (outcomeBuilder_ == null) {
             return outcome_.get(index);  } else {
@@ -2924,7 +2924,7 @@ public final class Locations {
         /**
          * <code>repeated .scifirpg.Outcome outcome = 2;</code>
          */
-        public java.util.List<? extends com.eldritch.invoken.proto.Outcomes.OutcomeOrBuilder> 
+        public java.util.List<? extends com.eldritch.scifirpg.proto.Outcomes.OutcomeOrBuilder> 
              getOutcomeOrBuilderList() {
           if (outcomeBuilder_ != null) {
             return outcomeBuilder_.getMessageOrBuilderList();
@@ -2935,31 +2935,31 @@ public final class Locations {
         /**
          * <code>repeated .scifirpg.Outcome outcome = 2;</code>
          */
-        public com.eldritch.invoken.proto.Outcomes.Outcome.Builder addOutcomeBuilder() {
+        public com.eldritch.scifirpg.proto.Outcomes.Outcome.Builder addOutcomeBuilder() {
           return getOutcomeFieldBuilder().addBuilder(
-              com.eldritch.invoken.proto.Outcomes.Outcome.getDefaultInstance());
+              com.eldritch.scifirpg.proto.Outcomes.Outcome.getDefaultInstance());
         }
         /**
          * <code>repeated .scifirpg.Outcome outcome = 2;</code>
          */
-        public com.eldritch.invoken.proto.Outcomes.Outcome.Builder addOutcomeBuilder(
+        public com.eldritch.scifirpg.proto.Outcomes.Outcome.Builder addOutcomeBuilder(
             int index) {
           return getOutcomeFieldBuilder().addBuilder(
-              index, com.eldritch.invoken.proto.Outcomes.Outcome.getDefaultInstance());
+              index, com.eldritch.scifirpg.proto.Outcomes.Outcome.getDefaultInstance());
         }
         /**
          * <code>repeated .scifirpg.Outcome outcome = 2;</code>
          */
-        public java.util.List<com.eldritch.invoken.proto.Outcomes.Outcome.Builder> 
+        public java.util.List<com.eldritch.scifirpg.proto.Outcomes.Outcome.Builder> 
              getOutcomeBuilderList() {
           return getOutcomeFieldBuilder().getBuilderList();
         }
         private com.google.protobuf.RepeatedFieldBuilder<
-            com.eldritch.invoken.proto.Outcomes.Outcome, com.eldritch.invoken.proto.Outcomes.Outcome.Builder, com.eldritch.invoken.proto.Outcomes.OutcomeOrBuilder> 
+            com.eldritch.scifirpg.proto.Outcomes.Outcome, com.eldritch.scifirpg.proto.Outcomes.Outcome.Builder, com.eldritch.scifirpg.proto.Outcomes.OutcomeOrBuilder> 
             getOutcomeFieldBuilder() {
           if (outcomeBuilder_ == null) {
             outcomeBuilder_ = new com.google.protobuf.RepeatedFieldBuilder<
-                com.eldritch.invoken.proto.Outcomes.Outcome, com.eldritch.invoken.proto.Outcomes.Outcome.Builder, com.eldritch.invoken.proto.Outcomes.OutcomeOrBuilder>(
+                com.eldritch.scifirpg.proto.Outcomes.Outcome, com.eldritch.scifirpg.proto.Outcomes.Outcome.Builder, com.eldritch.scifirpg.proto.Outcomes.OutcomeOrBuilder>(
                     outcome_,
                     ((bitField0_ & 0x00000002) == 0x00000002),
                     getParentForChildren(),
@@ -3307,7 +3307,7 @@ public final class Locations {
                   com.eldritch.invoken.proto.Locations.Encounter.DecisionParams.class, com.eldritch.invoken.proto.Locations.Encounter.DecisionParams.Builder.class);
         }
 
-        // Construct using com.eldritch.scifirpg.proto.Locations.Encounter.DecisionParams.newBuilder()
+        // Construct using com.eldritch.invoken.proto.Locations.Encounter.DecisionParams.newBuilder()
         private Builder() {
           maybeForceBuilderInitialization();
         }
@@ -3624,7 +3624,7 @@ public final class Locations {
        * for all actors.
        * </pre>
        */
-      java.util.List<com.eldritch.invoken.proto.Outcomes.Outcome> 
+      java.util.List<com.eldritch.scifirpg.proto.Outcomes.Outcome> 
           getOnFleeList();
       /**
        * <code>repeated .scifirpg.Outcome on_flee = 3;</code>
@@ -3634,7 +3634,7 @@ public final class Locations {
        * for all actors.
        * </pre>
        */
-      com.eldritch.invoken.proto.Outcomes.Outcome getOnFlee(int index);
+      com.eldritch.scifirpg.proto.Outcomes.Outcome getOnFlee(int index);
       /**
        * <code>repeated .scifirpg.Outcome on_flee = 3;</code>
        *
@@ -3652,7 +3652,7 @@ public final class Locations {
        * for all actors.
        * </pre>
        */
-      java.util.List<? extends com.eldritch.invoken.proto.Outcomes.OutcomeOrBuilder> 
+      java.util.List<? extends com.eldritch.scifirpg.proto.Outcomes.OutcomeOrBuilder> 
           getOnFleeOrBuilderList();
       /**
        * <code>repeated .scifirpg.Outcome on_flee = 3;</code>
@@ -3662,7 +3662,7 @@ public final class Locations {
        * for all actors.
        * </pre>
        */
-      com.eldritch.invoken.proto.Outcomes.OutcomeOrBuilder getOnFleeOrBuilder(
+      com.eldritch.scifirpg.proto.Outcomes.OutcomeOrBuilder getOnFleeOrBuilder(
           int index);
 
       // optional bool no_detect = 4 [default = false];
@@ -3767,10 +3767,10 @@ public final class Locations {
               }
               case 26: {
                 if (!((mutable_bitField0_ & 0x00000004) == 0x00000004)) {
-                  onFlee_ = new java.util.ArrayList<com.eldritch.invoken.proto.Outcomes.Outcome>();
+                  onFlee_ = new java.util.ArrayList<com.eldritch.scifirpg.proto.Outcomes.Outcome>();
                   mutable_bitField0_ |= 0x00000004;
                 }
-                onFlee_.add(input.readMessage(com.eldritch.invoken.proto.Outcomes.Outcome.PARSER, extensionRegistry));
+                onFlee_.add(input.readMessage(com.eldritch.scifirpg.proto.Outcomes.Outcome.PARSER, extensionRegistry));
                 break;
               }
               case 32: {
@@ -3859,7 +3859,7 @@ public final class Locations {
          * the quest stage forward.
          * </pre>
          */
-        java.util.List<com.eldritch.invoken.proto.Outcomes.Outcome> 
+        java.util.List<com.eldritch.scifirpg.proto.Outcomes.Outcome> 
             getOnDeathList();
         /**
          * <code>repeated .scifirpg.Outcome on_death = 2;</code>
@@ -3873,7 +3873,7 @@ public final class Locations {
          * the quest stage forward.
          * </pre>
          */
-        com.eldritch.invoken.proto.Outcomes.Outcome getOnDeath(int index);
+        com.eldritch.scifirpg.proto.Outcomes.Outcome getOnDeath(int index);
         /**
          * <code>repeated .scifirpg.Outcome on_death = 2;</code>
          *
@@ -3899,7 +3899,7 @@ public final class Locations {
          * the quest stage forward.
          * </pre>
          */
-        java.util.List<? extends com.eldritch.invoken.proto.Outcomes.OutcomeOrBuilder> 
+        java.util.List<? extends com.eldritch.scifirpg.proto.Outcomes.OutcomeOrBuilder> 
             getOnDeathOrBuilderList();
         /**
          * <code>repeated .scifirpg.Outcome on_death = 2;</code>
@@ -3913,7 +3913,7 @@ public final class Locations {
          * the quest stage forward.
          * </pre>
          */
-        com.eldritch.invoken.proto.Outcomes.OutcomeOrBuilder getOnDeathOrBuilder(
+        com.eldritch.scifirpg.proto.Outcomes.OutcomeOrBuilder getOnDeathOrBuilder(
             int index);
 
         // optional .scifirpg.DialogueTree dialogue = 3;
@@ -3981,6 +3981,36 @@ public final class Locations {
          * </pre>
          */
         boolean getBlocking();
+
+        // optional bool alive = 8 [default = true];
+        /**
+         * <code>optional bool alive = 8 [default = true];</code>
+         */
+        boolean hasAlive();
+        /**
+         * <code>optional bool alive = 8 [default = true];</code>
+         */
+        boolean getAlive();
+
+        // optional int32 min = 6 [default = 1];
+        /**
+         * <code>optional int32 min = 6 [default = 1];</code>
+         */
+        boolean hasMin();
+        /**
+         * <code>optional int32 min = 6 [default = 1];</code>
+         */
+        int getMin();
+
+        // optional int32 max = 7 [default = 1];
+        /**
+         * <code>optional int32 max = 7 [default = 1];</code>
+         */
+        boolean hasMax();
+        /**
+         * <code>optional int32 max = 7 [default = 1];</code>
+         */
+        int getMax();
       }
       /**
        * Protobuf type {@code scifirpg.Encounter.ActorParams.ActorScenario}
@@ -4040,10 +4070,10 @@ public final class Locations {
                 }
                 case 18: {
                   if (!((mutable_bitField0_ & 0x00000002) == 0x00000002)) {
-                    onDeath_ = new java.util.ArrayList<com.eldritch.invoken.proto.Outcomes.Outcome>();
+                    onDeath_ = new java.util.ArrayList<com.eldritch.scifirpg.proto.Outcomes.Outcome>();
                     mutable_bitField0_ |= 0x00000002;
                   }
-                  onDeath_.add(input.readMessage(com.eldritch.invoken.proto.Outcomes.Outcome.PARSER, extensionRegistry));
+                  onDeath_.add(input.readMessage(com.eldritch.scifirpg.proto.Outcomes.Outcome.PARSER, extensionRegistry));
                   break;
                 }
                 case 26: {
@@ -4067,6 +4097,21 @@ public final class Locations {
                 case 40: {
                   bitField0_ |= 0x00000008;
                   blocking_ = input.readBool();
+                  break;
+                }
+                case 48: {
+                  bitField0_ |= 0x00000020;
+                  min_ = input.readInt32();
+                  break;
+                }
+                case 56: {
+                  bitField0_ |= 0x00000040;
+                  max_ = input.readInt32();
+                  break;
+                }
+                case 64: {
+                  bitField0_ |= 0x00000010;
+                  alive_ = input.readBool();
                   break;
                 }
               }
@@ -4157,7 +4202,7 @@ public final class Locations {
 
         // repeated .scifirpg.Outcome on_death = 2;
         public static final int ON_DEATH_FIELD_NUMBER = 2;
-        private java.util.List<com.eldritch.invoken.proto.Outcomes.Outcome> onDeath_;
+        private java.util.List<com.eldritch.scifirpg.proto.Outcomes.Outcome> onDeath_;
         /**
          * <code>repeated .scifirpg.Outcome on_death = 2;</code>
          *
@@ -4170,7 +4215,7 @@ public final class Locations {
          * the quest stage forward.
          * </pre>
          */
-        public java.util.List<com.eldritch.invoken.proto.Outcomes.Outcome> getOnDeathList() {
+        public java.util.List<com.eldritch.scifirpg.proto.Outcomes.Outcome> getOnDeathList() {
           return onDeath_;
         }
         /**
@@ -4185,7 +4230,7 @@ public final class Locations {
          * the quest stage forward.
          * </pre>
          */
-        public java.util.List<? extends com.eldritch.invoken.proto.Outcomes.OutcomeOrBuilder> 
+        public java.util.List<? extends com.eldritch.scifirpg.proto.Outcomes.OutcomeOrBuilder> 
             getOnDeathOrBuilderList() {
           return onDeath_;
         }
@@ -4216,7 +4261,7 @@ public final class Locations {
          * the quest stage forward.
          * </pre>
          */
-        public com.eldritch.invoken.proto.Outcomes.Outcome getOnDeath(int index) {
+        public com.eldritch.scifirpg.proto.Outcomes.Outcome getOnDeath(int index) {
           return onDeath_.get(index);
         }
         /**
@@ -4231,7 +4276,7 @@ public final class Locations {
          * the quest stage forward.
          * </pre>
          */
-        public com.eldritch.invoken.proto.Outcomes.OutcomeOrBuilder getOnDeathOrBuilder(
+        public com.eldritch.scifirpg.proto.Outcomes.OutcomeOrBuilder getOnDeathOrBuilder(
             int index) {
           return onDeath_.get(index);
         }
@@ -4322,12 +4367,63 @@ public final class Locations {
           return blocking_;
         }
 
+        // optional bool alive = 8 [default = true];
+        public static final int ALIVE_FIELD_NUMBER = 8;
+        private boolean alive_;
+        /**
+         * <code>optional bool alive = 8 [default = true];</code>
+         */
+        public boolean hasAlive() {
+          return ((bitField0_ & 0x00000010) == 0x00000010);
+        }
+        /**
+         * <code>optional bool alive = 8 [default = true];</code>
+         */
+        public boolean getAlive() {
+          return alive_;
+        }
+
+        // optional int32 min = 6 [default = 1];
+        public static final int MIN_FIELD_NUMBER = 6;
+        private int min_;
+        /**
+         * <code>optional int32 min = 6 [default = 1];</code>
+         */
+        public boolean hasMin() {
+          return ((bitField0_ & 0x00000020) == 0x00000020);
+        }
+        /**
+         * <code>optional int32 min = 6 [default = 1];</code>
+         */
+        public int getMin() {
+          return min_;
+        }
+
+        // optional int32 max = 7 [default = 1];
+        public static final int MAX_FIELD_NUMBER = 7;
+        private int max_;
+        /**
+         * <code>optional int32 max = 7 [default = 1];</code>
+         */
+        public boolean hasMax() {
+          return ((bitField0_ & 0x00000040) == 0x00000040);
+        }
+        /**
+         * <code>optional int32 max = 7 [default = 1];</code>
+         */
+        public int getMax() {
+          return max_;
+        }
+
         private void initFields() {
           actorId_ = "";
           onDeath_ = java.util.Collections.emptyList();
           dialogue_ = com.eldritch.invoken.proto.Actors.DialogueTree.getDefaultInstance();
           essential_ = false;
           blocking_ = false;
+          alive_ = true;
+          min_ = 1;
+          max_ = 1;
         }
         private byte memoizedIsInitialized = -1;
         public final boolean isInitialized() {
@@ -4372,6 +4468,15 @@ public final class Locations {
           if (((bitField0_ & 0x00000008) == 0x00000008)) {
             output.writeBool(5, blocking_);
           }
+          if (((bitField0_ & 0x00000020) == 0x00000020)) {
+            output.writeInt32(6, min_);
+          }
+          if (((bitField0_ & 0x00000040) == 0x00000040)) {
+            output.writeInt32(7, max_);
+          }
+          if (((bitField0_ & 0x00000010) == 0x00000010)) {
+            output.writeBool(8, alive_);
+          }
           getUnknownFields().writeTo(output);
         }
 
@@ -4400,6 +4505,18 @@ public final class Locations {
           if (((bitField0_ & 0x00000008) == 0x00000008)) {
             size += com.google.protobuf.CodedOutputStream
               .computeBoolSize(5, blocking_);
+          }
+          if (((bitField0_ & 0x00000020) == 0x00000020)) {
+            size += com.google.protobuf.CodedOutputStream
+              .computeInt32Size(6, min_);
+          }
+          if (((bitField0_ & 0x00000040) == 0x00000040)) {
+            size += com.google.protobuf.CodedOutputStream
+              .computeInt32Size(7, max_);
+          }
+          if (((bitField0_ & 0x00000010) == 0x00000010)) {
+            size += com.google.protobuf.CodedOutputStream
+              .computeBoolSize(8, alive_);
           }
           size += getUnknownFields().getSerializedSize();
           memoizedSerializedSize = size;
@@ -4497,7 +4614,7 @@ public final class Locations {
                     com.eldritch.invoken.proto.Locations.Encounter.ActorParams.ActorScenario.class, com.eldritch.invoken.proto.Locations.Encounter.ActorParams.ActorScenario.Builder.class);
           }
 
-          // Construct using com.eldritch.scifirpg.proto.Locations.Encounter.ActorParams.ActorScenario.newBuilder()
+          // Construct using com.eldritch.invoken.proto.Locations.Encounter.ActorParams.ActorScenario.newBuilder()
           private Builder() {
             maybeForceBuilderInitialization();
           }
@@ -4537,6 +4654,12 @@ public final class Locations {
             bitField0_ = (bitField0_ & ~0x00000008);
             blocking_ = false;
             bitField0_ = (bitField0_ & ~0x00000010);
+            alive_ = true;
+            bitField0_ = (bitField0_ & ~0x00000020);
+            min_ = 1;
+            bitField0_ = (bitField0_ & ~0x00000040);
+            max_ = 1;
+            bitField0_ = (bitField0_ & ~0x00000080);
             return this;
           }
 
@@ -4594,6 +4717,18 @@ public final class Locations {
               to_bitField0_ |= 0x00000008;
             }
             result.blocking_ = blocking_;
+            if (((from_bitField0_ & 0x00000020) == 0x00000020)) {
+              to_bitField0_ |= 0x00000010;
+            }
+            result.alive_ = alive_;
+            if (((from_bitField0_ & 0x00000040) == 0x00000040)) {
+              to_bitField0_ |= 0x00000020;
+            }
+            result.min_ = min_;
+            if (((from_bitField0_ & 0x00000080) == 0x00000080)) {
+              to_bitField0_ |= 0x00000040;
+            }
+            result.max_ = max_;
             result.bitField0_ = to_bitField0_;
             onBuilt();
             return result;
@@ -4649,6 +4784,15 @@ public final class Locations {
             }
             if (other.hasBlocking()) {
               setBlocking(other.getBlocking());
+            }
+            if (other.hasAlive()) {
+              setAlive(other.getAlive());
+            }
+            if (other.hasMin()) {
+              setMin(other.getMin());
+            }
+            if (other.hasMax()) {
+              setMax(other.getMax());
             }
             this.mergeUnknownFields(other.getUnknownFields());
             return this;
@@ -4768,17 +4912,17 @@ public final class Locations {
           }
 
           // repeated .scifirpg.Outcome on_death = 2;
-          private java.util.List<com.eldritch.invoken.proto.Outcomes.Outcome> onDeath_ =
+          private java.util.List<com.eldritch.scifirpg.proto.Outcomes.Outcome> onDeath_ =
             java.util.Collections.emptyList();
           private void ensureOnDeathIsMutable() {
             if (!((bitField0_ & 0x00000002) == 0x00000002)) {
-              onDeath_ = new java.util.ArrayList<com.eldritch.invoken.proto.Outcomes.Outcome>(onDeath_);
+              onDeath_ = new java.util.ArrayList<com.eldritch.scifirpg.proto.Outcomes.Outcome>(onDeath_);
               bitField0_ |= 0x00000002;
              }
           }
 
           private com.google.protobuf.RepeatedFieldBuilder<
-              com.eldritch.invoken.proto.Outcomes.Outcome, com.eldritch.invoken.proto.Outcomes.Outcome.Builder, com.eldritch.invoken.proto.Outcomes.OutcomeOrBuilder> onDeathBuilder_;
+              com.eldritch.scifirpg.proto.Outcomes.Outcome, com.eldritch.scifirpg.proto.Outcomes.Outcome.Builder, com.eldritch.scifirpg.proto.Outcomes.OutcomeOrBuilder> onDeathBuilder_;
 
           /**
            * <code>repeated .scifirpg.Outcome on_death = 2;</code>
@@ -4792,7 +4936,7 @@ public final class Locations {
            * the quest stage forward.
            * </pre>
            */
-          public java.util.List<com.eldritch.invoken.proto.Outcomes.Outcome> getOnDeathList() {
+          public java.util.List<com.eldritch.scifirpg.proto.Outcomes.Outcome> getOnDeathList() {
             if (onDeathBuilder_ == null) {
               return java.util.Collections.unmodifiableList(onDeath_);
             } else {
@@ -4830,7 +4974,7 @@ public final class Locations {
            * the quest stage forward.
            * </pre>
            */
-          public com.eldritch.invoken.proto.Outcomes.Outcome getOnDeath(int index) {
+          public com.eldritch.scifirpg.proto.Outcomes.Outcome getOnDeath(int index) {
             if (onDeathBuilder_ == null) {
               return onDeath_.get(index);
             } else {
@@ -4850,7 +4994,7 @@ public final class Locations {
            * </pre>
            */
           public Builder setOnDeath(
-              int index, com.eldritch.invoken.proto.Outcomes.Outcome value) {
+              int index, com.eldritch.scifirpg.proto.Outcomes.Outcome value) {
             if (onDeathBuilder_ == null) {
               if (value == null) {
                 throw new NullPointerException();
@@ -4876,7 +5020,7 @@ public final class Locations {
            * </pre>
            */
           public Builder setOnDeath(
-              int index, com.eldritch.invoken.proto.Outcomes.Outcome.Builder builderForValue) {
+              int index, com.eldritch.scifirpg.proto.Outcomes.Outcome.Builder builderForValue) {
             if (onDeathBuilder_ == null) {
               ensureOnDeathIsMutable();
               onDeath_.set(index, builderForValue.build());
@@ -4898,7 +5042,7 @@ public final class Locations {
            * the quest stage forward.
            * </pre>
            */
-          public Builder addOnDeath(com.eldritch.invoken.proto.Outcomes.Outcome value) {
+          public Builder addOnDeath(com.eldritch.scifirpg.proto.Outcomes.Outcome value) {
             if (onDeathBuilder_ == null) {
               if (value == null) {
                 throw new NullPointerException();
@@ -4924,7 +5068,7 @@ public final class Locations {
            * </pre>
            */
           public Builder addOnDeath(
-              int index, com.eldritch.invoken.proto.Outcomes.Outcome value) {
+              int index, com.eldritch.scifirpg.proto.Outcomes.Outcome value) {
             if (onDeathBuilder_ == null) {
               if (value == null) {
                 throw new NullPointerException();
@@ -4950,7 +5094,7 @@ public final class Locations {
            * </pre>
            */
           public Builder addOnDeath(
-              com.eldritch.invoken.proto.Outcomes.Outcome.Builder builderForValue) {
+              com.eldritch.scifirpg.proto.Outcomes.Outcome.Builder builderForValue) {
             if (onDeathBuilder_ == null) {
               ensureOnDeathIsMutable();
               onDeath_.add(builderForValue.build());
@@ -4973,7 +5117,7 @@ public final class Locations {
            * </pre>
            */
           public Builder addOnDeath(
-              int index, com.eldritch.invoken.proto.Outcomes.Outcome.Builder builderForValue) {
+              int index, com.eldritch.scifirpg.proto.Outcomes.Outcome.Builder builderForValue) {
             if (onDeathBuilder_ == null) {
               ensureOnDeathIsMutable();
               onDeath_.add(index, builderForValue.build());
@@ -4996,7 +5140,7 @@ public final class Locations {
            * </pre>
            */
           public Builder addAllOnDeath(
-              java.lang.Iterable<? extends com.eldritch.invoken.proto.Outcomes.Outcome> values) {
+              java.lang.Iterable<? extends com.eldritch.scifirpg.proto.Outcomes.Outcome> values) {
             if (onDeathBuilder_ == null) {
               ensureOnDeathIsMutable();
               super.addAll(values, onDeath_);
@@ -5062,7 +5206,7 @@ public final class Locations {
            * the quest stage forward.
            * </pre>
            */
-          public com.eldritch.invoken.proto.Outcomes.Outcome.Builder getOnDeathBuilder(
+          public com.eldritch.scifirpg.proto.Outcomes.Outcome.Builder getOnDeathBuilder(
               int index) {
             return getOnDeathFieldBuilder().getBuilder(index);
           }
@@ -5078,7 +5222,7 @@ public final class Locations {
            * the quest stage forward.
            * </pre>
            */
-          public com.eldritch.invoken.proto.Outcomes.OutcomeOrBuilder getOnDeathOrBuilder(
+          public com.eldritch.scifirpg.proto.Outcomes.OutcomeOrBuilder getOnDeathOrBuilder(
               int index) {
             if (onDeathBuilder_ == null) {
               return onDeath_.get(index);  } else {
@@ -5097,7 +5241,7 @@ public final class Locations {
            * the quest stage forward.
            * </pre>
            */
-          public java.util.List<? extends com.eldritch.invoken.proto.Outcomes.OutcomeOrBuilder> 
+          public java.util.List<? extends com.eldritch.scifirpg.proto.Outcomes.OutcomeOrBuilder> 
                getOnDeathOrBuilderList() {
             if (onDeathBuilder_ != null) {
               return onDeathBuilder_.getMessageOrBuilderList();
@@ -5117,9 +5261,9 @@ public final class Locations {
            * the quest stage forward.
            * </pre>
            */
-          public com.eldritch.invoken.proto.Outcomes.Outcome.Builder addOnDeathBuilder() {
+          public com.eldritch.scifirpg.proto.Outcomes.Outcome.Builder addOnDeathBuilder() {
             return getOnDeathFieldBuilder().addBuilder(
-                com.eldritch.invoken.proto.Outcomes.Outcome.getDefaultInstance());
+                com.eldritch.scifirpg.proto.Outcomes.Outcome.getDefaultInstance());
           }
           /**
            * <code>repeated .scifirpg.Outcome on_death = 2;</code>
@@ -5133,10 +5277,10 @@ public final class Locations {
            * the quest stage forward.
            * </pre>
            */
-          public com.eldritch.invoken.proto.Outcomes.Outcome.Builder addOnDeathBuilder(
+          public com.eldritch.scifirpg.proto.Outcomes.Outcome.Builder addOnDeathBuilder(
               int index) {
             return getOnDeathFieldBuilder().addBuilder(
-                index, com.eldritch.invoken.proto.Outcomes.Outcome.getDefaultInstance());
+                index, com.eldritch.scifirpg.proto.Outcomes.Outcome.getDefaultInstance());
           }
           /**
            * <code>repeated .scifirpg.Outcome on_death = 2;</code>
@@ -5150,16 +5294,16 @@ public final class Locations {
            * the quest stage forward.
            * </pre>
            */
-          public java.util.List<com.eldritch.invoken.proto.Outcomes.Outcome.Builder> 
+          public java.util.List<com.eldritch.scifirpg.proto.Outcomes.Outcome.Builder> 
                getOnDeathBuilderList() {
             return getOnDeathFieldBuilder().getBuilderList();
           }
           private com.google.protobuf.RepeatedFieldBuilder<
-              com.eldritch.invoken.proto.Outcomes.Outcome, com.eldritch.invoken.proto.Outcomes.Outcome.Builder, com.eldritch.invoken.proto.Outcomes.OutcomeOrBuilder> 
+              com.eldritch.scifirpg.proto.Outcomes.Outcome, com.eldritch.scifirpg.proto.Outcomes.Outcome.Builder, com.eldritch.scifirpg.proto.Outcomes.OutcomeOrBuilder> 
               getOnDeathFieldBuilder() {
             if (onDeathBuilder_ == null) {
               onDeathBuilder_ = new com.google.protobuf.RepeatedFieldBuilder<
-                  com.eldritch.invoken.proto.Outcomes.Outcome, com.eldritch.invoken.proto.Outcomes.Outcome.Builder, com.eldritch.invoken.proto.Outcomes.OutcomeOrBuilder>(
+                  com.eldritch.scifirpg.proto.Outcomes.Outcome, com.eldritch.scifirpg.proto.Outcomes.Outcome.Builder, com.eldritch.scifirpg.proto.Outcomes.OutcomeOrBuilder>(
                       onDeath_,
                       ((bitField0_ & 0x00000002) == 0x00000002),
                       getParentForChildren(),
@@ -5428,6 +5572,105 @@ public final class Locations {
             return this;
           }
 
+          // optional bool alive = 8 [default = true];
+          private boolean alive_ = true;
+          /**
+           * <code>optional bool alive = 8 [default = true];</code>
+           */
+          public boolean hasAlive() {
+            return ((bitField0_ & 0x00000020) == 0x00000020);
+          }
+          /**
+           * <code>optional bool alive = 8 [default = true];</code>
+           */
+          public boolean getAlive() {
+            return alive_;
+          }
+          /**
+           * <code>optional bool alive = 8 [default = true];</code>
+           */
+          public Builder setAlive(boolean value) {
+            bitField0_ |= 0x00000020;
+            alive_ = value;
+            onChanged();
+            return this;
+          }
+          /**
+           * <code>optional bool alive = 8 [default = true];</code>
+           */
+          public Builder clearAlive() {
+            bitField0_ = (bitField0_ & ~0x00000020);
+            alive_ = true;
+            onChanged();
+            return this;
+          }
+
+          // optional int32 min = 6 [default = 1];
+          private int min_ = 1;
+          /**
+           * <code>optional int32 min = 6 [default = 1];</code>
+           */
+          public boolean hasMin() {
+            return ((bitField0_ & 0x00000040) == 0x00000040);
+          }
+          /**
+           * <code>optional int32 min = 6 [default = 1];</code>
+           */
+          public int getMin() {
+            return min_;
+          }
+          /**
+           * <code>optional int32 min = 6 [default = 1];</code>
+           */
+          public Builder setMin(int value) {
+            bitField0_ |= 0x00000040;
+            min_ = value;
+            onChanged();
+            return this;
+          }
+          /**
+           * <code>optional int32 min = 6 [default = 1];</code>
+           */
+          public Builder clearMin() {
+            bitField0_ = (bitField0_ & ~0x00000040);
+            min_ = 1;
+            onChanged();
+            return this;
+          }
+
+          // optional int32 max = 7 [default = 1];
+          private int max_ = 1;
+          /**
+           * <code>optional int32 max = 7 [default = 1];</code>
+           */
+          public boolean hasMax() {
+            return ((bitField0_ & 0x00000080) == 0x00000080);
+          }
+          /**
+           * <code>optional int32 max = 7 [default = 1];</code>
+           */
+          public int getMax() {
+            return max_;
+          }
+          /**
+           * <code>optional int32 max = 7 [default = 1];</code>
+           */
+          public Builder setMax(int value) {
+            bitField0_ |= 0x00000080;
+            max_ = value;
+            onChanged();
+            return this;
+          }
+          /**
+           * <code>optional int32 max = 7 [default = 1];</code>
+           */
+          public Builder clearMax() {
+            bitField0_ = (bitField0_ & ~0x00000080);
+            max_ = 1;
+            onChanged();
+            return this;
+          }
+
           // @@protoc_insertion_point(builder_scope:scifirpg.Encounter.ActorParams.ActorScenario)
         }
 
@@ -5541,7 +5784,7 @@ public final class Locations {
 
       // repeated .scifirpg.Outcome on_flee = 3;
       public static final int ON_FLEE_FIELD_NUMBER = 3;
-      private java.util.List<com.eldritch.invoken.proto.Outcomes.Outcome> onFlee_;
+      private java.util.List<com.eldritch.scifirpg.proto.Outcomes.Outcome> onFlee_;
       /**
        * <code>repeated .scifirpg.Outcome on_flee = 3;</code>
        *
@@ -5550,7 +5793,7 @@ public final class Locations {
        * for all actors.
        * </pre>
        */
-      public java.util.List<com.eldritch.invoken.proto.Outcomes.Outcome> getOnFleeList() {
+      public java.util.List<com.eldritch.scifirpg.proto.Outcomes.Outcome> getOnFleeList() {
         return onFlee_;
       }
       /**
@@ -5561,7 +5804,7 @@ public final class Locations {
        * for all actors.
        * </pre>
        */
-      public java.util.List<? extends com.eldritch.invoken.proto.Outcomes.OutcomeOrBuilder> 
+      public java.util.List<? extends com.eldritch.scifirpg.proto.Outcomes.OutcomeOrBuilder> 
           getOnFleeOrBuilderList() {
         return onFlee_;
       }
@@ -5584,7 +5827,7 @@ public final class Locations {
        * for all actors.
        * </pre>
        */
-      public com.eldritch.invoken.proto.Outcomes.Outcome getOnFlee(int index) {
+      public com.eldritch.scifirpg.proto.Outcomes.Outcome getOnFlee(int index) {
         return onFlee_.get(index);
       }
       /**
@@ -5595,7 +5838,7 @@ public final class Locations {
        * for all actors.
        * </pre>
        */
-      public com.eldritch.invoken.proto.Outcomes.OutcomeOrBuilder getOnFleeOrBuilder(
+      public com.eldritch.scifirpg.proto.Outcomes.OutcomeOrBuilder getOnFleeOrBuilder(
           int index) {
         return onFlee_.get(index);
       }
@@ -5823,7 +6066,7 @@ public final class Locations {
                   com.eldritch.invoken.proto.Locations.Encounter.ActorParams.class, com.eldritch.invoken.proto.Locations.Encounter.ActorParams.Builder.class);
         }
 
-        // Construct using com.eldritch.scifirpg.proto.Locations.Encounter.ActorParams.newBuilder()
+        // Construct using com.eldritch.invoken.proto.Locations.Encounter.ActorParams.newBuilder()
         private Builder() {
           maybeForceBuilderInitialization();
         }
@@ -6430,17 +6673,17 @@ public final class Locations {
         }
 
         // repeated .scifirpg.Outcome on_flee = 3;
-        private java.util.List<com.eldritch.invoken.proto.Outcomes.Outcome> onFlee_ =
+        private java.util.List<com.eldritch.scifirpg.proto.Outcomes.Outcome> onFlee_ =
           java.util.Collections.emptyList();
         private void ensureOnFleeIsMutable() {
           if (!((bitField0_ & 0x00000004) == 0x00000004)) {
-            onFlee_ = new java.util.ArrayList<com.eldritch.invoken.proto.Outcomes.Outcome>(onFlee_);
+            onFlee_ = new java.util.ArrayList<com.eldritch.scifirpg.proto.Outcomes.Outcome>(onFlee_);
             bitField0_ |= 0x00000004;
            }
         }
 
         private com.google.protobuf.RepeatedFieldBuilder<
-            com.eldritch.invoken.proto.Outcomes.Outcome, com.eldritch.invoken.proto.Outcomes.Outcome.Builder, com.eldritch.invoken.proto.Outcomes.OutcomeOrBuilder> onFleeBuilder_;
+            com.eldritch.scifirpg.proto.Outcomes.Outcome, com.eldritch.scifirpg.proto.Outcomes.Outcome.Builder, com.eldritch.scifirpg.proto.Outcomes.OutcomeOrBuilder> onFleeBuilder_;
 
         /**
          * <code>repeated .scifirpg.Outcome on_flee = 3;</code>
@@ -6450,7 +6693,7 @@ public final class Locations {
          * for all actors.
          * </pre>
          */
-        public java.util.List<com.eldritch.invoken.proto.Outcomes.Outcome> getOnFleeList() {
+        public java.util.List<com.eldritch.scifirpg.proto.Outcomes.Outcome> getOnFleeList() {
           if (onFleeBuilder_ == null) {
             return java.util.Collections.unmodifiableList(onFlee_);
           } else {
@@ -6480,7 +6723,7 @@ public final class Locations {
          * for all actors.
          * </pre>
          */
-        public com.eldritch.invoken.proto.Outcomes.Outcome getOnFlee(int index) {
+        public com.eldritch.scifirpg.proto.Outcomes.Outcome getOnFlee(int index) {
           if (onFleeBuilder_ == null) {
             return onFlee_.get(index);
           } else {
@@ -6496,7 +6739,7 @@ public final class Locations {
          * </pre>
          */
         public Builder setOnFlee(
-            int index, com.eldritch.invoken.proto.Outcomes.Outcome value) {
+            int index, com.eldritch.scifirpg.proto.Outcomes.Outcome value) {
           if (onFleeBuilder_ == null) {
             if (value == null) {
               throw new NullPointerException();
@@ -6518,7 +6761,7 @@ public final class Locations {
          * </pre>
          */
         public Builder setOnFlee(
-            int index, com.eldritch.invoken.proto.Outcomes.Outcome.Builder builderForValue) {
+            int index, com.eldritch.scifirpg.proto.Outcomes.Outcome.Builder builderForValue) {
           if (onFleeBuilder_ == null) {
             ensureOnFleeIsMutable();
             onFlee_.set(index, builderForValue.build());
@@ -6536,7 +6779,7 @@ public final class Locations {
          * for all actors.
          * </pre>
          */
-        public Builder addOnFlee(com.eldritch.invoken.proto.Outcomes.Outcome value) {
+        public Builder addOnFlee(com.eldritch.scifirpg.proto.Outcomes.Outcome value) {
           if (onFleeBuilder_ == null) {
             if (value == null) {
               throw new NullPointerException();
@@ -6558,7 +6801,7 @@ public final class Locations {
          * </pre>
          */
         public Builder addOnFlee(
-            int index, com.eldritch.invoken.proto.Outcomes.Outcome value) {
+            int index, com.eldritch.scifirpg.proto.Outcomes.Outcome value) {
           if (onFleeBuilder_ == null) {
             if (value == null) {
               throw new NullPointerException();
@@ -6580,7 +6823,7 @@ public final class Locations {
          * </pre>
          */
         public Builder addOnFlee(
-            com.eldritch.invoken.proto.Outcomes.Outcome.Builder builderForValue) {
+            com.eldritch.scifirpg.proto.Outcomes.Outcome.Builder builderForValue) {
           if (onFleeBuilder_ == null) {
             ensureOnFleeIsMutable();
             onFlee_.add(builderForValue.build());
@@ -6599,7 +6842,7 @@ public final class Locations {
          * </pre>
          */
         public Builder addOnFlee(
-            int index, com.eldritch.invoken.proto.Outcomes.Outcome.Builder builderForValue) {
+            int index, com.eldritch.scifirpg.proto.Outcomes.Outcome.Builder builderForValue) {
           if (onFleeBuilder_ == null) {
             ensureOnFleeIsMutable();
             onFlee_.add(index, builderForValue.build());
@@ -6618,7 +6861,7 @@ public final class Locations {
          * </pre>
          */
         public Builder addAllOnFlee(
-            java.lang.Iterable<? extends com.eldritch.invoken.proto.Outcomes.Outcome> values) {
+            java.lang.Iterable<? extends com.eldritch.scifirpg.proto.Outcomes.Outcome> values) {
           if (onFleeBuilder_ == null) {
             ensureOnFleeIsMutable();
             super.addAll(values, onFlee_);
@@ -6672,7 +6915,7 @@ public final class Locations {
          * for all actors.
          * </pre>
          */
-        public com.eldritch.invoken.proto.Outcomes.Outcome.Builder getOnFleeBuilder(
+        public com.eldritch.scifirpg.proto.Outcomes.Outcome.Builder getOnFleeBuilder(
             int index) {
           return getOnFleeFieldBuilder().getBuilder(index);
         }
@@ -6684,7 +6927,7 @@ public final class Locations {
          * for all actors.
          * </pre>
          */
-        public com.eldritch.invoken.proto.Outcomes.OutcomeOrBuilder getOnFleeOrBuilder(
+        public com.eldritch.scifirpg.proto.Outcomes.OutcomeOrBuilder getOnFleeOrBuilder(
             int index) {
           if (onFleeBuilder_ == null) {
             return onFlee_.get(index);  } else {
@@ -6699,7 +6942,7 @@ public final class Locations {
          * for all actors.
          * </pre>
          */
-        public java.util.List<? extends com.eldritch.invoken.proto.Outcomes.OutcomeOrBuilder> 
+        public java.util.List<? extends com.eldritch.scifirpg.proto.Outcomes.OutcomeOrBuilder> 
              getOnFleeOrBuilderList() {
           if (onFleeBuilder_ != null) {
             return onFleeBuilder_.getMessageOrBuilderList();
@@ -6715,9 +6958,9 @@ public final class Locations {
          * for all actors.
          * </pre>
          */
-        public com.eldritch.invoken.proto.Outcomes.Outcome.Builder addOnFleeBuilder() {
+        public com.eldritch.scifirpg.proto.Outcomes.Outcome.Builder addOnFleeBuilder() {
           return getOnFleeFieldBuilder().addBuilder(
-              com.eldritch.invoken.proto.Outcomes.Outcome.getDefaultInstance());
+              com.eldritch.scifirpg.proto.Outcomes.Outcome.getDefaultInstance());
         }
         /**
          * <code>repeated .scifirpg.Outcome on_flee = 3;</code>
@@ -6727,10 +6970,10 @@ public final class Locations {
          * for all actors.
          * </pre>
          */
-        public com.eldritch.invoken.proto.Outcomes.Outcome.Builder addOnFleeBuilder(
+        public com.eldritch.scifirpg.proto.Outcomes.Outcome.Builder addOnFleeBuilder(
             int index) {
           return getOnFleeFieldBuilder().addBuilder(
-              index, com.eldritch.invoken.proto.Outcomes.Outcome.getDefaultInstance());
+              index, com.eldritch.scifirpg.proto.Outcomes.Outcome.getDefaultInstance());
         }
         /**
          * <code>repeated .scifirpg.Outcome on_flee = 3;</code>
@@ -6740,16 +6983,16 @@ public final class Locations {
          * for all actors.
          * </pre>
          */
-        public java.util.List<com.eldritch.invoken.proto.Outcomes.Outcome.Builder> 
+        public java.util.List<com.eldritch.scifirpg.proto.Outcomes.Outcome.Builder> 
              getOnFleeBuilderList() {
           return getOnFleeFieldBuilder().getBuilderList();
         }
         private com.google.protobuf.RepeatedFieldBuilder<
-            com.eldritch.invoken.proto.Outcomes.Outcome, com.eldritch.invoken.proto.Outcomes.Outcome.Builder, com.eldritch.invoken.proto.Outcomes.OutcomeOrBuilder> 
+            com.eldritch.scifirpg.proto.Outcomes.Outcome, com.eldritch.scifirpg.proto.Outcomes.Outcome.Builder, com.eldritch.scifirpg.proto.Outcomes.OutcomeOrBuilder> 
             getOnFleeFieldBuilder() {
           if (onFleeBuilder_ == null) {
             onFleeBuilder_ = new com.google.protobuf.RepeatedFieldBuilder<
-                com.eldritch.invoken.proto.Outcomes.Outcome, com.eldritch.invoken.proto.Outcomes.Outcome.Builder, com.eldritch.invoken.proto.Outcomes.OutcomeOrBuilder>(
+                com.eldritch.scifirpg.proto.Outcomes.Outcome, com.eldritch.scifirpg.proto.Outcomes.Outcome.Builder, com.eldritch.scifirpg.proto.Outcomes.OutcomeOrBuilder>(
                     onFlee_,
                     ((bitField0_ & 0x00000004) == 0x00000004),
                     getParentForChildren(),
@@ -7066,7 +7309,7 @@ public final class Locations {
          * Some cells will only be visible if certain prereqs are met.
          * </pre>
          */
-        java.util.List<com.eldritch.invoken.proto.Prerequisites.Prerequisite> 
+        java.util.List<com.eldritch.scifirpg.proto.Prerequisites.Prerequisite> 
             getPrereqList();
         /**
          * <code>repeated .scifirpg.Prerequisite prereq = 3;</code>
@@ -7075,7 +7318,7 @@ public final class Locations {
          * Some cells will only be visible if certain prereqs are met.
          * </pre>
          */
-        com.eldritch.invoken.proto.Prerequisites.Prerequisite getPrereq(int index);
+        com.eldritch.scifirpg.proto.Prerequisites.Prerequisite getPrereq(int index);
         /**
          * <code>repeated .scifirpg.Prerequisite prereq = 3;</code>
          *
@@ -7091,7 +7334,7 @@ public final class Locations {
          * Some cells will only be visible if certain prereqs are met.
          * </pre>
          */
-        java.util.List<? extends com.eldritch.invoken.proto.Prerequisites.PrerequisiteOrBuilder> 
+        java.util.List<? extends com.eldritch.scifirpg.proto.Prerequisites.PrerequisiteOrBuilder> 
             getPrereqOrBuilderList();
         /**
          * <code>repeated .scifirpg.Prerequisite prereq = 3;</code>
@@ -7100,7 +7343,7 @@ public final class Locations {
          * Some cells will only be visible if certain prereqs are met.
          * </pre>
          */
-        com.eldritch.invoken.proto.Prerequisites.PrerequisiteOrBuilder getPrereqOrBuilder(
+        com.eldritch.scifirpg.proto.Prerequisites.PrerequisiteOrBuilder getPrereqOrBuilder(
             int index);
       }
       /**
@@ -7166,10 +7409,10 @@ public final class Locations {
                 }
                 case 26: {
                   if (!((mutable_bitField0_ & 0x00000004) == 0x00000004)) {
-                    prereq_ = new java.util.ArrayList<com.eldritch.invoken.proto.Prerequisites.Prerequisite>();
+                    prereq_ = new java.util.ArrayList<com.eldritch.scifirpg.proto.Prerequisites.Prerequisite>();
                     mutable_bitField0_ |= 0x00000004;
                   }
-                  prereq_.add(input.readMessage(com.eldritch.invoken.proto.Prerequisites.Prerequisite.PARSER, extensionRegistry));
+                  prereq_.add(input.readMessage(com.eldritch.scifirpg.proto.Prerequisites.Prerequisite.PARSER, extensionRegistry));
                   break;
                 }
               }
@@ -7286,7 +7529,7 @@ public final class Locations {
 
         // repeated .scifirpg.Prerequisite prereq = 3;
         public static final int PREREQ_FIELD_NUMBER = 3;
-        private java.util.List<com.eldritch.invoken.proto.Prerequisites.Prerequisite> prereq_;
+        private java.util.List<com.eldritch.scifirpg.proto.Prerequisites.Prerequisite> prereq_;
         /**
          * <code>repeated .scifirpg.Prerequisite prereq = 3;</code>
          *
@@ -7294,7 +7537,7 @@ public final class Locations {
          * Some cells will only be visible if certain prereqs are met.
          * </pre>
          */
-        public java.util.List<com.eldritch.invoken.proto.Prerequisites.Prerequisite> getPrereqList() {
+        public java.util.List<com.eldritch.scifirpg.proto.Prerequisites.Prerequisite> getPrereqList() {
           return prereq_;
         }
         /**
@@ -7304,7 +7547,7 @@ public final class Locations {
          * Some cells will only be visible if certain prereqs are met.
          * </pre>
          */
-        public java.util.List<? extends com.eldritch.invoken.proto.Prerequisites.PrerequisiteOrBuilder> 
+        public java.util.List<? extends com.eldritch.scifirpg.proto.Prerequisites.PrerequisiteOrBuilder> 
             getPrereqOrBuilderList() {
           return prereq_;
         }
@@ -7325,7 +7568,7 @@ public final class Locations {
          * Some cells will only be visible if certain prereqs are met.
          * </pre>
          */
-        public com.eldritch.invoken.proto.Prerequisites.Prerequisite getPrereq(int index) {
+        public com.eldritch.scifirpg.proto.Prerequisites.Prerequisite getPrereq(int index) {
           return prereq_.get(index);
         }
         /**
@@ -7335,7 +7578,7 @@ public final class Locations {
          * Some cells will only be visible if certain prereqs are met.
          * </pre>
          */
-        public com.eldritch.invoken.proto.Prerequisites.PrerequisiteOrBuilder getPrereqOrBuilder(
+        public com.eldritch.scifirpg.proto.Prerequisites.PrerequisiteOrBuilder getPrereqOrBuilder(
             int index) {
           return prereq_.get(index);
         }
@@ -7493,7 +7736,7 @@ public final class Locations {
                     com.eldritch.invoken.proto.Locations.Encounter.RegionParams.Cell.class, com.eldritch.invoken.proto.Locations.Encounter.RegionParams.Cell.Builder.class);
           }
 
-          // Construct using com.eldritch.scifirpg.proto.Locations.Encounter.RegionParams.Cell.newBuilder()
+          // Construct using com.eldritch.invoken.proto.Locations.Encounter.RegionParams.Cell.newBuilder()
           private Builder() {
             maybeForceBuilderInitialization();
           }
@@ -7784,17 +8027,17 @@ public final class Locations {
           }
 
           // repeated .scifirpg.Prerequisite prereq = 3;
-          private java.util.List<com.eldritch.invoken.proto.Prerequisites.Prerequisite> prereq_ =
+          private java.util.List<com.eldritch.scifirpg.proto.Prerequisites.Prerequisite> prereq_ =
             java.util.Collections.emptyList();
           private void ensurePrereqIsMutable() {
             if (!((bitField0_ & 0x00000004) == 0x00000004)) {
-              prereq_ = new java.util.ArrayList<com.eldritch.invoken.proto.Prerequisites.Prerequisite>(prereq_);
+              prereq_ = new java.util.ArrayList<com.eldritch.scifirpg.proto.Prerequisites.Prerequisite>(prereq_);
               bitField0_ |= 0x00000004;
              }
           }
 
           private com.google.protobuf.RepeatedFieldBuilder<
-              com.eldritch.invoken.proto.Prerequisites.Prerequisite, com.eldritch.invoken.proto.Prerequisites.Prerequisite.Builder, com.eldritch.invoken.proto.Prerequisites.PrerequisiteOrBuilder> prereqBuilder_;
+              com.eldritch.scifirpg.proto.Prerequisites.Prerequisite, com.eldritch.scifirpg.proto.Prerequisites.Prerequisite.Builder, com.eldritch.scifirpg.proto.Prerequisites.PrerequisiteOrBuilder> prereqBuilder_;
 
           /**
            * <code>repeated .scifirpg.Prerequisite prereq = 3;</code>
@@ -7803,7 +8046,7 @@ public final class Locations {
            * Some cells will only be visible if certain prereqs are met.
            * </pre>
            */
-          public java.util.List<com.eldritch.invoken.proto.Prerequisites.Prerequisite> getPrereqList() {
+          public java.util.List<com.eldritch.scifirpg.proto.Prerequisites.Prerequisite> getPrereqList() {
             if (prereqBuilder_ == null) {
               return java.util.Collections.unmodifiableList(prereq_);
             } else {
@@ -7831,7 +8074,7 @@ public final class Locations {
            * Some cells will only be visible if certain prereqs are met.
            * </pre>
            */
-          public com.eldritch.invoken.proto.Prerequisites.Prerequisite getPrereq(int index) {
+          public com.eldritch.scifirpg.proto.Prerequisites.Prerequisite getPrereq(int index) {
             if (prereqBuilder_ == null) {
               return prereq_.get(index);
             } else {
@@ -7846,7 +8089,7 @@ public final class Locations {
            * </pre>
            */
           public Builder setPrereq(
-              int index, com.eldritch.invoken.proto.Prerequisites.Prerequisite value) {
+              int index, com.eldritch.scifirpg.proto.Prerequisites.Prerequisite value) {
             if (prereqBuilder_ == null) {
               if (value == null) {
                 throw new NullPointerException();
@@ -7867,7 +8110,7 @@ public final class Locations {
            * </pre>
            */
           public Builder setPrereq(
-              int index, com.eldritch.invoken.proto.Prerequisites.Prerequisite.Builder builderForValue) {
+              int index, com.eldritch.scifirpg.proto.Prerequisites.Prerequisite.Builder builderForValue) {
             if (prereqBuilder_ == null) {
               ensurePrereqIsMutable();
               prereq_.set(index, builderForValue.build());
@@ -7884,7 +8127,7 @@ public final class Locations {
            * Some cells will only be visible if certain prereqs are met.
            * </pre>
            */
-          public Builder addPrereq(com.eldritch.invoken.proto.Prerequisites.Prerequisite value) {
+          public Builder addPrereq(com.eldritch.scifirpg.proto.Prerequisites.Prerequisite value) {
             if (prereqBuilder_ == null) {
               if (value == null) {
                 throw new NullPointerException();
@@ -7905,7 +8148,7 @@ public final class Locations {
            * </pre>
            */
           public Builder addPrereq(
-              int index, com.eldritch.invoken.proto.Prerequisites.Prerequisite value) {
+              int index, com.eldritch.scifirpg.proto.Prerequisites.Prerequisite value) {
             if (prereqBuilder_ == null) {
               if (value == null) {
                 throw new NullPointerException();
@@ -7926,7 +8169,7 @@ public final class Locations {
            * </pre>
            */
           public Builder addPrereq(
-              com.eldritch.invoken.proto.Prerequisites.Prerequisite.Builder builderForValue) {
+              com.eldritch.scifirpg.proto.Prerequisites.Prerequisite.Builder builderForValue) {
             if (prereqBuilder_ == null) {
               ensurePrereqIsMutable();
               prereq_.add(builderForValue.build());
@@ -7944,7 +8187,7 @@ public final class Locations {
            * </pre>
            */
           public Builder addPrereq(
-              int index, com.eldritch.invoken.proto.Prerequisites.Prerequisite.Builder builderForValue) {
+              int index, com.eldritch.scifirpg.proto.Prerequisites.Prerequisite.Builder builderForValue) {
             if (prereqBuilder_ == null) {
               ensurePrereqIsMutable();
               prereq_.add(index, builderForValue.build());
@@ -7962,7 +8205,7 @@ public final class Locations {
            * </pre>
            */
           public Builder addAllPrereq(
-              java.lang.Iterable<? extends com.eldritch.invoken.proto.Prerequisites.Prerequisite> values) {
+              java.lang.Iterable<? extends com.eldritch.scifirpg.proto.Prerequisites.Prerequisite> values) {
             if (prereqBuilder_ == null) {
               ensurePrereqIsMutable();
               super.addAll(values, prereq_);
@@ -8013,7 +8256,7 @@ public final class Locations {
            * Some cells will only be visible if certain prereqs are met.
            * </pre>
            */
-          public com.eldritch.invoken.proto.Prerequisites.Prerequisite.Builder getPrereqBuilder(
+          public com.eldritch.scifirpg.proto.Prerequisites.Prerequisite.Builder getPrereqBuilder(
               int index) {
             return getPrereqFieldBuilder().getBuilder(index);
           }
@@ -8024,7 +8267,7 @@ public final class Locations {
            * Some cells will only be visible if certain prereqs are met.
            * </pre>
            */
-          public com.eldritch.invoken.proto.Prerequisites.PrerequisiteOrBuilder getPrereqOrBuilder(
+          public com.eldritch.scifirpg.proto.Prerequisites.PrerequisiteOrBuilder getPrereqOrBuilder(
               int index) {
             if (prereqBuilder_ == null) {
               return prereq_.get(index);  } else {
@@ -8038,7 +8281,7 @@ public final class Locations {
            * Some cells will only be visible if certain prereqs are met.
            * </pre>
            */
-          public java.util.List<? extends com.eldritch.invoken.proto.Prerequisites.PrerequisiteOrBuilder> 
+          public java.util.List<? extends com.eldritch.scifirpg.proto.Prerequisites.PrerequisiteOrBuilder> 
                getPrereqOrBuilderList() {
             if (prereqBuilder_ != null) {
               return prereqBuilder_.getMessageOrBuilderList();
@@ -8053,9 +8296,9 @@ public final class Locations {
            * Some cells will only be visible if certain prereqs are met.
            * </pre>
            */
-          public com.eldritch.invoken.proto.Prerequisites.Prerequisite.Builder addPrereqBuilder() {
+          public com.eldritch.scifirpg.proto.Prerequisites.Prerequisite.Builder addPrereqBuilder() {
             return getPrereqFieldBuilder().addBuilder(
-                com.eldritch.invoken.proto.Prerequisites.Prerequisite.getDefaultInstance());
+                com.eldritch.scifirpg.proto.Prerequisites.Prerequisite.getDefaultInstance());
           }
           /**
            * <code>repeated .scifirpg.Prerequisite prereq = 3;</code>
@@ -8064,10 +8307,10 @@ public final class Locations {
            * Some cells will only be visible if certain prereqs are met.
            * </pre>
            */
-          public com.eldritch.invoken.proto.Prerequisites.Prerequisite.Builder addPrereqBuilder(
+          public com.eldritch.scifirpg.proto.Prerequisites.Prerequisite.Builder addPrereqBuilder(
               int index) {
             return getPrereqFieldBuilder().addBuilder(
-                index, com.eldritch.invoken.proto.Prerequisites.Prerequisite.getDefaultInstance());
+                index, com.eldritch.scifirpg.proto.Prerequisites.Prerequisite.getDefaultInstance());
           }
           /**
            * <code>repeated .scifirpg.Prerequisite prereq = 3;</code>
@@ -8076,16 +8319,16 @@ public final class Locations {
            * Some cells will only be visible if certain prereqs are met.
            * </pre>
            */
-          public java.util.List<com.eldritch.invoken.proto.Prerequisites.Prerequisite.Builder> 
+          public java.util.List<com.eldritch.scifirpg.proto.Prerequisites.Prerequisite.Builder> 
                getPrereqBuilderList() {
             return getPrereqFieldBuilder().getBuilderList();
           }
           private com.google.protobuf.RepeatedFieldBuilder<
-              com.eldritch.invoken.proto.Prerequisites.Prerequisite, com.eldritch.invoken.proto.Prerequisites.Prerequisite.Builder, com.eldritch.invoken.proto.Prerequisites.PrerequisiteOrBuilder> 
+              com.eldritch.scifirpg.proto.Prerequisites.Prerequisite, com.eldritch.scifirpg.proto.Prerequisites.Prerequisite.Builder, com.eldritch.scifirpg.proto.Prerequisites.PrerequisiteOrBuilder> 
               getPrereqFieldBuilder() {
             if (prereqBuilder_ == null) {
               prereqBuilder_ = new com.google.protobuf.RepeatedFieldBuilder<
-                  com.eldritch.invoken.proto.Prerequisites.Prerequisite, com.eldritch.invoken.proto.Prerequisites.Prerequisite.Builder, com.eldritch.invoken.proto.Prerequisites.PrerequisiteOrBuilder>(
+                  com.eldritch.scifirpg.proto.Prerequisites.Prerequisite, com.eldritch.scifirpg.proto.Prerequisites.Prerequisite.Builder, com.eldritch.scifirpg.proto.Prerequisites.PrerequisiteOrBuilder>(
                       prereq_,
                       ((bitField0_ & 0x00000004) == 0x00000004),
                       getParentForChildren(),
@@ -8308,7 +8551,7 @@ public final class Locations {
                   com.eldritch.invoken.proto.Locations.Encounter.RegionParams.class, com.eldritch.invoken.proto.Locations.Encounter.RegionParams.Builder.class);
         }
 
-        // Construct using com.eldritch.scifirpg.proto.Locations.Encounter.RegionParams.newBuilder()
+        // Construct using com.eldritch.invoken.proto.Locations.Encounter.RegionParams.newBuilder()
         private Builder() {
           maybeForceBuilderInitialization();
         }
@@ -8915,17 +9158,17 @@ public final class Locations {
 
     // repeated .scifirpg.Prerequisite prereq = 6;
     public static final int PREREQ_FIELD_NUMBER = 6;
-    private java.util.List<com.eldritch.invoken.proto.Prerequisites.Prerequisite> prereq_;
+    private java.util.List<com.eldritch.scifirpg.proto.Prerequisites.Prerequisite> prereq_;
     /**
      * <code>repeated .scifirpg.Prerequisite prereq = 6;</code>
      */
-    public java.util.List<com.eldritch.invoken.proto.Prerequisites.Prerequisite> getPrereqList() {
+    public java.util.List<com.eldritch.scifirpg.proto.Prerequisites.Prerequisite> getPrereqList() {
       return prereq_;
     }
     /**
      * <code>repeated .scifirpg.Prerequisite prereq = 6;</code>
      */
-    public java.util.List<? extends com.eldritch.invoken.proto.Prerequisites.PrerequisiteOrBuilder> 
+    public java.util.List<? extends com.eldritch.scifirpg.proto.Prerequisites.PrerequisiteOrBuilder> 
         getPrereqOrBuilderList() {
       return prereq_;
     }
@@ -8938,13 +9181,13 @@ public final class Locations {
     /**
      * <code>repeated .scifirpg.Prerequisite prereq = 6;</code>
      */
-    public com.eldritch.invoken.proto.Prerequisites.Prerequisite getPrereq(int index) {
+    public com.eldritch.scifirpg.proto.Prerequisites.Prerequisite getPrereq(int index) {
       return prereq_.get(index);
     }
     /**
      * <code>repeated .scifirpg.Prerequisite prereq = 6;</code>
      */
-    public com.eldritch.invoken.proto.Prerequisites.PrerequisiteOrBuilder getPrereqOrBuilder(
+    public com.eldritch.scifirpg.proto.Prerequisites.PrerequisiteOrBuilder getPrereqOrBuilder(
         int index) {
       return prereq_.get(index);
     }
@@ -9389,7 +9632,7 @@ public final class Locations {
                 com.eldritch.invoken.proto.Locations.Encounter.class, com.eldritch.invoken.proto.Locations.Encounter.Builder.class);
       }
 
-      // Construct using com.eldritch.scifirpg.proto.Locations.Encounter.newBuilder()
+      // Construct using com.eldritch.invoken.proto.Locations.Encounter.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -10004,22 +10247,22 @@ public final class Locations {
       }
 
       // repeated .scifirpg.Prerequisite prereq = 6;
-      private java.util.List<com.eldritch.invoken.proto.Prerequisites.Prerequisite> prereq_ =
+      private java.util.List<com.eldritch.scifirpg.proto.Prerequisites.Prerequisite> prereq_ =
         java.util.Collections.emptyList();
       private void ensurePrereqIsMutable() {
         if (!((bitField0_ & 0x00000020) == 0x00000020)) {
-          prereq_ = new java.util.ArrayList<com.eldritch.invoken.proto.Prerequisites.Prerequisite>(prereq_);
+          prereq_ = new java.util.ArrayList<com.eldritch.scifirpg.proto.Prerequisites.Prerequisite>(prereq_);
           bitField0_ |= 0x00000020;
          }
       }
 
       private com.google.protobuf.RepeatedFieldBuilder<
-          com.eldritch.invoken.proto.Prerequisites.Prerequisite, com.eldritch.invoken.proto.Prerequisites.Prerequisite.Builder, com.eldritch.invoken.proto.Prerequisites.PrerequisiteOrBuilder> prereqBuilder_;
+          com.eldritch.scifirpg.proto.Prerequisites.Prerequisite, com.eldritch.scifirpg.proto.Prerequisites.Prerequisite.Builder, com.eldritch.scifirpg.proto.Prerequisites.PrerequisiteOrBuilder> prereqBuilder_;
 
       /**
        * <code>repeated .scifirpg.Prerequisite prereq = 6;</code>
        */
-      public java.util.List<com.eldritch.invoken.proto.Prerequisites.Prerequisite> getPrereqList() {
+      public java.util.List<com.eldritch.scifirpg.proto.Prerequisites.Prerequisite> getPrereqList() {
         if (prereqBuilder_ == null) {
           return java.util.Collections.unmodifiableList(prereq_);
         } else {
@@ -10039,7 +10282,7 @@ public final class Locations {
       /**
        * <code>repeated .scifirpg.Prerequisite prereq = 6;</code>
        */
-      public com.eldritch.invoken.proto.Prerequisites.Prerequisite getPrereq(int index) {
+      public com.eldritch.scifirpg.proto.Prerequisites.Prerequisite getPrereq(int index) {
         if (prereqBuilder_ == null) {
           return prereq_.get(index);
         } else {
@@ -10050,7 +10293,7 @@ public final class Locations {
        * <code>repeated .scifirpg.Prerequisite prereq = 6;</code>
        */
       public Builder setPrereq(
-          int index, com.eldritch.invoken.proto.Prerequisites.Prerequisite value) {
+          int index, com.eldritch.scifirpg.proto.Prerequisites.Prerequisite value) {
         if (prereqBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -10067,7 +10310,7 @@ public final class Locations {
        * <code>repeated .scifirpg.Prerequisite prereq = 6;</code>
        */
       public Builder setPrereq(
-          int index, com.eldritch.invoken.proto.Prerequisites.Prerequisite.Builder builderForValue) {
+          int index, com.eldritch.scifirpg.proto.Prerequisites.Prerequisite.Builder builderForValue) {
         if (prereqBuilder_ == null) {
           ensurePrereqIsMutable();
           prereq_.set(index, builderForValue.build());
@@ -10080,7 +10323,7 @@ public final class Locations {
       /**
        * <code>repeated .scifirpg.Prerequisite prereq = 6;</code>
        */
-      public Builder addPrereq(com.eldritch.invoken.proto.Prerequisites.Prerequisite value) {
+      public Builder addPrereq(com.eldritch.scifirpg.proto.Prerequisites.Prerequisite value) {
         if (prereqBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -10097,7 +10340,7 @@ public final class Locations {
        * <code>repeated .scifirpg.Prerequisite prereq = 6;</code>
        */
       public Builder addPrereq(
-          int index, com.eldritch.invoken.proto.Prerequisites.Prerequisite value) {
+          int index, com.eldritch.scifirpg.proto.Prerequisites.Prerequisite value) {
         if (prereqBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -10114,7 +10357,7 @@ public final class Locations {
        * <code>repeated .scifirpg.Prerequisite prereq = 6;</code>
        */
       public Builder addPrereq(
-          com.eldritch.invoken.proto.Prerequisites.Prerequisite.Builder builderForValue) {
+          com.eldritch.scifirpg.proto.Prerequisites.Prerequisite.Builder builderForValue) {
         if (prereqBuilder_ == null) {
           ensurePrereqIsMutable();
           prereq_.add(builderForValue.build());
@@ -10128,7 +10371,7 @@ public final class Locations {
        * <code>repeated .scifirpg.Prerequisite prereq = 6;</code>
        */
       public Builder addPrereq(
-          int index, com.eldritch.invoken.proto.Prerequisites.Prerequisite.Builder builderForValue) {
+          int index, com.eldritch.scifirpg.proto.Prerequisites.Prerequisite.Builder builderForValue) {
         if (prereqBuilder_ == null) {
           ensurePrereqIsMutable();
           prereq_.add(index, builderForValue.build());
@@ -10142,7 +10385,7 @@ public final class Locations {
        * <code>repeated .scifirpg.Prerequisite prereq = 6;</code>
        */
       public Builder addAllPrereq(
-          java.lang.Iterable<? extends com.eldritch.invoken.proto.Prerequisites.Prerequisite> values) {
+          java.lang.Iterable<? extends com.eldritch.scifirpg.proto.Prerequisites.Prerequisite> values) {
         if (prereqBuilder_ == null) {
           ensurePrereqIsMutable();
           super.addAll(values, prereq_);
@@ -10181,14 +10424,14 @@ public final class Locations {
       /**
        * <code>repeated .scifirpg.Prerequisite prereq = 6;</code>
        */
-      public com.eldritch.invoken.proto.Prerequisites.Prerequisite.Builder getPrereqBuilder(
+      public com.eldritch.scifirpg.proto.Prerequisites.Prerequisite.Builder getPrereqBuilder(
           int index) {
         return getPrereqFieldBuilder().getBuilder(index);
       }
       /**
        * <code>repeated .scifirpg.Prerequisite prereq = 6;</code>
        */
-      public com.eldritch.invoken.proto.Prerequisites.PrerequisiteOrBuilder getPrereqOrBuilder(
+      public com.eldritch.scifirpg.proto.Prerequisites.PrerequisiteOrBuilder getPrereqOrBuilder(
           int index) {
         if (prereqBuilder_ == null) {
           return prereq_.get(index);  } else {
@@ -10198,7 +10441,7 @@ public final class Locations {
       /**
        * <code>repeated .scifirpg.Prerequisite prereq = 6;</code>
        */
-      public java.util.List<? extends com.eldritch.invoken.proto.Prerequisites.PrerequisiteOrBuilder> 
+      public java.util.List<? extends com.eldritch.scifirpg.proto.Prerequisites.PrerequisiteOrBuilder> 
            getPrereqOrBuilderList() {
         if (prereqBuilder_ != null) {
           return prereqBuilder_.getMessageOrBuilderList();
@@ -10209,31 +10452,31 @@ public final class Locations {
       /**
        * <code>repeated .scifirpg.Prerequisite prereq = 6;</code>
        */
-      public com.eldritch.invoken.proto.Prerequisites.Prerequisite.Builder addPrereqBuilder() {
+      public com.eldritch.scifirpg.proto.Prerequisites.Prerequisite.Builder addPrereqBuilder() {
         return getPrereqFieldBuilder().addBuilder(
-            com.eldritch.invoken.proto.Prerequisites.Prerequisite.getDefaultInstance());
+            com.eldritch.scifirpg.proto.Prerequisites.Prerequisite.getDefaultInstance());
       }
       /**
        * <code>repeated .scifirpg.Prerequisite prereq = 6;</code>
        */
-      public com.eldritch.invoken.proto.Prerequisites.Prerequisite.Builder addPrereqBuilder(
+      public com.eldritch.scifirpg.proto.Prerequisites.Prerequisite.Builder addPrereqBuilder(
           int index) {
         return getPrereqFieldBuilder().addBuilder(
-            index, com.eldritch.invoken.proto.Prerequisites.Prerequisite.getDefaultInstance());
+            index, com.eldritch.scifirpg.proto.Prerequisites.Prerequisite.getDefaultInstance());
       }
       /**
        * <code>repeated .scifirpg.Prerequisite prereq = 6;</code>
        */
-      public java.util.List<com.eldritch.invoken.proto.Prerequisites.Prerequisite.Builder> 
+      public java.util.List<com.eldritch.scifirpg.proto.Prerequisites.Prerequisite.Builder> 
            getPrereqBuilderList() {
         return getPrereqFieldBuilder().getBuilderList();
       }
       private com.google.protobuf.RepeatedFieldBuilder<
-          com.eldritch.invoken.proto.Prerequisites.Prerequisite, com.eldritch.invoken.proto.Prerequisites.Prerequisite.Builder, com.eldritch.invoken.proto.Prerequisites.PrerequisiteOrBuilder> 
+          com.eldritch.scifirpg.proto.Prerequisites.Prerequisite, com.eldritch.scifirpg.proto.Prerequisites.Prerequisite.Builder, com.eldritch.scifirpg.proto.Prerequisites.PrerequisiteOrBuilder> 
           getPrereqFieldBuilder() {
         if (prereqBuilder_ == null) {
           prereqBuilder_ = new com.google.protobuf.RepeatedFieldBuilder<
-              com.eldritch.invoken.proto.Prerequisites.Prerequisite, com.eldritch.invoken.proto.Prerequisites.Prerequisite.Builder, com.eldritch.invoken.proto.Prerequisites.PrerequisiteOrBuilder>(
+              com.eldritch.scifirpg.proto.Prerequisites.Prerequisite, com.eldritch.scifirpg.proto.Prerequisites.Prerequisite.Builder, com.eldritch.scifirpg.proto.Prerequisites.PrerequisiteOrBuilder>(
                   prereq_,
                   ((bitField0_ & 0x00000020) == 0x00000020),
                   getParentForChildren(),
@@ -10962,7 +11205,7 @@ public final class Locations {
       "ion\022\n\n\002id\030\001 \002(\t\022\014\n\004name\030\002 \002(\t\022\021\n\tparent_" +
       "id\030\004 \001(\t\022&\n\tencounter\030\003 \003(\0132\023.scifirpg.E" +
       "ncounter\022\022\n\nfaction_id\030\005 \001(\t\022\020\n\010min_rank" +
-      "\030\006 \001(\005\"\244\t\n\tEncounter\022\n\n\002id\030\001 \001(\t\022\r\n\005titl" +
+      "\030\006 \001(\005\"\331\t\n\tEncounter\022\n\n\002id\030\001 \001(\t\022\r\n\005titl" +
       "e\030\002 \002(\t\022&\n\004type\030\003 \002(\0162\030.scifirpg.Encount",
       "er.Type\022\021\n\006weight\030\004 \002(\001:\0011\022\025\n\006unique\030\005 \002" +
       "(\010:\005false\022&\n\006prereq\030\006 \003(\0132\026.scifirpg.Pre" +
@@ -10977,22 +11220,23 @@ public final class Locations {
       "\t\022\"\n\007outcome\030\002 \003(\0132\021.scifirpg.Outcome\022\023\n" +
       "\004rest\030\003 \001(\010:\005false\032?\n\016DecisionParams\022-\n\r" +
       "decision_tree\030\001 \002(\0132\026.scifirpg.DialogueT" +
-      "ree\032\345\002\n\013ActorParams\022\023\n\013description\030\001 \002(\t" +
+      "ree\032\232\003\n\013ActorParams\022\023\n\013description\030\001 \002(\t" +
       "\022E\n\016actor_scenario\030\002 \003(\0132-.scifirpg.Enco" +
       "unter.ActorParams.ActorScenario\022\"\n\007on_fl" +
       "ee\030\003 \003(\0132\021.scifirpg.Outcome\022\030\n\tno_detect" +
-      "\030\004 \001(\010:\005false\022\026\n\007no_flee\030\005 \001(\010:\005false\032\243\001" +
+      "\030\004 \001(\010:\005false\022\026\n\007no_flee\030\005 \001(\010:\005false\032\330\001" +
       "\n\rActorScenario\022\020\n\010actor_id\030\001 \002(\t\022#\n\010on_" +
       "death\030\002 \003(\0132\021.scifirpg.Outcome\022(\n\010dialog",
       "ue\030\003 \001(\0132\026.scifirpg.DialogueTree\022\030\n\tesse" +
       "ntial\030\004 \001(\010:\005false\022\027\n\010blocking\030\005 \001(\010:\005fa" +
-      "lse\032\256\001\n\014RegionParams\022\022\n\nrow_length\030\001 \001(\005" +
-      "\0223\n\004cell\030\002 \003(\0132%.scifirpg.Encounter.Regi" +
-      "onParams.Cell\032U\n\004Cell\022\023\n\013location_id\030\001 \002" +
-      "(\t\022\020\n\010position\030\002 \001(\005\022&\n\006prereq\030\003 \003(\0132\026.s" +
-      "cifirpg.Prerequisite\"7\n\004Type\022\n\n\006STATIC\020\000" +
-      "\022\014\n\010DECISION\020\001\022\t\n\005ACTOR\020\002\022\n\n\006REGION\020\003B\035\n" +
-      "\033com.eldritch.scifirpg.proto"
+      "lse\022\023\n\005alive\030\010 \001(\010:\004true\022\016\n\003min\030\006 \001(\005:\0011" +
+      "\022\016\n\003max\030\007 \001(\005:\0011\032\256\001\n\014RegionParams\022\022\n\nrow" +
+      "_length\030\001 \001(\005\0223\n\004cell\030\002 \003(\0132%.scifirpg.E" +
+      "ncounter.RegionParams.Cell\032U\n\004Cell\022\023\n\013lo" +
+      "cation_id\030\001 \002(\t\022\020\n\010position\030\002 \001(\005\022&\n\006pre" +
+      "req\030\003 \003(\0132\026.scifirpg.Prerequisite\"7\n\004Typ" +
+      "e\022\n\n\006STATIC\020\000\022\014\n\010DECISION\020\001\022\t\n\005ACTOR\020\002\022\n" +
+      "\n\006REGION\020\003B\034\n\032com.eldritch.invoken.proto"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
@@ -11034,7 +11278,7 @@ public final class Locations {
           internal_static_scifirpg_Encounter_ActorParams_ActorScenario_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_scifirpg_Encounter_ActorParams_ActorScenario_descriptor,
-              new java.lang.String[] { "ActorId", "OnDeath", "Dialogue", "Essential", "Blocking", });
+              new java.lang.String[] { "ActorId", "OnDeath", "Dialogue", "Essential", "Blocking", "Alive", "Min", "Max", });
           internal_static_scifirpg_Encounter_RegionParams_descriptor =
             internal_static_scifirpg_Encounter_descriptor.getNestedTypes().get(3);
           internal_static_scifirpg_Encounter_RegionParams_fieldAccessorTable = new
@@ -11054,8 +11298,8 @@ public final class Locations {
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
           com.eldritch.invoken.proto.Actors.getDescriptor(),
-          com.eldritch.invoken.proto.Prerequisites.getDescriptor(),
-          com.eldritch.invoken.proto.Outcomes.getDescriptor(),
+          com.eldritch.scifirpg.proto.Prerequisites.getDescriptor(),
+          com.eldritch.scifirpg.proto.Outcomes.getDescriptor(),
         }, assigner);
   }
 

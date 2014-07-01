@@ -884,7 +884,7 @@ public final class Prerequisites {
                 com.eldritch.invoken.proto.Prerequisites.Prerequisite.class, com.eldritch.invoken.proto.Prerequisites.Prerequisite.Builder.class);
       }
 
-      // Construct using com.eldritch.scifirpg.proto.Prerequisites.Prerequisite.newBuilder()
+      // Construct using com.eldritch.invoken.proto.Prerequisites.Prerequisite.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -1288,8 +1288,8 @@ public final class Prerequisites {
       "NFLUENCE_BETWEEN\020\007\022\017\n\013STANDING_IS\020\014\022\021\n\rI",
       "TEM_EQUIPPED\020\010\022\021\n\rMISSION_STAGE\020\n\022\t\n\005ALI" +
       "VE\020\r\022\014\n\010FOLLOWER\020\016*,\n\010Standing\022\010\n\004ALLY\020\000" +
-      "\022\013\n\007NEUTRAL\020\001\022\t\n\005ENEMY\020\002B\035\n\033com.eldritch" +
-      ".scifirpg.proto"
+      "\022\013\n\007NEUTRAL\020\001\022\t\n\005ENEMY\020\002B\034\n\032com.eldritch" +
+      ".invoken.proto"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {

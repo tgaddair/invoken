@@ -251,12 +251,12 @@ public final class Actors {
       /**
        * <code>repeated .scifirpg.Prerequisite prereq = 3;</code>
        */
-      java.util.List<com.eldritch.invoken.proto.Prerequisites.Prerequisite> 
+      java.util.List<com.eldritch.scifirpg.proto.Prerequisites.Prerequisite> 
           getPrereqList();
       /**
        * <code>repeated .scifirpg.Prerequisite prereq = 3;</code>
        */
-      com.eldritch.invoken.proto.Prerequisites.Prerequisite getPrereq(int index);
+      com.eldritch.scifirpg.proto.Prerequisites.Prerequisite getPrereq(int index);
       /**
        * <code>repeated .scifirpg.Prerequisite prereq = 3;</code>
        */
@@ -264,12 +264,12 @@ public final class Actors {
       /**
        * <code>repeated .scifirpg.Prerequisite prereq = 3;</code>
        */
-      java.util.List<? extends com.eldritch.invoken.proto.Prerequisites.PrerequisiteOrBuilder> 
+      java.util.List<? extends com.eldritch.scifirpg.proto.Prerequisites.PrerequisiteOrBuilder> 
           getPrereqOrBuilderList();
       /**
        * <code>repeated .scifirpg.Prerequisite prereq = 3;</code>
        */
-      com.eldritch.invoken.proto.Prerequisites.PrerequisiteOrBuilder getPrereqOrBuilder(
+      com.eldritch.scifirpg.proto.Prerequisites.PrerequisiteOrBuilder getPrereqOrBuilder(
           int index);
 
       // repeated .scifirpg.DialogueTree.Choice choice = 4;
@@ -301,12 +301,12 @@ public final class Actors {
       /**
        * <code>repeated .scifirpg.Outcome outcome = 5;</code>
        */
-      java.util.List<com.eldritch.invoken.proto.Outcomes.Outcome> 
+      java.util.List<com.eldritch.scifirpg.proto.Outcomes.Outcome> 
           getOutcomeList();
       /**
        * <code>repeated .scifirpg.Outcome outcome = 5;</code>
        */
-      com.eldritch.invoken.proto.Outcomes.Outcome getOutcome(int index);
+      com.eldritch.scifirpg.proto.Outcomes.Outcome getOutcome(int index);
       /**
        * <code>repeated .scifirpg.Outcome outcome = 5;</code>
        */
@@ -314,12 +314,12 @@ public final class Actors {
       /**
        * <code>repeated .scifirpg.Outcome outcome = 5;</code>
        */
-      java.util.List<? extends com.eldritch.invoken.proto.Outcomes.OutcomeOrBuilder> 
+      java.util.List<? extends com.eldritch.scifirpg.proto.Outcomes.OutcomeOrBuilder> 
           getOutcomeOrBuilderList();
       /**
        * <code>repeated .scifirpg.Outcome outcome = 5;</code>
        */
-      com.eldritch.invoken.proto.Outcomes.OutcomeOrBuilder getOutcomeOrBuilder(
+      com.eldritch.scifirpg.proto.Outcomes.OutcomeOrBuilder getOutcomeOrBuilder(
           int index);
 
       // required bool greeting = 6 [default = false];
@@ -420,10 +420,10 @@ public final class Actors {
               }
               case 26: {
                 if (!((mutable_bitField0_ & 0x00000004) == 0x00000004)) {
-                  prereq_ = new java.util.ArrayList<com.eldritch.invoken.proto.Prerequisites.Prerequisite>();
+                  prereq_ = new java.util.ArrayList<com.eldritch.scifirpg.proto.Prerequisites.Prerequisite>();
                   mutable_bitField0_ |= 0x00000004;
                 }
-                prereq_.add(input.readMessage(com.eldritch.invoken.proto.Prerequisites.Prerequisite.PARSER, extensionRegistry));
+                prereq_.add(input.readMessage(com.eldritch.scifirpg.proto.Prerequisites.Prerequisite.PARSER, extensionRegistry));
                 break;
               }
               case 34: {
@@ -436,10 +436,10 @@ public final class Actors {
               }
               case 42: {
                 if (!((mutable_bitField0_ & 0x00000010) == 0x00000010)) {
-                  outcome_ = new java.util.ArrayList<com.eldritch.invoken.proto.Outcomes.Outcome>();
+                  outcome_ = new java.util.ArrayList<com.eldritch.scifirpg.proto.Outcomes.Outcome>();
                   mutable_bitField0_ |= 0x00000010;
                 }
-                outcome_.add(input.readMessage(com.eldritch.invoken.proto.Outcomes.Outcome.PARSER, extensionRegistry));
+                outcome_.add(input.readMessage(com.eldritch.scifirpg.proto.Outcomes.Outcome.PARSER, extensionRegistry));
                 break;
               }
               case 48: {
@@ -601,17 +601,17 @@ public final class Actors {
 
       // repeated .scifirpg.Prerequisite prereq = 3;
       public static final int PREREQ_FIELD_NUMBER = 3;
-      private java.util.List<com.eldritch.invoken.proto.Prerequisites.Prerequisite> prereq_;
+      private java.util.List<com.eldritch.scifirpg.proto.Prerequisites.Prerequisite> prereq_;
       /**
        * <code>repeated .scifirpg.Prerequisite prereq = 3;</code>
        */
-      public java.util.List<com.eldritch.invoken.proto.Prerequisites.Prerequisite> getPrereqList() {
+      public java.util.List<com.eldritch.scifirpg.proto.Prerequisites.Prerequisite> getPrereqList() {
         return prereq_;
       }
       /**
        * <code>repeated .scifirpg.Prerequisite prereq = 3;</code>
        */
-      public java.util.List<? extends com.eldritch.invoken.proto.Prerequisites.PrerequisiteOrBuilder> 
+      public java.util.List<? extends com.eldritch.scifirpg.proto.Prerequisites.PrerequisiteOrBuilder> 
           getPrereqOrBuilderList() {
         return prereq_;
       }
@@ -624,13 +624,13 @@ public final class Actors {
       /**
        * <code>repeated .scifirpg.Prerequisite prereq = 3;</code>
        */
-      public com.eldritch.invoken.proto.Prerequisites.Prerequisite getPrereq(int index) {
+      public com.eldritch.scifirpg.proto.Prerequisites.Prerequisite getPrereq(int index) {
         return prereq_.get(index);
       }
       /**
        * <code>repeated .scifirpg.Prerequisite prereq = 3;</code>
        */
-      public com.eldritch.invoken.proto.Prerequisites.PrerequisiteOrBuilder getPrereqOrBuilder(
+      public com.eldritch.scifirpg.proto.Prerequisites.PrerequisiteOrBuilder getPrereqOrBuilder(
           int index) {
         return prereq_.get(index);
       }
@@ -673,17 +673,17 @@ public final class Actors {
 
       // repeated .scifirpg.Outcome outcome = 5;
       public static final int OUTCOME_FIELD_NUMBER = 5;
-      private java.util.List<com.eldritch.invoken.proto.Outcomes.Outcome> outcome_;
+      private java.util.List<com.eldritch.scifirpg.proto.Outcomes.Outcome> outcome_;
       /**
        * <code>repeated .scifirpg.Outcome outcome = 5;</code>
        */
-      public java.util.List<com.eldritch.invoken.proto.Outcomes.Outcome> getOutcomeList() {
+      public java.util.List<com.eldritch.scifirpg.proto.Outcomes.Outcome> getOutcomeList() {
         return outcome_;
       }
       /**
        * <code>repeated .scifirpg.Outcome outcome = 5;</code>
        */
-      public java.util.List<? extends com.eldritch.invoken.proto.Outcomes.OutcomeOrBuilder> 
+      public java.util.List<? extends com.eldritch.scifirpg.proto.Outcomes.OutcomeOrBuilder> 
           getOutcomeOrBuilderList() {
         return outcome_;
       }
@@ -696,13 +696,13 @@ public final class Actors {
       /**
        * <code>repeated .scifirpg.Outcome outcome = 5;</code>
        */
-      public com.eldritch.invoken.proto.Outcomes.Outcome getOutcome(int index) {
+      public com.eldritch.scifirpg.proto.Outcomes.Outcome getOutcome(int index) {
         return outcome_.get(index);
       }
       /**
        * <code>repeated .scifirpg.Outcome outcome = 5;</code>
        */
-      public com.eldritch.invoken.proto.Outcomes.OutcomeOrBuilder getOutcomeOrBuilder(
+      public com.eldritch.scifirpg.proto.Outcomes.OutcomeOrBuilder getOutcomeOrBuilder(
           int index) {
         return outcome_.get(index);
       }
@@ -955,7 +955,7 @@ public final class Actors {
                   com.eldritch.invoken.proto.Actors.DialogueTree.Response.class, com.eldritch.invoken.proto.Actors.DialogueTree.Response.Builder.class);
         }
 
-        // Construct using com.eldritch.scifirpg.proto.Actors.DialogueTree.Response.newBuilder()
+        // Construct using com.eldritch.invoken.proto.Actors.DialogueTree.Response.newBuilder()
         private Builder() {
           maybeForceBuilderInitialization();
         }
@@ -1411,22 +1411,22 @@ public final class Actors {
         }
 
         // repeated .scifirpg.Prerequisite prereq = 3;
-        private java.util.List<com.eldritch.invoken.proto.Prerequisites.Prerequisite> prereq_ =
+        private java.util.List<com.eldritch.scifirpg.proto.Prerequisites.Prerequisite> prereq_ =
           java.util.Collections.emptyList();
         private void ensurePrereqIsMutable() {
           if (!((bitField0_ & 0x00000004) == 0x00000004)) {
-            prereq_ = new java.util.ArrayList<com.eldritch.invoken.proto.Prerequisites.Prerequisite>(prereq_);
+            prereq_ = new java.util.ArrayList<com.eldritch.scifirpg.proto.Prerequisites.Prerequisite>(prereq_);
             bitField0_ |= 0x00000004;
            }
         }
 
         private com.google.protobuf.RepeatedFieldBuilder<
-            com.eldritch.invoken.proto.Prerequisites.Prerequisite, com.eldritch.invoken.proto.Prerequisites.Prerequisite.Builder, com.eldritch.invoken.proto.Prerequisites.PrerequisiteOrBuilder> prereqBuilder_;
+            com.eldritch.scifirpg.proto.Prerequisites.Prerequisite, com.eldritch.scifirpg.proto.Prerequisites.Prerequisite.Builder, com.eldritch.scifirpg.proto.Prerequisites.PrerequisiteOrBuilder> prereqBuilder_;
 
         /**
          * <code>repeated .scifirpg.Prerequisite prereq = 3;</code>
          */
-        public java.util.List<com.eldritch.invoken.proto.Prerequisites.Prerequisite> getPrereqList() {
+        public java.util.List<com.eldritch.scifirpg.proto.Prerequisites.Prerequisite> getPrereqList() {
           if (prereqBuilder_ == null) {
             return java.util.Collections.unmodifiableList(prereq_);
           } else {
@@ -1446,7 +1446,7 @@ public final class Actors {
         /**
          * <code>repeated .scifirpg.Prerequisite prereq = 3;</code>
          */
-        public com.eldritch.invoken.proto.Prerequisites.Prerequisite getPrereq(int index) {
+        public com.eldritch.scifirpg.proto.Prerequisites.Prerequisite getPrereq(int index) {
           if (prereqBuilder_ == null) {
             return prereq_.get(index);
           } else {
@@ -1457,7 +1457,7 @@ public final class Actors {
          * <code>repeated .scifirpg.Prerequisite prereq = 3;</code>
          */
         public Builder setPrereq(
-            int index, com.eldritch.invoken.proto.Prerequisites.Prerequisite value) {
+            int index, com.eldritch.scifirpg.proto.Prerequisites.Prerequisite value) {
           if (prereqBuilder_ == null) {
             if (value == null) {
               throw new NullPointerException();
@@ -1474,7 +1474,7 @@ public final class Actors {
          * <code>repeated .scifirpg.Prerequisite prereq = 3;</code>
          */
         public Builder setPrereq(
-            int index, com.eldritch.invoken.proto.Prerequisites.Prerequisite.Builder builderForValue) {
+            int index, com.eldritch.scifirpg.proto.Prerequisites.Prerequisite.Builder builderForValue) {
           if (prereqBuilder_ == null) {
             ensurePrereqIsMutable();
             prereq_.set(index, builderForValue.build());
@@ -1487,7 +1487,7 @@ public final class Actors {
         /**
          * <code>repeated .scifirpg.Prerequisite prereq = 3;</code>
          */
-        public Builder addPrereq(com.eldritch.invoken.proto.Prerequisites.Prerequisite value) {
+        public Builder addPrereq(com.eldritch.scifirpg.proto.Prerequisites.Prerequisite value) {
           if (prereqBuilder_ == null) {
             if (value == null) {
               throw new NullPointerException();
@@ -1504,7 +1504,7 @@ public final class Actors {
          * <code>repeated .scifirpg.Prerequisite prereq = 3;</code>
          */
         public Builder addPrereq(
-            int index, com.eldritch.invoken.proto.Prerequisites.Prerequisite value) {
+            int index, com.eldritch.scifirpg.proto.Prerequisites.Prerequisite value) {
           if (prereqBuilder_ == null) {
             if (value == null) {
               throw new NullPointerException();
@@ -1521,7 +1521,7 @@ public final class Actors {
          * <code>repeated .scifirpg.Prerequisite prereq = 3;</code>
          */
         public Builder addPrereq(
-            com.eldritch.invoken.proto.Prerequisites.Prerequisite.Builder builderForValue) {
+            com.eldritch.scifirpg.proto.Prerequisites.Prerequisite.Builder builderForValue) {
           if (prereqBuilder_ == null) {
             ensurePrereqIsMutable();
             prereq_.add(builderForValue.build());
@@ -1535,7 +1535,7 @@ public final class Actors {
          * <code>repeated .scifirpg.Prerequisite prereq = 3;</code>
          */
         public Builder addPrereq(
-            int index, com.eldritch.invoken.proto.Prerequisites.Prerequisite.Builder builderForValue) {
+            int index, com.eldritch.scifirpg.proto.Prerequisites.Prerequisite.Builder builderForValue) {
           if (prereqBuilder_ == null) {
             ensurePrereqIsMutable();
             prereq_.add(index, builderForValue.build());
@@ -1549,7 +1549,7 @@ public final class Actors {
          * <code>repeated .scifirpg.Prerequisite prereq = 3;</code>
          */
         public Builder addAllPrereq(
-            java.lang.Iterable<? extends com.eldritch.invoken.proto.Prerequisites.Prerequisite> values) {
+            java.lang.Iterable<? extends com.eldritch.scifirpg.proto.Prerequisites.Prerequisite> values) {
           if (prereqBuilder_ == null) {
             ensurePrereqIsMutable();
             super.addAll(values, prereq_);
@@ -1588,14 +1588,14 @@ public final class Actors {
         /**
          * <code>repeated .scifirpg.Prerequisite prereq = 3;</code>
          */
-        public com.eldritch.invoken.proto.Prerequisites.Prerequisite.Builder getPrereqBuilder(
+        public com.eldritch.scifirpg.proto.Prerequisites.Prerequisite.Builder getPrereqBuilder(
             int index) {
           return getPrereqFieldBuilder().getBuilder(index);
         }
         /**
          * <code>repeated .scifirpg.Prerequisite prereq = 3;</code>
          */
-        public com.eldritch.invoken.proto.Prerequisites.PrerequisiteOrBuilder getPrereqOrBuilder(
+        public com.eldritch.scifirpg.proto.Prerequisites.PrerequisiteOrBuilder getPrereqOrBuilder(
             int index) {
           if (prereqBuilder_ == null) {
             return prereq_.get(index);  } else {
@@ -1605,7 +1605,7 @@ public final class Actors {
         /**
          * <code>repeated .scifirpg.Prerequisite prereq = 3;</code>
          */
-        public java.util.List<? extends com.eldritch.invoken.proto.Prerequisites.PrerequisiteOrBuilder> 
+        public java.util.List<? extends com.eldritch.scifirpg.proto.Prerequisites.PrerequisiteOrBuilder> 
              getPrereqOrBuilderList() {
           if (prereqBuilder_ != null) {
             return prereqBuilder_.getMessageOrBuilderList();
@@ -1616,31 +1616,31 @@ public final class Actors {
         /**
          * <code>repeated .scifirpg.Prerequisite prereq = 3;</code>
          */
-        public com.eldritch.invoken.proto.Prerequisites.Prerequisite.Builder addPrereqBuilder() {
+        public com.eldritch.scifirpg.proto.Prerequisites.Prerequisite.Builder addPrereqBuilder() {
           return getPrereqFieldBuilder().addBuilder(
-              com.eldritch.invoken.proto.Prerequisites.Prerequisite.getDefaultInstance());
+              com.eldritch.scifirpg.proto.Prerequisites.Prerequisite.getDefaultInstance());
         }
         /**
          * <code>repeated .scifirpg.Prerequisite prereq = 3;</code>
          */
-        public com.eldritch.invoken.proto.Prerequisites.Prerequisite.Builder addPrereqBuilder(
+        public com.eldritch.scifirpg.proto.Prerequisites.Prerequisite.Builder addPrereqBuilder(
             int index) {
           return getPrereqFieldBuilder().addBuilder(
-              index, com.eldritch.invoken.proto.Prerequisites.Prerequisite.getDefaultInstance());
+              index, com.eldritch.scifirpg.proto.Prerequisites.Prerequisite.getDefaultInstance());
         }
         /**
          * <code>repeated .scifirpg.Prerequisite prereq = 3;</code>
          */
-        public java.util.List<com.eldritch.invoken.proto.Prerequisites.Prerequisite.Builder> 
+        public java.util.List<com.eldritch.scifirpg.proto.Prerequisites.Prerequisite.Builder> 
              getPrereqBuilderList() {
           return getPrereqFieldBuilder().getBuilderList();
         }
         private com.google.protobuf.RepeatedFieldBuilder<
-            com.eldritch.invoken.proto.Prerequisites.Prerequisite, com.eldritch.invoken.proto.Prerequisites.Prerequisite.Builder, com.eldritch.invoken.proto.Prerequisites.PrerequisiteOrBuilder> 
+            com.eldritch.scifirpg.proto.Prerequisites.Prerequisite, com.eldritch.scifirpg.proto.Prerequisites.Prerequisite.Builder, com.eldritch.scifirpg.proto.Prerequisites.PrerequisiteOrBuilder> 
             getPrereqFieldBuilder() {
           if (prereqBuilder_ == null) {
             prereqBuilder_ = new com.google.protobuf.RepeatedFieldBuilder<
-                com.eldritch.invoken.proto.Prerequisites.Prerequisite, com.eldritch.invoken.proto.Prerequisites.Prerequisite.Builder, com.eldritch.invoken.proto.Prerequisites.PrerequisiteOrBuilder>(
+                com.eldritch.scifirpg.proto.Prerequisites.Prerequisite, com.eldritch.scifirpg.proto.Prerequisites.Prerequisite.Builder, com.eldritch.scifirpg.proto.Prerequisites.PrerequisiteOrBuilder>(
                     prereq_,
                     ((bitField0_ & 0x00000004) == 0x00000004),
                     getParentForChildren(),
@@ -1891,22 +1891,22 @@ public final class Actors {
         }
 
         // repeated .scifirpg.Outcome outcome = 5;
-        private java.util.List<com.eldritch.invoken.proto.Outcomes.Outcome> outcome_ =
+        private java.util.List<com.eldritch.scifirpg.proto.Outcomes.Outcome> outcome_ =
           java.util.Collections.emptyList();
         private void ensureOutcomeIsMutable() {
           if (!((bitField0_ & 0x00000010) == 0x00000010)) {
-            outcome_ = new java.util.ArrayList<com.eldritch.invoken.proto.Outcomes.Outcome>(outcome_);
+            outcome_ = new java.util.ArrayList<com.eldritch.scifirpg.proto.Outcomes.Outcome>(outcome_);
             bitField0_ |= 0x00000010;
            }
         }
 
         private com.google.protobuf.RepeatedFieldBuilder<
-            com.eldritch.invoken.proto.Outcomes.Outcome, com.eldritch.invoken.proto.Outcomes.Outcome.Builder, com.eldritch.invoken.proto.Outcomes.OutcomeOrBuilder> outcomeBuilder_;
+            com.eldritch.scifirpg.proto.Outcomes.Outcome, com.eldritch.scifirpg.proto.Outcomes.Outcome.Builder, com.eldritch.scifirpg.proto.Outcomes.OutcomeOrBuilder> outcomeBuilder_;
 
         /**
          * <code>repeated .scifirpg.Outcome outcome = 5;</code>
          */
-        public java.util.List<com.eldritch.invoken.proto.Outcomes.Outcome> getOutcomeList() {
+        public java.util.List<com.eldritch.scifirpg.proto.Outcomes.Outcome> getOutcomeList() {
           if (outcomeBuilder_ == null) {
             return java.util.Collections.unmodifiableList(outcome_);
           } else {
@@ -1926,7 +1926,7 @@ public final class Actors {
         /**
          * <code>repeated .scifirpg.Outcome outcome = 5;</code>
          */
-        public com.eldritch.invoken.proto.Outcomes.Outcome getOutcome(int index) {
+        public com.eldritch.scifirpg.proto.Outcomes.Outcome getOutcome(int index) {
           if (outcomeBuilder_ == null) {
             return outcome_.get(index);
           } else {
@@ -1937,7 +1937,7 @@ public final class Actors {
          * <code>repeated .scifirpg.Outcome outcome = 5;</code>
          */
         public Builder setOutcome(
-            int index, com.eldritch.invoken.proto.Outcomes.Outcome value) {
+            int index, com.eldritch.scifirpg.proto.Outcomes.Outcome value) {
           if (outcomeBuilder_ == null) {
             if (value == null) {
               throw new NullPointerException();
@@ -1954,7 +1954,7 @@ public final class Actors {
          * <code>repeated .scifirpg.Outcome outcome = 5;</code>
          */
         public Builder setOutcome(
-            int index, com.eldritch.invoken.proto.Outcomes.Outcome.Builder builderForValue) {
+            int index, com.eldritch.scifirpg.proto.Outcomes.Outcome.Builder builderForValue) {
           if (outcomeBuilder_ == null) {
             ensureOutcomeIsMutable();
             outcome_.set(index, builderForValue.build());
@@ -1967,7 +1967,7 @@ public final class Actors {
         /**
          * <code>repeated .scifirpg.Outcome outcome = 5;</code>
          */
-        public Builder addOutcome(com.eldritch.invoken.proto.Outcomes.Outcome value) {
+        public Builder addOutcome(com.eldritch.scifirpg.proto.Outcomes.Outcome value) {
           if (outcomeBuilder_ == null) {
             if (value == null) {
               throw new NullPointerException();
@@ -1984,7 +1984,7 @@ public final class Actors {
          * <code>repeated .scifirpg.Outcome outcome = 5;</code>
          */
         public Builder addOutcome(
-            int index, com.eldritch.invoken.proto.Outcomes.Outcome value) {
+            int index, com.eldritch.scifirpg.proto.Outcomes.Outcome value) {
           if (outcomeBuilder_ == null) {
             if (value == null) {
               throw new NullPointerException();
@@ -2001,7 +2001,7 @@ public final class Actors {
          * <code>repeated .scifirpg.Outcome outcome = 5;</code>
          */
         public Builder addOutcome(
-            com.eldritch.invoken.proto.Outcomes.Outcome.Builder builderForValue) {
+            com.eldritch.scifirpg.proto.Outcomes.Outcome.Builder builderForValue) {
           if (outcomeBuilder_ == null) {
             ensureOutcomeIsMutable();
             outcome_.add(builderForValue.build());
@@ -2015,7 +2015,7 @@ public final class Actors {
          * <code>repeated .scifirpg.Outcome outcome = 5;</code>
          */
         public Builder addOutcome(
-            int index, com.eldritch.invoken.proto.Outcomes.Outcome.Builder builderForValue) {
+            int index, com.eldritch.scifirpg.proto.Outcomes.Outcome.Builder builderForValue) {
           if (outcomeBuilder_ == null) {
             ensureOutcomeIsMutable();
             outcome_.add(index, builderForValue.build());
@@ -2029,7 +2029,7 @@ public final class Actors {
          * <code>repeated .scifirpg.Outcome outcome = 5;</code>
          */
         public Builder addAllOutcome(
-            java.lang.Iterable<? extends com.eldritch.invoken.proto.Outcomes.Outcome> values) {
+            java.lang.Iterable<? extends com.eldritch.scifirpg.proto.Outcomes.Outcome> values) {
           if (outcomeBuilder_ == null) {
             ensureOutcomeIsMutable();
             super.addAll(values, outcome_);
@@ -2068,14 +2068,14 @@ public final class Actors {
         /**
          * <code>repeated .scifirpg.Outcome outcome = 5;</code>
          */
-        public com.eldritch.invoken.proto.Outcomes.Outcome.Builder getOutcomeBuilder(
+        public com.eldritch.scifirpg.proto.Outcomes.Outcome.Builder getOutcomeBuilder(
             int index) {
           return getOutcomeFieldBuilder().getBuilder(index);
         }
         /**
          * <code>repeated .scifirpg.Outcome outcome = 5;</code>
          */
-        public com.eldritch.invoken.proto.Outcomes.OutcomeOrBuilder getOutcomeOrBuilder(
+        public com.eldritch.scifirpg.proto.Outcomes.OutcomeOrBuilder getOutcomeOrBuilder(
             int index) {
           if (outcomeBuilder_ == null) {
             return outcome_.get(index);  } else {
@@ -2085,7 +2085,7 @@ public final class Actors {
         /**
          * <code>repeated .scifirpg.Outcome outcome = 5;</code>
          */
-        public java.util.List<? extends com.eldritch.invoken.proto.Outcomes.OutcomeOrBuilder> 
+        public java.util.List<? extends com.eldritch.scifirpg.proto.Outcomes.OutcomeOrBuilder> 
              getOutcomeOrBuilderList() {
           if (outcomeBuilder_ != null) {
             return outcomeBuilder_.getMessageOrBuilderList();
@@ -2096,31 +2096,31 @@ public final class Actors {
         /**
          * <code>repeated .scifirpg.Outcome outcome = 5;</code>
          */
-        public com.eldritch.invoken.proto.Outcomes.Outcome.Builder addOutcomeBuilder() {
+        public com.eldritch.scifirpg.proto.Outcomes.Outcome.Builder addOutcomeBuilder() {
           return getOutcomeFieldBuilder().addBuilder(
-              com.eldritch.invoken.proto.Outcomes.Outcome.getDefaultInstance());
+              com.eldritch.scifirpg.proto.Outcomes.Outcome.getDefaultInstance());
         }
         /**
          * <code>repeated .scifirpg.Outcome outcome = 5;</code>
          */
-        public com.eldritch.invoken.proto.Outcomes.Outcome.Builder addOutcomeBuilder(
+        public com.eldritch.scifirpg.proto.Outcomes.Outcome.Builder addOutcomeBuilder(
             int index) {
           return getOutcomeFieldBuilder().addBuilder(
-              index, com.eldritch.invoken.proto.Outcomes.Outcome.getDefaultInstance());
+              index, com.eldritch.scifirpg.proto.Outcomes.Outcome.getDefaultInstance());
         }
         /**
          * <code>repeated .scifirpg.Outcome outcome = 5;</code>
          */
-        public java.util.List<com.eldritch.invoken.proto.Outcomes.Outcome.Builder> 
+        public java.util.List<com.eldritch.scifirpg.proto.Outcomes.Outcome.Builder> 
              getOutcomeBuilderList() {
           return getOutcomeFieldBuilder().getBuilderList();
         }
         private com.google.protobuf.RepeatedFieldBuilder<
-            com.eldritch.invoken.proto.Outcomes.Outcome, com.eldritch.invoken.proto.Outcomes.Outcome.Builder, com.eldritch.invoken.proto.Outcomes.OutcomeOrBuilder> 
+            com.eldritch.scifirpg.proto.Outcomes.Outcome, com.eldritch.scifirpg.proto.Outcomes.Outcome.Builder, com.eldritch.scifirpg.proto.Outcomes.OutcomeOrBuilder> 
             getOutcomeFieldBuilder() {
           if (outcomeBuilder_ == null) {
             outcomeBuilder_ = new com.google.protobuf.RepeatedFieldBuilder<
-                com.eldritch.invoken.proto.Outcomes.Outcome, com.eldritch.invoken.proto.Outcomes.Outcome.Builder, com.eldritch.invoken.proto.Outcomes.OutcomeOrBuilder>(
+                com.eldritch.scifirpg.proto.Outcomes.Outcome, com.eldritch.scifirpg.proto.Outcomes.Outcome.Builder, com.eldritch.scifirpg.proto.Outcomes.OutcomeOrBuilder>(
                     outcome_,
                     ((bitField0_ & 0x00000010) == 0x00000010),
                     getParentForChildren(),
@@ -2249,12 +2249,12 @@ public final class Actors {
       /**
        * <code>repeated .scifirpg.Prerequisite prereq = 2;</code>
        */
-      java.util.List<com.eldritch.invoken.proto.Prerequisites.Prerequisite> 
+      java.util.List<com.eldritch.scifirpg.proto.Prerequisites.Prerequisite> 
           getPrereqList();
       /**
        * <code>repeated .scifirpg.Prerequisite prereq = 2;</code>
        */
-      com.eldritch.invoken.proto.Prerequisites.Prerequisite getPrereq(int index);
+      com.eldritch.scifirpg.proto.Prerequisites.Prerequisite getPrereq(int index);
       /**
        * <code>repeated .scifirpg.Prerequisite prereq = 2;</code>
        */
@@ -2262,12 +2262,12 @@ public final class Actors {
       /**
        * <code>repeated .scifirpg.Prerequisite prereq = 2;</code>
        */
-      java.util.List<? extends com.eldritch.invoken.proto.Prerequisites.PrerequisiteOrBuilder> 
+      java.util.List<? extends com.eldritch.scifirpg.proto.Prerequisites.PrerequisiteOrBuilder> 
           getPrereqOrBuilderList();
       /**
        * <code>repeated .scifirpg.Prerequisite prereq = 2;</code>
        */
-      com.eldritch.invoken.proto.Prerequisites.PrerequisiteOrBuilder getPrereqOrBuilder(
+      com.eldritch.scifirpg.proto.Prerequisites.PrerequisiteOrBuilder getPrereqOrBuilder(
           int index);
 
       // repeated string successor_id = 3;
@@ -2372,10 +2372,10 @@ public final class Actors {
               }
               case 18: {
                 if (!((mutable_bitField0_ & 0x00000002) == 0x00000002)) {
-                  prereq_ = new java.util.ArrayList<com.eldritch.invoken.proto.Prerequisites.Prerequisite>();
+                  prereq_ = new java.util.ArrayList<com.eldritch.scifirpg.proto.Prerequisites.Prerequisite>();
                   mutable_bitField0_ |= 0x00000002;
                 }
-                prereq_.add(input.readMessage(com.eldritch.invoken.proto.Prerequisites.Prerequisite.PARSER, extensionRegistry));
+                prereq_.add(input.readMessage(com.eldritch.scifirpg.proto.Prerequisites.Prerequisite.PARSER, extensionRegistry));
                 break;
               }
               case 26: {
@@ -2482,17 +2482,17 @@ public final class Actors {
 
       // repeated .scifirpg.Prerequisite prereq = 2;
       public static final int PREREQ_FIELD_NUMBER = 2;
-      private java.util.List<com.eldritch.invoken.proto.Prerequisites.Prerequisite> prereq_;
+      private java.util.List<com.eldritch.scifirpg.proto.Prerequisites.Prerequisite> prereq_;
       /**
        * <code>repeated .scifirpg.Prerequisite prereq = 2;</code>
        */
-      public java.util.List<com.eldritch.invoken.proto.Prerequisites.Prerequisite> getPrereqList() {
+      public java.util.List<com.eldritch.scifirpg.proto.Prerequisites.Prerequisite> getPrereqList() {
         return prereq_;
       }
       /**
        * <code>repeated .scifirpg.Prerequisite prereq = 2;</code>
        */
-      public java.util.List<? extends com.eldritch.invoken.proto.Prerequisites.PrerequisiteOrBuilder> 
+      public java.util.List<? extends com.eldritch.scifirpg.proto.Prerequisites.PrerequisiteOrBuilder> 
           getPrereqOrBuilderList() {
         return prereq_;
       }
@@ -2505,13 +2505,13 @@ public final class Actors {
       /**
        * <code>repeated .scifirpg.Prerequisite prereq = 2;</code>
        */
-      public com.eldritch.invoken.proto.Prerequisites.Prerequisite getPrereq(int index) {
+      public com.eldritch.scifirpg.proto.Prerequisites.Prerequisite getPrereq(int index) {
         return prereq_.get(index);
       }
       /**
        * <code>repeated .scifirpg.Prerequisite prereq = 2;</code>
        */
-      public com.eldritch.invoken.proto.Prerequisites.PrerequisiteOrBuilder getPrereqOrBuilder(
+      public com.eldritch.scifirpg.proto.Prerequisites.PrerequisiteOrBuilder getPrereqOrBuilder(
           int index) {
         return prereq_.get(index);
       }
@@ -2742,7 +2742,7 @@ public final class Actors {
                   com.eldritch.invoken.proto.Actors.DialogueTree.Choice.class, com.eldritch.invoken.proto.Actors.DialogueTree.Choice.Builder.class);
         }
 
-        // Construct using com.eldritch.scifirpg.proto.Actors.DialogueTree.Choice.newBuilder()
+        // Construct using com.eldritch.invoken.proto.Actors.DialogueTree.Choice.newBuilder()
         private Builder() {
           maybeForceBuilderInitialization();
         }
@@ -2998,22 +2998,22 @@ public final class Actors {
         }
 
         // repeated .scifirpg.Prerequisite prereq = 2;
-        private java.util.List<com.eldritch.invoken.proto.Prerequisites.Prerequisite> prereq_ =
+        private java.util.List<com.eldritch.scifirpg.proto.Prerequisites.Prerequisite> prereq_ =
           java.util.Collections.emptyList();
         private void ensurePrereqIsMutable() {
           if (!((bitField0_ & 0x00000002) == 0x00000002)) {
-            prereq_ = new java.util.ArrayList<com.eldritch.invoken.proto.Prerequisites.Prerequisite>(prereq_);
+            prereq_ = new java.util.ArrayList<com.eldritch.scifirpg.proto.Prerequisites.Prerequisite>(prereq_);
             bitField0_ |= 0x00000002;
            }
         }
 
         private com.google.protobuf.RepeatedFieldBuilder<
-            com.eldritch.invoken.proto.Prerequisites.Prerequisite, com.eldritch.invoken.proto.Prerequisites.Prerequisite.Builder, com.eldritch.invoken.proto.Prerequisites.PrerequisiteOrBuilder> prereqBuilder_;
+            com.eldritch.scifirpg.proto.Prerequisites.Prerequisite, com.eldritch.scifirpg.proto.Prerequisites.Prerequisite.Builder, com.eldritch.scifirpg.proto.Prerequisites.PrerequisiteOrBuilder> prereqBuilder_;
 
         /**
          * <code>repeated .scifirpg.Prerequisite prereq = 2;</code>
          */
-        public java.util.List<com.eldritch.invoken.proto.Prerequisites.Prerequisite> getPrereqList() {
+        public java.util.List<com.eldritch.scifirpg.proto.Prerequisites.Prerequisite> getPrereqList() {
           if (prereqBuilder_ == null) {
             return java.util.Collections.unmodifiableList(prereq_);
           } else {
@@ -3033,7 +3033,7 @@ public final class Actors {
         /**
          * <code>repeated .scifirpg.Prerequisite prereq = 2;</code>
          */
-        public com.eldritch.invoken.proto.Prerequisites.Prerequisite getPrereq(int index) {
+        public com.eldritch.scifirpg.proto.Prerequisites.Prerequisite getPrereq(int index) {
           if (prereqBuilder_ == null) {
             return prereq_.get(index);
           } else {
@@ -3044,7 +3044,7 @@ public final class Actors {
          * <code>repeated .scifirpg.Prerequisite prereq = 2;</code>
          */
         public Builder setPrereq(
-            int index, com.eldritch.invoken.proto.Prerequisites.Prerequisite value) {
+            int index, com.eldritch.scifirpg.proto.Prerequisites.Prerequisite value) {
           if (prereqBuilder_ == null) {
             if (value == null) {
               throw new NullPointerException();
@@ -3061,7 +3061,7 @@ public final class Actors {
          * <code>repeated .scifirpg.Prerequisite prereq = 2;</code>
          */
         public Builder setPrereq(
-            int index, com.eldritch.invoken.proto.Prerequisites.Prerequisite.Builder builderForValue) {
+            int index, com.eldritch.scifirpg.proto.Prerequisites.Prerequisite.Builder builderForValue) {
           if (prereqBuilder_ == null) {
             ensurePrereqIsMutable();
             prereq_.set(index, builderForValue.build());
@@ -3074,7 +3074,7 @@ public final class Actors {
         /**
          * <code>repeated .scifirpg.Prerequisite prereq = 2;</code>
          */
-        public Builder addPrereq(com.eldritch.invoken.proto.Prerequisites.Prerequisite value) {
+        public Builder addPrereq(com.eldritch.scifirpg.proto.Prerequisites.Prerequisite value) {
           if (prereqBuilder_ == null) {
             if (value == null) {
               throw new NullPointerException();
@@ -3091,7 +3091,7 @@ public final class Actors {
          * <code>repeated .scifirpg.Prerequisite prereq = 2;</code>
          */
         public Builder addPrereq(
-            int index, com.eldritch.invoken.proto.Prerequisites.Prerequisite value) {
+            int index, com.eldritch.scifirpg.proto.Prerequisites.Prerequisite value) {
           if (prereqBuilder_ == null) {
             if (value == null) {
               throw new NullPointerException();
@@ -3108,7 +3108,7 @@ public final class Actors {
          * <code>repeated .scifirpg.Prerequisite prereq = 2;</code>
          */
         public Builder addPrereq(
-            com.eldritch.invoken.proto.Prerequisites.Prerequisite.Builder builderForValue) {
+            com.eldritch.scifirpg.proto.Prerequisites.Prerequisite.Builder builderForValue) {
           if (prereqBuilder_ == null) {
             ensurePrereqIsMutable();
             prereq_.add(builderForValue.build());
@@ -3122,7 +3122,7 @@ public final class Actors {
          * <code>repeated .scifirpg.Prerequisite prereq = 2;</code>
          */
         public Builder addPrereq(
-            int index, com.eldritch.invoken.proto.Prerequisites.Prerequisite.Builder builderForValue) {
+            int index, com.eldritch.scifirpg.proto.Prerequisites.Prerequisite.Builder builderForValue) {
           if (prereqBuilder_ == null) {
             ensurePrereqIsMutable();
             prereq_.add(index, builderForValue.build());
@@ -3136,7 +3136,7 @@ public final class Actors {
          * <code>repeated .scifirpg.Prerequisite prereq = 2;</code>
          */
         public Builder addAllPrereq(
-            java.lang.Iterable<? extends com.eldritch.invoken.proto.Prerequisites.Prerequisite> values) {
+            java.lang.Iterable<? extends com.eldritch.scifirpg.proto.Prerequisites.Prerequisite> values) {
           if (prereqBuilder_ == null) {
             ensurePrereqIsMutable();
             super.addAll(values, prereq_);
@@ -3175,14 +3175,14 @@ public final class Actors {
         /**
          * <code>repeated .scifirpg.Prerequisite prereq = 2;</code>
          */
-        public com.eldritch.invoken.proto.Prerequisites.Prerequisite.Builder getPrereqBuilder(
+        public com.eldritch.scifirpg.proto.Prerequisites.Prerequisite.Builder getPrereqBuilder(
             int index) {
           return getPrereqFieldBuilder().getBuilder(index);
         }
         /**
          * <code>repeated .scifirpg.Prerequisite prereq = 2;</code>
          */
-        public com.eldritch.invoken.proto.Prerequisites.PrerequisiteOrBuilder getPrereqOrBuilder(
+        public com.eldritch.scifirpg.proto.Prerequisites.PrerequisiteOrBuilder getPrereqOrBuilder(
             int index) {
           if (prereqBuilder_ == null) {
             return prereq_.get(index);  } else {
@@ -3192,7 +3192,7 @@ public final class Actors {
         /**
          * <code>repeated .scifirpg.Prerequisite prereq = 2;</code>
          */
-        public java.util.List<? extends com.eldritch.invoken.proto.Prerequisites.PrerequisiteOrBuilder> 
+        public java.util.List<? extends com.eldritch.scifirpg.proto.Prerequisites.PrerequisiteOrBuilder> 
              getPrereqOrBuilderList() {
           if (prereqBuilder_ != null) {
             return prereqBuilder_.getMessageOrBuilderList();
@@ -3203,31 +3203,31 @@ public final class Actors {
         /**
          * <code>repeated .scifirpg.Prerequisite prereq = 2;</code>
          */
-        public com.eldritch.invoken.proto.Prerequisites.Prerequisite.Builder addPrereqBuilder() {
+        public com.eldritch.scifirpg.proto.Prerequisites.Prerequisite.Builder addPrereqBuilder() {
           return getPrereqFieldBuilder().addBuilder(
-              com.eldritch.invoken.proto.Prerequisites.Prerequisite.getDefaultInstance());
+              com.eldritch.scifirpg.proto.Prerequisites.Prerequisite.getDefaultInstance());
         }
         /**
          * <code>repeated .scifirpg.Prerequisite prereq = 2;</code>
          */
-        public com.eldritch.invoken.proto.Prerequisites.Prerequisite.Builder addPrereqBuilder(
+        public com.eldritch.scifirpg.proto.Prerequisites.Prerequisite.Builder addPrereqBuilder(
             int index) {
           return getPrereqFieldBuilder().addBuilder(
-              index, com.eldritch.invoken.proto.Prerequisites.Prerequisite.getDefaultInstance());
+              index, com.eldritch.scifirpg.proto.Prerequisites.Prerequisite.getDefaultInstance());
         }
         /**
          * <code>repeated .scifirpg.Prerequisite prereq = 2;</code>
          */
-        public java.util.List<com.eldritch.invoken.proto.Prerequisites.Prerequisite.Builder> 
+        public java.util.List<com.eldritch.scifirpg.proto.Prerequisites.Prerequisite.Builder> 
              getPrereqBuilderList() {
           return getPrereqFieldBuilder().getBuilderList();
         }
         private com.google.protobuf.RepeatedFieldBuilder<
-            com.eldritch.invoken.proto.Prerequisites.Prerequisite, com.eldritch.invoken.proto.Prerequisites.Prerequisite.Builder, com.eldritch.invoken.proto.Prerequisites.PrerequisiteOrBuilder> 
+            com.eldritch.scifirpg.proto.Prerequisites.Prerequisite, com.eldritch.scifirpg.proto.Prerequisites.Prerequisite.Builder, com.eldritch.scifirpg.proto.Prerequisites.PrerequisiteOrBuilder> 
             getPrereqFieldBuilder() {
           if (prereqBuilder_ == null) {
             prereqBuilder_ = new com.google.protobuf.RepeatedFieldBuilder<
-                com.eldritch.invoken.proto.Prerequisites.Prerequisite, com.eldritch.invoken.proto.Prerequisites.Prerequisite.Builder, com.eldritch.invoken.proto.Prerequisites.PrerequisiteOrBuilder>(
+                com.eldritch.scifirpg.proto.Prerequisites.Prerequisite, com.eldritch.scifirpg.proto.Prerequisites.Prerequisite.Builder, com.eldritch.scifirpg.proto.Prerequisites.PrerequisiteOrBuilder>(
                     prereq_,
                     ((bitField0_ & 0x00000002) == 0x00000002),
                     getParentForChildren(),
@@ -3628,7 +3628,7 @@ public final class Actors {
                 com.eldritch.invoken.proto.Actors.DialogueTree.class, com.eldritch.invoken.proto.Actors.DialogueTree.Builder.class);
       }
 
-      // Construct using com.eldritch.scifirpg.proto.Actors.DialogueTree.newBuilder()
+      // Construct using com.eldritch.invoken.proto.Actors.DialogueTree.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -4331,7 +4331,7 @@ public final class Actors {
     /**
      * <code>optional .scifirpg.Profession profession = 5;</code>
      */
-    com.eldritch.invoken.proto.Disciplines.Profession getProfession();
+    com.eldritch.scifirpg.proto.Disciplines.Profession getProfession();
 
     // required int32 level = 6;
     /**
@@ -4531,7 +4531,7 @@ public final class Actors {
             }
             case 40: {
               int rawValue = input.readEnum();
-              com.eldritch.invoken.proto.Disciplines.Profession value = com.eldritch.invoken.proto.Disciplines.Profession.valueOf(rawValue);
+              com.eldritch.scifirpg.proto.Disciplines.Profession value = com.eldritch.scifirpg.proto.Disciplines.Profession.valueOf(rawValue);
               if (value == null) {
                 unknownFields.mergeVarintField(5, rawValue);
               } else {
@@ -4839,7 +4839,7 @@ public final class Actors {
       /**
        * <code>required .scifirpg.Discipline discipline = 1;</code>
        */
-      com.eldritch.invoken.proto.Disciplines.Discipline getDiscipline();
+      com.eldritch.scifirpg.proto.Disciplines.Discipline getDiscipline();
 
       // required int32 level = 2;
       /**
@@ -4922,7 +4922,7 @@ public final class Actors {
               }
               case 8: {
                 int rawValue = input.readEnum();
-                com.eldritch.invoken.proto.Disciplines.Discipline value = com.eldritch.invoken.proto.Disciplines.Discipline.valueOf(rawValue);
+                com.eldritch.scifirpg.proto.Disciplines.Discipline value = com.eldritch.scifirpg.proto.Disciplines.Discipline.valueOf(rawValue);
                 if (value == null) {
                   unknownFields.mergeVarintField(1, rawValue);
                 } else {
@@ -4983,7 +4983,7 @@ public final class Actors {
       private int bitField0_;
       // required .scifirpg.Discipline discipline = 1;
       public static final int DISCIPLINE_FIELD_NUMBER = 1;
-      private com.eldritch.invoken.proto.Disciplines.Discipline discipline_;
+      private com.eldritch.scifirpg.proto.Disciplines.Discipline discipline_;
       /**
        * <code>required .scifirpg.Discipline discipline = 1;</code>
        */
@@ -4993,7 +4993,7 @@ public final class Actors {
       /**
        * <code>required .scifirpg.Discipline discipline = 1;</code>
        */
-      public com.eldritch.invoken.proto.Disciplines.Discipline getDiscipline() {
+      public com.eldritch.scifirpg.proto.Disciplines.Discipline getDiscipline() {
         return discipline_;
       }
 
@@ -5038,7 +5038,7 @@ public final class Actors {
       }
 
       private void initFields() {
-        discipline_ = com.eldritch.invoken.proto.Disciplines.Discipline.WARFARE;
+        discipline_ = com.eldritch.scifirpg.proto.Disciplines.Discipline.WARFARE;
         level_ = 0;
         xp_ = 0;
       }
@@ -5188,7 +5188,7 @@ public final class Actors {
                   com.eldritch.invoken.proto.Actors.ActorParams.Skill.class, com.eldritch.invoken.proto.Actors.ActorParams.Skill.Builder.class);
         }
 
-        // Construct using com.eldritch.scifirpg.proto.Actors.ActorParams.Skill.newBuilder()
+        // Construct using com.eldritch.invoken.proto.Actors.ActorParams.Skill.newBuilder()
         private Builder() {
           maybeForceBuilderInitialization();
         }
@@ -5208,7 +5208,7 @@ public final class Actors {
 
         public Builder clear() {
           super.clear();
-          discipline_ = com.eldritch.invoken.proto.Disciplines.Discipline.WARFARE;
+          discipline_ = com.eldritch.scifirpg.proto.Disciplines.Discipline.WARFARE;
           bitField0_ = (bitField0_ & ~0x00000001);
           level_ = 0;
           bitField0_ = (bitField0_ & ~0x00000002);
@@ -5315,7 +5315,7 @@ public final class Actors {
         private int bitField0_;
 
         // required .scifirpg.Discipline discipline = 1;
-        private com.eldritch.invoken.proto.Disciplines.Discipline discipline_ = com.eldritch.invoken.proto.Disciplines.Discipline.WARFARE;
+        private com.eldritch.scifirpg.proto.Disciplines.Discipline discipline_ = com.eldritch.scifirpg.proto.Disciplines.Discipline.WARFARE;
         /**
          * <code>required .scifirpg.Discipline discipline = 1;</code>
          */
@@ -5325,13 +5325,13 @@ public final class Actors {
         /**
          * <code>required .scifirpg.Discipline discipline = 1;</code>
          */
-        public com.eldritch.invoken.proto.Disciplines.Discipline getDiscipline() {
+        public com.eldritch.scifirpg.proto.Disciplines.Discipline getDiscipline() {
           return discipline_;
         }
         /**
          * <code>required .scifirpg.Discipline discipline = 1;</code>
          */
-        public Builder setDiscipline(com.eldritch.invoken.proto.Disciplines.Discipline value) {
+        public Builder setDiscipline(com.eldritch.scifirpg.proto.Disciplines.Discipline value) {
           if (value == null) {
             throw new NullPointerException();
           }
@@ -5345,7 +5345,7 @@ public final class Actors {
          */
         public Builder clearDiscipline() {
           bitField0_ = (bitField0_ & ~0x00000001);
-          discipline_ = com.eldritch.invoken.proto.Disciplines.Discipline.WARFARE;
+          discipline_ = com.eldritch.scifirpg.proto.Disciplines.Discipline.WARFARE;
           onChanged();
           return this;
         }
@@ -5829,7 +5829,7 @@ public final class Actors {
                   com.eldritch.invoken.proto.Actors.ActorParams.FactionStatus.class, com.eldritch.invoken.proto.Actors.ActorParams.FactionStatus.Builder.class);
         }
 
-        // Construct using com.eldritch.scifirpg.proto.Actors.ActorParams.FactionStatus.newBuilder()
+        // Construct using com.eldritch.invoken.proto.Actors.ActorParams.FactionStatus.newBuilder()
         private Builder() {
           maybeForceBuilderInitialization();
         }
@@ -6530,7 +6530,7 @@ public final class Actors {
                   com.eldritch.invoken.proto.Actors.ActorParams.InventoryItem.class, com.eldritch.invoken.proto.Actors.ActorParams.InventoryItem.Builder.class);
         }
 
-        // Construct using com.eldritch.scifirpg.proto.Actors.ActorParams.InventoryItem.newBuilder()
+        // Construct using com.eldritch.invoken.proto.Actors.ActorParams.InventoryItem.newBuilder()
         private Builder() {
           maybeForceBuilderInitialization();
         }
@@ -6986,7 +6986,7 @@ public final class Actors {
 
     // optional .scifirpg.Profession profession = 5;
     public static final int PROFESSION_FIELD_NUMBER = 5;
-    private com.eldritch.invoken.proto.Disciplines.Profession profession_;
+    private com.eldritch.scifirpg.proto.Disciplines.Profession profession_;
     /**
      * <code>optional .scifirpg.Profession profession = 5;</code>
      */
@@ -6996,7 +6996,7 @@ public final class Actors {
     /**
      * <code>optional .scifirpg.Profession profession = 5;</code>
      */
-    public com.eldritch.invoken.proto.Disciplines.Profession getProfession() {
+    public com.eldritch.scifirpg.proto.Disciplines.Profession getProfession() {
       return profession_;
     }
 
@@ -7167,7 +7167,7 @@ public final class Actors {
       name_ = "";
       species_ = com.eldritch.invoken.proto.Actors.ActorParams.Species.HUMAN;
       gender_ = com.eldritch.invoken.proto.Actors.ActorParams.Gender.MALE;
-      profession_ = com.eldritch.invoken.proto.Disciplines.Profession.CENTURION;
+      profession_ = com.eldritch.scifirpg.proto.Disciplines.Profession.CENTURION;
       level_ = 0;
       skill_ = java.util.Collections.emptyList();
       factionStatus_ = java.util.Collections.emptyList();
@@ -7390,7 +7390,7 @@ public final class Actors {
                 com.eldritch.invoken.proto.Actors.ActorParams.class, com.eldritch.invoken.proto.Actors.ActorParams.Builder.class);
       }
 
-      // Construct using com.eldritch.scifirpg.proto.Actors.ActorParams.newBuilder()
+      // Construct using com.eldritch.invoken.proto.Actors.ActorParams.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -7421,7 +7421,7 @@ public final class Actors {
         bitField0_ = (bitField0_ & ~0x00000004);
         gender_ = com.eldritch.invoken.proto.Actors.ActorParams.Gender.MALE;
         bitField0_ = (bitField0_ & ~0x00000008);
-        profession_ = com.eldritch.invoken.proto.Disciplines.Profession.CENTURION;
+        profession_ = com.eldritch.scifirpg.proto.Disciplines.Profession.CENTURION;
         bitField0_ = (bitField0_ & ~0x00000010);
         level_ = 0;
         bitField0_ = (bitField0_ & ~0x00000020);
@@ -7968,7 +7968,7 @@ public final class Actors {
       }
 
       // optional .scifirpg.Profession profession = 5;
-      private com.eldritch.invoken.proto.Disciplines.Profession profession_ = com.eldritch.invoken.proto.Disciplines.Profession.CENTURION;
+      private com.eldritch.scifirpg.proto.Disciplines.Profession profession_ = com.eldritch.scifirpg.proto.Disciplines.Profession.CENTURION;
       /**
        * <code>optional .scifirpg.Profession profession = 5;</code>
        */
@@ -7978,13 +7978,13 @@ public final class Actors {
       /**
        * <code>optional .scifirpg.Profession profession = 5;</code>
        */
-      public com.eldritch.invoken.proto.Disciplines.Profession getProfession() {
+      public com.eldritch.scifirpg.proto.Disciplines.Profession getProfession() {
         return profession_;
       }
       /**
        * <code>optional .scifirpg.Profession profession = 5;</code>
        */
-      public Builder setProfession(com.eldritch.invoken.proto.Disciplines.Profession value) {
+      public Builder setProfession(com.eldritch.scifirpg.proto.Disciplines.Profession value) {
         if (value == null) {
           throw new NullPointerException();
         }
@@ -7998,7 +7998,7 @@ public final class Actors {
        */
       public Builder clearProfession() {
         bitField0_ = (bitField0_ & ~0x00000010);
-        profession_ = com.eldritch.invoken.proto.Disciplines.Profession.CENTURION;
+        profession_ = com.eldritch.scifirpg.proto.Disciplines.Profession.CENTURION;
         onChanged();
         return this;
       }
@@ -9576,7 +9576,7 @@ public final class Actors {
       /**
        * <code>required .scifirpg.Influence influence = 1;</code>
        */
-      com.eldritch.invoken.proto.Disciplines.Influence getInfluence();
+      com.eldritch.scifirpg.proto.Disciplines.Influence getInfluence();
 
       // required bool effective = 2;
       /**
@@ -9641,7 +9641,7 @@ public final class Actors {
               }
               case 8: {
                 int rawValue = input.readEnum();
-                com.eldritch.invoken.proto.Disciplines.Influence value = com.eldritch.invoken.proto.Disciplines.Influence.valueOf(rawValue);
+                com.eldritch.scifirpg.proto.Disciplines.Influence value = com.eldritch.scifirpg.proto.Disciplines.Influence.valueOf(rawValue);
                 if (value == null) {
                   unknownFields.mergeVarintField(1, rawValue);
                 } else {
@@ -9697,7 +9697,7 @@ public final class Actors {
       private int bitField0_;
       // required .scifirpg.Influence influence = 1;
       public static final int INFLUENCE_FIELD_NUMBER = 1;
-      private com.eldritch.invoken.proto.Disciplines.Influence influence_;
+      private com.eldritch.scifirpg.proto.Disciplines.Influence influence_;
       /**
        * <code>required .scifirpg.Influence influence = 1;</code>
        */
@@ -9707,7 +9707,7 @@ public final class Actors {
       /**
        * <code>required .scifirpg.Influence influence = 1;</code>
        */
-      public com.eldritch.invoken.proto.Disciplines.Influence getInfluence() {
+      public com.eldritch.scifirpg.proto.Disciplines.Influence getInfluence() {
         return influence_;
       }
 
@@ -9728,7 +9728,7 @@ public final class Actors {
       }
 
       private void initFields() {
-        influence_ = com.eldritch.invoken.proto.Disciplines.Influence.PERSUASION;
+        influence_ = com.eldritch.scifirpg.proto.Disciplines.Influence.PERSUASION;
         effective_ = false;
       }
       private byte memoizedIsInitialized = -1;
@@ -9870,7 +9870,7 @@ public final class Actors {
                   com.eldritch.invoken.proto.Actors.NonPlayerActor.Trait.class, com.eldritch.invoken.proto.Actors.NonPlayerActor.Trait.Builder.class);
         }
 
-        // Construct using com.eldritch.scifirpg.proto.Actors.NonPlayerActor.Trait.newBuilder()
+        // Construct using com.eldritch.invoken.proto.Actors.NonPlayerActor.Trait.newBuilder()
         private Builder() {
           maybeForceBuilderInitialization();
         }
@@ -9890,7 +9890,7 @@ public final class Actors {
 
         public Builder clear() {
           super.clear();
-          influence_ = com.eldritch.invoken.proto.Disciplines.Influence.PERSUASION;
+          influence_ = com.eldritch.scifirpg.proto.Disciplines.Influence.PERSUASION;
           bitField0_ = (bitField0_ & ~0x00000001);
           effective_ = false;
           bitField0_ = (bitField0_ & ~0x00000002);
@@ -9988,7 +9988,7 @@ public final class Actors {
         private int bitField0_;
 
         // required .scifirpg.Influence influence = 1;
-        private com.eldritch.invoken.proto.Disciplines.Influence influence_ = com.eldritch.invoken.proto.Disciplines.Influence.PERSUASION;
+        private com.eldritch.scifirpg.proto.Disciplines.Influence influence_ = com.eldritch.scifirpg.proto.Disciplines.Influence.PERSUASION;
         /**
          * <code>required .scifirpg.Influence influence = 1;</code>
          */
@@ -9998,13 +9998,13 @@ public final class Actors {
         /**
          * <code>required .scifirpg.Influence influence = 1;</code>
          */
-        public com.eldritch.invoken.proto.Disciplines.Influence getInfluence() {
+        public com.eldritch.scifirpg.proto.Disciplines.Influence getInfluence() {
           return influence_;
         }
         /**
          * <code>required .scifirpg.Influence influence = 1;</code>
          */
-        public Builder setInfluence(com.eldritch.invoken.proto.Disciplines.Influence value) {
+        public Builder setInfluence(com.eldritch.scifirpg.proto.Disciplines.Influence value) {
           if (value == null) {
             throw new NullPointerException();
           }
@@ -10018,7 +10018,7 @@ public final class Actors {
          */
         public Builder clearInfluence() {
           bitField0_ = (bitField0_ & ~0x00000001);
-          influence_ = com.eldritch.invoken.proto.Disciplines.Influence.PERSUASION;
+          influence_ = com.eldritch.scifirpg.proto.Disciplines.Influence.PERSUASION;
           onChanged();
           return this;
         }
@@ -10439,7 +10439,7 @@ public final class Actors {
                 com.eldritch.invoken.proto.Actors.NonPlayerActor.class, com.eldritch.invoken.proto.Actors.NonPlayerActor.Builder.class);
       }
 
-      // Construct using com.eldritch.scifirpg.proto.Actors.NonPlayerActor.newBuilder()
+      // Construct using com.eldritch.invoken.proto.Actors.NonPlayerActor.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -11505,12 +11505,12 @@ public final class Actors {
     /**
      * <code>repeated .scifirpg.Mission mission = 22;</code>
      */
-    java.util.List<com.eldritch.invoken.proto.Missions.Mission> 
+    java.util.List<com.eldritch.scifirpg.proto.Missions.Mission> 
         getMissionList();
     /**
      * <code>repeated .scifirpg.Mission mission = 22;</code>
      */
-    com.eldritch.invoken.proto.Missions.Mission getMission(int index);
+    com.eldritch.scifirpg.proto.Missions.Mission getMission(int index);
     /**
      * <code>repeated .scifirpg.Mission mission = 22;</code>
      */
@@ -11518,12 +11518,12 @@ public final class Actors {
     /**
      * <code>repeated .scifirpg.Mission mission = 22;</code>
      */
-    java.util.List<? extends com.eldritch.invoken.proto.Missions.MissionOrBuilder> 
+    java.util.List<? extends com.eldritch.scifirpg.proto.Missions.MissionOrBuilder> 
         getMissionOrBuilderList();
     /**
      * <code>repeated .scifirpg.Mission mission = 22;</code>
      */
-    com.eldritch.invoken.proto.Missions.MissionOrBuilder getMissionOrBuilder(
+    com.eldritch.scifirpg.proto.Missions.MissionOrBuilder getMissionOrBuilder(
         int index);
   }
   /**
@@ -11629,10 +11629,10 @@ public final class Actors {
             }
             case 178: {
               if (!((mutable_bitField0_ & 0x00000040) == 0x00000040)) {
-                mission_ = new java.util.ArrayList<com.eldritch.invoken.proto.Missions.Mission>();
+                mission_ = new java.util.ArrayList<com.eldritch.scifirpg.proto.Missions.Mission>();
                 mutable_bitField0_ |= 0x00000040;
               }
-              mission_.add(input.readMessage(com.eldritch.invoken.proto.Missions.Mission.PARSER, extensionRegistry));
+              mission_.add(input.readMessage(com.eldritch.scifirpg.proto.Missions.Mission.PARSER, extensionRegistry));
               break;
             }
           }
@@ -12095,7 +12095,7 @@ public final class Actors {
                   com.eldritch.invoken.proto.Actors.PlayerActor.StagedAugmentation.class, com.eldritch.invoken.proto.Actors.PlayerActor.StagedAugmentation.Builder.class);
         }
 
-        // Construct using com.eldritch.scifirpg.proto.Actors.PlayerActor.StagedAugmentation.newBuilder()
+        // Construct using com.eldritch.invoken.proto.Actors.PlayerActor.StagedAugmentation.newBuilder()
         private Builder() {
           maybeForceBuilderInitialization();
         }
@@ -12741,7 +12741,7 @@ public final class Actors {
                   com.eldritch.invoken.proto.Actors.PlayerActor.StateMarker.class, com.eldritch.invoken.proto.Actors.PlayerActor.StateMarker.Builder.class);
         }
 
-        // Construct using com.eldritch.scifirpg.proto.Actors.PlayerActor.StateMarker.newBuilder()
+        // Construct using com.eldritch.invoken.proto.Actors.PlayerActor.StateMarker.newBuilder()
         private Builder() {
           maybeForceBuilderInitialization();
         }
@@ -13195,17 +13195,17 @@ public final class Actors {
 
     // repeated .scifirpg.Mission mission = 22;
     public static final int MISSION_FIELD_NUMBER = 22;
-    private java.util.List<com.eldritch.invoken.proto.Missions.Mission> mission_;
+    private java.util.List<com.eldritch.scifirpg.proto.Missions.Mission> mission_;
     /**
      * <code>repeated .scifirpg.Mission mission = 22;</code>
      */
-    public java.util.List<com.eldritch.invoken.proto.Missions.Mission> getMissionList() {
+    public java.util.List<com.eldritch.scifirpg.proto.Missions.Mission> getMissionList() {
       return mission_;
     }
     /**
      * <code>repeated .scifirpg.Mission mission = 22;</code>
      */
-    public java.util.List<? extends com.eldritch.invoken.proto.Missions.MissionOrBuilder> 
+    public java.util.List<? extends com.eldritch.scifirpg.proto.Missions.MissionOrBuilder> 
         getMissionOrBuilderList() {
       return mission_;
     }
@@ -13218,13 +13218,13 @@ public final class Actors {
     /**
      * <code>repeated .scifirpg.Mission mission = 22;</code>
      */
-    public com.eldritch.invoken.proto.Missions.Mission getMission(int index) {
+    public com.eldritch.scifirpg.proto.Missions.Mission getMission(int index) {
       return mission_.get(index);
     }
     /**
      * <code>repeated .scifirpg.Mission mission = 22;</code>
      */
-    public com.eldritch.invoken.proto.Missions.MissionOrBuilder getMissionOrBuilder(
+    public com.eldritch.scifirpg.proto.Missions.MissionOrBuilder getMissionOrBuilder(
         int index) {
       return mission_.get(index);
     }
@@ -13440,7 +13440,7 @@ public final class Actors {
                 com.eldritch.invoken.proto.Actors.PlayerActor.class, com.eldritch.invoken.proto.Actors.PlayerActor.Builder.class);
       }
 
-      // Construct using com.eldritch.scifirpg.proto.Actors.PlayerActor.newBuilder()
+      // Construct using com.eldritch.invoken.proto.Actors.PlayerActor.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -14687,22 +14687,22 @@ public final class Actors {
       }
 
       // repeated .scifirpg.Mission mission = 22;
-      private java.util.List<com.eldritch.invoken.proto.Missions.Mission> mission_ =
+      private java.util.List<com.eldritch.scifirpg.proto.Missions.Mission> mission_ =
         java.util.Collections.emptyList();
       private void ensureMissionIsMutable() {
         if (!((bitField0_ & 0x00000040) == 0x00000040)) {
-          mission_ = new java.util.ArrayList<com.eldritch.invoken.proto.Missions.Mission>(mission_);
+          mission_ = new java.util.ArrayList<com.eldritch.scifirpg.proto.Missions.Mission>(mission_);
           bitField0_ |= 0x00000040;
          }
       }
 
       private com.google.protobuf.RepeatedFieldBuilder<
-          com.eldritch.invoken.proto.Missions.Mission, com.eldritch.invoken.proto.Missions.Mission.Builder, com.eldritch.invoken.proto.Missions.MissionOrBuilder> missionBuilder_;
+          com.eldritch.scifirpg.proto.Missions.Mission, com.eldritch.scifirpg.proto.Missions.Mission.Builder, com.eldritch.scifirpg.proto.Missions.MissionOrBuilder> missionBuilder_;
 
       /**
        * <code>repeated .scifirpg.Mission mission = 22;</code>
        */
-      public java.util.List<com.eldritch.invoken.proto.Missions.Mission> getMissionList() {
+      public java.util.List<com.eldritch.scifirpg.proto.Missions.Mission> getMissionList() {
         if (missionBuilder_ == null) {
           return java.util.Collections.unmodifiableList(mission_);
         } else {
@@ -14722,7 +14722,7 @@ public final class Actors {
       /**
        * <code>repeated .scifirpg.Mission mission = 22;</code>
        */
-      public com.eldritch.invoken.proto.Missions.Mission getMission(int index) {
+      public com.eldritch.scifirpg.proto.Missions.Mission getMission(int index) {
         if (missionBuilder_ == null) {
           return mission_.get(index);
         } else {
@@ -14733,7 +14733,7 @@ public final class Actors {
        * <code>repeated .scifirpg.Mission mission = 22;</code>
        */
       public Builder setMission(
-          int index, com.eldritch.invoken.proto.Missions.Mission value) {
+          int index, com.eldritch.scifirpg.proto.Missions.Mission value) {
         if (missionBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -14750,7 +14750,7 @@ public final class Actors {
        * <code>repeated .scifirpg.Mission mission = 22;</code>
        */
       public Builder setMission(
-          int index, com.eldritch.invoken.proto.Missions.Mission.Builder builderForValue) {
+          int index, com.eldritch.scifirpg.proto.Missions.Mission.Builder builderForValue) {
         if (missionBuilder_ == null) {
           ensureMissionIsMutable();
           mission_.set(index, builderForValue.build());
@@ -14763,7 +14763,7 @@ public final class Actors {
       /**
        * <code>repeated .scifirpg.Mission mission = 22;</code>
        */
-      public Builder addMission(com.eldritch.invoken.proto.Missions.Mission value) {
+      public Builder addMission(com.eldritch.scifirpg.proto.Missions.Mission value) {
         if (missionBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -14780,7 +14780,7 @@ public final class Actors {
        * <code>repeated .scifirpg.Mission mission = 22;</code>
        */
       public Builder addMission(
-          int index, com.eldritch.invoken.proto.Missions.Mission value) {
+          int index, com.eldritch.scifirpg.proto.Missions.Mission value) {
         if (missionBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -14797,7 +14797,7 @@ public final class Actors {
        * <code>repeated .scifirpg.Mission mission = 22;</code>
        */
       public Builder addMission(
-          com.eldritch.invoken.proto.Missions.Mission.Builder builderForValue) {
+          com.eldritch.scifirpg.proto.Missions.Mission.Builder builderForValue) {
         if (missionBuilder_ == null) {
           ensureMissionIsMutable();
           mission_.add(builderForValue.build());
@@ -14811,7 +14811,7 @@ public final class Actors {
        * <code>repeated .scifirpg.Mission mission = 22;</code>
        */
       public Builder addMission(
-          int index, com.eldritch.invoken.proto.Missions.Mission.Builder builderForValue) {
+          int index, com.eldritch.scifirpg.proto.Missions.Mission.Builder builderForValue) {
         if (missionBuilder_ == null) {
           ensureMissionIsMutable();
           mission_.add(index, builderForValue.build());
@@ -14825,7 +14825,7 @@ public final class Actors {
        * <code>repeated .scifirpg.Mission mission = 22;</code>
        */
       public Builder addAllMission(
-          java.lang.Iterable<? extends com.eldritch.invoken.proto.Missions.Mission> values) {
+          java.lang.Iterable<? extends com.eldritch.scifirpg.proto.Missions.Mission> values) {
         if (missionBuilder_ == null) {
           ensureMissionIsMutable();
           super.addAll(values, mission_);
@@ -14864,14 +14864,14 @@ public final class Actors {
       /**
        * <code>repeated .scifirpg.Mission mission = 22;</code>
        */
-      public com.eldritch.invoken.proto.Missions.Mission.Builder getMissionBuilder(
+      public com.eldritch.scifirpg.proto.Missions.Mission.Builder getMissionBuilder(
           int index) {
         return getMissionFieldBuilder().getBuilder(index);
       }
       /**
        * <code>repeated .scifirpg.Mission mission = 22;</code>
        */
-      public com.eldritch.invoken.proto.Missions.MissionOrBuilder getMissionOrBuilder(
+      public com.eldritch.scifirpg.proto.Missions.MissionOrBuilder getMissionOrBuilder(
           int index) {
         if (missionBuilder_ == null) {
           return mission_.get(index);  } else {
@@ -14881,7 +14881,7 @@ public final class Actors {
       /**
        * <code>repeated .scifirpg.Mission mission = 22;</code>
        */
-      public java.util.List<? extends com.eldritch.invoken.proto.Missions.MissionOrBuilder> 
+      public java.util.List<? extends com.eldritch.scifirpg.proto.Missions.MissionOrBuilder> 
            getMissionOrBuilderList() {
         if (missionBuilder_ != null) {
           return missionBuilder_.getMessageOrBuilderList();
@@ -14892,31 +14892,31 @@ public final class Actors {
       /**
        * <code>repeated .scifirpg.Mission mission = 22;</code>
        */
-      public com.eldritch.invoken.proto.Missions.Mission.Builder addMissionBuilder() {
+      public com.eldritch.scifirpg.proto.Missions.Mission.Builder addMissionBuilder() {
         return getMissionFieldBuilder().addBuilder(
-            com.eldritch.invoken.proto.Missions.Mission.getDefaultInstance());
+            com.eldritch.scifirpg.proto.Missions.Mission.getDefaultInstance());
       }
       /**
        * <code>repeated .scifirpg.Mission mission = 22;</code>
        */
-      public com.eldritch.invoken.proto.Missions.Mission.Builder addMissionBuilder(
+      public com.eldritch.scifirpg.proto.Missions.Mission.Builder addMissionBuilder(
           int index) {
         return getMissionFieldBuilder().addBuilder(
-            index, com.eldritch.invoken.proto.Missions.Mission.getDefaultInstance());
+            index, com.eldritch.scifirpg.proto.Missions.Mission.getDefaultInstance());
       }
       /**
        * <code>repeated .scifirpg.Mission mission = 22;</code>
        */
-      public java.util.List<com.eldritch.invoken.proto.Missions.Mission.Builder> 
+      public java.util.List<com.eldritch.scifirpg.proto.Missions.Mission.Builder> 
            getMissionBuilderList() {
         return getMissionFieldBuilder().getBuilderList();
       }
       private com.google.protobuf.RepeatedFieldBuilder<
-          com.eldritch.invoken.proto.Missions.Mission, com.eldritch.invoken.proto.Missions.Mission.Builder, com.eldritch.invoken.proto.Missions.MissionOrBuilder> 
+          com.eldritch.scifirpg.proto.Missions.Mission, com.eldritch.scifirpg.proto.Missions.Mission.Builder, com.eldritch.scifirpg.proto.Missions.MissionOrBuilder> 
           getMissionFieldBuilder() {
         if (missionBuilder_ == null) {
           missionBuilder_ = new com.google.protobuf.RepeatedFieldBuilder<
-              com.eldritch.invoken.proto.Missions.Mission, com.eldritch.invoken.proto.Missions.Mission.Builder, com.eldritch.invoken.proto.Missions.MissionOrBuilder>(
+              com.eldritch.scifirpg.proto.Missions.Mission, com.eldritch.scifirpg.proto.Missions.Mission.Builder, com.eldritch.scifirpg.proto.Missions.MissionOrBuilder>(
                   mission_,
                   ((bitField0_ & 0x00000040) == 0x00000040),
                   getParentForChildren(),
@@ -15066,8 +15066,8 @@ public final class Actors {
       " \003(\0132\021.scifirpg.Mission\032L\n\022StagedAugment" +
       "ation\022\016\n\006aug_id\030\001 \001(\t\022\026\n\016remaining_uses\030" +
       "\002 \002(\005\022\016\n\006stages\030\003 \002(\005\032-\n\013StateMarker\022\014\n\004",
-      "name\030\001 \002(\t\022\020\n\005count\030\002 \002(\005:\0011B\035\n\033com.eldr" +
-      "itch.scifirpg.proto"
+      "name\030\001 \002(\t\022\020\n\005count\030\002 \002(\005:\0011B\034\n\032com.eldr" +
+      "itch.invoken.proto"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
@@ -15152,10 +15152,10 @@ public final class Actors {
     com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
-          com.eldritch.invoken.proto.Disciplines.getDescriptor(),
-          com.eldritch.invoken.proto.Prerequisites.getDescriptor(),
-          com.eldritch.invoken.proto.Missions.getDescriptor(),
-          com.eldritch.invoken.proto.Outcomes.getDescriptor(),
+          com.eldritch.scifirpg.proto.Disciplines.getDescriptor(),
+          com.eldritch.scifirpg.proto.Prerequisites.getDescriptor(),
+          com.eldritch.scifirpg.proto.Missions.getDescriptor(),
+          com.eldritch.scifirpg.proto.Outcomes.getDescriptor(),
         }, assigner);
   }
 

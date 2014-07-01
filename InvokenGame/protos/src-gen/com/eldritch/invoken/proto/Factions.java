@@ -624,7 +624,7 @@ public final class Factions {
                   com.eldritch.invoken.proto.Factions.Faction.Relation.class, com.eldritch.invoken.proto.Factions.Faction.Relation.Builder.class);
         }
 
-        // Construct using com.eldritch.scifirpg.proto.Factions.Faction.Relation.newBuilder()
+        // Construct using com.eldritch.invoken.proto.Factions.Faction.Relation.newBuilder()
         private Builder() {
           maybeForceBuilderInitialization();
         }
@@ -1224,7 +1224,7 @@ public final class Factions {
                   com.eldritch.invoken.proto.Factions.Faction.Rank.class, com.eldritch.invoken.proto.Factions.Faction.Rank.Builder.class);
         }
 
-        // Construct using com.eldritch.scifirpg.proto.Factions.Faction.Rank.newBuilder()
+        // Construct using com.eldritch.invoken.proto.Factions.Faction.Rank.newBuilder()
         private Builder() {
           maybeForceBuilderInitialization();
         }
@@ -1841,7 +1841,7 @@ public final class Factions {
                 com.eldritch.invoken.proto.Factions.Faction.class, com.eldritch.invoken.proto.Factions.Faction.Builder.class);
       }
 
-      // Construct using com.eldritch.scifirpg.proto.Factions.Faction.newBuilder()
+      // Construct using com.eldritch.invoken.proto.Factions.Faction.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -2831,8 +2831,8 @@ public final class Factions {
       "(\0162\024.scifirpg.Profession\022\026\n\007visible\030\006 \001(" +
       "\010:\005false\0320\n\010Relation\022\022\n\nfaction_id\030\001 \001(\t" +
       "\022\020\n\010reaction\030\002 \001(\005\032!\n\004Rank\022\n\n\002id\030\001 \002(\005\022\r" +
-      "\n\005title\030\002 \002(\tB\035\n\033com.eldritch.scifirpg.p",
-      "roto"
+      "\n\005title\030\002 \002(\tB\034\n\032com.eldritch.invoken.pr",
+      "oto"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {

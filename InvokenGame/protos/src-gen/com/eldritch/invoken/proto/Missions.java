@@ -575,7 +575,7 @@ public final class Missions {
                   com.eldritch.invoken.proto.Missions.Mission.Stage.class, com.eldritch.invoken.proto.Missions.Mission.Stage.Builder.class);
         }
 
-        // Construct using com.eldritch.scifirpg.proto.Missions.Mission.Stage.newBuilder()
+        // Construct using com.eldritch.invoken.proto.Missions.Mission.Stage.newBuilder()
         private Builder() {
           maybeForceBuilderInitialization();
         }
@@ -1146,7 +1146,7 @@ public final class Missions {
                 com.eldritch.invoken.proto.Missions.Mission.class, com.eldritch.invoken.proto.Missions.Mission.Builder.class);
       }
 
-      // Construct using com.eldritch.scifirpg.proto.Missions.Mission.newBuilder()
+      // Construct using com.eldritch.invoken.proto.Missions.Mission.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -1758,7 +1758,7 @@ public final class Missions {
       "\n\004name\030\002 \002(\t\022&\n\005stage\030\003 \003(\0132\027.scifirpg.M" +
       "ission.Stage\032A\n\005Stage\022\n\n\002id\030\001 \002(\005\022\023\n\013des" +
       "cription\030\002 \002(\t\022\027\n\010finished\030\003 \002(\010:\005falseB" +
-      "\035\n\033com.eldritch.scifirpg.proto"
+      "\034\n\032com.eldritch.invoken.proto"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {

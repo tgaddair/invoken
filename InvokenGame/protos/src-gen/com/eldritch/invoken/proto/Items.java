@@ -853,7 +853,7 @@ public final class Items {
                   com.eldritch.invoken.proto.Items.Item.Requirement.class, com.eldritch.invoken.proto.Items.Item.Requirement.Builder.class);
         }
 
-        // Construct using com.eldritch.scifirpg.proto.Items.Item.Requirement.newBuilder()
+        // Construct using com.eldritch.invoken.proto.Items.Item.Requirement.newBuilder()
         private Builder() {
           maybeForceBuilderInitialization();
         }
@@ -1371,7 +1371,7 @@ public final class Items {
                   com.eldritch.invoken.proto.Items.Item.DamageMod.class, com.eldritch.invoken.proto.Items.Item.DamageMod.Builder.class);
         }
 
-        // Construct using com.eldritch.scifirpg.proto.Items.Item.DamageMod.newBuilder()
+        // Construct using com.eldritch.invoken.proto.Items.Item.DamageMod.newBuilder()
         private Builder() {
           maybeForceBuilderInitialization();
         }
@@ -2252,7 +2252,7 @@ public final class Items {
                 com.eldritch.invoken.proto.Items.Item.class, com.eldritch.invoken.proto.Items.Item.Builder.class);
       }
 
-      // Construct using com.eldritch.scifirpg.proto.Items.Item.newBuilder()
+      // Construct using com.eldritch.invoken.proto.Items.Item.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -3942,8 +3942,8 @@ public final class Items {
       "rpg.DamageType\022\021\n\tmagnitude\030\002 \002(\005\"s\n\004Typ" +
       "e\022\020\n\014MELEE_WEAPON\020\000\022\021\n\rRANGED_WEAPON\020\001\022\020" +
       "\n\014HEAVY_WEAPON\020\002\022\n\n\006OUTFIT\020\003\022\r\n\tACCESSOR" +
-      "Y\020\004\022\016\n\nCREDENTIAL\020\005\022\t\n\005OTHER\020\006B\035\n\033com.el",
-      "dritch.scifirpg.proto"
+      "Y\020\004\022\016\n\nCREDENTIAL\020\005\022\t\n\005OTHER\020\006B\034\n\032com.el",
+      "dritch.invoken.proto"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
@@ -3976,7 +3976,7 @@ public final class Items {
         new com.google.protobuf.Descriptors.FileDescriptor[] {
           com.eldritch.invoken.proto.Disciplines.getDescriptor(),
           com.eldritch.invoken.proto.Effects.getDescriptor(),
-          com.eldritch.invoken.proto.Prerequisites.getDescriptor(),
+          com.eldritch.scifirpg.proto.Prerequisites.getDescriptor(),
         }, assigner);
   }
 
