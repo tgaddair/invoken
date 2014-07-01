@@ -56,6 +56,11 @@ message Encounter {
 			// Other ways to proceed include fleeing (sneaking) and teleport/set_successor
 			// dialogue outcomes.
 			optional bool blocking = 5 [default = false];
+
+			optional bool alive = 8 [default = true];
+
+			optional int32 min = 6 [default = 1];
+			optional int32 max = 7 [default = 1];
 		}
 
 		required string description = 1;

@@ -481,6 +481,9 @@ public class EncounterEditorPanel extends AssetEditorPanel<Encounter, EncounterT
 		private final JComboBox<String> pointerBox = new JComboBox<String>();
 		private final JCheckBox essentialCheck = new JCheckBox();
 		private final JCheckBox blockingCheck = new JCheckBox();
+		private final JCheckBox aliveCheck = new JCheckBox("", true);
+		private final JTextField minField = new JTextField();
+		private final JTextField maxField = new JTextField();
 		private final OutcomeTable outcomeTable = new EncounterOutcomeTable(EncounterEditorPanel.this.getTable());
 		private final DialogueTable dialogueTable = new DialogueTable();
 		
@@ -514,6 +517,15 @@ public class EncounterEditorPanel extends AssetEditorPanel<Encounter, EncounterT
 			builder.append("Blocking:", blockingCheck);
 			builder.nextLine();
 			
+			builder.append("Alive:", blockingCheck);
+			builder.nextLine();
+			
+			builder.append("Min:", minField);
+			builder.nextLine();
+			
+			builder.append("Max:", maxField);
+			builder.nextLine();
+			
 			builder.appendRow("fill:120dlu");
 			builder.append("On Death:", new AssetTablePanel(outcomeTable));
 			builder.nextLine();
@@ -532,6 +544,9 @@ public class EncounterEditorPanel extends AssetEditorPanel<Encounter, EncounterT
 				pointerBox.setSelectedItem(scenario.getActorId());
 				essentialCheck.setSelected(scenario.getEssential());
 				blockingCheck.setSelected(scenario.getBlocking());
+				aliveCheck.setSelected(scenario.getAlive());
+				minField.setText(scenario.getMin() + "");
+				maxField.setText(scenario.getMax() + "");
 				for (Outcome o : scenario.getOnDeathList()) {
 					outcomeTable.addAsset(o);
 				}
@@ -552,7 +567,14 @@ public class EncounterEditorPanel extends AssetEditorPanel<Encounter, EncounterT
 					.setActorId(id)
 					.setEssential(essentialCheck.isSelected())
 					.setBlocking(blockingCheck.isSelected())
+					.setAlive(aliveCheck.isSelected())
 					.addAllOnDeath(outcomeTable.getAssets());
+			if (!minField.getText().isEmpty()) {
+				as.setMin(Integer.parseInt(minField.getText()));
+			}
+			if (!maxField.getText().isEmpty()) {
+				as.setMax(Integer.parseInt(maxField.getText()));
+			}
 			if (!dialogueTable.getAssets().isEmpty()) {
 				DialogueTree dialogue = DialogueTree.newBuilder()
 						.addAllDialogue(dialogueTable.getAssets())
