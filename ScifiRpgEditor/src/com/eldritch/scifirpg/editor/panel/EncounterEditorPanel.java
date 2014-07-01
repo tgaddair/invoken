@@ -30,7 +30,6 @@ import com.eldritch.scifirpg.editor.tables.EncounterTable;
 import com.eldritch.scifirpg.editor.tables.OutcomeTable;
 import com.eldritch.scifirpg.editor.tables.OutcomeTable.EncounterOutcomeTable;
 import com.eldritch.scifirpg.editor.tables.PrerequisiteTable;
-import com.eldritch.scifirpg.editor.util.ScrollablePanel;
 import com.eldritch.scifirpg.proto.Actors.DialogueTree;
 import com.eldritch.scifirpg.proto.Actors.DialogueTree.Response;
 import com.eldritch.scifirpg.proto.Actors.NonPlayerActor;
@@ -596,7 +595,7 @@ public class EncounterEditorPanel extends AssetEditorPanel<Encounter, EncounterT
 	}
 	
 	private static DefaultFormBuilder createFormBuilder() {
-		DefaultFormBuilder builder = new DefaultFormBuilder(new FormLayout(""), new ScrollablePanel());
+		DefaultFormBuilder builder = new DefaultFormBuilder(new FormLayout(""));
 		builder.border(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 		builder.appendColumn("right:pref");
 		builder.appendColumn("3dlu");
