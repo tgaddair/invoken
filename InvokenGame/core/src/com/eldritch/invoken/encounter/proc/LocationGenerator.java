@@ -15,7 +15,6 @@ import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
 import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
 import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.actor.type.Player;
 import com.eldritch.invoken.encounter.Activator;
 import com.eldritch.invoken.encounter.Location;
@@ -26,7 +25,6 @@ import com.eldritch.invoken.encounter.layer.LocationLayer;
 import com.eldritch.invoken.encounter.layer.LocationLayer.CollisionLayer;
 import com.eldritch.invoken.encounter.layer.LocationMap;
 import com.eldritch.invoken.gfx.Light;
-import com.eldritch.invoken.gfx.Light.StaticLight;
 import com.eldritch.invoken.proto.Locations.Encounter;
 import com.eldritch.invoken.proto.Locations.Encounter.ActorParams.ActorScenario;
 
@@ -299,8 +297,10 @@ public class LocationGenerator {
                     layer.setName("encounter-" + leaf.x + "-" + leaf.y);
 
                     for (ActorScenario scenario : encounter.getActorParams().getActorScenarioList()) {
-                        NaturalVector2 position = getPoint(leaf.room, base, layer);
-                        addCell(layer, collider, position.x, position.y);
+                        for (int i = 0; i < scenario.getMax(); i++) {
+                            NaturalVector2 position = getPoint(leaf.room, base, layer);
+                            addCell(layer, collider, position.x, position.y);
+                        }
                     }
                     return layer;
                 }

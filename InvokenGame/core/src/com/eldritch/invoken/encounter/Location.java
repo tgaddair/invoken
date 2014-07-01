@@ -145,7 +145,12 @@ public class Location {
                     // create NPCs
                     LinkedList<Vector2> spawnNodes = getSpawnNodes(encounterLayer);
                     for (ActorScenario scenario : encounter.getActorParams().getActorScenarioList()) {
-                        addActor(createTestNpc(spawnNodes.poll(), scenario.getActorId()));
+                        int min = scenario.getMin();
+                        int max = scenario.getMax();
+                        int count = (int) (Math.random() * (max - min + 1) + min);
+                        for (int i = 0; i < count; i++) {
+                            addActor(createTestNpc(spawnNodes.poll(), scenario.getActorId()));
+                        }
                     }
                 }
             }
