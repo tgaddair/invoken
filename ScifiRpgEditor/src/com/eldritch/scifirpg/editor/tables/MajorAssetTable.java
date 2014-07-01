@@ -94,6 +94,6 @@ public abstract class MajorAssetTable<T extends Message> extends IdentifiedAsset
 	}
 	
 	protected String getTopAssetDirectory() {
-		return "C:/Users/Travis/repos/ScifiRpg/InvokenGame/android/assets/data";
+		return "../InvokenGame/android/assets/data";
 	}
 }
