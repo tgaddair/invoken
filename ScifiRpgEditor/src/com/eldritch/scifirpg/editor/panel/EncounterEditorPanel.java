@@ -18,6 +18,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
@@ -29,6 +30,7 @@ import com.eldritch.scifirpg.editor.tables.EncounterTable;
 import com.eldritch.scifirpg.editor.tables.OutcomeTable;
 import com.eldritch.scifirpg.editor.tables.OutcomeTable.EncounterOutcomeTable;
 import com.eldritch.scifirpg.editor.tables.PrerequisiteTable;
+import com.eldritch.scifirpg.editor.util.ScrollablePanel;
 import com.eldritch.scifirpg.proto.Actors.DialogueTree;
 import com.eldritch.scifirpg.proto.Actors.DialogueTree.Response;
 import com.eldritch.scifirpg.proto.Actors.NonPlayerActor;
@@ -112,9 +114,9 @@ public class EncounterEditorPanel extends AssetEditorPanel<Encounter, EncounterT
 		cards.add(actorPanel, Type.ACTOR.name());
 		cards.add(regionPanel, Type.REGION.name());
 		
-		builder.appendRow("fill:p:grow");
-		builder.append("Parameters:", cards);
-		builder.nextLine();
+//		builder.appendRow("fill:p:grow");
+//		builder.append("Parameters:", cards);
+//		builder.nextLine();
 
 		JButton saveButton = new JButton("Save");
 		saveButton.addActionListener(this);
@@ -149,8 +151,8 @@ public class EncounterEditorPanel extends AssetEditorPanel<Encounter, EncounterT
 			}
 		}
 
-		add(builder.getPanel());
-		setPreferredSize(new Dimension(800, 900));
+		add(new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, builder.getPanel(), cards));
+		setPreferredSize(new Dimension(1400, 600));
 	}
 
 	@Override
@@ -517,7 +519,7 @@ public class EncounterEditorPanel extends AssetEditorPanel<Encounter, EncounterT
 			builder.append("Blocking:", blockingCheck);
 			builder.nextLine();
 			
-			builder.append("Alive:", blockingCheck);
+			builder.append("Alive:", aliveCheck);
 			builder.nextLine();
 			
 			builder.append("Min:", minField);
@@ -594,7 +596,7 @@ public class EncounterEditorPanel extends AssetEditorPanel<Encounter, EncounterT
 	}
 	
 	private static DefaultFormBuilder createFormBuilder() {
-		DefaultFormBuilder builder = new DefaultFormBuilder(new FormLayout(""));
+		DefaultFormBuilder builder = new DefaultFormBuilder(new FormLayout(""), new ScrollablePanel());
 		builder.border(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 		builder.appendColumn("right:pref");
 		builder.appendColumn("3dlu");
