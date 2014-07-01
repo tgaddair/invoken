@@ -3,9 +3,9 @@ syntax = "proto2";
 package scifirpg;
 option java_package = "com.eldritch.invoken.proto";
 
-import "com/eldritch/scifirpg/proto/disciplines.proto";
-import "com/eldritch/scifirpg/proto/effects.proto";
-import "com/eldritch/scifirpg/proto/prerequisites.proto";
+import "com/eldritch/invoken/proto/disciplines.proto";
+import "com/eldritch/invoken/proto/effects.proto";
+import "com/eldritch/invoken/proto/prerequisites.proto";
 
 message Item {
 	enum Type {

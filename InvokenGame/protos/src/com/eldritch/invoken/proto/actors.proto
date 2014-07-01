@@ -3,10 +3,10 @@ syntax = "proto2";
 package scifirpg;
 option java_package = "com.eldritch.invoken.proto";
 
-import "com/eldritch/scifirpg/proto/disciplines.proto";
-import "com/eldritch/scifirpg/proto/prerequisites.proto";
-import "com/eldritch/scifirpg/proto/missions.proto";
-import "com/eldritch/scifirpg/proto/outcomes.proto";
+import "com/eldritch/invoken/proto/disciplines.proto";
+import "com/eldritch/invoken/proto/prerequisites.proto";
+import "com/eldritch/invoken/proto/missions.proto";
+import "com/eldritch/invoken/proto/outcomes.proto";
 
 message DialogueTree {
 	// DialogueTree ends when the player reaches a Response with no choices.

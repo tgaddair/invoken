@@ -3,9 +3,9 @@ syntax = "proto2";
 package scifirpg;
 option java_package = "com.eldritch.invoken.proto";
 
-import "com/eldritch/scifirpg/proto/actors.proto";
-import "com/eldritch/scifirpg/proto/prerequisites.proto";
-import "com/eldritch/scifirpg/proto/outcomes.proto";
+import "com/eldritch/invoken/proto/actors.proto";
+import "com/eldritch/invoken/proto/prerequisites.proto";
+import "com/eldritch/invoken/proto/outcomes.proto";
 
 message Location {
 	required string id = 1; // unique key
