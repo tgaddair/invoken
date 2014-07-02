@@ -57,7 +57,7 @@ public abstract class FurnitureGenerator {
             int lastLight = 0;
             for (int x = 0; x < base.getWidth(); x++) {
                 Cell cell = base.getCell(x, y);
-                if (cell != null && cell.getTile() == placer) {
+                if (cell != null && cell.getTile() == placer && !isMarked(x, y)) {
                     // with some probability, add a light to the wall
                     if (lastLight == 1 && Math.random() < 0.75) {
                         addCell(layer, light, x, y);
