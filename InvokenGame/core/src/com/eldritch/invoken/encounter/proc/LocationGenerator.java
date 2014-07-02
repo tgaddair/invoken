@@ -1,9 +1,11 @@
 package com.eldritch.invoken.encounter.proc;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
@@ -56,8 +58,7 @@ public class LocationGenerator {
         int height = Location.MAX_HEIGHT;
         LocationMap map = getBaseMap(width, height);
         List<Leaf> leafs = createLeaves(width / SCALE, height / SCALE);
-
-        List<Light> lights = new ArrayList<Light>();
+        List<Room> rooms = createRooms(leafs);
 
         // create layers
         LocationLayer base = createBaseLayer(leafs, width, height, map);
@@ -73,7 +74,7 @@ public class LocationGenerator {
         
         CollisionLayer collision = createCollisionLayer(base, map);
         map.getLayers().add(collision);
-        for (LocationLayer layer : createSpawnLayers(base, leafs, proto.getEncounterList(), map)) {
+        for (LocationLayer layer : createSpawnLayers(base, rooms, proto.getEncounterList(), map)) {
             map.getLayers().add(layer);
         }
 
@@ -85,6 +86,7 @@ public class LocationGenerator {
         furnitureGenerator.createDoors(base, trim, overlay, overlayTrim, collision, activators);
         
         // lights
+        List<Light> lights = new ArrayList<Light>();
         furnitureGenerator.addLights(trim, base, lights, midWallCenter);
         
         // clutter
@@ -251,30 +253,59 @@ public class LocationGenerator {
 
         return layer;
     }
+    
+    private List<Room> createRooms(List<Leaf> leafs) {
+        List<Room> rooms = new ArrayList<Room>();
+        
+        // create rooms
+        Map<Leaf, Room> leafToRoom = new HashMap<Leaf, Room>();
+        for (Leaf leaf : leafs) {
+            if (leaf.room != null) {
+                Room room = new Room(leaf);
+                rooms.add(room);
+                leafToRoom.put(leaf, room);
+            }
+        }
+        
+        // define neighbor rooms for later graph traversal
+        for (Room room : rooms) {
+            Leaf leaf = room.getLeaf();
+            if (leaf.leftChild != null && leafToRoom.containsKey(leaf.leftChild)) {
+                Room other = leafToRoom.get(leaf.leftChild);
+                room.addAdjacentRoom(other);
+                other.addAdjacentRoom(room);
+            }
+            if (leaf.rightChild != null && leafToRoom.containsKey(leaf.rightChild)) {
+                Room other = leafToRoom.get(leaf.rightChild);
+                room.addAdjacentRoom(other);
+                other.addAdjacentRoom(room);
+            }
+        }
+        
+        return rooms;
+    }
 
-    private List<LocationLayer> createSpawnLayers(LocationLayer base, List<Leaf> leafs,
+    private List<LocationLayer> createSpawnLayers(LocationLayer base, List<Room> rooms,
             List<Encounter> encounters, LocationMap map) {
         List<LocationLayer> layers = new ArrayList<LocationLayer>();
         LocationLayer playerLayer = null;
         double total = getTotalWeight(encounters);
-        for (Leaf leaf : leafs) {
-            if (leaf.room != null) {
-                if (playerLayer == null) {
-                    playerLayer = new LocationLayer(base.getWidth(), base.getHeight(),
-                            PX, PX, map);
-                    playerLayer.setVisible(false);
-                    playerLayer.setOpacity(1.0f);
-                    playerLayer.setName("player");
-                    
-                    NaturalVector2 position = getPoint(leaf.room, base, playerLayer);
-                    addCell(playerLayer, collider, position.x, position.y);
-                    
-                    layers.add(playerLayer);
-                } else {
-                    LocationLayer layer = addEncounter(leaf, encounters, base, total, map);
-                    if (layer != null) {
-                        layers.add(layer);
-                    }
+        for (Room room : rooms) {
+            if (playerLayer == null) {
+                playerLayer = new LocationLayer(base.getWidth(), base.getHeight(),
+                        PX, PX, map);
+                playerLayer.setVisible(false);
+                playerLayer.setOpacity(1.0f);
+                playerLayer.setName("player");
+                
+                NaturalVector2 position = getPoint(room.getBounds(), base, playerLayer);
+                addCell(playerLayer, collider, position.x, position.y);
+                
+                layers.add(playerLayer);
+            } else {
+                LocationLayer layer = addEncounter(room, encounters, base, total, map);
+                if (layer != null) {
+                    layers.add(layer);
                 }
             }
         }
@@ -282,7 +313,7 @@ public class LocationGenerator {
         return layers;
     }
 
-    private LocationLayer addEncounter(Leaf leaf, List<Encounter> encounters,
+    private LocationLayer addEncounter(Room room, List<Encounter> encounters,
             LocationLayer base, double total, LocationMap map) {
         double target = Math.random() * total;
         double sum = 0.0;
@@ -294,11 +325,11 @@ public class LocationGenerator {
                             base.getHeight(), PX, PX, map);
                     layer.setVisible(false);
                     layer.setOpacity(1.0f);
-                    layer.setName("encounter-" + leaf.x + "-" + leaf.y);
+                    layer.setName("encounter-" + room.getX() + "-" + room.getY());
 
                     for (ActorScenario scenario : encounter.getActorParams().getActorScenarioList()) {
                         for (int i = 0; i < scenario.getMax(); i++) {
-                            NaturalVector2 position = getPoint(leaf.room, base, layer);
+                            NaturalVector2 position = getPoint(room.getBounds(), base, layer);
                             addCell(layer, collider, position.x, position.y);
                         }
                     }
