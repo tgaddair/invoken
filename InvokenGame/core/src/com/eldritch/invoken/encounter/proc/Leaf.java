@@ -39,9 +39,9 @@ public class Leaf {
         // if the height is >25% larger than the width, we split horizontally
         // otherwise we split randomly
         boolean splitH = rand.nextDouble() > 0.5;
-        if (width > height && height / width >= 0.05)
+        if (width > height && width / height >= 1.25)
             splitH = false;
-        else if (height > width && width / height >= 0.05)
+        else if (height > width && height / width >= 1.25)
             splitH = true;
 
         int max = (splitH ? height : width) - MIN_LEAF_SIZE; // determine the

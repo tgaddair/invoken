@@ -1,5 +1,8 @@
 package com.eldritch.invoken.encounter.proc;
 
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -9,6 +12,8 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
+import javax.imageio.ImageIO;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
@@ -17,6 +22,7 @@ import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
 import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
 import com.badlogic.gdx.math.Rectangle;
+import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.actor.type.Player;
 import com.eldritch.invoken.encounter.Activator;
 import com.eldritch.invoken.encounter.Location;
@@ -95,6 +101,9 @@ public class LocationGenerator {
         Location location = new Location(proto, player, map);
         location.addLights(lights);
         location.addActivators(activators);
+        
+        // debug: print out the level
+        saveLayer(base);
 
         return location;
     }
@@ -476,7 +485,7 @@ public class LocationGenerator {
                 // if this Leaf is not already split...
                 if (l.leftChild == null && l.rightChild == null) {
                     // if this Leaf is too big, or 75% chance...
-                    if (l.width > MAX_LEAF_SIZE || l.height > MAX_LEAF_SIZE || Math.random() < 0.75) {
+                    if (l.width > MAX_LEAF_SIZE || l.height > MAX_LEAF_SIZE || Math.random() < 0.5) {
                         if (l.split()) { // split the Leaf!
                             // if we did split, push the child leafs to the list so we can loop into
                             // them next
@@ -498,5 +507,25 @@ public class LocationGenerator {
 
     public TextureAtlas getAtlas() {
         return atlas;
+    }
+    
+    private void saveLayer(LocationLayer layer) {
+        BufferedImage image = new BufferedImage(layer.getWidth(), layer.getHeight(), BufferedImage.TYPE_INT_RGB);
+        for (int x = 0; x < layer.getWidth(); x++) {
+            for (int y = 0; y < layer.getHeight(); y++) {
+                Cell cell = layer.getCell(x, y);
+                if (layer.isGround(cell)) {
+                    image.setRGB(x, y, 0xffffff);
+                } else {
+                    image.setRGB(x, y, 0);
+                }
+            }
+        }
+        File outputfile = new File(System.getProperty("user.home") + "/ground.png");
+        try {
+            ImageIO.write(image, "png", outputfile);
+        } catch (IOException e) {
+            InvokenGame.error("Failed saving level image!", e);
+        }
     }
 }
