@@ -39,7 +39,7 @@ import com.eldritch.invoken.proto.Locations.Encounter.ActorParams.ActorScenario;
 public class LocationGenerator {
     private static final int PX = Location.PX;
     private static final int SCALE = 2;
-    private static final int MAX_LEAF_SIZE = 35;
+    private static final int MAX_LEAF_SIZE = 10;
     private final Random rand = new Random();
     private final TextureAtlas atlas;
     private final TiledMapTile ground;
