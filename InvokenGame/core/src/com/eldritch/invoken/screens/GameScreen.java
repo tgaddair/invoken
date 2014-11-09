@@ -314,13 +314,15 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 		
 		if (!selection) {
 		    // click on arbitrary position
-		    if (player.holdingPosition()) {
-		        player.getInfo().getAugmentations().useActiveAugmentation(
-		                new Vector2(world.x, world.y), tacticalPause);
-		    } else {
-		        // move to destination
-                player.moveToFixedTarget(world.x, world.y);
-		    }
+//		    if (player.holdingPosition()) {
+//		        player.getInfo().getAugmentations().useActiveAugmentation(
+//		                new Vector2(world.x, world.y), tacticalPause);
+//		    } else {
+//		        // move to destination
+//                player.moveToFixedTarget(world.x, world.y);
+//		    }
+		    player.getInfo().getAugmentations().useActiveAugmentation(
+                    new Vector2(world.x, world.y), tacticalPause);
 		    selection = true;
 		}
 		

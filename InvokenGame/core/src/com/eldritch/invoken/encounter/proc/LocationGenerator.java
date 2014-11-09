@@ -1,5 +1,8 @@
 package com.eldritch.invoken.encounter.proc;
 
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -9,6 +12,8 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
+import javax.imageio.ImageIO;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
@@ -17,6 +22,7 @@ import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
 import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
 import com.badlogic.gdx.math.Rectangle;
+import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.actor.type.Player;
 import com.eldritch.invoken.encounter.Activator;
 import com.eldritch.invoken.encounter.Location;
@@ -26,13 +32,14 @@ import com.eldritch.invoken.encounter.layer.LocationCell;
 import com.eldritch.invoken.encounter.layer.LocationLayer;
 import com.eldritch.invoken.encounter.layer.LocationLayer.CollisionLayer;
 import com.eldritch.invoken.encounter.layer.LocationMap;
+import com.eldritch.invoken.encounter.proc.BspGenerator.CellType;
 import com.eldritch.invoken.gfx.Light;
 import com.eldritch.invoken.proto.Locations.Encounter;
 import com.eldritch.invoken.proto.Locations.Encounter.ActorParams.ActorScenario;
 
 public class LocationGenerator {
     private static final int PX = Location.PX;
-    private static final int SCALE = 2;
+    private static final int SCALE = 1;
     private static final int MAX_LEAF_SIZE = 35;
     private final Random rand = new Random();
     private final TextureAtlas atlas;
@@ -57,44 +64,61 @@ public class LocationGenerator {
         int width = Location.MAX_WIDTH;
         int height = Location.MAX_HEIGHT;
         LocationMap map = getBaseMap(width, height);
-        List<Leaf> leafs = createLeaves(width / SCALE, height / SCALE);
-        List<Room> rooms = createRooms(leafs);
+//        List<Leaf> leafs = createLeaves(width / SCALE, height / SCALE);
+//        List<Room> rooms = createRooms(leafs);
+        
+        BspGenerator bsp = new BspGenerator(width / SCALE, height / SCALE);
+        bsp.generateSegments();
+        bsp.save();
+        CellType[][] typeMap = bsp.getMap();
 
         // create layers
-        LocationLayer base = createBaseLayer(leafs, width, height, map);
+        InvokenGame.log("Creating Base");
+        LocationLayer base = createBaseLayer(typeMap, width, height, map);
         map.getLayers().add(base);
 
+        InvokenGame.log("Creating Trim");
         LocationLayer trim = createTrimLayer(base, map);
         map.getLayers().add(trim);
-        
+
+        InvokenGame.log("Creating Overlay");
         LocationLayer overlay = createOverlayLayer(base, map);
         map.getLayers().add(overlay);
+        
+        InvokenGame.log("Creating Overlay Trim");
         LocationLayer overlayTrim = createOverlayTrimLayer(base, overlay, map);
         map.getLayers().add(overlayTrim);
-        
+
+        InvokenGame.log("Creating Collision");
         CollisionLayer collision = createCollisionLayer(base, map);
         map.getLayers().add(collision);
-        for (LocationLayer layer : createSpawnLayers(base, rooms, proto.getEncounterList(), map)) {
+        
+        InvokenGame.log("Creating Spawn Layers");
+        for (LocationLayer layer : createSpawnLayers(base, bsp.getRooms(), proto.getEncounterList(), map)) {
             map.getLayers().add(layer);
         }
 
         // add furniture
+        InvokenGame.log("Adding Furniture");
         List<Activator> activators = new ArrayList<Activator>();
         IcarianFurnitureGenerator furnitureGenerator = new IcarianFurnitureGenerator(atlas, ground);
-        
+
         // doors
         furnitureGenerator.createDoors(base, trim, overlay, overlayTrim, collision, activators);
-        
+
         // lights
         List<Light> lights = new ArrayList<Light>();
         furnitureGenerator.addLights(trim, base, lights, midWallCenter);
-        
+
         // clutter
         map.getLayers().add(furnitureGenerator.generateClutter(base, map));
-        
+
         Location location = new Location(proto, player, map);
         location.addLights(lights);
         location.addActivators(activators);
+        
+        // debug
+        saveLayer(base);
 
         return location;
     }
@@ -109,23 +133,33 @@ public class LocationGenerator {
         return map;
     }
 
-    private LocationLayer createBaseLayer(List<Leaf> leafs, int width, int height, LocationMap map) {
+    private LocationLayer createBaseLayer(CellType[][] typeMap, int width, int height, LocationMap map) {
         LocationLayer layer = new LocationLayer(width, height, PX, PX, map);
         layer.setVisible(true);
         layer.setOpacity(1.0f);
         layer.setName("base");
-
-        for (Leaf leaf : leafs) {
-            if (leaf.room != null) {
-                addRoom(leaf.room, layer, ground);
-            }
-            for (Rectangle hall : leaf.halls) {
-                addRoom(hall, layer, ground);
+        
+        for (int i = 0; i < typeMap.length; i++) {
+            for (int j = 0; j < typeMap[i].length; j++) {
+                if (typeMap[i][j] == CellType.Floor) {
+                    addTile(i, j, layer, ground);
+                }
             }
         }
 
+//        for (Leaf leaf : leafs) {
+//            if (leaf.room != null) {
+//                addRoom(leaf.room, layer, ground);
+//            }
+//            for (Rectangle hall : leaf.halls) {
+//                addRoom(hall, layer, ground);
+//            }
+//        }
+
         // add walls
         addWalls(layer);
+        
+        InvokenGame.log("done");
 
         return layer;
     }
@@ -203,8 +237,8 @@ public class LocationGenerator {
         return layer;
     }
 
-    private LocationLayer createOverlayTrimLayer(LocationLayer base,
-            LocationLayer overlay, LocationMap map) {
+    private LocationLayer createOverlayTrimLayer(LocationLayer base, LocationLayer overlay,
+            LocationMap map) {
         LocationLayer layer = new LocationLayer(base.getWidth(), base.getHeight(), PX, PX, map);
         layer.setVisible(true);
         layer.setOpacity(1.0f);
@@ -236,7 +270,8 @@ public class LocationGenerator {
     }
 
     private CollisionLayer createCollisionLayer(LocationLayer base, LocationMap map) {
-        CollisionLayer layer = new CollisionLayer(base.getWidth(), base.getHeight(), PX, PX, map, collider);
+        CollisionLayer layer = new CollisionLayer(base.getWidth(), base.getHeight(), PX, PX, map,
+                collider);
         layer.setVisible(false);
         layer.setOpacity(1.0f);
         layer.setName("collision");
@@ -253,10 +288,10 @@ public class LocationGenerator {
 
         return layer;
     }
-    
+
     private List<Room> createRooms(List<Leaf> leafs) {
         List<Room> rooms = new ArrayList<Room>();
-        
+
         // create rooms
         Map<Leaf, Room> leafToRoom = new HashMap<Leaf, Room>();
         for (Leaf leaf : leafs) {
@@ -266,7 +301,7 @@ public class LocationGenerator {
                 leafToRoom.put(leaf, room);
             }
         }
-        
+
         // define neighbor rooms for later graph traversal
         for (Room room : rooms) {
             Leaf leaf = room.getLeaf();
@@ -281,26 +316,25 @@ public class LocationGenerator {
                 other.addAdjacentRoom(room);
             }
         }
-        
+
         return rooms;
     }
 
-    private List<LocationLayer> createSpawnLayers(LocationLayer base, List<Room> rooms,
+    private List<LocationLayer> createSpawnLayers(LocationLayer base, List<Rectangle> rooms,
             List<Encounter> encounters, LocationMap map) {
         List<LocationLayer> layers = new ArrayList<LocationLayer>();
         LocationLayer playerLayer = null;
         double total = getTotalWeight(encounters);
-        for (Room room : rooms) {
+        for (Rectangle room : rooms) {
             if (playerLayer == null) {
-                playerLayer = new LocationLayer(base.getWidth(), base.getHeight(),
-                        PX, PX, map);
+                playerLayer = new LocationLayer(base.getWidth(), base.getHeight(), PX, PX, map);
                 playerLayer.setVisible(false);
                 playerLayer.setOpacity(1.0f);
                 playerLayer.setName("player");
-                
-                NaturalVector2 position = getPoint(room.getBounds(), base, playerLayer);
+
+                NaturalVector2 position = getPoint(room, base, playerLayer);
                 addCell(playerLayer, collider, position.x, position.y);
-                
+
                 layers.add(playerLayer);
             } else {
                 LocationLayer layer = addEncounter(room, encounters, base, total, map);
@@ -313,8 +347,8 @@ public class LocationGenerator {
         return layers;
     }
 
-    private LocationLayer addEncounter(Room room, List<Encounter> encounters,
-            LocationLayer base, double total, LocationMap map) {
+    private LocationLayer addEncounter(Rectangle room, List<Encounter> encounters, LocationLayer base,
+            double total, LocationMap map) {
         double target = Math.random() * total;
         double sum = 0.0;
         for (Encounter encounter : encounters) {
@@ -329,7 +363,7 @@ public class LocationGenerator {
 
                     for (ActorScenario scenario : encounter.getActorParams().getActorScenarioList()) {
                         for (int i = 0; i < scenario.getMax(); i++) {
-                            NaturalVector2 position = getPoint(room.getBounds(), base, layer);
+                            NaturalVector2 position = getPoint(room, base, layer);
                             addCell(layer, collider, position.x, position.y);
                         }
                     }
@@ -376,8 +410,8 @@ public class LocationGenerator {
         int right = (int) (left + rect.width * SCALE);
         int top = (int) rect.y * SCALE;
         int bottom = (int) (top + rect.height * SCALE);
-        NaturalVector2 seed = NaturalVector2.of(randomNumber(left + 1, right - 2), randomNumber(
-                top + 1, bottom - 2));
+        NaturalVector2 seed = NaturalVector2.of(randomNumber(left + 1, right - 2),
+                randomNumber(top + 1, bottom - 2));
         return getPoint(rect, base, layer, seed);
     }
 
@@ -432,16 +466,20 @@ public class LocationGenerator {
         int bottom = (int) (room.y + room.height);
         for (int i = left; i <= right; i++) {
             for (int j = top; j <= bottom; j++) {
-                int startX = i * SCALE;
-                int startY = j * SCALE;
-                for (int dx = 0; dx < SCALE; dx++) {
-                    for (int dy = 0; dy < SCALE; dy++) {
-                        int x = startX + dx;
-                        int y = startY + dy;
-                        if (inBounds(x, y, layer.getWidth(), layer.getHeight())) {
-                            addCell(layer, tile, x, y);
-                        }
-                    }
+                addTile(i, j, layer, tile);
+            }
+        }
+    }
+    
+    private void addTile(int i, int j, LocationLayer layer, TiledMapTile tile) {
+        int startX = i * SCALE;
+        int startY = j * SCALE;
+        for (int dx = 0; dx < SCALE; dx++) {
+            for (int dy = 0; dy < SCALE; dy++) {
+                int x = startX + dx;
+                int y = startY + dy;
+                if (inBounds(x, y, layer.getWidth(), layer.getHeight())) {
+                    addCell(layer, tile, x, y);
                 }
             }
         }
@@ -498,5 +536,27 @@ public class LocationGenerator {
 
     public TextureAtlas getAtlas() {
         return atlas;
+    }
+
+    private void saveLayer(LocationLayer layer) {
+        BufferedImage image = new BufferedImage(layer.getWidth(), layer.getHeight(),
+                BufferedImage.TYPE_INT_RGB);
+        for (int x = 0; x < layer.getWidth(); x++) {
+            for (int y = 0; y < layer.getHeight(); y++) {
+                Cell cell = layer.getCell(x, y);
+                if (layer.isGround(cell)) {
+                    image.setRGB(x, y, 0xffffff);
+                } else {
+                    image.setRGB(x, y, 0);
+                }
+            }
+        }
+
+        File outputfile = new File(System.getProperty("user.home") + "/ground.png");
+        try {
+            ImageIO.write(image, "png", outputfile);
+        } catch (IOException e) {
+            InvokenGame.error("Failed saving level image!", e);
+        }
     }
 }
