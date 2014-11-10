@@ -339,7 +339,7 @@ public class LocationGenerator {
             } else {
                 LocationLayer layer = addEncounter(room, encounters, base, total, map);
                 if (layer != null) {
-                    layers.add(layer);
+//                    layers.add(layer);
                 }
             }
         }

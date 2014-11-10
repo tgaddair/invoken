@@ -44,7 +44,10 @@ public class BspGenerator {
         this.Height = height;
         map = new CellType[width][height];
         MinRoomSize = 6;
-        MaxRoomSize = (int) (Math.min(width, height) / 4f);
+        MaxRoomSize = (int) (Math.min(width, height) / 8f);
+        
+        // 2 -> lots of big halls
+        // 4 -> lots of corridors
         RoomCount = (int) (Math.sqrt(width * height) / 2f);
     }
 
@@ -101,7 +104,8 @@ public class BspGenerator {
                     (int) (next.x + next.width / 2), (int) (next.y + next.height / 2));
 
             // dig out the tunnel we just found
-            int size = choose(1, 2);
+            // int size = choose(1, 2);
+            int size = 2;
             for (NaturalVector2 point : currentPath) {
                 Set(point.x - size / 2, point.y - size / 2, size, size, CellType.Floor,
                         CellType.Stone);
@@ -282,7 +286,9 @@ public class BspGenerator {
     public boolean Overlaps(Rectangle area) {
         for (int i = 0; i < area.width; i++) {
             for (int j = 0; j < area.height; j++) {
-                if (map[i][j] != CellType.Wall && map[i][j] != CellType.Stone) {
+                int x = (int) area.x + i;
+                int y = (int) area.y + j;
+                if (map[x][y] != CellType.Wall && map[x][y] != CellType.Stone) {
                     return false;
                 }
             }
@@ -328,7 +334,7 @@ public class BspGenerator {
                         image.setRGB(x, y, 0xffffff);
                         break;
                     case Wall:
-                        image.setRGB(x, y, 0xff0000);
+                        image.setRGB(x, y, 0);
                         break;
                     case Stone:
                         image.setRGB(x, y, 0x0000ff);
