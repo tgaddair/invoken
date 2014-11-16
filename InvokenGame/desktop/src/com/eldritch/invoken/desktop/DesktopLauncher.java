@@ -20,7 +20,8 @@ public class DesktopLauncher {
 		config.height = 480;
 		
 		// whether to use OpenGL ES 2.0
-		config.useGL30 = true;
+		// causes a blank screen when using v1.4.1
+		//config.useGL30 = true;
 		
 		// create the game
 		new LwjglApplication(listener, config);

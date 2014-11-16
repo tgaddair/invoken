@@ -44,7 +44,11 @@ public class LocationGenerator {
     private final Random rand = new Random();
     private final TextureAtlas atlas;
     private final TiledMapTile ground;
-    private final TiledMapTile midWallCenter;
+    
+    private final TiledMapTile midWallTop;
+    //private final TiledMapTile midWallCenter;
+  private final TiledMapTile midWallBottom;
+    
     private final TiledMapTile leftTrim;
     private final TiledMapTile rightTrim;
     private final TiledMapTile collider;
@@ -54,7 +58,11 @@ public class LocationGenerator {
 
         AtlasRegion region = atlas.findRegion("test-biome/floor4");
         ground = new StaticTiledMapTile(region);
-        midWallCenter = new StaticTiledMapTile(atlas.findRegion("test-biome/mid-wall-center"));
+        
+        midWallTop = new StaticTiledMapTile(atlas.findRegion("industry/mid-wall-top"));
+        //midWallCenter = new StaticTiledMapTile(atlas.findRegion("industry/mid-wall-center"));
+        midWallBottom = new StaticTiledMapTile(atlas.findRegion("industry/mid-wall-bottom"));
+        
         leftTrim = new StaticTiledMapTile(atlas.findRegion("test-biome/left-trim"));
         rightTrim = new StaticTiledMapTile(atlas.findRegion("test-biome/right-trim"));
         collider = new StaticTiledMapTile(atlas.findRegion("markers/collision"));
@@ -108,7 +116,7 @@ public class LocationGenerator {
 
         // lights
         List<Light> lights = new ArrayList<Light>();
-        furnitureGenerator.addLights(trim, base, lights, midWallCenter);
+        furnitureGenerator.addLights(trim, base, lights, midWallTop);
 
         // clutter
         map.getLayers().add(furnitureGenerator.generateClutter(base, map));
@@ -385,20 +393,15 @@ public class LocationGenerator {
     }
 
     private void addWalls(LocationLayer layer) {
-        TiledMapTile midWallTop = new StaticTiledMapTile(
-                atlas.findRegion("test-biome/mid-wall-top"));
-        TiledMapTile midWallBottom = new StaticTiledMapTile(
-                atlas.findRegion("test-biome/mid-wall-bottom"));
-
         for (int x = 0; x < layer.getWidth(); x++) {
             for (int y = 0; y < layer.getHeight(); y++) {
                 Cell cell = layer.getCell(x, y);
                 if (cell != null && cell.getTile() == ground) {
                     // check for empty space above
-                    if (y + 3 < layer.getHeight() && layer.getCell(x, y + 3) == null) {
-                        addCell(layer, midWallBottom, x, y + 1);
-                        addCell(layer, midWallCenter, x, y + 2);
-                        addCell(layer, midWallTop, x, y + 3);
+                    if (y + 2 < layer.getHeight() && layer.getCell(x, y + 2) == null) {
+                        addCell(layer, midWallBottom, x, y + 0);
+                        //addCell(layer, midWallCenter, x, y + 1);
+                        addCell(layer, midWallTop, x, y + 1);
                     }
                 }
             }

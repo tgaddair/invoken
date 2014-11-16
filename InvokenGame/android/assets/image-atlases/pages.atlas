@@ -1,4 +1,3 @@
-
 pages.png
 format: RGBA8888
 filter: Nearest,Nearest
@@ -483,6 +482,60 @@ test-biome/furn-table1
 markers/collision
   rotate: false
   xy: 0, 704
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+
+industry-walls.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+industry/left-wall-top
+  rotate: false
+  xy: 256, 96
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+industry/right-wall-top
+  rotate: false
+  xy: 288, 96
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+industry/left-wall-bottom
+  rotate: false
+  xy: 256, 128
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+industry/right-wall-bottom
+  rotate: false
+  xy: 288, 128
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+industry/mid-wall-top
+  rotate: false
+  xy: 272, 96
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+industry/mid-wall-center
+  rotate: false
+  xy: 272, 112
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+industry/mid-wall-bottom
+  rotate: false
+  xy: 272, 128
   size: 32, 32
   orig: 32, 32
   offset: 0, 0

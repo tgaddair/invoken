@@ -48,7 +48,7 @@ public class BspGenerator {
         
         // 2 -> lots of big halls
         // 4 -> lots of corridors
-        RoomCount = (int) (Math.sqrt(width * height) / 2f);
+        RoomCount = (int) (Math.sqrt(width * height) / 3f);
     }
 
     public void generateSegments() {

@@ -146,13 +146,11 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 		batch.begin();
 		playerHealth.draw(batch);
 		selectedHealth.draw(batch);
-		
-		// render dialogue
 		dialogue.draw(batch);
 		batch.end();
 		
 		// draw stats
-//		drawStats();
+		drawStats();
 		
 		// render the HUD
 		stage.act(delta);
