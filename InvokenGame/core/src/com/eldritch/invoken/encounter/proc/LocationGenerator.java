@@ -63,8 +63,8 @@ public class LocationGenerator {
         //midWallCenter = new StaticTiledMapTile(atlas.findRegion("industry/mid-wall-center"));
         midWallBottom = new StaticTiledMapTile(atlas.findRegion("industry/mid-wall-bottom"));
         
-        leftTrim = new StaticTiledMapTile(atlas.findRegion("test-biome/left-trim"));
-        rightTrim = new StaticTiledMapTile(atlas.findRegion("test-biome/right-trim"));
+        leftTrim = new StaticTiledMapTile(atlas.findRegion("industry/left-trim"));
+        rightTrim = new StaticTiledMapTile(atlas.findRegion("industry/right-trim"));
         collider = new StaticTiledMapTile(atlas.findRegion("markers/collision"));
     }
 
@@ -96,10 +96,20 @@ public class LocationGenerator {
         InvokenGame.log("Creating Overlay Trim");
         LocationLayer overlayTrim = createOverlayTrimLayer(base, overlay, map);
         map.getLayers().add(overlayTrim);
-
+        
         InvokenGame.log("Creating Collision");
         CollisionLayer collision = createCollisionLayer(base, map);
         map.getLayers().add(collision);
+        
+        InvokenGame.log("Creating Roof");
+        TiledMapTile roof = new StaticTiledMapTile(atlas.findRegion("industry/roof"));
+        for (int i = 0; i < typeMap.length; i++) {
+            for (int j = 0; j < typeMap[i].length; j++) {
+                if (typeMap[i][j] != CellType.Floor) {
+                    addTile(i, j, base, roof);
+                }
+            }
+        }
         
         InvokenGame.log("Creating Spawn Layers");
         for (LocationLayer layer : createSpawnLayers(base, bsp.getRooms(), proto.getEncounterList(), map)) {
@@ -112,13 +122,16 @@ public class LocationGenerator {
         IcarianFurnitureGenerator furnitureGenerator = new IcarianFurnitureGenerator(atlas, ground);
 
         // doors
+        InvokenGame.log("Adding Doors");
         furnitureGenerator.createDoors(base, trim, overlay, overlayTrim, collision, activators);
 
         // lights
+        InvokenGame.log("Adding Lights");
         List<Light> lights = new ArrayList<Light>();
         furnitureGenerator.addLights(trim, base, lights, midWallTop);
 
         // clutter
+        InvokenGame.log("Adding Clutter");
         map.getLayers().add(furnitureGenerator.generateClutter(base, map));
 
         Location location = new Location(proto, player, map);
@@ -195,9 +208,14 @@ public class LocationGenerator {
             }
         }
 
-        TiledMapTile leftCorner = new StaticTiledMapTile(atlas.findRegion("test-biome/left-corner"));
+        TiledMapTile leftCorner = new StaticTiledMapTile(atlas.findRegion("industry/left-corner"));
         TiledMapTile rightCorner = new StaticTiledMapTile(
-                atlas.findRegion("test-biome/right-corner"));
+                atlas.findRegion("industry/right-corner"));
+        
+        // required offsets
+        leftCorner.setOffsetX(Location.PX / 2);
+        leftCorner.setOffsetY(Location.PX / 2);
+        rightCorner.setOffsetY(Location.PX / 2);
 
         // fill in corners
         for (int x = 0; x < base.getWidth(); x++) {
@@ -228,7 +246,7 @@ public class LocationGenerator {
         layer.setName("overlay");
 
         TiledMapTile belowTrim = new StaticTiledMapTile(
-                atlas.findRegion("test-biome/overlay-below-trim"));
+                atlas.findRegion("industry/overlay-below-trim"));
         for (int x = 0; x < base.getWidth(); x++) {
             for (int y = 0; y < base.getHeight(); y++) {
                 Cell cell = base.getCell(x, y);
@@ -253,9 +271,9 @@ public class LocationGenerator {
         layer.setName("overlay-trim");
 
         TiledMapTile overlayLeftTrim = new StaticTiledMapTile(
-                atlas.findRegion("test-biome/overlay-left-trim"));
+                atlas.findRegion("industry/overlay-left-trim"));
         TiledMapTile overlayRightTrim = new StaticTiledMapTile(
-                atlas.findRegion("test-biome/overlay-right-trim"));
+                atlas.findRegion("industry/overlay-right-trim"));
 
         // fill in sides
         for (int x = 0; x < overlay.getWidth(); x++) {

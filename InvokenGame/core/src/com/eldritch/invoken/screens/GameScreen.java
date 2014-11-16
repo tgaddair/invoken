@@ -150,7 +150,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 		batch.end();
 		
 		// draw stats
-		drawStats();
+//		drawStats();
 		
 		// render the HUD
 		stage.act(delta);

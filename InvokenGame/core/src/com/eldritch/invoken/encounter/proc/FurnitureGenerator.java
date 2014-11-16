@@ -12,6 +12,7 @@ import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
 import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.encounter.Activator;
 import com.eldritch.invoken.encounter.DoorActivator;
+import com.eldritch.invoken.encounter.Location;
 import com.eldritch.invoken.encounter.NaturalVector2;
 import com.eldritch.invoken.encounter.layer.LocationLayer;
 import com.eldritch.invoken.encounter.layer.LocationLayer.CollisionLayer;
@@ -52,6 +53,7 @@ public abstract class FurnitureGenerator {
     
     public void addLights(LocationLayer layer, LocationLayer base, List<Light> lights, TiledMapTile placer) {
         TiledMapTile light = new StaticTiledMapTile(atlas.findRegion("test-biome/light1"));
+        light.setOffsetY(-Location.PX / 2);
         for (int y = 0; y < base.getHeight(); y++) {
             // scan by row so we can properly distribute lights
             int lastLight = 0;
@@ -61,7 +63,7 @@ public abstract class FurnitureGenerator {
                     // with some probability, add a light to the wall
                     if (lastLight == 1 && Math.random() < 0.75) {
                         addCell(layer, light, x, y);
-                        lights.add(new StaticLight(new Vector2(x + 0.5f, y + 0.5f)));
+                        lights.add(new StaticLight(new Vector2(x + 0.5f, y + 1)));
                     }
                     lastLight = (lastLight + 1) % 5;
                 } else {
