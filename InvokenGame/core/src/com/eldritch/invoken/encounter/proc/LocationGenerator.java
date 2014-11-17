@@ -15,12 +15,18 @@ import java.util.Set;
 import javax.imageio.ImageIO;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Pixmap.Format;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
 import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
+import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Rectangle;
 import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.actor.type.Player;
@@ -47,10 +53,12 @@ public class LocationGenerator {
     
     private final TiledMapTile midWallTop;
     //private final TiledMapTile midWallCenter;
-  private final TiledMapTile midWallBottom;
+    private final TiledMapTile midWallBottom;
     
     private final TiledMapTile leftTrim;
     private final TiledMapTile rightTrim;
+    private final TiledMapTile narrowWall;
+    private final TiledMapTile narrowTop;
     private final TiledMapTile collider;
 
     public LocationGenerator() {
@@ -65,7 +73,38 @@ public class LocationGenerator {
         
         leftTrim = new StaticTiledMapTile(atlas.findRegion("industry/left-trim"));
         rightTrim = new StaticTiledMapTile(atlas.findRegion("industry/right-trim"));
+        narrowWall = merge(rightTrim.getTextureRegion(), leftTrim.getTextureRegion());
+        narrowTop = merge(
+        		atlas.findRegion("industry/top-left-trim"),
+        		atlas.findRegion("industry/top-right-trim"));
         collider = new StaticTiledMapTile(atlas.findRegion("markers/collision"));
+    }
+    
+    public TiledMapTile merge(TextureRegion left, TextureRegion right) {
+    	FrameBuffer buffer = new FrameBuffer(Format.RGB888, Location.PX, Location.PX, false);
+    	TextureRegion region = new TextureRegion(buffer.getColorBufferTexture());
+        region.flip(false, true);
+        
+        // extract the part of each region we care about
+        int size = Location.PX / 2;
+        TextureRegion leftPart = new TextureRegion(left, 0, 0, size, Location.PX);
+        TextureRegion rightPart = new TextureRegion(right, size, 0, size, Location.PX);
+        
+        // setup the projection matrix
+        buffer.begin();
+        SpriteBatch batch = new SpriteBatch();
+        Matrix4 m = new Matrix4();
+        m.setToOrtho2D(0, 0, buffer.getWidth(), buffer.getHeight());
+        batch.setProjectionMatrix(m);
+        
+        // draw to the frame buffer
+        batch.begin();
+        batch.draw(leftPart, 0, 0, leftPart.getRegionWidth(), leftPart.getRegionHeight());
+        batch.draw(rightPart, size, 0, rightPart.getRegionWidth(), rightPart.getRegionHeight());
+        batch.end();
+        buffer.end();
+        
+        return new StaticTiledMapTile(region);
     }
 
     public Location generate(com.eldritch.invoken.proto.Locations.Location proto, Player player) {
@@ -194,17 +233,22 @@ public class LocationGenerator {
         // fill in sides
         for (int x = 0; x < base.getWidth(); x++) {
             for (int y = 0; y < base.getHeight(); y++) {
-                Cell cell = base.getCell(x, y);
-                if (cell != null) {
-                    if (x - 1 >= 0 && base.getCell(x - 1, y) == null) {
-                        // empty space to the left
-                        addCell(layer, leftTrim, x - 1, y);
-                    }
-                    if (x + 1 < base.getWidth() && base.getCell(x + 1, y) == null) {
-                        // empty space to the right
-                        addCell(layer, rightTrim, x + 1, y);
-                    }
-                }
+            	if (base.getCell(x, y) == null) {
+            		boolean leftGround = x - 1 >= 0 && base.getCell(x - 1, y) != null;
+            		boolean rightGround = x + 1 < base.getWidth() && base.getCell(x + 1, y) != null;
+            		if (leftGround) {
+            			if (rightGround) {
+            				// narrow wall
+            				addCell(layer, narrowWall, x, y);
+            			} else {
+            				// right trim
+            				addCell(layer, rightTrim, x, y);
+            			}
+            		} else if (rightGround) {
+            			// left trim
+            			addCell(layer, leftTrim, x, y);
+            		}
+            	}
             }
         }
 
@@ -280,11 +324,17 @@ public class LocationGenerator {
             for (int y = 0; y < overlay.getHeight(); y++) {
                 Cell cell = overlay.getCell(x, y);
                 if (cell != null) {
-                    if (base.isGround(x - 1, y) && overlay.getCell(x - 1, y) == null) {
-                        // left space is ground
-                        addCell(layer, overlayRightTrim, x, y);
-                    }
-                    if (base.isGround(x + 1, y) && overlay.getCell(x + 1, y) == null) {
+                	boolean lGround = base.isGround(x - 1, y) && overlay.getCell(x - 1, y) == null;
+                	boolean rGround = base.isGround(x + 1, y) && overlay.getCell(x + 1, y) == null;
+                    if (lGround) {
+                    	if (rGround) {
+                    		// narrow top
+                    		addCell(layer, narrowTop, x, y);
+                    	} else {
+                    		// left space is ground
+                    		addCell(layer, overlayRightTrim, x, y);
+                    	}
+                    } else if (rGround) {
                         // right space is ground
                         addCell(layer, overlayLeftTrim, x, y);
                     }
@@ -365,7 +415,7 @@ public class LocationGenerator {
             } else {
                 LocationLayer layer = addEncounter(room, encounters, base, total, map);
                 if (layer != null) {
-//                    layers.add(layer);
+                    layers.add(layer);
                 }
             }
         }

@@ -603,3 +603,17 @@ industry/overlay-below-trim
   orig: 32, 32
   offset: 0, 0
   index: -1
+industry/top-left-trim
+  rotate: false
+  xy: 192, 352
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+industry/top-right-trim
+  rotate: false
+  xy: 224, 352
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
