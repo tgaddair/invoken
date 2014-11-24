@@ -15,12 +15,18 @@ import java.util.Set;
 import javax.imageio.ImageIO;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Pixmap.Format;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
 import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
+import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Rectangle;
 import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.actor.type.Player;
@@ -32,20 +38,27 @@ import com.eldritch.invoken.encounter.layer.LocationCell;
 import com.eldritch.invoken.encounter.layer.LocationLayer;
 import com.eldritch.invoken.encounter.layer.LocationLayer.CollisionLayer;
 import com.eldritch.invoken.encounter.layer.LocationMap;
+import com.eldritch.invoken.encounter.proc.BspGenerator.CellType;
 import com.eldritch.invoken.gfx.Light;
 import com.eldritch.invoken.proto.Locations.Encounter;
 import com.eldritch.invoken.proto.Locations.Encounter.ActorParams.ActorScenario;
 
 public class LocationGenerator {
     private static final int PX = Location.PX;
-    private static final int SCALE = 2;
-    private static final int MAX_LEAF_SIZE = 10;
+    private static final int SCALE = 1;
+    private static final int MAX_LEAF_SIZE = 35;
     private final Random rand = new Random();
     private final TextureAtlas atlas;
     private final TiledMapTile ground;
-    private final TiledMapTile midWallCenter;
+    
+    private final TiledMapTile midWallTop;
+    //private final TiledMapTile midWallCenter;
+    private final TiledMapTile midWallBottom;
+    
     private final TiledMapTile leftTrim;
     private final TiledMapTile rightTrim;
+    private final TiledMapTile narrowWall;
+    private final TiledMapTile narrowTop;
     private final TiledMapTile collider;
 
     public LocationGenerator() {
@@ -53,56 +66,118 @@ public class LocationGenerator {
 
         AtlasRegion region = atlas.findRegion("test-biome/floor4");
         ground = new StaticTiledMapTile(region);
-        midWallCenter = new StaticTiledMapTile(atlas.findRegion("test-biome/mid-wall-center"));
-        leftTrim = new StaticTiledMapTile(atlas.findRegion("test-biome/left-trim"));
-        rightTrim = new StaticTiledMapTile(atlas.findRegion("test-biome/right-trim"));
+        
+        midWallTop = new StaticTiledMapTile(atlas.findRegion("industry/mid-wall-top"));
+        //midWallCenter = new StaticTiledMapTile(atlas.findRegion("industry/mid-wall-center"));
+        midWallBottom = new StaticTiledMapTile(atlas.findRegion("industry/mid-wall-bottom"));
+        
+        leftTrim = new StaticTiledMapTile(atlas.findRegion("industry/left-trim"));
+        rightTrim = new StaticTiledMapTile(atlas.findRegion("industry/right-trim"));
+        narrowWall = merge(rightTrim.getTextureRegion(), leftTrim.getTextureRegion());
+        narrowTop = merge(
+        		atlas.findRegion("industry/top-left-trim"),
+        		atlas.findRegion("industry/top-right-trim"));
         collider = new StaticTiledMapTile(atlas.findRegion("markers/collision"));
+    }
+    
+    public TiledMapTile merge(TextureRegion left, TextureRegion right) {
+    	FrameBuffer buffer = new FrameBuffer(Format.RGB888, Location.PX, Location.PX, false);
+    	TextureRegion region = new TextureRegion(buffer.getColorBufferTexture());
+        region.flip(false, true);
+        
+        // extract the part of each region we care about
+        int size = Location.PX / 2;
+        TextureRegion leftPart = new TextureRegion(left, 0, 0, size, Location.PX);
+        TextureRegion rightPart = new TextureRegion(right, size, 0, size, Location.PX);
+        
+        // setup the projection matrix
+        buffer.begin();
+        SpriteBatch batch = new SpriteBatch();
+        Matrix4 m = new Matrix4();
+        m.setToOrtho2D(0, 0, buffer.getWidth(), buffer.getHeight());
+        batch.setProjectionMatrix(m);
+        
+        // draw to the frame buffer
+        batch.begin();
+        batch.draw(leftPart, 0, 0, leftPart.getRegionWidth(), leftPart.getRegionHeight());
+        batch.draw(rightPart, size, 0, rightPart.getRegionWidth(), rightPart.getRegionHeight());
+        batch.end();
+        buffer.end();
+        
+        return new StaticTiledMapTile(region);
     }
 
     public Location generate(com.eldritch.invoken.proto.Locations.Location proto, Player player) {
         int width = Location.MAX_WIDTH;
         int height = Location.MAX_HEIGHT;
         LocationMap map = getBaseMap(width, height);
-        List<Leaf> leafs = createLeaves(width / SCALE, height / SCALE);
-        List<Room> rooms = createRooms(leafs);
+//        List<Leaf> leafs = createLeaves(width / SCALE, height / SCALE);
+//        List<Room> rooms = createRooms(leafs);
+        
+        BspGenerator bsp = new BspGenerator(width / SCALE, height / SCALE);
+        bsp.generateSegments();
+        bsp.save();
+        CellType[][] typeMap = bsp.getMap();
 
         // create layers
-        LocationLayer base = createBaseLayer(leafs, width, height, map);
+        InvokenGame.log("Creating Base");
+        LocationLayer base = createBaseLayer(typeMap, width, height, map);
         map.getLayers().add(base);
 
+        InvokenGame.log("Creating Trim");
         LocationLayer trim = createTrimLayer(base, map);
         map.getLayers().add(trim);
-        
+
+        InvokenGame.log("Creating Overlay");
         LocationLayer overlay = createOverlayLayer(base, map);
         map.getLayers().add(overlay);
+        
+        InvokenGame.log("Creating Overlay Trim");
         LocationLayer overlayTrim = createOverlayTrimLayer(base, overlay, map);
         map.getLayers().add(overlayTrim);
         
+        InvokenGame.log("Creating Collision");
         CollisionLayer collision = createCollisionLayer(base, map);
         map.getLayers().add(collision);
-        for (LocationLayer layer : createSpawnLayers(base, rooms, proto.getEncounterList(), map)) {
+        
+        InvokenGame.log("Creating Roof");
+        TiledMapTile roof = new StaticTiledMapTile(atlas.findRegion("industry/roof"));
+        for (int i = 0; i < typeMap.length; i++) {
+            for (int j = 0; j < typeMap[i].length; j++) {
+                if (typeMap[i][j] != CellType.Floor) {
+                    addTile(i, j, base, roof);
+                }
+            }
+        }
+        
+        InvokenGame.log("Creating Spawn Layers");
+        for (LocationLayer layer : createSpawnLayers(base, bsp.getRooms(), proto.getEncounterList(), map)) {
             map.getLayers().add(layer);
         }
 
         // add furniture
+        InvokenGame.log("Adding Furniture");
         List<Activator> activators = new ArrayList<Activator>();
         IcarianFurnitureGenerator furnitureGenerator = new IcarianFurnitureGenerator(atlas, ground);
-        
+
         // doors
+        InvokenGame.log("Adding Doors");
         furnitureGenerator.createDoors(base, trim, overlay, overlayTrim, collision, activators);
-        
+
         // lights
+        InvokenGame.log("Adding Lights");
         List<Light> lights = new ArrayList<Light>();
-        furnitureGenerator.addLights(trim, base, lights, midWallCenter);
-        
+        furnitureGenerator.addLights(trim, base, lights, midWallTop);
+
         // clutter
+        InvokenGame.log("Adding Clutter");
         map.getLayers().add(furnitureGenerator.generateClutter(base, map));
-        
+
         Location location = new Location(proto, player, map);
         location.addLights(lights);
         location.addActivators(activators);
         
-        // debug: print out the level
+        // debug
         saveLayer(base);
 
         return location;
@@ -118,23 +193,33 @@ public class LocationGenerator {
         return map;
     }
 
-    private LocationLayer createBaseLayer(List<Leaf> leafs, int width, int height, LocationMap map) {
+    private LocationLayer createBaseLayer(CellType[][] typeMap, int width, int height, LocationMap map) {
         LocationLayer layer = new LocationLayer(width, height, PX, PX, map);
         layer.setVisible(true);
         layer.setOpacity(1.0f);
         layer.setName("base");
-
-        for (Leaf leaf : leafs) {
-            if (leaf.room != null) {
-                addRoom(leaf.room, layer, ground);
-            }
-            for (Rectangle hall : leaf.halls) {
-                addRoom(hall, layer, ground);
+        
+        for (int i = 0; i < typeMap.length; i++) {
+            for (int j = 0; j < typeMap[i].length; j++) {
+                if (typeMap[i][j] == CellType.Floor) {
+                    addTile(i, j, layer, ground);
+                }
             }
         }
 
+//        for (Leaf leaf : leafs) {
+//            if (leaf.room != null) {
+//                addRoom(leaf.room, layer, ground);
+//            }
+//            for (Rectangle hall : leaf.halls) {
+//                addRoom(hall, layer, ground);
+//            }
+//        }
+
         // add walls
         addWalls(layer);
+        
+        InvokenGame.log("done");
 
         return layer;
     }
@@ -148,23 +233,33 @@ public class LocationGenerator {
         // fill in sides
         for (int x = 0; x < base.getWidth(); x++) {
             for (int y = 0; y < base.getHeight(); y++) {
-                Cell cell = base.getCell(x, y);
-                if (cell != null) {
-                    if (x - 1 >= 0 && base.getCell(x - 1, y) == null) {
-                        // empty space to the left
-                        addCell(layer, leftTrim, x - 1, y);
-                    }
-                    if (x + 1 < base.getWidth() && base.getCell(x + 1, y) == null) {
-                        // empty space to the right
-                        addCell(layer, rightTrim, x + 1, y);
-                    }
-                }
+            	if (base.getCell(x, y) == null) {
+            		boolean leftGround = x - 1 >= 0 && base.getCell(x - 1, y) != null;
+            		boolean rightGround = x + 1 < base.getWidth() && base.getCell(x + 1, y) != null;
+            		if (leftGround) {
+            			if (rightGround) {
+            				// narrow wall
+            				addCell(layer, narrowWall, x, y);
+            			} else {
+            				// right trim
+            				addCell(layer, rightTrim, x, y);
+            			}
+            		} else if (rightGround) {
+            			// left trim
+            			addCell(layer, leftTrim, x, y);
+            		}
+            	}
             }
         }
 
-        TiledMapTile leftCorner = new StaticTiledMapTile(atlas.findRegion("test-biome/left-corner"));
+        TiledMapTile leftCorner = new StaticTiledMapTile(atlas.findRegion("industry/left-corner"));
         TiledMapTile rightCorner = new StaticTiledMapTile(
-                atlas.findRegion("test-biome/right-corner"));
+                atlas.findRegion("industry/right-corner"));
+        
+        // required offsets
+        leftCorner.setOffsetX(Location.PX / 2);
+        leftCorner.setOffsetY(Location.PX / 2);
+        rightCorner.setOffsetY(Location.PX / 2);
 
         // fill in corners
         for (int x = 0; x < base.getWidth(); x++) {
@@ -195,7 +290,7 @@ public class LocationGenerator {
         layer.setName("overlay");
 
         TiledMapTile belowTrim = new StaticTiledMapTile(
-                atlas.findRegion("test-biome/overlay-below-trim"));
+                atlas.findRegion("industry/overlay-below-trim"));
         for (int x = 0; x < base.getWidth(); x++) {
             for (int y = 0; y < base.getHeight(); y++) {
                 Cell cell = base.getCell(x, y);
@@ -212,28 +307,34 @@ public class LocationGenerator {
         return layer;
     }
 
-    private LocationLayer createOverlayTrimLayer(LocationLayer base,
-            LocationLayer overlay, LocationMap map) {
+    private LocationLayer createOverlayTrimLayer(LocationLayer base, LocationLayer overlay,
+            LocationMap map) {
         LocationLayer layer = new LocationLayer(base.getWidth(), base.getHeight(), PX, PX, map);
         layer.setVisible(true);
         layer.setOpacity(1.0f);
         layer.setName("overlay-trim");
 
         TiledMapTile overlayLeftTrim = new StaticTiledMapTile(
-                atlas.findRegion("test-biome/overlay-left-trim"));
+                atlas.findRegion("industry/overlay-left-trim"));
         TiledMapTile overlayRightTrim = new StaticTiledMapTile(
-                atlas.findRegion("test-biome/overlay-right-trim"));
+                atlas.findRegion("industry/overlay-right-trim"));
 
         // fill in sides
         for (int x = 0; x < overlay.getWidth(); x++) {
             for (int y = 0; y < overlay.getHeight(); y++) {
                 Cell cell = overlay.getCell(x, y);
                 if (cell != null) {
-                    if (base.isGround(x - 1, y) && overlay.getCell(x - 1, y) == null) {
-                        // left space is ground
-                        addCell(layer, overlayRightTrim, x, y);
-                    }
-                    if (base.isGround(x + 1, y) && overlay.getCell(x + 1, y) == null) {
+                	boolean lGround = base.isGround(x - 1, y) && overlay.getCell(x - 1, y) == null;
+                	boolean rGround = base.isGround(x + 1, y) && overlay.getCell(x + 1, y) == null;
+                    if (lGround) {
+                    	if (rGround) {
+                    		// narrow top
+                    		addCell(layer, narrowTop, x, y);
+                    	} else {
+                    		// left space is ground
+                    		addCell(layer, overlayRightTrim, x, y);
+                    	}
+                    } else if (rGround) {
                         // right space is ground
                         addCell(layer, overlayLeftTrim, x, y);
                     }
@@ -245,7 +346,8 @@ public class LocationGenerator {
     }
 
     private CollisionLayer createCollisionLayer(LocationLayer base, LocationMap map) {
-        CollisionLayer layer = new CollisionLayer(base.getWidth(), base.getHeight(), PX, PX, map, collider);
+        CollisionLayer layer = new CollisionLayer(base.getWidth(), base.getHeight(), PX, PX, map,
+                collider);
         layer.setVisible(false);
         layer.setOpacity(1.0f);
         layer.setName("collision");
@@ -262,10 +364,10 @@ public class LocationGenerator {
 
         return layer;
     }
-    
+
     private List<Room> createRooms(List<Leaf> leafs) {
         List<Room> rooms = new ArrayList<Room>();
-        
+
         // create rooms
         Map<Leaf, Room> leafToRoom = new HashMap<Leaf, Room>();
         for (Leaf leaf : leafs) {
@@ -275,7 +377,7 @@ public class LocationGenerator {
                 leafToRoom.put(leaf, room);
             }
         }
-        
+
         // define neighbor rooms for later graph traversal
         for (Room room : rooms) {
             Leaf leaf = room.getLeaf();
@@ -290,26 +392,25 @@ public class LocationGenerator {
                 other.addAdjacentRoom(room);
             }
         }
-        
+
         return rooms;
     }
 
-    private List<LocationLayer> createSpawnLayers(LocationLayer base, List<Room> rooms,
+    private List<LocationLayer> createSpawnLayers(LocationLayer base, List<Rectangle> rooms,
             List<Encounter> encounters, LocationMap map) {
         List<LocationLayer> layers = new ArrayList<LocationLayer>();
         LocationLayer playerLayer = null;
         double total = getTotalWeight(encounters);
-        for (Room room : rooms) {
+        for (Rectangle room : rooms) {
             if (playerLayer == null) {
-                playerLayer = new LocationLayer(base.getWidth(), base.getHeight(),
-                        PX, PX, map);
+                playerLayer = new LocationLayer(base.getWidth(), base.getHeight(), PX, PX, map);
                 playerLayer.setVisible(false);
                 playerLayer.setOpacity(1.0f);
                 playerLayer.setName("player");
-                
-                NaturalVector2 position = getPoint(room.getBounds(), base, playerLayer);
+
+                NaturalVector2 position = getPoint(room, base, playerLayer);
                 addCell(playerLayer, collider, position.x, position.y);
-                
+
                 layers.add(playerLayer);
             } else {
                 LocationLayer layer = addEncounter(room, encounters, base, total, map);
@@ -322,8 +423,8 @@ public class LocationGenerator {
         return layers;
     }
 
-    private LocationLayer addEncounter(Room room, List<Encounter> encounters,
-            LocationLayer base, double total, LocationMap map) {
+    private LocationLayer addEncounter(Rectangle room, List<Encounter> encounters, LocationLayer base,
+            double total, LocationMap map) {
         double target = Math.random() * total;
         double sum = 0.0;
         for (Encounter encounter : encounters) {
@@ -338,7 +439,7 @@ public class LocationGenerator {
 
                     for (ActorScenario scenario : encounter.getActorParams().getActorScenarioList()) {
                         for (int i = 0; i < scenario.getMax(); i++) {
-                            NaturalVector2 position = getPoint(room.getBounds(), base, layer);
+                            NaturalVector2 position = getPoint(room, base, layer);
                             addCell(layer, collider, position.x, position.y);
                         }
                     }
@@ -360,20 +461,15 @@ public class LocationGenerator {
     }
 
     private void addWalls(LocationLayer layer) {
-        TiledMapTile midWallTop = new StaticTiledMapTile(
-                atlas.findRegion("test-biome/mid-wall-top"));
-        TiledMapTile midWallBottom = new StaticTiledMapTile(
-                atlas.findRegion("test-biome/mid-wall-bottom"));
-
         for (int x = 0; x < layer.getWidth(); x++) {
             for (int y = 0; y < layer.getHeight(); y++) {
                 Cell cell = layer.getCell(x, y);
                 if (cell != null && cell.getTile() == ground) {
                     // check for empty space above
-                    if (y + 3 < layer.getHeight() && layer.getCell(x, y + 3) == null) {
-                        addCell(layer, midWallBottom, x, y + 1);
-                        addCell(layer, midWallCenter, x, y + 2);
-                        addCell(layer, midWallTop, x, y + 3);
+                    if (y + 2 < layer.getHeight() && layer.getCell(x, y + 2) == null) {
+                        addCell(layer, midWallBottom, x, y + 0);
+                        //addCell(layer, midWallCenter, x, y + 1);
+                        addCell(layer, midWallTop, x, y + 1);
                     }
                 }
             }
@@ -385,8 +481,8 @@ public class LocationGenerator {
         int right = (int) (left + rect.width * SCALE);
         int top = (int) rect.y * SCALE;
         int bottom = (int) (top + rect.height * SCALE);
-        NaturalVector2 seed = NaturalVector2.of(randomNumber(left + 1, right - 2), randomNumber(
-                top + 1, bottom - 2));
+        NaturalVector2 seed = NaturalVector2.of(randomNumber(left + 1, right - 2),
+                randomNumber(top + 1, bottom - 2));
         return getPoint(rect, base, layer, seed);
     }
 
@@ -441,16 +537,20 @@ public class LocationGenerator {
         int bottom = (int) (room.y + room.height);
         for (int i = left; i <= right; i++) {
             for (int j = top; j <= bottom; j++) {
-                int startX = i * SCALE;
-                int startY = j * SCALE;
-                for (int dx = 0; dx < SCALE; dx++) {
-                    for (int dy = 0; dy < SCALE; dy++) {
-                        int x = startX + dx;
-                        int y = startY + dy;
-                        if (inBounds(x, y, layer.getWidth(), layer.getHeight())) {
-                            addCell(layer, tile, x, y);
-                        }
-                    }
+                addTile(i, j, layer, tile);
+            }
+        }
+    }
+    
+    private void addTile(int i, int j, LocationLayer layer, TiledMapTile tile) {
+        int startX = i * SCALE;
+        int startY = j * SCALE;
+        for (int dx = 0; dx < SCALE; dx++) {
+            for (int dy = 0; dy < SCALE; dy++) {
+                int x = startX + dx;
+                int y = startY + dy;
+                if (inBounds(x, y, layer.getWidth(), layer.getHeight())) {
+                    addCell(layer, tile, x, y);
                 }
             }
         }
@@ -508,9 +608,10 @@ public class LocationGenerator {
     public TextureAtlas getAtlas() {
         return atlas;
     }
-    
+
     private void saveLayer(LocationLayer layer) {
-        BufferedImage image = new BufferedImage(layer.getWidth(), layer.getHeight(), BufferedImage.TYPE_INT_RGB);
+        BufferedImage image = new BufferedImage(layer.getWidth(), layer.getHeight(),
+                BufferedImage.TYPE_INT_RGB);
         for (int x = 0; x < layer.getWidth(); x++) {
             for (int y = 0; y < layer.getHeight(); y++) {
                 Cell cell = layer.getCell(x, y);
@@ -521,6 +622,7 @@ public class LocationGenerator {
                 }
             }
         }
+
         File outputfile = new File(System.getProperty("user.home") + "/ground.png");
         try {
             ImageIO.write(image, "png", outputfile);

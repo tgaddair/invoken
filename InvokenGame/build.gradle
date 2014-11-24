@@ -21,7 +21,7 @@ allprojects {
     version = "1.0"
     ext {
         appName = "Invoken"
-        gdxVersion = "1.0-SNAPSHOT"
+        gdxVersion = "1.4.1"
         roboVMVersion = "0.0.10"
     }
     

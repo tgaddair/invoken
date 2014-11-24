@@ -1,7 +1,5 @@
 # cache for current jar dependency. DO NOT EDIT.
 # format is <lastModified> <length> <SHA-1> <path>
 # Encoding is UTF-8
-1403471987000 2228009 5fa98cd1a63c99a44dd8d3b77e4762b066a5d0c5 /Users/travis/git/invoken/InvokenGame/core/libs/guava-16.0.1.jar
-1403471987000 2228009 5fa98cd1a63c99a44dd8d3b77e4762b066a5d0c5 /Users/travis/git/invoken/InvokenGame/android/libs/guava-16.0.1.jar
-1403471987000 533455 a10732c76bfacdbd633a7eb0f7968b1059a65dfa /Users/travis/git/invoken/InvokenGame/protos/libs/protobuf-java-2.5.0.jar
-1403471987000 533455 a10732c76bfacdbd633a7eb0f7968b1059a65dfa /Users/travis/git/invoken/InvokenGame/core/libs/protobuf-java-2.5.0.jar
+1392701855268 533455 a10732c76bfacdbd633a7eb0f7968b1059a65dfa C:\Users\Travis\repos\ScifiRpg\InvokenGame\core\libs\protobuf-java-2.5.0.jar
+1392701855268 533455 a10732c76bfacdbd633a7eb0f7968b1059a65dfa C:\Users\Travis\repos\ScifiRpg\InvokenGame\protos\libs\protobuf-java-2.5.0.jar

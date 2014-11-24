@@ -129,7 +129,9 @@ public class IcarianFurnitureGenerator extends FurnitureGenerator {
             for (int i = 0; i < grid.length; i++) {
                 tiles[i] = new TiledMapTile[grid[i].length];
                 for (int j = 0; j < grid[i].length; j++) {
-                    tiles[i][j] = new StaticTiledMapTile(grid[i][j]);
+                    StaticTiledMapTile tile = new StaticTiledMapTile(grid[i][j]);
+                    tile.setOffsetY(-Location.PX / 2);
+                    tiles[i][j] = tile;
                 }
             }
         }

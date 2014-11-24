@@ -1,4 +1,3 @@
-
 pages.png
 format: RGBA8888
 filter: Nearest,Nearest
@@ -265,7 +264,7 @@ test-biome/floor3
   index: -1
 test-biome/floor4
   rotate: false
-  xy: 256, 288
+  xy: 0, 608
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
@@ -483,6 +482,137 @@ test-biome/furn-table1
 markers/collision
   rotate: false
   xy: 0, 704
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+
+industry-walls.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+industry/roof
+  rotate: false
+  xy: 208, 368
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+industry/left-wall-top
+  rotate: false
+  xy: 256, 96
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+industry/right-wall-top
+  rotate: false
+  xy: 288, 96
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+industry/left-wall-bottom
+  rotate: false
+  xy: 256, 128
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+industry/right-wall-bottom
+  rotate: false
+  xy: 288, 128
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+industry/mid-wall-top
+  rotate: false
+  xy: 272, 96
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+industry/mid-wall-center
+  rotate: false
+  xy: 272, 112
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+industry/mid-wall-bottom
+  rotate: false
+  xy: 272, 128
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+industry/left-trim
+  rotate: false
+  xy: 224, 368
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+industry/right-trim
+  rotate: false
+  xy: 192, 368
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+industry/overlay-left-trim
+  rotate: false
+  xy: 224, 352
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+industry/overlay-right-trim
+  rotate: false
+  xy: 192, 352
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+industry/left-corner
+  rotate: false
+  xy: 240, 320
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+industry/right-corner
+  rotate: false
+  xy: 224, 320
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+industry/below-trim
+  rotate: false
+  xy: 208, 352
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+industry/overlay-below-trim
+  rotate: false
+  xy: 208, 352
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+industry/top-left-trim
+  rotate: false
+  xy: 192, 352
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+industry/top-right-trim
+  rotate: false
+  xy: 224, 352
   size: 32, 32
   orig: 32, 32
   offset: 0, 0

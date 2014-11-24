@@ -4,6 +4,8 @@ import java.util.List;
 
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
+import com.eldritch.invoken.encounter.NaturalVector2;
 import com.eldritch.invoken.encounter.proc.FurnitureGenerator;
 import com.eldritch.invoken.encounter.proc.LocationGenerator;
 
@@ -46,6 +48,13 @@ public class LocationLayer extends TiledMapTileLayer {
     
     public boolean isGround(int x, int y) {
         return inBounds(x, y) && isGround(getCell(x, y));
+    }
+    
+    public Cell setGround(int x, int y) {
+        Cell cell = new LocationCell(NaturalVector2.of(x, y), this);
+        cell.setTile(map.getGround());
+        setCell(x, y, cell);
+        return cell;
     }
     
     public boolean isGround(Cell cell) {

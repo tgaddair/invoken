@@ -17,7 +17,6 @@ enum Discipline {
 	CHARISMA = 3;
 }
 
-
 enum Profession {
 	CENTURION = 0;
 	EXECUTOR = 1;

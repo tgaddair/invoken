@@ -358,7 +358,14 @@ public class Location {
 
         Set<NaturalVector2> visited = new HashSet<NaturalVector2>();
         LinkedList<NaturalVector2> queue = new LinkedList<NaturalVector2>();
+        
+        for (int i = x1; i <= x2; i++) {
+            for (int j = y1; j <= y2; j++) {
+                activeTiles.add(NaturalVector2.of(i, j));
+            }
+        }
 
+        /*
         visited.add(origin);
         activeTiles.add(origin);
 
@@ -407,6 +414,7 @@ public class Location {
                 }
             }
         }
+        */
 
         map.update(activeTiles);
     }
