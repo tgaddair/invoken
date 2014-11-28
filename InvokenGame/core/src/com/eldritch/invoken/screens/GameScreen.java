@@ -340,7 +340,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 
 	@Override
 	public boolean mouseMoved(int screenX, int screenY) {
-		return false;
+		return stage.mouseMoved(screenX, screenY);
 	}
 
 	@Override

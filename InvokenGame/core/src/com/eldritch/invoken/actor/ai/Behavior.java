@@ -237,7 +237,7 @@ public class Behavior {
     }
     
     public static boolean isEnemyGiven(float reaction) {
-        return reaction <= -10;
+        return reaction <= -25;
     }
     
     public static boolean isNeutralGiven(float reaction) {
@@ -245,6 +245,6 @@ public class Behavior {
     }
     
     public static boolean isAllyGiven(float reaction) {
-        return reaction >= 10;
+        return reaction >= 25;
     }
 }
