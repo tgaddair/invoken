@@ -101,7 +101,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 		
 		LocationGenerator generator = new LocationGenerator();
 		location = generator.generate(
-		        InvokenGame.LOCATION_READER.readAsset("NostorraUnderworks"), player);
+		        InvokenGame.LOCATION_READER.readAsset("IcarianEmbassy"), player);
 		
 		// create player menus
 		actionBar = new ActionBar(player);

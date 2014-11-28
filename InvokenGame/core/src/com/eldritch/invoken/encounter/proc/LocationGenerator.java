@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -398,10 +399,11 @@ public class LocationGenerator {
 
     private List<LocationLayer> createSpawnLayers(LocationLayer base, List<Rectangle> rooms,
             List<Encounter> encounters, LocationMap map) {
+    	List<Encounter> availableEncounters = new ArrayList<Encounter>(encounters);
         List<LocationLayer> layers = new ArrayList<LocationLayer>();
         LocationLayer playerLayer = null;
-        double total = getTotalWeight(encounters);
         for (Rectangle room : rooms) {
+        	double total = getTotalWeight(encounters);
             if (playerLayer == null) {
                 playerLayer = new LocationLayer(base.getWidth(), base.getHeight(), PX, PX, map);
                 playerLayer.setVisible(false);
@@ -413,7 +415,7 @@ public class LocationGenerator {
 
                 layers.add(playerLayer);
             } else {
-                LocationLayer layer = addEncounter(room, encounters, base, total, map);
+                LocationLayer layer = addEncounter(room, availableEncounters, base, total, map);
                 if (layer != null) {
                     layers.add(layer);
                 }
@@ -427,7 +429,9 @@ public class LocationGenerator {
             double total, LocationMap map) {
         double target = Math.random() * total;
         double sum = 0.0;
-        for (Encounter encounter : encounters) {
+        Iterator<Encounter> it = encounters.iterator();
+        while (it.hasNext()) {
+        	Encounter encounter = it.next();
             if (encounter.getType() == Encounter.Type.ACTOR) {
                 sum += encounter.getWeight();
                 if (sum >= target) {
@@ -443,6 +447,11 @@ public class LocationGenerator {
                             addCell(layer, collider, position.x, position.y);
                         }
                     }
+                    
+                    if (encounter.getUnique()) {
+                		it.remove();
+                	}
+                    
                     return layer;
                 }
             }
