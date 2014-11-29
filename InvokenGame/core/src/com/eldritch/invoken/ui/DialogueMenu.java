@@ -103,14 +103,13 @@ public class DialogueMenu {
 		    }
 		} else {
 			// end of conversation
-			endDialogue();
+			container.setVisible(false);
 		}
 	}
 	
 	private void endDialogue() {
 		container.setVisible(false);
 		active = false;
-		// TODO: end dialogue with player
 	}
 	
 	private void addLabel(String text) {
