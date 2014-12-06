@@ -262,7 +262,7 @@ test-biome/floor3
   orig: 32, 32
   offset: 0, 0
   index: -1
-test-biome/floor4
+industry/floor4
   rotate: false
   xy: 0, 608
   size: 32, 32
@@ -618,6 +618,102 @@ industry/top-right-trim
   offset: 0, 0
   index: -1
 
+misc-walls.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+grime/roof
+  rotate: false
+  xy: 400, 368
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+grime/mid-wall-top
+  rotate: false
+  xy: 464, 416
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+grime/mid-wall-center
+  rotate: false
+  xy: 464, 432
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+grime/mid-wall-bottom
+  rotate: false
+  xy: 464, 448
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+grime/left-trim
+  rotate: false
+  xy: 416, 368
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+grime/right-trim
+  rotate: false
+  xy: 384, 368
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+grime/top-left-trim
+  rotate: false
+  xy: 384, 352
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+grime/top-right-trim
+  rotate: false
+  xy: 416, 352
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+grime/left-corner
+  rotate: false
+  xy: 432, 320
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+grime/right-corner
+  rotate: false
+  xy: 416, 320
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+grime/overlay-below-trim
+  rotate: false
+  xy: 400, 352
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+grime/overlay-left-trim
+  rotate: false
+  xy: 416, 352
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+grime/overlay-right-trim
+  rotate: false
+  xy: 384, 352
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+
 gates.png
 format: RGBA8888
 filter: Nearest,Nearest
@@ -627,5 +723,24 @@ industry/gate1
   xy: 257, 0
   size: 85, 228
   orig: 85, 228
+  offset: 0, 0
+  index: -1
+
+floors.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+industry/floor
+  rotate: false
+  xy: 0, 0
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+grime/floor
+  rotate: false
+  xy: 32, 0
+  size: 32, 32
+  orig: 32, 32
   offset: 0, 0
   index: -1

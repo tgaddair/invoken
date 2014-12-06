@@ -99,7 +99,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 //		location = new Location(
 //		        InvokenGame.LOCATION_READER.readAsset("NostorraPlaza"), player);
 		
-		LocationGenerator generator = new LocationGenerator();
+		LocationGenerator generator = new LocationGenerator("grime");
 		location = generator.generate(
 		        InvokenGame.LOCATION_READER.readAsset("IcarianEmbassy"), player);
 		

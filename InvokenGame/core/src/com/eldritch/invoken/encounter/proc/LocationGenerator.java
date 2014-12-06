@@ -44,13 +44,32 @@ import com.eldritch.invoken.proto.Locations.Encounter;
 import com.eldritch.invoken.proto.Locations.Encounter.ActorParams.ActorScenario;
 
 public class LocationGenerator {
+	// string constants required for all biome types
+	private static final String FLOOR = "/floor";
+	private static final String ROOF = "/roof";
+	private static final String MID_WALL_TOP = "/mid-wall-top";
+	private static final String MID_WALL_CENTER = "/mid-wall-center";
+	private static final String MID_WALL_BOTTOM = "/mid-wall-bottom";
+	private static final String LEFT_TRIM = "/left-trim";
+	private static final String RIGHT_TRIM = "/right-trim";
+	private static final String TOP_LEFT_TRIM = "/top-left-trim";
+	private static final String TOP_RIGHT_TRIM = "/top-right-trim";
+	private static final String LEFT_CORNER = "/left-corner";
+	private static final String RIGHT_CORNER = "/right-corner";
+	private static final String OVERLAY_BELOW_TRIM = "/overlay-below-trim";
+	private static final String OVERLAY_LEFT_TRIM = "/overlay-left-trim";
+	private static final String OVERLAY_RIGHT_TRIM = "/overlay-right-trim";
+	private static final String COLLISION = "markers/collision";
+	
     private static final int PX = Location.PX;
     private static final int SCALE = 1;
     private static final int MAX_LEAF_SIZE = 35;
     private final Random rand = new Random();
+
+    private final String biome;
     private final TextureAtlas atlas;
-    private final TiledMapTile ground;
     
+    private final TiledMapTile ground;
     private final TiledMapTile midWallTop;
     //private final TiledMapTile midWallCenter;
     private final TiledMapTile midWallBottom;
@@ -60,24 +79,25 @@ public class LocationGenerator {
     private final TiledMapTile narrowWall;
     private final TiledMapTile narrowTop;
     private final TiledMapTile collider;
-
-    public LocationGenerator() {
+    
+    public LocationGenerator(String biome) {
+    	this.biome = biome;
         atlas = new TextureAtlas(Gdx.files.internal("image-atlases/pages.atlas"));
 
-        AtlasRegion region = atlas.findRegion("test-biome/floor4");
+        AtlasRegion region = atlas.findRegion(biome + FLOOR);
         ground = new StaticTiledMapTile(region);
         
-        midWallTop = new StaticTiledMapTile(atlas.findRegion("industry/mid-wall-top"));
-        //midWallCenter = new StaticTiledMapTile(atlas.findRegion("industry/mid-wall-center"));
-        midWallBottom = new StaticTiledMapTile(atlas.findRegion("industry/mid-wall-bottom"));
+        midWallTop = new StaticTiledMapTile(atlas.findRegion(biome + MID_WALL_TOP));
+        //midWallCenter = new StaticTiledMapTile(atlas.findRegion(biome + MID_WALL_CENTER));
+        midWallBottom = new StaticTiledMapTile(atlas.findRegion(biome + MID_WALL_BOTTOM));
         
-        leftTrim = new StaticTiledMapTile(atlas.findRegion("industry/left-trim"));
-        rightTrim = new StaticTiledMapTile(atlas.findRegion("industry/right-trim"));
+        leftTrim = new StaticTiledMapTile(atlas.findRegion(biome + LEFT_TRIM));
+        rightTrim = new StaticTiledMapTile(atlas.findRegion(biome + RIGHT_TRIM));
         narrowWall = merge(rightTrim.getTextureRegion(), leftTrim.getTextureRegion());
         narrowTop = merge(
-        		atlas.findRegion("industry/top-left-trim"),
-        		atlas.findRegion("industry/top-right-trim"));
-        collider = new StaticTiledMapTile(atlas.findRegion("markers/collision"));
+        		atlas.findRegion(biome + TOP_LEFT_TRIM),
+        		atlas.findRegion(biome + TOP_RIGHT_TRIM));
+        collider = new StaticTiledMapTile(atlas.findRegion(COLLISION));
     }
 
     public Location generate(com.eldritch.invoken.proto.Locations.Location proto, Player player) {
@@ -114,7 +134,7 @@ public class LocationGenerator {
         map.getLayers().add(collision);
         
         InvokenGame.log("Creating Roof");
-        TiledMapTile roof = new StaticTiledMapTile(atlas.findRegion("industry/roof"));
+        TiledMapTile roof = new StaticTiledMapTile(atlas.findRegion(biome + ROOF));
         for (int i = 0; i < typeMap.length; i++) {
             for (int j = 0; j < typeMap[i].length; j++) {
                 if (typeMap[i][j] != CellType.Floor) {
@@ -225,9 +245,9 @@ public class LocationGenerator {
             }
         }
 
-        TiledMapTile leftCorner = new StaticTiledMapTile(atlas.findRegion("industry/left-corner"));
+        TiledMapTile leftCorner = new StaticTiledMapTile(atlas.findRegion(biome + LEFT_CORNER));
         TiledMapTile rightCorner = new StaticTiledMapTile(
-                atlas.findRegion("industry/right-corner"));
+                atlas.findRegion(biome + RIGHT_CORNER));
         
         // required offsets
         leftCorner.setOffsetX(Location.PX / 2);
@@ -263,7 +283,7 @@ public class LocationGenerator {
         layer.setName("overlay");
 
         TiledMapTile belowTrim = new StaticTiledMapTile(
-                atlas.findRegion("industry/overlay-below-trim"));
+                atlas.findRegion(biome + OVERLAY_BELOW_TRIM));
         for (int x = 0; x < base.getWidth(); x++) {
             for (int y = 0; y < base.getHeight(); y++) {
                 Cell cell = base.getCell(x, y);
@@ -288,9 +308,9 @@ public class LocationGenerator {
         layer.setName("overlay-trim");
 
         TiledMapTile overlayLeftTrim = new StaticTiledMapTile(
-                atlas.findRegion("industry/overlay-left-trim"));
+                atlas.findRegion(biome + OVERLAY_LEFT_TRIM));
         TiledMapTile overlayRightTrim = new StaticTiledMapTile(
-                atlas.findRegion("industry/overlay-right-trim"));
+                atlas.findRegion(biome + OVERLAY_RIGHT_TRIM));
 
         // fill in sides
         for (int x = 0; x < overlay.getWidth(); x++) {
