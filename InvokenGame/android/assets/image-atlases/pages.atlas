@@ -617,3 +617,15 @@ industry/top-right-trim
   orig: 32, 32
   offset: 0, 0
   index: -1
+
+gates.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+industry/gate1
+  rotate: false
+  xy: 257, 0
+  size: 85, 228
+  orig: 85, 228
+  offset: 0, 0
+  index: -1

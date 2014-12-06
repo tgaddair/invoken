@@ -15,7 +15,6 @@ import java.util.Set;
 import javax.imageio.ImageIO;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -78,33 +77,6 @@ public class LocationGenerator {
         		atlas.findRegion("industry/top-left-trim"),
         		atlas.findRegion("industry/top-right-trim"));
         collider = new StaticTiledMapTile(atlas.findRegion("markers/collision"));
-    }
-    
-    public TiledMapTile merge(TextureRegion left, TextureRegion right) {
-    	FrameBuffer buffer = new FrameBuffer(Format.RGB888, Location.PX, Location.PX, false);
-    	TextureRegion region = new TextureRegion(buffer.getColorBufferTexture());
-        region.flip(false, true);
-        
-        // extract the part of each region we care about
-        int size = Location.PX / 2;
-        TextureRegion leftPart = new TextureRegion(left, 0, 0, size, Location.PX);
-        TextureRegion rightPart = new TextureRegion(right, size, 0, size, Location.PX);
-        
-        // setup the projection matrix
-        buffer.begin();
-        SpriteBatch batch = new SpriteBatch();
-        Matrix4 m = new Matrix4();
-        m.setToOrtho2D(0, 0, buffer.getWidth(), buffer.getHeight());
-        batch.setProjectionMatrix(m);
-        
-        // draw to the frame buffer
-        batch.begin();
-        batch.draw(leftPart, 0, 0, leftPart.getRegionWidth(), leftPart.getRegionHeight());
-        batch.draw(rightPart, size, 0, rightPart.getRegionWidth(), rightPart.getRegionHeight());
-        batch.end();
-        buffer.end();
-        
-        return new StaticTiledMapTile(region);
     }
 
     public Location generate(com.eldritch.invoken.proto.Locations.Location proto, Player player) {
@@ -607,6 +579,33 @@ public class LocationGenerator {
 
     public TextureAtlas getAtlas() {
         return atlas;
+    }
+    
+    private static TiledMapTile merge(TextureRegion left, TextureRegion right) {
+    	FrameBuffer buffer = new FrameBuffer(Format.RGB888, Location.PX, Location.PX, false);
+    	TextureRegion region = new TextureRegion(buffer.getColorBufferTexture());
+        region.flip(false, true);
+        
+        // extract the part of each region we care about
+        int size = Location.PX / 2;
+        TextureRegion leftPart = new TextureRegion(left, 0, 0, size, Location.PX);
+        TextureRegion rightPart = new TextureRegion(right, size, 0, size, Location.PX);
+        
+        // setup the projection matrix
+        buffer.begin();
+        SpriteBatch batch = new SpriteBatch();
+        Matrix4 m = new Matrix4();
+        m.setToOrtho2D(0, 0, buffer.getWidth(), buffer.getHeight());
+        batch.setProjectionMatrix(m);
+        
+        // draw to the frame buffer
+        batch.begin();
+        batch.draw(leftPart, 0, 0, leftPart.getRegionWidth(), leftPart.getRegionHeight());
+        batch.draw(rightPart, size, 0, rightPart.getRegionWidth(), rightPart.getRegionHeight());
+        batch.end();
+        buffer.end();
+        
+        return new StaticTiledMapTile(region);
     }
 
     private void saveLayer(LocationLayer layer) {
