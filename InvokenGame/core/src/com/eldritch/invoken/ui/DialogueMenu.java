@@ -1,16 +1,21 @@
 package com.eldritch.invoken.ui;
 
+import java.util.List;
+
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Cell;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Npc;
 import com.eldritch.invoken.actor.type.Player;
@@ -77,28 +82,34 @@ public class DialogueMenu {
 			// remove old content
 		    choiceBar.clear();
 		    bubble.clear();
-			
-			// add new content
-			addLabel(response.getText());
-			
-			boolean hasChoice = false;
-			for (final Choice c : npc.getChoicesFor(response)) {
-				addChoiceButton(c, npc);
-				hasChoice = true;
-			}
-			if (!hasChoice) {
-			    container.setVisible(false);
-			}
+		    
+		    List<Choice> choices = npc.getChoicesFor(response);
+		    if (choices.isEmpty()) {
+		    	// display a text bubble, as there is no choice for the player to make
+		    	addLabel(response.getText());
+		    	container.setVisible(false);
+		    } else {
+		    	// use the lower portion of the screen for the dialogue
+		    	LabelStyle labelStyle = skin.get("response", LabelStyle.class);
+				Label label = new Label(response.getText(), labelStyle);
+				label.setWrap(true);
+				choiceBar.add(label).expand().fill().padBottom(15);
+				choiceBar.row();
+				
+				// add the choices below
+				for (final Choice c : choices) {
+					addChoiceButton(c, npc);
+				}
+		    }
 		} else {
 			// end of conversation
-			endDialogue();
+			container.setVisible(false);
 		}
 	}
 	
 	private void endDialogue() {
 		container.setVisible(false);
 		active = false;
-		// TODO: end dialogue with player
 	}
 	
 	private void addLabel(String text) {
@@ -114,14 +125,15 @@ public class DialogueMenu {
 	}
 	
 	private void addChoiceButton(final Choice c, final Npc npc) {
-		TextButton choice = new TextButton(c.getText(), skin);
+		TextButtonStyle buttonStyle = skin.get("choice", TextButtonStyle.class);
+		final TextButton choice = new TextButton(c.getText(), buttonStyle);
 		choice.addListener(new DefaultInputListener() {
 			@Override
 			public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
 				setup(npc, npc.getResponseFor(c));
 			}
 		});
-		choiceBar.add(choice).left().padLeft(25).padRight(25).padBottom(10);
+		choiceBar.add(choice).left().padLeft(50).padRight(25).padBottom(10);
 		choiceBar.row();
 	}
 	

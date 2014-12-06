@@ -8,7 +8,8 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 public class Leaf {
-    private static final int MIN_LEAF_SIZE = 6;
+    private static final int MIN_LEAF_SIZE = 10;
+    private static final int MAX_LENGTH = 10;
 
     private final Random rand = new Random();
     public int y, x, width, height; // the position and size of this Leaf
@@ -39,9 +40,9 @@ public class Leaf {
         // if the height is >25% larger than the width, we split horizontally
         // otherwise we split randomly
         boolean splitH = rand.nextDouble() > 0.5;
-        if (width > height && height / width >= 0.05)
+        if (width > height && width / height >= 1.25)
             splitH = false;
-        else if (height > width && width / height >= 0.05)
+        else if (height > width && height / width >= 1.25)
             splitH = true;
 
         int max = (splitH ? height : width) - MIN_LEAF_SIZE; // determine the
@@ -86,8 +87,13 @@ public class Leaf {
             // this Leaf is the ready to make a room
             Vector2 roomSize;
             Vector2 roomPos;
+            
             // the room can be between 3 x 3 tiles to the size of the leaf - 2.
-            roomSize = new Vector2(randomNumber(3, width - 2), randomNumber(3, height - 2));
+            int minLength = 3;
+            int maxWidth = Math.min(width - 2, MAX_LENGTH);
+            int maxHeight = Math.min(height - 2, MAX_LENGTH);
+            roomSize = new Vector2(
+                    randomNumber(minLength, maxWidth), randomNumber(minLength, maxHeight));
 
             // place the room within the Leaf, but don't put it right
             // against the side of the Leaf (that would merge rooms together)

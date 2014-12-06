@@ -101,7 +101,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 		
 		LocationGenerator generator = new LocationGenerator();
 		location = generator.generate(
-		        InvokenGame.LOCATION_READER.readAsset("NostorraUnderworks"), player);
+		        InvokenGame.LOCATION_READER.readAsset("IcarianEmbassy"), player);
 		
 		// create player menus
 		actionBar = new ActionBar(player);
@@ -340,7 +340,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 
 	@Override
 	public boolean mouseMoved(int screenX, int screenY) {
-		return false;
+		return stage.mouseMoved(screenX, screenY);
 	}
 
 	@Override

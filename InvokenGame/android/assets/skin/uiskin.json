@@ -3,8 +3,11 @@ com.badlogic.gdx.graphics.g2d.BitmapFont: { default-font: { file: roboto.fnt } }
 com.badlogic.gdx.graphics.Color: {
 	green: { a: 1, b: 0, g: 1, r: 0 },
 	white: { a: 1, b: 1, g: 1, r: 1 },
+	grey: { a: 1, b: 0.9, g: 0.9, r: 0.9 },
 	red: { a: 1, b: 0, g: 0, r: 1 },
 	maroon: { a: 1, b: 0, g: 0, r: 0.35 },
+	buff: { a: 1, b: 0.51, g: 0.86, r: 0.94 },
+	wheat: { a: 1, b: 0.70, g: 0.87, r: 0.96 },
 	black: { a: 1, b: 0, g: 0, r: 0 }
 },
 com.badlogic.gdx.scenes.scene2d.ui.ProgressBar$ProgressBarStyle: {
@@ -24,8 +27,9 @@ com.badlogic.gdx.scenes.scene2d.ui.Button$ButtonStyle: {
 	toggle: { down: default-button-down, checked: default-button-down, up: default-button-up }
 },
 com.badlogic.gdx.scenes.scene2d.ui.TextButton$TextButtonStyle: {
-	default: { down: default-button-down, up: default-button-up, font: default-font, fontColor: maroon },
-	toggle: { down: default-button-down, up: default-button-up, checked: default-button-down, font: default-font, fontColor: maroon, downFontColor: red }
+	default: { down: default-button-down, up: default-button-up, font: default-font, fontColor: maroon, overFontColor: white },
+	toggle: { down: default-button-down, up: default-button-up, checked: default-button-down, font: default-font, fontColor: maroon, downFontColor: red, overFontColor: white },
+	choice: { font: default-font, fontColor: wheat, overFontColor: white },
 },
 com.badlogic.gdx.scenes.scene2d.ui.SelectBox$SelectBoxStyle: {
 	default: {
@@ -48,7 +52,8 @@ com.badlogic.gdx.scenes.scene2d.ui.Slider$SliderStyle: {
 	default: { background: default-slider, knob: default-slider-knob }
 },
 com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle: {
-	default: { background: default-panel-inset, font: default-font, fontColor: maroon }
+	default: { background: default-panel-inset, font: default-font, fontColor: maroon },
+	response: { font: default-font, fontColor: grey }
 },
 com.badlogic.gdx.scenes.scene2d.ui.TextField$TextFieldStyle: {
 	default: { selection: selection, background: textfield, font: default-font, fontColor: white, cursor: cursor }

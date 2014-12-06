@@ -149,7 +149,9 @@ public class Location {
                         int max = scenario.getMax();
                         int count = (int) (Math.random() * (max - min + 1) + min);
                         for (int i = 0; i < count; i++) {
-                            addActor(createTestNpc(spawnNodes.poll(), scenario.getActorId()));
+                            if (!spawnNodes.isEmpty()) {
+                                addActor(createTestNpc(spawnNodes.poll(), scenario.getActorId()));
+                            }
                         }
                     }
                 }
