@@ -127,7 +127,8 @@ public class FireWeapon extends ProjectileAugmentation {
                 GameScreen.getTexture("sprite/effects/bullet-blue.png"));
 
         public Bullet() {
-            super(1, 1, 20, 5);
+            super(texture.getRegionWidth() / Location.PX, texture.getRegionHeight() / Location.PX,
+            		40, 5);
         }
 
         @Override

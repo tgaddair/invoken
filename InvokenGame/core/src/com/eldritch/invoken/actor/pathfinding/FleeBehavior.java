@@ -13,8 +13,12 @@ public class FleeBehavior extends AbstractSteeringBehavior {
     public Vector2 getForce(Vector2 target, Location location) {
         Npc agent = getNpc();
         Vector2 position = agent.getPosition().cpy();
-        target = agent.getTarget().getPosition();
-        Vector2 desired = position.sub(target).nor().scl(agent.getMaxVelocity());
+        if (agent.getTarget() != null) {
+        	target = agent.getTarget().getPosition();
+        } else {
+        	target = agent.getPosition();
+        }
+    	Vector2 desired = position.sub(target).nor().scl(agent.getMaxVelocity());
         return desired.sub(agent.getVelocity());
     }
 }

@@ -89,8 +89,15 @@ public class DialogueMenu {
 		    	addLabel(response.getText());
 		    	container.setVisible(false);
 		    } else {
+		    	// use the bubble to indicate that the full conversation appears elsewhere
+		    	addLabel("...");
+		    	
 		    	// use the lower portion of the screen for the dialogue
 		    	LabelStyle labelStyle = skin.get("response", LabelStyle.class);
+//		    	Label name = new Label(npc.getInfo().getName(), labelStyle);
+//		    	choiceBar.add(name).expand().fill();
+//		    	choiceBar.row();
+		    	
 				Label label = new Label(response.getText(), labelStyle);
 				label.setWrap(true);
 				choiceBar.add(label).expand().fill().padBottom(15);
