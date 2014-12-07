@@ -5,7 +5,7 @@ import java.util.Set;
 
 import com.eldritch.scifirpg.game.model.actor.Actor;
 import com.eldritch.scifirpg.game.util.Result;
-import com.eldritch.scifirpg.proto.Outcomes.Outcome;
+import com.eldritch.invoken.proto.Outcomes.Outcome;
 
 public interface EncounterListener {
     void outcomesApplied(List<Outcome> outcomes);

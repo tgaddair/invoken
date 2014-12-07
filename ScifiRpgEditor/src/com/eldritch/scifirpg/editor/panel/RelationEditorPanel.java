@@ -15,7 +15,7 @@ import javax.swing.JTextField;
 import com.eldritch.scifirpg.editor.MainPanel;
 import com.eldritch.scifirpg.editor.tables.FactionTable;
 import com.eldritch.scifirpg.editor.tables.RelationTable;
-import com.eldritch.scifirpg.proto.Factions.Faction.Relation;
+import com.eldritch.invoken.proto.Factions.Faction.Relation;
 import com.google.common.base.Optional;
 import com.jgoodies.forms.builder.DefaultFormBuilder;
 import com.jgoodies.forms.layout.FormLayout;

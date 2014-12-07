@@ -2,9 +2,9 @@ package com.eldritch.scifirpg.game.model;
 
 import java.util.List;
 
-import com.eldritch.scifirpg.proto.Locations.Encounter;
-import com.eldritch.scifirpg.proto.Locations.Encounter.StaticParams;
-import com.eldritch.scifirpg.proto.Outcomes.Outcome;
+import com.eldritch.invoken.proto.Locations.Encounter;
+import com.eldritch.invoken.proto.Locations.Encounter.StaticParams;
+import com.eldritch.invoken.proto.Outcomes.Outcome;
 
 public class StaticEncounter extends AbstractEncounter {
     private final StaticParams params;

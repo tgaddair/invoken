@@ -3,7 +3,7 @@ package com.eldritch.scifirpg.game.util;
 import java.io.IOException;
 import java.io.InputStream;
 
-import com.eldritch.scifirpg.proto.Actors.NonPlayerActor;
+import com.eldritch.invoken.proto.Actors.NonPlayerActor;
 
 public class ActorMarshaller extends AssetMarshaller<NonPlayerActor> {
     @Override

@@ -7,7 +7,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import com.eldritch.scifirpg.editor.panel.MissionEditorPanel;
-import com.eldritch.scifirpg.proto.Missions.Mission;
+import com.eldritch.invoken.proto.Missions.Mission;
 import com.google.common.base.Optional;
 
 public class MissionTable extends MajorAssetTable<Mission> {

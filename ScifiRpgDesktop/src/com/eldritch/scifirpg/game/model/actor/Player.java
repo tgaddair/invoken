@@ -9,15 +9,15 @@ import java.util.Set;
 import org.apache.commons.lang3.text.WordUtils;
 
 import com.eldritch.scifirpg.game.util.ProfessionUtil;
-import com.eldritch.scifirpg.proto.Actors.ActorParams;
-import com.eldritch.scifirpg.proto.Actors.ActorParams.Gender;
-import com.eldritch.scifirpg.proto.Actors.ActorParams.Species;
-import com.eldritch.scifirpg.proto.Actors.PlayerActor;
-import com.eldritch.scifirpg.proto.Actors.PlayerActor.StagedAugmentation;
-import com.eldritch.scifirpg.proto.Actors.PlayerActor.StateMarker;
-import com.eldritch.scifirpg.proto.Disciplines.Discipline;
-import com.eldritch.scifirpg.proto.Disciplines.Profession;
-import com.eldritch.scifirpg.proto.Missions.Mission;
+import com.eldritch.invoken.proto.Actors.ActorParams;
+import com.eldritch.invoken.proto.Actors.ActorParams.Gender;
+import com.eldritch.invoken.proto.Actors.ActorParams.Species;
+import com.eldritch.invoken.proto.Actors.PlayerActor;
+import com.eldritch.invoken.proto.Actors.PlayerActor.StagedAugmentation;
+import com.eldritch.invoken.proto.Actors.PlayerActor.StateMarker;
+import com.eldritch.invoken.proto.Disciplines.Discipline;
+import com.eldritch.invoken.proto.Disciplines.Profession;
+import com.eldritch.invoken.proto.Missions.Mission;
 
 public class Player extends Actor {
 	// Player specific parameters

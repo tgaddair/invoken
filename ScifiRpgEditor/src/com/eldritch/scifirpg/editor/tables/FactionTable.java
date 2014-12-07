@@ -7,7 +7,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import com.eldritch.scifirpg.editor.panel.FactionEditorPanel;
-import com.eldritch.scifirpg.proto.Factions.Faction;
+import com.eldritch.invoken.proto.Factions.Faction;
 import com.google.common.base.Optional;
 
 public class FactionTable extends MajorAssetTable<Faction> {

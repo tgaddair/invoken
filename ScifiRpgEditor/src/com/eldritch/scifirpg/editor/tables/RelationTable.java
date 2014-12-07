@@ -5,7 +5,7 @@ import javax.swing.JPanel;
 
 import com.eldritch.scifirpg.editor.panel.FactionEditorPanel;
 import com.eldritch.scifirpg.editor.panel.RelationEditorPanel;
-import com.eldritch.scifirpg.proto.Factions.Faction.Relation;
+import com.eldritch.invoken.proto.Factions.Faction.Relation;
 import com.google.common.base.Optional;
 
 public class RelationTable extends AssetTable<Relation> {

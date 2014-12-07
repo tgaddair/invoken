@@ -11,8 +11,8 @@ import javax.swing.JFrame;
 import javax.swing.JTextField;
 
 import com.eldritch.scifirpg.editor.tables.SkillTable;
-import com.eldritch.scifirpg.proto.Actors.ActorParams.Skill;
-import com.eldritch.scifirpg.proto.Disciplines.Discipline;
+import com.eldritch.invoken.proto.Actors.ActorParams.Skill;
+import com.eldritch.invoken.proto.Disciplines.Discipline;
 import com.google.common.base.Optional;
 import com.jgoodies.forms.builder.DefaultFormBuilder;
 import com.jgoodies.forms.layout.FormLayout;

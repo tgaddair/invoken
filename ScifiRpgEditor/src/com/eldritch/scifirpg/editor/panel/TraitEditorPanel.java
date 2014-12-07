@@ -11,8 +11,8 @@ import javax.swing.JComboBox;
 import javax.swing.JFrame;
 
 import com.eldritch.scifirpg.editor.tables.TraitTable;
-import com.eldritch.scifirpg.proto.Actors.NonPlayerActor.Trait;
-import com.eldritch.scifirpg.proto.Disciplines.Influence;
+import com.eldritch.invoken.proto.Actors.NonPlayerActor.Trait;
+import com.eldritch.invoken.proto.Disciplines.Influence;
 import com.google.common.base.Optional;
 import com.jgoodies.forms.builder.DefaultFormBuilder;
 import com.jgoodies.forms.layout.FormLayout;

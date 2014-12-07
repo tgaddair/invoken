@@ -5,8 +5,8 @@ import java.util.List;
 
 import com.eldritch.scifirpg.game.model.EncounterModel;
 import com.eldritch.scifirpg.game.model.actor.Player;
-import com.eldritch.scifirpg.proto.Disciplines.Discipline;
-import com.eldritch.scifirpg.proto.Outcomes.Outcome;
+import com.eldritch.invoken.proto.Disciplines.Discipline;
+import com.eldritch.invoken.proto.Outcomes.Outcome;
 
 public class OutcomeApplier {
     public List<Outcome> apply(List<Outcome> outcomes, Player player, EncounterModel<?, ?> model) {

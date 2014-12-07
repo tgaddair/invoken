@@ -4,7 +4,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import com.eldritch.scifirpg.editor.panel.FactionStatusEditorPanel;
-import com.eldritch.scifirpg.proto.Actors.ActorParams.FactionStatus;
+import com.eldritch.invoken.proto.Actors.ActorParams.FactionStatus;
 import com.google.common.base.Optional;
 
 public class FactionStatusTable extends AssetTable<FactionStatus> {

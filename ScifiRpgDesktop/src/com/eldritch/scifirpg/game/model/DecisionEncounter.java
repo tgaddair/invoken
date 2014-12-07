@@ -1,8 +1,8 @@
 package com.eldritch.scifirpg.game.model;
 
-import com.eldritch.scifirpg.proto.Actors.DialogueTree;
-import com.eldritch.scifirpg.proto.Locations.Encounter;
-import com.eldritch.scifirpg.proto.Locations.Encounter.DecisionParams;
+import com.eldritch.invoken.proto.Actors.DialogueTree;
+import com.eldritch.invoken.proto.Locations.Encounter;
+import com.eldritch.invoken.proto.Locations.Encounter.DecisionParams;
 
 public class DecisionEncounter extends AbstractEncounter {
     private final DecisionParams params;

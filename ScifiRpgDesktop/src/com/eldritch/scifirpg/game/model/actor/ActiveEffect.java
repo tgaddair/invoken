@@ -2,8 +2,8 @@ package com.eldritch.scifirpg.game.model.actor;
 
 import com.eldritch.scifirpg.game.util.Result;
 import com.eldritch.scifirpg.game.util.Result.HealthModResult;
-import com.eldritch.scifirpg.proto.Effects.Effect;
-import com.eldritch.scifirpg.proto.Effects.Effect.Type;
+import com.eldritch.invoken.proto.Effects.Effect;
+import com.eldritch.invoken.proto.Effects.Effect.Type;
 
 public abstract class ActiveEffect {
     protected final Effect effect;

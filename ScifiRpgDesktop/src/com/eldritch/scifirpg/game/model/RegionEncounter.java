@@ -2,9 +2,9 @@ package com.eldritch.scifirpg.game.model;
 
 import java.util.List;
 
-import com.eldritch.scifirpg.proto.Locations.Encounter;
-import com.eldritch.scifirpg.proto.Locations.Encounter.RegionParams;
-import com.eldritch.scifirpg.proto.Locations.Encounter.RegionParams.Cell;
+import com.eldritch.invoken.proto.Locations.Encounter;
+import com.eldritch.invoken.proto.Locations.Encounter.RegionParams;
+import com.eldritch.invoken.proto.Locations.Encounter.RegionParams.Cell;
 
 public class RegionEncounter extends AbstractEncounter {
     private final RegionParams params;

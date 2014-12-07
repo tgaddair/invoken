@@ -14,7 +14,7 @@ import com.eldritch.scifirpg.game.model.LocationModel.LocationListener;
 import com.eldritch.scifirpg.game.model.actor.ActorEncounter;
 import com.eldritch.scifirpg.game.model.RegionEncounter;
 import com.eldritch.scifirpg.game.model.StaticEncounter;
-import com.eldritch.scifirpg.proto.Locations.Location;
+import com.eldritch.invoken.proto.Locations.Location;
 
 public class LocationPanel extends JPanel implements LocationListener {
     private static final long serialVersionUID = 1L;

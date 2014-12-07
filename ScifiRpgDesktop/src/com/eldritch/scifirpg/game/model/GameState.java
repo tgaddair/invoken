@@ -10,12 +10,12 @@ import java.util.Set;
 import com.eldritch.scifirpg.game.model.actor.ActorModel;
 import com.eldritch.scifirpg.game.model.actor.Player;
 import com.eldritch.scifirpg.game.util.ProfessionUtil;
-import com.eldritch.scifirpg.proto.Actors.ActorParams;
-import com.eldritch.scifirpg.proto.Actors.PlayerActor;
-import com.eldritch.scifirpg.proto.Actors.ActorParams.Gender;
-import com.eldritch.scifirpg.proto.Actors.ActorParams.Species;
-import com.eldritch.scifirpg.proto.Actors.PlayerActor.StagedAugmentation;
-import com.eldritch.scifirpg.proto.Disciplines.Profession;
+import com.eldritch.invoken.proto.Actors.ActorParams;
+import com.eldritch.invoken.proto.Actors.PlayerActor;
+import com.eldritch.invoken.proto.Actors.ActorParams.Gender;
+import com.eldritch.invoken.proto.Actors.ActorParams.Species;
+import com.eldritch.invoken.proto.Actors.PlayerActor.StagedAugmentation;
+import com.eldritch.invoken.proto.Disciplines.Profession;
 
 public class GameState {
 	private final LocationModel locationModel;

@@ -16,8 +16,10 @@ import com.eldritch.invoken.screens.AbstractScreen;
 public class LightManager {
     // values passed to the shader
 //    public static final float ambientIntensity = 0.8f;
-    public static final float ambientIntensity = 1.25f;
-    public static final Vector3 ambientColor = new Vector3(0.7f, 0.7f, 0.9f);
+    public static final float ambientIntensity = 1.f;
+    public static final Vector3 ambientColor = getColor(103, 146, 103);  // imperial green
+//    public static final Vector3 ambientColor = getColor(46, 139, 87);  // sea green
+//    public static final Vector3 ambientColor = new Vector3(0.7f, 0.7f, 0.9f);
 //    public static final Vector3 ambientColor = new Vector3(0.5f, 0.5f, 0.5f);
     public static final Vector3 pauseColor = new Vector3(0.3f, 0.6f, 0.9f);
 
@@ -107,5 +109,9 @@ public class LightManager {
             // you can basically bind anything, it doesn't matter
             light.bind(0);
         }
+    }
+    
+    private static Vector3 getColor(int r, int g, int b) {
+    	return new Vector3(r / 255.0f, g / 255.0f, b / 255.0f);
     }
 }

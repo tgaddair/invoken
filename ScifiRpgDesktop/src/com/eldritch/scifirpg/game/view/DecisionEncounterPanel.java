@@ -19,8 +19,8 @@ import javax.swing.border.LineBorder;
 import com.eldritch.scifirpg.game.Application;
 import com.eldritch.scifirpg.game.model.DecisionEncounterModel;
 import com.eldritch.scifirpg.game.util.LineBreaker;
-import com.eldritch.scifirpg.proto.Actors.DialogueTree.Choice;
-import com.eldritch.scifirpg.proto.Actors.DialogueTree.Response;
+import com.eldritch.invoken.proto.Actors.DialogueTree.Choice;
+import com.eldritch.invoken.proto.Actors.DialogueTree.Response;
 import com.jgoodies.forms.builder.DefaultFormBuilder;
 import com.jgoodies.forms.layout.FormLayout;
 

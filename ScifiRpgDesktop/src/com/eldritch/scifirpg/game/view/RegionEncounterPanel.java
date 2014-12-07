@@ -13,7 +13,7 @@ import javax.swing.SwingConstants;
 
 import com.eldritch.scifirpg.game.model.LocationModel;
 import com.eldritch.scifirpg.game.model.RegionEncounter;
-import com.eldritch.scifirpg.proto.Locations.Encounter.RegionParams.Cell;
+import com.eldritch.invoken.proto.Locations.Encounter.RegionParams.Cell;
 
 public class RegionEncounterPanel extends JPanel {
     private static final long serialVersionUID = 1L;

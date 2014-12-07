@@ -7,8 +7,8 @@ import java.util.List;
 import java.util.Map;
 
 import com.eldritch.scifirpg.game.util.LocationMarshaller;
-import com.eldritch.scifirpg.proto.Locations.Encounter;
-import com.eldritch.scifirpg.proto.Locations.Location;
+import com.eldritch.invoken.proto.Locations.Encounter;
+import com.eldritch.invoken.proto.Locations.Location;
 
 public class LocationModel {
     private final GameState state;

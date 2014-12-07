@@ -4,10 +4,10 @@ import java.util.List;
 
 import com.eldritch.scifirpg.game.model.AbstractEncounter;
 import com.eldritch.scifirpg.game.model.GameState;
-import com.eldritch.scifirpg.proto.Locations.Encounter;
-import com.eldritch.scifirpg.proto.Locations.Encounter.ActorParams;
-import com.eldritch.scifirpg.proto.Locations.Encounter.ActorParams.ActorScenario;
-import com.eldritch.scifirpg.proto.Outcomes.Outcome;
+import com.eldritch.invoken.proto.Locations.Encounter;
+import com.eldritch.invoken.proto.Locations.Encounter.ActorParams;
+import com.eldritch.invoken.proto.Locations.Encounter.ActorParams.ActorScenario;
+import com.eldritch.invoken.proto.Outcomes.Outcome;
 
 public class ActorEncounter extends AbstractEncounter {
     private final ActorParams params;

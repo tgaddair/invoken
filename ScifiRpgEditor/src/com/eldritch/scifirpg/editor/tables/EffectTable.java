@@ -4,7 +4,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import com.eldritch.scifirpg.editor.panel.EffectEditorPanel;
-import com.eldritch.scifirpg.proto.Effects.Effect;
+import com.eldritch.invoken.proto.Effects.Effect;
 import com.google.common.base.Optional;
 
 public class EffectTable extends AssetTable<Effect> {

@@ -4,7 +4,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import com.eldritch.scifirpg.editor.panel.PrerequisiteEditorPanel;
-import com.eldritch.scifirpg.proto.Prerequisites.Prerequisite;
+import com.eldritch.invoken.proto.Prerequisites.Prerequisite;
 import com.google.common.base.Optional;
 
 public class PrerequisiteTable extends AssetTable<Prerequisite> {

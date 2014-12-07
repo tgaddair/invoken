@@ -9,7 +9,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import com.eldritch.scifirpg.editor.panel.RankEditorPanel;
-import com.eldritch.scifirpg.proto.Factions.Faction.Rank;
+import com.eldritch.invoken.proto.Factions.Faction.Rank;
 import com.google.common.base.Optional;
 
 public class RankTable extends AssetTable<Rank> {

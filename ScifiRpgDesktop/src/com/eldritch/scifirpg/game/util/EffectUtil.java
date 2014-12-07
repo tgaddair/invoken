@@ -5,7 +5,7 @@ import com.eldritch.scifirpg.game.model.actor.ActiveEffect;
 import com.eldritch.scifirpg.game.model.actor.ActiveEffect.RangedDamageEffect;
 import com.eldritch.scifirpg.game.model.actor.ActiveEffect.RegenerateEffect;
 import com.eldritch.scifirpg.game.model.actor.ActorState;
-import com.eldritch.scifirpg.proto.Effects.Effect;
+import com.eldritch.invoken.proto.Effects.Effect;
 
 public class EffectUtil {
     public static boolean isTargetFor(Action action, ActorState target) {

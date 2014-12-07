@@ -4,8 +4,8 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import com.eldritch.scifirpg.editor.panel.SkillEditorPanel;
-import com.eldritch.scifirpg.proto.Actors.ActorParams.Skill;
-import com.eldritch.scifirpg.proto.Disciplines.Discipline;
+import com.eldritch.invoken.proto.Actors.ActorParams.Skill;
+import com.eldritch.invoken.proto.Disciplines.Discipline;
 import com.google.common.base.Optional;
 
 public class SkillTable extends AssetTable<Skill> {

@@ -10,10 +10,20 @@ import "com/eldritch/invoken/proto/outcomes.proto";
 message Location {
 	required string id = 1; // unique key
 	required string name = 2;
-	optional string parent_id = 4;
 	repeated Encounter encounter = 3;
 	optional string faction_id = 5; // Access restricted to this faction
 	optional int32 min_rank = 6; // Min rank allowed in area
+	optional Light light = 7;
+
+	// DEPRECATED
+	optional int32 parend_id_DEPRECATED = 4;
+}
+
+message Light {
+	optional int32 r = 1;
+	optional int32 g = 2;
+	optional int32 b = 3;
+	optional float intensity = 4;
 }
 
 message Encounter {

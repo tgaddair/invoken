@@ -9,7 +9,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import com.eldritch.scifirpg.editor.panel.ResponseEditorPanel;
-import com.eldritch.scifirpg.proto.Actors.DialogueTree.Response;
+import com.eldritch.invoken.proto.Actors.DialogueTree.Response;
 import com.google.common.base.Optional;
 
 public class DialogueTable extends IdentifiedAssetTable<Response> {

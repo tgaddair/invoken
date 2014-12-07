@@ -4,8 +4,8 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import com.eldritch.scifirpg.editor.panel.TraitEditorPanel;
-import com.eldritch.scifirpg.proto.Actors.NonPlayerActor.Trait;
-import com.eldritch.scifirpg.proto.Disciplines.Influence;
+import com.eldritch.invoken.proto.Actors.NonPlayerActor.Trait;
+import com.eldritch.invoken.proto.Disciplines.Influence;
 import com.google.common.base.Optional;
 
 public class TraitTable extends AssetTable<Trait> {

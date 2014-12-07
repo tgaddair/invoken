@@ -16,8 +16,8 @@ import javax.swing.JPanel;
 import com.eldritch.scifirpg.game.Application;
 import com.eldritch.scifirpg.game.model.GameState;
 import com.eldritch.scifirpg.game.util.ProfessionUtil;
-import com.eldritch.scifirpg.proto.Disciplines.Discipline;
-import com.eldritch.scifirpg.proto.Disciplines.Profession;
+import com.eldritch.invoken.proto.Disciplines.Discipline;
+import com.eldritch.invoken.proto.Disciplines.Profession;
 import com.jgoodies.forms.builder.DefaultFormBuilder;
 import com.jgoodies.forms.layout.FormLayout;
 

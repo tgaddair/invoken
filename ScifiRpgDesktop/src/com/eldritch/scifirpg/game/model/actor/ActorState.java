@@ -11,8 +11,8 @@ import java.util.Map;
 import java.util.Set;
 
 import com.eldritch.scifirpg.game.util.Result;
-import com.eldritch.scifirpg.proto.Effects.DamageType;
-import com.eldritch.scifirpg.proto.Effects.Effect;
+import com.eldritch.invoken.proto.Effects.DamageType;
+import com.eldritch.invoken.proto.Effects.Effect;
 
 public class ActorState implements Comparable<ActorState> {
     private final Actor actor;

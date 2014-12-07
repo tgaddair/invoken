@@ -4,9 +4,9 @@ import java.util.List;
 
 import com.eldritch.scifirpg.game.model.actor.ActorEncounter;
 import com.eldritch.scifirpg.game.util.PrerequisiteVerifier;
-import com.eldritch.scifirpg.proto.Locations.Encounter;
-import com.eldritch.scifirpg.proto.Locations.Encounter.Type;
-import com.eldritch.scifirpg.proto.Prerequisites.Prerequisite;
+import com.eldritch.invoken.proto.Locations.Encounter;
+import com.eldritch.invoken.proto.Locations.Encounter.Type;
+import com.eldritch.invoken.proto.Prerequisites.Prerequisite;
 
 public abstract class AbstractEncounter implements Comparable<AbstractEncounter> {
     private static final PrerequisiteVerifier VERIFIER = new PrerequisiteVerifier();

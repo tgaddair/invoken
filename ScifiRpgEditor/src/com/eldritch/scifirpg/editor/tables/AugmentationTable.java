@@ -7,8 +7,8 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import com.eldritch.scifirpg.editor.panel.AugmentationEditorPanel;
-import com.eldritch.scifirpg.proto.Augmentations.Augmentation;
-import com.eldritch.scifirpg.proto.Augmentations.Augmentation.Requirement;
+import com.eldritch.invoken.proto.Augmentations.Augmentation;
+import com.eldritch.invoken.proto.Augmentations.Augmentation.Requirement;
 import com.google.common.base.Optional;
 
 public class AugmentationTable extends MajorAssetTable<Augmentation> {

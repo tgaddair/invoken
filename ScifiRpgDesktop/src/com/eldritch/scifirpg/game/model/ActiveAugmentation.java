@@ -10,11 +10,11 @@ import com.eldritch.scifirpg.game.model.actor.Actor;
 import com.eldritch.scifirpg.game.model.actor.ActorState;
 import com.eldritch.scifirpg.game.util.EffectUtil;
 import com.eldritch.scifirpg.game.util.Result;
-import com.eldritch.scifirpg.proto.Actors.PlayerActor.StagedAugmentation;
-import com.eldritch.scifirpg.proto.Augmentations.Augmentation;
-import com.eldritch.scifirpg.proto.Augmentations.Augmentation.Type;
-import com.eldritch.scifirpg.proto.Effects.Effect;
-import com.eldritch.scifirpg.proto.Effects.Effect.Range;
+import com.eldritch.invoken.proto.Actors.PlayerActor.StagedAugmentation;
+import com.eldritch.invoken.proto.Augmentations.Augmentation;
+import com.eldritch.invoken.proto.Augmentations.Augmentation.Type;
+import com.eldritch.invoken.proto.Effects.Effect;
+import com.eldritch.invoken.proto.Effects.Effect.Range;
 
 public class ActiveAugmentation {
     private final Augmentation aug;

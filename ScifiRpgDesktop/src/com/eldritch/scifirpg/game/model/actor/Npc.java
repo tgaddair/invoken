@@ -7,20 +7,20 @@ import java.util.Set;
 
 import com.eldritch.scifirpg.game.model.ActiveAugmentation;
 import com.eldritch.scifirpg.game.util.PrerequisiteVerifier;
-import com.eldritch.scifirpg.proto.Actors.DialogueTree;
-import com.eldritch.scifirpg.proto.Actors.DialogueTree.Choice;
-import com.eldritch.scifirpg.proto.Actors.NonPlayerActor;
-import com.eldritch.scifirpg.proto.Actors.DialogueTree.Response;
-import com.eldritch.scifirpg.proto.Actors.NonPlayerActor.Aggression;
-import com.eldritch.scifirpg.proto.Actors.NonPlayerActor.Assistance;
-import com.eldritch.scifirpg.proto.Actors.NonPlayerActor.Confidence;
-import com.eldritch.scifirpg.proto.Actors.NonPlayerActor.Trait;
-import com.eldritch.scifirpg.proto.Augmentations.Augmentation;
-import com.eldritch.scifirpg.proto.Augmentations.Augmentation.Type;
-import com.eldritch.scifirpg.proto.Locations.Encounter.ActorParams.ActorScenario;
-import com.eldritch.scifirpg.proto.Outcomes.Outcome;
-import com.eldritch.scifirpg.proto.Prerequisites.Prerequisite;
-import com.eldritch.scifirpg.proto.Prerequisites.Standing;
+import com.eldritch.invoken.proto.Actors.DialogueTree;
+import com.eldritch.invoken.proto.Actors.DialogueTree.Choice;
+import com.eldritch.invoken.proto.Actors.NonPlayerActor;
+import com.eldritch.invoken.proto.Actors.DialogueTree.Response;
+import com.eldritch.invoken.proto.Actors.NonPlayerActor.Aggression;
+import com.eldritch.invoken.proto.Actors.NonPlayerActor.Assistance;
+import com.eldritch.invoken.proto.Actors.NonPlayerActor.Confidence;
+import com.eldritch.invoken.proto.Actors.NonPlayerActor.Trait;
+import com.eldritch.invoken.proto.Augmentations.Augmentation;
+import com.eldritch.invoken.proto.Augmentations.Augmentation.Type;
+import com.eldritch.invoken.proto.Locations.Encounter.ActorParams.ActorScenario;
+import com.eldritch.invoken.proto.Outcomes.Outcome;
+import com.eldritch.invoken.proto.Prerequisites.Prerequisite;
+import com.eldritch.invoken.proto.Prerequisites.Standing;
 
 public class Npc extends Actor {
     private final DialogueVerifier dialogueVerifier = new DialogueVerifier();

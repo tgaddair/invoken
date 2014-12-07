@@ -16,11 +16,11 @@ import javax.swing.JTextField;
 
 import com.eldritch.scifirpg.editor.MainPanel;
 import com.eldritch.scifirpg.editor.tables.EffectTable;
-import com.eldritch.scifirpg.proto.Disciplines.Influence;
-import com.eldritch.scifirpg.proto.Effects.DamageType;
-import com.eldritch.scifirpg.proto.Effects.Effect;
-import com.eldritch.scifirpg.proto.Effects.Effect.Range;
-import com.eldritch.scifirpg.proto.Effects.Effect.Type;
+import com.eldritch.invoken.proto.Disciplines.Influence;
+import com.eldritch.invoken.proto.Effects.DamageType;
+import com.eldritch.invoken.proto.Effects.Effect;
+import com.eldritch.invoken.proto.Effects.Effect.Range;
+import com.eldritch.invoken.proto.Effects.Effect.Type;
 import com.google.common.base.Optional;
 import com.jgoodies.forms.builder.DefaultFormBuilder;
 import com.jgoodies.forms.layout.FormLayout;

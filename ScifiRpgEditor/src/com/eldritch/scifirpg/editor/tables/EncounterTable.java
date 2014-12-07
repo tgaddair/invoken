@@ -4,7 +4,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import com.eldritch.scifirpg.editor.panel.EncounterEditorPanel;
-import com.eldritch.scifirpg.proto.Locations.Encounter;
+import com.eldritch.invoken.proto.Locations.Encounter;
 import com.google.common.base.Optional;
 
 public class EncounterTable extends IdentifiedAssetTable<Encounter> {

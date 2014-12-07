@@ -7,9 +7,9 @@ import java.util.Set;
 
 import com.eldritch.scifirpg.game.model.actor.ActorModel;
 import com.eldritch.scifirpg.game.util.PrerequisiteVerifier;
-import com.eldritch.scifirpg.proto.Actors.DialogueTree;
-import com.eldritch.scifirpg.proto.Actors.DialogueTree.Choice;
-import com.eldritch.scifirpg.proto.Actors.DialogueTree.Response;
+import com.eldritch.invoken.proto.Actors.DialogueTree;
+import com.eldritch.invoken.proto.Actors.DialogueTree.Choice;
+import com.eldritch.invoken.proto.Actors.DialogueTree.Response;
 
 public class DecisionEncounterModel extends EncounterModel<DecisionEncounter, EncounterListener> {
     private final DecisionVerifier verifier;

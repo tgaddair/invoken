@@ -9,9 +9,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-import com.eldritch.scifirpg.proto.Actors.ActorParams.Skill;
-import com.eldritch.scifirpg.proto.Disciplines.Discipline;
-import com.eldritch.scifirpg.proto.Disciplines.Profession;
+import com.eldritch.invoken.proto.Actors.ActorParams.Skill;
+import com.eldritch.invoken.proto.Disciplines.Discipline;
+import com.eldritch.invoken.proto.Disciplines.Profession;
 import com.google.common.collect.ImmutableList;
 
 public class ProfessionUtil {

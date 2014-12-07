@@ -6,7 +6,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import com.eldritch.scifirpg.editor.panel.OutcomeEditorPanel;
-import com.eldritch.scifirpg.proto.Outcomes.Outcome;
+import com.eldritch.invoken.proto.Outcomes.Outcome;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 

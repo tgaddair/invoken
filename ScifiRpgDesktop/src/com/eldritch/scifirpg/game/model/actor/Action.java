@@ -5,8 +5,8 @@ import java.util.List;
 
 import com.eldritch.scifirpg.game.model.ActiveAugmentation;
 import com.eldritch.scifirpg.game.util.Result;
-import com.eldritch.scifirpg.proto.Augmentations.Augmentation;
-import com.eldritch.scifirpg.proto.Effects.Effect;
+import com.eldritch.invoken.proto.Augmentations.Augmentation;
+import com.eldritch.invoken.proto.Effects.Effect;
 import com.google.common.base.Optional;
 
 public class Action {

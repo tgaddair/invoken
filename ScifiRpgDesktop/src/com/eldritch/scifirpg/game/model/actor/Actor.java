@@ -10,17 +10,17 @@ import java.util.Set;
 import com.eldritch.scifirpg.game.model.ActiveAugmentation;
 import com.eldritch.scifirpg.game.util.AugmentationMarshaller;
 import com.eldritch.scifirpg.game.util.ItemMarshaller;
-import com.eldritch.scifirpg.proto.Actors.ActorParams;
-import com.eldritch.scifirpg.proto.Actors.ActorParams.FactionStatus;
-import com.eldritch.scifirpg.proto.Actors.ActorParams.Gender;
-import com.eldritch.scifirpg.proto.Actors.ActorParams.InventoryItem;
-import com.eldritch.scifirpg.proto.Actors.ActorParams.Skill;
-import com.eldritch.scifirpg.proto.Actors.ActorParams.Species;
-import com.eldritch.scifirpg.proto.Actors.PlayerActor.StagedAugmentation;
-import com.eldritch.scifirpg.proto.Augmentations.Augmentation;
-import com.eldritch.scifirpg.proto.Disciplines.Discipline;
-import com.eldritch.scifirpg.proto.Disciplines.Profession;
-import com.eldritch.scifirpg.proto.Items.Item;
+import com.eldritch.invoken.proto.Actors.ActorParams;
+import com.eldritch.invoken.proto.Actors.ActorParams.FactionStatus;
+import com.eldritch.invoken.proto.Actors.ActorParams.Gender;
+import com.eldritch.invoken.proto.Actors.ActorParams.InventoryItem;
+import com.eldritch.invoken.proto.Actors.ActorParams.Skill;
+import com.eldritch.invoken.proto.Actors.ActorParams.Species;
+import com.eldritch.invoken.proto.Actors.PlayerActor.StagedAugmentation;
+import com.eldritch.invoken.proto.Augmentations.Augmentation;
+import com.eldritch.invoken.proto.Disciplines.Discipline;
+import com.eldritch.invoken.proto.Disciplines.Profession;
+import com.eldritch.invoken.proto.Items.Item;
 
 public abstract class Actor {
     protected final static AugmentationMarshaller AUG_READER = new AugmentationMarshaller();

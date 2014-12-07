@@ -17,8 +17,8 @@ import javax.swing.JTextField;
 import com.eldritch.scifirpg.editor.AssetTablePanel;
 import com.eldritch.scifirpg.editor.MainPanel;
 import com.eldritch.scifirpg.editor.panel.AssetEditorPanel;
-import com.eldritch.scifirpg.proto.Locations.Encounter;
-import com.eldritch.scifirpg.proto.Locations.Location;
+import com.eldritch.invoken.proto.Locations.Encounter;
+import com.eldritch.invoken.proto.Locations.Location;
 import com.google.common.base.Optional;
 import com.jgoodies.forms.builder.DefaultFormBuilder;
 import com.jgoodies.forms.layout.FormLayout;
@@ -50,8 +50,7 @@ public class LocationTable extends MajorAssetTable<Location> {
 		for (Encounter e : asset.getEncounterList()) {
 			encounters += e.getId() + " ";
 		}
-		Object parentId = asset.hasParentId() ? asset.getParentId() : "";
-		return new Object[]{asset.getId(), asset.getName(), parentId, faction, encounters};
+		return new Object[]{asset.getId(), asset.getName(), faction, encounters};
 	}
 
 	@Override
@@ -129,9 +128,6 @@ public class LocationTable extends MajorAssetTable<Location> {
 				Location loc = prev.get();
 				idField.setText(loc.getId());
 				nameField.setText(loc.getName());
-				if (loc.hasParentId()) {
-					parentBox.setSelectedItem(loc.getParentId());
-				}
 				if (loc.hasFactionId()) {
 					factionBox.setSelectedItem(loc.getFactionId());
 				}
@@ -153,10 +149,6 @@ public class LocationTable extends MajorAssetTable<Location> {
 					.setId(idField.getText())
 					.setName(nameField.getText())
 					.addAllEncounter(encounterTable.getAssets());
-			String parentId = (String) parentBox.getSelectedItem();
-			if (!parentId.isEmpty()) {
-				location.setParentId(parentId);
-			}
 			String factionId = (String) factionBox.getSelectedItem();
 			if (!factionId.isEmpty()) {
 				location.setFactionId(factionId);

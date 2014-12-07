@@ -6,11 +6,11 @@ import com.eldritch.scifirpg.game.model.ActiveAugmentation;
 import com.eldritch.scifirpg.game.model.actor.Actor;
 import com.eldritch.scifirpg.game.model.actor.ActorModel;
 import com.eldritch.scifirpg.game.model.actor.Player;
-import com.eldritch.scifirpg.proto.Disciplines.Discipline;
-import com.eldritch.scifirpg.proto.Disciplines.Influence;
-import com.eldritch.scifirpg.proto.Effects.Effect;
-import com.eldritch.scifirpg.proto.Effects.Effect.Range;
-import com.eldritch.scifirpg.proto.Prerequisites.Prerequisite;
+import com.eldritch.invoken.proto.Disciplines.Discipline;
+import com.eldritch.invoken.proto.Disciplines.Influence;
+import com.eldritch.invoken.proto.Effects.Effect;
+import com.eldritch.invoken.proto.Effects.Effect.Range;
+import com.eldritch.invoken.proto.Prerequisites.Prerequisite;
 
 public class PrerequisiteVerifier {
     public boolean verify(List<Prerequisite> prereqs, ActorModel model) {

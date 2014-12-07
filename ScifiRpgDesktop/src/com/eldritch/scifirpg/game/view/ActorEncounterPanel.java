@@ -51,9 +51,9 @@ import com.eldritch.scifirpg.game.util.LineBreaker;
 import com.eldritch.scifirpg.game.util.Result;
 import com.eldritch.scifirpg.game.util.Result.HealthModResult;
 import com.eldritch.scifirpg.game.util.Result.ResultCallback;
-import com.eldritch.scifirpg.proto.Actors.DialogueTree.Choice;
-import com.eldritch.scifirpg.proto.Actors.DialogueTree.Response;
-import com.eldritch.scifirpg.proto.Outcomes.Outcome;
+import com.eldritch.invoken.proto.Actors.DialogueTree.Choice;
+import com.eldritch.invoken.proto.Actors.DialogueTree.Response;
+import com.eldritch.invoken.proto.Outcomes.Outcome;
 import com.jgoodies.forms.builder.DefaultFormBuilder;
 import com.jgoodies.forms.layout.FormLayout;
 

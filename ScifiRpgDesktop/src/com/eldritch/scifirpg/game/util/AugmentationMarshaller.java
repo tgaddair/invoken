@@ -3,7 +3,7 @@ package com.eldritch.scifirpg.game.util;
 import java.io.IOException;
 import java.io.InputStream;
 
-import com.eldritch.scifirpg.proto.Augmentations.Augmentation;
+import com.eldritch.invoken.proto.Augmentations.Augmentation;
 
 public class AugmentationMarshaller extends AssetMarshaller<Augmentation> {
     @Override

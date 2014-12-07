@@ -6,7 +6,7 @@ import javax.swing.JFrame;
 import javax.swing.JTextField;
 
 import com.eldritch.scifirpg.editor.tables.RankTable;
-import com.eldritch.scifirpg.proto.Factions.Faction.Rank;
+import com.eldritch.invoken.proto.Factions.Faction.Rank;
 import com.google.common.base.Optional;
 import com.jgoodies.forms.builder.DefaultFormBuilder;
 import com.jgoodies.forms.layout.FormLayout;

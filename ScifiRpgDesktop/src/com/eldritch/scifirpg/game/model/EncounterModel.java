@@ -5,8 +5,8 @@ import java.util.List;
 
 import com.eldritch.scifirpg.game.model.actor.Player;
 import com.eldritch.scifirpg.game.util.OutcomeApplier;
-import com.eldritch.scifirpg.proto.Locations.Encounter.Type;
-import com.eldritch.scifirpg.proto.Outcomes.Outcome;
+import com.eldritch.invoken.proto.Locations.Encounter.Type;
+import com.eldritch.invoken.proto.Outcomes.Outcome;
 
 public class EncounterModel<T extends AbstractEncounter, S extends EncounterListener> {
     private final T encounter;
