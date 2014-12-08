@@ -63,7 +63,7 @@ public class Location {
     private final List<TemporaryEntity> tempEntities = new ArrayList<TemporaryEntity>();
     private final List<Activator> activators = new ArrayList<Activator>();
     private final Set<NaturalVector2> activeTiles = new HashSet<NaturalVector2>();
-    private final LightManager lightManager = new LightManager();
+    private final LightManager lightManager;
     
     private final Optional<Faction> owningFaction;
 
@@ -84,6 +84,7 @@ public class Location {
         this.player = player;
         this.map = map;
         owningFaction = Optional.fromNullable(Faction.of(data.getFactionId()));
+        lightManager = new LightManager(data);
 
         // find layers we care about
         List<Integer> overlayList = new ArrayList<Integer>();

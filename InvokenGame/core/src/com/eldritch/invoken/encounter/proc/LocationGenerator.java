@@ -40,6 +40,7 @@ import com.eldritch.invoken.encounter.layer.LocationLayer.CollisionLayer;
 import com.eldritch.invoken.encounter.layer.LocationMap;
 import com.eldritch.invoken.encounter.proc.BspGenerator.CellType;
 import com.eldritch.invoken.gfx.Light;
+import com.eldritch.invoken.proto.Locations.Biome;
 import com.eldritch.invoken.proto.Locations.Encounter;
 import com.eldritch.invoken.proto.Locations.Encounter.ActorParams.ActorScenario;
 
@@ -80,8 +81,8 @@ public class LocationGenerator {
     private final TiledMapTile narrowTop;
     private final TiledMapTile collider;
     
-    public LocationGenerator(String biome) {
-    	this.biome = biome;
+    public LocationGenerator(Biome biomeType) {
+    	this.biome = biomeType.name().toLowerCase();
         atlas = new TextureAtlas(Gdx.files.internal("image-atlases/pages.atlas"));
 
         AtlasRegion region = atlas.findRegion(biome + FLOOR);

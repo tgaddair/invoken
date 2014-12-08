@@ -11,22 +11,20 @@ import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector3;
+import com.eldritch.invoken.proto.Locations.Location;
 import com.eldritch.invoken.screens.AbstractScreen;
 
 public class LightManager {
     // values passed to the shader
-//    public static final float ambientIntensity = 0.8f;
-    public static final float ambientIntensity = 1.f;
-    public static final Vector3 ambientColor = getColor(103, 146, 103);  // imperial green
-//    public static final Vector3 ambientColor = getColor(46, 139, 87);  // sea green
-//    public static final Vector3 ambientColor = new Vector3(0.7f, 0.7f, 0.9f);
-//    public static final Vector3 ambientColor = new Vector3(0.5f, 0.5f, 0.5f);
     public static final Vector3 pauseColor = new Vector3(0.3f, 0.6f, 0.9f);
 
     // used to make the light flicker
     public static final float zSpeed = 15.0f;
     public static final float PI2 = (float) (Math.PI * 2.0);
     public float zAngle;
+    
+    public final float ambientIntensity;
+    public final Vector3 ambientColor;
 
     private ShaderProgram defaultShader;
     private ShaderProgram finalShader;
@@ -43,7 +41,13 @@ public class LightManager {
     private int width;
     private int height;
 
-    public LightManager() {
+    public LightManager(Location location) {
+    	ambientIntensity = location.getLight().getIntensity();
+    	ambientColor = getColor(
+    			location.getLight().getR(),
+    			location.getLight().getG(),
+    			location.getLight().getB());
+    	
         ShaderProgram.pedantic = false;
         defaultShader = new ShaderProgram(vertexShader, defaultPixelShader);
         finalShader = createShader(finalPixelShader, ambientColor, ambientIntensity);

@@ -8,15 +8,45 @@ import "com/eldritch/invoken/proto/prerequisites.proto";
 import "com/eldritch/invoken/proto/outcomes.proto";
 
 message Location {
-	required string id = 1; // unique key
+	required string id = 1;  // unique key
 	required string name = 2;
 	repeated Encounter encounter = 3;
-	optional string faction_id = 5; // Access restricted to this faction
-	optional int32 min_rank = 6; // Min rank allowed in area
+	optional string faction_id = 5;  // access restricted to this faction
+	optional int32 min_rank = 6;  // min rank allowed in area
 	optional Light light = 7;
+	optional Biome biome = 8 [default = INDUSTRY];
+	repeated string room_id = 9;
 
 	// DEPRECATED
 	optional int32 parend_id_DEPRECATED = 4;
+}
+
+message Room {
+	message Furniture {
+		enum Type {
+			ATLAS = 1;  // check the tile atlas
+			TMX = 2;  // Tiled TMX file
+			ACTIVATOR = 3;  // hardcoded
+		}
+
+		optional string id = 1;
+		optional Type type = 2;
+	}
+
+	enum Size {
+		SMALL = 0;
+		MEDIUM = 1;
+		LARGE = 2;
+	}
+
+	optional string id = 1;
+	repeated Furniture furniture = 2;
+	optional Size size = 3;
+}
+
+enum Biome {
+	INDUSTRY = 0;
+	GRIME = 1;
 }
 
 message Light {

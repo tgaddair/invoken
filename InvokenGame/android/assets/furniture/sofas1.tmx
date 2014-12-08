@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" width="3" height="3" tilewidth="32" tileheight="32">
+ <tileset firstgid="1" name="furniture-modern" tilewidth="32" tileheight="32">
+  <image source="../maps/graphics/tiles/furniture-modern.png" width="512" height="512"/>
+ </tileset>
+ <tileset firstgid="257" name="furniture-placement" tilewidth="32" tileheight="32">
+  <image source="../maps/graphics/tiles/furniture-placement.png" width="64" height="64"/>
+ </tileset>
+ <tileset firstgid="261" name="collision" tilewidth="32" tileheight="32">
+  <image source="../maps/graphics/tiles/collision.png" width="64" height="32"/>
+ </tileset>
+ <layer name="objects" width="3" height="3">
+  <data encoding="base64" compression="zlib">
+   eJxzZIAAJyAOhLKDgDgRyk4CYgAjTAHq
+  </data>
+ </layer>
+ <layer name="constraints" width="3" height="3">
+  <data encoding="base64" compression="zlib">
+   eJxjZmRgYARiZijGxgYAAnMAHw==
+  </data>
+ </layer>
+ <layer name="collision" width="3" height="3">
+  <data encoding="base64" compression="zlib">
+   eJxjY2QAAzZGCMbGBgADZgAr
+  </data>
+ </layer>
+</map>
