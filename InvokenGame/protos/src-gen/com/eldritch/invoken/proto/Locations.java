@@ -8,6 +8,88 @@ public final class Locations {
   public static void registerAllExtensions(
       com.google.protobuf.ExtensionRegistry registry) {
   }
+  /**
+   * Protobuf enum {@code scifirpg.Biome}
+   */
+  public enum Biome
+      implements com.google.protobuf.ProtocolMessageEnum {
+    /**
+     * <code>INDUSTRY = 0;</code>
+     */
+    INDUSTRY(0, 0),
+    /**
+     * <code>GRIME = 1;</code>
+     */
+    GRIME(1, 1),
+    ;
+
+    /**
+     * <code>INDUSTRY = 0;</code>
+     */
+    public static final int INDUSTRY_VALUE = 0;
+    /**
+     * <code>GRIME = 1;</code>
+     */
+    public static final int GRIME_VALUE = 1;
+
+
+    public final int getNumber() { return value; }
+
+    public static Biome valueOf(int value) {
+      switch (value) {
+        case 0: return INDUSTRY;
+        case 1: return GRIME;
+        default: return null;
+      }
+    }
+
+    public static com.google.protobuf.Internal.EnumLiteMap<Biome>
+        internalGetValueMap() {
+      return internalValueMap;
+    }
+    private static com.google.protobuf.Internal.EnumLiteMap<Biome>
+        internalValueMap =
+          new com.google.protobuf.Internal.EnumLiteMap<Biome>() {
+            public Biome findValueByNumber(int number) {
+              return Biome.valueOf(number);
+            }
+          };
+
+    public final com.google.protobuf.Descriptors.EnumValueDescriptor
+        getValueDescriptor() {
+      return getDescriptor().getValues().get(index);
+    }
+    public final com.google.protobuf.Descriptors.EnumDescriptor
+        getDescriptorForType() {
+      return getDescriptor();
+    }
+    public static final com.google.protobuf.Descriptors.EnumDescriptor
+        getDescriptor() {
+      return com.eldritch.invoken.proto.Locations.getDescriptor().getEnumTypes().get(0);
+    }
+
+    private static final Biome[] VALUES = values();
+
+    public static Biome valueOf(
+        com.google.protobuf.Descriptors.EnumValueDescriptor desc) {
+      if (desc.getType() != getDescriptor()) {
+        throw new java.lang.IllegalArgumentException(
+          "EnumValueDescriptor is not for this type.");
+      }
+      return VALUES[desc.getIndex()];
+    }
+
+    private final int index;
+    private final int value;
+
+    private Biome(int index, int value) {
+      this.index = index;
+      this.value = value;
+    }
+
+    // @@protoc_insertion_point(enum_scope:scifirpg.Biome)
+  }
+
   public interface LocationOrBuilder
       extends com.google.protobuf.MessageOrBuilder {
 
@@ -53,21 +135,6 @@ public final class Locations {
     com.google.protobuf.ByteString
         getNameBytes();
 
-    // optional string parent_id = 4;
-    /**
-     * <code>optional string parent_id = 4;</code>
-     */
-    boolean hasParentId();
-    /**
-     * <code>optional string parent_id = 4;</code>
-     */
-    java.lang.String getParentId();
-    /**
-     * <code>optional string parent_id = 4;</code>
-     */
-    com.google.protobuf.ByteString
-        getParentIdBytes();
-
     // repeated .scifirpg.Encounter encounter = 3;
     /**
      * <code>repeated .scifirpg.Encounter encounter = 3;</code>
@@ -98,7 +165,7 @@ public final class Locations {
      * <code>optional string faction_id = 5;</code>
      *
      * <pre>
-     * Access restricted to this faction
+     * access restricted to this faction
      * </pre>
      */
     boolean hasFactionId();
@@ -106,7 +173,7 @@ public final class Locations {
      * <code>optional string faction_id = 5;</code>
      *
      * <pre>
-     * Access restricted to this faction
+     * access restricted to this faction
      * </pre>
      */
     java.lang.String getFactionId();
@@ -114,7 +181,7 @@ public final class Locations {
      * <code>optional string faction_id = 5;</code>
      *
      * <pre>
-     * Access restricted to this faction
+     * access restricted to this faction
      * </pre>
      */
     com.google.protobuf.ByteString
@@ -125,7 +192,7 @@ public final class Locations {
      * <code>optional int32 min_rank = 6;</code>
      *
      * <pre>
-     * Min rank allowed in area
+     * min rank allowed in area
      * </pre>
      */
     boolean hasMinRank();
@@ -133,10 +200,72 @@ public final class Locations {
      * <code>optional int32 min_rank = 6;</code>
      *
      * <pre>
-     * Min rank allowed in area
+     * min rank allowed in area
      * </pre>
      */
     int getMinRank();
+
+    // optional .scifirpg.Light light = 7;
+    /**
+     * <code>optional .scifirpg.Light light = 7;</code>
+     */
+    boolean hasLight();
+    /**
+     * <code>optional .scifirpg.Light light = 7;</code>
+     */
+    com.eldritch.invoken.proto.Locations.Light getLight();
+    /**
+     * <code>optional .scifirpg.Light light = 7;</code>
+     */
+    com.eldritch.invoken.proto.Locations.LightOrBuilder getLightOrBuilder();
+
+    // optional .scifirpg.Biome biome = 8 [default = INDUSTRY];
+    /**
+     * <code>optional .scifirpg.Biome biome = 8 [default = INDUSTRY];</code>
+     */
+    boolean hasBiome();
+    /**
+     * <code>optional .scifirpg.Biome biome = 8 [default = INDUSTRY];</code>
+     */
+    com.eldritch.invoken.proto.Locations.Biome getBiome();
+
+    // repeated string room_id = 9;
+    /**
+     * <code>repeated string room_id = 9;</code>
+     */
+    java.util.List<java.lang.String>
+    getRoomIdList();
+    /**
+     * <code>repeated string room_id = 9;</code>
+     */
+    int getRoomIdCount();
+    /**
+     * <code>repeated string room_id = 9;</code>
+     */
+    java.lang.String getRoomId(int index);
+    /**
+     * <code>repeated string room_id = 9;</code>
+     */
+    com.google.protobuf.ByteString
+        getRoomIdBytes(int index);
+
+    // optional int32 parend_id_DEPRECATED = 4;
+    /**
+     * <code>optional int32 parend_id_DEPRECATED = 4;</code>
+     *
+     * <pre>
+     * DEPRECATED
+     * </pre>
+     */
+    boolean hasParendIdDEPRECATED();
+    /**
+     * <code>optional int32 parend_id_DEPRECATED = 4;</code>
+     *
+     * <pre>
+     * DEPRECATED
+     * </pre>
+     */
+    int getParendIdDEPRECATED();
   }
   /**
    * Protobuf type {@code scifirpg.Location}
@@ -200,26 +329,58 @@ public final class Locations {
               break;
             }
             case 26: {
-              if (!((mutable_bitField0_ & 0x00000008) == 0x00000008)) {
+              if (!((mutable_bitField0_ & 0x00000004) == 0x00000004)) {
                 encounter_ = new java.util.ArrayList<com.eldritch.invoken.proto.Locations.Encounter>();
-                mutable_bitField0_ |= 0x00000008;
+                mutable_bitField0_ |= 0x00000004;
               }
               encounter_.add(input.readMessage(com.eldritch.invoken.proto.Locations.Encounter.PARSER, extensionRegistry));
               break;
             }
-            case 34: {
-              bitField0_ |= 0x00000004;
-              parentId_ = input.readBytes();
+            case 32: {
+              bitField0_ |= 0x00000040;
+              parendIdDEPRECATED_ = input.readInt32();
               break;
             }
             case 42: {
-              bitField0_ |= 0x00000008;
+              bitField0_ |= 0x00000004;
               factionId_ = input.readBytes();
               break;
             }
             case 48: {
-              bitField0_ |= 0x00000010;
+              bitField0_ |= 0x00000008;
               minRank_ = input.readInt32();
+              break;
+            }
+            case 58: {
+              com.eldritch.invoken.proto.Locations.Light.Builder subBuilder = null;
+              if (((bitField0_ & 0x00000010) == 0x00000010)) {
+                subBuilder = light_.toBuilder();
+              }
+              light_ = input.readMessage(com.eldritch.invoken.proto.Locations.Light.PARSER, extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(light_);
+                light_ = subBuilder.buildPartial();
+              }
+              bitField0_ |= 0x00000010;
+              break;
+            }
+            case 64: {
+              int rawValue = input.readEnum();
+              com.eldritch.invoken.proto.Locations.Biome value = com.eldritch.invoken.proto.Locations.Biome.valueOf(rawValue);
+              if (value == null) {
+                unknownFields.mergeVarintField(8, rawValue);
+              } else {
+                bitField0_ |= 0x00000020;
+                biome_ = value;
+              }
+              break;
+            }
+            case 74: {
+              if (!((mutable_bitField0_ & 0x00000080) == 0x00000080)) {
+                roomId_ = new com.google.protobuf.LazyStringArrayList();
+                mutable_bitField0_ |= 0x00000080;
+              }
+              roomId_.add(input.readBytes());
               break;
             }
           }
@@ -230,8 +391,11 @@ public final class Locations {
         throw new com.google.protobuf.InvalidProtocolBufferException(
             e.getMessage()).setUnfinishedMessage(this);
       } finally {
-        if (((mutable_bitField0_ & 0x00000008) == 0x00000008)) {
+        if (((mutable_bitField0_ & 0x00000004) == 0x00000004)) {
           encounter_ = java.util.Collections.unmodifiableList(encounter_);
+        }
+        if (((mutable_bitField0_ & 0x00000080) == 0x00000080)) {
+          roomId_ = new com.google.protobuf.UnmodifiableLazyStringList(roomId_);
         }
         this.unknownFields = unknownFields.build();
         makeExtensionsImmutable();
@@ -363,49 +527,6 @@ public final class Locations {
       }
     }
 
-    // optional string parent_id = 4;
-    public static final int PARENT_ID_FIELD_NUMBER = 4;
-    private java.lang.Object parentId_;
-    /**
-     * <code>optional string parent_id = 4;</code>
-     */
-    public boolean hasParentId() {
-      return ((bitField0_ & 0x00000004) == 0x00000004);
-    }
-    /**
-     * <code>optional string parent_id = 4;</code>
-     */
-    public java.lang.String getParentId() {
-      java.lang.Object ref = parentId_;
-      if (ref instanceof java.lang.String) {
-        return (java.lang.String) ref;
-      } else {
-        com.google.protobuf.ByteString bs = 
-            (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        if (bs.isValidUtf8()) {
-          parentId_ = s;
-        }
-        return s;
-      }
-    }
-    /**
-     * <code>optional string parent_id = 4;</code>
-     */
-    public com.google.protobuf.ByteString
-        getParentIdBytes() {
-      java.lang.Object ref = parentId_;
-      if (ref instanceof java.lang.String) {
-        com.google.protobuf.ByteString b = 
-            com.google.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        parentId_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
-    }
-
     // repeated .scifirpg.Encounter encounter = 3;
     public static final int ENCOUNTER_FIELD_NUMBER = 3;
     private java.util.List<com.eldritch.invoken.proto.Locations.Encounter> encounter_;
@@ -449,17 +570,17 @@ public final class Locations {
      * <code>optional string faction_id = 5;</code>
      *
      * <pre>
-     * Access restricted to this faction
+     * access restricted to this faction
      * </pre>
      */
     public boolean hasFactionId() {
-      return ((bitField0_ & 0x00000008) == 0x00000008);
+      return ((bitField0_ & 0x00000004) == 0x00000004);
     }
     /**
      * <code>optional string faction_id = 5;</code>
      *
      * <pre>
-     * Access restricted to this faction
+     * access restricted to this faction
      * </pre>
      */
     public java.lang.String getFactionId() {
@@ -480,7 +601,7 @@ public final class Locations {
      * <code>optional string faction_id = 5;</code>
      *
      * <pre>
-     * Access restricted to this faction
+     * access restricted to this faction
      * </pre>
      */
     public com.google.protobuf.ByteString
@@ -504,30 +625,125 @@ public final class Locations {
      * <code>optional int32 min_rank = 6;</code>
      *
      * <pre>
-     * Min rank allowed in area
+     * min rank allowed in area
      * </pre>
      */
     public boolean hasMinRank() {
-      return ((bitField0_ & 0x00000010) == 0x00000010);
+      return ((bitField0_ & 0x00000008) == 0x00000008);
     }
     /**
      * <code>optional int32 min_rank = 6;</code>
      *
      * <pre>
-     * Min rank allowed in area
+     * min rank allowed in area
      * </pre>
      */
     public int getMinRank() {
       return minRank_;
     }
 
+    // optional .scifirpg.Light light = 7;
+    public static final int LIGHT_FIELD_NUMBER = 7;
+    private com.eldritch.invoken.proto.Locations.Light light_;
+    /**
+     * <code>optional .scifirpg.Light light = 7;</code>
+     */
+    public boolean hasLight() {
+      return ((bitField0_ & 0x00000010) == 0x00000010);
+    }
+    /**
+     * <code>optional .scifirpg.Light light = 7;</code>
+     */
+    public com.eldritch.invoken.proto.Locations.Light getLight() {
+      return light_;
+    }
+    /**
+     * <code>optional .scifirpg.Light light = 7;</code>
+     */
+    public com.eldritch.invoken.proto.Locations.LightOrBuilder getLightOrBuilder() {
+      return light_;
+    }
+
+    // optional .scifirpg.Biome biome = 8 [default = INDUSTRY];
+    public static final int BIOME_FIELD_NUMBER = 8;
+    private com.eldritch.invoken.proto.Locations.Biome biome_;
+    /**
+     * <code>optional .scifirpg.Biome biome = 8 [default = INDUSTRY];</code>
+     */
+    public boolean hasBiome() {
+      return ((bitField0_ & 0x00000020) == 0x00000020);
+    }
+    /**
+     * <code>optional .scifirpg.Biome biome = 8 [default = INDUSTRY];</code>
+     */
+    public com.eldritch.invoken.proto.Locations.Biome getBiome() {
+      return biome_;
+    }
+
+    // repeated string room_id = 9;
+    public static final int ROOM_ID_FIELD_NUMBER = 9;
+    private com.google.protobuf.LazyStringList roomId_;
+    /**
+     * <code>repeated string room_id = 9;</code>
+     */
+    public java.util.List<java.lang.String>
+        getRoomIdList() {
+      return roomId_;
+    }
+    /**
+     * <code>repeated string room_id = 9;</code>
+     */
+    public int getRoomIdCount() {
+      return roomId_.size();
+    }
+    /**
+     * <code>repeated string room_id = 9;</code>
+     */
+    public java.lang.String getRoomId(int index) {
+      return roomId_.get(index);
+    }
+    /**
+     * <code>repeated string room_id = 9;</code>
+     */
+    public com.google.protobuf.ByteString
+        getRoomIdBytes(int index) {
+      return roomId_.getByteString(index);
+    }
+
+    // optional int32 parend_id_DEPRECATED = 4;
+    public static final int PAREND_ID_DEPRECATED_FIELD_NUMBER = 4;
+    private int parendIdDEPRECATED_;
+    /**
+     * <code>optional int32 parend_id_DEPRECATED = 4;</code>
+     *
+     * <pre>
+     * DEPRECATED
+     * </pre>
+     */
+    public boolean hasParendIdDEPRECATED() {
+      return ((bitField0_ & 0x00000040) == 0x00000040);
+    }
+    /**
+     * <code>optional int32 parend_id_DEPRECATED = 4;</code>
+     *
+     * <pre>
+     * DEPRECATED
+     * </pre>
+     */
+    public int getParendIdDEPRECATED() {
+      return parendIdDEPRECATED_;
+    }
+
     private void initFields() {
       id_ = "";
       name_ = "";
-      parentId_ = "";
       encounter_ = java.util.Collections.emptyList();
       factionId_ = "";
       minRank_ = 0;
+      light_ = com.eldritch.invoken.proto.Locations.Light.getDefaultInstance();
+      biome_ = com.eldritch.invoken.proto.Locations.Biome.INDUSTRY;
+      roomId_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+      parendIdDEPRECATED_ = 0;
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -564,14 +780,23 @@ public final class Locations {
       for (int i = 0; i < encounter_.size(); i++) {
         output.writeMessage(3, encounter_.get(i));
       }
-      if (((bitField0_ & 0x00000004) == 0x00000004)) {
-        output.writeBytes(4, getParentIdBytes());
+      if (((bitField0_ & 0x00000040) == 0x00000040)) {
+        output.writeInt32(4, parendIdDEPRECATED_);
       }
-      if (((bitField0_ & 0x00000008) == 0x00000008)) {
+      if (((bitField0_ & 0x00000004) == 0x00000004)) {
         output.writeBytes(5, getFactionIdBytes());
       }
-      if (((bitField0_ & 0x00000010) == 0x00000010)) {
+      if (((bitField0_ & 0x00000008) == 0x00000008)) {
         output.writeInt32(6, minRank_);
+      }
+      if (((bitField0_ & 0x00000010) == 0x00000010)) {
+        output.writeMessage(7, light_);
+      }
+      if (((bitField0_ & 0x00000020) == 0x00000020)) {
+        output.writeEnum(8, biome_.getNumber());
+      }
+      for (int i = 0; i < roomId_.size(); i++) {
+        output.writeBytes(9, roomId_.getByteString(i));
       }
       getUnknownFields().writeTo(output);
     }
@@ -594,17 +819,34 @@ public final class Locations {
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(3, encounter_.get(i));
       }
-      if (((bitField0_ & 0x00000004) == 0x00000004)) {
+      if (((bitField0_ & 0x00000040) == 0x00000040)) {
         size += com.google.protobuf.CodedOutputStream
-          .computeBytesSize(4, getParentIdBytes());
+          .computeInt32Size(4, parendIdDEPRECATED_);
       }
-      if (((bitField0_ & 0x00000008) == 0x00000008)) {
+      if (((bitField0_ & 0x00000004) == 0x00000004)) {
         size += com.google.protobuf.CodedOutputStream
           .computeBytesSize(5, getFactionIdBytes());
       }
-      if (((bitField0_ & 0x00000010) == 0x00000010)) {
+      if (((bitField0_ & 0x00000008) == 0x00000008)) {
         size += com.google.protobuf.CodedOutputStream
           .computeInt32Size(6, minRank_);
+      }
+      if (((bitField0_ & 0x00000010) == 0x00000010)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(7, light_);
+      }
+      if (((bitField0_ & 0x00000020) == 0x00000020)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeEnumSize(8, biome_.getNumber());
+      }
+      {
+        int dataSize = 0;
+        for (int i = 0; i < roomId_.size(); i++) {
+          dataSize += com.google.protobuf.CodedOutputStream
+            .computeBytesSizeNoTag(roomId_.getByteString(i));
+        }
+        size += dataSize;
+        size += 1 * getRoomIdList().size();
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSerializedSize = size;
@@ -715,6 +957,7 @@ public final class Locations {
       private void maybeForceBuilderInitialization() {
         if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
           getEncounterFieldBuilder();
+          getLightFieldBuilder();
         }
       }
       private static Builder create() {
@@ -727,18 +970,28 @@ public final class Locations {
         bitField0_ = (bitField0_ & ~0x00000001);
         name_ = "";
         bitField0_ = (bitField0_ & ~0x00000002);
-        parentId_ = "";
-        bitField0_ = (bitField0_ & ~0x00000004);
         if (encounterBuilder_ == null) {
           encounter_ = java.util.Collections.emptyList();
-          bitField0_ = (bitField0_ & ~0x00000008);
+          bitField0_ = (bitField0_ & ~0x00000004);
         } else {
           encounterBuilder_.clear();
         }
         factionId_ = "";
-        bitField0_ = (bitField0_ & ~0x00000010);
+        bitField0_ = (bitField0_ & ~0x00000008);
         minRank_ = 0;
+        bitField0_ = (bitField0_ & ~0x00000010);
+        if (lightBuilder_ == null) {
+          light_ = com.eldritch.invoken.proto.Locations.Light.getDefaultInstance();
+        } else {
+          lightBuilder_.clear();
+        }
         bitField0_ = (bitField0_ & ~0x00000020);
+        biome_ = com.eldritch.invoken.proto.Locations.Biome.INDUSTRY;
+        bitField0_ = (bitField0_ & ~0x00000040);
+        roomId_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+        bitField0_ = (bitField0_ & ~0x00000080);
+        parendIdDEPRECATED_ = 0;
+        bitField0_ = (bitField0_ & ~0x00000100);
         return this;
       }
 
@@ -775,27 +1028,45 @@ public final class Locations {
           to_bitField0_ |= 0x00000002;
         }
         result.name_ = name_;
-        if (((from_bitField0_ & 0x00000004) == 0x00000004)) {
-          to_bitField0_ |= 0x00000004;
-        }
-        result.parentId_ = parentId_;
         if (encounterBuilder_ == null) {
-          if (((bitField0_ & 0x00000008) == 0x00000008)) {
+          if (((bitField0_ & 0x00000004) == 0x00000004)) {
             encounter_ = java.util.Collections.unmodifiableList(encounter_);
-            bitField0_ = (bitField0_ & ~0x00000008);
+            bitField0_ = (bitField0_ & ~0x00000004);
           }
           result.encounter_ = encounter_;
         } else {
           result.encounter_ = encounterBuilder_.build();
         }
+        if (((from_bitField0_ & 0x00000008) == 0x00000008)) {
+          to_bitField0_ |= 0x00000004;
+        }
+        result.factionId_ = factionId_;
         if (((from_bitField0_ & 0x00000010) == 0x00000010)) {
           to_bitField0_ |= 0x00000008;
         }
-        result.factionId_ = factionId_;
+        result.minRank_ = minRank_;
         if (((from_bitField0_ & 0x00000020) == 0x00000020)) {
           to_bitField0_ |= 0x00000010;
         }
-        result.minRank_ = minRank_;
+        if (lightBuilder_ == null) {
+          result.light_ = light_;
+        } else {
+          result.light_ = lightBuilder_.build();
+        }
+        if (((from_bitField0_ & 0x00000040) == 0x00000040)) {
+          to_bitField0_ |= 0x00000020;
+        }
+        result.biome_ = biome_;
+        if (((bitField0_ & 0x00000080) == 0x00000080)) {
+          roomId_ = new com.google.protobuf.UnmodifiableLazyStringList(
+              roomId_);
+          bitField0_ = (bitField0_ & ~0x00000080);
+        }
+        result.roomId_ = roomId_;
+        if (((from_bitField0_ & 0x00000100) == 0x00000100)) {
+          to_bitField0_ |= 0x00000040;
+        }
+        result.parendIdDEPRECATED_ = parendIdDEPRECATED_;
         result.bitField0_ = to_bitField0_;
         onBuilt();
         return result;
@@ -822,16 +1093,11 @@ public final class Locations {
           name_ = other.name_;
           onChanged();
         }
-        if (other.hasParentId()) {
-          bitField0_ |= 0x00000004;
-          parentId_ = other.parentId_;
-          onChanged();
-        }
         if (encounterBuilder_ == null) {
           if (!other.encounter_.isEmpty()) {
             if (encounter_.isEmpty()) {
               encounter_ = other.encounter_;
-              bitField0_ = (bitField0_ & ~0x00000008);
+              bitField0_ = (bitField0_ & ~0x00000004);
             } else {
               ensureEncounterIsMutable();
               encounter_.addAll(other.encounter_);
@@ -844,7 +1110,7 @@ public final class Locations {
               encounterBuilder_.dispose();
               encounterBuilder_ = null;
               encounter_ = other.encounter_;
-              bitField0_ = (bitField0_ & ~0x00000008);
+              bitField0_ = (bitField0_ & ~0x00000004);
               encounterBuilder_ = 
                 com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders ?
                    getEncounterFieldBuilder() : null;
@@ -854,12 +1120,31 @@ public final class Locations {
           }
         }
         if (other.hasFactionId()) {
-          bitField0_ |= 0x00000010;
+          bitField0_ |= 0x00000008;
           factionId_ = other.factionId_;
           onChanged();
         }
         if (other.hasMinRank()) {
           setMinRank(other.getMinRank());
+        }
+        if (other.hasLight()) {
+          mergeLight(other.getLight());
+        }
+        if (other.hasBiome()) {
+          setBiome(other.getBiome());
+        }
+        if (!other.roomId_.isEmpty()) {
+          if (roomId_.isEmpty()) {
+            roomId_ = other.roomId_;
+            bitField0_ = (bitField0_ & ~0x00000080);
+          } else {
+            ensureRoomIdIsMutable();
+            roomId_.addAll(other.roomId_);
+          }
+          onChanged();
+        }
+        if (other.hasParendIdDEPRECATED()) {
+          setParendIdDEPRECATED(other.getParendIdDEPRECATED());
         }
         this.mergeUnknownFields(other.getUnknownFields());
         return this;
@@ -1074,87 +1359,13 @@ public final class Locations {
         return this;
       }
 
-      // optional string parent_id = 4;
-      private java.lang.Object parentId_ = "";
-      /**
-       * <code>optional string parent_id = 4;</code>
-       */
-      public boolean hasParentId() {
-        return ((bitField0_ & 0x00000004) == 0x00000004);
-      }
-      /**
-       * <code>optional string parent_id = 4;</code>
-       */
-      public java.lang.String getParentId() {
-        java.lang.Object ref = parentId_;
-        if (!(ref instanceof java.lang.String)) {
-          java.lang.String s = ((com.google.protobuf.ByteString) ref)
-              .toStringUtf8();
-          parentId_ = s;
-          return s;
-        } else {
-          return (java.lang.String) ref;
-        }
-      }
-      /**
-       * <code>optional string parent_id = 4;</code>
-       */
-      public com.google.protobuf.ByteString
-          getParentIdBytes() {
-        java.lang.Object ref = parentId_;
-        if (ref instanceof String) {
-          com.google.protobuf.ByteString b = 
-              com.google.protobuf.ByteString.copyFromUtf8(
-                  (java.lang.String) ref);
-          parentId_ = b;
-          return b;
-        } else {
-          return (com.google.protobuf.ByteString) ref;
-        }
-      }
-      /**
-       * <code>optional string parent_id = 4;</code>
-       */
-      public Builder setParentId(
-          java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  bitField0_ |= 0x00000004;
-        parentId_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>optional string parent_id = 4;</code>
-       */
-      public Builder clearParentId() {
-        bitField0_ = (bitField0_ & ~0x00000004);
-        parentId_ = getDefaultInstance().getParentId();
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>optional string parent_id = 4;</code>
-       */
-      public Builder setParentIdBytes(
-          com.google.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  bitField0_ |= 0x00000004;
-        parentId_ = value;
-        onChanged();
-        return this;
-      }
-
       // repeated .scifirpg.Encounter encounter = 3;
       private java.util.List<com.eldritch.invoken.proto.Locations.Encounter> encounter_ =
         java.util.Collections.emptyList();
       private void ensureEncounterIsMutable() {
-        if (!((bitField0_ & 0x00000008) == 0x00000008)) {
+        if (!((bitField0_ & 0x00000004) == 0x00000004)) {
           encounter_ = new java.util.ArrayList<com.eldritch.invoken.proto.Locations.Encounter>(encounter_);
-          bitField0_ |= 0x00000008;
+          bitField0_ |= 0x00000004;
          }
       }
 
@@ -1303,7 +1514,7 @@ public final class Locations {
       public Builder clearEncounter() {
         if (encounterBuilder_ == null) {
           encounter_ = java.util.Collections.emptyList();
-          bitField0_ = (bitField0_ & ~0x00000008);
+          bitField0_ = (bitField0_ & ~0x00000004);
           onChanged();
         } else {
           encounterBuilder_.clear();
@@ -1380,7 +1591,7 @@ public final class Locations {
           encounterBuilder_ = new com.google.protobuf.RepeatedFieldBuilder<
               com.eldritch.invoken.proto.Locations.Encounter, com.eldritch.invoken.proto.Locations.Encounter.Builder, com.eldritch.invoken.proto.Locations.EncounterOrBuilder>(
                   encounter_,
-                  ((bitField0_ & 0x00000008) == 0x00000008),
+                  ((bitField0_ & 0x00000004) == 0x00000004),
                   getParentForChildren(),
                   isClean());
           encounter_ = null;
@@ -1394,17 +1605,17 @@ public final class Locations {
        * <code>optional string faction_id = 5;</code>
        *
        * <pre>
-       * Access restricted to this faction
+       * access restricted to this faction
        * </pre>
        */
       public boolean hasFactionId() {
-        return ((bitField0_ & 0x00000010) == 0x00000010);
+        return ((bitField0_ & 0x00000008) == 0x00000008);
       }
       /**
        * <code>optional string faction_id = 5;</code>
        *
        * <pre>
-       * Access restricted to this faction
+       * access restricted to this faction
        * </pre>
        */
       public java.lang.String getFactionId() {
@@ -1422,7 +1633,7 @@ public final class Locations {
        * <code>optional string faction_id = 5;</code>
        *
        * <pre>
-       * Access restricted to this faction
+       * access restricted to this faction
        * </pre>
        */
       public com.google.protobuf.ByteString
@@ -1442,7 +1653,7 @@ public final class Locations {
        * <code>optional string faction_id = 5;</code>
        *
        * <pre>
-       * Access restricted to this faction
+       * access restricted to this faction
        * </pre>
        */
       public Builder setFactionId(
@@ -1450,7 +1661,7 @@ public final class Locations {
         if (value == null) {
     throw new NullPointerException();
   }
-  bitField0_ |= 0x00000010;
+  bitField0_ |= 0x00000008;
         factionId_ = value;
         onChanged();
         return this;
@@ -1459,11 +1670,11 @@ public final class Locations {
        * <code>optional string faction_id = 5;</code>
        *
        * <pre>
-       * Access restricted to this faction
+       * access restricted to this faction
        * </pre>
        */
       public Builder clearFactionId() {
-        bitField0_ = (bitField0_ & ~0x00000010);
+        bitField0_ = (bitField0_ & ~0x00000008);
         factionId_ = getDefaultInstance().getFactionId();
         onChanged();
         return this;
@@ -1472,7 +1683,7 @@ public final class Locations {
        * <code>optional string faction_id = 5;</code>
        *
        * <pre>
-       * Access restricted to this faction
+       * access restricted to this faction
        * </pre>
        */
       public Builder setFactionIdBytes(
@@ -1480,7 +1691,7 @@ public final class Locations {
         if (value == null) {
     throw new NullPointerException();
   }
-  bitField0_ |= 0x00000010;
+  bitField0_ |= 0x00000008;
         factionId_ = value;
         onChanged();
         return this;
@@ -1492,17 +1703,17 @@ public final class Locations {
        * <code>optional int32 min_rank = 6;</code>
        *
        * <pre>
-       * Min rank allowed in area
+       * min rank allowed in area
        * </pre>
        */
       public boolean hasMinRank() {
-        return ((bitField0_ & 0x00000020) == 0x00000020);
+        return ((bitField0_ & 0x00000010) == 0x00000010);
       }
       /**
        * <code>optional int32 min_rank = 6;</code>
        *
        * <pre>
-       * Min rank allowed in area
+       * min rank allowed in area
        * </pre>
        */
       public int getMinRank() {
@@ -1512,11 +1723,11 @@ public final class Locations {
        * <code>optional int32 min_rank = 6;</code>
        *
        * <pre>
-       * Min rank allowed in area
+       * min rank allowed in area
        * </pre>
        */
       public Builder setMinRank(int value) {
-        bitField0_ |= 0x00000020;
+        bitField0_ |= 0x00000010;
         minRank_ = value;
         onChanged();
         return this;
@@ -1525,12 +1736,307 @@ public final class Locations {
        * <code>optional int32 min_rank = 6;</code>
        *
        * <pre>
-       * Min rank allowed in area
+       * min rank allowed in area
        * </pre>
        */
       public Builder clearMinRank() {
-        bitField0_ = (bitField0_ & ~0x00000020);
+        bitField0_ = (bitField0_ & ~0x00000010);
         minRank_ = 0;
+        onChanged();
+        return this;
+      }
+
+      // optional .scifirpg.Light light = 7;
+      private com.eldritch.invoken.proto.Locations.Light light_ = com.eldritch.invoken.proto.Locations.Light.getDefaultInstance();
+      private com.google.protobuf.SingleFieldBuilder<
+          com.eldritch.invoken.proto.Locations.Light, com.eldritch.invoken.proto.Locations.Light.Builder, com.eldritch.invoken.proto.Locations.LightOrBuilder> lightBuilder_;
+      /**
+       * <code>optional .scifirpg.Light light = 7;</code>
+       */
+      public boolean hasLight() {
+        return ((bitField0_ & 0x00000020) == 0x00000020);
+      }
+      /**
+       * <code>optional .scifirpg.Light light = 7;</code>
+       */
+      public com.eldritch.invoken.proto.Locations.Light getLight() {
+        if (lightBuilder_ == null) {
+          return light_;
+        } else {
+          return lightBuilder_.getMessage();
+        }
+      }
+      /**
+       * <code>optional .scifirpg.Light light = 7;</code>
+       */
+      public Builder setLight(com.eldritch.invoken.proto.Locations.Light value) {
+        if (lightBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          light_ = value;
+          onChanged();
+        } else {
+          lightBuilder_.setMessage(value);
+        }
+        bitField0_ |= 0x00000020;
+        return this;
+      }
+      /**
+       * <code>optional .scifirpg.Light light = 7;</code>
+       */
+      public Builder setLight(
+          com.eldritch.invoken.proto.Locations.Light.Builder builderForValue) {
+        if (lightBuilder_ == null) {
+          light_ = builderForValue.build();
+          onChanged();
+        } else {
+          lightBuilder_.setMessage(builderForValue.build());
+        }
+        bitField0_ |= 0x00000020;
+        return this;
+      }
+      /**
+       * <code>optional .scifirpg.Light light = 7;</code>
+       */
+      public Builder mergeLight(com.eldritch.invoken.proto.Locations.Light value) {
+        if (lightBuilder_ == null) {
+          if (((bitField0_ & 0x00000020) == 0x00000020) &&
+              light_ != com.eldritch.invoken.proto.Locations.Light.getDefaultInstance()) {
+            light_ =
+              com.eldritch.invoken.proto.Locations.Light.newBuilder(light_).mergeFrom(value).buildPartial();
+          } else {
+            light_ = value;
+          }
+          onChanged();
+        } else {
+          lightBuilder_.mergeFrom(value);
+        }
+        bitField0_ |= 0x00000020;
+        return this;
+      }
+      /**
+       * <code>optional .scifirpg.Light light = 7;</code>
+       */
+      public Builder clearLight() {
+        if (lightBuilder_ == null) {
+          light_ = com.eldritch.invoken.proto.Locations.Light.getDefaultInstance();
+          onChanged();
+        } else {
+          lightBuilder_.clear();
+        }
+        bitField0_ = (bitField0_ & ~0x00000020);
+        return this;
+      }
+      /**
+       * <code>optional .scifirpg.Light light = 7;</code>
+       */
+      public com.eldritch.invoken.proto.Locations.Light.Builder getLightBuilder() {
+        bitField0_ |= 0x00000020;
+        onChanged();
+        return getLightFieldBuilder().getBuilder();
+      }
+      /**
+       * <code>optional .scifirpg.Light light = 7;</code>
+       */
+      public com.eldritch.invoken.proto.Locations.LightOrBuilder getLightOrBuilder() {
+        if (lightBuilder_ != null) {
+          return lightBuilder_.getMessageOrBuilder();
+        } else {
+          return light_;
+        }
+      }
+      /**
+       * <code>optional .scifirpg.Light light = 7;</code>
+       */
+      private com.google.protobuf.SingleFieldBuilder<
+          com.eldritch.invoken.proto.Locations.Light, com.eldritch.invoken.proto.Locations.Light.Builder, com.eldritch.invoken.proto.Locations.LightOrBuilder> 
+          getLightFieldBuilder() {
+        if (lightBuilder_ == null) {
+          lightBuilder_ = new com.google.protobuf.SingleFieldBuilder<
+              com.eldritch.invoken.proto.Locations.Light, com.eldritch.invoken.proto.Locations.Light.Builder, com.eldritch.invoken.proto.Locations.LightOrBuilder>(
+                  light_,
+                  getParentForChildren(),
+                  isClean());
+          light_ = null;
+        }
+        return lightBuilder_;
+      }
+
+      // optional .scifirpg.Biome biome = 8 [default = INDUSTRY];
+      private com.eldritch.invoken.proto.Locations.Biome biome_ = com.eldritch.invoken.proto.Locations.Biome.INDUSTRY;
+      /**
+       * <code>optional .scifirpg.Biome biome = 8 [default = INDUSTRY];</code>
+       */
+      public boolean hasBiome() {
+        return ((bitField0_ & 0x00000040) == 0x00000040);
+      }
+      /**
+       * <code>optional .scifirpg.Biome biome = 8 [default = INDUSTRY];</code>
+       */
+      public com.eldritch.invoken.proto.Locations.Biome getBiome() {
+        return biome_;
+      }
+      /**
+       * <code>optional .scifirpg.Biome biome = 8 [default = INDUSTRY];</code>
+       */
+      public Builder setBiome(com.eldritch.invoken.proto.Locations.Biome value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        bitField0_ |= 0x00000040;
+        biome_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>optional .scifirpg.Biome biome = 8 [default = INDUSTRY];</code>
+       */
+      public Builder clearBiome() {
+        bitField0_ = (bitField0_ & ~0x00000040);
+        biome_ = com.eldritch.invoken.proto.Locations.Biome.INDUSTRY;
+        onChanged();
+        return this;
+      }
+
+      // repeated string room_id = 9;
+      private com.google.protobuf.LazyStringList roomId_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+      private void ensureRoomIdIsMutable() {
+        if (!((bitField0_ & 0x00000080) == 0x00000080)) {
+          roomId_ = new com.google.protobuf.LazyStringArrayList(roomId_);
+          bitField0_ |= 0x00000080;
+         }
+      }
+      /**
+       * <code>repeated string room_id = 9;</code>
+       */
+      public java.util.List<java.lang.String>
+          getRoomIdList() {
+        return java.util.Collections.unmodifiableList(roomId_);
+      }
+      /**
+       * <code>repeated string room_id = 9;</code>
+       */
+      public int getRoomIdCount() {
+        return roomId_.size();
+      }
+      /**
+       * <code>repeated string room_id = 9;</code>
+       */
+      public java.lang.String getRoomId(int index) {
+        return roomId_.get(index);
+      }
+      /**
+       * <code>repeated string room_id = 9;</code>
+       */
+      public com.google.protobuf.ByteString
+          getRoomIdBytes(int index) {
+        return roomId_.getByteString(index);
+      }
+      /**
+       * <code>repeated string room_id = 9;</code>
+       */
+      public Builder setRoomId(
+          int index, java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  ensureRoomIdIsMutable();
+        roomId_.set(index, value);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated string room_id = 9;</code>
+       */
+      public Builder addRoomId(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  ensureRoomIdIsMutable();
+        roomId_.add(value);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated string room_id = 9;</code>
+       */
+      public Builder addAllRoomId(
+          java.lang.Iterable<java.lang.String> values) {
+        ensureRoomIdIsMutable();
+        super.addAll(values, roomId_);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated string room_id = 9;</code>
+       */
+      public Builder clearRoomId() {
+        roomId_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+        bitField0_ = (bitField0_ & ~0x00000080);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated string room_id = 9;</code>
+       */
+      public Builder addRoomIdBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  ensureRoomIdIsMutable();
+        roomId_.add(value);
+        onChanged();
+        return this;
+      }
+
+      // optional int32 parend_id_DEPRECATED = 4;
+      private int parendIdDEPRECATED_ ;
+      /**
+       * <code>optional int32 parend_id_DEPRECATED = 4;</code>
+       *
+       * <pre>
+       * DEPRECATED
+       * </pre>
+       */
+      public boolean hasParendIdDEPRECATED() {
+        return ((bitField0_ & 0x00000100) == 0x00000100);
+      }
+      /**
+       * <code>optional int32 parend_id_DEPRECATED = 4;</code>
+       *
+       * <pre>
+       * DEPRECATED
+       * </pre>
+       */
+      public int getParendIdDEPRECATED() {
+        return parendIdDEPRECATED_;
+      }
+      /**
+       * <code>optional int32 parend_id_DEPRECATED = 4;</code>
+       *
+       * <pre>
+       * DEPRECATED
+       * </pre>
+       */
+      public Builder setParendIdDEPRECATED(int value) {
+        bitField0_ |= 0x00000100;
+        parendIdDEPRECATED_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>optional int32 parend_id_DEPRECATED = 4;</code>
+       *
+       * <pre>
+       * DEPRECATED
+       * </pre>
+       */
+      public Builder clearParendIdDEPRECATED() {
+        bitField0_ = (bitField0_ & ~0x00000100);
+        parendIdDEPRECATED_ = 0;
         onChanged();
         return this;
       }
@@ -1544,6 +2050,2335 @@ public final class Locations {
     }
 
     // @@protoc_insertion_point(class_scope:scifirpg.Location)
+  }
+
+  public interface RoomOrBuilder
+      extends com.google.protobuf.MessageOrBuilder {
+
+    // optional string id = 1;
+    /**
+     * <code>optional string id = 1;</code>
+     */
+    boolean hasId();
+    /**
+     * <code>optional string id = 1;</code>
+     */
+    java.lang.String getId();
+    /**
+     * <code>optional string id = 1;</code>
+     */
+    com.google.protobuf.ByteString
+        getIdBytes();
+
+    // repeated .scifirpg.Room.Furniture furniture = 2;
+    /**
+     * <code>repeated .scifirpg.Room.Furniture furniture = 2;</code>
+     */
+    java.util.List<com.eldritch.invoken.proto.Locations.Room.Furniture> 
+        getFurnitureList();
+    /**
+     * <code>repeated .scifirpg.Room.Furniture furniture = 2;</code>
+     */
+    com.eldritch.invoken.proto.Locations.Room.Furniture getFurniture(int index);
+    /**
+     * <code>repeated .scifirpg.Room.Furniture furniture = 2;</code>
+     */
+    int getFurnitureCount();
+    /**
+     * <code>repeated .scifirpg.Room.Furniture furniture = 2;</code>
+     */
+    java.util.List<? extends com.eldritch.invoken.proto.Locations.Room.FurnitureOrBuilder> 
+        getFurnitureOrBuilderList();
+    /**
+     * <code>repeated .scifirpg.Room.Furniture furniture = 2;</code>
+     */
+    com.eldritch.invoken.proto.Locations.Room.FurnitureOrBuilder getFurnitureOrBuilder(
+        int index);
+
+    // optional .scifirpg.Room.Size size = 3;
+    /**
+     * <code>optional .scifirpg.Room.Size size = 3;</code>
+     */
+    boolean hasSize();
+    /**
+     * <code>optional .scifirpg.Room.Size size = 3;</code>
+     */
+    com.eldritch.invoken.proto.Locations.Room.Size getSize();
+  }
+  /**
+   * Protobuf type {@code scifirpg.Room}
+   */
+  public static final class Room extends
+      com.google.protobuf.GeneratedMessage
+      implements RoomOrBuilder {
+    // Use Room.newBuilder() to construct.
+    private Room(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
+      super(builder);
+      this.unknownFields = builder.getUnknownFields();
+    }
+    private Room(boolean noInit) { this.unknownFields = com.google.protobuf.UnknownFieldSet.getDefaultInstance(); }
+
+    private static final Room defaultInstance;
+    public static Room getDefaultInstance() {
+      return defaultInstance;
+    }
+
+    public Room getDefaultInstanceForType() {
+      return defaultInstance;
+    }
+
+    private final com.google.protobuf.UnknownFieldSet unknownFields;
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+        getUnknownFields() {
+      return this.unknownFields;
+    }
+    private Room(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      initFields();
+      int mutable_bitField0_ = 0;
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            default: {
+              if (!parseUnknownField(input, unknownFields,
+                                     extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+            case 10: {
+              bitField0_ |= 0x00000001;
+              id_ = input.readBytes();
+              break;
+            }
+            case 18: {
+              if (!((mutable_bitField0_ & 0x00000002) == 0x00000002)) {
+                furniture_ = new java.util.ArrayList<com.eldritch.invoken.proto.Locations.Room.Furniture>();
+                mutable_bitField0_ |= 0x00000002;
+              }
+              furniture_.add(input.readMessage(com.eldritch.invoken.proto.Locations.Room.Furniture.PARSER, extensionRegistry));
+              break;
+            }
+            case 24: {
+              int rawValue = input.readEnum();
+              com.eldritch.invoken.proto.Locations.Room.Size value = com.eldritch.invoken.proto.Locations.Room.Size.valueOf(rawValue);
+              if (value == null) {
+                unknownFields.mergeVarintField(3, rawValue);
+              } else {
+                bitField0_ |= 0x00000002;
+                size_ = value;
+              }
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e.getMessage()).setUnfinishedMessage(this);
+      } finally {
+        if (((mutable_bitField0_ & 0x00000002) == 0x00000002)) {
+          furniture_ = java.util.Collections.unmodifiableList(furniture_);
+        }
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return com.eldritch.invoken.proto.Locations.internal_static_scifirpg_Room_descriptor;
+    }
+
+    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return com.eldritch.invoken.proto.Locations.internal_static_scifirpg_Room_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              com.eldritch.invoken.proto.Locations.Room.class, com.eldritch.invoken.proto.Locations.Room.Builder.class);
+    }
+
+    public static com.google.protobuf.Parser<Room> PARSER =
+        new com.google.protobuf.AbstractParser<Room>() {
+      public Room parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new Room(input, extensionRegistry);
+      }
+    };
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<Room> getParserForType() {
+      return PARSER;
+    }
+
+    /**
+     * Protobuf enum {@code scifirpg.Room.Size}
+     */
+    public enum Size
+        implements com.google.protobuf.ProtocolMessageEnum {
+      /**
+       * <code>SMALL = 0;</code>
+       */
+      SMALL(0, 0),
+      /**
+       * <code>MEDIUM = 1;</code>
+       */
+      MEDIUM(1, 1),
+      /**
+       * <code>LARGE = 2;</code>
+       */
+      LARGE(2, 2),
+      ;
+
+      /**
+       * <code>SMALL = 0;</code>
+       */
+      public static final int SMALL_VALUE = 0;
+      /**
+       * <code>MEDIUM = 1;</code>
+       */
+      public static final int MEDIUM_VALUE = 1;
+      /**
+       * <code>LARGE = 2;</code>
+       */
+      public static final int LARGE_VALUE = 2;
+
+
+      public final int getNumber() { return value; }
+
+      public static Size valueOf(int value) {
+        switch (value) {
+          case 0: return SMALL;
+          case 1: return MEDIUM;
+          case 2: return LARGE;
+          default: return null;
+        }
+      }
+
+      public static com.google.protobuf.Internal.EnumLiteMap<Size>
+          internalGetValueMap() {
+        return internalValueMap;
+      }
+      private static com.google.protobuf.Internal.EnumLiteMap<Size>
+          internalValueMap =
+            new com.google.protobuf.Internal.EnumLiteMap<Size>() {
+              public Size findValueByNumber(int number) {
+                return Size.valueOf(number);
+              }
+            };
+
+      public final com.google.protobuf.Descriptors.EnumValueDescriptor
+          getValueDescriptor() {
+        return getDescriptor().getValues().get(index);
+      }
+      public final com.google.protobuf.Descriptors.EnumDescriptor
+          getDescriptorForType() {
+        return getDescriptor();
+      }
+      public static final com.google.protobuf.Descriptors.EnumDescriptor
+          getDescriptor() {
+        return com.eldritch.invoken.proto.Locations.Room.getDescriptor().getEnumTypes().get(0);
+      }
+
+      private static final Size[] VALUES = values();
+
+      public static Size valueOf(
+          com.google.protobuf.Descriptors.EnumValueDescriptor desc) {
+        if (desc.getType() != getDescriptor()) {
+          throw new java.lang.IllegalArgumentException(
+            "EnumValueDescriptor is not for this type.");
+        }
+        return VALUES[desc.getIndex()];
+      }
+
+      private final int index;
+      private final int value;
+
+      private Size(int index, int value) {
+        this.index = index;
+        this.value = value;
+      }
+
+      // @@protoc_insertion_point(enum_scope:scifirpg.Room.Size)
+    }
+
+    public interface FurnitureOrBuilder
+        extends com.google.protobuf.MessageOrBuilder {
+
+      // optional string id = 1;
+      /**
+       * <code>optional string id = 1;</code>
+       */
+      boolean hasId();
+      /**
+       * <code>optional string id = 1;</code>
+       */
+      java.lang.String getId();
+      /**
+       * <code>optional string id = 1;</code>
+       */
+      com.google.protobuf.ByteString
+          getIdBytes();
+
+      // optional .scifirpg.Room.Furniture.Type type = 2;
+      /**
+       * <code>optional .scifirpg.Room.Furniture.Type type = 2;</code>
+       */
+      boolean hasType();
+      /**
+       * <code>optional .scifirpg.Room.Furniture.Type type = 2;</code>
+       */
+      com.eldritch.invoken.proto.Locations.Room.Furniture.Type getType();
+    }
+    /**
+     * Protobuf type {@code scifirpg.Room.Furniture}
+     */
+    public static final class Furniture extends
+        com.google.protobuf.GeneratedMessage
+        implements FurnitureOrBuilder {
+      // Use Furniture.newBuilder() to construct.
+      private Furniture(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
+        super(builder);
+        this.unknownFields = builder.getUnknownFields();
+      }
+      private Furniture(boolean noInit) { this.unknownFields = com.google.protobuf.UnknownFieldSet.getDefaultInstance(); }
+
+      private static final Furniture defaultInstance;
+      public static Furniture getDefaultInstance() {
+        return defaultInstance;
+      }
+
+      public Furniture getDefaultInstanceForType() {
+        return defaultInstance;
+      }
+
+      private final com.google.protobuf.UnknownFieldSet unknownFields;
+      @java.lang.Override
+      public final com.google.protobuf.UnknownFieldSet
+          getUnknownFields() {
+        return this.unknownFields;
+      }
+      private Furniture(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        initFields();
+        int mutable_bitField0_ = 0;
+        com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+            com.google.protobuf.UnknownFieldSet.newBuilder();
+        try {
+          boolean done = false;
+          while (!done) {
+            int tag = input.readTag();
+            switch (tag) {
+              case 0:
+                done = true;
+                break;
+              default: {
+                if (!parseUnknownField(input, unknownFields,
+                                       extensionRegistry, tag)) {
+                  done = true;
+                }
+                break;
+              }
+              case 10: {
+                bitField0_ |= 0x00000001;
+                id_ = input.readBytes();
+                break;
+              }
+              case 16: {
+                int rawValue = input.readEnum();
+                com.eldritch.invoken.proto.Locations.Room.Furniture.Type value = com.eldritch.invoken.proto.Locations.Room.Furniture.Type.valueOf(rawValue);
+                if (value == null) {
+                  unknownFields.mergeVarintField(2, rawValue);
+                } else {
+                  bitField0_ |= 0x00000002;
+                  type_ = value;
+                }
+                break;
+              }
+            }
+          }
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.setUnfinishedMessage(this);
+        } catch (java.io.IOException e) {
+          throw new com.google.protobuf.InvalidProtocolBufferException(
+              e.getMessage()).setUnfinishedMessage(this);
+        } finally {
+          this.unknownFields = unknownFields.build();
+          makeExtensionsImmutable();
+        }
+      }
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return com.eldritch.invoken.proto.Locations.internal_static_scifirpg_Room_Furniture_descriptor;
+      }
+
+      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return com.eldritch.invoken.proto.Locations.internal_static_scifirpg_Room_Furniture_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                com.eldritch.invoken.proto.Locations.Room.Furniture.class, com.eldritch.invoken.proto.Locations.Room.Furniture.Builder.class);
+      }
+
+      public static com.google.protobuf.Parser<Furniture> PARSER =
+          new com.google.protobuf.AbstractParser<Furniture>() {
+        public Furniture parsePartialFrom(
+            com.google.protobuf.CodedInputStream input,
+            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws com.google.protobuf.InvalidProtocolBufferException {
+          return new Furniture(input, extensionRegistry);
+        }
+      };
+
+      @java.lang.Override
+      public com.google.protobuf.Parser<Furniture> getParserForType() {
+        return PARSER;
+      }
+
+      /**
+       * Protobuf enum {@code scifirpg.Room.Furniture.Type}
+       */
+      public enum Type
+          implements com.google.protobuf.ProtocolMessageEnum {
+        /**
+         * <code>ATLAS = 1;</code>
+         *
+         * <pre>
+         * check the tile atlas
+         * </pre>
+         */
+        ATLAS(0, 1),
+        /**
+         * <code>TMX = 2;</code>
+         *
+         * <pre>
+         * Tiled TMX file
+         * </pre>
+         */
+        TMX(1, 2),
+        /**
+         * <code>ACTIVATOR = 3;</code>
+         *
+         * <pre>
+         * hardcoded
+         * </pre>
+         */
+        ACTIVATOR(2, 3),
+        ;
+
+        /**
+         * <code>ATLAS = 1;</code>
+         *
+         * <pre>
+         * check the tile atlas
+         * </pre>
+         */
+        public static final int ATLAS_VALUE = 1;
+        /**
+         * <code>TMX = 2;</code>
+         *
+         * <pre>
+         * Tiled TMX file
+         * </pre>
+         */
+        public static final int TMX_VALUE = 2;
+        /**
+         * <code>ACTIVATOR = 3;</code>
+         *
+         * <pre>
+         * hardcoded
+         * </pre>
+         */
+        public static final int ACTIVATOR_VALUE = 3;
+
+
+        public final int getNumber() { return value; }
+
+        public static Type valueOf(int value) {
+          switch (value) {
+            case 1: return ATLAS;
+            case 2: return TMX;
+            case 3: return ACTIVATOR;
+            default: return null;
+          }
+        }
+
+        public static com.google.protobuf.Internal.EnumLiteMap<Type>
+            internalGetValueMap() {
+          return internalValueMap;
+        }
+        private static com.google.protobuf.Internal.EnumLiteMap<Type>
+            internalValueMap =
+              new com.google.protobuf.Internal.EnumLiteMap<Type>() {
+                public Type findValueByNumber(int number) {
+                  return Type.valueOf(number);
+                }
+              };
+
+        public final com.google.protobuf.Descriptors.EnumValueDescriptor
+            getValueDescriptor() {
+          return getDescriptor().getValues().get(index);
+        }
+        public final com.google.protobuf.Descriptors.EnumDescriptor
+            getDescriptorForType() {
+          return getDescriptor();
+        }
+        public static final com.google.protobuf.Descriptors.EnumDescriptor
+            getDescriptor() {
+          return com.eldritch.invoken.proto.Locations.Room.Furniture.getDescriptor().getEnumTypes().get(0);
+        }
+
+        private static final Type[] VALUES = values();
+
+        public static Type valueOf(
+            com.google.protobuf.Descriptors.EnumValueDescriptor desc) {
+          if (desc.getType() != getDescriptor()) {
+            throw new java.lang.IllegalArgumentException(
+              "EnumValueDescriptor is not for this type.");
+          }
+          return VALUES[desc.getIndex()];
+        }
+
+        private final int index;
+        private final int value;
+
+        private Type(int index, int value) {
+          this.index = index;
+          this.value = value;
+        }
+
+        // @@protoc_insertion_point(enum_scope:scifirpg.Room.Furniture.Type)
+      }
+
+      private int bitField0_;
+      // optional string id = 1;
+      public static final int ID_FIELD_NUMBER = 1;
+      private java.lang.Object id_;
+      /**
+       * <code>optional string id = 1;</code>
+       */
+      public boolean hasId() {
+        return ((bitField0_ & 0x00000001) == 0x00000001);
+      }
+      /**
+       * <code>optional string id = 1;</code>
+       */
+      public java.lang.String getId() {
+        java.lang.Object ref = id_;
+        if (ref instanceof java.lang.String) {
+          return (java.lang.String) ref;
+        } else {
+          com.google.protobuf.ByteString bs = 
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          if (bs.isValidUtf8()) {
+            id_ = s;
+          }
+          return s;
+        }
+      }
+      /**
+       * <code>optional string id = 1;</code>
+       */
+      public com.google.protobuf.ByteString
+          getIdBytes() {
+        java.lang.Object ref = id_;
+        if (ref instanceof java.lang.String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          id_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+
+      // optional .scifirpg.Room.Furniture.Type type = 2;
+      public static final int TYPE_FIELD_NUMBER = 2;
+      private com.eldritch.invoken.proto.Locations.Room.Furniture.Type type_;
+      /**
+       * <code>optional .scifirpg.Room.Furniture.Type type = 2;</code>
+       */
+      public boolean hasType() {
+        return ((bitField0_ & 0x00000002) == 0x00000002);
+      }
+      /**
+       * <code>optional .scifirpg.Room.Furniture.Type type = 2;</code>
+       */
+      public com.eldritch.invoken.proto.Locations.Room.Furniture.Type getType() {
+        return type_;
+      }
+
+      private void initFields() {
+        id_ = "";
+        type_ = com.eldritch.invoken.proto.Locations.Room.Furniture.Type.ATLAS;
+      }
+      private byte memoizedIsInitialized = -1;
+      public final boolean isInitialized() {
+        byte isInitialized = memoizedIsInitialized;
+        if (isInitialized != -1) return isInitialized == 1;
+
+        memoizedIsInitialized = 1;
+        return true;
+      }
+
+      public void writeTo(com.google.protobuf.CodedOutputStream output)
+                          throws java.io.IOException {
+        getSerializedSize();
+        if (((bitField0_ & 0x00000001) == 0x00000001)) {
+          output.writeBytes(1, getIdBytes());
+        }
+        if (((bitField0_ & 0x00000002) == 0x00000002)) {
+          output.writeEnum(2, type_.getNumber());
+        }
+        getUnknownFields().writeTo(output);
+      }
+
+      private int memoizedSerializedSize = -1;
+      public int getSerializedSize() {
+        int size = memoizedSerializedSize;
+        if (size != -1) return size;
+
+        size = 0;
+        if (((bitField0_ & 0x00000001) == 0x00000001)) {
+          size += com.google.protobuf.CodedOutputStream
+            .computeBytesSize(1, getIdBytes());
+        }
+        if (((bitField0_ & 0x00000002) == 0x00000002)) {
+          size += com.google.protobuf.CodedOutputStream
+            .computeEnumSize(2, type_.getNumber());
+        }
+        size += getUnknownFields().getSerializedSize();
+        memoizedSerializedSize = size;
+        return size;
+      }
+
+      private static final long serialVersionUID = 0L;
+      @java.lang.Override
+      protected java.lang.Object writeReplace()
+          throws java.io.ObjectStreamException {
+        return super.writeReplace();
+      }
+
+      public static com.eldritch.invoken.proto.Locations.Room.Furniture parseFrom(
+          com.google.protobuf.ByteString data)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data);
+      }
+      public static com.eldritch.invoken.proto.Locations.Room.Furniture parseFrom(
+          com.google.protobuf.ByteString data,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data, extensionRegistry);
+      }
+      public static com.eldritch.invoken.proto.Locations.Room.Furniture parseFrom(byte[] data)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data);
+      }
+      public static com.eldritch.invoken.proto.Locations.Room.Furniture parseFrom(
+          byte[] data,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data, extensionRegistry);
+      }
+      public static com.eldritch.invoken.proto.Locations.Room.Furniture parseFrom(java.io.InputStream input)
+          throws java.io.IOException {
+        return PARSER.parseFrom(input);
+      }
+      public static com.eldritch.invoken.proto.Locations.Room.Furniture parseFrom(
+          java.io.InputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        return PARSER.parseFrom(input, extensionRegistry);
+      }
+      public static com.eldritch.invoken.proto.Locations.Room.Furniture parseDelimitedFrom(java.io.InputStream input)
+          throws java.io.IOException {
+        return PARSER.parseDelimitedFrom(input);
+      }
+      public static com.eldritch.invoken.proto.Locations.Room.Furniture parseDelimitedFrom(
+          java.io.InputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        return PARSER.parseDelimitedFrom(input, extensionRegistry);
+      }
+      public static com.eldritch.invoken.proto.Locations.Room.Furniture parseFrom(
+          com.google.protobuf.CodedInputStream input)
+          throws java.io.IOException {
+        return PARSER.parseFrom(input);
+      }
+      public static com.eldritch.invoken.proto.Locations.Room.Furniture parseFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        return PARSER.parseFrom(input, extensionRegistry);
+      }
+
+      public static Builder newBuilder() { return Builder.create(); }
+      public Builder newBuilderForType() { return newBuilder(); }
+      public static Builder newBuilder(com.eldritch.invoken.proto.Locations.Room.Furniture prototype) {
+        return newBuilder().mergeFrom(prototype);
+      }
+      public Builder toBuilder() { return newBuilder(this); }
+
+      @java.lang.Override
+      protected Builder newBuilderForType(
+          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+        Builder builder = new Builder(parent);
+        return builder;
+      }
+      /**
+       * Protobuf type {@code scifirpg.Room.Furniture}
+       */
+      public static final class Builder extends
+          com.google.protobuf.GeneratedMessage.Builder<Builder>
+         implements com.eldritch.invoken.proto.Locations.Room.FurnitureOrBuilder {
+        public static final com.google.protobuf.Descriptors.Descriptor
+            getDescriptor() {
+          return com.eldritch.invoken.proto.Locations.internal_static_scifirpg_Room_Furniture_descriptor;
+        }
+
+        protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+            internalGetFieldAccessorTable() {
+          return com.eldritch.invoken.proto.Locations.internal_static_scifirpg_Room_Furniture_fieldAccessorTable
+              .ensureFieldAccessorsInitialized(
+                  com.eldritch.invoken.proto.Locations.Room.Furniture.class, com.eldritch.invoken.proto.Locations.Room.Furniture.Builder.class);
+        }
+
+        // Construct using com.eldritch.invoken.proto.Locations.Room.Furniture.newBuilder()
+        private Builder() {
+          maybeForceBuilderInitialization();
+        }
+
+        private Builder(
+            com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+          super(parent);
+          maybeForceBuilderInitialization();
+        }
+        private void maybeForceBuilderInitialization() {
+          if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
+          }
+        }
+        private static Builder create() {
+          return new Builder();
+        }
+
+        public Builder clear() {
+          super.clear();
+          id_ = "";
+          bitField0_ = (bitField0_ & ~0x00000001);
+          type_ = com.eldritch.invoken.proto.Locations.Room.Furniture.Type.ATLAS;
+          bitField0_ = (bitField0_ & ~0x00000002);
+          return this;
+        }
+
+        public Builder clone() {
+          return create().mergeFrom(buildPartial());
+        }
+
+        public com.google.protobuf.Descriptors.Descriptor
+            getDescriptorForType() {
+          return com.eldritch.invoken.proto.Locations.internal_static_scifirpg_Room_Furniture_descriptor;
+        }
+
+        public com.eldritch.invoken.proto.Locations.Room.Furniture getDefaultInstanceForType() {
+          return com.eldritch.invoken.proto.Locations.Room.Furniture.getDefaultInstance();
+        }
+
+        public com.eldritch.invoken.proto.Locations.Room.Furniture build() {
+          com.eldritch.invoken.proto.Locations.Room.Furniture result = buildPartial();
+          if (!result.isInitialized()) {
+            throw newUninitializedMessageException(result);
+          }
+          return result;
+        }
+
+        public com.eldritch.invoken.proto.Locations.Room.Furniture buildPartial() {
+          com.eldritch.invoken.proto.Locations.Room.Furniture result = new com.eldritch.invoken.proto.Locations.Room.Furniture(this);
+          int from_bitField0_ = bitField0_;
+          int to_bitField0_ = 0;
+          if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
+            to_bitField0_ |= 0x00000001;
+          }
+          result.id_ = id_;
+          if (((from_bitField0_ & 0x00000002) == 0x00000002)) {
+            to_bitField0_ |= 0x00000002;
+          }
+          result.type_ = type_;
+          result.bitField0_ = to_bitField0_;
+          onBuilt();
+          return result;
+        }
+
+        public Builder mergeFrom(com.google.protobuf.Message other) {
+          if (other instanceof com.eldritch.invoken.proto.Locations.Room.Furniture) {
+            return mergeFrom((com.eldritch.invoken.proto.Locations.Room.Furniture)other);
+          } else {
+            super.mergeFrom(other);
+            return this;
+          }
+        }
+
+        public Builder mergeFrom(com.eldritch.invoken.proto.Locations.Room.Furniture other) {
+          if (other == com.eldritch.invoken.proto.Locations.Room.Furniture.getDefaultInstance()) return this;
+          if (other.hasId()) {
+            bitField0_ |= 0x00000001;
+            id_ = other.id_;
+            onChanged();
+          }
+          if (other.hasType()) {
+            setType(other.getType());
+          }
+          this.mergeUnknownFields(other.getUnknownFields());
+          return this;
+        }
+
+        public final boolean isInitialized() {
+          return true;
+        }
+
+        public Builder mergeFrom(
+            com.google.protobuf.CodedInputStream input,
+            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws java.io.IOException {
+          com.eldritch.invoken.proto.Locations.Room.Furniture parsedMessage = null;
+          try {
+            parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+          } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+            parsedMessage = (com.eldritch.invoken.proto.Locations.Room.Furniture) e.getUnfinishedMessage();
+            throw e;
+          } finally {
+            if (parsedMessage != null) {
+              mergeFrom(parsedMessage);
+            }
+          }
+          return this;
+        }
+        private int bitField0_;
+
+        // optional string id = 1;
+        private java.lang.Object id_ = "";
+        /**
+         * <code>optional string id = 1;</code>
+         */
+        public boolean hasId() {
+          return ((bitField0_ & 0x00000001) == 0x00000001);
+        }
+        /**
+         * <code>optional string id = 1;</code>
+         */
+        public java.lang.String getId() {
+          java.lang.Object ref = id_;
+          if (!(ref instanceof java.lang.String)) {
+            java.lang.String s = ((com.google.protobuf.ByteString) ref)
+                .toStringUtf8();
+            id_ = s;
+            return s;
+          } else {
+            return (java.lang.String) ref;
+          }
+        }
+        /**
+         * <code>optional string id = 1;</code>
+         */
+        public com.google.protobuf.ByteString
+            getIdBytes() {
+          java.lang.Object ref = id_;
+          if (ref instanceof String) {
+            com.google.protobuf.ByteString b = 
+                com.google.protobuf.ByteString.copyFromUtf8(
+                    (java.lang.String) ref);
+            id_ = b;
+            return b;
+          } else {
+            return (com.google.protobuf.ByteString) ref;
+          }
+        }
+        /**
+         * <code>optional string id = 1;</code>
+         */
+        public Builder setId(
+            java.lang.String value) {
+          if (value == null) {
+    throw new NullPointerException();
+  }
+  bitField0_ |= 0x00000001;
+          id_ = value;
+          onChanged();
+          return this;
+        }
+        /**
+         * <code>optional string id = 1;</code>
+         */
+        public Builder clearId() {
+          bitField0_ = (bitField0_ & ~0x00000001);
+          id_ = getDefaultInstance().getId();
+          onChanged();
+          return this;
+        }
+        /**
+         * <code>optional string id = 1;</code>
+         */
+        public Builder setIdBytes(
+            com.google.protobuf.ByteString value) {
+          if (value == null) {
+    throw new NullPointerException();
+  }
+  bitField0_ |= 0x00000001;
+          id_ = value;
+          onChanged();
+          return this;
+        }
+
+        // optional .scifirpg.Room.Furniture.Type type = 2;
+        private com.eldritch.invoken.proto.Locations.Room.Furniture.Type type_ = com.eldritch.invoken.proto.Locations.Room.Furniture.Type.ATLAS;
+        /**
+         * <code>optional .scifirpg.Room.Furniture.Type type = 2;</code>
+         */
+        public boolean hasType() {
+          return ((bitField0_ & 0x00000002) == 0x00000002);
+        }
+        /**
+         * <code>optional .scifirpg.Room.Furniture.Type type = 2;</code>
+         */
+        public com.eldritch.invoken.proto.Locations.Room.Furniture.Type getType() {
+          return type_;
+        }
+        /**
+         * <code>optional .scifirpg.Room.Furniture.Type type = 2;</code>
+         */
+        public Builder setType(com.eldritch.invoken.proto.Locations.Room.Furniture.Type value) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          bitField0_ |= 0x00000002;
+          type_ = value;
+          onChanged();
+          return this;
+        }
+        /**
+         * <code>optional .scifirpg.Room.Furniture.Type type = 2;</code>
+         */
+        public Builder clearType() {
+          bitField0_ = (bitField0_ & ~0x00000002);
+          type_ = com.eldritch.invoken.proto.Locations.Room.Furniture.Type.ATLAS;
+          onChanged();
+          return this;
+        }
+
+        // @@protoc_insertion_point(builder_scope:scifirpg.Room.Furniture)
+      }
+
+      static {
+        defaultInstance = new Furniture(true);
+        defaultInstance.initFields();
+      }
+
+      // @@protoc_insertion_point(class_scope:scifirpg.Room.Furniture)
+    }
+
+    private int bitField0_;
+    // optional string id = 1;
+    public static final int ID_FIELD_NUMBER = 1;
+    private java.lang.Object id_;
+    /**
+     * <code>optional string id = 1;</code>
+     */
+    public boolean hasId() {
+      return ((bitField0_ & 0x00000001) == 0x00000001);
+    }
+    /**
+     * <code>optional string id = 1;</code>
+     */
+    public java.lang.String getId() {
+      java.lang.Object ref = id_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        if (bs.isValidUtf8()) {
+          id_ = s;
+        }
+        return s;
+      }
+    }
+    /**
+     * <code>optional string id = 1;</code>
+     */
+    public com.google.protobuf.ByteString
+        getIdBytes() {
+      java.lang.Object ref = id_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        id_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    // repeated .scifirpg.Room.Furniture furniture = 2;
+    public static final int FURNITURE_FIELD_NUMBER = 2;
+    private java.util.List<com.eldritch.invoken.proto.Locations.Room.Furniture> furniture_;
+    /**
+     * <code>repeated .scifirpg.Room.Furniture furniture = 2;</code>
+     */
+    public java.util.List<com.eldritch.invoken.proto.Locations.Room.Furniture> getFurnitureList() {
+      return furniture_;
+    }
+    /**
+     * <code>repeated .scifirpg.Room.Furniture furniture = 2;</code>
+     */
+    public java.util.List<? extends com.eldritch.invoken.proto.Locations.Room.FurnitureOrBuilder> 
+        getFurnitureOrBuilderList() {
+      return furniture_;
+    }
+    /**
+     * <code>repeated .scifirpg.Room.Furniture furniture = 2;</code>
+     */
+    public int getFurnitureCount() {
+      return furniture_.size();
+    }
+    /**
+     * <code>repeated .scifirpg.Room.Furniture furniture = 2;</code>
+     */
+    public com.eldritch.invoken.proto.Locations.Room.Furniture getFurniture(int index) {
+      return furniture_.get(index);
+    }
+    /**
+     * <code>repeated .scifirpg.Room.Furniture furniture = 2;</code>
+     */
+    public com.eldritch.invoken.proto.Locations.Room.FurnitureOrBuilder getFurnitureOrBuilder(
+        int index) {
+      return furniture_.get(index);
+    }
+
+    // optional .scifirpg.Room.Size size = 3;
+    public static final int SIZE_FIELD_NUMBER = 3;
+    private com.eldritch.invoken.proto.Locations.Room.Size size_;
+    /**
+     * <code>optional .scifirpg.Room.Size size = 3;</code>
+     */
+    public boolean hasSize() {
+      return ((bitField0_ & 0x00000002) == 0x00000002);
+    }
+    /**
+     * <code>optional .scifirpg.Room.Size size = 3;</code>
+     */
+    public com.eldritch.invoken.proto.Locations.Room.Size getSize() {
+      return size_;
+    }
+
+    private void initFields() {
+      id_ = "";
+      furniture_ = java.util.Collections.emptyList();
+      size_ = com.eldritch.invoken.proto.Locations.Room.Size.SMALL;
+    }
+    private byte memoizedIsInitialized = -1;
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized != -1) return isInitialized == 1;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      getSerializedSize();
+      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+        output.writeBytes(1, getIdBytes());
+      }
+      for (int i = 0; i < furniture_.size(); i++) {
+        output.writeMessage(2, furniture_.get(i));
+      }
+      if (((bitField0_ & 0x00000002) == 0x00000002)) {
+        output.writeEnum(3, size_.getNumber());
+      }
+      getUnknownFields().writeTo(output);
+    }
+
+    private int memoizedSerializedSize = -1;
+    public int getSerializedSize() {
+      int size = memoizedSerializedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeBytesSize(1, getIdBytes());
+      }
+      for (int i = 0; i < furniture_.size(); i++) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(2, furniture_.get(i));
+      }
+      if (((bitField0_ & 0x00000002) == 0x00000002)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeEnumSize(3, size_.getNumber());
+      }
+      size += getUnknownFields().getSerializedSize();
+      memoizedSerializedSize = size;
+      return size;
+    }
+
+    private static final long serialVersionUID = 0L;
+    @java.lang.Override
+    protected java.lang.Object writeReplace()
+        throws java.io.ObjectStreamException {
+      return super.writeReplace();
+    }
+
+    public static com.eldritch.invoken.proto.Locations.Room parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static com.eldritch.invoken.proto.Locations.Room parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static com.eldritch.invoken.proto.Locations.Room parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static com.eldritch.invoken.proto.Locations.Room parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static com.eldritch.invoken.proto.Locations.Room parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input);
+    }
+    public static com.eldritch.invoken.proto.Locations.Room parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input, extensionRegistry);
+    }
+    public static com.eldritch.invoken.proto.Locations.Room parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return PARSER.parseDelimitedFrom(input);
+    }
+    public static com.eldritch.invoken.proto.Locations.Room parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseDelimitedFrom(input, extensionRegistry);
+    }
+    public static com.eldritch.invoken.proto.Locations.Room parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input);
+    }
+    public static com.eldritch.invoken.proto.Locations.Room parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input, extensionRegistry);
+    }
+
+    public static Builder newBuilder() { return Builder.create(); }
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder(com.eldritch.invoken.proto.Locations.Room prototype) {
+      return newBuilder().mergeFrom(prototype);
+    }
+    public Builder toBuilder() { return newBuilder(this); }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code scifirpg.Room}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessage.Builder<Builder>
+       implements com.eldritch.invoken.proto.Locations.RoomOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return com.eldritch.invoken.proto.Locations.internal_static_scifirpg_Room_descriptor;
+      }
+
+      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return com.eldritch.invoken.proto.Locations.internal_static_scifirpg_Room_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                com.eldritch.invoken.proto.Locations.Room.class, com.eldritch.invoken.proto.Locations.Room.Builder.class);
+      }
+
+      // Construct using com.eldritch.invoken.proto.Locations.Room.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
+          getFurnitureFieldBuilder();
+        }
+      }
+      private static Builder create() {
+        return new Builder();
+      }
+
+      public Builder clear() {
+        super.clear();
+        id_ = "";
+        bitField0_ = (bitField0_ & ~0x00000001);
+        if (furnitureBuilder_ == null) {
+          furniture_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000002);
+        } else {
+          furnitureBuilder_.clear();
+        }
+        size_ = com.eldritch.invoken.proto.Locations.Room.Size.SMALL;
+        bitField0_ = (bitField0_ & ~0x00000004);
+        return this;
+      }
+
+      public Builder clone() {
+        return create().mergeFrom(buildPartial());
+      }
+
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return com.eldritch.invoken.proto.Locations.internal_static_scifirpg_Room_descriptor;
+      }
+
+      public com.eldritch.invoken.proto.Locations.Room getDefaultInstanceForType() {
+        return com.eldritch.invoken.proto.Locations.Room.getDefaultInstance();
+      }
+
+      public com.eldritch.invoken.proto.Locations.Room build() {
+        com.eldritch.invoken.proto.Locations.Room result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      public com.eldritch.invoken.proto.Locations.Room buildPartial() {
+        com.eldritch.invoken.proto.Locations.Room result = new com.eldritch.invoken.proto.Locations.Room(this);
+        int from_bitField0_ = bitField0_;
+        int to_bitField0_ = 0;
+        if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
+          to_bitField0_ |= 0x00000001;
+        }
+        result.id_ = id_;
+        if (furnitureBuilder_ == null) {
+          if (((bitField0_ & 0x00000002) == 0x00000002)) {
+            furniture_ = java.util.Collections.unmodifiableList(furniture_);
+            bitField0_ = (bitField0_ & ~0x00000002);
+          }
+          result.furniture_ = furniture_;
+        } else {
+          result.furniture_ = furnitureBuilder_.build();
+        }
+        if (((from_bitField0_ & 0x00000004) == 0x00000004)) {
+          to_bitField0_ |= 0x00000002;
+        }
+        result.size_ = size_;
+        result.bitField0_ = to_bitField0_;
+        onBuilt();
+        return result;
+      }
+
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof com.eldritch.invoken.proto.Locations.Room) {
+          return mergeFrom((com.eldritch.invoken.proto.Locations.Room)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(com.eldritch.invoken.proto.Locations.Room other) {
+        if (other == com.eldritch.invoken.proto.Locations.Room.getDefaultInstance()) return this;
+        if (other.hasId()) {
+          bitField0_ |= 0x00000001;
+          id_ = other.id_;
+          onChanged();
+        }
+        if (furnitureBuilder_ == null) {
+          if (!other.furniture_.isEmpty()) {
+            if (furniture_.isEmpty()) {
+              furniture_ = other.furniture_;
+              bitField0_ = (bitField0_ & ~0x00000002);
+            } else {
+              ensureFurnitureIsMutable();
+              furniture_.addAll(other.furniture_);
+            }
+            onChanged();
+          }
+        } else {
+          if (!other.furniture_.isEmpty()) {
+            if (furnitureBuilder_.isEmpty()) {
+              furnitureBuilder_.dispose();
+              furnitureBuilder_ = null;
+              furniture_ = other.furniture_;
+              bitField0_ = (bitField0_ & ~0x00000002);
+              furnitureBuilder_ = 
+                com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders ?
+                   getFurnitureFieldBuilder() : null;
+            } else {
+              furnitureBuilder_.addAllMessages(other.furniture_);
+            }
+          }
+        }
+        if (other.hasSize()) {
+          setSize(other.getSize());
+        }
+        this.mergeUnknownFields(other.getUnknownFields());
+        return this;
+      }
+
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        com.eldritch.invoken.proto.Locations.Room parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (com.eldritch.invoken.proto.Locations.Room) e.getUnfinishedMessage();
+          throw e;
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+      private int bitField0_;
+
+      // optional string id = 1;
+      private java.lang.Object id_ = "";
+      /**
+       * <code>optional string id = 1;</code>
+       */
+      public boolean hasId() {
+        return ((bitField0_ & 0x00000001) == 0x00000001);
+      }
+      /**
+       * <code>optional string id = 1;</code>
+       */
+      public java.lang.String getId() {
+        java.lang.Object ref = id_;
+        if (!(ref instanceof java.lang.String)) {
+          java.lang.String s = ((com.google.protobuf.ByteString) ref)
+              .toStringUtf8();
+          id_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>optional string id = 1;</code>
+       */
+      public com.google.protobuf.ByteString
+          getIdBytes() {
+        java.lang.Object ref = id_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          id_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>optional string id = 1;</code>
+       */
+      public Builder setId(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  bitField0_ |= 0x00000001;
+        id_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>optional string id = 1;</code>
+       */
+      public Builder clearId() {
+        bitField0_ = (bitField0_ & ~0x00000001);
+        id_ = getDefaultInstance().getId();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>optional string id = 1;</code>
+       */
+      public Builder setIdBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  bitField0_ |= 0x00000001;
+        id_ = value;
+        onChanged();
+        return this;
+      }
+
+      // repeated .scifirpg.Room.Furniture furniture = 2;
+      private java.util.List<com.eldritch.invoken.proto.Locations.Room.Furniture> furniture_ =
+        java.util.Collections.emptyList();
+      private void ensureFurnitureIsMutable() {
+        if (!((bitField0_ & 0x00000002) == 0x00000002)) {
+          furniture_ = new java.util.ArrayList<com.eldritch.invoken.proto.Locations.Room.Furniture>(furniture_);
+          bitField0_ |= 0x00000002;
+         }
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilder<
+          com.eldritch.invoken.proto.Locations.Room.Furniture, com.eldritch.invoken.proto.Locations.Room.Furniture.Builder, com.eldritch.invoken.proto.Locations.Room.FurnitureOrBuilder> furnitureBuilder_;
+
+      /**
+       * <code>repeated .scifirpg.Room.Furniture furniture = 2;</code>
+       */
+      public java.util.List<com.eldritch.invoken.proto.Locations.Room.Furniture> getFurnitureList() {
+        if (furnitureBuilder_ == null) {
+          return java.util.Collections.unmodifiableList(furniture_);
+        } else {
+          return furnitureBuilder_.getMessageList();
+        }
+      }
+      /**
+       * <code>repeated .scifirpg.Room.Furniture furniture = 2;</code>
+       */
+      public int getFurnitureCount() {
+        if (furnitureBuilder_ == null) {
+          return furniture_.size();
+        } else {
+          return furnitureBuilder_.getCount();
+        }
+      }
+      /**
+       * <code>repeated .scifirpg.Room.Furniture furniture = 2;</code>
+       */
+      public com.eldritch.invoken.proto.Locations.Room.Furniture getFurniture(int index) {
+        if (furnitureBuilder_ == null) {
+          return furniture_.get(index);
+        } else {
+          return furnitureBuilder_.getMessage(index);
+        }
+      }
+      /**
+       * <code>repeated .scifirpg.Room.Furniture furniture = 2;</code>
+       */
+      public Builder setFurniture(
+          int index, com.eldritch.invoken.proto.Locations.Room.Furniture value) {
+        if (furnitureBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureFurnitureIsMutable();
+          furniture_.set(index, value);
+          onChanged();
+        } else {
+          furnitureBuilder_.setMessage(index, value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .scifirpg.Room.Furniture furniture = 2;</code>
+       */
+      public Builder setFurniture(
+          int index, com.eldritch.invoken.proto.Locations.Room.Furniture.Builder builderForValue) {
+        if (furnitureBuilder_ == null) {
+          ensureFurnitureIsMutable();
+          furniture_.set(index, builderForValue.build());
+          onChanged();
+        } else {
+          furnitureBuilder_.setMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .scifirpg.Room.Furniture furniture = 2;</code>
+       */
+      public Builder addFurniture(com.eldritch.invoken.proto.Locations.Room.Furniture value) {
+        if (furnitureBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureFurnitureIsMutable();
+          furniture_.add(value);
+          onChanged();
+        } else {
+          furnitureBuilder_.addMessage(value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .scifirpg.Room.Furniture furniture = 2;</code>
+       */
+      public Builder addFurniture(
+          int index, com.eldritch.invoken.proto.Locations.Room.Furniture value) {
+        if (furnitureBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureFurnitureIsMutable();
+          furniture_.add(index, value);
+          onChanged();
+        } else {
+          furnitureBuilder_.addMessage(index, value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .scifirpg.Room.Furniture furniture = 2;</code>
+       */
+      public Builder addFurniture(
+          com.eldritch.invoken.proto.Locations.Room.Furniture.Builder builderForValue) {
+        if (furnitureBuilder_ == null) {
+          ensureFurnitureIsMutable();
+          furniture_.add(builderForValue.build());
+          onChanged();
+        } else {
+          furnitureBuilder_.addMessage(builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .scifirpg.Room.Furniture furniture = 2;</code>
+       */
+      public Builder addFurniture(
+          int index, com.eldritch.invoken.proto.Locations.Room.Furniture.Builder builderForValue) {
+        if (furnitureBuilder_ == null) {
+          ensureFurnitureIsMutable();
+          furniture_.add(index, builderForValue.build());
+          onChanged();
+        } else {
+          furnitureBuilder_.addMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .scifirpg.Room.Furniture furniture = 2;</code>
+       */
+      public Builder addAllFurniture(
+          java.lang.Iterable<? extends com.eldritch.invoken.proto.Locations.Room.Furniture> values) {
+        if (furnitureBuilder_ == null) {
+          ensureFurnitureIsMutable();
+          super.addAll(values, furniture_);
+          onChanged();
+        } else {
+          furnitureBuilder_.addAllMessages(values);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .scifirpg.Room.Furniture furniture = 2;</code>
+       */
+      public Builder clearFurniture() {
+        if (furnitureBuilder_ == null) {
+          furniture_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000002);
+          onChanged();
+        } else {
+          furnitureBuilder_.clear();
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .scifirpg.Room.Furniture furniture = 2;</code>
+       */
+      public Builder removeFurniture(int index) {
+        if (furnitureBuilder_ == null) {
+          ensureFurnitureIsMutable();
+          furniture_.remove(index);
+          onChanged();
+        } else {
+          furnitureBuilder_.remove(index);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .scifirpg.Room.Furniture furniture = 2;</code>
+       */
+      public com.eldritch.invoken.proto.Locations.Room.Furniture.Builder getFurnitureBuilder(
+          int index) {
+        return getFurnitureFieldBuilder().getBuilder(index);
+      }
+      /**
+       * <code>repeated .scifirpg.Room.Furniture furniture = 2;</code>
+       */
+      public com.eldritch.invoken.proto.Locations.Room.FurnitureOrBuilder getFurnitureOrBuilder(
+          int index) {
+        if (furnitureBuilder_ == null) {
+          return furniture_.get(index);  } else {
+          return furnitureBuilder_.getMessageOrBuilder(index);
+        }
+      }
+      /**
+       * <code>repeated .scifirpg.Room.Furniture furniture = 2;</code>
+       */
+      public java.util.List<? extends com.eldritch.invoken.proto.Locations.Room.FurnitureOrBuilder> 
+           getFurnitureOrBuilderList() {
+        if (furnitureBuilder_ != null) {
+          return furnitureBuilder_.getMessageOrBuilderList();
+        } else {
+          return java.util.Collections.unmodifiableList(furniture_);
+        }
+      }
+      /**
+       * <code>repeated .scifirpg.Room.Furniture furniture = 2;</code>
+       */
+      public com.eldritch.invoken.proto.Locations.Room.Furniture.Builder addFurnitureBuilder() {
+        return getFurnitureFieldBuilder().addBuilder(
+            com.eldritch.invoken.proto.Locations.Room.Furniture.getDefaultInstance());
+      }
+      /**
+       * <code>repeated .scifirpg.Room.Furniture furniture = 2;</code>
+       */
+      public com.eldritch.invoken.proto.Locations.Room.Furniture.Builder addFurnitureBuilder(
+          int index) {
+        return getFurnitureFieldBuilder().addBuilder(
+            index, com.eldritch.invoken.proto.Locations.Room.Furniture.getDefaultInstance());
+      }
+      /**
+       * <code>repeated .scifirpg.Room.Furniture furniture = 2;</code>
+       */
+      public java.util.List<com.eldritch.invoken.proto.Locations.Room.Furniture.Builder> 
+           getFurnitureBuilderList() {
+        return getFurnitureFieldBuilder().getBuilderList();
+      }
+      private com.google.protobuf.RepeatedFieldBuilder<
+          com.eldritch.invoken.proto.Locations.Room.Furniture, com.eldritch.invoken.proto.Locations.Room.Furniture.Builder, com.eldritch.invoken.proto.Locations.Room.FurnitureOrBuilder> 
+          getFurnitureFieldBuilder() {
+        if (furnitureBuilder_ == null) {
+          furnitureBuilder_ = new com.google.protobuf.RepeatedFieldBuilder<
+              com.eldritch.invoken.proto.Locations.Room.Furniture, com.eldritch.invoken.proto.Locations.Room.Furniture.Builder, com.eldritch.invoken.proto.Locations.Room.FurnitureOrBuilder>(
+                  furniture_,
+                  ((bitField0_ & 0x00000002) == 0x00000002),
+                  getParentForChildren(),
+                  isClean());
+          furniture_ = null;
+        }
+        return furnitureBuilder_;
+      }
+
+      // optional .scifirpg.Room.Size size = 3;
+      private com.eldritch.invoken.proto.Locations.Room.Size size_ = com.eldritch.invoken.proto.Locations.Room.Size.SMALL;
+      /**
+       * <code>optional .scifirpg.Room.Size size = 3;</code>
+       */
+      public boolean hasSize() {
+        return ((bitField0_ & 0x00000004) == 0x00000004);
+      }
+      /**
+       * <code>optional .scifirpg.Room.Size size = 3;</code>
+       */
+      public com.eldritch.invoken.proto.Locations.Room.Size getSize() {
+        return size_;
+      }
+      /**
+       * <code>optional .scifirpg.Room.Size size = 3;</code>
+       */
+      public Builder setSize(com.eldritch.invoken.proto.Locations.Room.Size value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        bitField0_ |= 0x00000004;
+        size_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>optional .scifirpg.Room.Size size = 3;</code>
+       */
+      public Builder clearSize() {
+        bitField0_ = (bitField0_ & ~0x00000004);
+        size_ = com.eldritch.invoken.proto.Locations.Room.Size.SMALL;
+        onChanged();
+        return this;
+      }
+
+      // @@protoc_insertion_point(builder_scope:scifirpg.Room)
+    }
+
+    static {
+      defaultInstance = new Room(true);
+      defaultInstance.initFields();
+    }
+
+    // @@protoc_insertion_point(class_scope:scifirpg.Room)
+  }
+
+  public interface LightOrBuilder
+      extends com.google.protobuf.MessageOrBuilder {
+
+    // optional int32 r = 1;
+    /**
+     * <code>optional int32 r = 1;</code>
+     */
+    boolean hasR();
+    /**
+     * <code>optional int32 r = 1;</code>
+     */
+    int getR();
+
+    // optional int32 g = 2;
+    /**
+     * <code>optional int32 g = 2;</code>
+     */
+    boolean hasG();
+    /**
+     * <code>optional int32 g = 2;</code>
+     */
+    int getG();
+
+    // optional int32 b = 3;
+    /**
+     * <code>optional int32 b = 3;</code>
+     */
+    boolean hasB();
+    /**
+     * <code>optional int32 b = 3;</code>
+     */
+    int getB();
+
+    // optional float intensity = 4;
+    /**
+     * <code>optional float intensity = 4;</code>
+     */
+    boolean hasIntensity();
+    /**
+     * <code>optional float intensity = 4;</code>
+     */
+    float getIntensity();
+  }
+  /**
+   * Protobuf type {@code scifirpg.Light}
+   */
+  public static final class Light extends
+      com.google.protobuf.GeneratedMessage
+      implements LightOrBuilder {
+    // Use Light.newBuilder() to construct.
+    private Light(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
+      super(builder);
+      this.unknownFields = builder.getUnknownFields();
+    }
+    private Light(boolean noInit) { this.unknownFields = com.google.protobuf.UnknownFieldSet.getDefaultInstance(); }
+
+    private static final Light defaultInstance;
+    public static Light getDefaultInstance() {
+      return defaultInstance;
+    }
+
+    public Light getDefaultInstanceForType() {
+      return defaultInstance;
+    }
+
+    private final com.google.protobuf.UnknownFieldSet unknownFields;
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+        getUnknownFields() {
+      return this.unknownFields;
+    }
+    private Light(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      initFields();
+      int mutable_bitField0_ = 0;
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            default: {
+              if (!parseUnknownField(input, unknownFields,
+                                     extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+            case 8: {
+              bitField0_ |= 0x00000001;
+              r_ = input.readInt32();
+              break;
+            }
+            case 16: {
+              bitField0_ |= 0x00000002;
+              g_ = input.readInt32();
+              break;
+            }
+            case 24: {
+              bitField0_ |= 0x00000004;
+              b_ = input.readInt32();
+              break;
+            }
+            case 37: {
+              bitField0_ |= 0x00000008;
+              intensity_ = input.readFloat();
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e.getMessage()).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return com.eldritch.invoken.proto.Locations.internal_static_scifirpg_Light_descriptor;
+    }
+
+    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return com.eldritch.invoken.proto.Locations.internal_static_scifirpg_Light_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              com.eldritch.invoken.proto.Locations.Light.class, com.eldritch.invoken.proto.Locations.Light.Builder.class);
+    }
+
+    public static com.google.protobuf.Parser<Light> PARSER =
+        new com.google.protobuf.AbstractParser<Light>() {
+      public Light parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new Light(input, extensionRegistry);
+      }
+    };
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<Light> getParserForType() {
+      return PARSER;
+    }
+
+    private int bitField0_;
+    // optional int32 r = 1;
+    public static final int R_FIELD_NUMBER = 1;
+    private int r_;
+    /**
+     * <code>optional int32 r = 1;</code>
+     */
+    public boolean hasR() {
+      return ((bitField0_ & 0x00000001) == 0x00000001);
+    }
+    /**
+     * <code>optional int32 r = 1;</code>
+     */
+    public int getR() {
+      return r_;
+    }
+
+    // optional int32 g = 2;
+    public static final int G_FIELD_NUMBER = 2;
+    private int g_;
+    /**
+     * <code>optional int32 g = 2;</code>
+     */
+    public boolean hasG() {
+      return ((bitField0_ & 0x00000002) == 0x00000002);
+    }
+    /**
+     * <code>optional int32 g = 2;</code>
+     */
+    public int getG() {
+      return g_;
+    }
+
+    // optional int32 b = 3;
+    public static final int B_FIELD_NUMBER = 3;
+    private int b_;
+    /**
+     * <code>optional int32 b = 3;</code>
+     */
+    public boolean hasB() {
+      return ((bitField0_ & 0x00000004) == 0x00000004);
+    }
+    /**
+     * <code>optional int32 b = 3;</code>
+     */
+    public int getB() {
+      return b_;
+    }
+
+    // optional float intensity = 4;
+    public static final int INTENSITY_FIELD_NUMBER = 4;
+    private float intensity_;
+    /**
+     * <code>optional float intensity = 4;</code>
+     */
+    public boolean hasIntensity() {
+      return ((bitField0_ & 0x00000008) == 0x00000008);
+    }
+    /**
+     * <code>optional float intensity = 4;</code>
+     */
+    public float getIntensity() {
+      return intensity_;
+    }
+
+    private void initFields() {
+      r_ = 0;
+      g_ = 0;
+      b_ = 0;
+      intensity_ = 0F;
+    }
+    private byte memoizedIsInitialized = -1;
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized != -1) return isInitialized == 1;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      getSerializedSize();
+      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+        output.writeInt32(1, r_);
+      }
+      if (((bitField0_ & 0x00000002) == 0x00000002)) {
+        output.writeInt32(2, g_);
+      }
+      if (((bitField0_ & 0x00000004) == 0x00000004)) {
+        output.writeInt32(3, b_);
+      }
+      if (((bitField0_ & 0x00000008) == 0x00000008)) {
+        output.writeFloat(4, intensity_);
+      }
+      getUnknownFields().writeTo(output);
+    }
+
+    private int memoizedSerializedSize = -1;
+    public int getSerializedSize() {
+      int size = memoizedSerializedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(1, r_);
+      }
+      if (((bitField0_ & 0x00000002) == 0x00000002)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(2, g_);
+      }
+      if (((bitField0_ & 0x00000004) == 0x00000004)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(3, b_);
+      }
+      if (((bitField0_ & 0x00000008) == 0x00000008)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeFloatSize(4, intensity_);
+      }
+      size += getUnknownFields().getSerializedSize();
+      memoizedSerializedSize = size;
+      return size;
+    }
+
+    private static final long serialVersionUID = 0L;
+    @java.lang.Override
+    protected java.lang.Object writeReplace()
+        throws java.io.ObjectStreamException {
+      return super.writeReplace();
+    }
+
+    public static com.eldritch.invoken.proto.Locations.Light parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static com.eldritch.invoken.proto.Locations.Light parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static com.eldritch.invoken.proto.Locations.Light parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static com.eldritch.invoken.proto.Locations.Light parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static com.eldritch.invoken.proto.Locations.Light parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input);
+    }
+    public static com.eldritch.invoken.proto.Locations.Light parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input, extensionRegistry);
+    }
+    public static com.eldritch.invoken.proto.Locations.Light parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return PARSER.parseDelimitedFrom(input);
+    }
+    public static com.eldritch.invoken.proto.Locations.Light parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseDelimitedFrom(input, extensionRegistry);
+    }
+    public static com.eldritch.invoken.proto.Locations.Light parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input);
+    }
+    public static com.eldritch.invoken.proto.Locations.Light parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input, extensionRegistry);
+    }
+
+    public static Builder newBuilder() { return Builder.create(); }
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder(com.eldritch.invoken.proto.Locations.Light prototype) {
+      return newBuilder().mergeFrom(prototype);
+    }
+    public Builder toBuilder() { return newBuilder(this); }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code scifirpg.Light}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessage.Builder<Builder>
+       implements com.eldritch.invoken.proto.Locations.LightOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return com.eldritch.invoken.proto.Locations.internal_static_scifirpg_Light_descriptor;
+      }
+
+      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return com.eldritch.invoken.proto.Locations.internal_static_scifirpg_Light_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                com.eldritch.invoken.proto.Locations.Light.class, com.eldritch.invoken.proto.Locations.Light.Builder.class);
+      }
+
+      // Construct using com.eldritch.invoken.proto.Locations.Light.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
+        }
+      }
+      private static Builder create() {
+        return new Builder();
+      }
+
+      public Builder clear() {
+        super.clear();
+        r_ = 0;
+        bitField0_ = (bitField0_ & ~0x00000001);
+        g_ = 0;
+        bitField0_ = (bitField0_ & ~0x00000002);
+        b_ = 0;
+        bitField0_ = (bitField0_ & ~0x00000004);
+        intensity_ = 0F;
+        bitField0_ = (bitField0_ & ~0x00000008);
+        return this;
+      }
+
+      public Builder clone() {
+        return create().mergeFrom(buildPartial());
+      }
+
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return com.eldritch.invoken.proto.Locations.internal_static_scifirpg_Light_descriptor;
+      }
+
+      public com.eldritch.invoken.proto.Locations.Light getDefaultInstanceForType() {
+        return com.eldritch.invoken.proto.Locations.Light.getDefaultInstance();
+      }
+
+      public com.eldritch.invoken.proto.Locations.Light build() {
+        com.eldritch.invoken.proto.Locations.Light result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      public com.eldritch.invoken.proto.Locations.Light buildPartial() {
+        com.eldritch.invoken.proto.Locations.Light result = new com.eldritch.invoken.proto.Locations.Light(this);
+        int from_bitField0_ = bitField0_;
+        int to_bitField0_ = 0;
+        if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
+          to_bitField0_ |= 0x00000001;
+        }
+        result.r_ = r_;
+        if (((from_bitField0_ & 0x00000002) == 0x00000002)) {
+          to_bitField0_ |= 0x00000002;
+        }
+        result.g_ = g_;
+        if (((from_bitField0_ & 0x00000004) == 0x00000004)) {
+          to_bitField0_ |= 0x00000004;
+        }
+        result.b_ = b_;
+        if (((from_bitField0_ & 0x00000008) == 0x00000008)) {
+          to_bitField0_ |= 0x00000008;
+        }
+        result.intensity_ = intensity_;
+        result.bitField0_ = to_bitField0_;
+        onBuilt();
+        return result;
+      }
+
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof com.eldritch.invoken.proto.Locations.Light) {
+          return mergeFrom((com.eldritch.invoken.proto.Locations.Light)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(com.eldritch.invoken.proto.Locations.Light other) {
+        if (other == com.eldritch.invoken.proto.Locations.Light.getDefaultInstance()) return this;
+        if (other.hasR()) {
+          setR(other.getR());
+        }
+        if (other.hasG()) {
+          setG(other.getG());
+        }
+        if (other.hasB()) {
+          setB(other.getB());
+        }
+        if (other.hasIntensity()) {
+          setIntensity(other.getIntensity());
+        }
+        this.mergeUnknownFields(other.getUnknownFields());
+        return this;
+      }
+
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        com.eldritch.invoken.proto.Locations.Light parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (com.eldritch.invoken.proto.Locations.Light) e.getUnfinishedMessage();
+          throw e;
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+      private int bitField0_;
+
+      // optional int32 r = 1;
+      private int r_ ;
+      /**
+       * <code>optional int32 r = 1;</code>
+       */
+      public boolean hasR() {
+        return ((bitField0_ & 0x00000001) == 0x00000001);
+      }
+      /**
+       * <code>optional int32 r = 1;</code>
+       */
+      public int getR() {
+        return r_;
+      }
+      /**
+       * <code>optional int32 r = 1;</code>
+       */
+      public Builder setR(int value) {
+        bitField0_ |= 0x00000001;
+        r_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>optional int32 r = 1;</code>
+       */
+      public Builder clearR() {
+        bitField0_ = (bitField0_ & ~0x00000001);
+        r_ = 0;
+        onChanged();
+        return this;
+      }
+
+      // optional int32 g = 2;
+      private int g_ ;
+      /**
+       * <code>optional int32 g = 2;</code>
+       */
+      public boolean hasG() {
+        return ((bitField0_ & 0x00000002) == 0x00000002);
+      }
+      /**
+       * <code>optional int32 g = 2;</code>
+       */
+      public int getG() {
+        return g_;
+      }
+      /**
+       * <code>optional int32 g = 2;</code>
+       */
+      public Builder setG(int value) {
+        bitField0_ |= 0x00000002;
+        g_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>optional int32 g = 2;</code>
+       */
+      public Builder clearG() {
+        bitField0_ = (bitField0_ & ~0x00000002);
+        g_ = 0;
+        onChanged();
+        return this;
+      }
+
+      // optional int32 b = 3;
+      private int b_ ;
+      /**
+       * <code>optional int32 b = 3;</code>
+       */
+      public boolean hasB() {
+        return ((bitField0_ & 0x00000004) == 0x00000004);
+      }
+      /**
+       * <code>optional int32 b = 3;</code>
+       */
+      public int getB() {
+        return b_;
+      }
+      /**
+       * <code>optional int32 b = 3;</code>
+       */
+      public Builder setB(int value) {
+        bitField0_ |= 0x00000004;
+        b_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>optional int32 b = 3;</code>
+       */
+      public Builder clearB() {
+        bitField0_ = (bitField0_ & ~0x00000004);
+        b_ = 0;
+        onChanged();
+        return this;
+      }
+
+      // optional float intensity = 4;
+      private float intensity_ ;
+      /**
+       * <code>optional float intensity = 4;</code>
+       */
+      public boolean hasIntensity() {
+        return ((bitField0_ & 0x00000008) == 0x00000008);
+      }
+      /**
+       * <code>optional float intensity = 4;</code>
+       */
+      public float getIntensity() {
+        return intensity_;
+      }
+      /**
+       * <code>optional float intensity = 4;</code>
+       */
+      public Builder setIntensity(float value) {
+        bitField0_ |= 0x00000008;
+        intensity_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>optional float intensity = 4;</code>
+       */
+      public Builder clearIntensity() {
+        bitField0_ = (bitField0_ & ~0x00000008);
+        intensity_ = 0F;
+        onChanged();
+        return this;
+      }
+
+      // @@protoc_insertion_point(builder_scope:scifirpg.Light)
+    }
+
+    static {
+      defaultInstance = new Light(true);
+      defaultInstance.initFields();
+    }
+
+    // @@protoc_insertion_point(class_scope:scifirpg.Light)
   }
 
   public interface EncounterOrBuilder
@@ -11154,6 +13989,21 @@ public final class Locations {
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
       internal_static_scifirpg_Location_fieldAccessorTable;
   private static com.google.protobuf.Descriptors.Descriptor
+    internal_static_scifirpg_Room_descriptor;
+  private static
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_scifirpg_Room_fieldAccessorTable;
+  private static com.google.protobuf.Descriptors.Descriptor
+    internal_static_scifirpg_Room_Furniture_descriptor;
+  private static
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_scifirpg_Room_Furniture_fieldAccessorTable;
+  private static com.google.protobuf.Descriptors.Descriptor
+    internal_static_scifirpg_Light_descriptor;
+  private static
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_scifirpg_Light_fieldAccessorTable;
+  private static com.google.protobuf.Descriptors.Descriptor
     internal_static_scifirpg_Encounter_descriptor;
   private static
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
@@ -11201,42 +14051,54 @@ public final class Locations {
       "roto\022\010scifirpg\032\'com/eldritch/invoken/pro" +
       "to/actors.proto\032.com/eldritch/invoken/pr" +
       "oto/prerequisites.proto\032)com/eldritch/in" +
-      "voken/proto/outcomes.proto\"\205\001\n\010Location\022" +
-      "\n\n\002id\030\001 \002(\t\022\014\n\004name\030\002 \002(\t\022\021\n\tparent_id\030\004" +
-      " \001(\t\022&\n\tencounter\030\003 \003(\0132\023.scifirpg.Encou" +
-      "nter\022\022\n\nfaction_id\030\005 \001(\t\022\020\n\010min_rank\030\006 \001" +
-      "(\005\"\331\t\n\tEncounter\022\n\n\002id\030\001 \001(\t\022\r\n\005title\030\002 " +
-      "\002(\t\022&\n\004type\030\003 \002(\0162\030.scifirpg.Encounter.T",
-      "ype\022\021\n\006weight\030\004 \002(\001:\0011\022\025\n\006unique\030\005 \002(\010:\005" +
-      "false\022&\n\006prereq\030\006 \003(\0132\026.scifirpg.Prerequ" +
-      "isite\022\024\n\014successor_id\030\014 \001(\t\022\025\n\006return\030\007 " +
-      "\001(\010:\005false\0227\n\rstatic_params\030\010 \001(\0132 .scif" +
-      "irpg.Encounter.StaticParams\022;\n\017decision_" +
-      "params\030\t \001(\0132\".scifirpg.Encounter.Decisi" +
-      "onParams\0225\n\014actor_params\030\n \001(\0132\037.scifirp" +
-      "g.Encounter.ActorParams\0227\n\rregion_params" +
-      "\030\013 \001(\0132 .scifirpg.Encounter.RegionParams" +
-      "\032\\\n\014StaticParams\022\023\n\013description\030\001 \002(\t\022\"\n",
-      "\007outcome\030\002 \003(\0132\021.scifirpg.Outcome\022\023\n\004res" +
-      "t\030\003 \001(\010:\005false\032?\n\016DecisionParams\022-\n\rdeci" +
-      "sion_tree\030\001 \002(\0132\026.scifirpg.DialogueTree\032" +
-      "\232\003\n\013ActorParams\022\023\n\013description\030\001 \002(\t\022E\n\016" +
-      "actor_scenario\030\002 \003(\0132-.scifirpg.Encounte" +
-      "r.ActorParams.ActorScenario\022\"\n\007on_flee\030\003" +
-      " \003(\0132\021.scifirpg.Outcome\022\030\n\tno_detect\030\004 \001" +
-      "(\010:\005false\022\026\n\007no_flee\030\005 \001(\010:\005false\032\330\001\n\rAc" +
-      "torScenario\022\020\n\010actor_id\030\001 \002(\t\022#\n\010on_deat" +
-      "h\030\002 \003(\0132\021.scifirpg.Outcome\022(\n\010dialogue\030\003",
-      " \001(\0132\026.scifirpg.DialogueTree\022\030\n\tessentia" +
-      "l\030\004 \001(\010:\005false\022\027\n\010blocking\030\005 \001(\010:\005false\022" +
-      "\023\n\005alive\030\010 \001(\010:\004true\022\016\n\003min\030\006 \001(\005:\0011\022\016\n\003" +
-      "max\030\007 \001(\005:\0011\032\256\001\n\014RegionParams\022\022\n\nrow_len" +
-      "gth\030\001 \001(\005\0223\n\004cell\030\002 \003(\0132%.scifirpg.Encou" +
-      "nter.RegionParams.Cell\032U\n\004Cell\022\023\n\013locati" +
-      "on_id\030\001 \002(\t\022\020\n\010position\030\002 \001(\005\022&\n\006prereq\030" +
-      "\003 \003(\0132\026.scifirpg.Prerequisite\"7\n\004Type\022\n\n" +
-      "\006STATIC\020\000\022\014\n\010DECISION\020\001\022\t\n\005ACTOR\020\002\022\n\n\006RE" +
-      "GION\020\003B\034\n\032com.eldritch.invoken.proto"
+      "voken/proto/outcomes.proto\"\353\001\n\010Location\022" +
+      "\n\n\002id\030\001 \002(\t\022\014\n\004name\030\002 \002(\t\022&\n\tencounter\030\003" +
+      " \003(\0132\023.scifirpg.Encounter\022\022\n\nfaction_id\030" +
+      "\005 \001(\t\022\020\n\010min_rank\030\006 \001(\005\022\036\n\005light\030\007 \001(\0132\017" +
+      ".scifirpg.Light\022(\n\005biome\030\010 \001(\0162\017.scifirp" +
+      "g.Biome:\010INDUSTRY\022\017\n\007room_id\030\t \003(\t\022\034\n\024pa",
+      "rend_id_DEPRECATED\030\004 \001(\005\"\375\001\n\004Room\022\n\n\002id\030" +
+      "\001 \001(\t\022+\n\tfurniture\030\002 \003(\0132\030.scifirpg.Room" +
+      ".Furniture\022!\n\004size\030\003 \001(\0162\023.scifirpg.Room" +
+      ".Size\032o\n\tFurniture\022\n\n\002id\030\001 \001(\t\022+\n\004type\030\002" +
+      " \001(\0162\035.scifirpg.Room.Furniture.Type\")\n\004T" +
+      "ype\022\t\n\005ATLAS\020\001\022\007\n\003TMX\020\002\022\r\n\tACTIVATOR\020\003\"(" +
+      "\n\004Size\022\t\n\005SMALL\020\000\022\n\n\006MEDIUM\020\001\022\t\n\005LARGE\020\002" +
+      "\";\n\005Light\022\t\n\001r\030\001 \001(\005\022\t\n\001g\030\002 \001(\005\022\t\n\001b\030\003 \001" +
+      "(\005\022\021\n\tintensity\030\004 \001(\002\"\331\t\n\tEncounter\022\n\n\002i" +
+      "d\030\001 \001(\t\022\r\n\005title\030\002 \002(\t\022&\n\004type\030\003 \002(\0162\030.s",
+      "cifirpg.Encounter.Type\022\021\n\006weight\030\004 \002(\001:\001" +
+      "1\022\025\n\006unique\030\005 \002(\010:\005false\022&\n\006prereq\030\006 \003(\013" +
+      "2\026.scifirpg.Prerequisite\022\024\n\014successor_id" +
+      "\030\014 \001(\t\022\025\n\006return\030\007 \001(\010:\005false\0227\n\rstatic_" +
+      "params\030\010 \001(\0132 .scifirpg.Encounter.Static" +
+      "Params\022;\n\017decision_params\030\t \001(\0132\".scifir" +
+      "pg.Encounter.DecisionParams\0225\n\014actor_par" +
+      "ams\030\n \001(\0132\037.scifirpg.Encounter.ActorPara" +
+      "ms\0227\n\rregion_params\030\013 \001(\0132 .scifirpg.Enc" +
+      "ounter.RegionParams\032\\\n\014StaticParams\022\023\n\013d",
+      "escription\030\001 \002(\t\022\"\n\007outcome\030\002 \003(\0132\021.scif" +
+      "irpg.Outcome\022\023\n\004rest\030\003 \001(\010:\005false\032?\n\016Dec" +
+      "isionParams\022-\n\rdecision_tree\030\001 \002(\0132\026.sci" +
+      "firpg.DialogueTree\032\232\003\n\013ActorParams\022\023\n\013de" +
+      "scription\030\001 \002(\t\022E\n\016actor_scenario\030\002 \003(\0132" +
+      "-.scifirpg.Encounter.ActorParams.ActorSc" +
+      "enario\022\"\n\007on_flee\030\003 \003(\0132\021.scifirpg.Outco" +
+      "me\022\030\n\tno_detect\030\004 \001(\010:\005false\022\026\n\007no_flee\030" +
+      "\005 \001(\010:\005false\032\330\001\n\rActorScenario\022\020\n\010actor_" +
+      "id\030\001 \002(\t\022#\n\010on_death\030\002 \003(\0132\021.scifirpg.Ou",
+      "tcome\022(\n\010dialogue\030\003 \001(\0132\026.scifirpg.Dialo" +
+      "gueTree\022\030\n\tessential\030\004 \001(\010:\005false\022\027\n\010blo" +
+      "cking\030\005 \001(\010:\005false\022\023\n\005alive\030\010 \001(\010:\004true\022" +
+      "\016\n\003min\030\006 \001(\005:\0011\022\016\n\003max\030\007 \001(\005:\0011\032\256\001\n\014Regi" +
+      "onParams\022\022\n\nrow_length\030\001 \001(\005\0223\n\004cell\030\002 \003" +
+      "(\0132%.scifirpg.Encounter.RegionParams.Cel" +
+      "l\032U\n\004Cell\022\023\n\013location_id\030\001 \002(\t\022\020\n\010positi" +
+      "on\030\002 \001(\005\022&\n\006prereq\030\003 \003(\0132\026.scifirpg.Prer" +
+      "equisite\"7\n\004Type\022\n\n\006STATIC\020\000\022\014\n\010DECISION" +
+      "\020\001\022\t\n\005ACTOR\020\002\022\n\n\006REGION\020\003* \n\005Biome\022\014\n\010IN",
+      "DUSTRY\020\000\022\t\n\005GRIME\020\001B\034\n\032com.eldritch.invo" +
+      "ken.proto"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
@@ -11248,9 +14110,27 @@ public final class Locations {
           internal_static_scifirpg_Location_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_scifirpg_Location_descriptor,
-              new java.lang.String[] { "Id", "Name", "ParentId", "Encounter", "FactionId", "MinRank", });
-          internal_static_scifirpg_Encounter_descriptor =
+              new java.lang.String[] { "Id", "Name", "Encounter", "FactionId", "MinRank", "Light", "Biome", "RoomId", "ParendIdDEPRECATED", });
+          internal_static_scifirpg_Room_descriptor =
             getDescriptor().getMessageTypes().get(1);
+          internal_static_scifirpg_Room_fieldAccessorTable = new
+            com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+              internal_static_scifirpg_Room_descriptor,
+              new java.lang.String[] { "Id", "Furniture", "Size", });
+          internal_static_scifirpg_Room_Furniture_descriptor =
+            internal_static_scifirpg_Room_descriptor.getNestedTypes().get(0);
+          internal_static_scifirpg_Room_Furniture_fieldAccessorTable = new
+            com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+              internal_static_scifirpg_Room_Furniture_descriptor,
+              new java.lang.String[] { "Id", "Type", });
+          internal_static_scifirpg_Light_descriptor =
+            getDescriptor().getMessageTypes().get(2);
+          internal_static_scifirpg_Light_fieldAccessorTable = new
+            com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+              internal_static_scifirpg_Light_descriptor,
+              new java.lang.String[] { "R", "G", "B", "Intensity", });
+          internal_static_scifirpg_Encounter_descriptor =
+            getDescriptor().getMessageTypes().get(3);
           internal_static_scifirpg_Encounter_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_scifirpg_Encounter_descriptor,

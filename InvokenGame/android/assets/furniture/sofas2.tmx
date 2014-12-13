@@ -14,12 +14,12 @@
    eJwrZGBgKALiYiBuBOImIG4G4olAPAmIJwMxAFb0BJM=
   </data>
  </layer>
- <layer name="constraints" width="3" height="3">
+ <layer name="constraints" width="3" height="3" visible="0">
   <data encoding="base64" compression="zlib">
    eJxjYEAAZkbsGAABbgAZ
   </data>
  </layer>
- <layer name="collision" width="3" height="3">
+ <layer name="collision" width="3" height="3" visible="0">
   <data encoding="base64" compression="zlib">
    eJxjYEAANkbsGAACagAr
   </data>

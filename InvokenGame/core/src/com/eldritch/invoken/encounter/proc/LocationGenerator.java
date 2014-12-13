@@ -359,35 +359,35 @@ public class LocationGenerator {
         return layer;
     }
 
-    private List<Room> createRooms(List<Leaf> leafs) {
-        List<Room> rooms = new ArrayList<Room>();
+    private List<GeneratedRoom> createRooms(List<Leaf> leafs) {
+        List<GeneratedRoom> generatedRooms = new ArrayList<GeneratedRoom>();
 
         // create rooms
-        Map<Leaf, Room> leafToRoom = new HashMap<Leaf, Room>();
+        Map<Leaf, GeneratedRoom> leafToRoom = new HashMap<Leaf, GeneratedRoom>();
         for (Leaf leaf : leafs) {
             if (leaf.room != null) {
-                Room room = new Room(leaf);
-                rooms.add(room);
-                leafToRoom.put(leaf, room);
+                GeneratedRoom generatedRoom = new GeneratedRoom(leaf);
+                generatedRooms.add(generatedRoom);
+                leafToRoom.put(leaf, generatedRoom);
             }
         }
 
         // define neighbor rooms for later graph traversal
-        for (Room room : rooms) {
-            Leaf leaf = room.getLeaf();
+        for (GeneratedRoom generatedRoom : generatedRooms) {
+            Leaf leaf = generatedRoom.getLeaf();
             if (leaf.leftChild != null && leafToRoom.containsKey(leaf.leftChild)) {
-                Room other = leafToRoom.get(leaf.leftChild);
-                room.addAdjacentRoom(other);
-                other.addAdjacentRoom(room);
+                GeneratedRoom other = leafToRoom.get(leaf.leftChild);
+                generatedRoom.addAdjacentRoom(other);
+                other.addAdjacentRoom(generatedRoom);
             }
             if (leaf.rightChild != null && leafToRoom.containsKey(leaf.rightChild)) {
-                Room other = leafToRoom.get(leaf.rightChild);
-                room.addAdjacentRoom(other);
-                other.addAdjacentRoom(room);
+                GeneratedRoom other = leafToRoom.get(leaf.rightChild);
+                generatedRoom.addAdjacentRoom(other);
+                other.addAdjacentRoom(generatedRoom);
             }
         }
 
-        return rooms;
+        return generatedRooms;
     }
 
     private List<LocationLayer> createSpawnLayers(LocationLayer base, List<Rectangle> rooms,

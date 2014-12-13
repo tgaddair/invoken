@@ -133,6 +133,7 @@ public class FireWeapon extends ProjectileAugmentation {
 
         @Override
         protected void apply(Agent owner, Agent target) {
+            target.applyForce(velocity.cpy().nor().scl(100));
             target.addEffect(new Bleed(owner, target, getDamage(target)));
         }
 

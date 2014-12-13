@@ -5,12 +5,12 @@ import java.util.List;
 
 import com.badlogic.gdx.math.Rectangle;
 
-public class Room {
-    private final List<Room> adjacentRooms = new ArrayList<Room>();
+public class GeneratedRoom {
+    private final List<GeneratedRoom> adjacentRooms = new ArrayList<GeneratedRoom>();
     private final Leaf leaf;
     private int doors = 0;
     
-    public Room(Leaf leaf) {
+    public GeneratedRoom(Leaf leaf) {
         this.leaf = leaf;
     }
     
@@ -42,11 +42,11 @@ public class Room {
         return doors;
     }
     
-    public void addAdjacentRoom(Room room) {
-        adjacentRooms.add(room);
+    public void addAdjacentRoom(GeneratedRoom generatedRoom) {
+        adjacentRooms.add(generatedRoom);
     }
     
-    public Iterable<Room> getAdjacentRooms() {
+    public Iterable<GeneratedRoom> getAdjacentRooms() {
         return adjacentRooms;
     }
 }

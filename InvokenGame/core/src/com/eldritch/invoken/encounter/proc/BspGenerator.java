@@ -60,14 +60,14 @@ public class BspGenerator {
         PlaceTunnels();
     }
 
-    public void FillMap(CellType type) {
+    private void FillMap(CellType type) {
         for (int i = 0; i < Width; i++) {
             for (int j = 0; j < Height; j++)
                 map[i][j] = type;
         }
     }
 
-    public void PlaceRooms() {
+    private void PlaceRooms() {
         // place rooms
         int placed = 0;
         int count = 0;
@@ -91,7 +91,7 @@ public class BspGenerator {
     // / <summary>
     // / Places and digs out the tunnels from room-to-room
     // / </summary>
-    public void PlaceTunnels() {
+    private void PlaceTunnels() {
         int count = 0;
 
         // pathfind tunnels
@@ -116,7 +116,7 @@ public class BspGenerator {
         }
     }
 
-    public boolean PlaceRectRoom() {
+    private boolean PlaceRectRoom() {
         int width = range(MinRoomSize, MaxRoomSize);
         int height = range(MinRoomSize, MaxRoomSize);
         Rectangle room = new Rectangle(range(Padding, Width - width - Padding * 2), range(Padding,
@@ -135,7 +135,7 @@ public class BspGenerator {
     // / Digs out the rectangular room
     // / </summary>
     // / <param name="room"></param>
-    public void DigRoom(Rectangle room) {
+    private void DigRoom(Rectangle room) {
         // place floors
         for (int i = 0; i < room.width; i++) {
             for (int j = 0; j < room.height; j++) {
@@ -173,7 +173,7 @@ public class BspGenerator {
     // / NOTE: This is probably super horrible A* Pathfinding algorithm. I'm sure there's WAY better
     // ways of writing this
     // / </summary>
-    public void Pathfind(int x, int y, int x2, int y2) {
+    private void Pathfind(int x, int y, int x2, int y2) {
         int[][] cost = new int[Width][Height];
         cost[x][y] = CellType.Floor.cost;
 
@@ -254,14 +254,14 @@ public class BspGenerator {
         currentPath = points;
     }
 
-    public void Set(int x, int y, CellType type) {
+    private void Set(int x, int y, CellType type) {
         Set(x, y, type, CellType.None);
     }
 
     // / <summary>
     // / Sets the given cell to the given type, if it's not already set to the untype
     // / </summary>
-    public void Set(int x, int y, CellType type, CellType untype) {
+    private void Set(int x, int y, CellType type, CellType untype) {
         if (x < 0 || y < 0 || x >= Width || y >= Height)
             return;
         if (map[x][y] != untype)
@@ -271,7 +271,7 @@ public class BspGenerator {
     // / <summary>
     // / Sets the given rectangle of cells to the type
     // / </summary>
-    public void Set(int x, int y, int w, int h, CellType type, CellType untype) {
+    private void Set(int x, int y, int w, int h, CellType type, CellType untype) {
         for (int i = x; i < x + w; i++) {
             for (int j = y; j < y + h; j++) {
                 Set(i, j, type);
@@ -283,7 +283,7 @@ public class BspGenerator {
     // / </summary>
     // / <param name="area"></param>
     // / <returns></returns>
-    public boolean Overlaps(Rectangle area) {
+    private boolean Overlaps(Rectangle area) {
         for (int i = 0; i < area.width; i++) {
             for (int j = 0; j < area.height; j++) {
                 int x = (int) area.x + i;
