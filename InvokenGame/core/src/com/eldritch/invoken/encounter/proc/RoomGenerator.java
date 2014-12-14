@@ -14,6 +14,7 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
 import com.badlogic.gdx.math.Rectangle;
 import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.encounter.NaturalVector2;
+import com.eldritch.invoken.encounter.layer.LocationLayer;
 import com.eldritch.invoken.encounter.layer.LocationMap;
 import com.eldritch.invoken.proto.Locations.Encounter;
 import com.eldritch.invoken.proto.Locations.Room;
@@ -117,7 +118,6 @@ public class RoomGenerator {
     }
     
     private void place(Rectangle rect, Room room) {
-        RoomType type = get(room.getSize());
         double area = rect.area();
         int coveredTiles = 0;  // running count of covered tiles
         for (Furniture furniture : room.getFurnitureList()) {
@@ -139,8 +139,54 @@ public class RoomGenerator {
         }
     }
     
-    private NaturalVector2 findOffset(TiledMap roomMap, Rectangle rect) {
+    private NaturalVector2 findOffset(TiledMap furniture, Rectangle rect) {
+        Map<String, LocationLayer> presentLayers = map.getLayerMap();
+        for (int x = 0; x < map.getWidth(); x++) {
+            for (int y = 0; y < map.getHeight(); y++) {
+                if (compatible(presentLayers, furniture, x, y)) {
+                    return NaturalVector2.of(x, y);
+                }
+            }
+        }
         return null;
+    }
+    
+    private boolean compatible(Map<String, LocationLayer> presentLayers, TiledMap furniture,
+            int x, int y) {
+        for (MapLayer mapLayer : furniture.getLayers()) {
+            TiledMapTileLayer layer = (TiledMapTileLayer) mapLayer;
+            if (layer.getName().equals("constraints")) {
+                // special case
+            } else {
+                LocationLayer existing = presentLayers.get(mapLayer.getName());
+                if (existing == null) {
+                    // no equivalent layer to be in conflict with
+                    continue;
+                }
+                
+                for (int i = 0; i < layer.getWidth(); i++) {
+                    for (int j = 0; j < layer.getHeight(); j++) {
+                        if (!inBounds(x + i, y + j, existing)) {
+                            // furniture will not fit, so call this a failure
+                            return false;
+                        }
+                        
+                        Cell current = existing.getCell(x + i, y + j);
+                        Cell cell = layer.getCell(i, j);
+                        if (current != null && cell != null) {
+                            // conflict
+                            return false;
+                        }
+                    }
+                }
+            }
+        }
+        
+        return true;
+    }
+    
+    private boolean inBounds(int x, int y, LocationLayer layer) {
+        return x >= 0 && y >= 0 && x < layer.getWidth() && y < layer.getHeight();
     }
     
     private int getCost(TiledMap roomMap) {

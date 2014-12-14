@@ -17,6 +17,13 @@ public class LocationLayer extends TiledMapTileLayer {
         this.map = map;
     }
     
+    public Cell addCell(TiledMapTile tile, int x, int y) {
+        Cell cell = new LocationCell(NaturalVector2.of(x, y), this);
+        cell.setTile(tile);
+        setCell(x, y, cell);
+        return cell;
+    }
+    
     public boolean isVisible(int x, int y) {
         return map.isActive(x, y);
     }
