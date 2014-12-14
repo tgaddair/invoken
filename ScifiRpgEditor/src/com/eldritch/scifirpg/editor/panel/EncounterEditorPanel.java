@@ -24,6 +24,7 @@ import javax.swing.JTextField;
 
 import com.eldritch.scifirpg.editor.AssetTablePanel;
 import com.eldritch.scifirpg.editor.MainPanel;
+import com.eldritch.scifirpg.editor.tables.AssetPointerTable;
 import com.eldritch.scifirpg.editor.tables.AssetTable;
 import com.eldritch.scifirpg.editor.tables.DialogueTable;
 import com.eldritch.scifirpg.editor.tables.EncounterTable;
@@ -34,6 +35,7 @@ import com.eldritch.invoken.proto.Actors.DialogueTree;
 import com.eldritch.invoken.proto.Actors.DialogueTree.Response;
 import com.eldritch.invoken.proto.Actors.NonPlayerActor;
 import com.eldritch.invoken.proto.Locations.Encounter;
+import com.eldritch.invoken.proto.Locations.Room;
 import com.eldritch.invoken.proto.Locations.Encounter.ActorParams;
 import com.eldritch.invoken.proto.Locations.Encounter.ActorParams.ActorScenario;
 import com.eldritch.invoken.proto.Locations.Encounter.DecisionParams;
@@ -57,6 +59,10 @@ public class EncounterEditorPanel extends AssetEditorPanel<Encounter, EncounterT
 	private final JTextField weightField = new JTextField();
 	private final JCheckBox uniqueCheck = new JCheckBox();
 	private final JCheckBox returnCheck = new JCheckBox();
+	
+	private final AssetPointerTable<Room> roomTable =
+			new AssetPointerTable<Room>(MainPanel.ROOM_TABLE);
+	
 	private final JComboBox<String> successorBox = new JComboBox<String>();
 	private final PrerequisiteTable prereqTable = new PrerequisiteTable();
 	
@@ -89,19 +95,23 @@ public class EncounterEditorPanel extends AssetEditorPanel<Encounter, EncounterT
 		builder.append("Unique:", uniqueCheck);
 		builder.nextLine();
 		
-		builder.append("Return:", returnCheck);
+//		builder.append("Return:", returnCheck);
+//		builder.nextLine();
+		
+		builder.appendRow("fill:120dlu");
+		builder.append("Rooms:", new AssetTablePanel(roomTable));
 		builder.nextLine();
 		
-		List<String> values = new ArrayList<>();
-		values.add("");
-		for (String id : owner.getAssetIds()) {
-			if (!prev.isPresent() || !prev.get().getId().equals(id)) {
-				values.add(id);
-			}
-		}
-		successorBox.setModel(new DefaultComboBoxModel<String>(values.toArray(new String[0])));
-		builder.append("Successor:", successorBox);
-		builder.nextLine();
+//		List<String> values = new ArrayList<>();
+//		values.add("");
+//		for (String id : owner.getAssetIds()) {
+//			if (!prev.isPresent() || !prev.get().getId().equals(id)) {
+//				values.add(id);
+//			}
+//		}
+//		successorBox.setModel(new DefaultComboBoxModel<String>(values.toArray(new String[0])));
+//		builder.append("Successor:", successorBox);
+//		builder.nextLine();
 		
 		builder.appendRow("fill:120dlu");
 		builder.append("Prerequisites:", new AssetTablePanel(prereqTable));
@@ -130,6 +140,9 @@ public class EncounterEditorPanel extends AssetEditorPanel<Encounter, EncounterT
 			weightField.setText(asset.getWeight() + "");
 			uniqueCheck.setSelected(asset.getUnique());
 			returnCheck.setSelected(asset.getReturn());
+			for (String roomId : asset.getRoomIdList()) {
+				roomTable.addAssetId(roomId);
+			}
 			if (asset.hasSuccessorId()) {
 				successorBox.setSelectedItem(asset.getSuccessorId());
 			}
@@ -164,6 +177,7 @@ public class EncounterEditorPanel extends AssetEditorPanel<Encounter, EncounterT
 				.setWeight(Double.parseDouble(weightField.getText()))
 				.setUnique(uniqueCheck.isSelected())
 				.setReturn(returnCheck.isSelected())
+				.addAllRoomId(roomTable.getAssetIds())
 				.addAllPrereq(prereqTable.getAssets());
 		String successorId = (String) successorBox.getSelectedItem();
 		if (!successorId.isEmpty()) {

@@ -229,26 +229,6 @@ public final class Locations {
      */
     com.eldritch.invoken.proto.Locations.Biome getBiome();
 
-    // repeated string room_id = 9;
-    /**
-     * <code>repeated string room_id = 9;</code>
-     */
-    java.util.List<java.lang.String>
-    getRoomIdList();
-    /**
-     * <code>repeated string room_id = 9;</code>
-     */
-    int getRoomIdCount();
-    /**
-     * <code>repeated string room_id = 9;</code>
-     */
-    java.lang.String getRoomId(int index);
-    /**
-     * <code>repeated string room_id = 9;</code>
-     */
-    com.google.protobuf.ByteString
-        getRoomIdBytes(int index);
-
     // optional int32 parend_id_DEPRECATED = 4;
     /**
      * <code>optional int32 parend_id_DEPRECATED = 4;</code>
@@ -266,6 +246,26 @@ public final class Locations {
      * </pre>
      */
     int getParendIdDEPRECATED();
+
+    // repeated string room_id_DEPRECATED = 9;
+    /**
+     * <code>repeated string room_id_DEPRECATED = 9;</code>
+     */
+    java.util.List<java.lang.String>
+    getRoomIdDEPRECATEDList();
+    /**
+     * <code>repeated string room_id_DEPRECATED = 9;</code>
+     */
+    int getRoomIdDEPRECATEDCount();
+    /**
+     * <code>repeated string room_id_DEPRECATED = 9;</code>
+     */
+    java.lang.String getRoomIdDEPRECATED(int index);
+    /**
+     * <code>repeated string room_id_DEPRECATED = 9;</code>
+     */
+    com.google.protobuf.ByteString
+        getRoomIdDEPRECATEDBytes(int index);
   }
   /**
    * Protobuf type {@code scifirpg.Location}
@@ -376,11 +376,11 @@ public final class Locations {
               break;
             }
             case 74: {
-              if (!((mutable_bitField0_ & 0x00000080) == 0x00000080)) {
-                roomId_ = new com.google.protobuf.LazyStringArrayList();
-                mutable_bitField0_ |= 0x00000080;
+              if (!((mutable_bitField0_ & 0x00000100) == 0x00000100)) {
+                roomIdDEPRECATED_ = new com.google.protobuf.LazyStringArrayList();
+                mutable_bitField0_ |= 0x00000100;
               }
-              roomId_.add(input.readBytes());
+              roomIdDEPRECATED_.add(input.readBytes());
               break;
             }
           }
@@ -394,8 +394,8 @@ public final class Locations {
         if (((mutable_bitField0_ & 0x00000004) == 0x00000004)) {
           encounter_ = java.util.Collections.unmodifiableList(encounter_);
         }
-        if (((mutable_bitField0_ & 0x00000080) == 0x00000080)) {
-          roomId_ = new com.google.protobuf.UnmodifiableLazyStringList(roomId_);
+        if (((mutable_bitField0_ & 0x00000100) == 0x00000100)) {
+          roomIdDEPRECATED_ = new com.google.protobuf.UnmodifiableLazyStringList(roomIdDEPRECATED_);
         }
         this.unknownFields = unknownFields.build();
         makeExtensionsImmutable();
@@ -680,36 +680,6 @@ public final class Locations {
       return biome_;
     }
 
-    // repeated string room_id = 9;
-    public static final int ROOM_ID_FIELD_NUMBER = 9;
-    private com.google.protobuf.LazyStringList roomId_;
-    /**
-     * <code>repeated string room_id = 9;</code>
-     */
-    public java.util.List<java.lang.String>
-        getRoomIdList() {
-      return roomId_;
-    }
-    /**
-     * <code>repeated string room_id = 9;</code>
-     */
-    public int getRoomIdCount() {
-      return roomId_.size();
-    }
-    /**
-     * <code>repeated string room_id = 9;</code>
-     */
-    public java.lang.String getRoomId(int index) {
-      return roomId_.get(index);
-    }
-    /**
-     * <code>repeated string room_id = 9;</code>
-     */
-    public com.google.protobuf.ByteString
-        getRoomIdBytes(int index) {
-      return roomId_.getByteString(index);
-    }
-
     // optional int32 parend_id_DEPRECATED = 4;
     public static final int PAREND_ID_DEPRECATED_FIELD_NUMBER = 4;
     private int parendIdDEPRECATED_;
@@ -734,6 +704,36 @@ public final class Locations {
       return parendIdDEPRECATED_;
     }
 
+    // repeated string room_id_DEPRECATED = 9;
+    public static final int ROOM_ID_DEPRECATED_FIELD_NUMBER = 9;
+    private com.google.protobuf.LazyStringList roomIdDEPRECATED_;
+    /**
+     * <code>repeated string room_id_DEPRECATED = 9;</code>
+     */
+    public java.util.List<java.lang.String>
+        getRoomIdDEPRECATEDList() {
+      return roomIdDEPRECATED_;
+    }
+    /**
+     * <code>repeated string room_id_DEPRECATED = 9;</code>
+     */
+    public int getRoomIdDEPRECATEDCount() {
+      return roomIdDEPRECATED_.size();
+    }
+    /**
+     * <code>repeated string room_id_DEPRECATED = 9;</code>
+     */
+    public java.lang.String getRoomIdDEPRECATED(int index) {
+      return roomIdDEPRECATED_.get(index);
+    }
+    /**
+     * <code>repeated string room_id_DEPRECATED = 9;</code>
+     */
+    public com.google.protobuf.ByteString
+        getRoomIdDEPRECATEDBytes(int index) {
+      return roomIdDEPRECATED_.getByteString(index);
+    }
+
     private void initFields() {
       id_ = "";
       name_ = "";
@@ -742,8 +742,8 @@ public final class Locations {
       minRank_ = 0;
       light_ = com.eldritch.invoken.proto.Locations.Light.getDefaultInstance();
       biome_ = com.eldritch.invoken.proto.Locations.Biome.INDUSTRY;
-      roomId_ = com.google.protobuf.LazyStringArrayList.EMPTY;
       parendIdDEPRECATED_ = 0;
+      roomIdDEPRECATED_ = com.google.protobuf.LazyStringArrayList.EMPTY;
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -795,8 +795,8 @@ public final class Locations {
       if (((bitField0_ & 0x00000020) == 0x00000020)) {
         output.writeEnum(8, biome_.getNumber());
       }
-      for (int i = 0; i < roomId_.size(); i++) {
-        output.writeBytes(9, roomId_.getByteString(i));
+      for (int i = 0; i < roomIdDEPRECATED_.size(); i++) {
+        output.writeBytes(9, roomIdDEPRECATED_.getByteString(i));
       }
       getUnknownFields().writeTo(output);
     }
@@ -841,12 +841,12 @@ public final class Locations {
       }
       {
         int dataSize = 0;
-        for (int i = 0; i < roomId_.size(); i++) {
+        for (int i = 0; i < roomIdDEPRECATED_.size(); i++) {
           dataSize += com.google.protobuf.CodedOutputStream
-            .computeBytesSizeNoTag(roomId_.getByteString(i));
+            .computeBytesSizeNoTag(roomIdDEPRECATED_.getByteString(i));
         }
         size += dataSize;
-        size += 1 * getRoomIdList().size();
+        size += 1 * getRoomIdDEPRECATEDList().size();
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSerializedSize = size;
@@ -988,9 +988,9 @@ public final class Locations {
         bitField0_ = (bitField0_ & ~0x00000020);
         biome_ = com.eldritch.invoken.proto.Locations.Biome.INDUSTRY;
         bitField0_ = (bitField0_ & ~0x00000040);
-        roomId_ = com.google.protobuf.LazyStringArrayList.EMPTY;
-        bitField0_ = (bitField0_ & ~0x00000080);
         parendIdDEPRECATED_ = 0;
+        bitField0_ = (bitField0_ & ~0x00000080);
+        roomIdDEPRECATED_ = com.google.protobuf.LazyStringArrayList.EMPTY;
         bitField0_ = (bitField0_ & ~0x00000100);
         return this;
       }
@@ -1057,16 +1057,16 @@ public final class Locations {
           to_bitField0_ |= 0x00000020;
         }
         result.biome_ = biome_;
-        if (((bitField0_ & 0x00000080) == 0x00000080)) {
-          roomId_ = new com.google.protobuf.UnmodifiableLazyStringList(
-              roomId_);
-          bitField0_ = (bitField0_ & ~0x00000080);
-        }
-        result.roomId_ = roomId_;
-        if (((from_bitField0_ & 0x00000100) == 0x00000100)) {
+        if (((from_bitField0_ & 0x00000080) == 0x00000080)) {
           to_bitField0_ |= 0x00000040;
         }
         result.parendIdDEPRECATED_ = parendIdDEPRECATED_;
+        if (((bitField0_ & 0x00000100) == 0x00000100)) {
+          roomIdDEPRECATED_ = new com.google.protobuf.UnmodifiableLazyStringList(
+              roomIdDEPRECATED_);
+          bitField0_ = (bitField0_ & ~0x00000100);
+        }
+        result.roomIdDEPRECATED_ = roomIdDEPRECATED_;
         result.bitField0_ = to_bitField0_;
         onBuilt();
         return result;
@@ -1133,18 +1133,18 @@ public final class Locations {
         if (other.hasBiome()) {
           setBiome(other.getBiome());
         }
-        if (!other.roomId_.isEmpty()) {
-          if (roomId_.isEmpty()) {
-            roomId_ = other.roomId_;
-            bitField0_ = (bitField0_ & ~0x00000080);
-          } else {
-            ensureRoomIdIsMutable();
-            roomId_.addAll(other.roomId_);
-          }
-          onChanged();
-        }
         if (other.hasParendIdDEPRECATED()) {
           setParendIdDEPRECATED(other.getParendIdDEPRECATED());
+        }
+        if (!other.roomIdDEPRECATED_.isEmpty()) {
+          if (roomIdDEPRECATED_.isEmpty()) {
+            roomIdDEPRECATED_ = other.roomIdDEPRECATED_;
+            bitField0_ = (bitField0_ & ~0x00000100);
+          } else {
+            ensureRoomIdDEPRECATEDIsMutable();
+            roomIdDEPRECATED_.addAll(other.roomIdDEPRECATED_);
+          }
+          onChanged();
         }
         this.mergeUnknownFields(other.getUnknownFields());
         return this;
@@ -1899,99 +1899,6 @@ public final class Locations {
         return this;
       }
 
-      // repeated string room_id = 9;
-      private com.google.protobuf.LazyStringList roomId_ = com.google.protobuf.LazyStringArrayList.EMPTY;
-      private void ensureRoomIdIsMutable() {
-        if (!((bitField0_ & 0x00000080) == 0x00000080)) {
-          roomId_ = new com.google.protobuf.LazyStringArrayList(roomId_);
-          bitField0_ |= 0x00000080;
-         }
-      }
-      /**
-       * <code>repeated string room_id = 9;</code>
-       */
-      public java.util.List<java.lang.String>
-          getRoomIdList() {
-        return java.util.Collections.unmodifiableList(roomId_);
-      }
-      /**
-       * <code>repeated string room_id = 9;</code>
-       */
-      public int getRoomIdCount() {
-        return roomId_.size();
-      }
-      /**
-       * <code>repeated string room_id = 9;</code>
-       */
-      public java.lang.String getRoomId(int index) {
-        return roomId_.get(index);
-      }
-      /**
-       * <code>repeated string room_id = 9;</code>
-       */
-      public com.google.protobuf.ByteString
-          getRoomIdBytes(int index) {
-        return roomId_.getByteString(index);
-      }
-      /**
-       * <code>repeated string room_id = 9;</code>
-       */
-      public Builder setRoomId(
-          int index, java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  ensureRoomIdIsMutable();
-        roomId_.set(index, value);
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>repeated string room_id = 9;</code>
-       */
-      public Builder addRoomId(
-          java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  ensureRoomIdIsMutable();
-        roomId_.add(value);
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>repeated string room_id = 9;</code>
-       */
-      public Builder addAllRoomId(
-          java.lang.Iterable<java.lang.String> values) {
-        ensureRoomIdIsMutable();
-        super.addAll(values, roomId_);
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>repeated string room_id = 9;</code>
-       */
-      public Builder clearRoomId() {
-        roomId_ = com.google.protobuf.LazyStringArrayList.EMPTY;
-        bitField0_ = (bitField0_ & ~0x00000080);
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>repeated string room_id = 9;</code>
-       */
-      public Builder addRoomIdBytes(
-          com.google.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  ensureRoomIdIsMutable();
-        roomId_.add(value);
-        onChanged();
-        return this;
-      }
-
       // optional int32 parend_id_DEPRECATED = 4;
       private int parendIdDEPRECATED_ ;
       /**
@@ -2002,7 +1909,7 @@ public final class Locations {
        * </pre>
        */
       public boolean hasParendIdDEPRECATED() {
-        return ((bitField0_ & 0x00000100) == 0x00000100);
+        return ((bitField0_ & 0x00000080) == 0x00000080);
       }
       /**
        * <code>optional int32 parend_id_DEPRECATED = 4;</code>
@@ -2022,7 +1929,7 @@ public final class Locations {
        * </pre>
        */
       public Builder setParendIdDEPRECATED(int value) {
-        bitField0_ |= 0x00000100;
+        bitField0_ |= 0x00000080;
         parendIdDEPRECATED_ = value;
         onChanged();
         return this;
@@ -2035,8 +1942,101 @@ public final class Locations {
        * </pre>
        */
       public Builder clearParendIdDEPRECATED() {
-        bitField0_ = (bitField0_ & ~0x00000100);
+        bitField0_ = (bitField0_ & ~0x00000080);
         parendIdDEPRECATED_ = 0;
+        onChanged();
+        return this;
+      }
+
+      // repeated string room_id_DEPRECATED = 9;
+      private com.google.protobuf.LazyStringList roomIdDEPRECATED_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+      private void ensureRoomIdDEPRECATEDIsMutable() {
+        if (!((bitField0_ & 0x00000100) == 0x00000100)) {
+          roomIdDEPRECATED_ = new com.google.protobuf.LazyStringArrayList(roomIdDEPRECATED_);
+          bitField0_ |= 0x00000100;
+         }
+      }
+      /**
+       * <code>repeated string room_id_DEPRECATED = 9;</code>
+       */
+      public java.util.List<java.lang.String>
+          getRoomIdDEPRECATEDList() {
+        return java.util.Collections.unmodifiableList(roomIdDEPRECATED_);
+      }
+      /**
+       * <code>repeated string room_id_DEPRECATED = 9;</code>
+       */
+      public int getRoomIdDEPRECATEDCount() {
+        return roomIdDEPRECATED_.size();
+      }
+      /**
+       * <code>repeated string room_id_DEPRECATED = 9;</code>
+       */
+      public java.lang.String getRoomIdDEPRECATED(int index) {
+        return roomIdDEPRECATED_.get(index);
+      }
+      /**
+       * <code>repeated string room_id_DEPRECATED = 9;</code>
+       */
+      public com.google.protobuf.ByteString
+          getRoomIdDEPRECATEDBytes(int index) {
+        return roomIdDEPRECATED_.getByteString(index);
+      }
+      /**
+       * <code>repeated string room_id_DEPRECATED = 9;</code>
+       */
+      public Builder setRoomIdDEPRECATED(
+          int index, java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  ensureRoomIdDEPRECATEDIsMutable();
+        roomIdDEPRECATED_.set(index, value);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated string room_id_DEPRECATED = 9;</code>
+       */
+      public Builder addRoomIdDEPRECATED(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  ensureRoomIdDEPRECATEDIsMutable();
+        roomIdDEPRECATED_.add(value);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated string room_id_DEPRECATED = 9;</code>
+       */
+      public Builder addAllRoomIdDEPRECATED(
+          java.lang.Iterable<java.lang.String> values) {
+        ensureRoomIdDEPRECATEDIsMutable();
+        super.addAll(values, roomIdDEPRECATED_);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated string room_id_DEPRECATED = 9;</code>
+       */
+      public Builder clearRoomIdDEPRECATED() {
+        roomIdDEPRECATED_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+        bitField0_ = (bitField0_ & ~0x00000100);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated string room_id_DEPRECATED = 9;</code>
+       */
+      public Builder addRoomIdDEPRECATEDBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  ensureRoomIdDEPRECATEDIsMutable();
+        roomIdDEPRECATED_.add(value);
         onChanged();
         return this;
       }
@@ -4536,6 +4536,26 @@ public final class Locations {
      */
     boolean getReturn();
 
+    // repeated string room_id = 13;
+    /**
+     * <code>repeated string room_id = 13;</code>
+     */
+    java.util.List<java.lang.String>
+    getRoomIdList();
+    /**
+     * <code>repeated string room_id = 13;</code>
+     */
+    int getRoomIdCount();
+    /**
+     * <code>repeated string room_id = 13;</code>
+     */
+    java.lang.String getRoomId(int index);
+    /**
+     * <code>repeated string room_id = 13;</code>
+     */
+    com.google.protobuf.ByteString
+        getRoomIdBytes(int index);
+
     // optional .scifirpg.Encounter.StaticParams static_params = 8;
     /**
      * <code>optional .scifirpg.Encounter.StaticParams static_params = 8;</code>
@@ -4756,6 +4776,14 @@ public final class Locations {
               successorId_ = input.readBytes();
               break;
             }
+            case 106: {
+              if (!((mutable_bitField0_ & 0x00000100) == 0x00000100)) {
+                roomId_ = new com.google.protobuf.LazyStringArrayList();
+                mutable_bitField0_ |= 0x00000100;
+              }
+              roomId_.add(input.readBytes());
+              break;
+            }
           }
         }
       } catch (com.google.protobuf.InvalidProtocolBufferException e) {
@@ -4766,6 +4794,9 @@ public final class Locations {
       } finally {
         if (((mutable_bitField0_ & 0x00000020) == 0x00000020)) {
           prereq_ = java.util.Collections.unmodifiableList(prereq_);
+        }
+        if (((mutable_bitField0_ & 0x00000100) == 0x00000100)) {
+          roomId_ = new com.google.protobuf.UnmodifiableLazyStringList(roomId_);
         }
         this.unknownFields = unknownFields.build();
         makeExtensionsImmutable();
@@ -12106,6 +12137,36 @@ public final class Locations {
       return return_;
     }
 
+    // repeated string room_id = 13;
+    public static final int ROOM_ID_FIELD_NUMBER = 13;
+    private com.google.protobuf.LazyStringList roomId_;
+    /**
+     * <code>repeated string room_id = 13;</code>
+     */
+    public java.util.List<java.lang.String>
+        getRoomIdList() {
+      return roomId_;
+    }
+    /**
+     * <code>repeated string room_id = 13;</code>
+     */
+    public int getRoomIdCount() {
+      return roomId_.size();
+    }
+    /**
+     * <code>repeated string room_id = 13;</code>
+     */
+    public java.lang.String getRoomId(int index) {
+      return roomId_.get(index);
+    }
+    /**
+     * <code>repeated string room_id = 13;</code>
+     */
+    public com.google.protobuf.ByteString
+        getRoomIdBytes(int index) {
+      return roomId_.getByteString(index);
+    }
+
     // optional .scifirpg.Encounter.StaticParams static_params = 8;
     public static final int STATIC_PARAMS_FIELD_NUMBER = 8;
     private com.eldritch.invoken.proto.Locations.Encounter.StaticParams staticParams_;
@@ -12215,6 +12276,7 @@ public final class Locations {
       prereq_ = java.util.Collections.emptyList();
       successorId_ = "";
       return_ = false;
+      roomId_ = com.google.protobuf.LazyStringArrayList.EMPTY;
       staticParams_ = com.eldritch.invoken.proto.Locations.Encounter.StaticParams.getDefaultInstance();
       decisionParams_ = com.eldritch.invoken.proto.Locations.Encounter.DecisionParams.getDefaultInstance();
       actorParams_ = com.eldritch.invoken.proto.Locations.Encounter.ActorParams.getDefaultInstance();
@@ -12314,6 +12376,9 @@ public final class Locations {
       if (((bitField0_ & 0x00000020) == 0x00000020)) {
         output.writeBytes(12, getSuccessorIdBytes());
       }
+      for (int i = 0; i < roomId_.size(); i++) {
+        output.writeBytes(13, roomId_.getByteString(i));
+      }
       getUnknownFields().writeTo(output);
     }
 
@@ -12370,6 +12435,15 @@ public final class Locations {
       if (((bitField0_ & 0x00000020) == 0x00000020)) {
         size += com.google.protobuf.CodedOutputStream
           .computeBytesSize(12, getSuccessorIdBytes());
+      }
+      {
+        int dataSize = 0;
+        for (int i = 0; i < roomId_.size(); i++) {
+          dataSize += com.google.protobuf.CodedOutputStream
+            .computeBytesSizeNoTag(roomId_.getByteString(i));
+        }
+        size += dataSize;
+        size += 1 * getRoomIdList().size();
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSerializedSize = size;
@@ -12512,30 +12586,32 @@ public final class Locations {
         bitField0_ = (bitField0_ & ~0x00000040);
         return_ = false;
         bitField0_ = (bitField0_ & ~0x00000080);
+        roomId_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+        bitField0_ = (bitField0_ & ~0x00000100);
         if (staticParamsBuilder_ == null) {
           staticParams_ = com.eldritch.invoken.proto.Locations.Encounter.StaticParams.getDefaultInstance();
         } else {
           staticParamsBuilder_.clear();
         }
-        bitField0_ = (bitField0_ & ~0x00000100);
+        bitField0_ = (bitField0_ & ~0x00000200);
         if (decisionParamsBuilder_ == null) {
           decisionParams_ = com.eldritch.invoken.proto.Locations.Encounter.DecisionParams.getDefaultInstance();
         } else {
           decisionParamsBuilder_.clear();
         }
-        bitField0_ = (bitField0_ & ~0x00000200);
+        bitField0_ = (bitField0_ & ~0x00000400);
         if (actorParamsBuilder_ == null) {
           actorParams_ = com.eldritch.invoken.proto.Locations.Encounter.ActorParams.getDefaultInstance();
         } else {
           actorParamsBuilder_.clear();
         }
-        bitField0_ = (bitField0_ & ~0x00000400);
+        bitField0_ = (bitField0_ & ~0x00000800);
         if (regionParamsBuilder_ == null) {
           regionParams_ = com.eldritch.invoken.proto.Locations.Encounter.RegionParams.getDefaultInstance();
         } else {
           regionParamsBuilder_.clear();
         }
-        bitField0_ = (bitField0_ & ~0x00000800);
+        bitField0_ = (bitField0_ & ~0x00001000);
         return this;
       }
 
@@ -12601,7 +12677,13 @@ public final class Locations {
           to_bitField0_ |= 0x00000040;
         }
         result.return_ = return_;
-        if (((from_bitField0_ & 0x00000100) == 0x00000100)) {
+        if (((bitField0_ & 0x00000100) == 0x00000100)) {
+          roomId_ = new com.google.protobuf.UnmodifiableLazyStringList(
+              roomId_);
+          bitField0_ = (bitField0_ & ~0x00000100);
+        }
+        result.roomId_ = roomId_;
+        if (((from_bitField0_ & 0x00000200) == 0x00000200)) {
           to_bitField0_ |= 0x00000080;
         }
         if (staticParamsBuilder_ == null) {
@@ -12609,7 +12691,7 @@ public final class Locations {
         } else {
           result.staticParams_ = staticParamsBuilder_.build();
         }
-        if (((from_bitField0_ & 0x00000200) == 0x00000200)) {
+        if (((from_bitField0_ & 0x00000400) == 0x00000400)) {
           to_bitField0_ |= 0x00000100;
         }
         if (decisionParamsBuilder_ == null) {
@@ -12617,7 +12699,7 @@ public final class Locations {
         } else {
           result.decisionParams_ = decisionParamsBuilder_.build();
         }
-        if (((from_bitField0_ & 0x00000400) == 0x00000400)) {
+        if (((from_bitField0_ & 0x00000800) == 0x00000800)) {
           to_bitField0_ |= 0x00000200;
         }
         if (actorParamsBuilder_ == null) {
@@ -12625,7 +12707,7 @@ public final class Locations {
         } else {
           result.actorParams_ = actorParamsBuilder_.build();
         }
-        if (((from_bitField0_ & 0x00000800) == 0x00000800)) {
+        if (((from_bitField0_ & 0x00001000) == 0x00001000)) {
           to_bitField0_ |= 0x00000400;
         }
         if (regionParamsBuilder_ == null) {
@@ -12701,6 +12783,16 @@ public final class Locations {
         }
         if (other.hasReturn()) {
           setReturn(other.getReturn());
+        }
+        if (!other.roomId_.isEmpty()) {
+          if (roomId_.isEmpty()) {
+            roomId_ = other.roomId_;
+            bitField0_ = (bitField0_ & ~0x00000100);
+          } else {
+            ensureRoomIdIsMutable();
+            roomId_.addAll(other.roomId_);
+          }
+          onChanged();
         }
         if (other.hasStaticParams()) {
           mergeStaticParams(other.getStaticParams());
@@ -13468,6 +13560,99 @@ public final class Locations {
         return this;
       }
 
+      // repeated string room_id = 13;
+      private com.google.protobuf.LazyStringList roomId_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+      private void ensureRoomIdIsMutable() {
+        if (!((bitField0_ & 0x00000100) == 0x00000100)) {
+          roomId_ = new com.google.protobuf.LazyStringArrayList(roomId_);
+          bitField0_ |= 0x00000100;
+         }
+      }
+      /**
+       * <code>repeated string room_id = 13;</code>
+       */
+      public java.util.List<java.lang.String>
+          getRoomIdList() {
+        return java.util.Collections.unmodifiableList(roomId_);
+      }
+      /**
+       * <code>repeated string room_id = 13;</code>
+       */
+      public int getRoomIdCount() {
+        return roomId_.size();
+      }
+      /**
+       * <code>repeated string room_id = 13;</code>
+       */
+      public java.lang.String getRoomId(int index) {
+        return roomId_.get(index);
+      }
+      /**
+       * <code>repeated string room_id = 13;</code>
+       */
+      public com.google.protobuf.ByteString
+          getRoomIdBytes(int index) {
+        return roomId_.getByteString(index);
+      }
+      /**
+       * <code>repeated string room_id = 13;</code>
+       */
+      public Builder setRoomId(
+          int index, java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  ensureRoomIdIsMutable();
+        roomId_.set(index, value);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated string room_id = 13;</code>
+       */
+      public Builder addRoomId(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  ensureRoomIdIsMutable();
+        roomId_.add(value);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated string room_id = 13;</code>
+       */
+      public Builder addAllRoomId(
+          java.lang.Iterable<java.lang.String> values) {
+        ensureRoomIdIsMutable();
+        super.addAll(values, roomId_);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated string room_id = 13;</code>
+       */
+      public Builder clearRoomId() {
+        roomId_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+        bitField0_ = (bitField0_ & ~0x00000100);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated string room_id = 13;</code>
+       */
+      public Builder addRoomIdBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  ensureRoomIdIsMutable();
+        roomId_.add(value);
+        onChanged();
+        return this;
+      }
+
       // optional .scifirpg.Encounter.StaticParams static_params = 8;
       private com.eldritch.invoken.proto.Locations.Encounter.StaticParams staticParams_ = com.eldritch.invoken.proto.Locations.Encounter.StaticParams.getDefaultInstance();
       private com.google.protobuf.SingleFieldBuilder<
@@ -13480,7 +13665,7 @@ public final class Locations {
        * </pre>
        */
       public boolean hasStaticParams() {
-        return ((bitField0_ & 0x00000100) == 0x00000100);
+        return ((bitField0_ & 0x00000200) == 0x00000200);
       }
       /**
        * <code>optional .scifirpg.Encounter.StaticParams static_params = 8;</code>
@@ -13513,7 +13698,7 @@ public final class Locations {
         } else {
           staticParamsBuilder_.setMessage(value);
         }
-        bitField0_ |= 0x00000100;
+        bitField0_ |= 0x00000200;
         return this;
       }
       /**
@@ -13531,7 +13716,7 @@ public final class Locations {
         } else {
           staticParamsBuilder_.setMessage(builderForValue.build());
         }
-        bitField0_ |= 0x00000100;
+        bitField0_ |= 0x00000200;
         return this;
       }
       /**
@@ -13543,7 +13728,7 @@ public final class Locations {
        */
       public Builder mergeStaticParams(com.eldritch.invoken.proto.Locations.Encounter.StaticParams value) {
         if (staticParamsBuilder_ == null) {
-          if (((bitField0_ & 0x00000100) == 0x00000100) &&
+          if (((bitField0_ & 0x00000200) == 0x00000200) &&
               staticParams_ != com.eldritch.invoken.proto.Locations.Encounter.StaticParams.getDefaultInstance()) {
             staticParams_ =
               com.eldritch.invoken.proto.Locations.Encounter.StaticParams.newBuilder(staticParams_).mergeFrom(value).buildPartial();
@@ -13554,7 +13739,7 @@ public final class Locations {
         } else {
           staticParamsBuilder_.mergeFrom(value);
         }
-        bitField0_ |= 0x00000100;
+        bitField0_ |= 0x00000200;
         return this;
       }
       /**
@@ -13571,7 +13756,7 @@ public final class Locations {
         } else {
           staticParamsBuilder_.clear();
         }
-        bitField0_ = (bitField0_ & ~0x00000100);
+        bitField0_ = (bitField0_ & ~0x00000200);
         return this;
       }
       /**
@@ -13582,7 +13767,7 @@ public final class Locations {
        * </pre>
        */
       public com.eldritch.invoken.proto.Locations.Encounter.StaticParams.Builder getStaticParamsBuilder() {
-        bitField0_ |= 0x00000100;
+        bitField0_ |= 0x00000200;
         onChanged();
         return getStaticParamsFieldBuilder().getBuilder();
       }
@@ -13629,7 +13814,7 @@ public final class Locations {
        * <code>optional .scifirpg.Encounter.DecisionParams decision_params = 9;</code>
        */
       public boolean hasDecisionParams() {
-        return ((bitField0_ & 0x00000200) == 0x00000200);
+        return ((bitField0_ & 0x00000400) == 0x00000400);
       }
       /**
        * <code>optional .scifirpg.Encounter.DecisionParams decision_params = 9;</code>
@@ -13654,7 +13839,7 @@ public final class Locations {
         } else {
           decisionParamsBuilder_.setMessage(value);
         }
-        bitField0_ |= 0x00000200;
+        bitField0_ |= 0x00000400;
         return this;
       }
       /**
@@ -13668,7 +13853,7 @@ public final class Locations {
         } else {
           decisionParamsBuilder_.setMessage(builderForValue.build());
         }
-        bitField0_ |= 0x00000200;
+        bitField0_ |= 0x00000400;
         return this;
       }
       /**
@@ -13676,7 +13861,7 @@ public final class Locations {
        */
       public Builder mergeDecisionParams(com.eldritch.invoken.proto.Locations.Encounter.DecisionParams value) {
         if (decisionParamsBuilder_ == null) {
-          if (((bitField0_ & 0x00000200) == 0x00000200) &&
+          if (((bitField0_ & 0x00000400) == 0x00000400) &&
               decisionParams_ != com.eldritch.invoken.proto.Locations.Encounter.DecisionParams.getDefaultInstance()) {
             decisionParams_ =
               com.eldritch.invoken.proto.Locations.Encounter.DecisionParams.newBuilder(decisionParams_).mergeFrom(value).buildPartial();
@@ -13687,7 +13872,7 @@ public final class Locations {
         } else {
           decisionParamsBuilder_.mergeFrom(value);
         }
-        bitField0_ |= 0x00000200;
+        bitField0_ |= 0x00000400;
         return this;
       }
       /**
@@ -13700,14 +13885,14 @@ public final class Locations {
         } else {
           decisionParamsBuilder_.clear();
         }
-        bitField0_ = (bitField0_ & ~0x00000200);
+        bitField0_ = (bitField0_ & ~0x00000400);
         return this;
       }
       /**
        * <code>optional .scifirpg.Encounter.DecisionParams decision_params = 9;</code>
        */
       public com.eldritch.invoken.proto.Locations.Encounter.DecisionParams.Builder getDecisionParamsBuilder() {
-        bitField0_ |= 0x00000200;
+        bitField0_ |= 0x00000400;
         onChanged();
         return getDecisionParamsFieldBuilder().getBuilder();
       }
@@ -13746,7 +13931,7 @@ public final class Locations {
        * <code>optional .scifirpg.Encounter.ActorParams actor_params = 10;</code>
        */
       public boolean hasActorParams() {
-        return ((bitField0_ & 0x00000400) == 0x00000400);
+        return ((bitField0_ & 0x00000800) == 0x00000800);
       }
       /**
        * <code>optional .scifirpg.Encounter.ActorParams actor_params = 10;</code>
@@ -13771,7 +13956,7 @@ public final class Locations {
         } else {
           actorParamsBuilder_.setMessage(value);
         }
-        bitField0_ |= 0x00000400;
+        bitField0_ |= 0x00000800;
         return this;
       }
       /**
@@ -13785,7 +13970,7 @@ public final class Locations {
         } else {
           actorParamsBuilder_.setMessage(builderForValue.build());
         }
-        bitField0_ |= 0x00000400;
+        bitField0_ |= 0x00000800;
         return this;
       }
       /**
@@ -13793,7 +13978,7 @@ public final class Locations {
        */
       public Builder mergeActorParams(com.eldritch.invoken.proto.Locations.Encounter.ActorParams value) {
         if (actorParamsBuilder_ == null) {
-          if (((bitField0_ & 0x00000400) == 0x00000400) &&
+          if (((bitField0_ & 0x00000800) == 0x00000800) &&
               actorParams_ != com.eldritch.invoken.proto.Locations.Encounter.ActorParams.getDefaultInstance()) {
             actorParams_ =
               com.eldritch.invoken.proto.Locations.Encounter.ActorParams.newBuilder(actorParams_).mergeFrom(value).buildPartial();
@@ -13804,7 +13989,7 @@ public final class Locations {
         } else {
           actorParamsBuilder_.mergeFrom(value);
         }
-        bitField0_ |= 0x00000400;
+        bitField0_ |= 0x00000800;
         return this;
       }
       /**
@@ -13817,14 +14002,14 @@ public final class Locations {
         } else {
           actorParamsBuilder_.clear();
         }
-        bitField0_ = (bitField0_ & ~0x00000400);
+        bitField0_ = (bitField0_ & ~0x00000800);
         return this;
       }
       /**
        * <code>optional .scifirpg.Encounter.ActorParams actor_params = 10;</code>
        */
       public com.eldritch.invoken.proto.Locations.Encounter.ActorParams.Builder getActorParamsBuilder() {
-        bitField0_ |= 0x00000400;
+        bitField0_ |= 0x00000800;
         onChanged();
         return getActorParamsFieldBuilder().getBuilder();
       }
@@ -13863,7 +14048,7 @@ public final class Locations {
        * <code>optional .scifirpg.Encounter.RegionParams region_params = 11;</code>
        */
       public boolean hasRegionParams() {
-        return ((bitField0_ & 0x00000800) == 0x00000800);
+        return ((bitField0_ & 0x00001000) == 0x00001000);
       }
       /**
        * <code>optional .scifirpg.Encounter.RegionParams region_params = 11;</code>
@@ -13888,7 +14073,7 @@ public final class Locations {
         } else {
           regionParamsBuilder_.setMessage(value);
         }
-        bitField0_ |= 0x00000800;
+        bitField0_ |= 0x00001000;
         return this;
       }
       /**
@@ -13902,7 +14087,7 @@ public final class Locations {
         } else {
           regionParamsBuilder_.setMessage(builderForValue.build());
         }
-        bitField0_ |= 0x00000800;
+        bitField0_ |= 0x00001000;
         return this;
       }
       /**
@@ -13910,7 +14095,7 @@ public final class Locations {
        */
       public Builder mergeRegionParams(com.eldritch.invoken.proto.Locations.Encounter.RegionParams value) {
         if (regionParamsBuilder_ == null) {
-          if (((bitField0_ & 0x00000800) == 0x00000800) &&
+          if (((bitField0_ & 0x00001000) == 0x00001000) &&
               regionParams_ != com.eldritch.invoken.proto.Locations.Encounter.RegionParams.getDefaultInstance()) {
             regionParams_ =
               com.eldritch.invoken.proto.Locations.Encounter.RegionParams.newBuilder(regionParams_).mergeFrom(value).buildPartial();
@@ -13921,7 +14106,7 @@ public final class Locations {
         } else {
           regionParamsBuilder_.mergeFrom(value);
         }
-        bitField0_ |= 0x00000800;
+        bitField0_ |= 0x00001000;
         return this;
       }
       /**
@@ -13934,14 +14119,14 @@ public final class Locations {
         } else {
           regionParamsBuilder_.clear();
         }
-        bitField0_ = (bitField0_ & ~0x00000800);
+        bitField0_ = (bitField0_ & ~0x00001000);
         return this;
       }
       /**
        * <code>optional .scifirpg.Encounter.RegionParams region_params = 11;</code>
        */
       public com.eldritch.invoken.proto.Locations.Encounter.RegionParams.Builder getRegionParamsBuilder() {
-        bitField0_ |= 0x00000800;
+        bitField0_ |= 0x00001000;
         onChanged();
         return getRegionParamsFieldBuilder().getBuilder();
       }
@@ -14051,54 +14236,54 @@ public final class Locations {
       "roto\022\010scifirpg\032\'com/eldritch/invoken/pro" +
       "to/actors.proto\032.com/eldritch/invoken/pr" +
       "oto/prerequisites.proto\032)com/eldritch/in" +
-      "voken/proto/outcomes.proto\"\353\001\n\010Location\022" +
+      "voken/proto/outcomes.proto\"\366\001\n\010Location\022" +
       "\n\n\002id\030\001 \002(\t\022\014\n\004name\030\002 \002(\t\022&\n\tencounter\030\003" +
       " \003(\0132\023.scifirpg.Encounter\022\022\n\nfaction_id\030" +
       "\005 \001(\t\022\020\n\010min_rank\030\006 \001(\005\022\036\n\005light\030\007 \001(\0132\017" +
       ".scifirpg.Light\022(\n\005biome\030\010 \001(\0162\017.scifirp" +
-      "g.Biome:\010INDUSTRY\022\017\n\007room_id\030\t \003(\t\022\034\n\024pa",
-      "rend_id_DEPRECATED\030\004 \001(\005\"\375\001\n\004Room\022\n\n\002id\030" +
-      "\001 \001(\t\022+\n\tfurniture\030\002 \003(\0132\030.scifirpg.Room" +
-      ".Furniture\022!\n\004size\030\003 \001(\0162\023.scifirpg.Room" +
-      ".Size\032o\n\tFurniture\022\n\n\002id\030\001 \001(\t\022+\n\004type\030\002" +
-      " \001(\0162\035.scifirpg.Room.Furniture.Type\")\n\004T" +
-      "ype\022\t\n\005ATLAS\020\001\022\007\n\003TMX\020\002\022\r\n\tACTIVATOR\020\003\"(" +
-      "\n\004Size\022\t\n\005SMALL\020\000\022\n\n\006MEDIUM\020\001\022\t\n\005LARGE\020\002" +
-      "\";\n\005Light\022\t\n\001r\030\001 \001(\005\022\t\n\001g\030\002 \001(\005\022\t\n\001b\030\003 \001" +
-      "(\005\022\021\n\tintensity\030\004 \001(\002\"\331\t\n\tEncounter\022\n\n\002i" +
-      "d\030\001 \001(\t\022\r\n\005title\030\002 \002(\t\022&\n\004type\030\003 \002(\0162\030.s",
-      "cifirpg.Encounter.Type\022\021\n\006weight\030\004 \002(\001:\001" +
-      "1\022\025\n\006unique\030\005 \002(\010:\005false\022&\n\006prereq\030\006 \003(\013" +
-      "2\026.scifirpg.Prerequisite\022\024\n\014successor_id" +
-      "\030\014 \001(\t\022\025\n\006return\030\007 \001(\010:\005false\0227\n\rstatic_" +
-      "params\030\010 \001(\0132 .scifirpg.Encounter.Static" +
-      "Params\022;\n\017decision_params\030\t \001(\0132\".scifir" +
-      "pg.Encounter.DecisionParams\0225\n\014actor_par" +
-      "ams\030\n \001(\0132\037.scifirpg.Encounter.ActorPara" +
-      "ms\0227\n\rregion_params\030\013 \001(\0132 .scifirpg.Enc" +
-      "ounter.RegionParams\032\\\n\014StaticParams\022\023\n\013d",
-      "escription\030\001 \002(\t\022\"\n\007outcome\030\002 \003(\0132\021.scif" +
-      "irpg.Outcome\022\023\n\004rest\030\003 \001(\010:\005false\032?\n\016Dec" +
-      "isionParams\022-\n\rdecision_tree\030\001 \002(\0132\026.sci" +
-      "firpg.DialogueTree\032\232\003\n\013ActorParams\022\023\n\013de" +
-      "scription\030\001 \002(\t\022E\n\016actor_scenario\030\002 \003(\0132" +
-      "-.scifirpg.Encounter.ActorParams.ActorSc" +
-      "enario\022\"\n\007on_flee\030\003 \003(\0132\021.scifirpg.Outco" +
-      "me\022\030\n\tno_detect\030\004 \001(\010:\005false\022\026\n\007no_flee\030" +
-      "\005 \001(\010:\005false\032\330\001\n\rActorScenario\022\020\n\010actor_" +
-      "id\030\001 \002(\t\022#\n\010on_death\030\002 \003(\0132\021.scifirpg.Ou",
-      "tcome\022(\n\010dialogue\030\003 \001(\0132\026.scifirpg.Dialo" +
-      "gueTree\022\030\n\tessential\030\004 \001(\010:\005false\022\027\n\010blo" +
-      "cking\030\005 \001(\010:\005false\022\023\n\005alive\030\010 \001(\010:\004true\022" +
-      "\016\n\003min\030\006 \001(\005:\0011\022\016\n\003max\030\007 \001(\005:\0011\032\256\001\n\014Regi" +
-      "onParams\022\022\n\nrow_length\030\001 \001(\005\0223\n\004cell\030\002 \003" +
-      "(\0132%.scifirpg.Encounter.RegionParams.Cel" +
-      "l\032U\n\004Cell\022\023\n\013location_id\030\001 \002(\t\022\020\n\010positi" +
-      "on\030\002 \001(\005\022&\n\006prereq\030\003 \003(\0132\026.scifirpg.Prer" +
-      "equisite\"7\n\004Type\022\n\n\006STATIC\020\000\022\014\n\010DECISION" +
-      "\020\001\022\t\n\005ACTOR\020\002\022\n\n\006REGION\020\003* \n\005Biome\022\014\n\010IN",
-      "DUSTRY\020\000\022\t\n\005GRIME\020\001B\034\n\032com.eldritch.invo" +
-      "ken.proto"
+      "g.Biome:\010INDUSTRY\022\034\n\024parend_id_DEPRECATE",
+      "D\030\004 \001(\005\022\032\n\022room_id_DEPRECATED\030\t \003(\t\"\375\001\n\004" +
+      "Room\022\n\n\002id\030\001 \001(\t\022+\n\tfurniture\030\002 \003(\0132\030.sc" +
+      "ifirpg.Room.Furniture\022!\n\004size\030\003 \001(\0162\023.sc" +
+      "ifirpg.Room.Size\032o\n\tFurniture\022\n\n\002id\030\001 \001(" +
+      "\t\022+\n\004type\030\002 \001(\0162\035.scifirpg.Room.Furnitur" +
+      "e.Type\")\n\004Type\022\t\n\005ATLAS\020\001\022\007\n\003TMX\020\002\022\r\n\tAC" +
+      "TIVATOR\020\003\"(\n\004Size\022\t\n\005SMALL\020\000\022\n\n\006MEDIUM\020\001" +
+      "\022\t\n\005LARGE\020\002\";\n\005Light\022\t\n\001r\030\001 \001(\005\022\t\n\001g\030\002 \001" +
+      "(\005\022\t\n\001b\030\003 \001(\005\022\021\n\tintensity\030\004 \001(\002\"\352\t\n\tEnc" +
+      "ounter\022\n\n\002id\030\001 \001(\t\022\r\n\005title\030\002 \002(\t\022&\n\004typ",
+      "e\030\003 \002(\0162\030.scifirpg.Encounter.Type\022\021\n\006wei" +
+      "ght\030\004 \002(\001:\0011\022\025\n\006unique\030\005 \002(\010:\005false\022&\n\006p" +
+      "rereq\030\006 \003(\0132\026.scifirpg.Prerequisite\022\024\n\014s" +
+      "uccessor_id\030\014 \001(\t\022\025\n\006return\030\007 \001(\010:\005false" +
+      "\022\017\n\007room_id\030\r \003(\t\0227\n\rstatic_params\030\010 \001(\013" +
+      "2 .scifirpg.Encounter.StaticParams\022;\n\017de" +
+      "cision_params\030\t \001(\0132\".scifirpg.Encounter" +
+      ".DecisionParams\0225\n\014actor_params\030\n \001(\0132\037." +
+      "scifirpg.Encounter.ActorParams\0227\n\rregion" +
+      "_params\030\013 \001(\0132 .scifirpg.Encounter.Regio",
+      "nParams\032\\\n\014StaticParams\022\023\n\013description\030\001" +
+      " \002(\t\022\"\n\007outcome\030\002 \003(\0132\021.scifirpg.Outcome" +
+      "\022\023\n\004rest\030\003 \001(\010:\005false\032?\n\016DecisionParams\022" +
+      "-\n\rdecision_tree\030\001 \002(\0132\026.scifirpg.Dialog" +
+      "ueTree\032\232\003\n\013ActorParams\022\023\n\013description\030\001 " +
+      "\002(\t\022E\n\016actor_scenario\030\002 \003(\0132-.scifirpg.E" +
+      "ncounter.ActorParams.ActorScenario\022\"\n\007on" +
+      "_flee\030\003 \003(\0132\021.scifirpg.Outcome\022\030\n\tno_det" +
+      "ect\030\004 \001(\010:\005false\022\026\n\007no_flee\030\005 \001(\010:\005false" +
+      "\032\330\001\n\rActorScenario\022\020\n\010actor_id\030\001 \002(\t\022#\n\010",
+      "on_death\030\002 \003(\0132\021.scifirpg.Outcome\022(\n\010dia" +
+      "logue\030\003 \001(\0132\026.scifirpg.DialogueTree\022\030\n\te" +
+      "ssential\030\004 \001(\010:\005false\022\027\n\010blocking\030\005 \001(\010:" +
+      "\005false\022\023\n\005alive\030\010 \001(\010:\004true\022\016\n\003min\030\006 \001(\005" +
+      ":\0011\022\016\n\003max\030\007 \001(\005:\0011\032\256\001\n\014RegionParams\022\022\n\n" +
+      "row_length\030\001 \001(\005\0223\n\004cell\030\002 \003(\0132%.scifirp" +
+      "g.Encounter.RegionParams.Cell\032U\n\004Cell\022\023\n" +
+      "\013location_id\030\001 \002(\t\022\020\n\010position\030\002 \001(\005\022&\n\006" +
+      "prereq\030\003 \003(\0132\026.scifirpg.Prerequisite\"7\n\004" +
+      "Type\022\n\n\006STATIC\020\000\022\014\n\010DECISION\020\001\022\t\n\005ACTOR\020",
+      "\002\022\n\n\006REGION\020\003* \n\005Biome\022\014\n\010INDUSTRY\020\000\022\t\n\005" +
+      "GRIME\020\001B\034\n\032com.eldritch.invoken.proto"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
@@ -14110,7 +14295,7 @@ public final class Locations {
           internal_static_scifirpg_Location_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_scifirpg_Location_descriptor,
-              new java.lang.String[] { "Id", "Name", "Encounter", "FactionId", "MinRank", "Light", "Biome", "RoomId", "ParendIdDEPRECATED", });
+              new java.lang.String[] { "Id", "Name", "Encounter", "FactionId", "MinRank", "Light", "Biome", "ParendIdDEPRECATED", "RoomIdDEPRECATED", });
           internal_static_scifirpg_Room_descriptor =
             getDescriptor().getMessageTypes().get(1);
           internal_static_scifirpg_Room_fieldAccessorTable = new
@@ -14134,7 +14319,7 @@ public final class Locations {
           internal_static_scifirpg_Encounter_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_scifirpg_Encounter_descriptor,
-              new java.lang.String[] { "Id", "Title", "Type", "Weight", "Unique", "Prereq", "SuccessorId", "Return", "StaticParams", "DecisionParams", "ActorParams", "RegionParams", });
+              new java.lang.String[] { "Id", "Title", "Type", "Weight", "Unique", "Prereq", "SuccessorId", "Return", "RoomId", "StaticParams", "DecisionParams", "ActorParams", "RegionParams", });
           internal_static_scifirpg_Encounter_StaticParams_descriptor =
             internal_static_scifirpg_Encounter_descriptor.getNestedTypes().get(0);
           internal_static_scifirpg_Encounter_StaticParams_fieldAccessorTable = new

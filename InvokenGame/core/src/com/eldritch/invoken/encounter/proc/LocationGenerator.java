@@ -4,6 +4,8 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -39,10 +41,15 @@ import com.eldritch.invoken.encounter.layer.LocationLayer;
 import com.eldritch.invoken.encounter.layer.LocationLayer.CollisionLayer;
 import com.eldritch.invoken.encounter.layer.LocationMap;
 import com.eldritch.invoken.encounter.proc.BspGenerator.CellType;
+import com.eldritch.invoken.encounter.proc.RoomGenerator.RoomType;
 import com.eldritch.invoken.gfx.Light;
 import com.eldritch.invoken.proto.Locations.Biome;
 import com.eldritch.invoken.proto.Locations.Encounter;
 import com.eldritch.invoken.proto.Locations.Encounter.ActorParams.ActorScenario;
+import com.eldritch.invoken.proto.Locations.Room;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 
 public class LocationGenerator {
 	// string constants required for all biome types
@@ -408,8 +415,9 @@ public class LocationGenerator {
 
                 layers.add(playerLayer);
             } else {
-                LocationLayer layer = addEncounter(room, availableEncounters, base, total, map);
-                if (layer != null) {
+                Encounter encounter = popEncounter(room, availableEncounters, total);
+                if (encounter != null) {
+                    LocationLayer layer = createLayer(encounter, room, base, map);
                     layers.add(layer);
                 }
             }
@@ -418,41 +426,103 @@ public class LocationGenerator {
         return layers;
     }
 
-    private LocationLayer addEncounter(Rectangle room, List<Encounter> encounters, LocationLayer base,
-            double total, LocationMap map) {
+    private Encounter popEncounter(Rectangle room, List<Encounter> encounters, double total) {
         double target = Math.random() * total;
         double sum = 0.0;
         Iterator<Encounter> it = encounters.iterator();
         while (it.hasNext()) {
         	Encounter encounter = it.next();
+        	if (!compatible(encounter, room)) {
+        	    // basic check to make sure the dimensions fit together
+        	    continue;
+        	}
+        	
             if (encounter.getType() == Encounter.Type.ACTOR) {
                 sum += encounter.getWeight();
                 if (sum >= target) {
-                    LocationLayer layer = new EncounterLayer(encounter, base.getWidth(),
-                            base.getHeight(), PX, PX, map);
-                    layer.setVisible(false);
-                    layer.setOpacity(1.0f);
-                    layer.setName("encounter-" + room.getX() + "-" + room.getY());
-
-                    for (ActorScenario scenario : encounter.getActorParams().getActorScenarioList()) {
-                        for (int i = 0; i < scenario.getMax(); i++) {
-                            NaturalVector2 position = getPoint(room, base, layer);
-                            addCell(layer, collider, position.x, position.y);
-                        }
-                    }
-                    
                     if (encounter.getUnique()) {
                 		it.remove();
                 	}
                     
-                    return layer;
+                    return encounter;
                 }
             }
         }
         return null;
     }
+    
+    private final LoadingCache<String, Room> availableRooms = CacheBuilder.newBuilder()
+            .build(new CacheLoader<String, Room>() {
+              public Room load(String roomId) {
+                  return InvokenGame.ROOM_READER.readAsset(roomId);
+              }
+            });
+    
+    private Room lookupRoom(String roomId) {
+        try {
+            return availableRooms.get(roomId);
+        } catch (Exception ex) {
+            InvokenGame.error("Failed to load room: " + roomId, ex);
+            return null;
+        }
+    }
+    
+    // TODO: this is redundant, as we'll need to do this check again to actually fetch a compatible
+    // room for the encounter; better to just compute the actual room here and store it off
+    private boolean compatible(Encounter encounter, Rectangle bounds) {
+        // if the room list is empty, then the encounter can go in any room
+        if (encounter.getRoomIdList().isEmpty()) {
+            return true;
+        }
+        
+        for (String roomId : encounter.getRoomIdList()) {
+            Room room = lookupRoom(roomId);
+            RoomType type = RoomGenerator.get(room.getSize());
+            if (type.fitsBounds(bounds)) {
+                return true;
+            }
+        }
+        
+        // no match, but there were room restrictions in place
+        return false;
+    }
+    
+    private LocationLayer createLayer(Encounter encounter, Rectangle room, LocationLayer base, LocationMap map) {
+        LocationLayer layer = new EncounterLayer(encounter, base.getWidth(),
+                base.getHeight(), PX, PX, map);
+        layer.setVisible(false);
+        layer.setOpacity(1.0f);
+        layer.setName("encounter-" + room.getX() + "-" + room.getY());
 
-    private double getTotalWeight(List<Encounter> encounters) {
+        for (ActorScenario scenario : encounter.getActorParams().getActorScenarioList()) {
+            for (int i = 0; i < scenario.getMax(); i++) {
+                NaturalVector2 position = getPoint(room, base, layer);
+                addCell(layer, collider, position.x, position.y);
+            }
+        }
+        
+        return layer;
+    }
+    
+    public static void sortByWeight(List<Encounter> encounters) {
+        // unique encounters appear first, then ordered by descending weight
+        Collections.sort(encounters, new Comparator<Encounter>() {
+            @Override
+            public int compare(Encounter e1, Encounter e2) {
+                if (e1.getUnique() && !e2.getUnique()) {
+                    return -1;
+                }
+                if (e2.getUnique() && !e1.getUnique()) {
+                    return 1;
+                }
+                
+                double diff = e1.getWeight() - e2.getWeight();
+                return diff > 0 ? -1 : diff < 0 ? 1 : 0;
+            }
+        });
+    }
+
+    public static double getTotalWeight(List<Encounter> encounters) {
         double total = 0.0;
         for (Encounter encounter : encounters) {
             if (encounter.getType() == Encounter.Type.ACTOR) {

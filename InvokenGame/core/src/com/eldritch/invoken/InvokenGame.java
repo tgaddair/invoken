@@ -13,6 +13,7 @@ import com.eldritch.invoken.util.AugmentationMarshaller;
 import com.eldritch.invoken.util.FactionMarshaller;
 import com.eldritch.invoken.util.ItemMarshaller;
 import com.eldritch.invoken.util.LocationMarshaller;
+import com.eldritch.invoken.util.RoomMarshaller;
 
 public class InvokenGame extends Game {
 	public static final String LOG = InvokenGame.class.getSimpleName();
@@ -23,6 +24,7 @@ public class InvokenGame extends Game {
 	public final static ItemMarshaller ITEM_READER = new ItemMarshaller();
 	public final static FactionMarshaller FACTION_READER = new FactionMarshaller();
 	public final static LocationMarshaller LOCATION_READER = new LocationMarshaller();
+	public final static RoomMarshaller ROOM_READER = new RoomMarshaller();
 
 	SpriteBatch batch;
 	Texture img;

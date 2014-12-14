@@ -81,8 +81,6 @@ public class LocationTable extends MajorAssetTable<Location> {
 		private final JComboBox<Biome> biomeBox = new JComboBox<Biome>(Biome.values());
 		private final JTextField intensityField = new JTextField("1.0f");
 		private final JTextField colorField = new JTextField("255 255 255");
-		private final AssetPointerTable<Room> roomTable =
-				new AssetPointerTable<Room>(MainPanel.ROOM_TABLE);
 		private final EncounterTable encounterTable = new EncounterTable();
 
 		public LocationEditorPanel(LocationTable owner, JFrame frame, Optional<Location> prev) {
@@ -120,10 +118,6 @@ public class LocationTable extends MajorAssetTable<Location> {
 			builder.append("Ambient RGB:", colorField);
 			builder.nextLine();
 			
-			builder.appendRow("fill:120dlu");
-			builder.append("Rooms:", new AssetTablePanel(roomTable));
-			builder.nextLine();
-			
 			builder.appendRow("fill:p:grow");
 			builder.append("Encounters:", new AssetTablePanel(encounterTable));
 			builder.nextLine();
@@ -149,9 +143,6 @@ public class LocationTable extends MajorAssetTable<Location> {
 					intensityField.setText(light.getIntensity() + "");
 					colorField.setText(light.getR() + " " + light.getG() + " " + light.getB());
 				}
-				for (String roomId : loc.getRoomIdList()) {
-					roomTable.addAssetId(roomId);
-				}
 				for (Encounter e : loc.getEncounterList()) {
 					encounterTable.addAsset(e);
 				}
@@ -174,7 +165,6 @@ public class LocationTable extends MajorAssetTable<Location> {
 							.setG(Integer.parseInt(rgb[1]))
 							.setB(Integer.parseInt(rgb[2]))
 							.build())
-					.addAllRoomId(roomTable.getAssetIds())
 					.addAllEncounter(encounterTable.getAssets());
 			String factionId = (String) factionBox.getSelectedItem();
 			if (!factionId.isEmpty()) {

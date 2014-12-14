@@ -15,10 +15,10 @@ message Location {
 	optional int32 min_rank = 6;  // min rank allowed in area
 	optional Light light = 7;
 	optional Biome biome = 8 [default = INDUSTRY];
-	repeated string room_id = 9;
 
 	// DEPRECATED
 	optional int32 parend_id_DEPRECATED = 4;
+	repeated string room_id_DEPRECATED = 9;
 }
 
 message Room {
@@ -143,6 +143,8 @@ message Encounter {
 	repeated Prerequisite prereq = 6;
 	optional string successor_id = 12; // bypass selection process and jump right to this encounter
 	optional bool return = 7 [default = false]; // allows you to return to the previous location
+
+	repeated string room_id = 13;
 
 	// Parameters specific to encounter type
 	optional StaticParams static_params = 8;
