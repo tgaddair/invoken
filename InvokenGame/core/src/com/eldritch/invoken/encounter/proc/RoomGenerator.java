@@ -7,16 +7,26 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import com.badlogic.gdx.maps.MapLayer;
+import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
 import com.badlogic.gdx.math.Rectangle;
 import com.eldritch.invoken.InvokenGame;
+import com.eldritch.invoken.encounter.NaturalVector2;
 import com.eldritch.invoken.encounter.layer.LocationMap;
 import com.eldritch.invoken.proto.Locations.Encounter;
 import com.eldritch.invoken.proto.Locations.Room;
+import com.eldritch.invoken.proto.Locations.Room.Furniture;
+import com.eldritch.invoken.util.FurnitureLoader;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 
 public class RoomGenerator {
+    // threshold of furniture to open ground in room, past which we need to stop adding furniture
+    public static final double MAX_FURNITURE = 0.5;
+    
     enum RoomType {
         SMALL(0, 49), MEDIUM(36, 100), LARGE(81, Integer.MAX_VALUE);
 
@@ -108,7 +118,45 @@ public class RoomGenerator {
     
     private void place(Rectangle rect, Room room) {
         RoomType type = get(room.getSize());
-        // TODO: load furniture
+        double area = rect.area();
+        int coveredTiles = 0;  // running count of covered tiles
+        for (Furniture furniture : room.getFurnitureList()) {
+            TiledMap roomMap = FurnitureLoader.load(furniture);
+            
+            // calculate the percentage of furniture coverage to ground tiles adding this piece of
+            // furniture would cost us
+            int cost = getCost(roomMap);
+            double coverage = (coveredTiles + cost) / area;
+            
+            // find a suitable place in room that satisfies the constraints
+            if (coverage < MAX_FURNITURE) {
+                NaturalVector2 offset = findOffset(roomMap, rect);
+                if (offset != null) {
+                    // found a place to put the furniture, so merge it into the map
+                    map.merge(roomMap, offset);
+                }
+            }
+        }
+    }
+    
+    private NaturalVector2 findOffset(TiledMap roomMap, Rectangle rect) {
+        return null;
+    }
+    
+    private int getCost(TiledMap roomMap) {
+        int cost = 0;
+        TiledMapTileLayer layer = (TiledMapTileLayer) roomMap.getLayers().get("collision");
+        if (layer != null) {
+            for (int x = 0; x < layer.getWidth(); x++) {
+                for (int y = 0; y < layer.getHeight(); y++) {
+                    Cell cell = layer.getCell(x, y);
+                    if (cell != null) {
+                        cost++;
+                    }
+                }
+            }
+        }
+        return cost;
     }
     
     private void put(String roomId, Rectangle rect) {

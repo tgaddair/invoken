@@ -29,4 +29,9 @@ public class LocationMap extends TiledMap {
     public TiledMapTile getGround() {
         return ground;
     }
+    
+    
+    public void merge(TiledMap map, NaturalVector2 offset) {
+        
+    }
 }
