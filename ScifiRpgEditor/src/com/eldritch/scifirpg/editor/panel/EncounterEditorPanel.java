@@ -179,10 +179,10 @@ public class EncounterEditorPanel extends AssetEditorPanel<Encounter, EncounterT
 				.setReturn(returnCheck.isSelected())
 				.addAllRoomId(roomTable.getAssetIds())
 				.addAllPrereq(prereqTable.getAssets());
-		String successorId = (String) successorBox.getSelectedItem();
-		if (!successorId.isEmpty()) {
-			encounter.setSuccessorId(successorId);
-		}
+//		String successorId = (String) successorBox.getSelectedItem();
+//		if (!successorId.isEmpty()) {
+//			encounter.setSuccessorId(successorId);
+//		}
 		switch (t) {
 			case STATIC:
 				encounter.setStaticParams(staticPanel.getParams());

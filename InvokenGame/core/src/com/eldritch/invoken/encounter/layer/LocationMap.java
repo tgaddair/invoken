@@ -9,6 +9,8 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
+import com.eldritch.invoken.InvokenGame;
+import com.eldritch.invoken.encounter.Location;
 import com.eldritch.invoken.encounter.NaturalVector2;
 
 public class LocationMap extends TiledMap {
@@ -55,16 +57,39 @@ public class LocationMap extends TiledMap {
         Map<String, LocationLayer> presentLayers = getLayerMap();
         for (MapLayer mapLayer : map.getLayers()) {
             TiledMapTileLayer layer = (TiledMapTileLayer) mapLayer;
-            LocationLayer existing = presentLayers.get(mapLayer.getName());
-            if (existing != null) {
-                // merge the new layer into the existing
+            if (layer.getName().equals("constraints")) {
                 for (int x = 0; x < layer.getWidth(); x++) {
                     for (int y = 0; y < layer.getHeight(); y++) {
                         Cell cell = layer.getCell(x, y);
                         if (cell != null) {
-                            // add this cell at the offset position
-                            existing.addCell(cell.getTile(), offset.x + x, offset.y + y);
+                            InvokenGame.log("constraint tile: " + cell.getTile().getId());
                         }
+                    }
+                }
+                
+                // don't add the constraints
+                continue;
+            }
+            
+            LocationLayer existing = presentLayers.get(mapLayer.getName());
+            if (existing == null) {
+                existing = new LocationLayer(getWidth(), getHeight(), 
+                        Location.PX, Location.PX, this);
+                existing.setVisible(true);
+                existing.setOpacity(1.0f);
+                existing.setName(layer.getName());
+                
+                // add the new layer
+                getLayers().add(existing);
+            }
+            
+            // merge the new layer into the existing
+            for (int x = 0; x < layer.getWidth(); x++) {
+                for (int y = 0; y < layer.getHeight(); y++) {
+                    Cell cell = layer.getCell(x, y);
+                    if (cell != null) {
+                        // add this cell at the offset position
+                        existing.addCell(cell.getTile(), offset.x + x, offset.y + y);
                     }
                 }
             }

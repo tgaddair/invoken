@@ -151,6 +151,10 @@ public class LocationGenerator {
             }
         }
         
+        InvokenGame.log("Adding Rooms");
+        RoomGenerator roomGenerator = new RoomGenerator(map);
+        roomGenerator.generate(bsp.getRooms(), proto.getEncounterList());
+        
         InvokenGame.log("Creating Spawn Layers");
         for (LocationLayer layer : createSpawnLayers(base, bsp.getRooms(), proto.getEncounterList(), map)) {
             map.getLayers().add(layer);

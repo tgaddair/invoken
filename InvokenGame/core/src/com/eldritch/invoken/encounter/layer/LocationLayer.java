@@ -4,10 +4,8 @@ import java.util.List;
 
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
-import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
 import com.eldritch.invoken.encounter.NaturalVector2;
 import com.eldritch.invoken.encounter.proc.FurnitureGenerator;
-import com.eldritch.invoken.encounter.proc.LocationGenerator;
 
 public class LocationLayer extends TiledMapTileLayer {
     private final LocationMap map;

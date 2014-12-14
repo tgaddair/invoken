@@ -134,6 +134,7 @@ public class RoomGenerator {
                 if (offset != null) {
                     // found a place to put the furniture, so merge it into the map
                     map.merge(roomMap, offset);
+                    coveredTiles += cost;
                 }
             }
         }
@@ -144,7 +145,7 @@ public class RoomGenerator {
         for (int x = 0; x < map.getWidth(); x++) {
             for (int y = 0; y < map.getHeight(); y++) {
                 if (compatible(presentLayers, furniture, x, y)) {
-                    return NaturalVector2.of(x, y);
+                    return NaturalVector2.of(x + (int) rect.x, y + (int) rect.y);
                 }
             }
         }
