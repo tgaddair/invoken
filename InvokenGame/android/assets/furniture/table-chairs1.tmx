@@ -5,6 +5,16 @@
  </tileset>
  <tileset firstgid="257" name="furniture-placement" tilewidth="32" tileheight="32">
   <image source="../maps/graphics/tiles/furniture-placement.png" width="64" height="64"/>
+  <tile id="2">
+   <properties>
+    <property name="constraint" value="ground"/>
+   </properties>
+  </tile>
+  <tile id="3">
+   <properties>
+    <property name="constraint" value="wall"/>
+   </properties>
+  </tile>
  </tileset>
  <tileset firstgid="261" name="collision" tilewidth="32" tileheight="32">
   <image source="../maps/graphics/tiles/collision.png" width="64" height="32"/>
@@ -24,7 +34,7 @@
    eJxjYMAOmBkRGJ2PSxwXAAAJSQAt
   </data>
  </layer>
- <layer name="collision" width="5" height="5">
+ <layer name="collision" width="5" height="5" visible="0">
   <data encoding="base64" compression="zlib">
    eJxjYCAesDEiMD4xdAAAB0IAKw==
   </data>

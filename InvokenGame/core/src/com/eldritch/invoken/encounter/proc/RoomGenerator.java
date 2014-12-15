@@ -26,7 +26,7 @@ import com.google.common.cache.LoadingCache;
 
 public class RoomGenerator {
     // threshold of furniture to open ground in room, past which we need to stop adding furniture
-    public static final double MAX_FURNITURE = 0.5;
+    public static final double MAX_FURNITURE = 0.2;
     
     enum RoomType {
         SMALL(0, 49), MEDIUM(36, 100), LARGE(81, Integer.MAX_VALUE);
@@ -142,10 +142,10 @@ public class RoomGenerator {
     
     private NaturalVector2 findOffset(TiledMap furniture, Rectangle rect) {
         Map<String, LocationLayer> presentLayers = map.getLayerMap();
-        for (int x = 0; x < map.getWidth(); x++) {
-            for (int y = 0; y < map.getHeight(); y++) {
+        for (int x = (int) rect.x; x < rect.x + rect.width; x++) {
+            for (int y = (int) rect.y; y < rect.y + rect.height; y++) {
                 if (compatible(presentLayers, furniture, x, y)) {
-                    return NaturalVector2.of(x + (int) rect.x, y + (int) rect.y);
+                    return NaturalVector2.of(x, y);
                 }
             }
         }
@@ -157,7 +157,34 @@ public class RoomGenerator {
         for (MapLayer mapLayer : furniture.getLayers()) {
             TiledMapTileLayer layer = (TiledMapTileLayer) mapLayer;
             if (layer.getName().equals("constraints")) {
-                // special case
+                LocationLayer existing = presentLayers.get("base");
+                if (existing == null) {
+                    // no base layer to be in conflict with
+                    continue;
+                }
+                
+                // check that constraints are satisfied in the base layer
+                for (int i = 0; i < layer.getWidth(); i++) {
+                    for (int j = 0; j < layer.getHeight(); j++) {
+                        Cell cell = layer.getCell(i, j);
+                        if (cell != null) {
+                            String constraint = cell.getTile().getProperties().get(
+                                    "constraint", String.class);
+                            if (constraint != null) {
+                                if (constraint.equals("ground") 
+                                        && !existing.isGround(x + i, y + j)) {
+                                    // tile in base is required to be ground, but isn't
+                                    return false;
+                                }
+                                if (constraint.equals("wall") 
+                                        && !existing.isWall(x + i, y + j)) {
+                                    // tile in base is required to be wall, but isn't
+                                    return false;
+                                }
+                            }
+                        }
+                    }
+                }
             } else {
                 LocationLayer existing = presentLayers.get(mapLayer.getName());
                 if (existing == null) {
