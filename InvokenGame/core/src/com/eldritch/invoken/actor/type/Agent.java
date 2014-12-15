@@ -926,8 +926,8 @@ public abstract class Agent extends CollisionEntity {
     }
 
     public Rectangle getBoundingBox(Rectangle rect) {
-        rect.set(position.x - getWidth() / 4, position.y - getHeight() / 2, getWidth() / 2,
-                getHeight() / 4);
+        float w = getWidth() / 3f;
+        rect.set(position.x - w / 2, position.y - getHeight() / 2, w, getHeight() / 4);
         return rect;
     }
 

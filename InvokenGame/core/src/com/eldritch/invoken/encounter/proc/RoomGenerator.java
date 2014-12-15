@@ -1,6 +1,7 @@
 package com.eldritch.invoken.encounter.proc;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -120,7 +121,9 @@ public class RoomGenerator {
     private void place(Rectangle rect, Room room) {
         double area = rect.area();
         int coveredTiles = 0;  // running count of covered tiles
-        for (Furniture furniture : room.getFurnitureList()) {
+        List<Furniture> availableFurniture = new ArrayList<Furniture>(room.getFurnitureList());
+        Collections.shuffle(availableFurniture);
+        for (Furniture furniture : availableFurniture) {
             TiledMap roomMap = FurnitureLoader.load(furniture);
             
             // calculate the percentage of furniture coverage to ground tiles adding this piece of

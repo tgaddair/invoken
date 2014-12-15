@@ -26,7 +26,7 @@
  </layer>
  <layer name="constraints" width="1" height="2" visible="0">
   <data encoding="base64" compression="zlib">
-   eJxjYGBgYGZkYAAAABcABQ==
+   eJxjYWRgYAZiAAA+AAo=
   </data>
  </layer>
  <layer name="collision" width="1" height="2" visible="0">
