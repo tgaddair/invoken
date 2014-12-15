@@ -207,7 +207,7 @@ public class Location {
     }
 
     public Npc createTestNpc(Vector2 position, String id) {
-        return createTestNpc(position.x, position.y, id);
+        return createTestNpc(position.x + 0.5f, position.y + 0.5f, id);
     }
 
     public Npc createTestNpc(float x, float y, String id) {

@@ -156,7 +156,8 @@ public class LocationGenerator {
         roomGenerator.generate(bsp.getRooms(), proto.getEncounterList());
         
         InvokenGame.log("Creating Spawn Layers");
-        for (LocationLayer layer : createSpawnLayers(base, bsp.getRooms(), proto.getEncounterList(), map)) {
+        for (LocationLayer layer : createSpawnLayers(base, collision, bsp.getRooms(),
+                proto.getEncounterList(), map)) {
             map.getLayers().add(layer);
         }
 
@@ -401,8 +402,8 @@ public class LocationGenerator {
         return generatedRooms;
     }
 
-    private List<LocationLayer> createSpawnLayers(LocationLayer base, List<Rectangle> rooms,
-            List<Encounter> encounters, LocationMap map) {
+    private List<LocationLayer> createSpawnLayers(LocationLayer base, LocationLayer collision,
+            List<Rectangle> rooms, List<Encounter> encounters, LocationMap map) {
     	List<Encounter> availableEncounters = new ArrayList<Encounter>(encounters);
         List<LocationLayer> layers = new ArrayList<LocationLayer>();
         LocationLayer playerLayer = null;
@@ -421,7 +422,7 @@ public class LocationGenerator {
             } else {
                 Encounter encounter = popEncounter(room, availableEncounters, total);
                 if (encounter != null) {
-                    LocationLayer layer = createLayer(encounter, room, base, map);
+                    LocationLayer layer = createLayer(encounter, room, base, collision, map);
                     layers.add(layer);
                 }
             }
@@ -491,21 +492,39 @@ public class LocationGenerator {
         return false;
     }
     
-    private LocationLayer createLayer(Encounter encounter, Rectangle room, LocationLayer base, LocationMap map) {
+    private LocationLayer createLayer(Encounter encounter, Rectangle room, LocationLayer base,
+            LocationLayer collision, LocationMap map) {
         LocationLayer layer = new EncounterLayer(encounter, base.getWidth(),
                 base.getHeight(), PX, PX, map);
         layer.setVisible(false);
         layer.setOpacity(1.0f);
         layer.setName("encounter-" + room.getX() + "-" + room.getY());
 
+        List<NaturalVector2> freeSpaces = getFreeSpaces(collision, room);
+        Collections.shuffle(freeSpaces);
+        
+        Iterator<NaturalVector2> it = freeSpaces.iterator();
         for (ActorScenario scenario : encounter.getActorParams().getActorScenarioList()) {
             for (int i = 0; i < scenario.getMax(); i++) {
-                NaturalVector2 position = getPoint(room, base, layer);
+                NaturalVector2 position = it.hasNext() ? it.next() : getPoint(room, base, layer);
                 addCell(layer, collider, position.x, position.y);
             }
         }
         
         return layer;
+    }
+    
+    public static List<NaturalVector2> getFreeSpaces(LocationLayer layer, Rectangle bounds) {
+        List<NaturalVector2> freeSpaces = new ArrayList<NaturalVector2>();
+        for (int x = (int) bounds.x; x < bounds.x + bounds.width; x++) {
+            for (int y = (int) bounds.y; y < bounds.y + bounds.height; y++) {
+                Cell cell = layer.getCell(x, y);
+                if (cell == null) {
+                    freeSpaces.add(NaturalVector2.of(x, y));
+                }
+            }
+        }
+        return freeSpaces;
     }
     
     public static void sortByWeight(List<Encounter> encounters) {
