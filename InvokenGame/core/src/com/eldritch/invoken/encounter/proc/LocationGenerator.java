@@ -177,7 +177,7 @@ public class LocationGenerator {
 
         // clutter
         InvokenGame.log("Adding Clutter");
-        map.getLayers().add(furnitureGenerator.generateClutter(base, map));
+//        map.getLayers().add(furnitureGenerator.generateClutter(base, map));
 
         Location location = new Location(proto, player, map);
         location.addLights(lights);

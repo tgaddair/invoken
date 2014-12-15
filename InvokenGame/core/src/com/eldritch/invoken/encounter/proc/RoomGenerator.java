@@ -4,9 +4,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.tiled.TiledMap;
@@ -147,7 +150,8 @@ public class RoomGenerator {
         Map<String, LocationLayer> presentLayers = map.getLayerMap();
         for (int x = (int) rect.x; x < rect.x + rect.width; x++) {
             for (int y = (int) rect.y; y < rect.y + rect.height; y++) {
-                if (compatible(presentLayers, furniture, x, y)) {
+                if (isContiguous(rect, furniture, x, y) 
+                        && compatible(presentLayers, furniture, x, y)) {
                     return NaturalVector2.of(x, y);
                 }
             }
@@ -216,7 +220,78 @@ public class RoomGenerator {
         return true;
     }
     
-    private boolean inBounds(int x, int y, LocationLayer layer) {
+    private boolean isContiguous(Rectangle rect, TiledMap candidate, int x, int y) {
+        LocationLayer collision = (LocationLayer) map.getLayers().get("collision");
+        TiledMapTileLayer collision2 = (TiledMapTileLayer) candidate.getLayers().get("collision");
+        
+        // check each entry point
+        Set<NaturalVector2> visited = new HashSet<NaturalVector2>();
+        LinkedList<NaturalVector2> points = getEntryPoints(rect, map);
+        while (!points.isEmpty()) {
+            NaturalVector2 point = points.removeFirst();
+            if (visited.contains(point)) {
+                // don't repeat work
+                continue;
+            }
+            
+            if (collision.getCell(point.x, point.y) == null) {
+                // cell is free
+                visited.add(point);
+                
+                if (!inBounds(x - point.x, y - point.y, collision2) 
+                            || collision2.getCell(x - point.x, y - point.y) == null) {
+                    for (NaturalVector2 neighbor : getNeighbors(point)) {
+                        // add the neighbor if it's in the rectangle
+                        if (neighbor.x >= rect.x && neighbor.x < rect.x + rect.width 
+                                && neighbor.y >= rect.y && neighbor.y < rect.y + rect.height) {
+                            points.add(neighbor);
+                        }
+                    }
+                }
+            }
+        }
+        
+        return visited.containsAll(LocationGenerator.getFreeSpaces(collision, rect));
+    }
+    
+    private List<NaturalVector2> getNeighbors(NaturalVector2 point) {
+        List<NaturalVector2> neighbors = new ArrayList<NaturalVector2>();
+        neighbors.add(NaturalVector2.of(point.x - 1, point.y));
+        neighbors.add(NaturalVector2.of(point.x + 1, point.y));
+        neighbors.add(NaturalVector2.of(point.x, point.y - 1));
+        neighbors.add(NaturalVector2.of(point.x, point.y + 1));
+        return neighbors;
+    }
+    
+    private LinkedList<NaturalVector2> getEntryPoints(Rectangle rect, LocationMap map) {
+        LinkedList<NaturalVector2> points = new LinkedList<NaturalVector2>();
+        LocationLayer base = (LocationLayer) map.getLayers().get("base");
+        for (int y = (int) rect.y; y < rect.y + rect.height; y++) {
+            int x1 = (int) rect.x;
+            if (base.isGround(x1 - 1, y)) {
+                points.add(NaturalVector2.of(x1, y));
+            }
+            
+            int x2 = (int) (rect.x + rect.width) - 1;
+            if (base.isGround(x2 + 1, y)) {
+                points.add(NaturalVector2.of(x2, y));
+            }
+        }
+        for (int x = (int) rect.x; x < rect.x + rect.width; x++) {
+            int y1 = (int) rect.y;
+            if (base.isGround(x, y1 - 1)) {
+                points.add(NaturalVector2.of(x, y1));
+            }
+            
+            int y2 = (int) (rect.y + rect.height) - 1;
+            if (base.isGround(x, y2 + 1)) {
+                points.add(NaturalVector2.of(x, y2));
+            }
+        }
+        return points;
+    }
+    
+    private boolean inBounds(int x, int y, TiledMapTileLayer layer) {
         return x >= 0 && y >= 0 && x < layer.getWidth() && y < layer.getHeight();
     }
     
