@@ -1,4 +1,4 @@
-package com.eldritch.invoken.encounter;
+package com.eldritch.invoken.activators;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -8,13 +8,14 @@ import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
 import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.actor.type.Agent;
+import com.eldritch.invoken.encounter.Location;
+import com.eldritch.invoken.encounter.NaturalVector2;
 import com.eldritch.invoken.encounter.layer.LocationCell;
 import com.eldritch.invoken.encounter.layer.LocationLayer;
 import com.eldritch.invoken.encounter.layer.RemovableCell;
 
-public class DoorActivator implements Activator {
+public class DoorActivator extends ClickActivator {
     private final Cell cell;
-    private final Vector2 position = new Vector2();
     private final List<RemovableCell> cells = new ArrayList<RemovableCell>();
     private final TiledMapTile unlockedTile;
     private final TiledMapTile lockedTile;
@@ -23,24 +24,14 @@ public class DoorActivator implements Activator {
 
     public DoorActivator(int x, int y, Collection<RemovableCell> cells,
             TiledMapTile unlockedTile, TiledMapTile lockedTile, LocationLayer layer) {
+    	super(x, y);
         this.cell = new LocationCell(NaturalVector2.of(x, y), layer);
-        position.set(x, y);
         this.cells.addAll(cells);
         this.unlockedTile = unlockedTile;
         this.lockedTile = lockedTile;
         
         locked = Math.random() < 0.5;
         resetCell();
-    }
-
-    @Override
-    public boolean click(Agent agent, Location location, float x, float y) {
-        boolean clicked = x >= position.x && x <= position.x + 1 && y >= position.y
-                && y <= position.y + 1;
-        if (clicked) {
-            activate(agent, location);
-        }
-        return clicked;
     }
 
     @Override

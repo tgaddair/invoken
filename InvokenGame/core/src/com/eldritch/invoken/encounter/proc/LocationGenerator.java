@@ -31,8 +31,8 @@ import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Rectangle;
 import com.eldritch.invoken.InvokenGame;
+import com.eldritch.invoken.activators.Activator;
 import com.eldritch.invoken.actor.type.Player;
-import com.eldritch.invoken.encounter.Activator;
 import com.eldritch.invoken.encounter.Location;
 import com.eldritch.invoken.encounter.NaturalVector2;
 import com.eldritch.invoken.encounter.layer.EncounterLayer;
@@ -181,7 +181,8 @@ public class LocationGenerator {
 
         Location location = new Location(proto, player, map);
         location.addLights(lights);
-        location.addActivators(activators);
+//        location.addActivators(activators);
+        location.addActivators(map.getActivators());
         
         // debug
         saveLayer(base);

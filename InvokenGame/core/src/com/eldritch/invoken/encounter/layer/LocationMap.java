@@ -1,6 +1,8 @@
 package com.eldritch.invoken.encounter.layer;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -10,15 +12,25 @@ import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
 import com.eldritch.invoken.InvokenGame;
+import com.eldritch.invoken.activators.Activator;
 import com.eldritch.invoken.encounter.Location;
 import com.eldritch.invoken.encounter.NaturalVector2;
 
 public class LocationMap extends TiledMap {
     private final TiledMapTile ground;
     private Set<NaturalVector2> activeTiles = null;
+    private final List<Activator> activators = new ArrayList<Activator>();
     
     public LocationMap(TiledMapTile ground) {
         this.ground = ground;
+    }
+    
+    public void add(Activator activator) {
+    	activators.add(activator);
+    }
+    
+    public List<Activator> getActivators() {
+    	return activators;
     }
     
     public void update(Set<NaturalVector2> activeTiles) {
@@ -58,15 +70,6 @@ public class LocationMap extends TiledMap {
         for (MapLayer mapLayer : map.getLayers()) {
             TiledMapTileLayer layer = (TiledMapTileLayer) mapLayer;
             if (layer.getName().equals("constraints")) {
-                for (int x = 0; x < layer.getWidth(); x++) {
-                    for (int y = 0; y < layer.getHeight(); y++) {
-                        Cell cell = layer.getCell(x, y);
-                        if (cell != null) {
-                            InvokenGame.log("constraint tile: " + cell.getTile().getId());
-                        }
-                    }
-                }
-                
                 // don't add the constraints
                 continue;
             }

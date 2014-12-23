@@ -744,3 +744,36 @@ grime/floor
   orig: 32, 32
   offset: 0, 0
   index: -1
+
+modern-activators.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+industry/camera-on
+  rotate: false
+  xy: 0, 0
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+industry/camera-off
+  rotate: false
+  xy: 0, 32
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+industry/terminal-blue
+  rotate: false
+  xy: 32, 0
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+industry/terminal-green
+  rotate: false
+  xy: 32, 32
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
