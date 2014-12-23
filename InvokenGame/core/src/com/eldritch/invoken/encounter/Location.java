@@ -27,6 +27,7 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
 import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.activators.Activator;
+import com.eldritch.invoken.activators.SecurityCamera;
 import com.eldritch.invoken.actor.aug.Action;
 import com.eldritch.invoken.actor.factions.Faction;
 import com.eldritch.invoken.actor.type.Agent;
@@ -63,6 +64,7 @@ public class Location {
     private final List<Agent> drawableEntities = new ArrayList<Agent>();
     private final List<TemporaryEntity> tempEntities = new ArrayList<TemporaryEntity>();
     private final List<Activator> activators = new ArrayList<Activator>();
+    private final List<SecurityCamera> securityCameras = new ArrayList<SecurityCamera>();
     private final Set<NaturalVector2> activeTiles = new HashSet<NaturalVector2>();
     private final LightManager lightManager;
     
@@ -135,6 +137,24 @@ public class Location {
 
     public void addActivators(List<Activator> activators) {
         this.activators.addAll(activators);
+        for (Activator activator : activators) {
+        	activator.register(this);
+        }
+    }
+    
+    public void addSecurityCamera(SecurityCamera camera) {
+    	if (!securityCameras.isEmpty()) {
+    		securityCameras.get(securityCameras.size() - 1).setNext(camera);
+    	}
+    	securityCameras.add(camera);
+    }
+    
+    public SecurityCamera getFirstSecurityCamera() {
+    	return securityCameras.get(0);
+    }
+    
+    public boolean hasSecurityCamera() {
+    	return !securityCameras.isEmpty();
     }
 
     public void addEntities(com.eldritch.invoken.proto.Locations.Location data, TiledMap map) {
@@ -240,7 +260,7 @@ public class Location {
         }
 
         // let the camera follow the player
-        Vector2 position = player.getPosition();
+        Vector2 position = player.getCamera().getPosition();
         float scale = PX * camera.zoom;
         camera.position.x = Math.round(position.x * scale) / scale;
         camera.position.y = Math.round(position.y * scale) / scale;

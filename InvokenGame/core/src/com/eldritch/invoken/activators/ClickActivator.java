@@ -3,12 +3,13 @@ package com.eldritch.invoken.activators;
 import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.encounter.Location;
+import com.eldritch.invoken.encounter.NaturalVector2;
 
 public abstract class ClickActivator implements Activator {
 	private final Vector2 position = new Vector2();
 	
-	public ClickActivator(int x, int y) {
-		position.set(x, y);
+	public ClickActivator(NaturalVector2 position) {
+		this.position.set(position.x, position.y);
 	}
 	
 	@Override
@@ -19,5 +20,9 @@ public abstract class ClickActivator implements Activator {
             activate(agent, location);
         }
         return clicked;
+	}
+	
+	public Vector2 getPosition() {
+		return position;
 	}
 }

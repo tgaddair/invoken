@@ -6,7 +6,6 @@ import java.util.List;
 
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
-import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.encounter.Location;
 import com.eldritch.invoken.encounter.NaturalVector2;
@@ -24,7 +23,7 @@ public class DoorActivator extends ClickActivator {
 
     public DoorActivator(int x, int y, Collection<RemovableCell> cells,
             TiledMapTile unlockedTile, TiledMapTile lockedTile, LocationLayer layer) {
-    	super(x, y);
+    	super(NaturalVector2.of(x, y));
         this.cell = new LocationCell(NaturalVector2.of(x, y), layer);
         this.cells.addAll(cells);
         this.unlockedTile = unlockedTile;
@@ -57,4 +56,8 @@ public class DoorActivator extends ClickActivator {
     private void resetCell() {
         cell.setTile(locked ? lockedTile : unlockedTile);
     }
+
+	@Override
+	public void register(Location location) {
+	}
 }

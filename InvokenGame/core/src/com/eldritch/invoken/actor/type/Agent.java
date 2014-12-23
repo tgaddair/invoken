@@ -21,6 +21,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Array;
 import com.eldritch.invoken.actor.AgentInfo;
+import com.eldritch.invoken.actor.GameCamera;
 import com.eldritch.invoken.actor.Inventory;
 import com.eldritch.invoken.actor.Profession;
 import com.eldritch.invoken.actor.ai.Behavior;
@@ -215,6 +216,12 @@ public abstract class Agent extends CollisionEntity {
 
     public void resurrect() {
         info.resetHealth();
+    }
+    
+    public void setCamera(GameCamera camera) {
+    }
+    
+    public void resetCamera() {
     }
 
     public float getVisibility() {

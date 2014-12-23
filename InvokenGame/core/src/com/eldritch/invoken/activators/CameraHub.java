@@ -5,12 +5,21 @@ import com.eldritch.invoken.encounter.Location;
 import com.eldritch.invoken.encounter.NaturalVector2;
 
 public class CameraHub extends ClickActivator {
+	private Location location = null;
+	
 	public CameraHub(NaturalVector2 position) {
-		super(position.x, position.y);
+		super(position);
 	}
 
 	@Override
 	public void activate(Agent agent, Location location) {
-		System.out.println("activated CameraHub");
+		if (location.hasSecurityCamera()) {
+			agent.setCamera(location.getFirstSecurityCamera());
+		}
+	}
+
+	@Override
+	public void register(Location location) {
+		this.location = location;
 	}
 }
