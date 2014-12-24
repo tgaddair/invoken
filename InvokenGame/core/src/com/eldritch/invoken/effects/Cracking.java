@@ -25,6 +25,7 @@ public class Cracking extends BasicEffect {
 	public void dispel() {
 	    target.toggleOff(Crack.class);
 	    target.getInfo().getAugmentations().removeActiveAugmentation(aug);
+	    target.resetCamera();
 	}
 	
 	@Override

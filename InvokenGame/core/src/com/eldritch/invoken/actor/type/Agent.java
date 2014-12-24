@@ -223,6 +223,10 @@ public abstract class Agent extends CollisionEntity {
     
     public void resetCamera() {
     }
+    
+    public boolean usingRemoteCamera() {
+    	return false;
+    }
 
     public float getVisibility() {
         return color.a;

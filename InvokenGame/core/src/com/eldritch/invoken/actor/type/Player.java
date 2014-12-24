@@ -35,6 +35,11 @@ public class Player extends Agent {
     	this.camera = PLAYER_CAMERA;
     }
     
+    @Override
+    public boolean usingRemoteCamera() {
+    	return camera != PLAYER_CAMERA;
+    }
+    
     public GameCamera getCamera() {
     	return camera;
     }

@@ -355,6 +355,8 @@ public class Location {
                 drawableEntities.add(other);
             } else if (other.inCombat() && player.isNear(other)) {
                 activeEntities.add(other);
+            } else if (other == player) {
+            	activeEntities.add(other);
             }
         }
     }
