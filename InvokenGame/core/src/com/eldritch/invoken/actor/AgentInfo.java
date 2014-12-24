@@ -16,11 +16,13 @@ import com.eldritch.invoken.proto.Actors.ActorParams;
 import com.eldritch.invoken.proto.Actors.ActorParams.FactionStatus;
 import com.eldritch.invoken.proto.Actors.ActorParams.InventoryItem;
 import com.eldritch.invoken.proto.Actors.ActorParams.Skill;
+import com.eldritch.invoken.proto.Actors.ActorParams.Species;
 import com.eldritch.invoken.proto.Disciplines.Discipline;
 import com.google.common.base.Functions;
 
 public class AgentInfo {
     final String name;
+    final Species species;
     
 	final Profession profession;
 	final FactionManager factions;
@@ -38,6 +40,7 @@ public class AgentInfo {
 	
 	public AgentInfo(Agent agent, ActorParams params) {
 	    this.name = params.getName();
+	    this.species = params.getSpecies();
 	    InvokenGame.log("creating: " + name);
 	    
 		augmentations = new PreparedAugmentations(agent);
@@ -76,6 +79,7 @@ public class AgentInfo {
 	
 	public AgentInfo(Agent agent, Profession profession, int level) {
 	    this.name = "Player";
+	    this.species = Species.HUMAN;
 		augmentations = new PreparedAugmentations(agent);
 		
 		this.profession = profession;
@@ -96,6 +100,10 @@ public class AgentInfo {
 	
 	public String getName() {
 	    return name;
+	}
+	
+	public Species getSpecies() {
+		return species;
 	}
 	
 	public int getLevel() {

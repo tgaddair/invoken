@@ -20,6 +20,7 @@ import com.eldritch.invoken.actor.aug.Mirror;
 import com.eldritch.invoken.actor.aug.Paralyze;
 import com.eldritch.invoken.actor.aug.RendWeapon;
 import com.eldritch.invoken.actor.aug.Resurrect;
+import com.eldritch.invoken.actor.aug.Scramble;
 import com.eldritch.invoken.proto.Actors.ActorParams.Skill;
 import com.eldritch.invoken.proto.Disciplines.Discipline;
 import com.google.common.collect.ImmutableList;
@@ -163,7 +164,7 @@ public abstract class Profession {
 		
 		@Override
 		public List<Augmentation> getStartingAugmentations() {
-			return ImmutableList.<Augmentation>of(new FireWeapon(), new Cloak(), new Crack());
+			return ImmutableList.<Augmentation>of(new FireWeapon(), new Cloak(), new Crack(), new Scramble());
 		}
 	}
 	

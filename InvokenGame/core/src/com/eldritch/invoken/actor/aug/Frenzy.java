@@ -11,6 +11,7 @@ import com.eldritch.invoken.actor.type.Projectile;
 import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.effects.Frenzied;
 import com.eldritch.invoken.encounter.Location;
+import com.eldritch.invoken.proto.Actors.ActorParams.Species;
 import com.eldritch.invoken.screens.GameScreen;
 
 public class Frenzy extends ProjectileAugmentation {
@@ -79,7 +80,9 @@ public class Frenzy extends ProjectileAugmentation {
 
         @Override
         protected void apply(Agent owner, Agent target) {
-            target.addEffect(new Frenzied(owner, target, 3));
+        	if (target.getInfo().getSpecies() != Species.AUTOMATON) {
+        		target.addEffect(new Frenzied(owner, target, 3));
+        	}
         }
 
         @Override
