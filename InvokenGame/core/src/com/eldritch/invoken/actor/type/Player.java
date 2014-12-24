@@ -27,13 +27,11 @@ public class Player extends Agent {
     
     @Override
     public void setCamera(GameCamera camera) {
-    	System.out.println("set camera");
     	this.camera = camera;
     }
     
     @Override
     public void resetCamera() {
-    	System.out.println("reset camera");
     	this.camera = PLAYER_CAMERA;
     }
     

@@ -12,6 +12,7 @@ import java.util.Random;
 import com.eldritch.invoken.actor.aug.Augmentation;
 import com.eldritch.invoken.actor.aug.Barrier;
 import com.eldritch.invoken.actor.aug.Cloak;
+import com.eldritch.invoken.actor.aug.Crack;
 import com.eldritch.invoken.actor.aug.Frenzy;
 import com.eldritch.invoken.actor.aug.Drain;
 import com.eldritch.invoken.actor.aug.FireWeapon;
@@ -25,7 +26,7 @@ import com.google.common.collect.ImmutableList;
 
 public abstract class Profession {
     public static Profession getDefault() {
-        return new Executor();
+        return new Ghost();
     }
     
 	public static List<Skill> getSorted(List<Skill> skills, final Collection<Discipline> masteries) {
@@ -162,7 +163,7 @@ public abstract class Profession {
 		
 		@Override
 		public List<Augmentation> getStartingAugmentations() {
-			return ImmutableList.<Augmentation>of(new FireWeapon(), new Cloak());
+			return ImmutableList.<Augmentation>of(new FireWeapon(), new Cloak(), new Crack());
 		}
 	}
 	
