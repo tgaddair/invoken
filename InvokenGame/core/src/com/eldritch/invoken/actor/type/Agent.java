@@ -671,19 +671,6 @@ public abstract class Agent extends CollisionEntity {
             stateTime = 0;
         }
 
-        move(delta, location);
-    }
-
-    private void move(float delta, Location screen) {
-        // clamp the velocity to the maximum
-        if (Math.abs(velocity.x) > getMaxVelocity()) {
-            velocity.x = Math.signum(velocity.x) * getMaxVelocity();
-        }
-
-        if (Math.abs(velocity.y) > getMaxVelocity()) {
-            velocity.y = Math.signum(velocity.y) * getMaxVelocity();
-        }
-
         // clamp the velocity to 0 if it's < 1, and set the state to
         // standing
         if (Math.abs(velocity.x) < 1 && Math.abs(velocity.y) < 1) {
@@ -704,6 +691,19 @@ public abstract class Agent extends CollisionEntity {
             float dx = target.position.x - position.x;
             float dy = target.position.y - position.y;
             direction = getDominantDirection(dx, dy);
+        }
+        
+        move(delta, location);
+    }
+
+    protected void move(float delta, Location screen) {
+        // clamp the velocity to the maximum
+        if (Math.abs(velocity.x) > getMaxVelocity()) {
+            velocity.x = Math.signum(velocity.x) * getMaxVelocity();
+        }
+
+        if (Math.abs(velocity.y) > getMaxVelocity()) {
+            velocity.y = Math.signum(velocity.y) * getMaxVelocity();
         }
 
         // multiply by delta time so we know how far we go
@@ -803,7 +803,7 @@ public abstract class Agent extends CollisionEntity {
         return result;
     }
 
-    private boolean collidesWith(Rectangle actorRect, Array<Rectangle> rects) {
+    protected boolean collidesWith(Rectangle actorRect, Array<Rectangle> rects) {
         for (Rectangle tile : rects) {
             if (actorRect.overlaps(tile)) {
                 return true;

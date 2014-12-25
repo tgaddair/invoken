@@ -15,7 +15,6 @@ public abstract class SteeringAgent extends Agent implements Steerable<Vector2> 
 	        new SteeringAcceleration<Vector2>(new Vector2());
 	
 	float orientation;
-    Vector2 linearVelocity = new Vector2();
     float angularVelocity;
     boolean independentFacing = true;
     boolean tagged;
@@ -100,7 +99,7 @@ public abstract class SteeringAgent extends Agent implements Steerable<Vector2> 
 
 	@Override
 	public Vector2 getLinearVelocity() {
-		return linearVelocity;
+		return velocity;
 	}
 
 	@Override
@@ -131,8 +130,8 @@ public abstract class SteeringAgent extends Agent implements Steerable<Vector2> 
 	
 	private void applySteering(SteeringAcceleration<Vector2> steering, float time) {
         // Update position and linear velocity. Velocity is trimmed to maximum speed
-        this.position.mulAdd(linearVelocity, time);
-        this.linearVelocity.mulAdd(steering.linear, time).limit(this.getMaxLinearSpeed());
+        this.position.mulAdd(velocity, time);
+        this.velocity.mulAdd(steering.linear, time).limit(this.getMaxLinearSpeed());
 
         // Update orientation and angular velocity
         if (independentFacing) {

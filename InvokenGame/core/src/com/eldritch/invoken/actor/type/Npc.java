@@ -11,6 +11,7 @@ import com.badlogic.gdx.ai.steer.behaviors.PrioritySteering;
 import com.badlogic.gdx.ai.steer.behaviors.RaycastObstacleAvoidance;
 import com.badlogic.gdx.ai.steer.behaviors.Wander;
 import com.badlogic.gdx.ai.steer.limiters.LinearAccelerationLimiter;
+import com.badlogic.gdx.ai.steer.utils.Collision;
 import com.badlogic.gdx.ai.steer.utils.Ray;
 import com.badlogic.gdx.ai.steer.utils.rays.CentralRayWithWhiskersConfiguration;
 import com.badlogic.gdx.ai.steer.utils.rays.RayConfigurationBase;
@@ -28,6 +29,7 @@ import com.eldritch.invoken.actor.Inventory.ItemState;
 import com.eldritch.invoken.actor.ai.AssaultRoutine;
 import com.eldritch.invoken.actor.ai.AssistRoutine;
 import com.eldritch.invoken.actor.ai.Behavior;
+import com.eldritch.invoken.actor.ai.Box2dRaycastCollisionDetector;
 import com.eldritch.invoken.actor.ai.FleeRoutine;
 import com.eldritch.invoken.actor.ai.FollowRoutine;
 import com.eldritch.invoken.actor.ai.IdleRoutine;
@@ -35,6 +37,7 @@ import com.eldritch.invoken.actor.ai.LocationCollisionDetector;
 import com.eldritch.invoken.actor.ai.PatrolRoutine;
 import com.eldritch.invoken.actor.ai.Routine;
 import com.eldritch.invoken.actor.pathfinding.Pathfinder;
+import com.eldritch.invoken.actor.type.Agent.State;
 import com.eldritch.invoken.encounter.Location;
 import com.eldritch.invoken.proto.Actors.DialogueTree;
 import com.eldritch.invoken.proto.Actors.NonPlayerActor;
@@ -94,7 +97,7 @@ public abstract class Npc extends SteeringAgent {
 		RaycastObstacleAvoidance<Vector2> obstacleAvoidance = new RaycastObstacleAvoidance<Vector2>(
 				this, 
 				rayConfiguration,
-				new LocationCollisionDetector(location),
+				new Box2dRaycastCollisionDetector(location.getWorld()),
 				40);
 		Wander<Vector2> wander = new Wander<Vector2>(this)
 				// Don't use Face internally because independent facing is off
@@ -158,15 +161,18 @@ public abstract class Npc extends SteeringAgent {
 		shapeRenderer.begin(ShapeType.Line);
 		shapeRenderer.setColor(1, 0, 0, 1);
 		shapeRenderer.setProjectionMatrix(camera.combined);
-//		transform.idt();
-//		shapeRenderer.setTransformMatrix(transform);
 		for (int i = 0; i < rays.length; i++) {
 			Ray<Vector2> ray = rays[i];
 			Vector2 end = ray.origin.cpy().add(ray.direction);
 			shapeRenderer.line(ray.origin, end);
 		}
+		
 		shapeRenderer.end();
 	}
+	
+	@Override
+	protected void move(float delta, Location screen) {
+    }
 	
 	@Override
     protected void handleConfusion(boolean confused) {

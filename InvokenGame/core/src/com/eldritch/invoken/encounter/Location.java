@@ -9,9 +9,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ai.steer.utils.Collision;
-import com.badlogic.gdx.ai.steer.utils.Ray;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
 import com.badlogic.gdx.graphics.Color;
@@ -32,12 +30,19 @@ import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
+import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
+import com.badlogic.gdx.physics.box2d.CircleShape;
+import com.badlogic.gdx.physics.box2d.EdgeShape;
+import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
 import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.activators.Activator;
 import com.eldritch.invoken.activators.SecurityCamera;
-import com.eldritch.invoken.actor.ai.Behavior;
 import com.eldritch.invoken.actor.aug.Action;
 import com.eldritch.invoken.actor.factions.Faction;
 import com.eldritch.invoken.actor.type.Agent;
@@ -88,6 +93,9 @@ public class Location {
     private int overlayIndex = -1;
     private final int groundIndex = 0;
     
+    private final World world;
+    Box2DDebugRenderer debugRenderer = new Box2DDebugRenderer();
+    
     // debug
     private BitmapFont debugFont = new BitmapFont();
 
@@ -101,7 +109,7 @@ public class Location {
         this.map = map;
         owningFaction = Optional.fromNullable(Faction.of(data.getFactionId()));
         lightManager = new LightManager(data);
-
+        
         // find layers we care about
         List<Integer> overlayList = new ArrayList<Integer>();
         for (int i = 0; i < map.getLayers().getCount(); i++) {
@@ -128,9 +136,128 @@ public class Location {
         Vector2 spawn = getSpawnLocation();
         player.setPosition(spawn.x, spawn.y);
         addActor(player);
+        
+        // Instantiate a new World with no gravity and tell it to sleep when possible.
+  		world = new World(new Vector2(0, 0), true);
+  		addWalls(world);
 
         // add encounters
         addEntities(data, map);
+    }
+    
+    private void addWalls(World world) {
+    	for (int y = 1; y < map.getHeight(); y++) {
+    		boolean contiguous = false;
+    		int x0 = 0;
+    		
+    		// scan through the rows looking for collision stripes and ground below
+    		for (int x = 0; x < map.getWidth(); x++) {
+    			if (isObstacle(x, y) && !isObstacle(x, y - 1)) {
+    				// this is part of a valid edge
+    				if (!contiguous) {
+    					// this is the first point in the edge
+    					x0 = x;
+    					contiguous = true;
+    				}
+    			} else {
+    				// this point is not part of a valid edge
+    				if (contiguous) {
+    					// this point marks the end of our last edge
+    					addEdge(x0, y, x, y, world);
+    					contiguous = false;
+    				}
+    			}
+    		}
+    		
+    		contiguous = false;
+    		x0 = 0;
+    		
+    		// scan through the rows looking for collision stripes and ground above
+    		for (int x = 0; x < map.getWidth(); x++) {
+    			if (!isObstacle(x, y) && isObstacle(x, y - 1)) {
+    				// this is part of a valid edge
+    				if (!contiguous) {
+    					// this is the first point in the edge
+    					x0 = x;
+    					contiguous = true;
+    				}
+    			} else {
+    				// this point is not part of a valid edge
+    				if (contiguous) {
+    					// this point marks the end of our last edge
+    					addEdge(x0, y, x, y, world);
+    					contiguous = false;
+    				}
+    			}
+    		}
+    	}
+    	
+    	for (int x = 1; x < map.getWidth(); x++) {
+    		boolean contiguous = false;
+    		int y0 = 0;
+    		
+    		// scan through the columns looking for collision stripes and ground left
+    		for (int y = 0; y < map.getHeight(); y++) {
+    			if (isObstacle(x, y) && !isObstacle(x - 1, y)) {
+    				// this is part of a valid edge
+    				if (!contiguous) {
+    					// this is the first point in the edge
+    					y0 = y;
+    					contiguous = true;
+    				}
+    			} else {
+    				// this point is not part of a valid edge
+    				if (contiguous) {
+    					// this point marks the end of our last edge
+    					addEdge(x, y0, x, y, world);
+    					contiguous = false;
+    				}
+    			}
+    		}
+    		
+    		contiguous = false;
+    		y0 = 0;
+    		
+    		// scan through the rows looking for collision stripes and ground right
+    		for (int y = 0; y < map.getHeight(); y++) {
+    			if (!isObstacle(x, y) && isObstacle(x - 1, y)) {
+    				// this is part of a valid edge
+    				if (!contiguous) {
+    					// this is the first point in the edge
+    					y0 = y;
+    					contiguous = true;
+    				}
+    			} else {
+    				// this point is not part of a valid edge
+    				if (contiguous) {
+    					// this point marks the end of our last edge
+    					addEdge(x, y0, x, y, world);
+    					contiguous = false;
+    				}
+    			}
+    		}
+    	}
+    }
+    
+    private void addEdge(int x0, int y0, int x1, int y1, World world) {
+    	EdgeShape edge = new EdgeShape();
+		Vector2 start = new Vector2(x0, y0);
+		Vector2 end = new Vector2(x1, y1);
+		edge.set(start, end);
+		
+		BodyDef groundBodyDef = new BodyDef();
+		groundBodyDef.type = BodyType.StaticBody;
+		groundBodyDef.position.set(0, 0);
+
+		FixtureDef fixtureDef = new FixtureDef();
+		fixtureDef.shape = edge;
+		fixtureDef.filter.groupIndex = 0;
+		
+		Body body = world.createBody(groundBodyDef);
+		body.createFixture(fixtureDef);
+		edge.dispose();
+		
+		System.out.println("edge: " + start + " " + end);
     }
     
     public void alertTo(Agent intruder) {
@@ -251,9 +378,15 @@ public class Location {
     private void addActor(Agent actor) {
         entities.add(actor);
     }
+    
+    public World getWorld() {
+    	return world;
+    }
 
     public void render(float delta, OrthographicCamera camera, TextureRegion selector,
             boolean paused) {
+    	// update the world simulation
+    	world.step(1 / 60f, 8, 3);
         
         // update the player (process input, collision detection, position update)
         resetActiveTiles();
@@ -372,6 +505,9 @@ public class Location {
 
         // render the overlay layer
         renderer.render(overlays);
+        
+        // debug render the world
+        debugRenderer.render(world, camera.combined);
     }
 
     private void drawCentered(TextureRegion region, Vector2 position, Color color) {
@@ -552,17 +688,15 @@ public class Location {
         return tiles;
     }
     
-    public boolean collides(Vector2 start, Vector2 end, Collision<Vector2> collision) {
+    public boolean collides(Vector2 start, Vector2 end, Collision<Vector2> output) {
     	Array<Rectangle> tiles = getTiles((int) start.x, (int) start.y, (int) end.x, (int) end.y);
         Vector2 tmp = new Vector2();
         for (Rectangle tile : tiles) {
         	Vector2 center = tile.getCenter(tmp);
             float r = Math.max(tile.width, tile.height);
-            float d = Intersector.intersectSegmentCircleDisplace(
-            		start, end, center, r, collision.normal);
-            if (d != Float.POSITIVE_INFINITY) {
-            	collision.point.set(center);
-            	collision.normal.scl(d);
+            if (Intersector.intersectSegmentCircle(start, end, center, r)) {
+            	output.point = center;
+            	output.normal = start.cpy().sub(end).nor().scl(5);
                 return true;
             }
         }
