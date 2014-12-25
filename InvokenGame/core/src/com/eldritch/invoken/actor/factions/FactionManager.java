@@ -99,7 +99,7 @@ public class FactionManager {
             if (agent.getInfo().hasRank(faction)) {
                 // the better our reputation in this faction, the more strongly we feel
                 // about others in relation to it
-                float a = getReputation(faction) / 20f;
+                float a = getReputation(faction) / 10f;
                 
                 // only consider factions we're currently on good terms with
                 if (a > 0) {
@@ -107,7 +107,7 @@ public class FactionManager {
                     for (Faction otherFaction : other.getInfo().getFactions()) {
                         if (faction.hasRelation(otherFaction)) {
                             // we care more about how our target is perceived by the related faction
-                            float b = other.getInfo().getReputation(otherFaction) / 10f;
+                            float b = other.getInfo().getReputation(otherFaction) / 5f;
                             float f = faction.getRelation(otherFaction);
 
                             // r: [-100, 100]

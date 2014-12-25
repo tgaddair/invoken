@@ -9,12 +9,17 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
@@ -23,11 +28,13 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
 import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.activators.Activator;
 import com.eldritch.invoken.activators.SecurityCamera;
+import com.eldritch.invoken.actor.ai.Behavior;
 import com.eldritch.invoken.actor.aug.Action;
 import com.eldritch.invoken.actor.factions.Faction;
 import com.eldritch.invoken.actor.type.Agent;
@@ -77,6 +84,9 @@ public class Location {
     private int collisionIndex = -1;
     private int overlayIndex = -1;
     private final int groundIndex = 0;
+    
+    // debug
+    private BitmapFont debugFont = new BitmapFont();
 
     public Location(com.eldritch.invoken.proto.Locations.Location data, Player player) {
         this(data, player, readMap(data));
@@ -283,7 +293,7 @@ public class Location {
                         actionsColor.r, actionsColor.g, actionsColor.b, actionsColor.a * 0.5f);
             }
         }
-
+        
         // sort drawables by descending y
         Collections.sort(drawableEntities, new Comparator<Agent>() {
             @Override
@@ -291,6 +301,47 @@ public class Location {
                 return Float.compare(a2.getPosition().y, a1.getPosition().y);
             }
         });
+        
+        // draw the disposition graph
+        if (player.getTarget() != null) {
+        	Agent target = player.getTarget();
+	        ShapeRenderer sr = new ShapeRenderer();
+	        sr.setProjectionMatrix(camera.combined);
+	        sr.begin(ShapeType.Line);
+	        SpriteBatch batch = new SpriteBatch();
+	        for (Agent other : drawableEntities) {
+	        	if (target == other) {
+	        		// don't draw a relation edge to yourself
+	        		continue;
+	        	}
+	        	
+	        	float relation = target.getRelation(other);
+	        	float val = relation;
+	        	
+	        	// 0 = red, 60 = yellow, 120 = green
+//	        	float hue = (float) Math.floor((100 - val) * 120 / 100f);  // go from green to red
+//	        	float saturation = Math.abs(val - 50) / 50f;   // fade to white as it approaches 50
+	        	float hue = Math.min(Math.max(((val + 100) / 200f) * 120, 0), 120) / 360f;
+	        	float saturation = 1;
+	        	float brightness = 1;
+	        	java.awt.Color hsv = java.awt.Color.getHSBColor(hue, saturation, brightness);
+	        	Color c = new Color(hsv.getRed() / 255f, hsv.getGreen() / 255f, hsv.getBlue() / 255f, 1f);
+	        	sr.setColor(c);
+	        	sr.line(target.getPosition().x, target.getPosition().y,
+	                    other.getPosition().x, other.getPosition().y);
+	        	
+	        	// draw number
+	        	Vector3 screen = camera.project(new Vector3(
+	        			(target.getPosition().x + other.getPosition().x) / 2f,
+	                    (target.getPosition().y + other.getPosition().y) / 2f, 0));
+//	        	Batch batch = renderer.getSpriteBatch();
+	        	batch.begin();
+	        	debugFont.draw(batch,
+	        			String.format("%.2f", relation), screen.x, screen.y);
+	        	batch.end();
+	        }
+	        sr.end();
+        }
 
         // render the drawables
         for (Agent actor : drawableEntities) {
