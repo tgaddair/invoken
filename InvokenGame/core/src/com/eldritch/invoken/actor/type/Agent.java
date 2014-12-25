@@ -935,12 +935,16 @@ public abstract class Agent extends CollisionEntity {
                 getHeight());
         return rect;
     }
-
+    
     public Rectangle getBoundingBox(Rectangle rect) {
         float w = getWidth() / 3f;
         rect.set(position.x - w / 2, position.y - getHeight() / 2, w, getHeight() / 4);
         return rect;
     }
+    
+	public float getBoundingRadius() {
+		return getWidth() / 2f;
+	}
 
     public boolean contains(float x, float y) {
         return x >= position.x - getWidth() / 2 && x <= position.x + getWidth() / 2

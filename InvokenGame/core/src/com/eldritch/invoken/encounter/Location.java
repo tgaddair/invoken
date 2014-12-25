@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Set;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.ai.steer.utils.Collision;
+import com.badlogic.gdx.ai.steer.utils.Ray;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
 import com.badlogic.gdx.graphics.Color;
@@ -26,6 +28,7 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
@@ -342,6 +345,14 @@ public class Location {
 	        }
 	        sr.end();
         }
+        
+        // draw NPC debug rays
+        for (Agent agent : drawableEntities) {
+        	if (agent instanceof Npc) {
+        		Npc npc = (Npc) agent;
+        		npc.render(camera);
+        	}
+        }
 
         // render the drawables
         for (Agent actor : drawableEntities) {
@@ -539,6 +550,23 @@ public class Location {
             }
         }
         return tiles;
+    }
+    
+    public boolean collides(Vector2 start, Vector2 end, Collision<Vector2> collision) {
+    	Array<Rectangle> tiles = getTiles((int) start.x, (int) start.y, (int) end.x, (int) end.y);
+        Vector2 tmp = new Vector2();
+        for (Rectangle tile : tiles) {
+        	Vector2 center = tile.getCenter(tmp);
+            float r = Math.max(tile.width, tile.height);
+            float d = Intersector.intersectSegmentCircleDisplace(
+            		start, end, center, r, collision.normal);
+            if (d != Float.POSITIVE_INFINITY) {
+            	collision.point.set(center);
+            	collision.normal.scl(d);
+                return true;
+            }
+        }
+        return false;
     }
 
     private static LocationMap readMap(com.eldritch.invoken.proto.Locations.Location data) {

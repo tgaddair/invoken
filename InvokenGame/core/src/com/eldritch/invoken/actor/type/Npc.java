@@ -7,8 +7,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.badlogic.gdx.ai.steer.behaviors.PrioritySteering;
+import com.badlogic.gdx.ai.steer.behaviors.RaycastObstacleAvoidance;
+import com.badlogic.gdx.ai.steer.behaviors.Wander;
+import com.badlogic.gdx.ai.steer.limiters.LinearAccelerationLimiter;
+import com.badlogic.gdx.ai.steer.utils.Ray;
+import com.badlogic.gdx.ai.steer.utils.rays.CentralRayWithWhiskersConfiguration;
+import com.badlogic.gdx.ai.steer.utils.rays.RayConfigurationBase;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
+import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Intersector;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
@@ -19,6 +31,7 @@ import com.eldritch.invoken.actor.ai.Behavior;
 import com.eldritch.invoken.actor.ai.FleeRoutine;
 import com.eldritch.invoken.actor.ai.FollowRoutine;
 import com.eldritch.invoken.actor.ai.IdleRoutine;
+import com.eldritch.invoken.actor.ai.LocationCollisionDetector;
 import com.eldritch.invoken.actor.ai.PatrolRoutine;
 import com.eldritch.invoken.actor.ai.Routine;
 import com.eldritch.invoken.actor.pathfinding.Pathfinder;
@@ -35,7 +48,7 @@ import com.eldritch.invoken.proto.Prerequisites.Standing;
 import com.eldritch.invoken.util.PrerequisiteVerifier;
 import com.google.common.base.Optional;
 
-public abstract class Npc extends Agent {
+public abstract class Npc extends SteeringAgent {
 	private final NonPlayerActor data;
     private final Optional<ActorScenario> scenario;
 	private final DialogueVerifier dialogueVerifier = new DialogueVerifier();
@@ -47,6 +60,8 @@ public abstract class Npc extends Agent {
 	// used in AI routine calculations to determine things like the target
 	private final List<Agent> neighbors = new ArrayList<Agent>();
 	private Routine routine;
+	
+	RayConfigurationBase<Vector2> rayConfiguration;
 	
 	public Npc(NonPlayerActor data, float x, float y, float width, float height,
 	        Map<Activity, Map<Direction, Animation>> animations, Location location) {
@@ -73,6 +88,30 @@ public abstract class Npc extends Agent {
 		routines.add(idle); // idle is fallback
 		
 		routine = Math.random() < 0.5 ? idle : patrol;
+		
+		// steering behaviors
+		rayConfiguration = new CentralRayWithWhiskersConfiguration<Vector2>(this, 3, 2, 35 * MathUtils.degreesToRadians);
+		RaycastObstacleAvoidance<Vector2> obstacleAvoidance = new RaycastObstacleAvoidance<Vector2>(
+				this, 
+				rayConfiguration,
+				new LocationCollisionDetector(location),
+				40);
+		Wander<Vector2> wander = new Wander<Vector2>(this)
+				// Don't use Face internally because independent facing is off
+				.setFaceEnabled(false) //
+				// We don't need a limiter supporting angular components because Face is not used
+				// No need to call setAlignTolerance, setDecelerationRadius and setTimeToTarget for the same reason
+				.setLimiter(new LinearAccelerationLimiter(30)) //
+				.setWanderOffset(60) //
+				.setWanderOrientation(10) //
+				.setWanderRadius(40) //
+				.setWanderRate(MathUtils.PI / 5);
+		
+		// order in descending priority
+		PrioritySteering<Vector2> prioritySteering = new PrioritySteering<Vector2>(this, 0.0001f) //
+				.add(obstacleAvoidance)
+				.add(wander);
+		setBehavior(prioritySteering);
 	}
 	
 	@Override
@@ -90,24 +129,43 @@ public abstract class Npc extends Agent {
 		}
 		
 		// update routine
-		if (routine.isFinished()) {
-			for (Routine r : routines) {
-				if (r.isValid()) {
-					setRoutine(r);
-					break;
-				}
-			}
-		} else {
-			for (Routine r : routines) {
-				if (r.canInterrupt() && r.isValid()) {
-					if (r != routine) {
-						setRoutine(r);
-					}
-					break;
-				}
-			}
+//		if (routine.isFinished()) {
+//			for (Routine r : routines) {
+//				if (r.isValid()) {
+//					setRoutine(r);
+//					break;
+//				}
+//			}
+//		} else {
+//			for (Routine r : routines) {
+//				if (r.canInterrupt() && r.isValid()) {
+//					if (r != routine) {
+//						setRoutine(r);
+//					}
+//					break;
+//				}
+//			}
+//		}
+//		routine.takeAction(delta, screen);
+		
+		// update steering
+		update(delta);
+	}
+	
+	public void render(OrthographicCamera camera) {
+		ShapeRenderer shapeRenderer = new ShapeRenderer();
+		Ray<Vector2>[] rays = rayConfiguration.getRays();
+		shapeRenderer.begin(ShapeType.Line);
+		shapeRenderer.setColor(1, 0, 0, 1);
+		shapeRenderer.setProjectionMatrix(camera.combined);
+//		transform.idt();
+//		shapeRenderer.setTransformMatrix(transform);
+		for (int i = 0; i < rays.length; i++) {
+			Ray<Vector2> ray = rays[i];
+			Vector2 end = ray.origin.cpy().add(ray.direction);
+			shapeRenderer.line(ray.origin, end);
 		}
-		routine.takeAction(delta, screen);
+		shapeRenderer.end();
 	}
 	
 	@Override
