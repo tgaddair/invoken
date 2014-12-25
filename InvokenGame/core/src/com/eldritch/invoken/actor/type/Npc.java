@@ -93,7 +93,7 @@ public abstract class Npc extends SteeringAgent {
 		routine = Math.random() < 0.5 ? idle : patrol;
 		
 		// steering behaviors
-		rayConfiguration = new CentralRayWithWhiskersConfiguration<Vector2>(this, 3, 2, 35 * MathUtils.degreesToRadians);
+		rayConfiguration = new CentralRayWithWhiskersConfiguration<Vector2>(this, 2, 1, 35 * MathUtils.degreesToRadians);
 		RaycastObstacleAvoidance<Vector2> obstacleAvoidance = new RaycastObstacleAvoidance<Vector2>(
 				this, 
 				rayConfiguration,

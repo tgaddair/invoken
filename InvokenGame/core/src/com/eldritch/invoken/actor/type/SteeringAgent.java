@@ -29,10 +29,10 @@ public abstract class SteeringAgent extends Agent implements Steerable<Vector2> 
     boolean tagged;
     SteeringBehavior<Vector2> steeringBehavior;
     
-    private float maxAngularAcceleration = 100;
-    private float maxAngularVelocity = 200;
-    private float maxLinearAcceleration = 500;
-    private float maxLinearVelocity = 500;
+    private float maxAngularAcceleration = 10;
+    private float maxAngularVelocity = 10;
+    private float maxLinearAcceleration = 50;
+    private float maxLinearVelocity = 50;
 	
 	public SteeringAgent(ActorParams params, float x, float y, float width, float height,
             World world, Map<Activity, Map<Direction, Animation>> animations) {
@@ -43,7 +43,7 @@ public abstract class SteeringAgent extends Agent implements Steerable<Vector2> 
 	private Body createBody(float x, float y, float width, float height, World world) {
 		CircleShape circleChape = new CircleShape();
 		circleChape.setPosition(new Vector2());
-		circleChape.setRadius(Math.max(width, height) / 2);
+		circleChape.setRadius(Math.max(width, height) / 4);
 
 		BodyDef characterBodyDef = new BodyDef();
 		characterBodyDef.position.set(x, y);
@@ -161,10 +161,12 @@ public abstract class SteeringAgent extends Agent implements Steerable<Vector2> 
 	
 	private void applySteering(SteeringAcceleration<Vector2> steering, float deltaTime) {
 		boolean anyAccelerations = false;
+		
+		float scale = deltaTime * 50;
 
 		// Update position and linear velocity.
 		if (!steeringOutput.linear.isZero()) {
-			Vector2 force = steeringOutput.linear.scl(deltaTime);
+			Vector2 force = steeringOutput.linear.scl(scale);
 			body.applyForceToCenter(force, true);
 			anyAccelerations = true;
 		}
@@ -172,7 +174,7 @@ public abstract class SteeringAgent extends Agent implements Steerable<Vector2> 
 		// Update orientation and angular velocity
 		if (independentFacing) {
 			if (steeringOutput.angular != 0) {
-				body.applyTorque(steeringOutput.angular * deltaTime, true);
+				body.applyTorque(steeringOutput.angular * scale, true);
 				anyAccelerations = true;
 			}
 		}
@@ -181,7 +183,7 @@ public abstract class SteeringAgent extends Agent implements Steerable<Vector2> 
 			Vector2 linVel = getLinearVelocity();
 			if (!linVel.isZero(MathUtils.FLOAT_ROUNDING_ERROR)) {
 				float newOrientation = vectorToAngle(linVel);
-				body.setAngularVelocity((newOrientation - getAngularVelocity()) * deltaTime); // this is superfluous if independentFacing is always true
+				body.setAngularVelocity((newOrientation - getAngularVelocity()) * scale); // this is superfluous if independentFacing is always true
 				body.setTransform(body.getPosition(), newOrientation);
 			}
 		}
@@ -199,7 +201,7 @@ public abstract class SteeringAgent extends Agent implements Steerable<Vector2> 
 			float currentSpeedSquare = velocity.len2();
 			float maxLinearSpeed = getMaxLinearSpeed();
 			if (currentSpeedSquare > maxLinearSpeed * maxLinearSpeed) {
-				body.setLinearVelocity(velocity.scl(maxLinearSpeed / (float)Math.sqrt(currentSpeedSquare)));
+				body.setLinearVelocity(velocity.scl(maxLinearSpeed / (float) Math.sqrt(currentSpeedSquare)));
 			}
 
 			// Cap the angular speed
