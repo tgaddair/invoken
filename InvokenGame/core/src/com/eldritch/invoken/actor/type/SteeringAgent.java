@@ -29,10 +29,10 @@ public abstract class SteeringAgent extends Agent implements Steerable<Vector2> 
     boolean tagged;
     SteeringBehavior<Vector2> steeringBehavior;
     
-    private float maxAngularAcceleration = 10;
-    private float maxAngularVelocity = 10;
-    private float maxLinearAcceleration = 50;
-    private float maxLinearVelocity = 50;
+    private float maxAngularAcceleration = 1;
+    private float maxAngularVelocity = 1;
+    private float maxLinearAcceleration = 5;
+    private float maxLinearVelocity = 5;
 	
 	public SteeringAgent(ActorParams params, float x, float y, float width, float height,
             World world, Map<Activity, Map<Direction, Animation>> animations) {
@@ -73,6 +73,7 @@ public abstract class SteeringAgent extends Agent implements Steerable<Vector2> 
 	        applySteering(steeringOutput, delta);
 	    }
 		position.set(body.getPosition());
+		velocity.set(body.getLinearVelocity());
 	}
 
 	@Override
