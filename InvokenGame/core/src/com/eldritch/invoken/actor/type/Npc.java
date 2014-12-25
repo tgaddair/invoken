@@ -68,7 +68,7 @@ public abstract class Npc extends SteeringAgent {
 	
 	public Npc(NonPlayerActor data, float x, float y, float width, float height,
 	        Map<Activity, Map<Direction, Animation>> animations, Location location) {
-		super(data.getParams(), x, y, width, height, animations);
+		super(data.getParams(), x, y, width, height, location.getWorld(), animations);
 		this.data = data;
 		scenario = Optional.absent();
 		behavior = new Behavior(this, data);
@@ -98,20 +98,20 @@ public abstract class Npc extends SteeringAgent {
 				this, 
 				rayConfiguration,
 				new Box2dRaycastCollisionDetector(location.getWorld()),
-				40);
+				5);
 		Wander<Vector2> wander = new Wander<Vector2>(this)
 				// Don't use Face internally because independent facing is off
 				.setFaceEnabled(false) //
 				// We don't need a limiter supporting angular components because Face is not used
 				// No need to call setAlignTolerance, setDecelerationRadius and setTimeToTarget for the same reason
-				.setLimiter(new LinearAccelerationLimiter(30)) //
+				.setLimiter(new LinearAccelerationLimiter(3)) //
 				.setWanderOffset(60) //
 				.setWanderOrientation(10) //
-				.setWanderRadius(40) //
+				.setWanderRadius(10) //
 				.setWanderRate(MathUtils.PI / 5);
 		
 		// order in descending priority
-		PrioritySteering<Vector2> prioritySteering = new PrioritySteering<Vector2>(this, 0.0001f) //
+		PrioritySteering<Vector2> prioritySteering = new PrioritySteering<Vector2>(this)
 				.add(obstacleAvoidance)
 				.add(wander);
 		setBehavior(prioritySteering);

@@ -37,9 +37,6 @@ public class Box2dRaycastCollisionDetector implements RaycastCollisionDetector<V
 		public Collision<Vector2> outputCollision;
 		public boolean collided;
 
-		public Box2dRaycastCallback () {
-		}
-
 		@Override
 		public float reportRayFixture(Fixture fixture, Vector2 point, Vector2 normal, float fraction) {
 			if (outputCollision != null) outputCollision.set(point, normal);
