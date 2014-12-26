@@ -151,9 +151,9 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
 				// We don't need a limiter supporting angular components because Face is not used
 				// No need to call setAlignTolerance, setDecelerationRadius and setTimeToTarget for the same reason
 				.setLimiter(new LinearAccelerationLimiter(5))
-				.setWanderOffset(3)
+				.setWanderOffset(2)
 				.setWanderOrientation(0)
-				.setWanderRadius(5)
+				.setWanderRadius(1)
 				.setWanderRate(MathUtils.PI / 5);
 		
 		// initially disable our states

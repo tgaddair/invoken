@@ -19,7 +19,7 @@ public abstract class SteeringAgent extends Agent implements Steerable<Vector2> 
 	float orientation;
     Vector2 linearVelocity = new Vector2();
     float angularVelocity;
-    boolean independentFacing = true;
+    boolean independentFacing = false;
     boolean tagged;
     SteeringBehavior<Vector2> steeringBehavior;
     
