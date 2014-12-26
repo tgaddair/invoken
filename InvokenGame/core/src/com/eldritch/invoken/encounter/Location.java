@@ -498,14 +498,6 @@ public class Location {
 	        }
 	        sr.end();
         }
-        
-        // draw NPC debug rays
-        for (Agent agent : drawableEntities) {
-        	if (agent instanceof Npc) {
-        		Npc npc = (Npc) agent;
-        		npc.render(camera);
-        	}
-        }
 
         // render the drawables
         for (Agent actor : drawableEntities) {
@@ -526,8 +518,19 @@ public class Location {
         // render the overlay layer
         renderer.render(overlays);
         
-        // debug render the world
-        debugRenderer.render(world, camera.combined);
+        boolean DEBUG_DRAW = true;
+        if (DEBUG_DRAW) {
+	        // draw NPC debug rays
+	        for (Agent agent : drawableEntities) {
+	        	if (agent instanceof Npc) {
+	        		Npc npc = (Npc) agent;
+	        		npc.render(camera);
+	        	}
+	        }
+	        
+	        // debug render the world
+	        debugRenderer.render(world, camera.combined);
+        }
     }
 
     private void drawCentered(TextureRegion region, Vector2 position, Color color) {

@@ -14,10 +14,13 @@ import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
+import com.eldritch.invoken.actor.Profession;
+import com.eldritch.invoken.actor.type.Agent.Activity;
+import com.eldritch.invoken.actor.type.Agent.Direction;
 import com.eldritch.invoken.proto.Actors.ActorParams;
 
 public abstract class SteeringAgent extends Agent implements Steerable<Vector2> {
-	private static final SteeringAcceleration<Vector2> steeringOutput = 
+	protected static final SteeringAcceleration<Vector2> steeringOutput = 
 	        new SteeringAcceleration<Vector2>(new Vector2());
 	
 	float orientation;
@@ -37,18 +40,13 @@ public abstract class SteeringAgent extends Agent implements Steerable<Vector2> 
 		super(params, x, y, width, height, world, animations);
 	}
 	
-	protected void setBehavior(SteeringBehavior<Vector2> behavior) {
-		this.steeringBehavior = behavior;
+	public SteeringAgent(float x, float y, float width, float height, Profession profession, int level,
+            World world, Map<Activity, Map<Direction, Animation>> animations) {
+		super(x, y, width, height, profession, level, world, animations);
 	}
 	
-	public void update(float delta) {
-		if (steeringBehavior != null) {
-	        // Calculate steering acceleration
-	        steeringBehavior.calculateSteering(steeringOutput);
-	
-	        // Apply steering acceleration to move this agent
-	        applySteering(steeringOutput, delta);
-	    }
+	protected void setBehavior(SteeringBehavior<Vector2> behavior) {
+		this.steeringBehavior = behavior;
 	}
 
 	@Override
@@ -135,7 +133,7 @@ public abstract class SteeringAgent extends Agent implements Steerable<Vector2> 
 		return (float) Math.atan2(-vector.x, vector.y);
 	}
 	
-	private void applySteering(SteeringAcceleration<Vector2> steering, float deltaTime) {
+	protected void applySteering(SteeringAcceleration<Vector2> steering, float deltaTime) {
 		boolean anyAccelerations = false;
 		
 		float scale = deltaTime * 50;

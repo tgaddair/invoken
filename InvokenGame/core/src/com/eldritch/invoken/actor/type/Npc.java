@@ -12,9 +12,9 @@ import com.badlogic.gdx.ai.steer.Steerable;
 import com.badlogic.gdx.ai.steer.behaviors.CollisionAvoidance;
 import com.badlogic.gdx.ai.steer.behaviors.PrioritySteering;
 import com.badlogic.gdx.ai.steer.behaviors.RaycastObstacleAvoidance;
+import com.badlogic.gdx.ai.steer.behaviors.Seek;
 import com.badlogic.gdx.ai.steer.behaviors.Wander;
 import com.badlogic.gdx.ai.steer.limiters.LinearAccelerationLimiter;
-import com.badlogic.gdx.ai.steer.utils.Collision;
 import com.badlogic.gdx.ai.steer.utils.Ray;
 import com.badlogic.gdx.ai.steer.utils.rays.CentralRayWithWhiskersConfiguration;
 import com.badlogic.gdx.ai.steer.utils.rays.RayConfigurationBase;
@@ -22,7 +22,6 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
-import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
@@ -36,17 +35,15 @@ import com.eldritch.invoken.actor.ai.Box2dRaycastCollisionDetector;
 import com.eldritch.invoken.actor.ai.FleeRoutine;
 import com.eldritch.invoken.actor.ai.FollowRoutine;
 import com.eldritch.invoken.actor.ai.IdleRoutine;
-import com.eldritch.invoken.actor.ai.LocationCollisionDetector;
 import com.eldritch.invoken.actor.ai.PatrolRoutine;
 import com.eldritch.invoken.actor.ai.Routine;
 import com.eldritch.invoken.actor.pathfinding.Pathfinder;
-import com.eldritch.invoken.actor.type.Agent.State;
 import com.eldritch.invoken.encounter.Location;
-import com.eldritch.invoken.proto.Actors.DialogueTree;
-import com.eldritch.invoken.proto.Actors.NonPlayerActor;
 import com.eldritch.invoken.proto.Actors.ActorParams.Species;
+import com.eldritch.invoken.proto.Actors.DialogueTree;
 import com.eldritch.invoken.proto.Actors.DialogueTree.Choice;
 import com.eldritch.invoken.proto.Actors.DialogueTree.Response;
+import com.eldritch.invoken.proto.Actors.NonPlayerActor;
 import com.eldritch.invoken.proto.Actors.NonPlayerActor.Aggression;
 import com.eldritch.invoken.proto.Locations.Encounter.ActorParams.ActorScenario;
 import com.eldritch.invoken.proto.Prerequisites.Prerequisite;
@@ -96,12 +93,12 @@ public abstract class Npc extends SteeringAgent {
 		routine = Math.random() < 0.5 ? idle : patrol;
 		
 		// steering behaviors
-		rayConfiguration = new CentralRayWithWhiskersConfiguration<Vector2>(this, 2, 1, 35 * MathUtils.degreesToRadians);
+		rayConfiguration = new CentralRayWithWhiskersConfiguration<Vector2>(this, 3, 1, 35 * MathUtils.degreesToRadians);
 		RaycastObstacleAvoidance<Vector2> obstacleAvoidance = new RaycastObstacleAvoidance<Vector2>(
 				this, 
 				rayConfiguration,
 				new Box2dRaycastCollisionDetector(location.getWorld()),
-				5);
+				1);
 		Proximity<Vector2> proximity = new Proximity<Vector2>() {
 			private Steerable<Vector2> owner = Npc.this;
 			
@@ -129,23 +126,35 @@ public abstract class Npc extends SteeringAgent {
 			}
 		};
 		CollisionAvoidance<Vector2> collisionAvoidance = new CollisionAvoidance<Vector2>(this, proximity);
+		Seek<Vector2> seek = new Seek<Vector2>(this, location.getPlayer());
 		Wander<Vector2> wander = new Wander<Vector2>(this)
 				// Don't use Face internally because independent facing is off
 				.setFaceEnabled(false) //
 				// We don't need a limiter supporting angular components because Face is not used
 				// No need to call setAlignTolerance, setDecelerationRadius and setTimeToTarget for the same reason
 				.setLimiter(new LinearAccelerationLimiter(10))
-				.setWanderOffset(1)
-				.setWanderOrientation(10)
-				.setWanderRadius(1)
+				.setWanderOffset(3)
+				.setWanderOrientation(0)
+				.setWanderRadius(5)
 				.setWanderRate(MathUtils.PI / 5);
 		
 		// order in descending priority
 		PrioritySteering<Vector2> prioritySteering = new PrioritySteering<Vector2>(this)
 				.add(obstacleAvoidance)
-				.add(collisionAvoidance)
+//				.add(collisionAvoidance)
+				.add(seek)
 				.add(wander);
 		setBehavior(prioritySteering);
+	}
+	
+	public void update(float delta) {
+		if (steeringBehavior != null) {
+	        // Calculate steering acceleration
+	        steeringBehavior.calculateSteering(steeringOutput);
+	
+	        // Apply steering acceleration to move this agent
+	        applySteering(steeringOutput, delta);
+	    }
 	}
 	
 	@Override

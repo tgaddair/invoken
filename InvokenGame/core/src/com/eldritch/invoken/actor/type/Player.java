@@ -10,7 +10,7 @@ import com.eldritch.invoken.actor.ai.AgentMover;
 import com.eldritch.invoken.encounter.Location;
 
 /** The player character, has state and state time, */
-public class Player extends Agent {
+public class Player extends SteeringAgent {
 	private final GameCamera PLAYER_CAMERA = new PlayerCamera();
 	
     private final AgentMover mover;
