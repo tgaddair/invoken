@@ -55,22 +55,22 @@ public class Player extends Agent {
         }
 
         if (Gdx.input.isKeyPressed(Keys.LEFT) || Gdx.input.isKeyPressed(Keys.A)) {
-            velocity.x = -getMaxVelocity();
+        	body.applyForceToCenter(new Vector2(-1 * getMaxVelocity(), 0), true);
             moving = false;
         }
 
         if (Gdx.input.isKeyPressed(Keys.RIGHT) || Gdx.input.isKeyPressed(Keys.D)) {
-            velocity.x = getMaxVelocity();
+            body.applyForceToCenter(new Vector2(1 * getMaxVelocity(), 0), true);
             moving = false;
         }
 
         if (Gdx.input.isKeyPressed(Keys.UP) || Gdx.input.isKeyPressed(Keys.W)) {
-            velocity.y = getMaxVelocity();
+            body.applyForceToCenter(new Vector2(0, 1 * getMaxVelocity()), true);
             moving = false;
         }
 
         if (Gdx.input.isKeyPressed(Keys.DOWN) || Gdx.input.isKeyPressed(Keys.S)) {
-            velocity.y = -getMaxVelocity();
+            body.applyForceToCenter(new Vector2(0, -1 * getMaxVelocity()), true);
             moving = false;
         }
     }

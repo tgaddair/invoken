@@ -124,7 +124,7 @@ public abstract class Agent extends CollisionEntity {
 	private Body createBody(float x, float y, float width, float height, World world) {
 		CircleShape circleChape = new CircleShape();
 		circleChape.setPosition(new Vector2());
-		circleChape.setRadius(Math.max(width, height) / 4);
+		circleChape.setRadius(Math.max(width, height) / 5);
 
 		BodyDef characterBodyDef = new BodyDef();
 		characterBodyDef.position.set(x, y);
@@ -136,6 +136,8 @@ public abstract class Agent extends CollisionEntity {
 		charFixtureDef.shape = circleChape;
 		charFixtureDef.filter.groupIndex = 0;
 		body.createFixture(charFixtureDef);
+		
+		body.setLinearDamping(DAMPING);
 
 		circleChape.dispose();
 		return body;

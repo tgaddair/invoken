@@ -136,9 +136,8 @@ public class Location {
   		addWalls(world);
 
         // spawn and add the player
-        this.player = createPlayer(world);
         Vector2 spawn = getSpawnLocation();
-        player.setPosition(spawn.x, spawn.y);
+        this.player = createPlayer(world, spawn.x, spawn.y);
         addActor(player);
         
         // add encounters
@@ -149,9 +148,9 @@ public class Location {
     	return player;
     }
     
-    private Player createPlayer(World world) {
+    private Player createPlayer(World world, float x, float y) {
     	// create the Player we want to move around the world
-		Player player = new Player(Profession.getDefault(), 25, 0, 0,
+		Player player = new Player(Profession.getDefault(), 25, x, y,
 				world, "sprite/characters/light-blue-hair.png");
 //    			player.addFaction(playerFaction, 9, 0);
 		
