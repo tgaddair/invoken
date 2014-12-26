@@ -48,7 +48,7 @@ public abstract class Agent extends CollisionEntity {
     public static final int ASSAULT_PENALTY = -50;
 
     static AssetManager assetManager = new AssetManager();
-    static float DAMPING = 0.87f;
+    static float DAMPING = 5f;
     
     protected final Body body;
 
