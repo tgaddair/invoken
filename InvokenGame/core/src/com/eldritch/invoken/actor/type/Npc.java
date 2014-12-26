@@ -7,6 +7,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.badlogic.gdx.ai.steer.Proximity;
+import com.badlogic.gdx.ai.steer.Steerable;
+import com.badlogic.gdx.ai.steer.behaviors.CollisionAvoidance;
 import com.badlogic.gdx.ai.steer.behaviors.PrioritySteering;
 import com.badlogic.gdx.ai.steer.behaviors.RaycastObstacleAvoidance;
 import com.badlogic.gdx.ai.steer.behaviors.Wander;
@@ -99,20 +102,48 @@ public abstract class Npc extends SteeringAgent {
 				rayConfiguration,
 				new Box2dRaycastCollisionDetector(location.getWorld()),
 				5);
+		Proximity<Vector2> proximity = new Proximity<Vector2>() {
+			private Steerable<Vector2> owner = Npc.this;
+			
+			@Override
+			public Steerable<Vector2> getOwner() {
+				return owner;
+			}
+
+			@Override
+			public void setOwner(Steerable<Vector2> owner) {
+				this.owner = owner;
+			}
+
+			@Override
+			public int findNeighbors(
+					com.badlogic.gdx.ai.steer.Proximity.ProximityCallback<Vector2> callback) {
+				int count = 0;
+				for (Agent neighbor : getNeighbors()) {
+					if (neighbor instanceof SteeringAgent) {
+						callback.reportNeighbor((SteeringAgent) neighbor);
+						count++;
+					}
+				}
+				return count;
+			}
+		};
+		CollisionAvoidance<Vector2> collisionAvoidance = new CollisionAvoidance<Vector2>(this, proximity);
 		Wander<Vector2> wander = new Wander<Vector2>(this)
 				// Don't use Face internally because independent facing is off
 				.setFaceEnabled(false) //
 				// We don't need a limiter supporting angular components because Face is not used
 				// No need to call setAlignTolerance, setDecelerationRadius and setTimeToTarget for the same reason
-				.setLimiter(new LinearAccelerationLimiter(3)) //
-				.setWanderOffset(60) //
-				.setWanderOrientation(10) //
-				.setWanderRadius(10) //
+				.setLimiter(new LinearAccelerationLimiter(3))
+				.setWanderOffset(1)
+				.setWanderOrientation(10)
+				.setWanderRadius(1)
 				.setWanderRate(MathUtils.PI / 5);
 		
 		// order in descending priority
 		PrioritySteering<Vector2> prioritySteering = new PrioritySteering<Vector2>(this)
 				.add(obstacleAvoidance)
+				.add(collisionAvoidance)
 				.add(wander);
 		setBehavior(prioritySteering);
 	}
@@ -169,10 +200,6 @@ public abstract class Npc extends SteeringAgent {
 		
 		shapeRenderer.end();
 	}
-	
-	@Override
-	protected void move(float delta, Location screen) {
-    }
 	
 	@Override
     protected void handleConfusion(boolean confused) {

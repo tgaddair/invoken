@@ -20,8 +20,6 @@ public abstract class SteeringAgent extends Agent implements Steerable<Vector2> 
 	private static final SteeringAcceleration<Vector2> steeringOutput = 
 	        new SteeringAcceleration<Vector2>(new Vector2());
 	
-	private final Body body;
-	
 	float orientation;
     Vector2 linearVelocity = new Vector2();
     float angularVelocity;
@@ -36,28 +34,7 @@ public abstract class SteeringAgent extends Agent implements Steerable<Vector2> 
 	
 	public SteeringAgent(ActorParams params, float x, float y, float width, float height,
             World world, Map<Activity, Map<Direction, Animation>> animations) {
-		super(params, x, y, width, height, animations);
-		body = createBody(x, y, width, height, world);
-	}
-	
-	private Body createBody(float x, float y, float width, float height, World world) {
-		CircleShape circleChape = new CircleShape();
-		circleChape.setPosition(new Vector2());
-		circleChape.setRadius(Math.max(width, height) / 4);
-
-		BodyDef characterBodyDef = new BodyDef();
-		characterBodyDef.position.set(x, y);
-		characterBodyDef.type = BodyType.DynamicBody;
-		Body body = world.createBody(characterBodyDef);
-
-		FixtureDef charFixtureDef = new FixtureDef();
-		charFixtureDef.density = 1;
-		charFixtureDef.shape = circleChape;
-		charFixtureDef.filter.groupIndex = 0;
-		body.createFixture(charFixtureDef);
-
-		circleChape.dispose();
-		return body;
+		super(params, x, y, width, height, world, animations);
 	}
 	
 	protected void setBehavior(SteeringBehavior<Vector2> behavior) {
@@ -72,8 +49,6 @@ public abstract class SteeringAgent extends Agent implements Steerable<Vector2> 
 	        // Apply steering acceleration to move this agent
 	        applySteering(steeringOutput, delta);
 	    }
-		position.set(body.getPosition());
-		velocity.set(body.getLinearVelocity());
 	}
 
 	@Override
@@ -203,8 +178,9 @@ public abstract class SteeringAgent extends Agent implements Steerable<Vector2> 
 			float maxLinearSpeed = getMaxLinearSpeed();
 			if (currentSpeedSquare > maxLinearSpeed * maxLinearSpeed) {
 				body.setLinearVelocity(velocity.scl(maxLinearSpeed / (float) Math.sqrt(currentSpeedSquare)));
+//				body.setLinearVelocity(body.getLinearVelocity().cpy().clamp(0, maxLinearSpeed));
 			}
-
+			
 			// Cap the angular speed
 			float maxAngVelocity = getMaxAngularSpeed();
 			if (body.getAngularVelocity() > maxAngVelocity) {

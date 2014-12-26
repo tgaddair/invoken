@@ -18,6 +18,12 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.CircleShape;
+import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Array;
 import com.eldritch.invoken.actor.AgentInfo;
@@ -43,6 +49,8 @@ public abstract class Agent extends CollisionEntity {
 
     static AssetManager assetManager = new AssetManager();
     static float DAMPING = 0.87f;
+    
+    protected final Body body;
 
     public enum Direction {
         Up, Left, Down, Right
@@ -92,24 +100,46 @@ public abstract class Agent extends CollisionEntity {
     private final Color color = new Color(1, 1, 1, 1);
 
     public Agent(ActorParams params, float x, float y, float width, float height,
-            Map<Activity, Map<Direction, Animation>> animations) {
+            World world, Map<Activity, Map<Direction, Animation>> animations) {
         super(width, height);
         setPosition(x, y);
         this.animations = animations;
 
         // health, level, augmentations, etc.
         info = new AgentInfo(this, params);
+        body = createBody(x, y, width, height, world);
     }
 
     public Agent(float x, float y, float width, float height, Profession profession, int level,
-            Map<Activity, Map<Direction, Animation>> animations) {
+            World world, Map<Activity, Map<Direction, Animation>> animations) {
         super(width, height);
         setPosition(x, y);
         this.animations = animations;
 
         // health, level, augmentations, etc.
         info = new AgentInfo(this, profession, level);
+        body = createBody(x, y, width, height, world);
     }
+    
+	private Body createBody(float x, float y, float width, float height, World world) {
+		CircleShape circleChape = new CircleShape();
+		circleChape.setPosition(new Vector2());
+		circleChape.setRadius(Math.max(width, height) / 4);
+
+		BodyDef characterBodyDef = new BodyDef();
+		characterBodyDef.position.set(x, y);
+		characterBodyDef.type = BodyType.DynamicBody;
+		Body body = world.createBody(characterBodyDef);
+
+		FixtureDef charFixtureDef = new FixtureDef();
+		charFixtureDef.density = 1;
+		charFixtureDef.shape = circleChape;
+		charFixtureDef.filter.groupIndex = 0;
+		body.createFixture(charFixtureDef);
+
+		circleChape.dispose();
+		return body;
+	}
 
     public void setRgb(float r, float g, float b) {
         color.set(r, g, b, color.a);
@@ -693,95 +723,9 @@ public abstract class Agent extends CollisionEntity {
             direction = getDominantDirection(dx, dy);
         }
         
-        move(delta, location);
-    }
-
-    protected void move(float delta, Location screen) {
-        // clamp the velocity to the maximum
-        if (Math.abs(velocity.x) > getMaxVelocity()) {
-            velocity.x = Math.signum(velocity.x) * getMaxVelocity();
-        }
-
-        if (Math.abs(velocity.y) > getMaxVelocity()) {
-            velocity.y = Math.signum(velocity.y) * getMaxVelocity();
-        }
-
-        // multiply by delta time so we know how far we go
-        // in this frame
-        velocity.scl(delta);
-        float lastX = position.x;
-        float lastY = position.y;
-        position.add(velocity);
-
-        // perform collision detection & response, on each axis, separately
-        // if the actor is moving right, check the tiles to the right of
-        // it's
-        // right bounding box edge, otherwise check the ones to the left
-        Rectangle actorRect = Location.getRectPool().obtain();
-        getBoundingBox(actorRect);
-
-        float relativeX = actorRect.x - actorRect.width / 2;
-        float relativeY = actorRect.y - actorRect.height / 2;
-        int startX, startY, endX, endY;
-
-        // handle x-axis collisions
-        startX = (int) (relativeX);
-        endX = (int) (relativeX + getWidth());
-        startY = (int) (relativeY);
-        endY = (int) (relativeY + getHeight());
-        screen.getTiles(startX, startY, endX, endY, screen.getTiles());
-
-        Array<Agent> agents = getCollisionActors(screen);
-        int vScale = 50;
-
-        float oldX = actorRect.x;
-        actorRect.x += velocity.x;
-        if (collidesWith(actorRect, screen.getTiles())) {
-            velocity.x = 0;
-            position.x = lastX;
-        }
-        for (Agent agent : agents) {
-            if (agent.collidesWith(actorRect)) {
-                agent.addVelocity(velocity.x * vScale, 0);
-                position.x = lastX;
-                break;
-            }
-        }
-        actorRect.x = oldX;
-
-        // handle y-axis collisions
-        startY = (int) (relativeY);
-        endY = (int) (relativeY + getHeight());
-        startX = (int) (relativeX);
-        endX = (int) (relativeX + getWidth());
-        screen.getTiles(startX, startY, endX, endY, screen.getTiles());
-
-        float oldY = actorRect.y;
-        actorRect.y += velocity.y;
-        if (collidesWith(actorRect, screen.getTiles())) {
-            velocity.y = 0;
-            position.y = lastY;
-        }
-        for (Agent agent : agents) {
-            if (agent.collidesWith(actorRect)) {
-                agent.addVelocity(0, velocity.y * vScale);
-                position.y = lastY;
-                break;
-            }
-        }
-        actorRect.y = oldY;
-
-        Location.getRectPool().free(actorRect);
-
-        // unscale the velocity by the inverse delta time and set
-        // the latest position
-        // position.add(velocity);
-        velocity.scl(1 / delta);
-
-        // Apply damping to the velocity on the x-axis so we don't
-        // walk infinitely once a key was pressed
-        velocity.x *= DAMPING;
-        velocity.y *= DAMPING;
+//        move(delta, location);
+        position.set(body.getPosition());
+		velocity.set(body.getLinearVelocity());
     }
 
     public boolean collidesWith(float x, float y) {

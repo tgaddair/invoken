@@ -34,7 +34,6 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
-import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.EdgeShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
@@ -43,8 +42,10 @@ import com.badlogic.gdx.utils.Pool;
 import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.activators.Activator;
 import com.eldritch.invoken.activators.SecurityCamera;
+import com.eldritch.invoken.actor.Profession;
 import com.eldritch.invoken.actor.aug.Action;
 import com.eldritch.invoken.actor.factions.Faction;
+import com.eldritch.invoken.actor.items.Item;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Npc;
 import com.eldritch.invoken.actor.type.Player;
@@ -99,13 +100,11 @@ public class Location {
     // debug
     private BitmapFont debugFont = new BitmapFont();
 
-    public Location(com.eldritch.invoken.proto.Locations.Location data, Player player) {
-        this(data, player, readMap(data));
+    public Location(com.eldritch.invoken.proto.Locations.Location data) {
+        this(data, readMap(data));
     }
 
-    public Location(com.eldritch.invoken.proto.Locations.Location data, Player player,
-            LocationMap map) {
-        this.player = player;
+    public Location(com.eldritch.invoken.proto.Locations.Location data, LocationMap map) {
         this.map = map;
         owningFaction = Optional.fromNullable(Faction.of(data.getFactionId()));
         lightManager = new LightManager(data);
@@ -131,18 +130,40 @@ public class Location {
         // objects are rendered by y-ordering with other entities
         float unitScale = 1.0f / PX;
         renderer = new OrthogonalTiledMapRenderer(map, unitScale);
-
-        // spawn and add the player
-        Vector2 spawn = getSpawnLocation();
-        player.setPosition(spawn.x, spawn.y);
-        addActor(player);
         
         // Instantiate a new World with no gravity and tell it to sleep when possible.
   		world = new World(new Vector2(0, 0), true);
   		addWalls(world);
 
+        // spawn and add the player
+        this.player = createPlayer(world);
+        Vector2 spawn = getSpawnLocation();
+        player.setPosition(spawn.x, spawn.y);
+        addActor(player);
+        
         // add encounters
         addEntities(data, map);
+    }
+    
+    public Player getPlayer() {
+    	return player;
+    }
+    
+    private Player createPlayer(World world) {
+    	// create the Player we want to move around the world
+		Player player = new Player(Profession.getDefault(), 25, 0, 0,
+				world, "sprite/characters/light-blue-hair.png");
+//    			player.addFaction(playerFaction, 9, 0);
+		
+		Item outfit = Item.fromProto(InvokenGame.ITEM_READER.readAsset("IcarianOperativeExosuit"));
+		player.getInfo().getInventory().addItem(outfit);
+		player.getInfo().getInventory().equip(outfit);
+		
+		Item weapon = Item.fromProto(InvokenGame.ITEM_READER.readAsset("AssaultRifle"));
+        player.getInfo().getInventory().addItem(weapon);
+        player.getInfo().getInventory().equip(weapon);
+        
+        return player;
     }
     
     private void addWalls(World world) {

@@ -3,6 +3,7 @@ package com.eldritch.invoken.actor.type;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.World;
 import com.eldritch.invoken.actor.GameCamera;
 import com.eldritch.invoken.actor.Profession;
 import com.eldritch.invoken.actor.ai.AgentMover;
@@ -19,9 +20,9 @@ public class Player extends Agent {
     private boolean fixedTarget = false;
     private GameCamera camera = PLAYER_CAMERA;
 
-    public Player(Profession profession, int level, float x, float y, String body) {
-        super(x, y, Human.getWidth(), Human.getHeight(), profession, level, Human
-                .getAllAnimations(body));
+    public Player(Profession profession, int level, float x, float y, World world, String body) {
+        super(x, y, Human.getWidth(), Human.getHeight(), profession, level, world, 
+        		Human.getAllAnimations(body));
         mover = new AgentMover(this, getMaxVelocity(), 0.01f);
     }
     

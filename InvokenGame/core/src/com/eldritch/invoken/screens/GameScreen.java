@@ -83,26 +83,14 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 		// load the selector
 		selector = new TextureRegion(new Texture("sprite/selection.png"));
 		
-		// create the Player we want to move around the world
-		player = new Player(Profession.getDefault(), 25, 0, 0,
-				"sprite/characters/light-blue-hair.png");
-//		player.addFaction(playerFaction, 9, 0);
-		
-		Item outfit = Item.fromProto(InvokenGame.ITEM_READER.readAsset("IcarianOperativeExosuit"));
-		player.getInfo().getInventory().addItem(outfit);
-		player.getInfo().getInventory().equip(outfit);
-		
-		Item weapon = Item.fromProto(InvokenGame.ITEM_READER.readAsset("AssaultRifle"));
-        player.getInfo().getInventory().addItem(weapon);
-        player.getInfo().getInventory().equip(weapon);
-		
 //		location = new Location(
 //		        InvokenGame.LOCATION_READER.readAsset("NostorraPlaza"), player);
 		
         com.eldritch.invoken.proto.Locations.Location data = 
         		InvokenGame.LOCATION_READER.readAsset("IcarianEmbassy");
 		LocationGenerator generator = new LocationGenerator(data.getBiome());
-		location = generator.generate(data, player);
+		location = generator.generate(data);
+		player = location.getPlayer();
 		
 		// create player menus
 		actionBar = new ActionBar(player);

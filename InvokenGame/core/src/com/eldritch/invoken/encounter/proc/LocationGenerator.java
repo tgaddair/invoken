@@ -108,7 +108,7 @@ public class LocationGenerator {
         collider = new StaticTiledMapTile(atlas.findRegion(COLLISION));
     }
 
-    public Location generate(com.eldritch.invoken.proto.Locations.Location proto, Player player) {
+    public Location generate(com.eldritch.invoken.proto.Locations.Location proto) {
         int width = Location.MAX_WIDTH;
         int height = Location.MAX_HEIGHT;
         LocationMap map = getBaseMap(width, height);
@@ -179,7 +179,7 @@ public class LocationGenerator {
         InvokenGame.log("Adding Clutter");
 //        map.getLayers().add(furnitureGenerator.generateClutter(base, map));
 
-        Location location = new Location(proto, player, map);
+        Location location = new Location(proto, map);
         location.addLights(lights);
 //        location.addActivators(activators);
         location.addActivators(map.getActivators());
