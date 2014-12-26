@@ -3,12 +3,18 @@ package com.eldritch.invoken.actor.type;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.badlogic.gdx.ai.fsm.DefaultStateMachine;
+import com.badlogic.gdx.ai.fsm.StateMachine;
+import com.badlogic.gdx.ai.msg.Telegram;
+import com.badlogic.gdx.ai.msg.Telegraph;
 import com.badlogic.gdx.ai.steer.Proximity;
 import com.badlogic.gdx.ai.steer.Steerable;
+import com.badlogic.gdx.ai.steer.SteeringBehavior;
 import com.badlogic.gdx.ai.steer.behaviors.CollisionAvoidance;
 import com.badlogic.gdx.ai.steer.behaviors.PrioritySteering;
 import com.badlogic.gdx.ai.steer.behaviors.RaycastObstacleAvoidance;
@@ -16,7 +22,6 @@ import com.badlogic.gdx.ai.steer.behaviors.Seek;
 import com.badlogic.gdx.ai.steer.behaviors.Wander;
 import com.badlogic.gdx.ai.steer.limiters.LinearAccelerationLimiter;
 import com.badlogic.gdx.ai.steer.utils.Ray;
-import com.badlogic.gdx.ai.steer.utils.rays.CentralRayWithWhiskersConfiguration;
 import com.badlogic.gdx.ai.steer.utils.rays.RayConfigurationBase;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Animation;
@@ -36,6 +41,7 @@ import com.eldritch.invoken.actor.ai.Box2dRaycastCollisionDetector;
 import com.eldritch.invoken.actor.ai.FleeRoutine;
 import com.eldritch.invoken.actor.ai.FollowRoutine;
 import com.eldritch.invoken.actor.ai.IdleRoutine;
+import com.eldritch.invoken.actor.ai.NpcState;
 import com.eldritch.invoken.actor.ai.PatrolRoutine;
 import com.eldritch.invoken.actor.ai.Routine;
 import com.eldritch.invoken.actor.pathfinding.Pathfinder;
@@ -52,7 +58,7 @@ import com.eldritch.invoken.proto.Prerequisites.Standing;
 import com.eldritch.invoken.util.PrerequisiteVerifier;
 import com.google.common.base.Optional;
 
-public abstract class Npc extends SteeringAgent {
+public abstract class Npc extends SteeringAgent implements Telegraph {
 	private final NonPlayerActor data;
     private final Optional<ActorScenario> scenario;
 	private final DialogueVerifier dialogueVerifier = new DialogueVerifier();
@@ -65,7 +71,18 @@ public abstract class Npc extends SteeringAgent {
 	private final List<Agent> neighbors = new ArrayList<Agent>();
 	private Routine routine;
 	
+	// AI controllers
+	private final StateMachine<Npc> stateMachine;
+	private final Map<Class<? extends SteeringBehavior<?>>, SteeringBehavior<Vector2>> behaviors = 
+			new LinkedHashMap<Class<? extends SteeringBehavior<?>>, SteeringBehavior<Vector2>>();
 	RayConfigurationBase<Vector2> rayConfiguration;
+	
+	// behaviors that need to be updated periodically
+	private final Seek<Vector2> seek;
+	private final Wander<Vector2> wander;
+	
+	// state tracking parameters
+	private float stateDuration = 0;
 	
 	public Npc(NonPlayerActor data, float x, float y, float width, float height,
 	        Map<Activity, Map<Direction, Animation>> animations, Location location) {
@@ -127,8 +144,8 @@ public abstract class Npc extends SteeringAgent {
 			}
 		};
 		CollisionAvoidance<Vector2> collisionAvoidance = new CollisionAvoidance<Vector2>(this, proximity);
-		Seek<Vector2> seek = new Seek<Vector2>(this, location.getPlayer());
-		Wander<Vector2> wander = new Wander<Vector2>(this)
+		seek = new Seek<Vector2>(this, location.getPlayer());
+		wander = new Wander<Vector2>(this)
 				// Don't use Face internally because independent facing is off
 				.setFaceEnabled(false) //
 				// We don't need a limiter supporting angular components because Face is not used
@@ -139,6 +156,10 @@ public abstract class Npc extends SteeringAgent {
 				.setWanderRadius(5)
 				.setWanderRate(MathUtils.PI / 5);
 		
+		// initially disable our states
+		seek.setEnabled(false);
+		wander.setEnabled(false);
+		
 		// order in descending priority
 		PrioritySteering<Vector2> prioritySteering = new PrioritySteering<Vector2>(this)
 				.add(obstacleAvoidance)
@@ -146,9 +167,39 @@ public abstract class Npc extends SteeringAgent {
 				.add(seek)
 				.add(wander);
 		setBehavior(prioritySteering);
+		
+		// state machine
+		stateMachine = new DefaultStateMachine<Npc>(this, NpcState.IDLE);
+	}
+	
+	@Override
+	public boolean handleMessage (Telegram telegram) {
+		return stateMachine.handleMessage(telegram);
+	}
+	
+	public StateMachine<Npc> getStateMachine() {
+		return stateMachine;
+	}
+	
+	public void resetStateDuration() {
+		stateDuration = 0;
+	}
+	
+	public float getStateDuration() {
+		return stateDuration;
+	}
+	
+	public Seek<Vector2> getSeek() {
+		return seek;
+	}
+	
+	public Wander<Vector2> getWander() {
+		return wander;
 	}
 	
 	public void update(float delta) {
+		stateDuration += delta;
+		stateMachine.update();
 		if (steeringBehavior != null) {
 	        // Calculate steering acceleration
 	        steeringBehavior.calculateSteering(steeringOutput);
