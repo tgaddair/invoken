@@ -174,7 +174,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 	}
 	
 	private void drawStats(Agent agent) {
-		Vector2 position = agent.getPosition();
+		Vector2 position = agent.getRenderPosition();
 		float h = agent.getHeight() / 2;
 		Vector3 screen = camera.project(new Vector3(position.x, position.y + h, 0));
 		

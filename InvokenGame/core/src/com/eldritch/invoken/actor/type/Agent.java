@@ -444,9 +444,13 @@ public abstract class Agent extends CollisionEntity {
     public void setPosition(float x, float y) {
         position.set(x, y);
     }
+    
+    public Vector2 getRenderPosition() {
+    	return position;
+    }
 
     public Vector2 getPosition() {
-        return position;
+        return body.getPosition();
     }
 
     public NaturalVector2 getCellPosition() {
