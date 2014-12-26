@@ -51,6 +51,7 @@ public abstract class Agent extends CollisionEntity {
     static float DAMPING = 5f;
     
     protected final Body body;
+    private final float radius;
 
     public enum Direction {
         Up, Left, Down, Right
@@ -107,6 +108,7 @@ public abstract class Agent extends CollisionEntity {
 
         // health, level, augmentations, etc.
         info = new AgentInfo(this, params);
+        radius = Math.max(width, height) / 5;
         body = createBody(x, y, width, height, world);
     }
 
@@ -118,13 +120,14 @@ public abstract class Agent extends CollisionEntity {
 
         // health, level, augmentations, etc.
         info = new AgentInfo(this, profession, level);
+        radius = Math.max(width, height) / 5;
         body = createBody(x, y, width, height, world);
     }
     
 	private Body createBody(float x, float y, float width, float height, World world) {
-		CircleShape circleChape = new CircleShape();
-		circleChape.setPosition(new Vector2());
-		circleChape.setRadius(Math.max(width, height) / 5);
+		CircleShape circleShape = new CircleShape();
+		circleShape.setPosition(new Vector2());
+		circleShape.setRadius(radius);
 
 		BodyDef characterBodyDef = new BodyDef();
 		characterBodyDef.position.set(x, y);
@@ -133,13 +136,13 @@ public abstract class Agent extends CollisionEntity {
 
 		FixtureDef charFixtureDef = new FixtureDef();
 		charFixtureDef.density = 1;
-		charFixtureDef.shape = circleChape;
+		charFixtureDef.shape = circleShape;
 		charFixtureDef.filter.groupIndex = 0;
 		body.createFixture(charFixtureDef);
 		
 		body.setLinearDamping(DAMPING);
 
-		circleChape.dispose();
+		circleShape.dispose();
 		return body;
 	}
 
@@ -705,11 +708,12 @@ public abstract class Agent extends CollisionEntity {
 
         // clamp the velocity to 0 if it's < 1, and set the state to
         // standing
-        if (Math.abs(velocity.x) < 1 && Math.abs(velocity.y) < 1) {
+        if (Math.abs(velocity.x) < .01 && Math.abs(velocity.y) < .01) {
             velocity.x = 0;
             velocity.y = 0;
             state = State.Standing;
-        } else {
+        } else if (Math.abs(velocity.x) > 1 || Math.abs(velocity.y) > 1) {
+        	// only update direction if we are going pretty fast
             if (target == null || target == this) {
                 // update the current animation based on the maximal velocity
                 // component
@@ -725,8 +729,7 @@ public abstract class Agent extends CollisionEntity {
             direction = getDominantDirection(dx, dy);
         }
         
-//        move(delta, location);
-        position.set(body.getPosition());
+        position.set(body.getPosition().cpy().add(0, getHeight() / 2 - radius));
 		velocity.set(body.getLinearVelocity());
     }
 

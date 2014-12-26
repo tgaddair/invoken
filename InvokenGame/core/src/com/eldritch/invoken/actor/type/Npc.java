@@ -134,7 +134,7 @@ public abstract class Npc extends SteeringAgent {
 				.setFaceEnabled(false) //
 				// We don't need a limiter supporting angular components because Face is not used
 				// No need to call setAlignTolerance, setDecelerationRadius and setTimeToTarget for the same reason
-				.setLimiter(new LinearAccelerationLimiter(3))
+				.setLimiter(new LinearAccelerationLimiter(10))
 				.setWanderOffset(1)
 				.setWanderOrientation(10)
 				.setWanderRadius(1)
