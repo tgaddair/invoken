@@ -28,6 +28,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.eldritch.invoken.actor.Inventory.ItemState;
+import com.eldritch.invoken.actor.ai.AdaptiveRayWithWhiskersConfiguration;
 import com.eldritch.invoken.actor.ai.AssaultRoutine;
 import com.eldritch.invoken.actor.ai.AssistRoutine;
 import com.eldritch.invoken.actor.ai.Behavior;
@@ -93,7 +94,7 @@ public abstract class Npc extends SteeringAgent {
 		routine = Math.random() < 0.5 ? idle : patrol;
 		
 		// steering behaviors
-		rayConfiguration = new CentralRayWithWhiskersConfiguration<Vector2>(this, 3, 1, 35 * MathUtils.degreesToRadians);
+		rayConfiguration = new AdaptiveRayWithWhiskersConfiguration<Vector2>(this, 3, 1, 35 * MathUtils.degreesToRadians);
 		RaycastObstacleAvoidance<Vector2> obstacleAvoidance = new RaycastObstacleAvoidance<Vector2>(
 				this, 
 				rayConfiguration,
@@ -132,7 +133,7 @@ public abstract class Npc extends SteeringAgent {
 				.setFaceEnabled(false) //
 				// We don't need a limiter supporting angular components because Face is not used
 				// No need to call setAlignTolerance, setDecelerationRadius and setTimeToTarget for the same reason
-				.setLimiter(new LinearAccelerationLimiter(10))
+				.setLimiter(new LinearAccelerationLimiter(5))
 				.setWanderOffset(3)
 				.setWanderOrientation(0)
 				.setWanderRadius(5)

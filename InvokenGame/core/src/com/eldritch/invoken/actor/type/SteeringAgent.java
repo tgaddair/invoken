@@ -8,15 +8,8 @@ import com.badlogic.gdx.ai.steer.SteeringBehavior;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.BodyDef;
-import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
-import com.badlogic.gdx.physics.box2d.CircleShape;
-import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
 import com.eldritch.invoken.actor.Profession;
-import com.eldritch.invoken.actor.type.Agent.Activity;
-import com.eldritch.invoken.actor.type.Agent.Direction;
 import com.eldritch.invoken.proto.Actors.ActorParams;
 
 public abstract class SteeringAgent extends Agent implements Steerable<Vector2> {
@@ -32,7 +25,7 @@ public abstract class SteeringAgent extends Agent implements Steerable<Vector2> 
     
     private float maxAngularAcceleration = 1;
     private float maxAngularVelocity = 1;
-    private float maxLinearAcceleration = 5;
+    private float maxLinearAcceleration = 10;
     private float maxLinearVelocity = 5;
 	
 	public SteeringAgent(ActorParams params, float x, float y, float width, float height,
