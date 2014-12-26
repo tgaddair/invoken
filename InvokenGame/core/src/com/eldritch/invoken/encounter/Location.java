@@ -60,6 +60,8 @@ import com.google.common.base.Optional;
 import com.google.common.primitives.Ints;
 
 public class Location {
+	public static boolean DEBUG_DRAW = true;
+	
     public static final int PX = 32;
     public static final int MAX_WIDTH = 100;
     public static final int MAX_HEIGHT = 100;
@@ -518,7 +520,6 @@ public class Location {
         // render the overlay layer
         renderer.render(overlays);
         
-        boolean DEBUG_DRAW = true;
         if (DEBUG_DRAW) {
 	        // draw NPC debug rays
 	        for (Agent agent : drawableEntities) {

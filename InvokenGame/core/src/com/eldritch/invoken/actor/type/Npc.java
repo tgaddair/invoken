@@ -153,7 +153,7 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
 				.setLimiter(new LinearAccelerationLimiter(5))
 				.setWanderOffset(2)
 				.setWanderOrientation(0)
-				.setWanderRadius(1)
+				.setWanderRadius(0.5f)
 				.setWanderRate(MathUtils.PI / 5);
 		
 		// initially disable our states
