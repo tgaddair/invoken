@@ -12,6 +12,7 @@ import com.badlogic.gdx.physics.box2d.World;
 public class Box2dRaycastCollisionDetector implements RaycastCollisionDetector<Vector2> {
 	private final World world;
 	private final Box2dRaycastCallback callback;
+	private final Vector2 end = new Vector2();
 
 	public Box2dRaycastCollisionDetector(World world) {
 		this(world, new Box2dRaycastCallback());
@@ -25,7 +26,7 @@ public class Box2dRaycastCollisionDetector implements RaycastCollisionDetector<V
 	@Override
 	public boolean findCollision(Collision<Vector2> outputCollision, Ray<Vector2> inputRay) {
 		callback.collided = false;
-		Vector2 end = inputRay.origin.cpy().add(inputRay.direction);
+		end.set(inputRay.origin).add(inputRay.direction);
 		if (!inputRay.origin.epsilonEquals(end, MathUtils.FLOAT_ROUNDING_ERROR)) {
 			callback.outputCollision = outputCollision;
 			world.rayCast(callback, inputRay.origin, end);

@@ -509,7 +509,7 @@ public class Location {
                     // dark slate blue
                     color = new Color(0x483D8BFF);
                 }
-                drawCentered(selector, actor.getPosition(), color);
+                drawCentered(selector, actor.getRenderPosition(), color);
             }
             actor.render(delta, renderer);
         }

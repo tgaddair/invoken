@@ -1,64 +1,38 @@
 package com.eldritch.invoken.actor.ai;
 
 import com.badlogic.gdx.ai.fsm.State;
+import com.badlogic.gdx.ai.fsm.StateMachine;
 import com.badlogic.gdx.ai.msg.Telegram;
 import com.eldritch.invoken.actor.type.Npc;
 
 public enum NpcState implements State<Npc> {
-	IDLE() {
-		@Override
-		public void enter(Npc entity) {
-			entity.getWander().setEnabled(false);
-		}
-
-		@Override
-		public void update(Npc entity) {
-			if (entity.getStateDuration() > 3) {
-				entity.getStateMachine().changeState(PATROL);
-			}
-		}
-	},
-	
 	PATROL() {
 		@Override
 		public void enter(Npc entity) {
-			entity.getWander().setEnabled(true);
+			entity.getStateMachine().getMachine(PATROL).changeState(PatrolState.WANDER);
 		}
 
 		@Override
 		public void update(Npc entity) {
-			if (entity.getStateDuration() > 10) {
-				entity.getStateMachine().changeState(IDLE);
+			StateMachine<Npc> machine = entity.getStateMachine().getMachine(PATROL);
+			machine.update();
+			
+			if (entity.getInfo().getHealth() < entity.getInfo().getBaseHealth()) {
+				entity.getStateMachine().changeState(COMBAT);
 			}
 		}
 	},
 	
-	FLEE() {
+	COMBAT() {
+		@Override
+		public void enter(Npc entity) {
+			entity.getStateMachine().getMachine(COMBAT).changeState(CombatState.ATTACK);
+		}
+		
 		@Override
 		public void update(Npc entity) {
-		}
-	},
-	
-	FOLLOW() {
-		@Override
-		public void update(Npc entity) {
-		}
-	},
-	
-	ASSIST() {
-		@Override
-		public void update(Npc entity) {
-		}
-	},
-	
-	ATTACK() {
-		@Override
-		public void update(Npc entity) {
-		}
-	},
-	
-	HIDE() {
-		public void update(Npc entity) {
+			StateMachine<Npc> machine = entity.getStateMachine().getMachine(COMBAT);
+			machine.update();
 		}
 	};
 	
@@ -68,7 +42,6 @@ public enum NpcState implements State<Npc> {
 
 	@Override
 	public void exit(Npc entity) {
-		entity.resetStateDuration();
 	}
 
 	@Override

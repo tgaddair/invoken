@@ -42,7 +42,9 @@ import com.eldritch.invoken.actor.ai.FleeRoutine;
 import com.eldritch.invoken.actor.ai.FollowRoutine;
 import com.eldritch.invoken.actor.ai.IdleRoutine;
 import com.eldritch.invoken.actor.ai.NpcState;
+import com.eldritch.invoken.actor.ai.NpcStateMachine;
 import com.eldritch.invoken.actor.ai.PatrolRoutine;
+import com.eldritch.invoken.actor.ai.PatrolState;
 import com.eldritch.invoken.actor.ai.Routine;
 import com.eldritch.invoken.actor.pathfinding.Pathfinder;
 import com.eldritch.invoken.encounter.Location;
@@ -72,7 +74,8 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
 	private Routine routine;
 	
 	// AI controllers
-	private final StateMachine<Npc> stateMachine;
+	private final NpcStateMachine stateMachine;
+	
 	private final Map<Class<? extends SteeringBehavior<?>>, SteeringBehavior<Vector2>> behaviors = 
 			new LinkedHashMap<Class<? extends SteeringBehavior<?>>, SteeringBehavior<Vector2>>();
 	RayConfigurationBase<Vector2> rayConfiguration;
@@ -169,7 +172,7 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
 		setBehavior(prioritySteering);
 		
 		// state machine
-		stateMachine = new DefaultStateMachine<Npc>(this, NpcState.IDLE);
+		stateMachine = new NpcStateMachine(this, NpcState.PATROL);
 	}
 	
 	@Override
@@ -177,7 +180,7 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
 		return stateMachine.handleMessage(telegram);
 	}
 	
-	public StateMachine<Npc> getStateMachine() {
+	public NpcStateMachine getStateMachine() {
 		return stateMachine;
 	}
 	
