@@ -13,7 +13,7 @@ public enum PatrolState implements State<Npc> {
 
 		@Override
 		public void update(Npc entity) {
-			if (entity.getStateDuration() > 10) {
+			if (entity.getStateMachine().getStateDuration() > 10) {
 				entity.getStateMachine().changeState(NpcState.PATROL, IDLE);
 			}
 		}
@@ -37,7 +37,7 @@ public enum PatrolState implements State<Npc> {
 
 		@Override
 		public void update(Npc entity) {
-			if (entity.getStateDuration() > 3) {
+			if (entity.getStateMachine().getStateDuration() > 3) {
 				entity.getStateMachine().changeState(NpcState.PATROL, WANDER);
 			}
 		}
@@ -49,7 +49,7 @@ public enum PatrolState implements State<Npc> {
 
 	@Override
 	public void exit(Npc entity) {
-		entity.resetStateDuration();
+		entity.getStateMachine().resetStateDuration();
 	}
 
 	@Override

@@ -17,7 +17,7 @@ public enum NpcState implements State<Npc> {
 			StateMachine<Npc> machine = entity.getStateMachine().getMachine(PATROL);
 			machine.update();
 			
-			if (entity.getInfo().getHealth() < entity.getInfo().getBaseHealth()) {
+			if (entity.isThreatened()) {
 				entity.getStateMachine().changeState(COMBAT);
 			}
 		}
@@ -33,6 +33,10 @@ public enum NpcState implements State<Npc> {
 		public void update(Npc entity) {
 			StateMachine<Npc> machine = entity.getStateMachine().getMachine(COMBAT);
 			machine.update();
+			
+			if (entity.isSafe()) {
+				entity.getStateMachine().changeState(PATROL);
+			}
 		}
 	};
 	
