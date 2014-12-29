@@ -34,7 +34,7 @@ public enum PatrolState implements State<Npc> {
 	IDLE() {
 		@Override
 		public void enter(Npc entity) {
-			entity.getStateMachine().setValidator(new TimedValidator((float) Math.random() * 3));
+			entity.getStateMachine().setValidator(new TimedValidator((float) Math.random() * 10));
 			entity.getWander().setEnabled(false);
 		}
 

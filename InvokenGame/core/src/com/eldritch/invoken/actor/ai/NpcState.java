@@ -13,10 +13,7 @@ public enum NpcState implements State<Npc> {
 		}
 
 		@Override
-		public void update(Npc entity) {
-			StateMachine<Npc> machine = entity.getStateMachine().getMachine(PATROL);
-			machine.update();
-			
+		public void update(Npc entity, StateMachine<Npc> machine) {
 			if (entity.isThreatened()) {
 				entity.getStateMachine().changeState(COMBAT);
 			}
@@ -30,10 +27,7 @@ public enum NpcState implements State<Npc> {
 		}
 		
 		@Override
-		public void update(Npc entity) {
-			StateMachine<Npc> machine = entity.getStateMachine().getMachine(COMBAT);
-			machine.update();
-			
+		public void update(Npc entity, StateMachine<Npc> machine) {
 			if (entity.isSafe()) {
 				entity.getStateMachine().changeState(PATROL);
 			}
@@ -42,6 +36,12 @@ public enum NpcState implements State<Npc> {
 	
 	@Override
 	public void enter(Npc entity) {
+	}
+	
+	public void update(Npc entity) {
+		StateMachine<Npc> machine = getStateMachine(entity);
+		machine.update();
+		update(entity, machine);
 	}
 
 	@Override
@@ -52,4 +52,10 @@ public enum NpcState implements State<Npc> {
 	public boolean onMessage(Npc entity, Telegram telegram) {
 		return false;
 	}
+	
+	private StateMachine<Npc> getStateMachine(Npc entity) {
+		return entity.getStateMachine().getMachine(NpcState.this);
+	}
+	
+	protected abstract void update(Npc entity, StateMachine<Npc> machine);
 }
