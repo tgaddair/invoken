@@ -57,7 +57,7 @@ public enum CombatState implements State<Npc> {
 
 	@Override
 	public void exit(Npc entity) {
-		entity.getStateMachine().resetStateDuration();
+		entity.getStateMachine().resetValidator();
 	}
 
 	@Override

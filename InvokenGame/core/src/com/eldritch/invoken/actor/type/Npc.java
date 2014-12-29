@@ -8,8 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.badlogic.gdx.ai.fsm.DefaultStateMachine;
-import com.badlogic.gdx.ai.fsm.StateMachine;
 import com.badlogic.gdx.ai.msg.Telegram;
 import com.badlogic.gdx.ai.msg.Telegraph;
 import com.badlogic.gdx.ai.steer.Proximity;
@@ -44,8 +42,9 @@ import com.eldritch.invoken.actor.ai.IdleRoutine;
 import com.eldritch.invoken.actor.ai.NpcState;
 import com.eldritch.invoken.actor.ai.NpcStateMachine;
 import com.eldritch.invoken.actor.ai.PatrolRoutine;
-import com.eldritch.invoken.actor.ai.PatrolState;
 import com.eldritch.invoken.actor.ai.Routine;
+import com.eldritch.invoken.actor.ai.StateValidator;
+import com.eldritch.invoken.actor.ai.StateValidator.BasicValidator;
 import com.eldritch.invoken.actor.pathfinding.Pathfinder;
 import com.eldritch.invoken.encounter.Location;
 import com.eldritch.invoken.proto.Actors.ActorParams.Species;
@@ -83,9 +82,6 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
 	// behaviors that need to be updated periodically
 	private final Seek<Vector2> seek;
 	private final Wander<Vector2> wander;
-	
-	// state tracking parameters
-	private float stateDuration = 0;
 	
 	public Npc(NonPlayerActor data, float x, float y, float width, float height,
 	        Map<Activity, Map<Direction, Animation>> animations, Location location) {
@@ -161,7 +157,6 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
 		
 		// initially disable our states
 		seek.setEnabled(false);
-		wander.setEnabled(false);
 		
 		// order in descending priority
 		PrioritySteering<Vector2> prioritySteering = new PrioritySteering<Vector2>(this)
@@ -173,6 +168,7 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
 		
 		// state machine
 		stateMachine = new NpcStateMachine(this, NpcState.PATROL);
+		stateMachine.changeState(NpcState.PATROL);
 	}
 	
 	@Override
@@ -184,14 +180,6 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
 		return stateMachine;
 	}
 	
-	public void resetStateDuration() {
-		stateDuration = 0;
-	}
-	
-	public float getStateDuration() {
-		return stateDuration;
-	}
-	
 	public Seek<Vector2> getSeek() {
 		return seek;
 	}
@@ -200,9 +188,16 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
 		return wander;
 	}
 	
+	public boolean isThreatened() {
+		return false;
+	}
+	
+	public boolean isSafe() {
+		return !isThreatened();
+	}
+	
 	public void update(float delta) {
-		stateDuration += delta;
-		stateMachine.update();
+		stateMachine.update(delta);
 		if (steeringBehavior != null) {
 	        // Calculate steering acceleration
 	        steeringBehavior.calculateSteering(steeringOutput);

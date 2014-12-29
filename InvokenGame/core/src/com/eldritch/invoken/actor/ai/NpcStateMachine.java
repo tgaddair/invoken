@@ -5,13 +5,14 @@ import java.util.EnumMap;
 import com.badlogic.gdx.ai.fsm.DefaultStateMachine;
 import com.badlogic.gdx.ai.fsm.State;
 import com.badlogic.gdx.ai.fsm.StateMachine;
+import com.eldritch.invoken.actor.ai.StateValidator.BasicValidator;
 import com.eldritch.invoken.actor.type.Npc;
 
 public class NpcStateMachine extends DefaultStateMachine<Npc> {
 	private final EnumMap<NpcState, StateMachine<Npc>> machines = 
 			new EnumMap<NpcState, StateMachine<Npc>>(NpcState.class);
 	
-	private float stateDuration = 0;
+	private StateValidator validator = BasicValidator.getInstance();
 
 	public NpcStateMachine(Npc owner, State<Npc> initialState) {
 		super(owner, initialState);
@@ -20,7 +21,7 @@ public class NpcStateMachine extends DefaultStateMachine<Npc> {
 	}
 	
 	public void update(float delta) {
-		stateDuration += delta;
+		validator.update(delta);
 		update();
 	}
 
@@ -32,12 +33,16 @@ public class NpcStateMachine extends DefaultStateMachine<Npc> {
 		machines.get(topState).changeState(state);
 	}
 	
-	public void resetStateDuration() {
-		stateDuration = 0;
+	public void setValidator(StateValidator validator) {
+		this.validator = validator;
 	}
 	
-	public float getStateDuration() {
-		return stateDuration;
+	public void resetValidator() {
+		setValidator(BasicValidator.getInstance());
+	}
+	
+	public StateValidator getValidator() {
+		return validator;
 	}
 	
 	public Npc getOwner() {
