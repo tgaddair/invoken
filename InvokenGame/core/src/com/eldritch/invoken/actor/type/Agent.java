@@ -434,11 +434,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     }
     
     public void applyForce(Vector2 force) {
-        velocity.add(force);
-    }
-
-    public void addVelocity(float x, float y) {
-        velocity.add(x, y);
+    	body.applyForceToCenter(force, true);
     }
 
     public void setVelocity(float x, float y) {
