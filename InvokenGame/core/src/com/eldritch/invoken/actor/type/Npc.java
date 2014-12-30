@@ -43,8 +43,6 @@ import com.eldritch.invoken.actor.ai.NpcState;
 import com.eldritch.invoken.actor.ai.NpcStateMachine;
 import com.eldritch.invoken.actor.ai.PatrolRoutine;
 import com.eldritch.invoken.actor.ai.Routine;
-import com.eldritch.invoken.actor.ai.StateValidator;
-import com.eldritch.invoken.actor.ai.StateValidator.BasicValidator;
 import com.eldritch.invoken.actor.pathfinding.Pathfinder;
 import com.eldritch.invoken.encounter.Location;
 import com.eldritch.invoken.proto.Actors.ActorParams.Species;
@@ -189,7 +187,7 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
 	}
 	
 	public boolean isThreatened() {
-		return false;
+		return hasEnemies() || !detected.isEmpty();
 	}
 	
 	public boolean isSafe() {
@@ -276,11 +274,6 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
 	        detected.add(other);
 	    }
 	}
-	
-	@Override
-	public boolean inCombat() {
-        return super.inCombat() || !detected.isEmpty();
-    }
 	
 	public boolean canTarget(Agent other, Location location) {
         // within distance constraint

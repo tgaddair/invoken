@@ -65,10 +65,6 @@ public abstract class Agent extends CollisionEntity {
         Explore, Combat, Cast, Thrust, Swipe, Death
     }
 
-    public enum Hostility {
-        Defensive, Assault
-    }
-
     final AgentInfo info;
     State state = State.Moving;
     Activity activity = Activity.Explore;
@@ -85,9 +81,7 @@ public abstract class Agent extends CollisionEntity {
     private final List<Agent> followers = new ArrayList<Agent>();
 
     // hostilities: agents with negative reaction who have attacked us
-    Hostility hostility = Hostility.Defensive;
-    private final Set<Agent> hostilities = new HashSet<Agent>();
-    private final Set<Agent> assaulters = new HashSet<Agent>();
+    private final Set<Agent> enemies = new HashSet<Agent>();  // convenience collection for fast lookups
     private final Map<Agent, Float> relations = new HashMap<Agent, Float>();
 
     private int confused = 0;
@@ -135,15 +129,20 @@ public abstract class Agent extends CollisionEntity {
 		Body body = world.createBody(characterBodyDef);
 
 		FixtureDef charFixtureDef = new FixtureDef();
-		charFixtureDef.density = 1;
+		charFixtureDef.density = getDensity();
 		charFixtureDef.shape = circleShape;
 		charFixtureDef.filter.groupIndex = 0;
 		body.createFixture(charFixtureDef);
 		
 		body.setLinearDamping(DAMPING);
+		body.setAngularDamping(10);
 
 		circleShape.dispose();
 		return body;
+	}
+	
+	public float getDensity() {
+		return 1;
 	}
 
     public void setRgb(float r, float g, float b) {
@@ -170,57 +169,33 @@ public abstract class Agent extends CollisionEntity {
         return followers;
     }
 
+    // TODO: let's handle the legal aspects of committing a crime later...
     public boolean assaultedBy(Agent other) {
-        return assaulters.contains(other);
+//        return assaulters.contains(other);
+    	return false;
     }
-
+    
     public boolean hostileTo(Agent other) {
-        return hostilities.contains(other);
+        return enemies.contains(other);
     }
 
     public Iterable<Agent> getEnemies() {
-        return hostilities;
+        return enemies;
     }
 
     public boolean hasEnemies() {
-        return !hostilities.isEmpty();
+        return !enemies.isEmpty();
     }
-
-    public boolean inCombat() {
-        return hasEnemies();
-    }
-
-    public void addEnemy(Agent other, float magnitude) {
-        if (hostilities.contains(other)) {
-            // already hostile, so don't bother making it worse
-            return;
-        }
-        
-        if (other.assaultedBy(this)) {
-            // we previously assaulted them, so add them as an enemy, but don't adjust our relation
-            hostilities.add(other);
-        } else {
-            float modifier = -magnitude;
-            if (!hostilities.isEmpty()) {
-                // friendly fire is inevitable once bullets start flying, so relax the penalty
-                modifier *= 0.1f;
-            }
-
-            // lower our disposition
-            // System.out.println(String.format("relation (%s -> %s) : %f, mod=%f",
-            // getInfo().getName(), other.getInfo().getName(), getRelation(other), modifier));
-            float relation = changeRelation(other, modifier);
-            if (Behavior.isEnemyGiven(relation)) {
-                // unfriendly, so mark them as an enemy
-                hostilities.add(other);
-                if (hostility == Hostility.Defensive) {
-                    // they attacked us, mark them as an assaulter
-                    other.hostility = Hostility.Assault;
-                    assaulters.add(other);
-                    
-                    // assault carriers a severe penalty for ranking factions
-                    changeFactionRelations(other, ASSAULT_PENALTY);
-                }
+    
+    public void addHostility(Agent source, float magnitude) {
+    	float relation = changeRelation(source, -magnitude);
+    	if (Behavior.isEnemyGiven(relation)) {
+            // unfriendly, so mark them as an enemy
+            enemies.add(source);
+            if (assaultedBy(source)) {
+                // they attacked us, mark them as an assaulter
+                // assault carriers a severe penalty for ranking factions
+                changeFactionRelations(source, ASSAULT_PENALTY);
             }
         }
     }
@@ -235,7 +210,7 @@ public abstract class Agent extends CollisionEntity {
 
     public float damage(Agent source, float value) {
         if (isAlive()) {
-            addEnemy(source, value);
+            addHostility(source, value);
         }
         return damage(value);
     }
@@ -314,7 +289,7 @@ public abstract class Agent extends CollisionEntity {
 
     public void setParalyzed(Agent source, boolean paralyzed) {
         if (paralyzed) {
-            addEnemy(source, 10);
+            addHostility(source, 10);
             this.paralyzed++;
         } else {
             this.paralyzed--;
@@ -573,7 +548,7 @@ public abstract class Agent extends CollisionEntity {
 
     protected void onDeath() {
         followers.clear();
-        hostilities.clear();
+        enemies.clear();
         actions.clear();
         action = null;
         target = null;
@@ -689,7 +664,7 @@ public abstract class Agent extends CollisionEntity {
         }
 
         // update enemies
-        Iterator<Agent> enemyIterator = hostilities.iterator();
+        Iterator<Agent> enemyIterator = enemies.iterator();
         while (enemyIterator.hasNext()) {
             Agent enemy = enemyIterator.next();
             if (!enemy.isAlive()) {
@@ -713,10 +688,8 @@ public abstract class Agent extends CollisionEntity {
         // clamp the velocity to 0 if it's < 1, and set the state to
         // standing
         if (Math.abs(velocity.x) < .01 && Math.abs(velocity.y) < .01) {
-            velocity.x = 0;
-            velocity.y = 0;
             state = State.Standing;
-        } else if (Math.abs(velocity.x) > 1 || Math.abs(velocity.y) > 1) {
+        } else if (Math.abs(velocity.x) > .01 || Math.abs(velocity.y) > .01) {
         	// only update direction if we are going pretty fast
             if (target == null || target == this) {
                 // update the current animation based on the maximal velocity

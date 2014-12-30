@@ -575,7 +575,7 @@ public class Location {
             if (activeTiles.contains(other.getCellPosition())) {
                 activeEntities.add(other);
                 drawableEntities.add(other);
-            } else if (other.inCombat() && player.isNear(other)) {
+            } else if (other.hasEnemies() && player.isNear(other)) {
                 activeEntities.add(other);
             } else if (other == player) {
             	activeEntities.add(other);

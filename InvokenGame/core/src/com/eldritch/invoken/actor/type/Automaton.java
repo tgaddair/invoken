@@ -18,6 +18,11 @@ public class Automaton extends Npc {
     }
     
     @Override
+    public float getDensity() {
+		return 2;
+	}
+    
+    @Override
     public float getMaxVelocity() {
         return MAX_VELOCITY;
     }
