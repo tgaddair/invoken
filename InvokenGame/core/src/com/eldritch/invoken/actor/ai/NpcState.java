@@ -18,6 +18,11 @@ public enum NpcState implements State<Npc> {
 				entity.getStateMachine().changeState(COMBAT);
 			}
 		}
+		
+		@Override
+		public void exit(Npc entity) {
+			entity.getWander().setEnabled(false);
+		}
 	},
 	
 	COMBAT() {
@@ -34,6 +39,13 @@ public enum NpcState implements State<Npc> {
 			if (entity.isSafe()) {
 				entity.getStateMachine().changeState(PATROL);
 			}
+		}
+		
+		@Override
+		public void exit(Npc entity) {
+			entity.getHide().setEnabled(false);
+			entity.getPursue().setEnabled(false);
+			entity.getEvade().setEnabled(false);
 		}
 	};
 	

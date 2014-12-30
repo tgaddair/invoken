@@ -77,6 +77,7 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
 	
 	// AI controllers
 	private final NpcStateMachine stateMachine;
+	private boolean canAttack = true;
 	
 	private final Map<Class<? extends SteeringBehavior<?>>, SteeringBehavior<Vector2>> behaviors = 
 			new LinkedHashMap<Class<? extends SteeringBehavior<?>>, SteeringBehavior<Vector2>>();
@@ -198,6 +199,14 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
 	
 	public NpcStateMachine getStateMachine() {
 		return stateMachine;
+	}
+	
+	public void setCanAttack(boolean attack) {
+		canAttack = attack;
+	}
+	
+	public boolean canAttack() {
+		return canAttack;
 	}
 	
 	public Hide<Vector2> getHide() {

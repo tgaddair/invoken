@@ -40,6 +40,9 @@ public enum CombatState implements State<Npc> {
 	            entity.getPursue().setEnabled(true);
 	            entity.getEvade().setEnabled(false);
 	            entity.getHide().setEnabled(false);
+	        } else if (!entity.canAttack()) {
+	        	entity.getPursue().setEnabled(false);
+	            entity.getEvade().setEnabled(true);
 	        } else {
 	        	entity.getPursue().setEnabled(shouldPursue(entity, target));
 	        	entity.getEvade().setEnabled(shouldFlee(entity, target));
@@ -81,6 +84,10 @@ public enum CombatState implements State<Npc> {
 	            // if an aug was chosen, then go ahead and use it
 	            if (chosen != null) {
 	                npc.getInfo().getAugmentations().use(chosen);
+	                npc.setCanAttack(true);
+	            } else {
+	            	// cannot use any aug, so we need to start evading
+	            	npc.setCanAttack(false);
 	            }
 	        }
 		}
