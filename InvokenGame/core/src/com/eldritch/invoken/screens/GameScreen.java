@@ -3,6 +3,7 @@ package com.eldritch.invoken.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.ai.fsm.State;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -14,9 +15,8 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.activators.Activator;
-import com.eldritch.invoken.actor.Profession;
-import com.eldritch.invoken.actor.items.Item;
 import com.eldritch.invoken.actor.type.Agent;
+import com.eldritch.invoken.actor.type.Npc;
 import com.eldritch.invoken.actor.type.Player;
 import com.eldritch.invoken.encounter.Location;
 import com.eldritch.invoken.encounter.proc.LocationGenerator;
@@ -139,7 +139,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 		batch.end();
 		
 		// draw stats
-//		drawStats();
+		drawStats();
 		
 		// render the HUD
 		stage.act(delta);
@@ -166,9 +166,20 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 	}
 	
 	private void drawStats() {
-		for (Agent actor : location.getActors()) {
-			if (actor == player.getTarget() || actor == player) {
-				drawStats(actor);
+//		for (Agent actor : location.getActors()) {
+//			if (actor == player.getTarget() || actor == player) {
+//				drawStats(actor);
+//			}
+//		}
+		
+		if (player.getTarget() != null) {
+			if (player.getTarget() instanceof Npc) {
+				Npc npc = (Npc) player.getTarget();
+				State<Npc> state = npc.getStateMachine().getCurrentState();
+				
+				batch.begin();
+		        font.draw(batch, "State: " + state, 10, getHeight() - 30);
+		        batch.end();
 			}
 		}
 	}

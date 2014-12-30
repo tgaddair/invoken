@@ -33,14 +33,17 @@ public enum CombatState implements State<Npc> {
 	        }
 	        
 	        // enable/disable movement behaviors
+	        entity.getHide().setTarget(target);
 	        entity.getPursue().setTarget(target);
 	        entity.getEvade().setTarget(target);
 	        if (entity.getInventory().hasMeleeWeapon()) {
 	            entity.getPursue().setEnabled(true);
 	            entity.getEvade().setEnabled(false);
+	            entity.getHide().setEnabled(false);
 	        } else {
 	        	entity.getPursue().setEnabled(shouldPursue(entity, target));
 	        	entity.getEvade().setEnabled(shouldFlee(entity, target));
+//	        	entity.getHide().setEnabled(true);
 	        }
 	        
 	        // attack
@@ -49,6 +52,7 @@ public enum CombatState implements State<Npc> {
 		
 		@Override
 		public void exit(Npc entity) {
+			entity.getHide().setEnabled(false);
 			entity.getPursue().setEnabled(false);
 			entity.getEvade().setEnabled(false);
 		}
