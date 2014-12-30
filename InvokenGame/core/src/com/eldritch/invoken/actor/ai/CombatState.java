@@ -33,18 +33,24 @@ public enum CombatState implements State<Npc> {
 	        }
 	        
 	        // enable/disable movement behaviors
-	        entity.getSeek().setTarget(target);
-	        entity.getFlee().setTarget(target);
+	        entity.getPursue().setTarget(target);
+	        entity.getEvade().setTarget(target);
 	        if (entity.getInventory().hasMeleeWeapon()) {
-	            entity.getSeek().setEnabled(true);
-	            entity.getFlee().setEnabled(false);
+	            entity.getPursue().setEnabled(true);
+	            entity.getEvade().setEnabled(false);
 	        } else {
-	        	entity.getSeek().setEnabled(shouldPursue(entity, target));
-	        	entity.getFlee().setEnabled(shouldFlee(entity, target));
+	        	entity.getPursue().setEnabled(shouldPursue(entity, target));
+	        	entity.getEvade().setEnabled(shouldFlee(entity, target));
 	        }
 	        
 	        // attack
 	        attack(entity, target);
+		}
+		
+		@Override
+		public void exit(Npc entity) {
+			entity.getPursue().setEnabled(false);
+			entity.getEvade().setEnabled(false);
 		}
 		
 		private void attack(Npc npc, Agent target) {
@@ -73,12 +79,6 @@ public enum CombatState implements State<Npc> {
 	                npc.getInfo().getAugmentations().use(chosen);
 	            }
 	        }
-		}
-		
-		@Override
-		public void exit(Npc entity) {
-			entity.getSeek().setEnabled(false);
-			entity.getFlee().setEnabled(false);
 		}
 		
 		private List<Agent> fillTargets(Npc entity) {

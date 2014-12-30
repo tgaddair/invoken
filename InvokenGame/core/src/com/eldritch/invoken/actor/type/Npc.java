@@ -14,8 +14,11 @@ import com.badlogic.gdx.ai.steer.Proximity;
 import com.badlogic.gdx.ai.steer.Steerable;
 import com.badlogic.gdx.ai.steer.SteeringBehavior;
 import com.badlogic.gdx.ai.steer.behaviors.CollisionAvoidance;
+import com.badlogic.gdx.ai.steer.behaviors.Evade;
 import com.badlogic.gdx.ai.steer.behaviors.Flee;
+import com.badlogic.gdx.ai.steer.behaviors.Hide;
 import com.badlogic.gdx.ai.steer.behaviors.PrioritySteering;
+import com.badlogic.gdx.ai.steer.behaviors.Pursue;
 import com.badlogic.gdx.ai.steer.behaviors.RaycastObstacleAvoidance;
 import com.badlogic.gdx.ai.steer.behaviors.Seek;
 import com.badlogic.gdx.ai.steer.behaviors.Wander;
@@ -80,6 +83,9 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
 	RayConfigurationBase<Vector2> rayConfiguration;
 	
 	// behaviors that need to be updated periodically
+	private final Hide<Vector2> hide;
+	private final Evade<Vector2> evade;
+	private final Pursue<Vector2> pursue;
 	private final Flee<Vector2> flee;
 	private final Seek<Vector2> seek;
 	private final Wander<Vector2> wander;
@@ -145,6 +151,9 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
 			}
 		};
 		CollisionAvoidance<Vector2> collisionAvoidance = new CollisionAvoidance<Vector2>(this, proximity);
+		hide = new Hide<Vector2>(this);
+		evade = new Evade<Vector2>(this, location.getPlayer());
+		pursue = new Pursue<Vector2>(this, location.getPlayer());
 		flee = new Flee<Vector2>(this);
 		seek = new Seek<Vector2>(this);
 		wander = new Wander<Vector2>(this)
@@ -159,6 +168,9 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
 				.setWanderRate(MathUtils.PI / 5);
 		
 		// initially disable our states
+		hide.setEnabled(false);
+		evade.setEnabled(false);
+		pursue.setEnabled(false);
 		flee.setEnabled(false);
 		seek.setEnabled(false);
 		
@@ -166,6 +178,9 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
 		PrioritySteering<Vector2> prioritySteering = new PrioritySteering<Vector2>(this)
 				.add(obstacleAvoidance)
 //				.add(collisionAvoidance)
+				.add(hide)
+				.add(evade)
+				.add(pursue)
 				.add(flee)
 				.add(seek)
 				.add(wander);
@@ -183,6 +198,18 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
 	
 	public NpcStateMachine getStateMachine() {
 		return stateMachine;
+	}
+	
+	public Hide<Vector2> getHide() {
+		return hide;
+	}
+	
+	public Evade<Vector2> getEvade() {
+		return evade;
+	}
+	
+	public Pursue<Vector2> getPursue() {
+		return pursue;
 	}
 	
 	public Flee<Vector2> getFlee() {
