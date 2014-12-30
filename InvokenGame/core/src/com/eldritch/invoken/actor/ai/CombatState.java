@@ -6,8 +6,10 @@ import java.util.List;
 
 import com.badlogic.gdx.ai.fsm.State;
 import com.badlogic.gdx.ai.msg.Telegram;
+import com.eldritch.invoken.actor.aug.Augmentation;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Npc;
+import com.eldritch.invoken.encounter.Location;
 
 public enum CombatState implements State<Npc> {
 	ATTACK() {
@@ -15,7 +17,6 @@ public enum CombatState implements State<Npc> {
 		
 		@Override
 		public void enter(Npc entity) {
-			entity.getSeek().setEnabled(true);
 		}
 
 		@Override
@@ -41,11 +42,43 @@ public enum CombatState implements State<Npc> {
 	        	entity.getSeek().setEnabled(shouldPursue(entity, target));
 	        	entity.getFlee().setEnabled(shouldFlee(entity, target));
 	        }
+	        
+	        // attack
+	        attack(entity, target);
+		}
+		
+		private void attack(Npc npc, Agent target) {
+			Location location = npc.getLocation();
+			if (!npc.canTarget(target, location)) {
+	            // can't attack invalid targets
+	            return;
+	        }
+			
+			if (!npc.hasPendingAction() && !npc.actionInProgress()) {
+	            // choose the aug with the highest situational quality score
+	            Augmentation chosen = null;
+	            float bestQuality = 0; // never choose an aug with quality <= 0
+	            for (Augmentation aug : npc.getInfo().getAugmentations().getAugmentations()) {
+	                if (aug.hasEnergy(npc) && aug.isValid(npc, npc.getTarget())) {
+	                    float quality = aug.quality(npc, npc.getTarget(), location);
+	                    if (quality > bestQuality) {
+	                        chosen = aug;
+	                        bestQuality = quality;
+	                    }
+	                }
+	            }
+
+	            // if an aug was chosen, then go ahead and use it
+	            if (chosen != null) {
+	                npc.getInfo().getAugmentations().use(chosen);
+	            }
+	        }
 		}
 		
 		@Override
 		public void exit(Npc entity) {
 			entity.getSeek().setEnabled(false);
+			entity.getFlee().setEnabled(false);
 		}
 		
 		private List<Agent> fillTargets(Npc entity) {

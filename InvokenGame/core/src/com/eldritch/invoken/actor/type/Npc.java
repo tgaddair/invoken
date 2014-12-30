@@ -68,6 +68,7 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
 	private final Set<Agent> detected = new HashSet<Agent>();
 	
 	// used in AI routine calculations to determine things like the target
+	private final Location location;
 	private final List<Agent> neighbors = new ArrayList<Agent>();
 	private Routine routine;
 	
@@ -89,6 +90,7 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
 		this.data = data;
 		scenario = Optional.absent();
 		behavior = new Behavior(this, data);
+		this.location = location;
 		
 		// equip items
 		for (ItemState item : info.getInventory().getItems()) {
@@ -143,8 +145,8 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
 			}
 		};
 		CollisionAvoidance<Vector2> collisionAvoidance = new CollisionAvoidance<Vector2>(this, proximity);
-		flee = new Flee<Vector2>(this, location.getPlayer());
-		seek = new Seek<Vector2>(this, location.getPlayer());
+		flee = new Flee<Vector2>(this);
+		seek = new Seek<Vector2>(this);
 		wander = new Wander<Vector2>(this)
 				// Don't use Face internally because independent facing is off
 				.setFaceEnabled(false) //
@@ -201,6 +203,10 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
 	
 	public boolean isSafe() {
 		return !isThreatened();
+	}
+	
+	public Location getLocation() {
+		return location;
 	}
 	
 	public void update(float delta) {
