@@ -12,7 +12,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.eldritch.invoken.actor.Profession;
 import com.eldritch.invoken.proto.Actors.ActorParams;
 
-public abstract class SteeringAgent extends Agent implements Steerable<Vector2> {
+public abstract class SteeringAgent extends Agent {
 	protected static final SteeringAcceleration<Vector2> steeringOutput = 
 	        new SteeringAcceleration<Vector2>(new Vector2());
 	

@@ -14,6 +14,7 @@ import com.badlogic.gdx.ai.steer.Proximity;
 import com.badlogic.gdx.ai.steer.Steerable;
 import com.badlogic.gdx.ai.steer.SteeringBehavior;
 import com.badlogic.gdx.ai.steer.behaviors.CollisionAvoidance;
+import com.badlogic.gdx.ai.steer.behaviors.Flee;
 import com.badlogic.gdx.ai.steer.behaviors.PrioritySteering;
 import com.badlogic.gdx.ai.steer.behaviors.RaycastObstacleAvoidance;
 import com.badlogic.gdx.ai.steer.behaviors.Seek;
@@ -78,6 +79,7 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
 	RayConfigurationBase<Vector2> rayConfiguration;
 	
 	// behaviors that need to be updated periodically
+	private final Flee<Vector2> flee;
 	private final Seek<Vector2> seek;
 	private final Wander<Vector2> wander;
 	
@@ -141,6 +143,7 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
 			}
 		};
 		CollisionAvoidance<Vector2> collisionAvoidance = new CollisionAvoidance<Vector2>(this, proximity);
+		flee = new Flee<Vector2>(this, location.getPlayer());
 		seek = new Seek<Vector2>(this, location.getPlayer());
 		wander = new Wander<Vector2>(this)
 				// Don't use Face internally because independent facing is off
@@ -154,12 +157,14 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
 				.setWanderRate(MathUtils.PI / 5);
 		
 		// initially disable our states
+		flee.setEnabled(false);
 		seek.setEnabled(false);
 		
 		// order in descending priority
 		PrioritySteering<Vector2> prioritySteering = new PrioritySteering<Vector2>(this)
 				.add(obstacleAvoidance)
 //				.add(collisionAvoidance)
+				.add(flee)
 				.add(seek)
 				.add(wander);
 		setBehavior(prioritySteering);
@@ -176,6 +181,10 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
 	
 	public NpcStateMachine getStateMachine() {
 		return stateMachine;
+	}
+	
+	public Flee<Vector2> getFlee() {
+		return flee;
 	}
 	
 	public Seek<Vector2> getSeek() {

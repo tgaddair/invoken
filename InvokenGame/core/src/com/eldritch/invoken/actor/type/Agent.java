@@ -10,6 +10,7 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 
+import com.badlogic.gdx.ai.steer.Steerable;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Animation;
@@ -43,7 +44,7 @@ import com.eldritch.invoken.encounter.NaturalVector2;
 import com.eldritch.invoken.proto.Actors.ActorParams;
 import com.eldritch.invoken.ui.MultiTextureRegionDrawable;
 
-public abstract class Agent extends CollisionEntity {
+public abstract class Agent extends CollisionEntity implements Steerable<Vector2> {
     public static final int MAX_DST2 = 175;
     public static final int ASSAULT_PENALTY = -50;
 
