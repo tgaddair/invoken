@@ -536,16 +536,8 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
             takeAction(delta, screen);
         }
     }
-
-    public float getRelation(Agent agent) {
-        if (!relations.containsKey(agent)) {
-            relations.put(agent, info.getDisposition(agent));
-        }
-        return relations.get(agent);
-    }
     
     public boolean assaultedBy(Agent other) {
-    	System.out.println("assaulted by: " + assaulters.contains(other));
         return assaulters.contains(other);
     }
     
@@ -564,7 +556,6 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     public void addHostility(Agent source, float magnitude) {
     	if (!hasEnemies()) {
     		// we're not in combat with anyone, so this is considered assault
-    		System.out.println("assault: " + source);
     		assaulters.add(source);
     	}
     	
@@ -582,6 +573,13 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         return getRelation(target);
     }
     
+    public float getRelation(Agent agent) {
+        if (!relations.containsKey(agent)) {
+            setRelation(agent, info.getDisposition(agent));
+        }
+        return relations.get(agent);
+    }
+    
     public void changeFactionStatus(Faction faction, float delta) {
         info.getFactionManager().modifyReputationFor(faction, delta);
     }
@@ -590,11 +588,13 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         if (relations.containsKey(agent)) {
             // only update the disposition if it was previously calculated
         	float relation = info.getDisposition(agent);
-            relations.put(agent, relation);
-            
-            // recalculate enemies list
-            updateReaction(agent, relation);
+        	setRelation(agent, relation);
         }
+    }
+    
+    private void setRelation(Agent agent, float relation) {
+    	relations.put(agent, relation);
+        updateReaction(agent, relation);
     }
     
     private void updateReaction(Agent agent, float relation) {

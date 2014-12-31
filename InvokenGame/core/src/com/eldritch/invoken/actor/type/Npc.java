@@ -229,6 +229,11 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
             }
 		}
 		
+		// update relations
+		for (Agent neighbor : getNeighbors()) {
+			getRelation(neighbor);
+		}
+		
 		// update steering
 		update(delta);
 	}

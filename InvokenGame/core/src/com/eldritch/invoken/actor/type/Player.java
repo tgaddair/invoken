@@ -11,6 +11,9 @@ import com.eldritch.invoken.encounter.Location;
 
 /** The player character, has state and state time, */
 public class Player extends SteeringAgent {
+	// debug
+	private final boolean GOD_MODE = true;
+	
 	private final GameCamera PLAYER_CAMERA = new PlayerCamera();
 	
     private final AgentMover mover;
@@ -135,6 +138,14 @@ public class Player extends SteeringAgent {
     @Override
     public float getMaxVelocity() {
         return Human.MAX_VELOCITY;
+    }
+    
+    @Override
+    public float damage(float value) {
+    	if (GOD_MODE) {
+    		return 0;
+    	}
+		return super.damage(value);
     }
 
     private boolean isTouched(float startX, float endX) {
