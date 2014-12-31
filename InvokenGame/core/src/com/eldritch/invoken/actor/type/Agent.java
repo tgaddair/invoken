@@ -46,7 +46,7 @@ import com.eldritch.invoken.ui.MultiTextureRegionDrawable;
 
 public abstract class Agent extends CollisionEntity implements Steerable<Vector2> {
     public static final int MAX_DST2 = 175;
-    public static final int ASSAULT_PENALTY = -50;
+    public static final int ASSAULT_PENALTY = -10;
 
     static AssetManager assetManager = new AssetManager();
     static float DAMPING = 5f;
@@ -82,6 +82,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     private final List<Agent> followers = new ArrayList<Agent>();
 
     // hostilities: agents with negative reaction who have attacked us
+    private final Set<Agent> assaulters = new HashSet<Agent>();  // assaulters attack those who have no enemies
     private final Set<Agent> enemies = new HashSet<Agent>();  // convenience collection for fast lookups
     private final Map<Agent, Float> relations = new HashMap<Agent, Float>();
 
@@ -168,37 +169,6 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
 
     public List<Agent> getFollowers() {
         return followers;
-    }
-
-    // TODO: let's handle the legal aspects of committing a crime later...
-    public boolean assaultedBy(Agent other) {
-//        return assaulters.contains(other);
-    	return false;
-    }
-    
-    public boolean hostileTo(Agent other) {
-        return enemies.contains(other);
-    }
-
-    public Iterable<Agent> getEnemies() {
-        return enemies;
-    }
-
-    public boolean hasEnemies() {
-        return !enemies.isEmpty();
-    }
-    
-    public void addHostility(Agent source, float magnitude) {
-    	float relation = changeRelation(source, -magnitude);
-    	if (Behavior.isEnemyGiven(relation)) {
-            // unfriendly, so mark them as an enemy
-            enemies.add(source);
-            if (assaultedBy(source)) {
-                // they attacked us, mark them as an assaulter
-                // assault carriers a severe penalty for ranking factions
-                changeFactionRelations(source, ASSAULT_PENALTY);
-            }
-        }
     }
 
     public boolean isAlive() {
@@ -573,7 +543,34 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         }
         return relations.get(agent);
     }
+    
+    public boolean assaultedBy(Agent other) {
+    	System.out.println("assaulted by: " + assaulters.contains(other));
+        return assaulters.contains(other);
+    }
+    
+    public boolean hostileTo(Agent other) {
+        return enemies.contains(other);
+    }
 
+    public Iterable<Agent> getEnemies() {
+        return enemies;
+    }
+
+    public boolean hasEnemies() {
+        return !enemies.isEmpty();
+    }
+    
+    public void addHostility(Agent source, float magnitude) {
+    	if (!hasEnemies()) {
+    		// we're not in combat with anyone, so this is considered assault
+    		System.out.println("assault: " + source);
+    		assaulters.add(source);
+    	}
+    	
+    	changeRelation(source, -magnitude);
+    }
+    
     public float changeRelation(Agent target, float delta) {
         info.changePersonalRelation(target, delta);
         updateDisposition(target);
@@ -592,8 +589,25 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     public void updateDisposition(Agent agent) {
         if (relations.containsKey(agent)) {
             // only update the disposition if it was previously calculated
-            relations.put(agent, info.getDisposition(agent));
+        	float relation = info.getDisposition(agent);
+            relations.put(agent, relation);
+            
+            // recalculate enemies list
+            updateReaction(agent, relation);
         }
+    }
+    
+    private void updateReaction(Agent agent, float relation) {
+    	if (!enemies.contains(agent) && Behavior.isEnemyGiven(relation)) {
+            // unfriendly, so mark them as an enemy
+            enemies.add(agent);
+            
+            if (assaultedBy(agent)) {
+                // they attacked us, mark them as an assaulter
+                // assault carriers a severe penalty for ranking factions
+                changeFactionRelations(agent, ASSAULT_PENALTY);
+        	}
+    	}
     }
     
     @Override

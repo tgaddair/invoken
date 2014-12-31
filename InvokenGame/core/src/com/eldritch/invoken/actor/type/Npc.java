@@ -10,10 +10,7 @@ import java.util.Set;
 
 import com.badlogic.gdx.ai.msg.Telegram;
 import com.badlogic.gdx.ai.msg.Telegraph;
-import com.badlogic.gdx.ai.steer.Proximity;
-import com.badlogic.gdx.ai.steer.Steerable;
 import com.badlogic.gdx.ai.steer.SteeringBehavior;
-import com.badlogic.gdx.ai.steer.behaviors.CollisionAvoidance;
 import com.badlogic.gdx.ai.steer.behaviors.Evade;
 import com.badlogic.gdx.ai.steer.behaviors.Flee;
 import com.badlogic.gdx.ai.steer.behaviors.Hide;
@@ -125,33 +122,6 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
 				rayConfiguration,
 				new Box2dRaycastCollisionDetector(location.getWorld()),
 				1);
-		Proximity<Vector2> proximity = new Proximity<Vector2>() {
-			private Steerable<Vector2> owner = Npc.this;
-			
-			@Override
-			public Steerable<Vector2> getOwner() {
-				return owner;
-			}
-
-			@Override
-			public void setOwner(Steerable<Vector2> owner) {
-				this.owner = owner;
-			}
-
-			@Override
-			public int findNeighbors(
-					com.badlogic.gdx.ai.steer.Proximity.ProximityCallback<Vector2> callback) {
-				int count = 0;
-				for (Agent neighbor : getNeighbors()) {
-					if (neighbor instanceof SteeringAgent) {
-						callback.reportNeighbor((SteeringAgent) neighbor);
-						count++;
-					}
-				}
-				return count;
-			}
-		};
-		CollisionAvoidance<Vector2> collisionAvoidance = new CollisionAvoidance<Vector2>(this, proximity);
 		hide = new Hide<Vector2>(this);
 		evade = new Evade<Vector2>(this, location.getPlayer());
 		pursue = new Pursue<Vector2>(this, location.getPlayer());
@@ -245,17 +215,6 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
 		return location;
 	}
 	
-	public void update(float delta) {
-		stateMachine.update(delta);
-		if (steeringBehavior != null) {
-	        // Calculate steering acceleration
-	        steeringBehavior.calculateSteering(steeringOutput);
-	
-	        // Apply steering acceleration to move this agent
-	        applySteering(steeringOutput, delta);
-	    }
-	}
-	
 	@Override
 	protected void takeAction(float delta, Location screen) {
 		// update neighbors
@@ -270,28 +229,19 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
             }
 		}
 		
-		// update routine
-//		if (routine.isFinished()) {
-//			for (Routine r : routines) {
-//				if (r.isValid()) {
-//					setRoutine(r);
-//					break;
-//				}
-//			}
-//		} else {
-//			for (Routine r : routines) {
-//				if (r.canInterrupt() && r.isValid()) {
-//					if (r != routine) {
-//						setRoutine(r);
-//					}
-//					break;
-//				}
-//			}
-//		}
-//		routine.takeAction(delta, screen);
-		
 		// update steering
 		update(delta);
+	}
+	
+	public void update(float delta) {
+		stateMachine.update(delta);
+		if (steeringBehavior != null) {
+	        // Calculate steering acceleration
+	        steeringBehavior.calculateSteering(steeringOutput);
+	
+	        // Apply steering acceleration to move this agent
+	        applySteering(steeringOutput, delta);
+	    }
 	}
 	
 	public void render(OrthographicCamera camera) {
