@@ -10,7 +10,10 @@ import java.util.Set;
 
 import com.badlogic.gdx.ai.msg.Telegram;
 import com.badlogic.gdx.ai.msg.Telegraph;
+import com.badlogic.gdx.ai.steer.Proximity;
+import com.badlogic.gdx.ai.steer.Steerable;
 import com.badlogic.gdx.ai.steer.SteeringBehavior;
+import com.badlogic.gdx.ai.steer.behaviors.Cohesion;
 import com.badlogic.gdx.ai.steer.behaviors.Evade;
 import com.badlogic.gdx.ai.steer.behaviors.Flee;
 import com.badlogic.gdx.ai.steer.behaviors.Hide;
@@ -30,6 +33,8 @@ import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Fixture;
+import com.badlogic.gdx.physics.box2d.RayCastCallback;
 import com.badlogic.gdx.utils.Array;
 import com.eldritch.invoken.actor.Inventory.ItemState;
 import com.eldritch.invoken.actor.ai.AdaptiveRayWithWhiskersConfiguration;
@@ -70,6 +75,7 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
 	// used in AI routine calculations to determine things like the target
 	private final Location location;
 	private final List<Agent> neighbors = new ArrayList<Agent>();
+	private final Set<Agent> squad = new HashSet<Agent>();
 	private Routine routine;
 	
 	// AI controllers
@@ -122,6 +128,39 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
 				rayConfiguration,
 				new Box2dRaycastCollisionDetector(location.getWorld()),
 				1);
+		
+		// ally proximity
+		// TODO: move this to Location, have a set of "squads" managed at a higher level with a shared proximity instance
+//		Proximity<Vector2> proximity = new Proximity<Vector2>() {
+//			private Steerable<Vector2> owner = Npc.this;
+//			
+//			@Override
+//			public Steerable<Vector2> getOwner() {
+//				return owner;
+//			}
+//
+//			@Override
+//			public void setOwner(Steerable<Vector2> owner) {
+//				this.owner = owner;
+//			}
+//
+//			@Override
+//			public int findNeighbors(
+//					com.badlogic.gdx.ai.steer.Proximity.ProximityCallback<Vector2> callback) {
+//				int count = 0;
+//				for (Agent neighbor : Npc.this.getNeighbors()) {
+//					if (neighbor.dst2(Npc.this) < 5) {
+//						if (Behavior.isAllyGiven(getRelation(neighbor))) {
+//							callback.reportNeighbor(neighbor);
+//						}
+//					}
+//				}
+//				return count;
+//			}
+//			
+//		};
+//		Cohesion<Vector2> cohesion = new Cohesion<Vector2>(this, proximity);
+		
 		hide = new Hide<Vector2>(this);
 		evade = new Evade<Vector2>(this, location.getPlayer());
 		pursue = new Pursue<Vector2>(this, location.getPlayer());
@@ -148,7 +187,7 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
 		// order in descending priority
 		PrioritySteering<Vector2> prioritySteering = new PrioritySteering<Vector2>(this)
 				.add(obstacleAvoidance)
-//				.add(collisionAvoidance)
+//				.add(cohesion)
 				.add(hide)
 				.add(evade)
 				.add(pursue)
@@ -296,27 +335,13 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
         if (detected.contains(other)) {
             return true;
         }
-
-        // view obstruction: intersect character-character segment with collision tiles
-        int startX = (int) Math.floor(Math.min(position.x, other.position.x));
-        int startY = (int) Math.floor(Math.min(position.y, other.position.y));
-        int endX = (int) Math.ceil(Math.max(position.x, other.position.x));
-        int endY = (int) Math.ceil(Math.max(position.y, other.position.y));
-        Array<Rectangle> tiles = location.getTiles(startX, startY, endX, endY);
-        Vector2 tmp = new Vector2();
-        for (Rectangle tile : tiles) {
-            float r = Math.max(tile.width, tile.height);
-            if (Intersector
-                    .intersectSegmentCircle(position, other.position, tile.getCenter(tmp), r)) {
-                return false;
-            }
-        }
-
-        return true;
+        
+        // has line of sight
+        return hasLineOfSight(other);
     }
 	
 	public boolean inFieldOfView(Agent other) {
-	 // field of view: compute angle between character-character and forward vectors
+		// field of view: compute angle between character-character and forward vectors
         Vector2 a = getForwardVector();
         Vector2 b = other.position.cpy().sub(position).nor();
         double theta = Math.atan2(a.x * b.y - a.y * b.x, a.x * b.x + a.y * b.y);

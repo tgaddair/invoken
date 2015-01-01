@@ -22,7 +22,9 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.CircleShape;
+import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.badlogic.gdx.physics.box2d.RayCastCallback;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
@@ -51,6 +53,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     static AssetManager assetManager = new AssetManager();
     static float DAMPING = 5f;
     
+    private final World world;
     protected final Body body;
     private final float radius;
 
@@ -93,6 +96,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     private Npc interactor;
     private final Set<Class<?>> toggles = new HashSet<Class<?>>();
     private final Set<ProjectileHandler> projectileHandlers = new HashSet<ProjectileHandler>();
+    private final LineOfSightHandler losHandler = new LineOfSightHandler();
 
     private final Color color = new Color(1, 1, 1, 1);
 
@@ -105,6 +109,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         // health, level, augmentations, etc.
         info = new AgentInfo(this, params);
         radius = Math.max(width, height) / 5;
+        this.world = world;
         body = createBody(x, y, width, height, world);
     }
 
@@ -117,6 +122,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         // health, level, augmentations, etc.
         info = new AgentInfo(this, profession, level);
         radius = Math.max(width, height) / 5;
+        this.world = world;
         body = createBody(x, y, width, height, world);
     }
     
@@ -496,6 +502,12 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     public boolean isNear(Agent other) {
         return dst2(other) <= MAX_DST2;
     }
+    
+    public boolean hasLineOfSight(Agent other) {
+    	losHandler.reset(other);
+        world.rayCast(losHandler, position, other.position);
+        return losHandler.hasLineOfSight();
+    }
 
     public float getAttackScale(Agent other) {
         return info.getAccuracy() * getWeaponAccuracy() * (1.0f - other.getInfo().getDefense());
@@ -678,7 +690,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         Iterator<Agent> enemyIterator = enemies.iterator();
         while (enemyIterator.hasNext()) {
             Agent enemy = enemyIterator.next();
-            if (!enemy.isAlive()) {
+            if (!enemy.isAlive() || !canTarget(enemy, location)) {
                 enemyIterator.remove();
             }
         }
@@ -915,4 +927,39 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     protected abstract void takeAction(float delta, Location screen);
 
     protected abstract void handleInteract(Agent agent);
+	
+	private class LineOfSightHandler implements RayCastCallback {
+		private boolean lineOfSight = true;
+		private Agent target = null;
+		
+		public boolean hasLineOfSight() {
+			return lineOfSight;
+		}
+		
+		public void reset(Agent agent) {
+			lineOfSight = true;
+			target = agent;
+		}
+		
+		@Override
+		public float reportRayFixture(Fixture fixture, Vector2 point, Vector2 normal, float fraction) {
+			if (!targetFixture(fixture)) {
+				lineOfSight = false;
+			}
+			return fraction;
+		}
+		
+		private boolean targetFixture(Fixture fixture) {
+			if (target == null) {
+				return false;
+			}
+			
+			for (Fixture f : target.body.getFixtureList()) {
+				if (fixture == f) {
+					return true;
+				}
+			}
+			return false;
+		}
+	};
 }
