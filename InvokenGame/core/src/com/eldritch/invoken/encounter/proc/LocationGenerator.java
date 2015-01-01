@@ -168,7 +168,7 @@ public class LocationGenerator {
 
         // doors
         InvokenGame.log("Adding Doors");
-        furnitureGenerator.createDoors(base, trim, overlay, overlayTrim, collision, activators);
+//        furnitureGenerator.createDoors(base, trim, overlay, overlayTrim, collision, activators);
 
         // lights
         InvokenGame.log("Adding Lights");

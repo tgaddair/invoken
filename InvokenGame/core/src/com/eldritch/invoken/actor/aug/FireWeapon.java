@@ -81,8 +81,9 @@ public class FireWeapon extends ProjectileAugmentation {
         public void render(OrthogonalTiledMapRenderer renderer) {
             super.render(renderer);
 
+            // draw the muzzle flash
             TextureRegion frame = getAnimation().getKeyFrame(stateTime);
-            Vector2 position = owner.getPosition();
+            Vector2 position = owner.getRenderPosition();
 
             Batch batch = renderer.getSpriteBatch();
             batch.begin();

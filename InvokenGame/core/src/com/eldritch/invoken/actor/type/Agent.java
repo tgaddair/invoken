@@ -698,7 +698,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
 
         // clamp the velocity to 0 if it's < 1, and set the state to
         // standing
-        if (Math.abs(velocity.x) < .01 && Math.abs(velocity.y) < .01) {
+        if ((Math.abs(velocity.x) < .01 && Math.abs(velocity.y) < .01) || isParalyzed()) {
             state = State.Standing;
         } else if (Math.abs(velocity.x) > .01 || Math.abs(velocity.y) > .01) {
         	// only update direction if we are going pretty fast

@@ -60,7 +60,7 @@ import com.google.common.base.Optional;
 import com.google.common.primitives.Ints;
 
 public class Location {
-	public static boolean DEBUG_DRAW = true;
+	public static boolean DEBUG_DRAW = false;
 	
     public static final int PX = 32;
     public static final int MAX_WIDTH = 100;
