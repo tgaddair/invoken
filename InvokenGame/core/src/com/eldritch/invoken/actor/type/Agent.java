@@ -414,7 +414,12 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     }
     
     public void moveTo(Vector2 position) {
-    	body.setTransform(position, body.getAngle());
+    	Vector2 direction = position.cpy().sub(body.getPosition()).nor();
+    	applyForce(direction.scl(2500));
+    }
+    
+    public void stop() {
+    	body.setLinearVelocity(0, 0);
     }
 
     public void setVelocity(float x, float y) {

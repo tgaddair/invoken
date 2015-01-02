@@ -24,10 +24,15 @@ public class Jaunting extends BasicEffect {
 	@Override
 	protected void doApply() {
 		getTarget().moveTo(target);
-		finished = true;
 	}
 
 	@Override
 	protected void update(float delta) {
+		if (getStateTime() > 1) {
+			finished = true;
+		} else if (getTarget().getPosition().dst2(target) < 1) {
+			getTarget().stop();
+			finished = true;
+		}
 	}
 }
