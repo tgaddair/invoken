@@ -412,6 +412,10 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     public void applyForce(Vector2 force) {
     	body.applyForceToCenter(force, true);
     }
+    
+    public void moveTo(Vector2 position) {
+    	body.setTransform(position, body.getAngle());
+    }
 
     public void setVelocity(float x, float y) {
         velocity.set(x, y);
@@ -950,6 +954,12 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
 		}
 		
 		private boolean targetFixture(Fixture fixture) {
+			for (Fixture f : body.getFixtureList()) {
+				if (fixture == f) {
+					return true;
+				}
+			}
+			
 			if (target == null) {
 				return false;
 			}

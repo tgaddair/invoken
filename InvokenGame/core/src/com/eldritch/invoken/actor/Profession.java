@@ -16,6 +16,7 @@ import com.eldritch.invoken.actor.aug.Crack;
 import com.eldritch.invoken.actor.aug.Frenzy;
 import com.eldritch.invoken.actor.aug.Drain;
 import com.eldritch.invoken.actor.aug.FireWeapon;
+import com.eldritch.invoken.actor.aug.Jaunt;
 import com.eldritch.invoken.actor.aug.Mirror;
 import com.eldritch.invoken.actor.aug.Paralyze;
 import com.eldritch.invoken.actor.aug.RendWeapon;
@@ -27,7 +28,7 @@ import com.google.common.collect.ImmutableList;
 
 public abstract class Profession {
     public static Profession getDefault() {
-        return new Ghost();
+        return new Executor();
     }
     
 	public static List<Skill> getSorted(List<Skill> skills, final Collection<Discipline> masteries) {
@@ -116,7 +117,7 @@ public abstract class Profession {
 		
 		@Override
 		public List<Augmentation> getStartingAugmentations() {
-			return ImmutableList.<Augmentation>of(new FireWeapon(), new Drain(), new Mirror());
+			return ImmutableList.<Augmentation>of(new FireWeapon(), new Jaunt(), new Drain(), new Mirror());
 		}
 	}
 	
