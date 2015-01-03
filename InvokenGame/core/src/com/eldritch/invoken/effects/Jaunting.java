@@ -5,7 +5,7 @@ import com.eldritch.invoken.actor.type.Agent;
 
 public class Jaunting extends BasicEffect {
 	private final Vector2 target;
-	private boolean finished = false;
+	private boolean arrived = false;
 	
     public Jaunting(Agent agent, Vector2 target) {
         super(agent);
@@ -14,7 +14,7 @@ public class Jaunting extends BasicEffect {
 
 	@Override
 	public boolean isFinished() {
-		return finished;
+		return arrived || getStateTime() > 1;
 	}
 
 	@Override
@@ -23,16 +23,15 @@ public class Jaunting extends BasicEffect {
 
 	@Override
 	protected void doApply() {
-		getTarget().moveTo(target);
+		Vector2 direction = target.cpy().sub(getTarget().getPosition()).nor();
+    	getTarget().applyForce(direction.scl(2500));
 	}
 
 	@Override
 	protected void update(float delta) {
-		if (getStateTime() > 1) {
-			finished = true;
-		} else if (getTarget().getPosition().dst2(target) < 1) {
+		if (getTarget().getPosition().dst2(target) < 1) {
 			getTarget().stop();
-			finished = true;
+			arrived = true;
 		}
 	}
 }

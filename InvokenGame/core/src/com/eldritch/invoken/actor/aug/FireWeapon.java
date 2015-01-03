@@ -14,6 +14,7 @@ import com.eldritch.invoken.actor.type.Projectile;
 import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.actor.type.Agent.Direction;
 import com.eldritch.invoken.effects.Bleed;
+import com.eldritch.invoken.effects.Frozen;
 import com.eldritch.invoken.effects.Stunned;
 import com.eldritch.invoken.encounter.Location;
 import com.eldritch.invoken.screens.GameScreen;
@@ -135,9 +136,13 @@ public class FireWeapon extends ProjectileAugmentation {
 
         @Override
         protected void apply(Agent owner, Agent target) {
+        	float magnitude = getDamage(target);
             target.applyForce(velocity.cpy().nor().scl(100));
             target.addEffect(new Stunned(owner, target, 0.2f));
-            target.addEffect(new Bleed(owner, target, getDamage(target)));
+            target.addEffect(new Bleed(owner, target, magnitude));
+            
+            // TODO: debug
+            target.addEffect(new Frozen(owner, target, magnitude, 1));
         }
 
         @Override

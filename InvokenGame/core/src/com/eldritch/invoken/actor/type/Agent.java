@@ -91,6 +91,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
 
     private int confused = 0;
     private int paralyzed = 0;
+    private float freezing = 0;
 
     private Agent target;
     private Npc interactor;
@@ -257,6 +258,15 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
             }
         }
     }
+    
+    public void freeze(float magnitude) {
+    	freezing += magnitude;
+    	if (freezing > 0) {
+    		setRgb(0.8f, 0.8f, 0.8f + freezing / 25f);
+    	} else {
+    		setRgb(1, 1, 1);
+    	}
+    }
 
     protected abstract void handleConfusion(boolean confused);
 
@@ -411,11 +421,6 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     
     public void applyForce(Vector2 force) {
     	body.applyForceToCenter(force, true);
-    }
-    
-    public void moveTo(Vector2 position) {
-    	Vector2 direction = position.cpy().sub(body.getPosition()).nor();
-    	applyForce(direction.scl(2500));
     }
     
     public void stop() {
