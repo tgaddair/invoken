@@ -20,6 +20,6 @@ public abstract class ProjectileAugmentation extends Augmentation {
 
     @Override
     public boolean isValid(Agent owner, Agent target) {
-        return target != null && target != owner && owner.hasLineOfSight(target);
+        return target != null && target != owner && owner.canTargetProjectile(target);
     }
 }

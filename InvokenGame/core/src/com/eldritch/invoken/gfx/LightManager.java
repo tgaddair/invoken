@@ -83,6 +83,10 @@ public class LightManager {
     public void addLight(Light light) {
         lights.add(light);
     }
+    
+    public void removeLight(Light light) {
+    	lights.remove(light);
+    }
 
     public void render(OrthogonalTiledMapRenderer renderer, float delta, boolean paused) {
         // draw lights to frame buffer

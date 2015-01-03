@@ -10,7 +10,7 @@ public abstract class Light {
     private final float magnitude;
     private boolean oscillate;
     private Texture light;
-
+    
     public Light(float magnitude, boolean oscillate) {
         this.magnitude = magnitude;
         this.oscillate = oscillate;
@@ -30,7 +30,7 @@ public abstract class Light {
     public void bind(int unit) {
         light.bind(unit);
     }
-    
+
     public abstract Vector2 getPosition();
     
     public static class AgentLight extends Light {
