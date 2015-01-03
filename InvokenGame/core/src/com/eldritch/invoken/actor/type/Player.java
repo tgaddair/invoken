@@ -27,7 +27,6 @@ public class Player extends SteeringAgent {
         super(x, y, Human.getWidth(), Human.getHeight(), profession, level, world, 
         		Human.getAllAnimations(body));
         mover = new AgentMover(this, getMaxVelocity(), 0.01f);
-        setRgb(0.5f * 0.69f, 0.5f * 0.88f, 0.90f);
     }
     
     @Override

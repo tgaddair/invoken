@@ -177,9 +177,11 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 			if (player.getTarget() instanceof Npc) {
 				Npc npc = (Npc) player.getTarget();
 				State<Npc> state = npc.getStateMachine().getCurrentState();
+				float freezing = npc.getFreezing();
 				
 				batch.begin();
 		        font.draw(batch, "State: " + state, 10, getHeight() - 30);
+		        font.draw(batch, String.format("Freezing: %.2f", freezing), 10, getHeight() - 50);
 		        batch.end();
 			}
 		}

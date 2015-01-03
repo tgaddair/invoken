@@ -51,6 +51,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     public static final int ASSAULT_PENALTY = -10;
 
     static AssetManager assetManager = new AssetManager();
+    static float MAX_FREEZE = 25f;
     static float DAMPING = 5f;
     
     private final World world;
@@ -92,6 +93,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     private int confused = 0;
     private int paralyzed = 0;
     private float freezing = 0;
+    private float lastAction = 0;
 
     private Agent target;
     private Npc interactor;
@@ -260,12 +262,33 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     }
     
     public void freeze(float magnitude) {
+    	// apply freezing effects
     	freezing += magnitude;
     	if (freezing > 0) {
-    		setRgb(0.8f, 0.8f, 0.8f + freezing / 25f);
+    		float f = Math.max((MAX_FREEZE - freezing) / MAX_FREEZE, 0f);
+    		setDamping(DAMPING * f);
+    		setRgb(0.69f, 0.88f, 0.90f);
     	} else {
+    		setDamping(DAMPING);
     		setRgb(1, 1, 1);
     	}
+    }
+    
+    public float getFreezing() {
+    	return freezing;
+    }
+    
+    public boolean isFrozen(float lastAction) {
+    	float percent = Math.min(freezing / MAX_FREEZE, 1f);
+    	return lastAction < percent;
+    }
+    
+    public boolean isFrozen() {
+    	return freezing / MAX_FREEZE >= 1;
+    }
+    
+    public void setDamping(float damping) {
+    	body.setLinearDamping(damping);
     }
 
     protected abstract void handleConfusion(boolean confused);
@@ -277,10 +300,16 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     public void setParalyzed(Agent source, boolean paralyzed) {
         if (paralyzed) {
             addHostility(source, 10);
-            this.paralyzed++;
-        } else {
-            this.paralyzed--;
         }
+        setParalyzed(paralyzed);
+    }
+    
+    public void setParalyzed(boolean paralyzed) {
+    	if (paralyzed) {
+    		this.paralyzed++;
+    	} else {
+    		this.paralyzed--;
+    	}
     }
 
     public void addFollower(Agent follower) {
@@ -553,9 +582,15 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     }
 
     protected void attemptTakeAction(float delta, Location screen) {
+    	lastAction += delta;
         if (isParalyzed()) {
             // can't do anything when paralyzed
             return;
+        }
+        
+        if (isFrozen(lastAction)) {
+        	// can't act as frequently when we're frozen
+        	return;
         }
 
         if (isConfused()) {
@@ -563,6 +598,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
             // the confusion handler
         } else {
             // no disorienting effects, so take conscious action
+        	lastAction = 0;
             takeAction(delta, screen);
         }
     }
