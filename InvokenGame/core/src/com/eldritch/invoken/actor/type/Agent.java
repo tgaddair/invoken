@@ -472,6 +472,14 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     public Vector2 getVelocity() {
         return velocity;
     }
+    
+    public void setDirection(Direction direction) {
+    	this.direction = direction;
+    }
+    
+    public Direction getRelativeDirection(Vector2 point) {
+    	return getDominantDirection(point.x - position.x, point.y - position.y);
+    }
 
     public Direction getDirection() {
         return direction;
@@ -862,7 +870,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         // used for wall normals
         return getForwardVector().scl(-1);
     }
-
+    
     private Direction getDominantDirection(float x, float y) {
         if (Math.abs(x) > Math.abs(y)) {
             if (x < 0) {

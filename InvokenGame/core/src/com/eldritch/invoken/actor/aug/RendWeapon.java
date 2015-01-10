@@ -60,6 +60,10 @@ public class RendWeapon extends Augmentation {
             strike.add(owner.getForwardVector().scl(weapon.getRange() / 2));
         	
             Vector2 center = getCenter(owner.getPosition(), target, weapon.getRange());
+            
+            // update agent to fact the direction of their strike
+            owner.setDirection(owner.getRelativeDirection(center));
+            
         	for (Agent neighbor : owner.getNeighbors()) {
         		if (neighbor.inRange(center, weapon.getRange() / 2)) {
         			neighbor.addEffect(new Bleed(owner, neighbor, weapon.getDamage()));
