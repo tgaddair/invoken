@@ -141,8 +141,7 @@ public class FireWeapon extends ProjectileAugmentation {
             target.addEffect(new Stunned(owner, target, 0.2f));
             target.addEffect(new Bleed(owner, target, magnitude));
             
-            // TODO: debug
-            target.addEffect(new Frozen(owner, target, magnitude, 1));
+//            target.addEffect(new Frozen(owner, target, magnitude, 1));
         }
 
         @Override

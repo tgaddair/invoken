@@ -429,7 +429,7 @@ public class Location {
 
         // let the camera follow the player
         Vector2 position = player.getCamera().getPosition();
-        float scale = PX * camera.zoom;
+        float scale = PX * camera.zoom * 1.25f;
         camera.position.x = Math.round(position.x * scale) / scale;
         camera.position.y = Math.round(position.y * scale) / scale;
         camera.update();

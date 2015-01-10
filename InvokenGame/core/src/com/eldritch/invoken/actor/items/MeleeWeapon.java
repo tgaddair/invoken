@@ -1,17 +1,26 @@
 package com.eldritch.invoken.actor.items;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.eldritch.invoken.actor.Inventory;
+import com.eldritch.invoken.actor.type.Human;
 import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.actor.type.Agent.Direction;
 import com.eldritch.invoken.proto.Items.Item.DamageMod;
+import com.google.common.base.Strings;
 
 public class MeleeWeapon extends Item {
+	private final Map<Direction, Animation> animations = new HashMap<Direction, Animation>();
     private final float damage;
     private final float range;
     
     public MeleeWeapon(com.eldritch.invoken.proto.Items.Item item) {
         super(item, 0);
+        if (!Strings.isNullOrEmpty(item.getAsset())) {
+		    animations.putAll(Human.getAnimations(item.getAsset()));
+		}
         
         // calculate damage magnitude
         float damageSum = 0;
@@ -41,7 +50,7 @@ public class MeleeWeapon extends Item {
     
     @Override
     protected Animation getAnimation(Activity activity, Direction direction) {
-        return null;
+    	return animations.get(direction);
     }
     
     public float getRange() {
