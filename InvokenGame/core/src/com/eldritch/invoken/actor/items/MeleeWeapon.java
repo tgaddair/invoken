@@ -15,11 +15,12 @@ public class MeleeWeapon extends Item {
 	private final Map<Direction, Animation> animations = new HashMap<Direction, Animation>();
     private final float damage;
     private final float range;
+    private final boolean visible;
     
     public MeleeWeapon(com.eldritch.invoken.proto.Items.Item item) {
-        super(item, 0);
+        super(item, 192);
         if (!Strings.isNullOrEmpty(item.getAsset())) {
-		    animations.putAll(Human.getAnimations(item.getAsset()));
+		    animations.putAll(Human.getAnimations(item.getAsset(), 192));
 		}
         
         // calculate damage magnitude
@@ -29,6 +30,7 @@ public class MeleeWeapon extends Item {
         }
         this.damage = damageSum;
         this.range = (float) item.getRange();
+        this.visible = !item.getHidden();
     }
     
     @Override
@@ -59,6 +61,10 @@ public class MeleeWeapon extends Item {
     
     public float getDamage() {
         return damage;
+    }
+    
+    public boolean isVisible() {
+    	return visible;
     }
     
     @Override

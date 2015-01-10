@@ -14,7 +14,6 @@ import com.eldritch.invoken.actor.type.Projectile;
 import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.actor.type.Agent.Direction;
 import com.eldritch.invoken.effects.Bleed;
-import com.eldritch.invoken.effects.Frozen;
 import com.eldritch.invoken.effects.Stunned;
 import com.eldritch.invoken.encounter.Location;
 import com.eldritch.invoken.screens.GameScreen;

@@ -1,5 +1,9 @@
 package com.eldritch.invoken.actor.aug;
 
+import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.actor.items.MeleeWeapon;
 import com.eldritch.invoken.actor.type.Agent;
@@ -69,6 +73,17 @@ public class RendWeapon extends Augmentation {
         			neighbor.addEffect(new Bleed(owner, neighbor, weapon.getDamage()));
         		}
         	}
+        }
+        
+        @Override
+        public void render(OrthogonalTiledMapRenderer renderer) {
+            super.render(renderer);
+
+            // render weapon
+            MeleeWeapon weapon = owner.getInventory().getMeleeWeapon();
+            if (weapon.isVisible()) {
+            	weapon.render(owner, Activity.Combat, getStateTime(), renderer);
+            }
         }
         
         @Override

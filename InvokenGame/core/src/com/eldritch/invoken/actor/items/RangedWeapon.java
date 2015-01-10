@@ -15,9 +15,9 @@ public class RangedWeapon extends Item {
 	private final Map<Direction, Animation> animations = new HashMap<Direction, Animation>();
 	
 	public RangedWeapon(com.eldritch.invoken.proto.Items.Item item) {
-		super(item, 48);
+		super(item, 64);
 		if (!Strings.isNullOrEmpty(item.getAsset())) {
-		    animations.putAll(Human.getAnimations(item.getAsset()));
+		    animations.putAll(Human.getAnimations(item.getAsset(), 64));
 		}
 	}
 	

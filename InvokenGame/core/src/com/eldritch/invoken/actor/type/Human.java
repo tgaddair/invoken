@@ -32,12 +32,16 @@ public class Human {
         Animation anim = new Animation(0.15f, regions[0]);
         return anim;
     }
-
+    
     public static Map<Direction, Animation> getAnimations(String assetName) {
+    	return getAnimations(assetName, PX);
+    }
+
+    public static Map<Direction, Animation> getAnimations(String assetName, int px) {
         Map<Direction, Animation> animations = new HashMap<Direction, Animation>();
 
         // up, left, down, right
-        TextureRegion[][] regions = GameScreen.getRegions(assetName, PX, PX);
+        TextureRegion[][] regions = GameScreen.getRegions(assetName, px, px);
         for (Direction d : Direction.values()) {
             Animation anim = new Animation(0.15f, regions[d.ordinal()]);
             anim.setPlayMode(Animation.PlayMode.LOOP_PINGPONG);
