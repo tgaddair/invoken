@@ -164,6 +164,10 @@ public class Location {
         player.getInfo().getInventory().addItem(weapon);
         player.getInfo().getInventory().equip(weapon);
         
+        Item melee = Item.fromProto(InvokenGame.ITEM_READER.readAsset("Hammer"));
+        player.getInfo().getInventory().addItem(melee);
+        player.getInfo().getInventory().equip(melee);
+        
         return player;
     }
     
@@ -554,7 +558,7 @@ public class Location {
         return activators;
     }
 
-    public List<Agent> getNeighbors(Npc agent) {
+    public List<Agent> getNeighbors(Agent agent) {
         return getNeighbors(agent, agent.getNeighbors(), getActors());
     }
 

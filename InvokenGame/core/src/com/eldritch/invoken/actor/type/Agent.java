@@ -78,6 +78,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     float stateTime = 0;
     float elapsed = 0;
 
+    private final List<Agent> neighbors = new ArrayList<Agent>();
     private final LinkedList<Action> actions = new LinkedList<Action>();
     private final List<Effect> effects = new LinkedList<Effect>();
     private Action action = null;
@@ -175,6 +176,14 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     public void addAugmentation(Augmentation aug) {
         info.addAugmentation(aug);
     }
+    
+    public boolean inRange(Vector2 point, float radius) {
+    	return body.getPosition().dst2(point) <= radius * radius;
+    }
+    
+	public List<Agent> getNeighbors() {
+	    return neighbors;
+	}
 
     public List<Agent> getFollowers() {
         return followers;
@@ -581,7 +590,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         toggles.clear();
     }
 
-    protected void attemptTakeAction(float delta, Location screen) {
+    protected void attemptTakeAction(float delta, Location location) {
     	lastAction += delta;
         if (isParalyzed()) {
             // can't do anything when paralyzed
@@ -597,9 +606,12 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
             // cannot take a conscious action when confused, must delegate to
             // the confusion handler
         } else {
+        	// update neighbors
+        	location.getNeighbors(this);
+        	
             // no disorienting effects, so take conscious action
         	lastAction = 0;
-            takeAction(delta, screen);
+            takeAction(delta, location);
         }
     }
     

@@ -74,7 +74,6 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
 	
 	// used in AI routine calculations to determine things like the target
 	private final Location location;
-	private final List<Agent> neighbors = new ArrayList<Agent>();
 	private final Set<Agent> squad = new HashSet<Agent>();
 	private Routine routine;
 	
@@ -256,9 +255,6 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
 	
 	@Override
 	protected void takeAction(float delta, Location screen) {
-		// update neighbors
-		screen.getNeighbors(this);
-		
 		// update detected set
 		Iterator<Agent> it = detected.iterator();
 		while (it.hasNext()) {
@@ -346,10 +342,6 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
         Vector2 b = other.position.cpy().sub(position).nor();
         double theta = Math.atan2(a.x * b.y - a.y * b.x, a.x * b.x + a.y * b.y);
         return Math.abs(theta) <= Math.PI / 2;
-	}
-	
-	public List<Agent> getNeighbors() {
-	    return neighbors;
 	}
 	
 	public Behavior getBehavior() {
