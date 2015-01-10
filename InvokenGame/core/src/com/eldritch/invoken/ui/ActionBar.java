@@ -32,7 +32,7 @@ public class ActionBar {
             image.addListener(new DefaultInputListener() {
                 @Override
                 public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                    augmentations.toggleActiveAugmentation(aug);
+                    augmentations.toggleActiveAugmentation(aug, button);
                 }
             });
             images.put(aug, image);

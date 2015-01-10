@@ -1,8 +1,12 @@
 package com.eldritch.invoken.actor;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import com.badlogic.gdx.math.Vector2;
@@ -13,7 +17,7 @@ public class PreparedAugmentations {
 	private final List<Augmentation> augs = new ArrayList<Augmentation>();
 	private final Agent owner;
 	private final Set<Augmentation> activeSelfAugmentations = new HashSet<Augmentation>();
-	private Augmentation activeAugmentation;
+	private Map<Integer, Augmentation> activeAugmentations = new HashMap<Integer, Augmentation>();
 	
 	public PreparedAugmentations(Agent owner) {
 		this.owner = owner;
@@ -28,11 +32,12 @@ public class PreparedAugmentations {
 	}
 	
 	public boolean isActive(Augmentation aug) {
-	    return activeAugmentation == aug || activeSelfAugmentations.contains(aug);
-	}
-	
-	public Augmentation getActiveAugmentation() {
-	    return activeAugmentation;
+		for (Augmentation active : activeAugmentations.values()) {
+			if (active == aug) {
+				return true;
+			}
+		}
+	    return activeSelfAugmentations.contains(aug);
 	}
 	
 	public Set<Augmentation> getActiveSelfAugmentations() {
@@ -44,7 +49,7 @@ public class PreparedAugmentations {
 	}
 	
 	public boolean hasActiveAugmentation() {
-	    return activeAugmentation != null;
+	    return !activeAugmentations.isEmpty();
 	}
 	
 	public void toggleActiveAugmentation(int index) {
@@ -54,53 +59,56 @@ public class PreparedAugmentations {
 	}
 	
 	public void toggleActiveAugmentation(Augmentation aug) {
-	    if (aug.castsOnSelf()) {
+	    
+	}
+	
+	public void removeActiveAugmentation(Augmentation aug) {
+		
+	}
+	
+	
+	public void toggleActiveAugmentation(Augmentation aug, int slot) {
+		if (aug.castsOnSelf()) {
 	        boolean used = use(aug);
 	        if (activeSelfAugmentations.contains(aug)) {
-	            removeActiveAugmentation(aug);
+	            activeSelfAugmentations.remove(aug);
 	        } else if (used) {
-	            addActiveAugmentation(aug);
+	            activeSelfAugmentations.add(aug);
 	        }
 	    } else {
-	        if (aug != activeAugmentation) {
-	            addActiveAugmentation(aug);
+	    	Iterator<Entry<Integer, Augmentation>> it = activeAugmentations.entrySet().iterator();
+	    	while (it.hasNext()) {
+	    		Entry<Integer, Augmentation> active = it.next();
+				if (active.getValue() == aug && active.getKey() != slot) {
+					// the aug is already active in a different slot, so remove it
+					it.remove();
+				}
+			}
+	        if (activeAugmentations.get(slot) == aug) {
+	        	// already active in this slot
+	        	activeAugmentations.remove(slot);
 	        } else {
-	            removeActiveAugmentation(aug);
+	        	// activate the aug
+	        	activeAugmentations.put(slot, aug);
 	        }
 	    }
 	}
-	
-	public void addActiveAugmentation(Augmentation aug) {
-	    if (aug.castsOnSelf()) {
-	        activeSelfAugmentations.add(aug);
-	    } else {
-	        activeAugmentation = aug;
-	    }
-	}
-	
-    public void removeActiveAugmentation(Augmentation aug) {
-        if (aug.castsOnSelf()) {
-            activeSelfAugmentations.remove(aug);
-        } else {
-            activeAugmentation = null;
-        }
-    }
 	
 	public void useActiveAugmentation() {
-	    useActiveAugmentation(false);
+	    useActiveAugmentation(0, false);
 	}
 	
-	public void useActiveAugmentation(boolean queued) {
-	    if (activeAugmentation != null) {
-	        use(activeAugmentation, queued);
+	public void useActiveAugmentation(int slot, boolean queued) {
+		if (activeAugmentations.containsKey(slot)) {
+	        use(activeAugmentations.get(slot), queued);
 	    }
 	}
 	
-	public void useActiveAugmentation(Vector2 position, boolean queued) {
-        if (activeAugmentation != null) {
-            use(activeAugmentation, position, queued);
+	public void useActiveAugmentation(Vector2 position, int slot, boolean queued) {
+		if (activeAugmentations.containsKey(slot)) {
+            use(activeAugmentations.get(slot), position, queued);
         }
-    }
+	}
 	
     public boolean use(int index) {
         return use(index, false);

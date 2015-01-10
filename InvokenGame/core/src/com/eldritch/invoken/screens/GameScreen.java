@@ -285,7 +285,8 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 			if (entity.contains(world.x, world.y)) {
 			    if (player.getInfo().getAugmentations().hasActiveAugmentation()
 			    		&& player.select(entity, location)) {
-		            player.getInfo().getAugmentations().useActiveAugmentation(tacticalPause);
+		            player.getInfo().getAugmentations().useActiveAugmentation(
+		            		button, tacticalPause);
                 } else if (player.getTarget() != entity) {
 					// initial selection -> set target
 					player.select(entity, location);
@@ -322,7 +323,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 //                player.moveToFixedTarget(world.x, world.y);
 //		    }
 		    player.getInfo().getAugmentations().useActiveAugmentation(
-                    new Vector2(world.x, world.y), tacticalPause);
+                    new Vector2(world.x, world.y), button, tacticalPause);
 		    selection = true;
 		}
 		
