@@ -283,10 +283,9 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 		Vector3 world = camera.unproject(new Vector3(screenX, screenY, 0));
 		for (Agent entity : location.getActors()) {
 			if (entity.contains(world.x, world.y)) {
-			    if (player.getInfo().getAugmentations().hasActiveAugmentation()) {
-			        if (player.select(entity, location)) {
-			            player.getInfo().getAugmentations().useActiveAugmentation(tacticalPause);
-			        }
+			    if (player.getInfo().getAugmentations().hasActiveAugmentation()
+			    		&& player.select(entity, location)) {
+		            player.getInfo().getAugmentations().useActiveAugmentation(tacticalPause);
                 } else if (player.getTarget() != entity) {
 					// initial selection -> set target
 					player.select(entity, location);

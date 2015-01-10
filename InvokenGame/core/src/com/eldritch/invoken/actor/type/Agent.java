@@ -791,7 +791,10 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
             if (target == null || target == this) {
                 // update the current animation based on the maximal velocity
                 // component
-                direction = getDominantDirection(velocity.x, velocity.y);
+            	if (!actionInProgress()) {
+            		// don't update the direction if we're currently performing an action
+            		direction = getDominantDirection(velocity.x, velocity.y);
+            	}
             }
             state = State.Moving;
         }
