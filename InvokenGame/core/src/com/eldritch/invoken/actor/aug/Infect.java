@@ -105,7 +105,8 @@ public class Infect extends Augmentation {
 				if (!neighbor.isToggled(Infected.class)) {
 					// infection does not stack
 					if (neighbor.inRange(getPosition(), getRadius())) {
-						neighbor.addEffect(new Infected(owner, neighbor, getDamage(neighbor), 3));
+						neighbor.addEffect(new Infected(
+								owner, neighbor, getDamage(neighbor), 3, getRadius()));
 		    		}
 				}
         	}
