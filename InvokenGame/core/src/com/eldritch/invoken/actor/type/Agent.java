@@ -323,6 +323,11 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     }
 
     public void addFollower(Agent follower) {
+    	if (isFollowing(follower)) {
+    		// bidirectional following relationships can produce nasty side effects like infinite
+    		// loops, so this case must be explicitly disallowed
+    		follower.removeFollower(this);
+    	}
         follower.setFollowing(this);
         followers.add(follower);
     }
@@ -673,6 +678,16 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     }
     
     public float getRelation(Agent agent) {
+    	if (isFollowing()) {
+    		if (getFollowed() == agent) {
+    			// followers are always allies of their leaders
+    			return 100;
+    		}
+    		
+    		// followers take this disposition queues from their leader
+    		return followed.getRelation(agent);
+    	}
+    	
         if (!relations.containsKey(agent)) {
             setRelation(agent, info.getDisposition(agent));
         }
