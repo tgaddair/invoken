@@ -646,6 +646,13 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     }
     
     public boolean hostileTo(Agent other) {
+    	if (isFollowing()) {
+    		// do not call hostileTo directly to avoid an infinite loop
+    		if (followed.enemies.contains(other)) {
+    			// always hostile to those our leader is hostile to
+    			return true;
+    		}
+    	}
         return enemies.contains(other);
     }
 
@@ -654,6 +661,10 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     }
 
     public boolean hasEnemies() {
+    	if (isFollowing() && !followed.enemies.isEmpty()) {
+    		// share enemies with leader
+    		return true;
+    	}
         return !enemies.isEmpty();
     }
     
@@ -685,10 +696,15 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     		}
     		
     		// followers take this disposition queues from their leader
-    		return followed.getRelation(agent);
+    		return followed.getRelationNoFollow(agent);
     	}
     	
-        if (!relations.containsKey(agent)) {
+    	return getRelationNoFollow(agent);
+    }
+    
+    // does not consider transitive effects to avoid infinite loops
+    private float getRelationNoFollow(Agent agent) {
+    	if (!relations.containsKey(agent)) {
             setRelation(agent, info.getDisposition(agent));
         }
         return relations.get(agent);
