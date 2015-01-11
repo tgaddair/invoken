@@ -22,6 +22,11 @@ public enum PatrolState implements State<Npc> {
 				entity.getStateMachine().changeState(NpcState.PATROL, IDLE);
 			}
 		}
+		
+		@Override
+		protected void afterExit(Npc entity) {
+			entity.getWander().setEnabled(false);
+		}
 	},
 	
 	FOLLOW() {
@@ -29,9 +34,7 @@ public enum PatrolState implements State<Npc> {
 		public void enter(Npc entity) {
 			if (entity.isFollowing()) {
 				entity.getArrive().setTarget(entity.getFollowed());
-				entity.getSeek().setTarget(entity.getFollowed());
 				entity.getArrive().setEnabled(true);
-				entity.getSeek().setEnabled(true);
 			}
 		}
 
@@ -44,18 +47,15 @@ public enum PatrolState implements State<Npc> {
 			}
 			
 			Agent followed = entity.getFollowed();
-			if (followed != entity.getSeek().getTarget()) {
+			if (followed != entity.getArrive().getTarget()) {
 				// new target
 				entity.getArrive().setTarget(followed);
-				entity.getSeek().setTarget(followed);
 			}
 		}
 		
 		@Override
-		public void exit(Npc entity) {
-			super.exit(entity);
+		protected void afterExit(Npc entity) {
 			entity.getArrive().setEnabled(false);
-			entity.getSeek().setEnabled(false);
 		}
 	},
 	
@@ -83,10 +83,14 @@ public enum PatrolState implements State<Npc> {
 	@Override
 	public void exit(Npc entity) {
 		entity.getStateMachine().resetValidator();
+		afterExit(entity);
 	}
 
 	@Override
 	public boolean onMessage(Npc entity, Telegram telegram) {
 		return false;
+	}
+	
+	protected void afterExit(Npc entity) {
 	}
 }

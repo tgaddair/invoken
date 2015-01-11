@@ -167,7 +167,7 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
 		pursue = new Pursue<Vector2>(this, location.getPlayer());
 		flee = new Flee<Vector2>(this);
 		seek = new Seek<Vector2>(this);
-		arrive = new Arrive<Vector2>(this).setArrivalTolerance(0.1f).setDecelerationRadius(2f);
+		arrive = new Arrive<Vector2>(this).setArrivalTolerance(3f).setDecelerationRadius(5f);
 		wander = new Wander<Vector2>(this)
 				// Don't use Face internally because independent facing is off
 				.setFaceEnabled(false) //
