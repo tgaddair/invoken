@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Cell;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -74,7 +73,7 @@ public class DialogueMenu {
 	}
 	
 	private void setup(Npc npc) {
-		setup(npc, npc.getGreeting());
+		setup(npc, npc.getDialogueHandler().getGreeting());
 	}
 	
 	private void setup(Npc npc, Response response) {
@@ -83,7 +82,7 @@ public class DialogueMenu {
 		    choiceBar.clear();
 		    bubble.clear();
 		    
-		    List<Choice> choices = npc.getChoicesFor(response);
+		    List<Choice> choices = npc.getDialogueHandler().getChoicesFor(response);
 		    if (choices.isEmpty()) {
 		    	// display a text bubble, as there is no choice for the player to make
 		    	addLabel(response.getText());
@@ -137,7 +136,7 @@ public class DialogueMenu {
 		choice.addListener(new DefaultInputListener() {
 			@Override
 			public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-				setup(npc, npc.getResponseFor(c));
+				setup(npc, npc.getDialogueHandler().getResponseFor(c));
 			}
 		});
 		choiceBar.add(choice).left().padLeft(50).padRight(25).padBottom(10);

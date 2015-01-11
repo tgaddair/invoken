@@ -9,7 +9,7 @@ import com.eldritch.invoken.proto.Actors.DialogueTree;
 import com.eldritch.invoken.proto.Actors.DialogueTree.Choice;
 import com.eldritch.invoken.proto.Actors.DialogueTree.Response;
 
-public class ConversationHandler implements Conversable {
+public class ConversationHandler {
 	private final DialogueTree tree;
 	private final DialogueVerifier verifier;
 	

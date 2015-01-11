@@ -332,23 +332,8 @@ public abstract class Npc extends SteeringAgent implements Telegraph, Conversabl
 	}
 	
 	@Override
-	public List<Choice> getChoicesFor(Response response) {
-		return dialogue.getChoicesFor(response);
-    }
-    
-	@Override
-    public Response getResponseFor(Choice choice) {
-    	return dialogue.getResponseFor(choice);
-    }
-    
-	@Override
-    public boolean hasGreeting() {
-    	return dialogue.hasGreeting();
-    }
-    
-	@Override
-    public Response getGreeting() {
-    	return dialogue.getGreeting();
+	public ConversationHandler getDialogueHandler() {
+		return dialogue;
     }
     
     public int getInfluence(Agent other) {
