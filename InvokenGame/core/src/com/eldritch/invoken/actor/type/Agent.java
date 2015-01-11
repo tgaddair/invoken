@@ -215,6 +215,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
 
     public void resurrect() {
         info.resetHealth();
+        setRgb(0.4f, 0.4f, 0.7f);
     }
     
     public void setCamera(GameCamera camera) {
@@ -607,6 +608,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         action = null;
         target = null;
         toggles.clear();
+        setRgb(1, 1, 1);
     }
 
     protected void attemptTakeAction(float delta, Location location) {
