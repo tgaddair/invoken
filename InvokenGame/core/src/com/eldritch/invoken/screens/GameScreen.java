@@ -26,12 +26,10 @@ import com.eldritch.invoken.ui.EnergyBar;
 import com.eldritch.invoken.ui.HealthBar;
 import com.eldritch.invoken.ui.InventoryMenu;
 import com.eldritch.invoken.ui.LootMenu;
+import com.eldritch.invoken.util.Settings;
 
 public class GameScreen extends AbstractScreen implements InputProcessor {
-    public static final float MIN_ZOOM = 1.0f;
-    public static final float MAX_ZOOM = 10.0f; // for debug purposes; 2 or 1.5 is more reasonable
-    
-	public static final AssetManager textureManager = new AssetManager();
+    public static final AssetManager textureManager = new AssetManager();
 	
 	private final DialogueMenu dialogue;
 	private final LootMenu loot;
@@ -349,7 +347,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 	@Override
 	public boolean scrolled(int amount) {
 	    float zoom = camera.zoom + amount * 0.1f;
-	    zoom = Math.min(Math.max(zoom, MIN_ZOOM), MAX_ZOOM);
+	    zoom = Math.min(Math.max(zoom, Settings.MIN_ZOOM), Settings.MAX_ZOOM);
 	    camera.zoom = zoom;
 		return true;
 	}

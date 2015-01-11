@@ -8,9 +8,9 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
 import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
-import com.eldritch.invoken.encounter.Location;
 import com.eldritch.invoken.encounter.layer.LocationLayer;
 import com.eldritch.invoken.encounter.layer.LocationMap;
+import com.eldritch.invoken.util.Settings;
 
 public class IcarianFurnitureGenerator extends FurnitureGenerator {
     // tiles for different furniture pieces
@@ -124,13 +124,13 @@ public class IcarianFurnitureGenerator extends FurnitureGenerator {
         private final TiledMapTile[][] tiles;
 
         public MultiTileStatic(TextureRegion texture) {
-            TextureRegion[][] grid = texture.split(Location.PX, Location.PX);
+            TextureRegion[][] grid = texture.split(Settings.PX, Settings.PX);
             tiles = new TiledMapTile[grid.length][];
             for (int i = 0; i < grid.length; i++) {
                 tiles[i] = new TiledMapTile[grid[i].length];
                 for (int j = 0; j < grid[i].length; j++) {
                     StaticTiledMapTile tile = new StaticTiledMapTile(grid[i][j]);
-                    tile.setOffsetY(-Location.PX / 2);
+                    tile.setOffsetY(-Settings.PX / 2);
                     tiles[i][j] = tile;
                 }
             }

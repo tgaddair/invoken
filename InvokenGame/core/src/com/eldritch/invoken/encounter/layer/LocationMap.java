@@ -13,8 +13,8 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
 import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.activators.Activator;
-import com.eldritch.invoken.encounter.Location;
 import com.eldritch.invoken.encounter.NaturalVector2;
+import com.eldritch.invoken.util.Settings;
 
 public class LocationMap extends TiledMap {
     private final TiledMapTile ground;
@@ -77,7 +77,7 @@ public class LocationMap extends TiledMap {
             LocationLayer existing = presentLayers.get(mapLayer.getName());
             if (existing == null) {
                 existing = new LocationLayer(getWidth(), getHeight(), 
-                        Location.PX, Location.PX, this);
+                        Settings.PX, Settings.PX, this);
                 existing.setVisible(true);
                 existing.setOpacity(1.0f);
                 existing.setName(layer.getName());

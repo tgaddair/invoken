@@ -56,17 +56,12 @@ import com.eldritch.invoken.gfx.Light;
 import com.eldritch.invoken.gfx.LightManager;
 import com.eldritch.invoken.proto.Locations.Encounter;
 import com.eldritch.invoken.proto.Locations.Encounter.ActorParams.ActorScenario;
+import com.eldritch.invoken.util.Settings;
 import com.google.common.base.Optional;
 import com.google.common.primitives.Ints;
 
 public class Location {
-	public static boolean DEBUG_DRAW = false;
-	
-    public static final int PX = 32;
-    public static final int MAX_WIDTH = 100;
-    public static final int MAX_HEIGHT = 100;
-
-    private static Pool<Rectangle> rectPool = new Pool<Rectangle>() {
+	private static Pool<Rectangle> rectPool = new Pool<Rectangle>() {
         @Override
         protected Rectangle newObject() {
             return new Rectangle();
@@ -130,7 +125,7 @@ public class Location {
         overlays = Ints.toArray(overlayList);
 
         // objects are rendered by y-ordering with other entities
-        float unitScale = 1.0f / PX;
+        float unitScale = 1.0f / Settings.PX;
         renderer = new OrthogonalTiledMapRenderer(map, unitScale);
         
         // Instantiate a new World with no gravity and tell it to sleep when possible.
@@ -433,7 +428,7 @@ public class Location {
 
         // let the camera follow the player
         Vector2 position = player.getCamera().getPosition();
-        float scale = PX * camera.zoom * 1.25f;
+        float scale = Settings.PX * camera.zoom * 1.25f;
         camera.position.x = Math.round(position.x * scale) / scale;
         camera.position.y = Math.round(position.y * scale) / scale;
         camera.update();
@@ -524,7 +519,7 @@ public class Location {
         // render the overlay layer
         renderer.render(overlays);
         
-        if (DEBUG_DRAW) {
+        if (Settings.DEBUG_DRAW) {
 	        // draw NPC debug rays
 	        for (Agent agent : drawableEntities) {
 	        	if (agent instanceof Npc) {
@@ -539,8 +534,8 @@ public class Location {
     }
 
     private void drawCentered(TextureRegion region, Vector2 position, Color color) {
-        float w = 1f / PX * region.getRegionWidth();
-        float h = 1f / PX * region.getRegionHeight();
+        float w = 1f / Settings.PX * region.getRegionWidth();
+        float h = 1f / Settings.PX * region.getRegionHeight();
 
         Batch batch = renderer.getSpriteBatch();
         batch.setColor(color);
@@ -599,11 +594,11 @@ public class Location {
 
         Rectangle viewBounds = renderer.getViewBounds();
         final int x1 = Math.max(0, (int) (viewBounds.x / layerTileWidth));
-        final int x2 = Math.min(MAX_WIDTH,
+        final int x2 = Math.min(Settings.MAX_WIDTH,
                 (int) ((viewBounds.x + viewBounds.width + layerTileWidth) / layerTileWidth));
 
         final int y1 = Math.max(0, (int) (viewBounds.y / layerTileHeight));
-        final int y2 = Math.min(MAX_HEIGHT,
+        final int y2 = Math.min(Settings.MAX_HEIGHT,
                 (int) ((viewBounds.y + viewBounds.height + layerTileHeight) / layerTileHeight));
 
         Set<NaturalVector2> visited = new HashSet<NaturalVector2>();

@@ -47,6 +47,7 @@ import com.eldritch.invoken.proto.Locations.Biome;
 import com.eldritch.invoken.proto.Locations.Encounter;
 import com.eldritch.invoken.proto.Locations.Encounter.ActorParams.ActorScenario;
 import com.eldritch.invoken.proto.Locations.Room;
+import com.eldritch.invoken.util.Settings;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -69,7 +70,7 @@ public class LocationGenerator {
 	private static final String OVERLAY_RIGHT_TRIM = "/overlay-right-trim";
 	private static final String COLLISION = "markers/collision";
 	
-    private static final int PX = Location.PX;
+    private static final int PX = Settings.PX;
     private static final int SCALE = 1;
     private static final int MAX_LEAF_SIZE = 35;
     private final Random rand = new Random();
@@ -109,8 +110,8 @@ public class LocationGenerator {
     }
 
     public Location generate(com.eldritch.invoken.proto.Locations.Location proto) {
-        int width = Location.MAX_WIDTH;
-        int height = Location.MAX_HEIGHT;
+        int width = Settings.MAX_WIDTH;
+        int height = Settings.MAX_HEIGHT;
         LocationMap map = getBaseMap(width, height);
 //        List<Leaf> leafs = createLeaves(width / SCALE, height / SCALE);
 //        List<Room> rooms = createRooms(leafs);
@@ -264,9 +265,9 @@ public class LocationGenerator {
                 atlas.findRegion(biome + RIGHT_CORNER));
         
         // required offsets
-        leftCorner.setOffsetX(Location.PX / 2);
-        leftCorner.setOffsetY(Location.PX / 2);
-        rightCorner.setOffsetY(Location.PX / 2);
+        leftCorner.setOffsetX(Settings.PX / 2);
+        leftCorner.setOffsetY(Settings.PX / 2);
+        rightCorner.setOffsetY(Settings.PX / 2);
 
         // fill in corners
         for (int x = 0; x < base.getWidth(); x++) {
@@ -706,14 +707,14 @@ public class LocationGenerator {
     }
     
     private static TiledMapTile merge(TextureRegion left, TextureRegion right) {
-    	FrameBuffer buffer = new FrameBuffer(Format.RGB888, Location.PX, Location.PX, false);
+    	FrameBuffer buffer = new FrameBuffer(Format.RGB888, Settings.PX, Settings.PX, false);
     	TextureRegion region = new TextureRegion(buffer.getColorBufferTexture());
         region.flip(false, true);
         
         // extract the part of each region we care about
-        int size = Location.PX / 2;
-        TextureRegion leftPart = new TextureRegion(left, 0, 0, size, Location.PX);
-        TextureRegion rightPart = new TextureRegion(right, size, 0, size, Location.PX);
+        int size = Settings.PX / 2;
+        TextureRegion leftPart = new TextureRegion(left, 0, 0, size, Settings.PX);
+        TextureRegion rightPart = new TextureRegion(right, size, 0, size, Settings.PX);
         
         // setup the projection matrix
         buffer.begin();

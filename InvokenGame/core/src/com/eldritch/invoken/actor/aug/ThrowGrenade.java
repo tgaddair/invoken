@@ -87,7 +87,7 @@ public class ThrowGrenade extends Augmentation {
         private boolean detonated = false;
 
         public Grenade() {
-            super(1 / 32f * texture.getRegionWidth(), 1 / 32f * texture.getRegionHeight(), 5, 50);
+            super(texture, 5, 50);
             explosion = new Animation(0.1f, explosionRegions);
         }
         
@@ -109,7 +109,7 @@ public class ThrowGrenade extends Augmentation {
         		if (explosion.isAnimationFinished(explosionTime)) {
         			cancel();
         		}
-        	} else if (position.dst2(target) < 1) {
+        	} else if (position.dst2(target) < 0.5f) {
         		// special case where the position is very close to the target
         		detonate();
         	}

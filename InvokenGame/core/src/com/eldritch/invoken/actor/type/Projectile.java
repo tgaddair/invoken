@@ -6,6 +6,7 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.encounter.Location;
+import com.eldritch.invoken.util.Settings;
 
 public abstract class Projectile extends CollisionEntity implements TemporaryEntity {
 	private final float speed;
@@ -13,6 +14,11 @@ public abstract class Projectile extends CollisionEntity implements TemporaryEnt
     private Agent owner;
     private boolean finished;
     private float stateTime;
+    
+    public Projectile(TextureRegion region, float speed, float damage) {
+    	this(region.getRegionWidth() * Settings.SCALE, region.getRegionHeight() * Settings.SCALE,
+    			speed, damage);
+    }
 
     public Projectile(float width, float height, float speed, float damage) {
         super(width, height);

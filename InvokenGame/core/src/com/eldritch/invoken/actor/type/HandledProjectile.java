@@ -1,8 +1,10 @@
 package com.eldritch.invoken.actor.type;
 
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+
 public abstract class HandledProjectile extends Projectile {
-    public HandledProjectile(float width, float height, float speed, float damage) {
-        super(width, height, speed, damage);
+    public HandledProjectile(TextureRegion region, float speed, float damage) {
+        super(region, speed, damage);
     }
     
     @Override

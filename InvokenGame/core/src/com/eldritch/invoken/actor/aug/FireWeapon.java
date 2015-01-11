@@ -17,6 +17,7 @@ import com.eldritch.invoken.effects.Bleed;
 import com.eldritch.invoken.effects.Stunned;
 import com.eldritch.invoken.encounter.Location;
 import com.eldritch.invoken.screens.GameScreen;
+import com.eldritch.invoken.util.Settings;
 
 public class FireWeapon extends ProjectileAugmentation {
     private static Pool<Bullet> bulletPool = new Pool<Bullet>() {
@@ -129,11 +130,10 @@ public class FireWeapon extends ProjectileAugmentation {
 
     public static class Bullet extends HandledProjectile {
         private static final TextureRegion texture = new TextureRegion(
-                GameScreen.getTexture("sprite/effects/bullet-blue.png"));
+                GameScreen.getTexture("sprite/effects/bullet1.png"));
 
         public Bullet() {
-            super(texture.getRegionWidth() / Location.PX, texture.getRegionHeight() / Location.PX,
-            		40, 5);
+            super(texture, 40, 5);
         }
 
         @Override
