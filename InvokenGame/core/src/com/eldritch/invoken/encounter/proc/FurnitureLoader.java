@@ -25,7 +25,7 @@ public abstract class FurnitureLoader {
         loaders.put(Furniture.Type.ACTIVATOR, new ActivatorLoader());
     }
     
-    public abstract PlaceableFurniture load(String assetId);
+    public abstract PlaceableFurniture loadFrom(Furniture furniture);
     
     public interface PlaceableFurniture {
     	int getCost();
@@ -45,11 +45,12 @@ public abstract class FurnitureLoader {
                 });
         
         @Override
-        public PlaceableFurniture load(String assetId) {
+        public PlaceableFurniture loadFrom(Furniture furniture) {
+        	String id = furniture.getId();
             try {
-                return cache.get(assetId);
+                return cache.get(id);
             } catch (ExecutionException ex) {
-                InvokenGame.error("Failed to load furniture from TMX file: " + assetId, ex);
+                InvokenGame.error("Failed to load furniture from TMX file: " + id, ex);
                 return null;
             }
         }
@@ -57,15 +58,15 @@ public abstract class FurnitureLoader {
     
     public static class ActivatorLoader extends FurnitureLoader {
     	@Override
-    	public PlaceableFurniture load(String assetId) {
+    	public PlaceableFurniture loadFrom(Furniture furniture) {
     		FurnitureLoader tmxLoader = FurnitureLoader.getLoader(Furniture.Type.TMX);
-    		PlaceableFurniture furniture = tmxLoader.load("activators/" + assetId);
-    		return new PlaceableActivator(assetId, furniture);
+    		PlaceableFurniture placeable = tmxLoader.loadFrom(furniture);
+    		return new PlaceableActivator(furniture, placeable);
     	}
     }
     
     public static PlaceableFurniture load(Furniture furniture) {
-        return getLoader(furniture.getType()).load(furniture.getId());
+        return getLoader(furniture.getType()).loadFrom(furniture);
     }
     
     public static FurnitureLoader getLoader(Furniture.Type type) {

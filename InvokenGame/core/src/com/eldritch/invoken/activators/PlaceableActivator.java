@@ -7,14 +7,15 @@ import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.encounter.NaturalVector2;
 import com.eldritch.invoken.encounter.layer.LocationMap;
 import com.eldritch.invoken.encounter.proc.FurnitureLoader.PlaceableFurniture;
+import com.eldritch.invoken.proto.Locations.Room.Furniture;
 import com.google.common.base.CaseFormat;
 
 public class PlaceableActivator implements PlaceableFurniture {
-	private final String assetId;
+	private final Furniture data;
 	private final PlaceableFurniture tiles;
 	
-	public PlaceableActivator(String assetId, PlaceableFurniture tiles) {
-		this.assetId = assetId;
+	public PlaceableActivator(Furniture data, PlaceableFurniture tiles) {
+		this.data = data;
 		this.tiles = tiles;
 	}
 	
@@ -31,7 +32,7 @@ public class PlaceableActivator implements PlaceableFurniture {
 	@Override
 	public void place(NaturalVector2 position, LocationMap map) {
 		tiles.place(position, map);
-		map.add(load(assetId, position, map));
+		map.add(load(data.getId(), position, map));
 	}
 	
 	public static Activator load(String name, NaturalVector2 position, LocationMap map) {

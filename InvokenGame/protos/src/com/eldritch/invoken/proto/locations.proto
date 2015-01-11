@@ -31,6 +31,9 @@ message Room {
 
 		optional string id = 1;
 		optional Type type = 2;
+
+		// some pieces of furniture have custom behavior described by another asset proto
+		optional string asset_id = 3;
 	}
 
 	enum Size {
