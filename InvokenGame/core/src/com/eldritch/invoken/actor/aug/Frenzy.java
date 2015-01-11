@@ -61,7 +61,7 @@ public class Frenzy extends ProjectileAugmentation {
         private final Animation animation;
 
         public FrenzyBullet() {
-            super(1 / 32f * regions[0].getRegionWidth(), 1 / 32f * regions[0].getRegionWidth(),
+            super(1 / 32f * regions[0].getRegionWidth(), 1 / 32f * regions[0].getRegionHeight(),
                     10, 0);
 
             animation = new Animation(0.1f, regions);

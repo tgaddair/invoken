@@ -74,12 +74,11 @@ public class ThrowGrenade extends Augmentation {
     }
     
     public static class Grenade extends Projectile {
-        private static final TextureRegion[] regions = GameScreen.getRegions(
-                "sprite/effects/drain-attack.png", 32, 32)[0];
+        private static final TextureRegion texture = new TextureRegion(
+                GameScreen.getTexture("sprite/effects/grenade.png"));
         private static final TextureRegion[] explosionRegions = GameScreen.getMergedRegion(
         		"sprite/effects/explosion.png", 256, 256);
         
-        private final Animation animation;
         private final Animation explosion;
         
         private Vector2 target = null;
@@ -88,12 +87,7 @@ public class ThrowGrenade extends Augmentation {
         private boolean detonated = false;
 
         public Grenade() {
-            super(1 / 32f * regions[0].getRegionWidth(), 1 / 32f * regions[0].getRegionWidth(),
-            		5, 50);
-
-            animation = new Animation(0.1f, regions);
-            animation.setPlayMode(Animation.PlayMode.LOOP_PINGPONG);
-            
+            super(1 / 32f * texture.getRegionWidth(), 1 / 32f * texture.getRegionHeight(), 5, 50);
             explosion = new Animation(0.1f, explosionRegions);
         }
         
@@ -141,7 +135,7 @@ public class ThrowGrenade extends Augmentation {
 
         @Override
         protected TextureRegion getTexture(float stateTime) {
-            return animation.getKeyFrame(stateTime);
+            return texture;
         }
 
         @Override
