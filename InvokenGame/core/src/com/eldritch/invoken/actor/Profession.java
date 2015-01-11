@@ -16,6 +16,7 @@ import com.eldritch.invoken.actor.aug.Crack;
 import com.eldritch.invoken.actor.aug.Frenzy;
 import com.eldritch.invoken.actor.aug.Drain;
 import com.eldritch.invoken.actor.aug.FireWeapon;
+import com.eldritch.invoken.actor.aug.Infect;
 import com.eldritch.invoken.actor.aug.Jaunt;
 import com.eldritch.invoken.actor.aug.Mirror;
 import com.eldritch.invoken.actor.aug.Paralyze;
@@ -95,7 +96,10 @@ public enum Profession {
 		
 		@Override
 		public List<Augmentation> getStartingAugmentations() {
-			return ImmutableList.<Augmentation>of(Drain.getInstance(), Resurrect.getInstance());
+			return ImmutableList.<Augmentation>of(
+					Drain.getInstance(), 
+					Infect.getInstance(),
+					Resurrect.getInstance());
 		}
 	},
 	

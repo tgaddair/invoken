@@ -1,27 +1,32 @@
 package com.eldritch.invoken.actor.aug;
 
+import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Pool;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.actor.type.AoeProjectile;
+import com.eldritch.invoken.actor.type.Projectile;
 import com.eldritch.invoken.effects.Bleed;
+import com.eldritch.invoken.effects.Infected;
 import com.eldritch.invoken.effects.Stunned;
 import com.eldritch.invoken.encounter.Location;
 import com.eldritch.invoken.screens.GameScreen;
 
-public class ThrowGrenade extends Augmentation {
+public class Infect extends Augmentation {
 	private static class Holder {
-        private static final ThrowGrenade INSTANCE = new ThrowGrenade();
+        private static final Infect INSTANCE = new Infect();
 	}
 	
-	public static ThrowGrenade getInstance() {
+	public static Infect getInstance() {
 		return Holder.INSTANCE;
 	}
 	
-    private ThrowGrenade() {
-        super("throw");
+    private Infect() {
+        super("infect");
     }
 
     @Override
@@ -31,7 +36,7 @@ public class ThrowGrenade extends Augmentation {
     
     @Override
     public Action getAction(Agent owner, Vector2 target) {
-        return new ThrowAction(owner, target);
+        return new InfectAction(owner, target);
     }
 
     @Override
@@ -54,11 +59,11 @@ public class ThrowGrenade extends Augmentation {
         return 1;
     }
 
-    public class ThrowAction extends AnimatedAction {
+    public class InfectAction extends AnimatedAction {
         private final Vector2 target;
 
-        public ThrowAction(Agent actor, Vector2 target) {
-            super(actor, Activity.Swipe, ThrowGrenade.this);
+        public InfectAction(Agent actor, Vector2 target) {
+            super(actor, Activity.Swipe, Infect.this);
             this.target= target;
         }
 
@@ -82,33 +87,28 @@ public class ThrowGrenade extends Augmentation {
         private static final TextureRegion texture = new TextureRegion(
                 GameScreen.getTexture("sprite/effects/grenade.png"));
         private static final TextureRegion[] explosionRegions = GameScreen.getMergedRegion(
-        		"sprite/effects/explosion.png", 256, 256);
-
+        		"sprite/effects/infect_cloud.png", 256, 256);
+        
         public Grenade() {
-            super(texture, explosionRegions, 5, 50, 3);
+            super(texture, explosionRegions, 5, 5, 2);
         }
 		
         @Override
 		protected void onDetonate() {
-			// friendly fire
-			detonateOn(getOwner());
-			for (Agent neighbor : getOwner().getNeighbors()) {
-				detonateOn(neighbor);
-        	}
-		}
-		
-		private void detonateOn(Agent agent) {
-			Agent owner = getOwner();
-			if (agent.inRange(getPosition(), getRadius())) {
-				Vector2 direction = agent.getPosition().cpy().sub(getPosition()).nor();
-				agent.applyForce(direction.scl(500));
-				agent.addEffect(new Stunned(owner, agent, 0.2f));
-				agent.addEffect(new Bleed(owner, agent, getDamage(agent)));
-    		}
 		}
 
 		@Override
 		protected void doDuringExplosion(float delta, Location location) {
+			// no friendly fire
+			Agent owner = getOwner();
+			for (Agent neighbor : owner.getNeighbors()) {
+				if (!neighbor.isToggled(Infected.class)) {
+					// infection does not stack
+					if (neighbor.inRange(getPosition(), getRadius())) {
+						neighbor.addEffect(new Infected(owner, neighbor, getDamage(neighbor), 3));
+		    		}
+				}
+        	}
 		}
 
 		@Override
