@@ -51,7 +51,7 @@ import com.eldritch.invoken.gfx.Light;
 import com.eldritch.invoken.gfx.LightManager;
 import com.eldritch.invoken.proto.Locations.Encounter;
 import com.eldritch.invoken.proto.Locations.Encounter.ActorParams.ActorScenario;
-import com.eldritch.invoken.ui.RelationDrawer;
+import com.eldritch.invoken.ui.RelationRenderer;
 import com.eldritch.invoken.util.Settings;
 import com.google.common.base.Optional;
 import com.google.common.primitives.Ints;
@@ -88,7 +88,7 @@ public class Location {
     private final int groundIndex = 0;
     
     private final World world;
-    RelationDrawer relationRenderer = new RelationDrawer();
+    RelationRenderer relationRenderer = new RelationRenderer();
     Box2DDebugRenderer debugRenderer = new Box2DDebugRenderer();
     
     public Location(com.eldritch.invoken.proto.Locations.Location data) {
