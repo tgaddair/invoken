@@ -8,12 +8,10 @@ import com.eldritch.invoken.actor.GameCamera;
 import com.eldritch.invoken.actor.Profession;
 import com.eldritch.invoken.actor.ai.AgentMover;
 import com.eldritch.invoken.encounter.Location;
+import com.eldritch.invoken.util.Settings;
 
 /** The player character, has state and state time, */
 public class Player extends SteeringAgent {
-	// debug
-	private final boolean GOD_MODE = true;
-	
 	private final GameCamera PLAYER_CAMERA = new PlayerCamera();
 	
     private final AgentMover mover;
@@ -142,7 +140,7 @@ public class Player extends SteeringAgent {
     
     @Override
     public float damage(float value) {
-    	if (GOD_MODE) {
+    	if (Settings.GOD_MODE) {
     		return 0;
     	}
 		return super.damage(value);

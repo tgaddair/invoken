@@ -777,3 +777,22 @@ industry/terminal-green
   orig: 32, 32
   offset: 0, 0
   index: -1
+
+apocalypse.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+industry/terminal-large
+  rotate: false
+  xy: 192, 384
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+industry/terminal-small
+  rotate: false
+  xy: 256, 384
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1

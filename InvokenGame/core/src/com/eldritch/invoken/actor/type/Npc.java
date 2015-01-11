@@ -1,6 +1,5 @@
 package com.eldritch.invoken.actor.type;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -10,11 +9,8 @@ import java.util.Set;
 
 import com.badlogic.gdx.ai.msg.Telegram;
 import com.badlogic.gdx.ai.msg.Telegraph;
-import com.badlogic.gdx.ai.steer.Proximity;
-import com.badlogic.gdx.ai.steer.Steerable;
 import com.badlogic.gdx.ai.steer.SteeringBehavior;
 import com.badlogic.gdx.ai.steer.behaviors.Arrive;
-import com.badlogic.gdx.ai.steer.behaviors.Cohesion;
 import com.badlogic.gdx.ai.steer.behaviors.Evade;
 import com.badlogic.gdx.ai.steer.behaviors.Flee;
 import com.badlogic.gdx.ai.steer.behaviors.Hide;
@@ -30,30 +26,19 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
-import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Fixture;
-import com.badlogic.gdx.physics.box2d.RayCastCallback;
-import com.badlogic.gdx.utils.Array;
+import com.eldritch.invoken.actor.Conversable;
+import com.eldritch.invoken.actor.ConversationHandler;
+import com.eldritch.invoken.actor.ConversationHandler.DialogueVerifier;
 import com.eldritch.invoken.actor.Inventory.ItemState;
 import com.eldritch.invoken.actor.ai.AdaptiveRayWithWhiskersConfiguration;
-import com.eldritch.invoken.actor.ai.AssaultRoutine;
-import com.eldritch.invoken.actor.ai.AssistRoutine;
 import com.eldritch.invoken.actor.ai.Behavior;
 import com.eldritch.invoken.actor.ai.Box2dRaycastCollisionDetector;
-import com.eldritch.invoken.actor.ai.FleeRoutine;
-import com.eldritch.invoken.actor.ai.FollowRoutine;
-import com.eldritch.invoken.actor.ai.IdleRoutine;
 import com.eldritch.invoken.actor.ai.NpcState;
 import com.eldritch.invoken.actor.ai.NpcStateMachine;
-import com.eldritch.invoken.actor.ai.PatrolRoutine;
-import com.eldritch.invoken.actor.ai.Routine;
-import com.eldritch.invoken.actor.pathfinding.Pathfinder;
 import com.eldritch.invoken.encounter.Location;
 import com.eldritch.invoken.proto.Actors.ActorParams.Species;
-import com.eldritch.invoken.proto.Actors.DialogueTree;
 import com.eldritch.invoken.proto.Actors.DialogueTree.Choice;
 import com.eldritch.invoken.proto.Actors.DialogueTree.Response;
 import com.eldritch.invoken.proto.Actors.NonPlayerActor;
@@ -64,19 +49,16 @@ import com.eldritch.invoken.proto.Prerequisites.Standing;
 import com.eldritch.invoken.util.PrerequisiteVerifier;
 import com.google.common.base.Optional;
 
-public abstract class Npc extends SteeringAgent implements Telegraph {
+public abstract class Npc extends SteeringAgent implements Telegraph, Conversable {
 	private final NonPlayerActor data;
     private final Optional<ActorScenario> scenario;
-	private final DialogueVerifier dialogueVerifier = new DialogueVerifier();
+    private final ConversationHandler dialogue;
 	private final Behavior behavior;
-	final Pathfinder pathfinder = new Pathfinder();
-	private final List<Routine> routines = new ArrayList<Routine>();
 	private final Set<Agent> detected = new HashSet<Agent>();
 	
 	// used in AI routine calculations to determine things like the target
 	private final Location location;
 	private final Set<Agent> squad = new HashSet<Agent>();
-	private Routine routine;
 	
 	// AI controllers
 	private final NpcStateMachine stateMachine;
@@ -100,6 +82,7 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
 		super(data.getParams(), x, y, width, height, location.getWorld(), animations);
 		this.data = data;
 		scenario = Optional.absent();
+		dialogue = new ConversationHandler(data.getDialogue(), new NpcDialogueVerifier());
 		behavior = new Behavior(this, data);
 		this.location = location;
 		
@@ -107,20 +90,6 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
 		for (ItemState item : info.getInventory().getItems()) {
 			info.getInventory().equip(item.getItem());
 		}
-		
-		// routines
-		// TODO: add these to proto to make them modular for NPCs
-		routines.add(new FleeRoutine(this, location));
-		routines.add(new AssaultRoutine(this, location));
-		routines.add(new AssistRoutine(this, location));
-		routines.add(new FollowRoutine(this));
-		
-		Routine idle = new IdleRoutine(this);
-        Routine patrol = new PatrolRoutine(this);
-		routines.add(patrol);
-		routines.add(idle); // idle is fallback
-		
-		routine = Math.random() < 0.5 ? idle : patrol;
 		
 		// steering behaviors
 		rayConfiguration = new AdaptiveRayWithWhiskersConfiguration<Vector2>(this, 3, 1, 35 * MathUtils.degreesToRadians);
@@ -357,76 +326,29 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
 	    return behavior;
 	}
 	
-	public Pathfinder getPathfinder() {
-	    return pathfinder;
-	}
-	
-	public Vector2 getClearTarget(Location screen) {
-		return getClearTarget(getTarget().getPosition(), screen);
-	}
-	
-	public Vector2 getClearTarget(Vector2 target, Location screen) {
-		return pathfinder.getTarget(this, getPosition(), target, screen);
-	}
-	
-	public Vector2 getClearTarget(double theta, Location screen) {
-	    Vector2 target = pathfinder.rotate(getTarget().getPosition(), getPosition(), theta);
-        return pathfinder.getTarget(this, getPosition(), target, screen);
-    }
-	
-	private void setRoutine(Routine routine) {
-		this.routine = routine;
-		pathfinder.reset();
-		routine.reset();
-	}
-	
 	@Override
 	public void handleInteract(Agent other) {
 		other.interact(this);
 	}
 	
+	@Override
 	public List<Choice> getChoicesFor(Response response) {
-        List<Choice> choices = new ArrayList<Choice>();
-        for (Choice choice : response.getChoiceList()) {
-            if (dialogueVerifier.isValid(choice)) {
-                choices.add(choice);
-            }
-        }
-        return choices;
+		return dialogue.getChoicesFor(response);
     }
     
+	@Override
     public Response getResponseFor(Choice choice) {
-        Set<String> successors = new HashSet<String>(choice.getSuccessorIdList());
-        for (Response r : data.getDialogue().getDialogueList()) {
-            if (successors.contains(r.getId()) && dialogueVerifier.isValid(r)) {
-                return r;
-            }
-        }
-        return null;
+    	return dialogue.getResponseFor(choice);
     }
     
+	@Override
     public boolean hasGreeting() {
-        // TODO this could be more efficient
-        return getGreeting() != null;
+    	return dialogue.hasGreeting();
     }
     
+	@Override
     public Response getGreeting() {
-//        if (scenario.hasDialogue()) {
-//            Response greeting = getGreetingFor(scenario.getDialogue());
-//            if (greeting != null) {
-//                return greeting;
-//            }
-//        }
-        return getGreetingFor(data.getDialogue());
-    }
-    
-    private Response getGreetingFor(DialogueTree tree) {
-        for (Response r : tree.getDialogueList()) {
-            if (r.getGreeting() && dialogueVerifier.isValid(r)) {
-                return r;
-            }
-        }
-        return null;
+    	return dialogue.getGreeting();
     }
     
     public int getInfluence(Agent other) {
@@ -439,7 +361,7 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
         return Standing.NEUTRAL;
     }
     
-    public class DialogueVerifier extends PrerequisiteVerifier {
+    public class NpcDialogueVerifier extends PrerequisiteVerifier implements DialogueVerifier {
         @Override
         protected boolean verifyInfluence(Prerequisite prereq, Agent actor) {
             int value = getInfluence(actor);

@@ -6,12 +6,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
@@ -31,8 +29,6 @@ import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Rectangle;
 import com.eldritch.invoken.InvokenGame;
-import com.eldritch.invoken.activators.Activator;
-import com.eldritch.invoken.actor.type.Player;
 import com.eldritch.invoken.encounter.Location;
 import com.eldritch.invoken.encounter.NaturalVector2;
 import com.eldritch.invoken.encounter.layer.EncounterLayer;
@@ -57,7 +53,7 @@ public class LocationGenerator {
 	private static final String FLOOR = "/floor";
 	private static final String ROOF = "/roof";
 	private static final String MID_WALL_TOP = "/mid-wall-top";
-	private static final String MID_WALL_CENTER = "/mid-wall-center";
+//	private static final String MID_WALL_CENTER = "/mid-wall-center";
 	private static final String MID_WALL_BOTTOM = "/mid-wall-bottom";
 	private static final String LEFT_TRIM = "/left-trim";
 	private static final String RIGHT_TRIM = "/right-trim";
@@ -72,7 +68,6 @@ public class LocationGenerator {
 	
     private static final int PX = Settings.PX;
     private static final int SCALE = 1;
-    private static final int MAX_LEAF_SIZE = 35;
     private final Random rand = new Random();
 
     private final String biome;
@@ -113,8 +108,6 @@ public class LocationGenerator {
         int width = Settings.MAX_WIDTH;
         int height = Settings.MAX_HEIGHT;
         LocationMap map = getBaseMap(width, height);
-//        List<Leaf> leafs = createLeaves(width / SCALE, height / SCALE);
-//        List<Room> rooms = createRooms(leafs);
         
         BspGenerator bsp = new BspGenerator(width / SCALE, height / SCALE);
         bsp.generateSegments();
@@ -164,7 +157,7 @@ public class LocationGenerator {
 
         // add furniture
         InvokenGame.log("Adding Furniture");
-        List<Activator> activators = new ArrayList<Activator>();
+//        List<Activator> activators = new ArrayList<Activator>();
         IcarianFurnitureGenerator furnitureGenerator = new IcarianFurnitureGenerator(atlas, ground);
 
         // doors
@@ -186,7 +179,7 @@ public class LocationGenerator {
         location.addActivators(map.getActivators());
         
         // debug
-        saveLayer(base);
+//        saveLayer(base);
 
         return location;
     }
@@ -371,37 +364,6 @@ public class LocationGenerator {
         }
 
         return layer;
-    }
-
-    private List<GeneratedRoom> createRooms(List<Leaf> leafs) {
-        List<GeneratedRoom> generatedRooms = new ArrayList<GeneratedRoom>();
-
-        // create rooms
-        Map<Leaf, GeneratedRoom> leafToRoom = new HashMap<Leaf, GeneratedRoom>();
-        for (Leaf leaf : leafs) {
-            if (leaf.room != null) {
-                GeneratedRoom generatedRoom = new GeneratedRoom(leaf);
-                generatedRooms.add(generatedRoom);
-                leafToRoom.put(leaf, generatedRoom);
-            }
-        }
-
-        // define neighbor rooms for later graph traversal
-        for (GeneratedRoom generatedRoom : generatedRooms) {
-            Leaf leaf = generatedRoom.getLeaf();
-            if (leaf.leftChild != null && leafToRoom.containsKey(leaf.leftChild)) {
-                GeneratedRoom other = leafToRoom.get(leaf.leftChild);
-                generatedRoom.addAdjacentRoom(other);
-                other.addAdjacentRoom(generatedRoom);
-            }
-            if (leaf.rightChild != null && leafToRoom.containsKey(leaf.rightChild)) {
-                GeneratedRoom other = leafToRoom.get(leaf.rightChild);
-                generatedRoom.addAdjacentRoom(other);
-                other.addAdjacentRoom(generatedRoom);
-            }
-        }
-
-        return generatedRooms;
     }
 
     private List<LocationLayer> createSpawnLayers(LocationLayer base, LocationLayer collision,
@@ -626,18 +588,6 @@ public class LocationGenerator {
     private int randomNumber(int min, int max) {
         return rand.nextInt(max - min + 1) + min;
     }
-
-    private void addRoom(Rectangle room, LocationLayer layer, TiledMapTile tile) {
-        int left = (int) room.x;
-        int right = (int) (room.x + room.width);
-        int top = (int) room.y;
-        int bottom = (int) (room.y + room.height);
-        for (int i = left; i <= right; i++) {
-            for (int j = top; j <= bottom; j++) {
-                addTile(i, j, layer, tile);
-            }
-        }
-    }
     
     private void addTile(int i, int j, LocationLayer layer, TiledMapTile tile) {
         int startX = i * SCALE;
@@ -663,43 +613,6 @@ public class LocationGenerator {
         cell.setTile(tile);
         layer.setCell(x, y, cell);
         return cell;
-    }
-
-    private List<Leaf> createLeaves(int width, int height) {
-        List<Leaf> leafs = new ArrayList<Leaf>();
-
-        // first, create a Leaf to be the 'root' of all Leafs.
-        Leaf root = new Leaf(0, 0, width, height);
-        leafs.add(root);
-
-        boolean didSplit = true;
-        // we loop through every Leaf in our Vector over and over again, until no more Leafs can be
-        // split.
-        while (didSplit) {
-            didSplit = false;
-            List<Leaf> newLeaves = new ArrayList<Leaf>();
-            for (Leaf l : leafs) {
-                // if this Leaf is not already split...
-                if (l.leftChild == null && l.rightChild == null) {
-                    // if this Leaf is too big, or 75% chance...
-                    if (l.width > MAX_LEAF_SIZE || l.height > MAX_LEAF_SIZE || Math.random() < 0.5) {
-                        if (l.split()) { // split the Leaf!
-                            // if we did split, push the child leafs to the list so we can loop into
-                            // them next
-                            newLeaves.add(l.leftChild);
-                            newLeaves.add(l.rightChild);
-                            didSplit = true;
-                        }
-                    }
-                }
-            }
-            leafs.addAll(newLeaves);
-        }
-
-        // next, iterate through each Leaf and create a room in each one.
-        root.createRooms();
-
-        return leafs;
     }
 
     public TextureAtlas getAtlas() {
