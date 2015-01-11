@@ -79,6 +79,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     float elapsed = 0;
 
     private final List<Agent> neighbors = new ArrayList<Agent>();
+    private final Map<Agent, Boolean> lineOfSightCache = new HashMap<Agent, Boolean>();
     private final LinkedList<Action> actions = new LinkedList<Action>();
     private final List<Effect> effects = new LinkedList<Effect>();
     private Action action = null;
@@ -579,9 +580,12 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     }
     
     public boolean hasLineOfSight(Agent other) {
-    	losHandler.reset(other);
-        world.rayCast(losHandler, body.getPosition(), other.body.getPosition());
-        return losHandler.hasLineOfSight();
+    	if (!lineOfSightCache.containsKey(other)) {
+    		losHandler.reset(other);
+    		world.rayCast(losHandler, body.getPosition(), other.body.getPosition());
+    		lineOfSightCache.put(other, losHandler.hasLineOfSight());
+    	}
+    	return lineOfSightCache.get(other);
     }
     
     public boolean hasLineOfSight(Vector2 target) {
@@ -745,6 +749,9 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         if (delta == 0)
             return;
         stateTime += delta;
+        
+        // clear iteration caches
+        lineOfSightCache.clear();
         
         elapsed += delta;
         if (elapsed >= 3) {
