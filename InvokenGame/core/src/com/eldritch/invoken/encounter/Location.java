@@ -456,8 +456,8 @@ public class Location {
         // draw the disposition graph
         if (player.getTarget() != null) {
         	Agent target = player.getTarget();
-//        	relationRenderer.renderDispositions(target, drawableEntities, camera);
-        	relationRenderer.renderLineOfSight(target, drawableEntities, camera);
+        	relationRenderer.renderDispositions(target, drawableEntities, camera);
+//        	relationRenderer.renderLineOfSight(target, drawableEntities, camera);
         }
 
         // render the drawables
