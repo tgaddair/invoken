@@ -40,7 +40,11 @@ public abstract class Projectile extends CollisionEntity implements TemporaryEnt
         finished = false;
         stateTime = 0;
 
-        position.set(source.getForwardVector().scl(0.5f).add(source.getPosition()));
+        // get the center of the agent launching the projectile, then offset the starting position
+        // slightly towards its target so it appears to be coming from the agent's hands
+        Vector2 center = source.getVisibleCenter();
+        Vector2 delta = target.cpy().sub(center).nor().scl(0.5f);
+        position.set(center.add(delta));
         reset(source, target);
     }
     
@@ -98,8 +102,10 @@ public abstract class Projectile extends CollisionEntity implements TemporaryEnt
         Batch batch = renderer.getSpriteBatch();
         batch.begin();
         preRender(batch);
-        batch.draw(getTexture(stateTime), position.x - getWidth() * 0.5f, position.y - getHeight()
-                * 0.5f, 0.5f, 0.5f, getWidth(), getHeight(), 1f, 1f, velocity.angle());
+        batch.draw(getTexture(stateTime),
+        		position.x - getWidth(), position.y - getHeight(),
+        		getWidth() / 2, getHeight() / 2,
+        		getWidth(), getHeight(), 1f, 1f, velocity.angle());
         postRender(batch);
         batch.end();
     }

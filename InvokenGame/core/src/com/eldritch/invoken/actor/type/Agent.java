@@ -445,6 +445,10 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         position.set(x, y);
     }
     
+    public Vector2 getVisibleCenter() {
+    	return position.cpy().add(getWidth() / 2, 0);
+    }
+    
     public Vector2 getRenderPosition() {
     	return position;
     }
