@@ -2,14 +2,11 @@ package com.eldritch.invoken.actor.type;
 
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import com.badlogic.gdx.ai.msg.Telegram;
 import com.badlogic.gdx.ai.msg.Telegraph;
-import com.badlogic.gdx.ai.steer.SteeringBehavior;
 import com.badlogic.gdx.ai.steer.behaviors.Arrive;
 import com.badlogic.gdx.ai.steer.behaviors.Evade;
 import com.badlogic.gdx.ai.steer.behaviors.Flee;
@@ -64,8 +61,6 @@ public abstract class Npc extends SteeringAgent implements Telegraph, Conversabl
 	private final NpcStateMachine stateMachine;
 	private boolean canAttack = true;
 	
-	private final Map<Class<? extends SteeringBehavior<?>>, SteeringBehavior<Vector2>> behaviors = 
-			new LinkedHashMap<Class<? extends SteeringBehavior<?>>, SteeringBehavior<Vector2>>();
 	RayConfigurationBase<Vector2> rayConfiguration;
 	
 	// behaviors that need to be updated periodically
@@ -164,8 +159,8 @@ public abstract class Npc extends SteeringAgent implements Telegraph, Conversabl
 				.add(evade)
 				.add(pursue)
 				.add(flee)
-				.add(arrive)
 				.add(seek)
+				.add(arrive)
 				.add(wander);
 		setBehavior(prioritySteering);
 		
@@ -221,6 +216,10 @@ public abstract class Npc extends SteeringAgent implements Telegraph, Conversabl
 	
 	public boolean isThreatened() {
 		return hasEnemies() || !detected.isEmpty();
+	}
+	
+	public boolean isAgitated() {
+		return behavior.shouldAssault(getNeighbors());
 	}
 	
 	public boolean isSafe() {

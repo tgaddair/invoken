@@ -16,6 +16,8 @@ public class Settings {
 	// debug settings
 	public static final boolean GOD_MODE = true;
 	public static boolean DEBUG_DRAW = false;
+	public static boolean DRAW_DISPOSITION = true;
+	public static boolean DRAW_LOS = false;
 
 	private Settings() {}
 }

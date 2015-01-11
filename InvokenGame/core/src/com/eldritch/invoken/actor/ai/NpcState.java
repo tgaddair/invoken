@@ -14,7 +14,7 @@ public enum NpcState implements State<Npc> {
 
 		@Override
 		public void update(Npc entity, StateMachine<Npc> machine) {
-			if (entity.isThreatened()) {
+			if (entity.isThreatened() || entity.isAgitated()) {
 				entity.getStateMachine().changeState(COMBAT);
 			}
 		}
