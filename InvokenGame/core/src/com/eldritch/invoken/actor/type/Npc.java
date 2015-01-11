@@ -13,6 +13,7 @@ import com.badlogic.gdx.ai.msg.Telegraph;
 import com.badlogic.gdx.ai.steer.Proximity;
 import com.badlogic.gdx.ai.steer.Steerable;
 import com.badlogic.gdx.ai.steer.SteeringBehavior;
+import com.badlogic.gdx.ai.steer.behaviors.Arrive;
 import com.badlogic.gdx.ai.steer.behaviors.Cohesion;
 import com.badlogic.gdx.ai.steer.behaviors.Evade;
 import com.badlogic.gdx.ai.steer.behaviors.Flee;
@@ -91,6 +92,7 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
 	private final Pursue<Vector2> pursue;
 	private final Flee<Vector2> flee;
 	private final Seek<Vector2> seek;
+	private final Arrive<Vector2> arrive;
 	private final Wander<Vector2> wander;
 	
 	public Npc(NonPlayerActor data, float x, float y, float width, float height,
@@ -165,6 +167,7 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
 		pursue = new Pursue<Vector2>(this, location.getPlayer());
 		flee = new Flee<Vector2>(this);
 		seek = new Seek<Vector2>(this);
+		arrive = new Arrive<Vector2>(this).setArrivalTolerance(0.1f).setDecelerationRadius(2f);
 		wander = new Wander<Vector2>(this)
 				// Don't use Face internally because independent facing is off
 				.setFaceEnabled(false) //
@@ -182,6 +185,7 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
 		pursue.setEnabled(false);
 		flee.setEnabled(false);
 		seek.setEnabled(false);
+		arrive.setEnabled(false);
 		
 		// order in descending priority
 		PrioritySteering<Vector2> prioritySteering = new PrioritySteering<Vector2>(this)
@@ -191,6 +195,7 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
 				.add(evade)
 				.add(pursue)
 				.add(flee)
+				.add(arrive)
 				.add(seek)
 				.add(wander);
 		setBehavior(prioritySteering);
@@ -235,6 +240,10 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
 	
 	public Seek<Vector2> getSeek() {
 		return seek;
+	}
+	
+	public Arrive<Vector2> getArrive() {
+		return arrive;
 	}
 	
 	public Wander<Vector2> getWander() {

@@ -342,9 +342,13 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
             followed = null;
         }
     }
-
+    
     public Agent getFollowed() {
         return followed;
+    }
+    
+    public boolean isFollowing() {
+    	return followed != null;
     }
 
     public boolean isFollowing(Agent agent) {
