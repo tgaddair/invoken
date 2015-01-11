@@ -10,7 +10,7 @@ public class Settings {
 	
 	// debug settings
 	public static final boolean GOD_MODE = true;
-	public static boolean DEBUG_DRAW = true;
+	public static boolean DEBUG_DRAW = false;
 
 	private Settings() {}
 }

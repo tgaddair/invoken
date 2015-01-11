@@ -586,7 +586,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     
     public boolean hasLineOfSight(Vector2 target) {
     	losHandler.reset(null);
-        world.rayCast(losHandler, position, target);
+        world.rayCast(losHandler, body.getPosition(), target);
         return losHandler.hasLineOfSight();
     }
     

@@ -33,7 +33,8 @@ public class Resurrect extends Augmentation {
 	
 	@Override
 	public boolean isValid(Agent owner, Agent target) {
-		return target != null && target != owner && !target.isAlive();
+		return target != null && target != owner && !target.isAlive() 
+				&& owner.hasLineOfSight(target);
 	}
 	
 	@Override
