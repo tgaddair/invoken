@@ -36,6 +36,8 @@ public class AgentInfo {
 	float energy;
 	int level;
 	
+	float energyOffset = 0;
+	
 	int activeDefense = 0;
 	
 	public AgentInfo(Agent agent, ActorParams params) {
@@ -193,9 +195,13 @@ public class AgentInfo {
     public float getEnergy() {
         return energy;
     }
+    
+    public void changeBaseEnergy(float delta) {
+    	energyOffset += delta;
+    }
 	
 	public float getBaseEnergy() {
-        return getAutomata();
+        return getAutomata() + energyOffset;
     }
 	
 	public float expend(float value) {
