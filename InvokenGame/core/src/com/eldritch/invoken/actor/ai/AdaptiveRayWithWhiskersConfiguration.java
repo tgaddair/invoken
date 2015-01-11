@@ -7,12 +7,14 @@ import com.badlogic.gdx.math.Vector;
 
 public class AdaptiveRayWithWhiskersConfiguration<T extends Vector<T>> extends CentralRayWithWhiskersConfiguration<T> {
 	private final float maxRayLength;
+	private final float maxWhiskerLength;
 	private final float maxWhiskerAngle;
 
 	public AdaptiveRayWithWhiskersConfiguration(Steerable<T> owner,
-			float maxRayLength, float whiskerLength, float maxWhiskerAngle) {
-		super(owner, maxRayLength, whiskerLength, maxWhiskerAngle);
+			float maxRayLength, float maxWhiskerLength, float maxWhiskerAngle) {
+		super(owner, maxRayLength, maxWhiskerLength, maxWhiskerAngle);
 		this.maxRayLength = maxRayLength;
+		this.maxWhiskerLength = maxWhiskerLength;
 		this.maxWhiskerAngle = maxWhiskerAngle;
 	}
 	
@@ -25,8 +27,12 @@ public class AdaptiveRayWithWhiskersConfiguration<T extends Vector<T>> extends C
 		float angle = ((maxVelocity - velocity) / maxVelocity) * maxWhiskerAngle;
 		setWhiskerAngle(angle);
 		
+		float whiskerLength = (velocity / maxVelocity) * maxWhiskerLength;
+		whiskerLength = Math.min(whiskerLength + 0.5f, maxWhiskerLength);
+		setWhiskerLength(whiskerLength);
+		
 		float length = (velocity / maxVelocity) * maxRayLength;
-		length = Math.min(length + 1, maxRayLength);
+		length = Math.min(length + 0.5f, maxRayLength);
 		setRayLength(length);
 		
 		return super.updateRays();
