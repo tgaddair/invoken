@@ -27,11 +27,153 @@ import com.eldritch.invoken.proto.Actors.ActorParams.Skill;
 import com.eldritch.invoken.proto.Disciplines.Discipline;
 import com.google.common.collect.ImmutableList;
 
-public abstract class Profession {
-    public static Profession getDefault() {
-        return new Centurion();
+public enum Profession {
+	Centurion() {
+		@Override
+		public List<Discipline> getMasteries() {
+			return ImmutableList.of(Discipline.WARFARE, Discipline.WARFARE);
+		}
+		
+		@Override
+		public List<Augmentation> getStartingAugmentations() {
+			return ImmutableList.<Augmentation>of(
+					FireWeapon.getInstance(),
+					ThrowGrenade.getInstance(),
+					Barrier.getInstance());
+		}
+	},
+	
+	Executor() {
+		@Override
+		public List<Discipline> getMasteries() {
+			return ImmutableList.of(Discipline.WARFARE, Discipline.AUTOMATA);
+		}
+		
+		@Override
+		public List<Augmentation> getStartingAugmentations() {
+			return ImmutableList.<Augmentation>of(
+					RendWeapon.getInstance(),
+					Jaunt.getInstance(),
+					Drain.getInstance(),
+					Mirror.getInstance());
+		}
+	},
+	
+	Assassin() {
+		@Override
+		public List<Discipline> getMasteries() {
+			return ImmutableList.of(Discipline.WARFARE, Discipline.SUBTERFUGE);
+		}
+		
+		@Override
+		public List<Augmentation> getStartingAugmentations() {
+			return ImmutableList.<Augmentation>of(
+					RendWeapon.getInstance(),
+					FireWeapon.getInstance());
+		}
+	},
+	
+	Warden() {
+		@Override
+		public List<Discipline> getMasteries() {
+			return ImmutableList.of(Discipline.WARFARE, Discipline.CHARISMA);
+		}
+		
+		@Override
+		public List<Augmentation> getStartingAugmentations() {
+			return ImmutableList.<Augmentation>of(
+					FireWeapon.getInstance(),
+					ThrowGrenade.getInstance());
+		}
+	},
+	
+	Architect() {
+		@Override
+		public List<Discipline> getMasteries() {
+			return ImmutableList.of(Discipline.AUTOMATA, Discipline.AUTOMATA);
+		}
+		
+		@Override
+		public List<Augmentation> getStartingAugmentations() {
+			return ImmutableList.<Augmentation>of(Drain.getInstance(), Resurrect.getInstance());
+		}
+	},
+	
+	Ghost() {
+		@Override
+		public List<Discipline> getMasteries() {
+			return ImmutableList.of(Discipline.AUTOMATA, Discipline.SUBTERFUGE);
+		}
+		
+		@Override
+		public List<Augmentation> getStartingAugmentations() {
+			return ImmutableList.<Augmentation>of(
+					FireWeapon.getInstance(),
+					Cloak.getInstance(),
+					Crack.getInstance(),
+					Scramble.getInstance());
+		}
+	},
+	
+	Inquisitor() {
+		@Override
+		public List<Discipline> getMasteries() {
+			return ImmutableList.of(Discipline.AUTOMATA, Discipline.CHARISMA);
+		}
+		
+		@Override
+		public List<Augmentation> getStartingAugmentations() {
+			return ImmutableList.<Augmentation>of(
+					Drain.getInstance(),
+					Paralyze.getInstance(),
+					Frenzy.getInstance());
+		}
+	},
+	
+	Infiltrator() {
+		@Override
+		public List<Discipline> getMasteries() {
+			return ImmutableList.of(Discipline.SUBTERFUGE, Discipline.SUBTERFUGE);
+		}
+		
+		@Override
+		public List<Augmentation> getStartingAugmentations() {
+			return ImmutableList.<Augmentation>of(FireWeapon.getInstance());
+		}
+	},
+	
+	Agent() {
+		@Override
+		public List<Discipline> getMasteries() {
+			return ImmutableList.of(Discipline.SUBTERFUGE, Discipline.CHARISMA);
+		}
+		
+		@Override
+		public List<Augmentation> getStartingAugmentations() {
+			return ImmutableList.<Augmentation>of(FireWeapon.getInstance());
+		}
+	},
+	
+	Broker() {
+		@Override
+		public List<Discipline> getMasteries() {
+			return ImmutableList.of(Discipline.CHARISMA, Discipline.CHARISMA);
+		}
+		
+		@Override
+		public List<Augmentation> getStartingAugmentations() {
+			return ImmutableList.<Augmentation>of(FireWeapon.getInstance());
+		}
+	};
+	
+	public abstract List<Discipline> getMasteries();
+	
+	public abstract List<Augmentation> getStartingAugmentations();
+	
+	public static Profession getDefault() {
+        return Architect;
     }
-    
+	
 	public static List<Skill> getSorted(List<Skill> skills, final Collection<Discipline> masteries) {
 		Collections.sort(skills, new Comparator<Skill>() {
 			@Override
@@ -94,168 +236,28 @@ public abstract class Profession {
 		return getSorted(result, masteries);
 	}
 	
-	public abstract List<Discipline> getMasteries();
-	
-	public abstract List<Augmentation> getStartingAugmentations();
-	
-	public static class Centurion extends Profession {
-		@Override
-		public List<Discipline> getMasteries() {
-			return ImmutableList.of(Discipline.WARFARE, Discipline.WARFARE);
-		}
-		
-		@Override
-		public List<Augmentation> getStartingAugmentations() {
-			return ImmutableList.<Augmentation>of(
-					FireWeapon.getInstance(),
-					ThrowGrenade.getInstance(),
-					Barrier.getInstance());
-		}
-	}
-	
-	public static class Executor extends Profession {
-		@Override
-		public List<Discipline> getMasteries() {
-			return ImmutableList.of(Discipline.WARFARE, Discipline.AUTOMATA);
-		}
-		
-		@Override
-		public List<Augmentation> getStartingAugmentations() {
-			return ImmutableList.<Augmentation>of(
-					RendWeapon.getInstance(),
-					Jaunt.getInstance(),
-					Drain.getInstance(),
-					Mirror.getInstance());
-		}
-	}
-	
-	public static class Assassin extends Profession {
-		@Override
-		public List<Discipline> getMasteries() {
-			return ImmutableList.of(Discipline.WARFARE, Discipline.SUBTERFUGE);
-		}
-		
-		@Override
-		public List<Augmentation> getStartingAugmentations() {
-			return ImmutableList.<Augmentation>of(
-					RendWeapon.getInstance(),
-					FireWeapon.getInstance());
-		}
-	}
-	
-	public static class Warden extends Profession {
-		@Override
-		public List<Discipline> getMasteries() {
-			return ImmutableList.of(Discipline.WARFARE, Discipline.CHARISMA);
-		}
-		
-		@Override
-		public List<Augmentation> getStartingAugmentations() {
-			return ImmutableList.<Augmentation>of(FireWeapon.getInstance());
-		}
-	}
-	
-	public static class Architect extends Profession {
-		@Override
-		public List<Discipline> getMasteries() {
-			return ImmutableList.of(Discipline.AUTOMATA, Discipline.AUTOMATA);
-		}
-		
-		@Override
-		public List<Augmentation> getStartingAugmentations() {
-			return ImmutableList.<Augmentation>of(Drain.getInstance(), Resurrect.getInstance());
-		}
-	}
-	
-	public static class Ghost extends Profession {
-		@Override
-		public List<Discipline> getMasteries() {
-			return ImmutableList.of(Discipline.AUTOMATA, Discipline.SUBTERFUGE);
-		}
-		
-		@Override
-		public List<Augmentation> getStartingAugmentations() {
-			return ImmutableList.<Augmentation>of(
-					FireWeapon.getInstance(),
-					Cloak.getInstance(),
-					Crack.getInstance(),
-					Scramble.getInstance());
-		}
-	}
-	
-	public static class Inquisitor extends Profession {
-		@Override
-		public List<Discipline> getMasteries() {
-			return ImmutableList.of(Discipline.AUTOMATA, Discipline.CHARISMA);
-		}
-		
-		@Override
-		public List<Augmentation> getStartingAugmentations() {
-			return ImmutableList.<Augmentation>of(
-					Drain.getInstance(),
-					Paralyze.getInstance(),
-					Frenzy.getInstance());
-		}
-	}
-	
-	public static class Infiltrator extends Profession {
-		@Override
-		public List<Discipline> getMasteries() {
-			return ImmutableList.of(Discipline.SUBTERFUGE, Discipline.SUBTERFUGE);
-		}
-		
-		@Override
-		public List<Augmentation> getStartingAugmentations() {
-			return ImmutableList.<Augmentation>of(FireWeapon.getInstance());
-		}
-	}
-	
-	public static class Agent extends Profession {
-		@Override
-		public List<Discipline> getMasteries() {
-			return ImmutableList.of(Discipline.SUBTERFUGE, Discipline.CHARISMA);
-		}
-		
-		@Override
-		public List<Augmentation> getStartingAugmentations() {
-			return ImmutableList.<Augmentation>of(FireWeapon.getInstance());
-		}
-	}
-	
-	public static class Broker extends Profession {
-		@Override
-		public List<Discipline> getMasteries() {
-			return ImmutableList.of(Discipline.CHARISMA, Discipline.CHARISMA);
-		}
-		
-		@Override
-		public List<Augmentation> getStartingAugmentations() {
-			return ImmutableList.<Augmentation>of(FireWeapon.getInstance());
-		}
-	}
-	
 	public static Profession fromProto(com.eldritch.invoken.proto.Disciplines.Profession p) {
 		switch (p) {
 			case CENTURION:
-				return new Centurion();
+				return Centurion;
 			case EXECUTOR:
-				return new Executor();
+				return Executor;
 			case ASSASSIN:
-				return new Assassin();
+				return Assassin;
 			case WARDEN:
-				return new Warden();
+				return Warden;
 			case ARCHITECT:
-				return new Architect();
+				return Architect;
 			case GHOST:
-				return new Ghost();
+				return Ghost;
 			case INQUISITOR:
-				return new Inquisitor();
+				return Inquisitor;
 			case INFILTRATOR:
-				return new Infiltrator();
+				return Infiltrator;
 			case AGENT:
-				return new Agent();
+				return Agent;
 			case BROKER:
-				return new Broker();
+				return Broker;
 			default:
 				throw new IllegalArgumentException("Unrecognized Profession: " + p);
 		}
