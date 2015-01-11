@@ -15,7 +15,15 @@ import com.eldritch.invoken.proto.Actors.ActorParams.Species;
 import com.eldritch.invoken.screens.GameScreen;
 
 public class Frenzy extends ProjectileAugmentation {
-    public Frenzy() {
+	private static class Holder {
+        private static final Frenzy INSTANCE = new Frenzy();
+	}
+	
+	public static Frenzy getInstance() {
+		return Holder.INSTANCE;
+	}
+	
+    private Frenzy() {
         super("frenzy");
     }
     

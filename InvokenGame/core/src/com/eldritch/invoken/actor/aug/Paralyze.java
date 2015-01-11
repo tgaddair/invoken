@@ -14,7 +14,15 @@ import com.eldritch.invoken.encounter.Location;
 import com.eldritch.invoken.screens.GameScreen;
 
 public class Paralyze extends ProjectileAugmentation {
-    public Paralyze() {
+	private static class Holder {
+        private static final Paralyze INSTANCE = new Paralyze();
+	}
+	
+	public static Paralyze getInstance() {
+		return Holder.INSTANCE;
+	}
+	
+    private Paralyze() {
         super("paralyze");
     }
 

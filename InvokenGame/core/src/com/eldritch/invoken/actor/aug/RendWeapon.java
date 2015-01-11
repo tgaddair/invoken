@@ -9,9 +9,15 @@ import com.eldritch.invoken.effects.Bleed;
 import com.eldritch.invoken.encounter.Location;
 
 public class RendWeapon extends Augmentation {
-    private final Vector2 strike = new Vector2();
+    private static class Holder {
+        private static final RendWeapon INSTANCE = new RendWeapon();
+	}
+	
+	public static RendWeapon getInstance() {
+		return Holder.INSTANCE;
+	}
     
-    public RendWeapon() {
+    private RendWeapon() {
         super("rend");
     }
 
@@ -47,6 +53,7 @@ public class RendWeapon extends Augmentation {
     }
 
     public class RendAction extends AnimatedAction {
+    	private final Vector2 strike = new Vector2();
         private final Vector2 target;
 
         public RendAction(Agent actor, Vector2 target) {

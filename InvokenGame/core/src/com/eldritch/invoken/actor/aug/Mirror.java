@@ -7,7 +7,15 @@ import com.eldritch.invoken.effects.Mirroring;
 import com.eldritch.invoken.encounter.Location;
 
 public class Mirror extends Augmentation {
-    public Mirror() {
+	private static class Holder {
+        private static final Mirror INSTANCE = new Mirror();
+	}
+	
+	public static Mirror getInstance() {
+		return Holder.INSTANCE;
+	}
+	
+    private Mirror() {
         super("mirror", true);
     }
     

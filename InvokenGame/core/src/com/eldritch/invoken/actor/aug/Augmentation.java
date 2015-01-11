@@ -1,5 +1,7 @@
 package com.eldritch.invoken.actor.aug;
 
+import java.lang.reflect.InvocationTargetException;
+
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.InvokenGame;
@@ -74,14 +76,21 @@ public abstract class Augmentation {
 	        com.eldritch.invoken.proto.Augmentations.Augmentation proto) {
 	    String className = Augmentation.class.getPackage().getName() + "." + proto.getId();
 	    try {
-            return (Augmentation) Class.forName(className).newInstance();
-        } catch (InstantiationException e) {
+	    	Object o = Class.forName(className).getMethod("getInstance").invoke(null);
+            return (Augmentation) o;
+        } catch (InvocationTargetException e) {
             InvokenGame.error("Unable to instantiate " + className, e);
         } catch (IllegalAccessException e) {
             InvokenGame.error("Unable to access " + className, e);
         } catch (ClassNotFoundException e) {
             InvokenGame.error("Unable to find class " + className, e);
-        }
+        } catch (IllegalArgumentException e) {
+			InvokenGame.error("Bad argument for " + className, e);
+		} catch (NoSuchMethodException e) {
+			InvokenGame.error("No method for " + className, e);
+		} catch (SecurityException e) {
+			InvokenGame.error("Security violation for " + className, e);
+		}
 	    return null;
 	}
 	

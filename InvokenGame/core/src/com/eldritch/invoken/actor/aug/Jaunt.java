@@ -4,12 +4,18 @@ import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.effects.Jaunting;
-import com.eldritch.invoken.effects.Scrambled;
 import com.eldritch.invoken.encounter.Location;
-import com.eldritch.invoken.proto.Actors.ActorParams.Species;
 
 public class Jaunt extends Augmentation {
-    public Jaunt() {
+	private static class Holder {
+        private static final Jaunt INSTANCE = new Jaunt();
+	}
+	
+	public static Jaunt getInstance() {
+		return Holder.INSTANCE;
+	}
+	
+    private Jaunt() {
         super("jaunt", false);
     }
     

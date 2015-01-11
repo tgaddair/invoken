@@ -17,17 +17,17 @@ import com.eldritch.invoken.effects.Bleed;
 import com.eldritch.invoken.effects.Stunned;
 import com.eldritch.invoken.encounter.Location;
 import com.eldritch.invoken.screens.GameScreen;
-import com.eldritch.invoken.util.Settings;
 
 public class FireWeapon extends ProjectileAugmentation {
-    private static Pool<Bullet> bulletPool = new Pool<Bullet>() {
-        @Override
-        protected Bullet newObject() {
-            return new Bullet();
-        }
-    };
+    private static class Holder {
+        private static final FireWeapon INSTANCE = new FireWeapon();
+	}
+	
+	public static FireWeapon getInstance() {
+		return Holder.INSTANCE;
+	}
 
-    public FireWeapon() {
+    private FireWeapon() {
         super("fire");
     }
 
@@ -154,4 +154,11 @@ public class FireWeapon extends ProjectileAugmentation {
             bulletPool.free(this);
         }
     }
+    
+    private static Pool<Bullet> bulletPool = new Pool<Bullet>() {
+        @Override
+        protected Bullet newObject() {
+            return new Bullet();
+        }
+    };
 }

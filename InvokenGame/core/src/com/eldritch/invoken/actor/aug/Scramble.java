@@ -8,7 +8,15 @@ import com.eldritch.invoken.encounter.Location;
 import com.eldritch.invoken.proto.Actors.ActorParams.Species;
 
 public class Scramble extends Augmentation {
-    public Scramble() {
+	private static class Holder {
+        private static final Scramble INSTANCE = new Scramble();
+	}
+	
+	public static Scramble getInstance() {
+		return Holder.INSTANCE;
+	}
+	
+    private Scramble() {
         super("scramble", false);
     }
     

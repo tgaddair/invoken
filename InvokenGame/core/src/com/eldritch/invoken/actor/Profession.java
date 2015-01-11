@@ -106,7 +106,10 @@ public abstract class Profession {
 		
 		@Override
 		public List<Augmentation> getStartingAugmentations() {
-			return ImmutableList.<Augmentation>of(new FireWeapon(), new ThrowGrenade(), new Barrier());
+			return ImmutableList.<Augmentation>of(
+					FireWeapon.getInstance(),
+					ThrowGrenade.getInstance(),
+					Barrier.getInstance());
 		}
 	}
 	
@@ -118,7 +121,11 @@ public abstract class Profession {
 		
 		@Override
 		public List<Augmentation> getStartingAugmentations() {
-			return ImmutableList.<Augmentation>of(new RendWeapon(), new Jaunt(), new Drain(), new Mirror());
+			return ImmutableList.<Augmentation>of(
+					RendWeapon.getInstance(),
+					Jaunt.getInstance(),
+					Drain.getInstance(),
+					Mirror.getInstance());
 		}
 	}
 	
@@ -130,7 +137,9 @@ public abstract class Profession {
 		
 		@Override
 		public List<Augmentation> getStartingAugmentations() {
-			return ImmutableList.<Augmentation>of(new RendWeapon(), new FireWeapon());
+			return ImmutableList.<Augmentation>of(
+					RendWeapon.getInstance(),
+					FireWeapon.getInstance());
 		}
 	}
 	
@@ -142,7 +151,7 @@ public abstract class Profession {
 		
 		@Override
 		public List<Augmentation> getStartingAugmentations() {
-			return ImmutableList.<Augmentation>of(new FireWeapon());
+			return ImmutableList.<Augmentation>of(FireWeapon.getInstance());
 		}
 	}
 	
@@ -154,7 +163,7 @@ public abstract class Profession {
 		
 		@Override
 		public List<Augmentation> getStartingAugmentations() {
-			return ImmutableList.<Augmentation>of(new Drain(), new Resurrect());
+			return ImmutableList.<Augmentation>of(Drain.getInstance(), Resurrect.getInstance());
 		}
 	}
 	
@@ -166,7 +175,11 @@ public abstract class Profession {
 		
 		@Override
 		public List<Augmentation> getStartingAugmentations() {
-			return ImmutableList.<Augmentation>of(new FireWeapon(), new Cloak(), new Crack(), new Scramble());
+			return ImmutableList.<Augmentation>of(
+					FireWeapon.getInstance(),
+					Cloak.getInstance(),
+					Crack.getInstance(),
+					Scramble.getInstance());
 		}
 	}
 	
@@ -178,7 +191,10 @@ public abstract class Profession {
 		
 		@Override
 		public List<Augmentation> getStartingAugmentations() {
-			return ImmutableList.<Augmentation>of(new Drain(), new Paralyze(), new Frenzy());
+			return ImmutableList.<Augmentation>of(
+					Drain.getInstance(),
+					Paralyze.getInstance(),
+					Frenzy.getInstance());
 		}
 	}
 	
@@ -190,7 +206,7 @@ public abstract class Profession {
 		
 		@Override
 		public List<Augmentation> getStartingAugmentations() {
-			return ImmutableList.<Augmentation>of(new FireWeapon());
+			return ImmutableList.<Augmentation>of(FireWeapon.getInstance());
 		}
 	}
 	
@@ -202,7 +218,7 @@ public abstract class Profession {
 		
 		@Override
 		public List<Augmentation> getStartingAugmentations() {
-			return ImmutableList.<Augmentation>of(new FireWeapon());
+			return ImmutableList.<Augmentation>of(FireWeapon.getInstance());
 		}
 	}
 	
@@ -214,7 +230,7 @@ public abstract class Profession {
 		
 		@Override
 		public List<Augmentation> getStartingAugmentations() {
-			return ImmutableList.<Augmentation>of(new FireWeapon());
+			return ImmutableList.<Augmentation>of(FireWeapon.getInstance());
 		}
 	}
 	

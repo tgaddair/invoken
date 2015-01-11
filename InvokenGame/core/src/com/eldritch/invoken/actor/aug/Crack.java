@@ -7,7 +7,15 @@ import com.eldritch.invoken.effects.Cracking;
 import com.eldritch.invoken.encounter.Location;
 
 public class Crack extends Augmentation {
-    public Crack() {
+	private static class Holder {
+        private static final Crack INSTANCE = new Crack();
+	}
+	
+	public static Crack getInstance() {
+		return Holder.INSTANCE;
+	}
+	
+    private Crack() {
         super("crack", true);
     }
     

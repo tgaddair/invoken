@@ -12,7 +12,15 @@ import com.eldritch.invoken.encounter.Location;
 import com.eldritch.invoken.screens.GameScreen;
 
 public class Drain extends ProjectileAugmentation {
-    public Drain() {
+	private static class Holder {
+        private static final Drain INSTANCE = new Drain();
+	}
+	
+	public static Drain getInstance() {
+		return Holder.INSTANCE;
+	}
+	
+    private Drain() {
         super("drain");
     }
 

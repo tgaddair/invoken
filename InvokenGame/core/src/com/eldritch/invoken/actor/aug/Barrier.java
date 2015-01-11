@@ -7,7 +7,15 @@ import com.eldritch.invoken.effects.Shield;
 import com.eldritch.invoken.encounter.Location;
 
 public class Barrier extends Augmentation {
-    public Barrier() {
+	private static class Holder {
+        private static final Barrier INSTANCE = new Barrier();
+	}
+	
+	public static Barrier getInstance() {
+		return Holder.INSTANCE;
+	}
+	
+    private Barrier() {
         super("barrier", true);
     }
     

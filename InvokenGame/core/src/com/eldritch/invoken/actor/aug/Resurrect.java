@@ -6,7 +6,15 @@ import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.encounter.Location;
 
 public class Resurrect extends Augmentation {
-    public Resurrect() {
+	private static class Holder {
+        private static final Resurrect INSTANCE = new Resurrect();
+	}
+	
+	public static Resurrect getInstance() {
+		return Holder.INSTANCE;
+	}
+	
+    private Resurrect() {
         super("resurrect");
     }
     

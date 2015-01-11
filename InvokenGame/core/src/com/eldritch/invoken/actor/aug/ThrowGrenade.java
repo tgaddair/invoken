@@ -15,7 +15,15 @@ import com.eldritch.invoken.encounter.Location;
 import com.eldritch.invoken.screens.GameScreen;
 
 public class ThrowGrenade extends Augmentation {
-    public ThrowGrenade() {
+	private static class Holder {
+        private static final ThrowGrenade INSTANCE = new ThrowGrenade();
+	}
+	
+	public static ThrowGrenade getInstance() {
+		return Holder.INSTANCE;
+	}
+	
+    private ThrowGrenade() {
         super("throw");
     }
 
