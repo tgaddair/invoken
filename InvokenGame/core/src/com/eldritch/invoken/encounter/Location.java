@@ -15,11 +15,7 @@ import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
@@ -29,7 +25,6 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
@@ -56,6 +51,7 @@ import com.eldritch.invoken.gfx.Light;
 import com.eldritch.invoken.gfx.LightManager;
 import com.eldritch.invoken.proto.Locations.Encounter;
 import com.eldritch.invoken.proto.Locations.Encounter.ActorParams.ActorScenario;
+import com.eldritch.invoken.ui.RelationDrawer;
 import com.eldritch.invoken.util.Settings;
 import com.google.common.base.Optional;
 import com.google.common.primitives.Ints;
@@ -92,11 +88,9 @@ public class Location {
     private final int groundIndex = 0;
     
     private final World world;
+    RelationDrawer relationRenderer = new RelationDrawer();
     Box2DDebugRenderer debugRenderer = new Box2DDebugRenderer();
     
-    // debug
-    private BitmapFont debugFont = new BitmapFont();
-
     public Location(com.eldritch.invoken.proto.Locations.Location data) {
         this(data, readMap(data));
     }
@@ -462,42 +456,8 @@ public class Location {
         // draw the disposition graph
         if (player.getTarget() != null) {
         	Agent target = player.getTarget();
-	        ShapeRenderer sr = new ShapeRenderer();
-	        sr.setProjectionMatrix(camera.combined);
-	        sr.begin(ShapeType.Line);
-	        SpriteBatch batch = new SpriteBatch();
-	        for (Agent other : drawableEntities) {
-	        	if (target == other) {
-	        		// don't draw a relation edge to yourself
-	        		continue;
-	        	}
-	        	
-	        	float relation = target.getRelation(other);
-	        	float val = relation;
-	        	
-	        	// 0 = red, 60 = yellow, 120 = green
-//	        	float hue = (float) Math.floor((100 - val) * 120 / 100f);  // go from green to red
-//	        	float saturation = Math.abs(val - 50) / 50f;   // fade to white as it approaches 50
-	        	float hue = Math.min(Math.max(((val + 100) / 200f) * 120, 0), 120) / 360f;
-	        	float saturation = 1;
-	        	float brightness = 1;
-	        	java.awt.Color hsv = java.awt.Color.getHSBColor(hue, saturation, brightness);
-	        	Color c = new Color(hsv.getRed() / 255f, hsv.getGreen() / 255f, hsv.getBlue() / 255f, 1f);
-	        	sr.setColor(c);
-	        	sr.line(target.getPosition().x, target.getPosition().y,
-	                    other.getPosition().x, other.getPosition().y);
-	        	
-	        	// draw number
-	        	Vector3 screen = camera.project(new Vector3(
-	        			(target.getPosition().x + other.getPosition().x) / 2f,
-	                    (target.getPosition().y + other.getPosition().y) / 2f, 0));
-//	        	Batch batch = renderer.getSpriteBatch();
-	        	batch.begin();
-	        	debugFont.draw(batch,
-	        			String.format("%.2f", relation), screen.x, screen.y);
-	        	batch.end();
-	        }
-	        sr.end();
+//        	relationRenderer.renderDispositions(target, drawableEntities, camera);
+        	relationRenderer.renderLineOfSight(target, drawableEntities, camera);
         }
 
         // render the drawables

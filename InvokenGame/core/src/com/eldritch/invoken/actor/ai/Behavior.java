@@ -106,11 +106,14 @@ public class Behavior {
     
     public void getAssaultTargets(Collection<Agent> actors, Collection<Agent> targets) {
         for (Agent agent : actors) {
-            if (npc.hostileTo(agent) || wantsToAttack(agent)) {
-                if (willingToAttack(agent)) {
-                    targets.add(agent);
+        	if (npc.hasLineOfSight(agent)) {
+        		// only target if we have line of sight
+        		if (npc.hostileTo(agent) || wantsToAttack(agent)) {
+                    if (willingToAttack(agent)) {
+                        targets.add(agent);
+                    }
                 }
-            }
+        	}
         }
     }
      

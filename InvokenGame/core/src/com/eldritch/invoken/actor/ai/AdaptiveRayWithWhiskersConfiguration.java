@@ -32,7 +32,7 @@ public class AdaptiveRayWithWhiskersConfiguration<T extends Vector<T>> extends C
 		setWhiskerLength(whiskerLength);
 		
 		float length = (velocity / maxVelocity) * maxRayLength;
-		length = Math.min(length + 0.5f, maxRayLength);
+		length = Math.min(length + 0.75f, maxRayLength);
 		setRayLength(length);
 		
 		return super.updateRays();
