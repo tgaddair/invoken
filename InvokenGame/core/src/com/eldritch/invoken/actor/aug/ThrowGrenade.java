@@ -1,65 +1,92 @@
 package com.eldritch.invoken.actor.aug;
 
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Animation;
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Pool;
+import com.eldritch.invoken.actor.aug.Drain.DrainBullet;
+import com.eldritch.invoken.actor.items.MeleeWeapon;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.HandledProjectile;
 import com.eldritch.invoken.actor.type.Agent.Activity;
-import com.eldritch.invoken.effects.Paralyzed;
+import com.eldritch.invoken.effects.Bleed;
+import com.eldritch.invoken.effects.Draining;
 import com.eldritch.invoken.encounter.Location;
 import com.eldritch.invoken.screens.GameScreen;
 
-public class Paralyze extends ProjectileAugmentation {
-    public Paralyze() {
-        super("paralyze");
+public class ThrowGrenade extends Augmentation {
+    public ThrowGrenade() {
+        super("throw");
     }
 
+    @Override
+    public Action getAction(Agent owner, Agent target) {
+    	return getAction(owner, target.getPosition());
+    }
+    
     @Override
     public Action getAction(Agent owner, Vector2 target) {
-        return new ParalyzeAction(owner, target);
+        return new ThrowAction(owner, target);
     }
 
+    @Override
+    public boolean isValid(Agent owner, Agent target) {
+        return target != null && target != owner && owner.hasLineOfSight(target);
+    }
+    
+    @Override
+    public boolean isValid(Agent owner, Vector2 target) {
+        return owner.hasLineOfSight(target);
+    }
+    
     @Override
     public int getCost(Agent owner) {
-        return 3;
+        return 1;
     }
-
+    
     @Override
     public float quality(Agent owner, Agent target, Location location) {
-        return !target.isParalyzed() ? 5 : 0;
+        return 1;
     }
 
-    public class ParalyzeAction extends AnimatedAction {
+    public class ThrowAction extends AnimatedAction {
         private final Vector2 target;
 
-        public ParalyzeAction(Agent actor, Vector2 target) {
-            super(actor, Activity.Swipe, Paralyze.this);
-            this.target = target;
+        public ThrowAction(Agent actor, Vector2 target) {
+            super(actor, Activity.Swipe, ThrowGrenade.this);
+            this.target= target;
         }
 
         @Override
         public void apply(Location location) {
-            ParalyzeBullet bullet = bulletPool.obtain();
+            // update agent to fact the direction of their strike
+            owner.setDirection(owner.getRelativeDirection(target));
+            
+            Grenade bullet = bulletPool.obtain();
             bullet.setup(owner, target);
             location.addEntity(bullet);
+            
+            
+        	for (Agent neighbor : owner.getNeighbors()) {
+        		if (neighbor.inRange(target, 10)) {
+        			neighbor.addEffect(new Bleed(owner, neighbor, 10));
+        		}
+        	}
         }
-
+        
         @Override
         public Vector2 getPosition() {
             return target;
         }
     }
-
-    public static class ParalyzeBullet extends HandledProjectile {
+    
+    public static class Grenade extends HandledProjectile {
         private static final TextureRegion[] regions = GameScreen.getRegions(
                 "sprite/effects/drain-attack.png", 32, 32)[0];
         private final Animation animation;
 
-        public ParalyzeBullet() {
+        public Grenade() {
             super(1 / 32f * regions[0].getRegionWidth(), 1 / 32f * regions[0].getRegionWidth(), 10,
                     0);
 
@@ -68,18 +95,8 @@ public class Paralyze extends ProjectileAugmentation {
         }
 
         @Override
-        protected void preRender(Batch batch) {
-            batch.setColor(Color.GREEN);
-        }
-
-        @Override
-        protected void postRender(Batch batch) {
-            batch.setColor(Color.WHITE);
-        }
-
-        @Override
         protected void apply(Agent owner, Agent target) {
-            target.addEffect(new Paralyzed(owner, target, 3));
+            target.addEffect(new Draining(owner, target, 5, 2));
         }
 
         @Override
@@ -93,10 +110,10 @@ public class Paralyze extends ProjectileAugmentation {
         }
     }
 
-    private static Pool<ParalyzeBullet> bulletPool = new Pool<ParalyzeBullet>() {
+    private static Pool<Grenade> bulletPool = new Pool<Grenade>() {
         @Override
-        protected ParalyzeBullet newObject() {
-            return new ParalyzeBullet();
+        protected Grenade newObject() {
+            return new Grenade();
         }
     };
 }

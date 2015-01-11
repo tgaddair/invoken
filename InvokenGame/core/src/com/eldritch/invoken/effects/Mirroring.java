@@ -3,8 +3,8 @@ package com.eldritch.invoken.effects;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.eldritch.invoken.actor.aug.Augmentation;
 import com.eldritch.invoken.actor.type.Agent;
-import com.eldritch.invoken.actor.type.Projectile;
-import com.eldritch.invoken.actor.type.Projectile.ProjectileHandler;
+import com.eldritch.invoken.actor.type.HandledProjectile;
+import com.eldritch.invoken.actor.type.HandledProjectile.ProjectileHandler;
 import com.eldritch.invoken.screens.GameScreen;
 
 public class Mirroring extends AnimatedEffect {
@@ -35,15 +35,15 @@ public class Mirroring extends AnimatedEffect {
 	
 	private class MirrorProjectileHandler implements ProjectileHandler {
         @Override
-        public boolean handle(Projectile projectile) {
-            float damage = projectile.getDamage(target);
+        public boolean handle(HandledProjectile handledProjectile) {
+            float damage = handledProjectile.getDamage(target);
             if (damage > 0) {
                 target.getInfo().expend(damage);
                 if (target.getInfo().getEnergy() < damage) {
                     target.toggleOff(Mirroring.class);
                 }
                 
-                projectile.reset(target, projectile.getOwner().getPosition());
+                handledProjectile.reset(target, handledProjectile.getOwner().getPosition());
                 return true;
             }
             return false;

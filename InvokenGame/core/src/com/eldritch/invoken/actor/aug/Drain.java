@@ -5,7 +5,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Pool;
 import com.eldritch.invoken.actor.type.Agent;
-import com.eldritch.invoken.actor.type.Projectile;
+import com.eldritch.invoken.actor.type.HandledProjectile;
 import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.effects.Draining;
 import com.eldritch.invoken.encounter.Location;
@@ -52,7 +52,7 @@ public class Drain extends ProjectileAugmentation {
         }
     }
 
-    public static class DrainBullet extends Projectile {
+    public static class DrainBullet extends HandledProjectile {
         private static final TextureRegion[] regions = GameScreen.getRegions(
                 "sprite/effects/drain-attack.png", 32, 32)[0];
         private final Animation animation;

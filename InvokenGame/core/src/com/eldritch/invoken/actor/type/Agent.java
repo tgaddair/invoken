@@ -39,7 +39,7 @@ import com.eldritch.invoken.actor.aug.Augmentation;
 import com.eldritch.invoken.actor.aug.Cloak;
 import com.eldritch.invoken.actor.factions.Faction;
 import com.eldritch.invoken.actor.items.Outfit;
-import com.eldritch.invoken.actor.type.Projectile.ProjectileHandler;
+import com.eldritch.invoken.actor.type.HandledProjectile.ProjectileHandler;
 import com.eldritch.invoken.effects.Effect;
 import com.eldritch.invoken.encounter.Location;
 import com.eldritch.invoken.encounter.NaturalVector2;
@@ -243,10 +243,10 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         projectileHandlers.remove(handler);
     }
     
-    public void handleProjectile(Projectile projectile) {
+    public void handleProjectile(HandledProjectile handledProjectile) {
         boolean handled = false;
         for (ProjectileHandler handler : projectileHandlers) {
-            boolean result = handler.handle(projectile);
+            boolean result = handler.handle(handledProjectile);
             if (result) {
                 handled = true;
                 break;
@@ -254,7 +254,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         }
         
         if (!handled) {
-            projectile.apply(this);
+            handledProjectile.apply(this);
         }
     }
 
@@ -572,7 +572,13 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         world.rayCast(losHandler, position, other.position);
         return losHandler.hasLineOfSight();
     }
-
+    
+    public boolean hasLineOfSight(Vector2 target) {
+    	losHandler.reset(null);
+        world.rayCast(losHandler, position, target);
+        return losHandler.hasLineOfSight();
+    }
+    
     public float getAttackScale(Agent other) {
         return info.getAccuracy() * getWeaponAccuracy() * (1.0f - other.getInfo().getDefense());
     }

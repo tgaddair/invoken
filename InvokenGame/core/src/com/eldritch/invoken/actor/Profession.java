@@ -22,13 +22,14 @@ import com.eldritch.invoken.actor.aug.Paralyze;
 import com.eldritch.invoken.actor.aug.RendWeapon;
 import com.eldritch.invoken.actor.aug.Resurrect;
 import com.eldritch.invoken.actor.aug.Scramble;
+import com.eldritch.invoken.actor.aug.ThrowGrenade;
 import com.eldritch.invoken.proto.Actors.ActorParams.Skill;
 import com.eldritch.invoken.proto.Disciplines.Discipline;
 import com.google.common.collect.ImmutableList;
 
 public abstract class Profession {
     public static Profession getDefault() {
-        return new Executor();
+        return new Centurion();
     }
     
 	public static List<Skill> getSorted(List<Skill> skills, final Collection<Discipline> masteries) {
@@ -105,7 +106,7 @@ public abstract class Profession {
 		
 		@Override
 		public List<Augmentation> getStartingAugmentations() {
-			return ImmutableList.<Augmentation>of(new FireWeapon(), new Barrier());
+			return ImmutableList.<Augmentation>of(new FireWeapon(), new ThrowGrenade(), new Barrier());
 		}
 	}
 	

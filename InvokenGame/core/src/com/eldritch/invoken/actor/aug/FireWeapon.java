@@ -10,7 +10,7 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Pool;
 import com.eldritch.invoken.actor.type.Agent;
-import com.eldritch.invoken.actor.type.Projectile;
+import com.eldritch.invoken.actor.type.HandledProjectile;
 import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.actor.type.Agent.Direction;
 import com.eldritch.invoken.effects.Bleed;
@@ -112,6 +112,9 @@ public class FireWeapon extends ProjectileAugmentation {
             Bullet bullet = bulletPool.obtain();
             bullet.setup(owner, target);
             location.addEntity(bullet);
+            
+            // update agent to fact the direction of their shots
+            owner.setDirection(owner.getRelativeDirection(target));
         }
         
         @Override
@@ -124,7 +127,7 @@ public class FireWeapon extends ProjectileAugmentation {
         }
     }
 
-    public static class Bullet extends Projectile {
+    public static class Bullet extends HandledProjectile {
         private static final TextureRegion texture = new TextureRegion(
                 GameScreen.getTexture("sprite/effects/bullet-blue.png"));
 

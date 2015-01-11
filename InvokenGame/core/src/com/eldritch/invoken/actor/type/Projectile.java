@@ -8,7 +8,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.encounter.Location;
 
 public abstract class Projectile extends CollisionEntity implements TemporaryEntity {
-    private final float speed;
+	private final float speed;
     private final float damage;
     private Agent owner;
     private boolean finished;
@@ -65,7 +65,7 @@ public abstract class Projectile extends CollisionEntity implements TemporaryEnt
         float y = position.y + velocity.y * 0.25f;
         for (Agent agent : getCollisionActors(location)) {
             if (agent != owner && agent.collidesWith(x, y)) {
-                agent.handleProjectile(this);
+            	handleAgentContact(agent);
                 return;
             }
         }
@@ -74,7 +74,7 @@ public abstract class Projectile extends CollisionEntity implements TemporaryEnt
                 location.getTiles());
         for (Rectangle tile : location.getTiles()) {
             if (tile.contains(x, y)) {
-                finish();
+            	handleObstacleContact();
                 return;
             }
         }
@@ -127,7 +127,7 @@ public abstract class Projectile extends CollisionEntity implements TemporaryEnt
 
     protected abstract void free();
     
-    public static interface ProjectileHandler {
-        boolean handle(Projectile projectile);
-    }
+    protected abstract void handleAgentContact(Agent agent);
+    
+    protected abstract void handleObstacleContact();
 }
