@@ -25,7 +25,7 @@ public abstract class ToggledEffect<T extends Augmentation> extends BasicEffect 
 	@Override
 	public void dispel() {
 	    target.toggleOff(toggle);
-	    target.getInfo().getAugmentations().removeActiveAugmentation(aug);
+	    target.getInfo().getAugmentations().removeSelfAugmentation(aug);
 	    afterDispel();
 	}
 	

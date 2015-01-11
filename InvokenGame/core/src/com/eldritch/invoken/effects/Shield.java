@@ -25,7 +25,7 @@ public class Shield extends AnimatedEffect {
     @Override
     public void dispel() {
         target.removeProjectileHandler(handler);
-        target.getInfo().getAugmentations().removeActiveAugmentation(aug);
+        target.getInfo().getAugmentations().removeSelfAugmentation(aug);
     }
     
 	@Override

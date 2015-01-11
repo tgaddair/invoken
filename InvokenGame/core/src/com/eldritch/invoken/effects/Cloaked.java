@@ -23,7 +23,7 @@ public class Cloaked extends BasicEffect {
 	@Override
 	public void dispel() {
 	    target.setCloaked(false);
-	    target.getInfo().getAugmentations().removeActiveAugmentation(aug);
+	    target.getInfo().getAugmentations().removeSelfAugmentation(aug);
 	}
 	
 	@Override

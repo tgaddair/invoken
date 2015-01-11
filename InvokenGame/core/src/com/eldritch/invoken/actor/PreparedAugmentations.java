@@ -54,18 +54,13 @@ public class PreparedAugmentations {
 	
 	public void toggleActiveAugmentation(int index) {
 	    if (index < augs.size()) {
-	        toggleActiveAugmentation(augs.get(index));
+	        toggleActiveAugmentation(augs.get(index), 0);
 	    }
 	}
 	
-	public void toggleActiveAugmentation(Augmentation aug) {
-	    
+	public void removeSelfAugmentation(Augmentation aug) {
+		activeSelfAugmentations.remove(aug);
 	}
-	
-	public void removeActiveAugmentation(Augmentation aug) {
-		
-	}
-	
 	
 	public void toggleActiveAugmentation(Augmentation aug, int slot) {
 		if (aug.castsOnSelf()) {
