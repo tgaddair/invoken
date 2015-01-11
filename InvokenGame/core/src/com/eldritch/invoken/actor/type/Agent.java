@@ -22,6 +22,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.CircleShape;
+import com.badlogic.gdx.physics.box2d.Filter;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.RayCastCallback;
@@ -45,6 +46,7 @@ import com.eldritch.invoken.encounter.Location;
 import com.eldritch.invoken.encounter.NaturalVector2;
 import com.eldritch.invoken.proto.Actors.ActorParams;
 import com.eldritch.invoken.ui.MultiTextureRegionDrawable;
+import com.eldritch.invoken.util.Settings;
 
 public abstract class Agent extends CollisionEntity implements Steerable<Vector2> {
     public static final int MAX_DST2 = 175;
@@ -145,7 +147,13 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
 		charFixtureDef.density = getDensity();
 		charFixtureDef.shape = circleShape;
 		charFixtureDef.filter.groupIndex = 0;
-		body.createFixture(charFixtureDef);
+		Fixture fixture = body.createFixture(charFixtureDef);
+		
+		// collision filters
+        Filter filter = fixture.getFilterData();
+        filter.categoryBits = Settings.BIT_PHYSICAL;
+        filter.maskBits = Settings.BIT_ANYTHING;
+        fixture.setFilterData(filter);
 		
 		body.setLinearDamping(DAMPING);
 		body.setAngularDamping(10);
@@ -217,6 +225,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     public void resurrect() {
         info.resetHealth();
         setRgb(0.4f, 0.4f, 0.7f);
+        setCollisionMask(Settings.BIT_ANYTHING);
     }
     
     public void setCamera(GameCamera camera) {
@@ -618,6 +627,17 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         target = null;
         toggles.clear();
         setRgb(1, 1, 1);
+        setCollisionMask(Settings.BIT_PHYSICAL);
+    }
+    
+    private void setCollisionMask(short maskBits) {
+    	// update all fixtures
+        for (Fixture fixture : body.getFixtureList()) {
+            // collision filters
+            Filter filter = fixture.getFilterData();
+            filter.maskBits = maskBits;
+            fixture.setFilterData(filter);
+        }
     }
 
     protected void attemptTakeAction(float delta, Location location) {

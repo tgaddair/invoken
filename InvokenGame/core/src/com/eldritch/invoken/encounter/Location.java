@@ -30,6 +30,8 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.EdgeShape;
+import com.badlogic.gdx.physics.box2d.Filter;
+import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
@@ -269,7 +271,14 @@ public class Location {
 		fixtureDef.filter.groupIndex = 0;
 		
 		Body body = world.createBody(groundBodyDef);
-		body.createFixture(fixtureDef);
+		Fixture fixture = body.createFixture(fixtureDef);
+		
+		// collision filters
+        Filter filter = fixture.getFilterData();
+        filter.categoryBits = Settings.BIT_PHYSICAL;
+        filter.maskBits = Settings.BIT_ANYTHING;
+        fixture.setFilterData(filter);
+		
 		edge.dispose();
 		
 		System.out.println("edge: " + start + " " + end);
@@ -456,8 +465,8 @@ public class Location {
         // draw the disposition graph
         if (player.getTarget() != null) {
         	Agent target = player.getTarget();
-        	relationRenderer.renderDispositions(target, drawableEntities, camera);
-//        	relationRenderer.renderLineOfSight(target, drawableEntities, camera);
+//        	relationRenderer.renderDispositions(target, drawableEntities, camera);
+        	relationRenderer.renderLineOfSight(target, drawableEntities, camera);
         }
 
         // render the drawables
