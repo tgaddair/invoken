@@ -55,6 +55,10 @@ public abstract class Projectile extends CollisionEntity implements TemporaryEnt
     @Override
     public void update(float delta, Location location) {
         stateTime += delta;
+        
+        if (handleBeforeUpdate(delta, location)) {
+        	return;
+        }
 
         float scale = speed * delta;
         velocity.scl(scale);
@@ -84,6 +88,10 @@ public abstract class Projectile extends CollisionEntity implements TemporaryEnt
             finish();
         }
     }
+    
+    public boolean handleBeforeUpdate(float delta, Location location) {
+    	return false;
+    }
 
     @Override
     public void render(float delta, OrthogonalTiledMapRenderer renderer) {
@@ -101,11 +109,6 @@ public abstract class Projectile extends CollisionEntity implements TemporaryEnt
     
     protected void postRender(Batch batch) {
     }
-
-    public void apply(Agent target) {
-        apply(owner, target);
-        finish();
-    }
     
     public void cancel() {
         finish();
@@ -120,8 +123,6 @@ public abstract class Projectile extends CollisionEntity implements TemporaryEnt
     public boolean isFinished() {
         return finished;
     }
-
-    protected abstract void apply(Agent owner, Agent target);
 
     protected abstract TextureRegion getTexture(float delta);
 

@@ -449,6 +449,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     	return position;
     }
 
+    @Override
     public Vector2 getPosition() {
         return body.getPosition();
     }
@@ -469,10 +470,6 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         velocity.set(x, y);
     }
 
-    public Vector2 getVelocity() {
-        return velocity;
-    }
-    
     public void setDirection(Direction direction) {
     	this.direction = direction;
     }

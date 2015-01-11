@@ -18,4 +18,11 @@ public abstract class HandledProjectile extends Projectile {
     public static interface ProjectileHandler {
         boolean handle(HandledProjectile handledProjectile);
     }
+    
+    public void apply(Agent target) {
+        apply(getOwner(), target);
+        cancel();
+    }
+    
+    protected abstract void apply(Agent owner, Agent target);
 }

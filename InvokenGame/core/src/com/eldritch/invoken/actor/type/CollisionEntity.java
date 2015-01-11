@@ -41,6 +41,14 @@ public abstract class CollisionEntity implements Entity {
         return agents;
     }
     
+    public Vector2 getPosition() {
+        return position;
+    }
+    
+    public Vector2 getVelocity() {
+        return velocity;
+    }
+    
     protected void updateHeading() {
         if (velocity.len2() > 1E-6) {
             heading.set(velocity).nor();
