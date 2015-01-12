@@ -63,7 +63,6 @@ public class Resurrect extends Augmentation {
 		@Override
 		public void apply(Location location) {
 			if (!target.isAlive()) {
-				target.resurrect();
 				target.addEffect(new Resurrected(owner, target, BASE_COST));
 			}
 		}

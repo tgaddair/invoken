@@ -277,6 +277,13 @@ public abstract class Npc extends SteeringAgent implements Telegraph, Conversabl
 	}
 	
 	@Override
+	protected void onDeath() {
+		super.onDeath();
+		detected.clear();
+		stateMachine.changeState(NpcState.PATROL);
+	}
+	
+	@Override
     protected void handleConfusion(boolean confused) {
 	    if (confused) {
 	        behavior.setAggression(Aggression.FRENZIED);

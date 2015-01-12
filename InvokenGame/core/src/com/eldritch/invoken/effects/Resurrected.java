@@ -5,6 +5,7 @@ import com.eldritch.invoken.actor.type.Agent;
 public class Resurrected extends BasicEffect {
 	private final Agent owner;
 	private final float cost;
+	private boolean applied = false;
 	
 	public Resurrected(Agent owner, Agent target, float cost) {
 	    super(target);
@@ -14,7 +15,7 @@ public class Resurrected extends BasicEffect {
 
 	@Override
 	public boolean isFinished() {
-		return !target.isAlive();
+		return applied && !target.isAlive();
 	}
 
 	@Override
@@ -25,7 +26,9 @@ public class Resurrected extends BasicEffect {
 	@Override
     protected void doApply() {
 		owner.addFollower(target);
+		target.resurrect();
 		owner.getInfo().changeBaseEnergy(-cost);
+		applied = true;
     }
 
     @Override

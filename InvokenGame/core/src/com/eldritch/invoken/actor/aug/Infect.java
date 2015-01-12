@@ -82,7 +82,7 @@ public class Infect extends Augmentation {
     
     public static class Grenade extends AoeProjectile {
         private static final TextureRegion texture = new TextureRegion(
-                GameScreen.getTexture("sprite/effects/grenade.png"));
+                GameScreen.getTexture("sprite/effects/infect.png"));
         private static final TextureRegion[] explosionRegions = GameScreen.getMergedRegion(
         		"sprite/effects/infect_cloud.png", 256, 256);
         

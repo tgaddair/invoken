@@ -690,6 +690,10 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     }
     
     public void addHostility(Agent source, float magnitude) {
+    	if (!isAlive()) {
+    		return;
+    	}
+    	
     	if (!hasEnemies()) {
     		// we're not in combat with anyone, so this is considered assault
     		assaulters.add(source);
