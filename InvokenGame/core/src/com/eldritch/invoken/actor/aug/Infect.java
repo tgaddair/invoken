@@ -1,18 +1,15 @@
 package com.eldritch.invoken.actor.aug;
 
-import com.badlogic.gdx.graphics.g2d.Animation;
-import com.badlogic.gdx.graphics.g2d.Batch;
+import java.util.HashSet;
+import java.util.Set;
+
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Pool;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.actor.type.AoeProjectile;
-import com.eldritch.invoken.actor.type.Projectile;
-import com.eldritch.invoken.effects.Bleed;
 import com.eldritch.invoken.effects.Infected;
-import com.eldritch.invoken.effects.Stunned;
 import com.eldritch.invoken.encounter.Location;
 import com.eldritch.invoken.screens.GameScreen;
 
@@ -99,14 +96,21 @@ public class Infect extends Augmentation {
 
 		@Override
 		protected void doDuringExplosion(float delta, Location location) {
+			// create a set of immune agents to prevent the infinite spreading loop
+			// once you've gotten infected by this virus, you can't get it again
+			Set<Agent> immune = new HashSet<Agent>();
+			
 			// no friendly fire
 			Agent owner = getOwner();
+			immune.add(owner);
+			
 			for (Agent neighbor : owner.getNeighbors()) {
 				if (!neighbor.isToggled(Infected.class)) {
 					// infection does not stack
 					if (neighbor.inRange(getPosition(), getRadius())) {
+						immune.add(neighbor);
 						neighbor.addEffect(new Infected(
-								owner, neighbor, getDamage(neighbor), 3, getRadius()));
+								owner, neighbor, immune, getDamage(neighbor), 3, getRadius()));
 		    		}
 				}
         	}

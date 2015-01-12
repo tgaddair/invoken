@@ -656,9 +656,6 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
             // cannot take a conscious action when confused, must delegate to
             // the confusion handler
         } else {
-        	// update neighbors
-        	location.getNeighbors(this);
-        	
             // no disorienting effects, so take conscious action
         	lastAction = 0;
             takeAction(delta, location);
@@ -772,6 +769,9 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         
         // clear iteration caches
         lineOfSightCache.clear();
+        
+        // update neighbors
+    	location.getNeighbors(this);
         
         elapsed += delta;
         if (elapsed >= 3) {
