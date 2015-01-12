@@ -7,6 +7,8 @@ import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.screens.GameScreen;
 
 public class Infected extends AnimatedEffect {
+	private static final float INCUBATION_PERIOD = 0.5f;
+	
 	private final Agent source;
 	private final Set<Agent> immune;
 	private final float magnitude;
@@ -39,6 +41,11 @@ public class Infected extends AnimatedEffect {
 	public void update(float delta) {
 		Agent target = getTarget();
 		target.damage(source, magnitude * delta);
+		
+		// spread to neighbors only when we're past the incubation period
+		if (getStateTime() < INCUBATION_PERIOD) {
+			return;
+		}
 		
 		// spread to neighbors
 		for (Agent neighbor : target.getNeighbors()) {

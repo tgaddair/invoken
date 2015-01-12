@@ -532,7 +532,7 @@ public class Location {
     public List<Agent> getNeighbors(Agent agent, List<Agent> neighbors, List<Agent> actors) {
         neighbors.clear();
         for (Agent other : actors) {
-            if (agent != other && agent.canTarget(other, this)) {
+            if (agent != other && agent.isNear(other)) {
                 neighbors.add(other);
             }
         }
