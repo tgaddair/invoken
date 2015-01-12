@@ -87,7 +87,6 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     private Action action = null;
 
     private Agent followed = null;
-    private final List<Agent> followers = new ArrayList<Agent>();
 
     // hostilities: agents with negative reaction who have attacked us
     private final Set<Agent> assaulters = new HashSet<Agent>();  // assaulters attack those who have no enemies
@@ -193,10 +192,6 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
 	public List<Agent> getNeighbors() {
 	    return neighbors;
 	}
-
-    public List<Agent> getFollowers() {
-        return followers;
-    }
 
     public boolean isAlive() {
         return info.isAlive();
@@ -339,19 +334,17 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     		follower.removeFollower(this);
     	}
         follower.setFollowing(this);
-        followers.add(follower);
     }
 
     public void removeFollower(Agent follower) {
         follower.stopFollowing(this);
-        followers.remove(follower);
     }
 
-    public void setFollowing(Agent actor) {
+    private void setFollowing(Agent actor) {
         followed = actor;
     }
 
-    public void stopFollowing(Agent actor) {
+    private void stopFollowing(Agent actor) {
         // perform this check to avoid canceling the following of a different
         // actor
         if (followed == actor) {
@@ -620,7 +613,6 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     }
 
     protected void onDeath() {
-        followers.clear();
         enemies.clear();
         actions.clear();
         action = null;
@@ -729,6 +721,11 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     
     // does not consider transitive effects to avoid infinite loops
     private float getRelationNoFollow(Agent agent) {
+    	if (agent.isFollowing(this)) {
+    		// leaders likes their followers, and followers like each other
+    		return 100;
+    	}
+    	
     	if (!relations.containsKey(agent)) {
             setRelation(agent, info.getDisposition(agent));
         }
@@ -824,15 +821,6 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         // remove target if we can no longer target them
         if (hasTarget() && !canTarget(location)) {
             target = null;
-        }
-
-        // update followers
-        Iterator<Agent> followerIterator = followers.iterator();
-        while (followerIterator.hasNext()) {
-            Agent follower = followerIterator.next();
-            if (!follower.isAlive()) {
-                followerIterator.remove();
-            }
         }
 
         // update enemies
