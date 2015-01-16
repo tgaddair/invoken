@@ -16,6 +16,7 @@ import com.eldritch.invoken.actor.aug.Crack;
 import com.eldritch.invoken.actor.aug.Frenzy;
 import com.eldritch.invoken.actor.aug.Drain;
 import com.eldritch.invoken.actor.aug.FireWeapon;
+import com.eldritch.invoken.actor.aug.Implode;
 import com.eldritch.invoken.actor.aug.Infect;
 import com.eldritch.invoken.actor.aug.Jaunt;
 import com.eldritch.invoken.actor.aug.Mirror;
@@ -39,8 +40,9 @@ public enum Profession {
 		public List<Augmentation> getStartingAugmentations() {
 			return ImmutableList.<Augmentation>of(
 					FireWeapon.getInstance(),
+					Jaunt.getInstance(),
 					ThrowGrenade.getInstance(),
-					Barrier.getInstance());
+					Implode.getInstance());
 		}
 	},
 	
@@ -53,10 +55,10 @@ public enum Profession {
 		@Override
 		public List<Augmentation> getStartingAugmentations() {
 			return ImmutableList.<Augmentation>of(
-					RendWeapon.getInstance(),
-					Jaunt.getInstance(),
+					FireWeapon.getInstance(),
 					Drain.getInstance(),
-					Mirror.getInstance());
+					Mirror.getInstance(),
+					Barrier.getInstance());
 		}
 	},
 	
@@ -175,7 +177,7 @@ public enum Profession {
 	public abstract List<Augmentation> getStartingAugmentations();
 	
 	public static Profession getDefault() {
-        return Architect;
+        return Centurion;
     }
 	
 	public static List<Skill> getSorted(List<Skill> skills, final Collection<Discipline> masteries) {

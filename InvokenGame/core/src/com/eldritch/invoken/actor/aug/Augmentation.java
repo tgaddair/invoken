@@ -103,6 +103,10 @@ public abstract class Augmentation {
 	        this.aug = aug;
 	    }
 	    
+	    public Agent getOwner() {
+	    	return owner;
+	    }
+	    
 	    @Override
 	    public int getCost() {
 	        return aug.getCost(owner);
