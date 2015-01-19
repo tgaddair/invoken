@@ -95,6 +95,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
 
     private int confused = 0;
     private int paralyzed = 0;
+    private int imploding = 0;
     private float freezing = 0;
     private float lastAction = 0;
 
@@ -276,6 +277,17 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         }
     }
     
+    public void setImploding(boolean imploding) {
+    	this.imploding += imploding ? 1 : -1;
+        if (imploding || this.imploding == 0) {
+            if (imploding) {
+                setRgb(0, 0, 1);
+            } else {
+                setRgb(1, 1, 1);
+            }
+        }
+    }
+    
     public void freeze(float magnitude) {
     	// apply freezing effects
     	freezing += magnitude;
@@ -326,7 +338,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     		this.paralyzed--;
     	}
     }
-
+    
     public void addFollower(Agent follower) {
     	if (isFollowing(follower)) {
     		// bidirectional following relationships can produce nasty side effects like infinite

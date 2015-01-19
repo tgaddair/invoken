@@ -21,11 +21,13 @@ public class Imploding extends BasicEffect {
 	}
 
 	@Override
-	public void dispel() {
-	}
-
-	@Override
 	protected void doApply() {
+		getTarget().setImploding(true);
+	}
+	
+	@Override
+	public void dispel() {
+		getTarget().setImploding(false);
 	}
 
 	@Override

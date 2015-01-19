@@ -35,7 +35,7 @@ public class Implode extends Augmentation {
 
 	@Override
 	public Action getAction(Agent owner, Agent target) {
-		return new ImplodeAction(owner, target.getPosition());
+		return new ImplodeAction(owner, target.getPosition().cpy());
 	}
 	
 	@Override
