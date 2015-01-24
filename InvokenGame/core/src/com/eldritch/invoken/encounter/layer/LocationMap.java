@@ -19,26 +19,18 @@ public class LocationMap extends TiledMap {
     private final TiledMapTile ground;
     private Set<NaturalVector2> activeTiles = null;
     private final List<Activator> activators = new ArrayList<Activator>();
-    private final List<LocationLayer> overlays = new ArrayList<LocationLayer>();
+    private final TiledMap overlayMap = new TiledMap();
     
     public LocationMap(TiledMapTile ground) {
         this.ground = ground;
     }
     
     public void addOverlay(LocationLayer layer) {
-    	overlays.add(layer);
+    	overlayMap.getLayers().add(layer);
     }
     
     public TiledMap getOverlayMap() {
-    	TiledMap map = new TiledMap();
-    	for (LocationLayer layer : overlays) {
-    		map.getLayers().add(layer);
-    	}
-    	return map;
-    }
-    
-    public Iterable<LocationLayer> getOverlays() {
-    	return overlays;
+    	return overlayMap;
     }
     
     public void add(Activator activator) {

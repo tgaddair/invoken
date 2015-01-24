@@ -337,9 +337,9 @@ public class LocationGenerator {
 			for (int y = 0; y < overlay.getHeight(); y++) {
 				Cell cell = overlay.getCell(x, y);
 				if (cell != null) {
-					boolean lGround = base.isGround(x - 1, y)
+					boolean lGround = base.isFilled(x - 1, y)
 							&& overlay.getCell(x - 1, y) == null;
-					boolean rGround = base.isGround(x + 1, y)
+					boolean rGround = base.isFilled(x + 1, y)
 							&& overlay.getCell(x + 1, y) == null;
 					if (lGround) {
 						if (rGround) {
