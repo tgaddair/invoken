@@ -129,10 +129,6 @@ public class LocationGenerator {
         LocationLayer overlay = createOverlayLayer(base, map);
         LocationLayer roof = createEmptyLayer(base, map, "roof");
         
-        InvokenGame.log("Creating Overlay Trim");
-        LocationLayer overlayTrim1 = createTrimLayer(base, map);
-        LocationLayer overlayTrim2 = createOverlayTrimLayer(base, overlay, map);
-        
         InvokenGame.log("Creating Collision");
         CollisionLayer collision = createCollisionLayer(base, map);
         map.getLayers().add(collision);
@@ -146,6 +142,10 @@ public class LocationGenerator {
                 }
             }
         }
+        
+        InvokenGame.log("Creating Overlay Trim");
+        LocationLayer overlayTrim1 = createTrimLayer(base, overlay, map);
+        LocationLayer overlayTrim2 = createOverlayTrimLayer(base, overlay, map);
         
         // add all the overlays
         map.addOverlay(roof);
@@ -246,7 +246,8 @@ public class LocationGenerator {
         return layer;
     }
 
-    private LocationLayer createTrimLayer(LocationLayer base, LocationMap map) {
+    private LocationLayer createTrimLayer(LocationLayer base, LocationLayer overlay,
+    		LocationMap map) {
         LocationLayer layer = new LocationLayer(base.getWidth(), base.getHeight(), PX, PX, map);
         layer.setVisible(true);
         layer.setOpacity(1.0f);
@@ -256,8 +257,10 @@ public class LocationGenerator {
         for (int x = 0; x < base.getWidth(); x++) {
             for (int y = 0; y < base.getHeight(); y++) {
             	if (base.getCell(x, y) == null) {
-            		boolean leftGround = x - 1 >= 0 && base.getCell(x - 1, y) != null;
-            		boolean rightGround = x + 1 < base.getWidth() && base.getCell(x + 1, y) != null;
+            		boolean leftGround = x - 1 >= 0 && base.getCell(x - 1, y) != null 
+            				&& overlay.getCell(x - 1, y) == null;
+            		boolean rightGround = x + 1 < base.getWidth() && base.getCell(x + 1, y) != null 
+            				&& overlay.getCell(x + 1, y) == null;
             		if (leftGround) {
             			if (rightGround) {
             				// narrow wall
@@ -288,12 +291,14 @@ public class LocationGenerator {
             for (int y = 0; y < base.getHeight(); y++) {
                 Cell cell = base.getCell(x, y);
                 if (cell != null) {
-                    if (x - 1 >= 0 && y - 1 >= 0 && base.getCell(x - 1, y - 1) == null
+                    if (x - 1 >= 0 && y - 1 >= 0 
+                    		&& base.getCell(x - 1, y - 1) == null
                             && layer.getCell(x - 1, y - 1) == null) {
                         // empty space in left corner
                         addCell(layer, leftCorner, x - 1, y - 1);
                     }
-                    if (x + 1 >= 0 && y - 1 >= 0 && base.getCell(x + 1, y - 1) == null
+                    if (x + 1 >= 0 && y - 1 >= 0 
+                    		&& base.getCell(x + 1, y - 1) == null
                             && layer.getCell(x + 1, y - 1) == null) {
                         // empty space in left corner
                         addCell(layer, rightCorner, x + 1, y - 1);
