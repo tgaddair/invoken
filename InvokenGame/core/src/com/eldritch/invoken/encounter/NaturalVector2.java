@@ -23,4 +23,9 @@ public class NaturalVector2 {
         }
         return new NaturalVector2(x, y);
     }
+    
+    @Override
+    public String toString() {
+        return String.format("(%d,  %d)", x, y);
+    }
 }

@@ -48,7 +48,6 @@ import com.eldritch.invoken.actor.type.Npc;
 import com.eldritch.invoken.actor.type.Player;
 import com.eldritch.invoken.actor.type.TemporaryEntity;
 import com.eldritch.invoken.encounter.layer.EncounterLayer;
-import com.eldritch.invoken.encounter.layer.LocationLayer;
 import com.eldritch.invoken.encounter.layer.LocationMap;
 import com.eldritch.invoken.gfx.Light;
 import com.eldritch.invoken.gfx.LightManager;
@@ -57,7 +56,6 @@ import com.eldritch.invoken.proto.Locations.Encounter.ActorParams.ActorScenario;
 import com.eldritch.invoken.ui.RelationRenderer;
 import com.eldritch.invoken.util.Settings;
 import com.google.common.base.Optional;
-import com.google.common.primitives.Ints;
 
 public class Location {
 	private static Pool<Rectangle> rectPool = new Pool<Rectangle>() {
@@ -90,6 +88,11 @@ public class Location {
     private final int groundIndex = 0;
     
     private final World world;
+    
+    private NaturalVector2 currentCell = null;
+    private float currentZoom = 0;
+    private ConnectedRoom currentRoom = null;
+    
     RelationRenderer relationRenderer = new RelationRenderer();
     Box2DDebugRenderer debugRenderer = new Box2DDebugRenderer();
     
@@ -404,8 +407,15 @@ public class Location {
     	// update the world simulation
     	world.step(1 / 60f, 8, 3);
         
+        // let the camera follow the player
+        Vector2 position = player.getCamera().getPosition();
+        float scale = Settings.PX * camera.zoom * 1.25f;
+        camera.position.x = Math.round(position.x * scale) / scale;
+        camera.position.y = Math.round(position.y * scale) / scale;
+        camera.update();
+        
         // update the player (process input, collision detection, position update)
-        resetActiveTiles();
+        resetActiveTiles(position, camera.zoom);
         resetActiveEntities();
         if (!paused) {
             for (Agent actor : activeEntities) {
@@ -420,13 +430,6 @@ public class Location {
                 }
             }
         }
-
-        // let the camera follow the player
-        Vector2 position = player.getCamera().getPosition();
-        float scale = Settings.PX * camera.zoom * 1.25f;
-        camera.position.x = Math.round(position.x * scale) / scale;
-        camera.position.y = Math.round(position.y * scale) / scale;
-        camera.update();
 
         // draw lights
         lightManager.render(renderer, delta, paused);
@@ -548,16 +551,64 @@ public class Location {
         }
     }
 
-    private void resetActiveTiles() {
-        map.update(null);
-        activeTiles.clear();
+    private void resetActiveTiles(Vector2 position, float zoom) {
+        NaturalVector2 origin = NaturalVector2.of((int) position.x, (int) position.y);
+        if (origin != currentCell || zoom != currentZoom || activeTiles.isEmpty()) {
+            currentCell = origin;
+            currentZoom = zoom;
+            
+            map.update(null);
+            activeTiles.clear();
+            
+            final float layerTileWidth = 1;
+            final float layerTileHeight = 1;
+            
+            Rectangle viewBounds = renderer.getViewBounds();
+            final int x1 = Math.max(0, (int) (viewBounds.x / layerTileWidth) - 1);
+            final int x2 = Math.min(Settings.MAX_WIDTH,
+                    (int) ((viewBounds.x + viewBounds.width + layerTileWidth) / layerTileWidth) + 1);
 
-        Vector2 position = player.getPosition();
-        NaturalVector2 origin = NaturalVector2.of((int) position.x, (int) (position.y - 0.5f));
+            final int y1 = Math.max(0, (int) (viewBounds.y / layerTileHeight) - 1);
+            final int y2 = Math.min(Settings.MAX_HEIGHT,
+                    (int) ((viewBounds.y + viewBounds.height + layerTileHeight) / layerTileHeight) + 1);
+            
+            // sanity check
+            if (origin.x < x1 || origin.x > x2 || origin.y < y1 || origin.y > y2) {
+                return;
+            }
 
+            for (int i = x1; i <= x2; i++) {
+                for (int j = y1; j <= y2; j++) {
+                    NaturalVector2 tile = NaturalVector2.of(i, j);
+                    activeTiles.add(tile);
+                }
+            } 
+        }
+        
+        /*
+        ConnectedRoom[][] rooms = map.getRooms();
+        if (rooms[origin.x][origin.y] != currentRoom) {
+            System.out.println("new room!");
+            currentRoom = rooms[origin.x][origin.y];
+            
+            map.update(null);
+            activeTiles.clear();
+
+            for (int i = 0; i < map.getWidth(); i++) {
+                for (int j = 0; j < map.getHeight(); j++) {
+                    NaturalVector2 tile = NaturalVector2.of(i, j);
+                    if (currentRoom.isConnected(tile, rooms)) {
+                        activeTiles.add(tile);
+                    }
+                }
+            }
+        }
+        */
+
+        /*
         final float layerTileWidth = 1;
         final float layerTileHeight = 1;
-
+        
         Rectangle viewBounds = renderer.getViewBounds();
         final int x1 = Math.max(0, (int) (viewBounds.x / layerTileWidth));
         final int x2 = Math.min(Settings.MAX_WIDTH,
@@ -572,11 +623,13 @@ public class Location {
         
         for (int i = x1; i <= x2; i++) {
             for (int j = y1; j <= y2; j++) {
-                activeTiles.add(NaturalVector2.of(i, j));
+                NaturalVector2 tile = NaturalVector2.of(i, j);
+                if (currentRoom.isConnected(tile, rooms)) {
+                    activeTiles.add(tile);
+                }
             }
-        }
-
-        /*
+        }   
+        
         visited.add(origin);
         activeTiles.add(origin);
 

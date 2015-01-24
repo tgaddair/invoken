@@ -162,6 +162,7 @@ public class LocationGenerator {
         
         // create room connectivity map
         ConnectedRoom[][] rooms = createRooms(bsp.getRooms(), typeMap);
+        map.setRooms(rooms);
         save(rooms, "connected-rooms");
 
         InvokenGame.log("Creating Spawn Layers");
@@ -198,42 +199,6 @@ public class LocationGenerator {
         // saveLayer(base);
 
         return location;
-    }
-    
-    public <T> void save(T[][] grid, String filename) {
-        int width = grid.length;
-        int height = grid[0].length;
-        BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-        
-        // every element has a unique color in the grid
-        Random rand = new Random();
-        Map<T, Color> colors = new HashMap<T, Color>();
-        
-        for (int x = 0; x < width; x++) {
-            for (int y = 0; y < height; y++) {
-                T elem = grid[x][height - y - 1];  // images have (0, 0) in upper-left
-                if (!colors.containsKey(elem)) {
-                    if (elem == null) {
-                        colors.put(elem, Color.BLACK);
-                    } else {
-                        // color takes 3 floats, from 0 to 1
-                        float r = rand.nextFloat();
-                        float g = rand.nextFloat();
-                        float b = rand.nextFloat();
-                        colors.put(elem, new Color(r, g, b));
-                    }
-                }
-                
-                image.setRGB(x, y, colors.get(elem).getRGB());
-            }
-        }
-
-        File outputfile = new File(System.getProperty("user.home") + "/" + filename + ".png");
-        try {
-            ImageIO.write(image, "png", outputfile);
-        } catch (IOException e) {
-            InvokenGame.error("Failed saving grid image!", e);
-        }
     }
 
     private ConnectedRoom[][] createRooms(List<Rectangle> chambers, CellType[][] typeMap) {
@@ -841,6 +806,42 @@ public class LocationGenerator {
             ImageIO.write(image, "png", outputfile);
         } catch (IOException e) {
             InvokenGame.error("Failed saving level image!", e);
+        }
+    }
+    
+    public <T> void save(T[][] grid, String filename) {
+        int width = grid.length;
+        int height = grid[0].length;
+        BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+        
+        // every element has a unique color in the grid
+        Random rand = new Random();
+        Map<T, Color> colors = new HashMap<T, Color>();
+        
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                T elem = grid[x][height - y - 1];  // images have (0, 0) in upper-left
+                if (!colors.containsKey(elem)) {
+                    if (elem == null) {
+                        colors.put(elem, Color.BLACK);
+                    } else {
+                        // color takes 3 floats, from 0 to 1
+                        float r = rand.nextFloat();
+                        float g = rand.nextFloat();
+                        float b = rand.nextFloat();
+                        colors.put(elem, new Color(r, g, b));
+                    }
+                }
+                
+                image.setRGB(x, y, colors.get(elem).getRGB());
+            }
+        }
+
+        File outputfile = new File(System.getProperty("user.home") + "/" + filename + ".png");
+        try {
+            ImageIO.write(image, "png", outputfile);
+        } catch (IOException e) {
+            InvokenGame.error("Failed saving grid image!", e);
         }
     }
 }

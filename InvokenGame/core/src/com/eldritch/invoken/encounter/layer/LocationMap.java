@@ -12,6 +12,7 @@ import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
 import com.eldritch.invoken.activators.Activator;
+import com.eldritch.invoken.encounter.ConnectedRoom;
 import com.eldritch.invoken.encounter.NaturalVector2;
 import com.eldritch.invoken.util.Settings;
 
@@ -21,8 +22,18 @@ public class LocationMap extends TiledMap {
     private final List<Activator> activators = new ArrayList<Activator>();
     private final TiledMap overlayMap = new TiledMap();
     
+    private ConnectedRoom[][] rooms;
+    
     public LocationMap(TiledMapTile ground) {
         this.ground = ground;
+    }
+    
+    public void setRooms(ConnectedRoom[][] rooms) {
+        this.rooms = rooms;
+    }
+    
+    public ConnectedRoom[][] getRooms() {
+        return rooms;
     }
     
     public void addOverlay(LocationLayer layer) {

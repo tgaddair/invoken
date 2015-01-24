@@ -18,4 +18,9 @@ public class ConnectedRoom {
 	public void addNeighbor(ConnectedRoom neighbor) {
 		neighbors.add(neighbor);
 	}
+	
+	public boolean isConnected(NaturalVector2 point, ConnectedRoom[][] rooms) {
+	    ConnectedRoom room = rooms[point.x][point.y];
+	    return room == null || room == this || neighbors.contains(room);
+	}
 }
