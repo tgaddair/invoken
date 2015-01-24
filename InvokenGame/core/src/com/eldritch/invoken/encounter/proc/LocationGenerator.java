@@ -211,7 +211,7 @@ public class LocationGenerator {
         
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
-                T elem = grid[x][y];
+                T elem = grid[x][height - y - 1];  // images have (0, 0) in upper-left
                 if (!colors.containsKey(elem)) {
                     if (elem == null) {
                         colors.put(elem, Color.BLACK);
