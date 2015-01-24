@@ -6,10 +6,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
@@ -120,30 +122,36 @@ public class LocationGenerator {
         map.getLayers().add(base);
 
         InvokenGame.log("Creating Trim");
-        LocationLayer trim = createTrimLayer(base, map);
+        LocationLayer trim = createEmptyLayer(base, map, "trim");
         map.getLayers().add(trim);
 
         InvokenGame.log("Creating Overlay");
         LocationLayer overlay = createOverlayLayer(base, map);
-        map.getLayers().add(overlay);
+        LocationLayer roof = createEmptyLayer(base, map, "roof");
         
         InvokenGame.log("Creating Overlay Trim");
-        LocationLayer overlayTrim = createOverlayTrimLayer(base, overlay, map);
-        map.getLayers().add(overlayTrim);
+        LocationLayer overlayTrim1 = createTrimLayer(base, map);
+        LocationLayer overlayTrim2 = createOverlayTrimLayer(base, overlay, map);
         
         InvokenGame.log("Creating Collision");
         CollisionLayer collision = createCollisionLayer(base, map);
         map.getLayers().add(collision);
         
         InvokenGame.log("Creating Roof");
-        TiledMapTile roof = new StaticTiledMapTile(atlas.findRegion(biome + ROOF));
+        TiledMapTile roofTile = new StaticTiledMapTile(atlas.findRegion(biome + ROOF));
         for (int i = 0; i < typeMap.length; i++) {
             for (int j = 0; j < typeMap[i].length; j++) {
                 if (typeMap[i][j] != CellType.Floor) {
-                    addTile(i, j, base, roof);
+                    addTile(i, j, roof, roofTile);
                 }
             }
         }
+        
+        // add all the overlays
+        map.addOverlay(roof);
+        map.addOverlay(overlayTrim1);
+        map.addOverlay(overlay);
+        map.addOverlay(overlayTrim2);
         
         InvokenGame.log("Adding Rooms");
         RoomGenerator roomGenerator = new RoomGenerator(map);
@@ -182,6 +190,11 @@ public class LocationGenerator {
 //        saveLayer(base);
 
         return location;
+    }
+    
+    private Map<NaturalVector2, Room> createRooms(List<Rectangle> bounds, CellType[][] typeMap) {
+    	Map<NaturalVector2, Room> rooms = new HashMap<NaturalVector2, Room>();
+    	return rooms;
     }
 
     private LocationMap getBaseMap(int width, int height) {
@@ -224,12 +237,20 @@ public class LocationGenerator {
 
         return layer;
     }
+    
+    private LocationLayer createEmptyLayer(LocationLayer base, LocationMap map, String name) {
+    	LocationLayer layer = new LocationLayer(base.getWidth(), base.getHeight(), PX, PX, map);
+        layer.setVisible(true);
+        layer.setOpacity(1.0f);
+        layer.setName(name);
+        return layer;
+    }
 
     private LocationLayer createTrimLayer(LocationLayer base, LocationMap map) {
         LocationLayer layer = new LocationLayer(base.getWidth(), base.getHeight(), PX, PX, map);
         layer.setVisible(true);
         layer.setOpacity(1.0f);
-        layer.setName("trim");
+        layer.setName("overlay-trim-1");
 
         // fill in sides
         for (int x = 0; x < base.getWidth(); x++) {
@@ -313,7 +334,7 @@ public class LocationGenerator {
         LocationLayer layer = new LocationLayer(base.getWidth(), base.getHeight(), PX, PX, map);
         layer.setVisible(true);
         layer.setOpacity(1.0f);
-        layer.setName("overlay-trim");
+        layer.setName("overlay-trim-2");
 
         TiledMapTile overlayLeftTrim = new StaticTiledMapTile(
                 atlas.findRegion(biome + OVERLAY_LEFT_TRIM));

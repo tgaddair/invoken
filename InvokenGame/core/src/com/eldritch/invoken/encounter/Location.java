@@ -48,6 +48,7 @@ import com.eldritch.invoken.actor.type.Npc;
 import com.eldritch.invoken.actor.type.Player;
 import com.eldritch.invoken.actor.type.TemporaryEntity;
 import com.eldritch.invoken.encounter.layer.EncounterLayer;
+import com.eldritch.invoken.encounter.layer.LocationLayer;
 import com.eldritch.invoken.encounter.layer.LocationMap;
 import com.eldritch.invoken.gfx.Light;
 import com.eldritch.invoken.gfx.LightManager;
@@ -82,11 +83,10 @@ public class Location {
     private final Optional<Faction> owningFaction;
 
     private OrthogonalTiledMapRenderer renderer;
+    private OrthogonalTiledMapRenderer overlayRenderer;
     private Array<Rectangle> tiles = new Array<Rectangle>();
 
-    private int[] overlays;
     private int collisionIndex = -1;
-    private int overlayIndex = -1;
     private final int groundIndex = 0;
     
     private final World world;
@@ -103,26 +103,18 @@ public class Location {
         lightManager = new LightManager(data);
         
         // find layers we care about
-        List<Integer> overlayList = new ArrayList<Integer>();
         for (int i = 0; i < map.getLayers().getCount(); i++) {
             TiledMapTileLayer layer = (TiledMapTileLayer) map.getLayers().get(i);
             if (layer.getName().equals("collision")) {
                 layer.setVisible(false);
                 collisionIndex = i;
-            } else if (layer.getName().equals("overlay")) {
-                overlayList.add(i);
-                overlayIndex = i;
-
-            } else if (layer.getName().equals("overlay-trim")) {
-                // overlays are rendered above all objects always
-                overlayList.add(i);
             }
         }
-        overlays = Ints.toArray(overlayList);
 
         // objects are rendered by y-ordering with other entities
         float unitScale = 1.0f / Settings.PX;
         renderer = new OrthogonalTiledMapRenderer(map, unitScale);
+        overlayRenderer = new OrthogonalTiledMapRenderer(map.getOverlayMap(), unitScale);
         
         // Instantiate a new World with no gravity and tell it to sleep when possible.
   		world = new World(new Vector2(0, 0), true);
@@ -438,6 +430,7 @@ public class Location {
 
         // draw lights
         lightManager.render(renderer, delta, paused);
+        lightManager.render(overlayRenderer, delta, paused);
 
         // set the tile map render view based on what the
         // camera sees and render the map
@@ -488,8 +481,9 @@ public class Location {
             entity.render(delta, renderer);
         }
 
-        // render the overlay layer
-        renderer.render(overlays);
+        // render the overlay layers
+        overlayRenderer.setView(camera);
+        overlayRenderer.render();
         
         if (Settings.DEBUG_DRAW) {
 	        // draw NPC debug rays
@@ -646,10 +640,6 @@ public class Location {
 
     public boolean isObstacle(int x, int y) {
         return hasCell(x, y, collisionIndex);
-    }
-
-    public boolean isOverlay(NaturalVector2 point) {
-        return hasCell(point.x, point.y, overlayIndex);
     }
 
     private boolean hasCell(int x, int y, int layerIndex) {

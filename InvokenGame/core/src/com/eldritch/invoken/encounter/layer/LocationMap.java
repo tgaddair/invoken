@@ -11,7 +11,6 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
-import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.activators.Activator;
 import com.eldritch.invoken.encounter.NaturalVector2;
 import com.eldritch.invoken.util.Settings;
@@ -20,9 +19,26 @@ public class LocationMap extends TiledMap {
     private final TiledMapTile ground;
     private Set<NaturalVector2> activeTiles = null;
     private final List<Activator> activators = new ArrayList<Activator>();
+    private final List<LocationLayer> overlays = new ArrayList<LocationLayer>();
     
     public LocationMap(TiledMapTile ground) {
         this.ground = ground;
+    }
+    
+    public void addOverlay(LocationLayer layer) {
+    	overlays.add(layer);
+    }
+    
+    public TiledMap getOverlayMap() {
+    	TiledMap map = new TiledMap();
+    	for (LocationLayer layer : overlays) {
+    		map.getLayers().add(layer);
+    	}
+    	return map;
+    }
+    
+    public Iterable<LocationLayer> getOverlays() {
+    	return overlays;
     }
     
     public void add(Activator activator) {
