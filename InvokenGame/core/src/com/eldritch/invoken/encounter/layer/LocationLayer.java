@@ -71,6 +71,10 @@ public class LocationLayer extends TiledMapTileLayer {
                 && getCell(x, y).getTile() != map.getGround();
     }
     
+    public boolean isFilled(int x, int y) {
+    	return inBounds(x, y) && getCell(x, y) != null;
+    }
+    
     public static class CollisionLayer extends LocationLayer {
         private final TiledMapTile collider;
         
