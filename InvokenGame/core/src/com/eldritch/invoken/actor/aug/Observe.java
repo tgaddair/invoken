@@ -55,7 +55,7 @@ public class Observe extends Augmentation {
         private final boolean activate;
         
         public ObserveAction(Agent actor, Agent target) {
-            super(actor, Activity.Cast, Observe.this);
+            super(actor, Activity.Swipe, Observe.this);
             this.target = target;
             activate = !actor.isToggled(Observe.class);
         }

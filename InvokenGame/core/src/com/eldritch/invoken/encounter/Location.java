@@ -93,7 +93,7 @@ public class Location {
     
     private NaturalVector2 currentCell = null;
     private float currentZoom = 0;
-    private ConnectedRoom currentRoom = null;
+    private Rectangle viewBounds = new Rectangle();
     
     RelationRenderer relationRenderer = new RelationRenderer();
     Box2DDebugRenderer debugRenderer = new Box2DDebugRenderer();
@@ -423,9 +423,11 @@ public class Location {
         
         // update the player (process input, collision detection, position update)
         NaturalVector2 origin = NaturalVector2.of((int) position.x, (int) position.y);
-        if (origin != currentCell || camera.zoom != currentZoom || activeTiles.isEmpty()) {
+        if (origin != currentCell || camera.zoom != currentZoom || activeTiles.isEmpty() 
+                || changedViewBounds(renderer.getViewBounds())) {
             currentCell = origin;
             currentZoom = camera.zoom;
+            viewBounds.set(renderer.getViewBounds());
             
             resetActiveTiles(origin);
             resetActiveEntities();
@@ -547,6 +549,14 @@ public class Location {
         batch.draw(region, position.x - w / 2, position.y - h / 2 - 0.4f, w, h);
         batch.end();
         batch.setColor(Color.WHITE);
+    }
+    
+    private boolean changedViewBounds(Rectangle cameraBounds) {
+        return 
+                ((int) viewBounds.x) != ((int) cameraBounds.x) ||
+                ((int) viewBounds.y) != ((int) cameraBounds.y) ||
+                ((int) viewBounds.width) != ((int) cameraBounds.width) ||
+                ((int) viewBounds.height) != ((int) cameraBounds.height);
     }
 
     public List<Agent> getActors() {
