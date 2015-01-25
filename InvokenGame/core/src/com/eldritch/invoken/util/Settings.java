@@ -23,10 +23,19 @@ public class Settings {
 	public static final boolean GOD_MODE = true;
 	public static final boolean DEBUG_DRAW = false;
 	
-	public static DebugGraph DRAW_GRAPH = DebugGraph.Enemies;
+	public static DebugGraph DRAW_GRAPH = DebugGraph.Visible;
 	public enum DebugGraph {
-	    None, Disposition, LOS, Enemies
+	    None, Disposition, Enemies, LOS, Visible 
 	}
+	
+	public static void lastDebugGraph() {
+        int current = DRAW_GRAPH.ordinal();
+        int next = current - 1;
+        if (next < 0) {
+            next = DebugGraph.values().length - 1;
+        }
+        DRAW_GRAPH = DebugGraph.values()[next];
+    }
 	
 	public static void nextDebugGraph() {
 	    int current = DRAW_GRAPH.ordinal();

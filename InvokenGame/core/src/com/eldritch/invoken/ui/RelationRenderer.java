@@ -89,4 +89,22 @@ public class RelationRenderer {
         }
         sr.end();
     }
+	
+	public void renderVisible(
+            Agent target, Collection<Agent> agents, OrthographicCamera camera) {
+        sr.setProjectionMatrix(camera.combined);
+        sr.begin(ShapeType.Line);
+        for (Agent other : target.getVisibleNeighbors()) {
+            if (target == other) {
+                // don't draw a relation edge to yourself
+                continue;
+            }
+            
+            Color c = Color.BLUE;
+            sr.setColor(c);
+            sr.line(target.getPosition().x, target.getPosition().y,
+                    other.getPosition().x, other.getPosition().y);
+        }
+        sr.end();
+    }
 }

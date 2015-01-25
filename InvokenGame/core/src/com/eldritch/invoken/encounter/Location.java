@@ -485,6 +485,9 @@ public class Location {
         	    case Enemies:
         	        relationRenderer.renderEnemies(target, activeEntities, camera);
         	        break;
+        	    case Visible:
+                    relationRenderer.renderVisible(target, activeEntities, camera);
+                    break;
         	    case None:
         	}
         }

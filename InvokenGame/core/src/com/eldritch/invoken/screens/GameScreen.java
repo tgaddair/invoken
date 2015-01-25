@@ -194,6 +194,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 				
 				int i = 0;
 				batch.begin();
+		        font.draw(batch, "Graph: " + Settings.DRAW_GRAPH, 10, getHeight() - (30 + 20 * i++));
 		        font.draw(batch, "State: " + state, 10, getHeight() - (30 + 20 * i++));
 		        font.draw(batch, String.format("Freezing: %.2f", freezing), 10, getHeight() - (30 + 20 * i++));
 		        font.draw(batch, String.format("Agitated: %s", agitated), 10, getHeight() - (30 + 20 * i++));
@@ -253,6 +254,9 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 		        return true;
 		    }
 		    return false;
+		case Keys.MINUS:
+		    Settings.lastDebugGraph();
+		    return true;
 		case Keys.EQUALS:
 		    Settings.nextDebugGraph();
 		    return true;
