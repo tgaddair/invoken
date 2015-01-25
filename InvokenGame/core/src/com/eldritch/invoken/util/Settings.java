@@ -25,7 +25,7 @@ public class Settings {
 	
 	public static DebugGraph DRAW_GRAPH = DebugGraph.Visible;
 	public enum DebugGraph {
-	    None, Disposition, Enemies, LOS, Visible 
+	    None, Disposition, Enemies, LOS, Visible
 	}
 	
 	public static void lastDebugGraph() {

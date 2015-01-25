@@ -5,7 +5,6 @@ import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import com.eldritch.invoken.actor.ConversationHandler;
-import com.eldritch.invoken.actor.GameCamera;
 import com.eldritch.invoken.actor.Profession;
 import com.eldritch.invoken.actor.ai.AgentMover;
 import com.eldritch.invoken.encounter.Location;
@@ -13,38 +12,16 @@ import com.eldritch.invoken.util.Settings;
 
 /** The player character, has state and state time, */
 public class Player extends SteeringAgent {
-	private final GameCamera PLAYER_CAMERA = new PlayerCamera();
-	
     private final AgentMover mover;
     private final Vector2 targetCoord = new Vector2();
     private boolean holding = false;
     private boolean moving = false;
     private boolean fixedTarget = false;
-    private GameCamera camera = PLAYER_CAMERA;
 
     public Player(Profession profession, int level, float x, float y, World world, String body) {
         super(x, y, Human.getWidth(), Human.getHeight(), profession, level, world, 
         		Human.getAllAnimations(body));
         mover = new AgentMover(this, getMaxVelocity(), 0.01f);
-    }
-    
-    @Override
-    public void setCamera(GameCamera camera) {
-    	this.camera = camera;
-    }
-    
-    @Override
-    public void resetCamera() {
-    	this.camera = PLAYER_CAMERA;
-    }
-    
-    @Override
-    public boolean usingRemoteCamera() {
-    	return camera != PLAYER_CAMERA;
-    }
-    
-    public GameCamera getCamera() {
-    	return camera;
     }
 
     @Override
@@ -162,13 +139,6 @@ public class Player extends SteeringAgent {
             }
         }
         return false;
-    }
-    
-    private class PlayerCamera implements GameCamera {
-		@Override
-		public Vector2 getPosition() {
-			return Player.this.position;
-		}
     }
 
     @Override

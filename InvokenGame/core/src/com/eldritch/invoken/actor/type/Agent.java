@@ -57,6 +57,9 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     static float MAX_FREEZE = 25f;
     static float DAMPING = 5f;
     
+    private final GameCamera defaultCamera = new AgentCamera();
+    private GameCamera camera = defaultCamera;
+    
     private final World world;
     protected final Body body;
     private final float radius;
@@ -73,7 +76,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         Explore, Combat, Cast, Thrust, Swipe, Death
     }
 
-    final AgentInfo info;
+    AgentInfo info;
     State state = State.Moving;
     Activity activity = Activity.Explore;
     Direction direction = Direction.Down;
@@ -111,25 +114,26 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
 
     public Agent(ActorParams params, float x, float y, float width, float height,
             World world, Map<Activity, Map<Direction, Animation>> animations) {
-        super(width, height);
-        setPosition(x, y);
-        this.animations = animations;
-
+        this(x, y, width, height, world, animations);
+        
         // health, level, augmentations, etc.
-        info = new AgentInfo(this, params);
-        radius = Math.max(width, height) / 5;
-        this.world = world;
-        body = createBody(x, y, width, height, world);
+        this.info = new AgentInfo(this, params);
     }
 
     public Agent(float x, float y, float width, float height, Profession profession, int level,
+            World world, Map<Activity, Map<Direction, Animation>> animations) {
+        this(x, y, width, height, world, animations);
+        
+        // health, level, augmentations, etc.
+        this.info = new AgentInfo(this, profession, level);
+    }
+    
+    public Agent(float x, float y, float width, float height,
             World world, Map<Activity, Map<Direction, Animation>> animations) {
         super(width, height);
         setPosition(x, y);
         this.animations = animations;
 
-        // health, level, augmentations, etc.
-        info = new AgentInfo(this, profession, level);
         radius = Math.max(width, height) / 5;
         this.world = world;
         body = createBody(x, y, width, height, world);
@@ -163,6 +167,22 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
 		circleShape.dispose();
 		return body;
 	}
+	
+    public void setCamera(GameCamera camera) {
+        this.camera = camera;
+    }
+    
+    public void resetCamera() {
+        this.camera = defaultCamera;
+    }
+    
+    public boolean usingRemoteCamera() {
+        return camera != defaultCamera;
+    }
+    
+    public GameCamera getCamera() {
+        return camera;
+    }
 	
 	public float getDensity() {
 		return 1;
@@ -228,16 +248,6 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         info.resetHealth();
         setRgb(0.4f, 0.4f, 0.7f);
         setCollisionMask(Settings.BIT_ANYTHING);
-    }
-    
-    public void setCamera(GameCamera camera) {
-    }
-    
-    public void resetCamera() {
-    }
-    
-    public boolean usingRemoteCamera() {
-    	return false;
     }
 
     public float getVisibility() {
@@ -1154,4 +1164,11 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
 			return false;
 		}
 	};
+	
+    private class AgentCamera implements GameCamera {
+        @Override
+        public Vector2 getPosition() {
+            return Agent.this.position;
+        }
+    }
 }
