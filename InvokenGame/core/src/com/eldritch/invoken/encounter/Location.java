@@ -39,6 +39,7 @@ import com.badlogic.gdx.utils.Pool;
 import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.activators.Activator;
 import com.eldritch.invoken.activators.SecurityCamera;
+import com.eldritch.invoken.actor.Drawable;
 import com.eldritch.invoken.actor.Profession;
 import com.eldritch.invoken.actor.aug.Action;
 import com.eldritch.invoken.actor.factions.Faction;
@@ -71,7 +72,7 @@ public class Location {
     private final LocationMap map;
     private final List<Agent> entities = new ArrayList<Agent>();
     private final List<Agent> activeEntities = new ArrayList<Agent>();
-    private final List<Agent> drawableEntities = new ArrayList<Agent>();
+    private final List<Drawable> drawables = new ArrayList<Drawable>();
     private final List<TemporaryEntity> tempEntities = new ArrayList<TemporaryEntity>();
     private final List<Activator> activators = new ArrayList<Activator>();
     private final List<SecurityCamera> securityCameras = new ArrayList<SecurityCamera>();
@@ -251,7 +252,11 @@ public class Location {
     	}
     }
     
-    private void addEdge(int x0, int y0, int x1, int y1, World world) {
+    public Body createEdge(int x0, int y0, int x1, int y1) {
+        return addEdge(x0, y0, x1, y1, world);
+    }
+    
+    private Body addEdge(int x0, int y0, int x1, int y1, World world) {
     	EdgeShape edge = new EdgeShape();
 		Vector2 start = new Vector2(x0, y0);
 		Vector2 end = new Vector2(x1, y1);
@@ -277,6 +282,7 @@ public class Location {
 		edge.dispose();
 		
 		System.out.println("edge: " + start + " " + end);
+		return body;
     }
     
     public void alertTo(Agent intruder) {
@@ -451,9 +457,9 @@ public class Location {
         }
         
         // sort drawables by descending y
-        Collections.sort(drawableEntities, new Comparator<Agent>() {
+        Collections.sort(drawables, new Comparator<Drawable>() {
             @Override
-            public int compare(Agent a1, Agent a2) {
+            public int compare(Drawable a1, Drawable a2) {
                 return Float.compare(a2.getPosition().y, a1.getPosition().y);
             }
         });
@@ -462,23 +468,27 @@ public class Location {
         if (player.getTarget() != null) {
         	Agent target = player.getTarget();
         	if (Settings.DRAW_DISPOSITION) {
-        		relationRenderer.renderDispositions(target, drawableEntities, camera);
+        		relationRenderer.renderDispositions(target, activeEntities, camera);
         	} else if (Settings.DRAW_LOS) {
-        		relationRenderer.renderLineOfSight(target, drawableEntities, camera);
+        		relationRenderer.renderLineOfSight(target, activeEntities, camera);
         	}
         }
-
-        // render the drawables
-        for (Agent actor : drawableEntities) {
-            if (actor == player.getTarget() && !paused) {
+        
+        // draw selected entity
+        for (Agent agent : activeEntities) {
+            if (agent == player.getTarget() && !paused) {
                 Color color = new Color(0x00FA9AFF);
-                if (!actor.isAlive()) {
+                if (!agent.isAlive()) {
                     // dark slate blue
                     color = new Color(0x483D8BFF);
                 }
-                drawCentered(selector, actor.getRenderPosition(), color);
+                drawCentered(selector, agent.getRenderPosition(), color);
             }
-            actor.render(delta, renderer);
+        }
+
+        // render the drawables
+        for (Drawable drawable : drawables) {
+            drawable.render(delta, renderer);
         }
         for (TemporaryEntity entity : tempEntities) {
             entity.render(delta, renderer);
@@ -490,7 +500,7 @@ public class Location {
         
         if (Settings.DEBUG_DRAW) {
 	        // draw NPC debug rays
-	        for (Agent agent : drawableEntities) {
+	        for (Agent agent : activeEntities) {
 	        	if (agent instanceof Npc) {
 	        		Npc npc = (Npc) agent;
 	        		npc.render(camera);
@@ -538,17 +548,31 @@ public class Location {
 
     private void resetActiveEntities() {
         activeEntities.clear();
-        drawableEntities.clear();
+        drawables.clear();
+        
+        // add agents
         for (Agent other : entities) {
             if (activeTiles.contains(other.getCellPosition())) {
                 activeEntities.add(other);
-                drawableEntities.add(other);
+                drawables.add(other);
             } else if (other.hasEnemies() && player.isNear(other)) {
                 activeEntities.add(other);
             } else if (other == player) {
             	activeEntities.add(other);
             }
         }
+        
+        // add activators
+        for (Activator activator : activators) {
+            if (activeTiles.contains(getCellPosition(activator))) {
+                drawables.add(activator);
+            }
+        }
+    }
+    
+    private NaturalVector2 getCellPosition(Drawable drawable) {
+        Vector2 position = drawable.getPosition();
+        return NaturalVector2.of((int) position.x, (int) position.y);
     }
 
     private void resetActiveTiles(Vector2 position, float zoom) {

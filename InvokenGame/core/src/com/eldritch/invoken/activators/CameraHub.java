@@ -1,5 +1,6 @@
 package com.eldritch.invoken.activators;
 
+import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.eldritch.invoken.actor.aug.Crack;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.encounter.Location;
@@ -20,4 +21,9 @@ public class CameraHub extends ClickActivator {
 	@Override
 	public void register(Location location) {
 	}
+
+    @Override
+    public void render(float delta, OrthogonalTiledMapRenderer renderer) {
+        // delegated to layer
+    }
 }

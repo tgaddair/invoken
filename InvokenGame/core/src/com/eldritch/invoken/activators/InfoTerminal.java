@@ -1,5 +1,6 @@
 package com.eldritch.invoken.activators;
 
+import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.eldritch.invoken.actor.Conversable;
 import com.eldritch.invoken.actor.ConversationHandler;
 import com.eldritch.invoken.actor.type.Agent;
@@ -27,4 +28,9 @@ public class InfoTerminal extends ClickActivator implements Conversable {
 	public ConversationHandler getDialogueHandler() {
 		return dialogue;
 	}
+
+    @Override
+    public void render(float delta, OrthogonalTiledMapRenderer renderer) {
+        // delegated to layer
+    }
 }

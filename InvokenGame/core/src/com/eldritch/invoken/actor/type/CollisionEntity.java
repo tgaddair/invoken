@@ -41,6 +41,7 @@ public abstract class CollisionEntity implements Entity {
         return agents;
     }
     
+    @Override
     public Vector2 getPosition() {
         return position;
     }

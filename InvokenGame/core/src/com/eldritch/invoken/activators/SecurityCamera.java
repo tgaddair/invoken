@@ -1,5 +1,6 @@
 package com.eldritch.invoken.activators;
 
+import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.eldritch.invoken.actor.GameCamera;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.encounter.Location;
@@ -29,4 +30,9 @@ public class SecurityCamera extends ClickActivator implements GameCamera {
 	public void setNext(SecurityCamera camera) {
 		this.next = camera;
 	}
+
+    @Override
+    public void render(float delta, OrthogonalTiledMapRenderer renderer) {
+        // delegated to layer
+    }
 }

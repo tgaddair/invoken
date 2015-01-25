@@ -83,47 +83,17 @@ public abstract class FurnitureGenerator {
 
     private void addDoors(LocationLayer base, LocationLayer trim,
             LocationLayer overlay, CollisionLayer collision, List<Activator> activators) {
-
-        TiledMapTile doorTopLeft = new StaticTiledMapTile(
-                atlas.findRegion("test-biome/door-front-top-left"));
-        TiledMapTile doorTopRight = new StaticTiledMapTile(
-                atlas.findRegion("test-biome/door-front-top-right"));
-
         // add front doors
-        List<RemovableCell> cells = new ArrayList<RemovableCell>();
         for (int x = 0; x < base.getWidth(); x++) {
             for (int y = 0; y < base.getHeight(); y++) {
-                Cell cell = base.getCell(x, y);
-                if (base.isGround(cell)) {
+                if (base.isGround(x, y) && base.isGround(x + 1, y)) {
                     // wall to the left, wall to the right
-                    if (base.isWall(x - 4, y) && base.isWall(x + 1, y)) {
-                        if (base.isGround(x - 4, y - 1) && base.isGround(x + 1, y - 1)) {
-                            // room below
-                            addCell(trim, doorLeft, x - 3, y, cells);
-                            addCell(trim, doorRight, x - 2, y, cells);
-                            addCell(trim, doorLeft, x - 1, y, cells);
-                            addCell(trim, doorRight, x, y, cells);
-
-                            // add overlay
-                            addCell(overlay, doorTopLeft, x - 3, y + 1, cells);
-                            addCell(overlay, doorTopRight, x - 2, y + 1, cells);
-                            addCell(overlay, doorTopLeft, x - 1, y + 1, cells);
-                            addCell(overlay, doorTopRight, x, y + 1, cells);
-
-                            // add collision
-                            collision.addCell(x - 3, y, cells, this);
-                            collision.addCell(x - 2, y, cells, this);
-                            collision.addCell(x - 1, y, cells, this);
-                            collision.addCell(x, y, cells, this);
-
-                            // add activator
-                            DoorActivator activator = new DoorActivator(x - 4, y + 1, cells,
-                                    unlockedDoor, lockedDoor, trim);
-                            activators.add(activator);
-                            trim.setCell(x - 4, y + 1, activator.getCell());
-                            mark(x - 4, y + 1);
-                            cells.clear();
-                        }
+                    if (base.isWall(x - 1, y) && base.isWall(x + 2, y) 
+                            && base.isWall(x - 1, y + 1) && base.isWall(x + 2, y + 1) ) {
+                        // add activator
+                        DoorActivator activator = DoorActivator.createFront(x, y);
+                        activators.add(activator);
+                        mark(x, y);
                     }
                 }
             }
@@ -160,26 +130,26 @@ public abstract class FurnitureGenerator {
             CollisionLayer collision, TiledMapTile tile, TiledMapTile top, int x, int y,
             List<Activator> activators, List<RemovableCell> cells) {
         // add the doors
-        addCell(overlayTrim, tile, x, y - 1, cells);
-        addCell(overlayTrim, tile, x, y, cells);
-        addCell(overlayTrim, tile, x, y + 1, cells);
-        addCell(overlayTrim, tile, x, y + 2, cells);
-        addCell(overlayTrim, top, x, y + 3, cells);
+//        addCell(overlayTrim, tile, x, y - 1, cells);
+//        addCell(overlayTrim, tile, x, y, cells);
+//        addCell(overlayTrim, tile, x, y + 1, cells);
+//        addCell(overlayTrim, tile, x, y + 2, cells);
+//        addCell(overlayTrim, top, x, y + 3, cells);
 
         // add collision if absent so we don't delete collision cells when the door comes down
-        collision.addCellIfAbsent(x, y - 2, cells, this);
-        collision.addCellIfAbsent(x, y - 1, cells, this);
-        collision.addCellIfAbsent(x, y, cells, this);
-        collision.addCellIfAbsent(x, y + 1, cells, this);
-        collision.addCellIfAbsent(x, y + 2, cells, this);
-        collision.addCellIfAbsent(x, y + 3, cells, this);
+//        collision.addCellIfAbsent(x, y - 2, cells, this);
+//        collision.addCellIfAbsent(x, y - 1, cells, this);
+//        collision.addCellIfAbsent(x, y, cells, this);
+//        collision.addCellIfAbsent(x, y + 1, cells, this);
+//        collision.addCellIfAbsent(x, y + 2, cells, this);
+//        collision.addCellIfAbsent(x, y + 3, cells, this);
 
         // add activator
-        DoorActivator activator = new DoorActivator(x, y + 2, cells, unlockedDoor, lockedDoor, trim);
-        activators.add(activator);
-        trim.setCell(x, y + 2, activator.getCell());
-        mark(x, y + 2);
-        cells.clear();
+//        DoorActivator activator = new DoorActivator(x, y + 2, cells, unlockedDoor, lockedDoor, trim);
+//        activators.add(activator);
+//        trim.setCell(x, y + 2, activator.getCell());
+//        mark(x, y + 2);
+//        cells.clear();
     }
     
     private void mark(int x, int y) {
