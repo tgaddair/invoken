@@ -85,4 +85,13 @@ public class DoorActivator extends ClickActivator {
                 frame.getRegionWidth() * Settings.SCALE, frame.getRegionHeight() * Settings.SCALE);
         batch.end();
     }
+    
+    @Override
+    public float getZ() {
+        if (open && !activating) {
+            // always draw below everything else when open
+            return Float.POSITIVE_INFINITY;
+        }
+        return getPosition().y;
+    }
 }

@@ -546,7 +546,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     }
     
     public boolean canInteract(Agent other) {
-        return dst2(other) < 2 && !other.hasEnemies();
+        return dst2(other) < 5 && !other.hasEnemies();
     }
 
     public boolean inDialogue() {

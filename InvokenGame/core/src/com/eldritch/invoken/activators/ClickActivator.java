@@ -30,6 +30,11 @@ public abstract class ClickActivator implements Activator {
         return clicked;
 	}
 	
+	@Override
+	public float getZ() {
+	    return position.y;
+	}
+	
 	public Vector2 getPosition() {
 		return position;
 	}

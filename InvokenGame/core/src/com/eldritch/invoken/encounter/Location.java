@@ -461,7 +461,7 @@ public class Location {
         Collections.sort(drawables, new Comparator<Drawable>() {
             @Override
             public int compare(Drawable a1, Drawable a2) {
-                return Float.compare(a2.getPosition().y, a1.getPosition().y);
+                return Float.compare(a2.getZ(), a1.getZ());
             }
         });
         
