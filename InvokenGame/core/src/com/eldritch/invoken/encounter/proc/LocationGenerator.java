@@ -52,6 +52,7 @@ import com.eldritch.invoken.util.Settings;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import com.google.common.collect.ImmutableList;
 
 public class LocationGenerator {
     // string constants required for all biome types
@@ -146,15 +147,19 @@ public class LocationGenerator {
             }
         }
 
-        InvokenGame.log("Creating Overlay Trim");
+        InvokenGame.log("Creating Overlays");
         LocationLayer overlayTrim1 = createTrimLayer(base, overlay, map);
-        LocationLayer overlayTrim2 = createOverlayTrimLayer(base, roof, overlay, map);
-
+        LocationLayer doorLayer = createEmptyLayer(base, map, "doors");
+        List<LocationLayer> overlayTrims = createOverlayTrimLayer(base, roof, overlay, map);
+        
         // add all the overlays
         map.addOverlay(roof);
         map.addOverlay(overlayTrim1);
         map.addOverlay(overlay);
-        map.addOverlay(overlayTrim2);
+        map.addOverlay(doorLayer);
+        for (LocationLayer layer : overlayTrims) {
+            map.addOverlay(layer);
+        }
 
         InvokenGame.log("Adding Rooms");
         RoomGenerator roomGenerator = new RoomGenerator(map);
@@ -179,7 +184,7 @@ public class LocationGenerator {
         // doors
         InvokenGame.log("Adding Doors");
         furnitureGenerator.createDoors(base, overlayTrim1, overlay,
-                overlayTrim2, collision, map.getActivators());
+                doorLayer, collision, map.getActivators());
 
         // lights
         InvokenGame.log("Adding Lights");
@@ -417,12 +422,12 @@ public class LocationGenerator {
         return layer;
     }
 
-    private LocationLayer createOverlayTrimLayer(LocationLayer base, LocationLayer roof,
+    private List<LocationLayer> createOverlayTrimLayer(LocationLayer base, LocationLayer roof,
             LocationLayer overlay, LocationMap map) {
-        LocationLayer layer = new LocationLayer(base.getWidth(), base.getHeight(), PX, PX, map);
-        layer.setVisible(true);
-        layer.setOpacity(1.0f);
-        layer.setName("overlay-trim-2");
+        LocationLayer layer1 = new LocationLayer(base.getWidth(), base.getHeight(), PX, PX, map);
+        layer1.setVisible(true);
+        layer1.setOpacity(1.0f);
+        layer1.setName("overlay-trim-2");
 
         TiledMapTile overlayLeftTrim = new StaticTiledMapTile(atlas.findRegion(biome
                 + OVERLAY_LEFT_TRIM));
@@ -439,14 +444,14 @@ public class LocationGenerator {
                     if (lGround) {
                         if (rGround) {
                             // narrow top
-                            addCell(layer, narrowTop, x, y);
+                            addCell(layer1, narrowTop, x, y);
                         } else {
                             // left space is ground
-                            addCell(layer, overlayRightTrim, x, y);
+                            addCell(layer1, overlayRightTrim, x, y);
                         }
                     } else if (rGround) {
                         // right space is ground
-                        addCell(layer, overlayLeftTrim, x, y);
+                        addCell(layer1, overlayLeftTrim, x, y);
                     }
                 }
             }
@@ -462,27 +467,38 @@ public class LocationGenerator {
         leftCorner.setOffsetX(Settings.PX / 2);
         leftCorner.setOffsetY(Settings.PX / 2);
         rightCorner.setOffsetY(Settings.PX / 2);
-
+        
         // fill in corners
         for (int x = 0; x < roof.getWidth(); x++) {
             for (int y = 0; y < roof.getHeight(); y++) {
-                if (roof.isFilled(x, y) && !layer.isFilled(x, y) && !overlay.isFilled(x, y)) {
+                if (roof.isFilled(x, y) && !layer1.isFilled(x, y) && !overlay.isFilled(x, y)) {
                     if (overlay.isFilled(x + 1, y)) {
-                        // case I: overlay to the right, wall at current
-                        // position
+                        // case I: overlay to the right, wall at current position
                         // add a left corner here
-                        addCell(layer, leftCorner, x, y);
-                    } else if (overlay.isFilled(x - 1, y)) {
-                        // case II: overlay to the left, wall at current
-                        // position
+                        addCell(layer1, leftCorner, x, y);
+                    }
+                }
+            }
+        }
+        
+        LocationLayer layer2 = new LocationLayer(base.getWidth(), base.getHeight(), PX, PX, map);
+        layer2.setVisible(true);
+        layer2.setOpacity(1.0f);
+        layer2.setName("overlay-trim-3");
+        
+        for (int x = 0; x < roof.getWidth(); x++) {
+            for (int y = 0; y < roof.getHeight(); y++) {
+                if (roof.isFilled(x, y) && !layer2.isFilled(x, y) && !overlay.isFilled(x, y)) {
+                    if (overlay.isFilled(x - 1, y)) {
+                        // case II: overlay to the left, wall at current position
                         // add a right corner here
-                        addCell(layer, rightCorner, x, y);
+                        addCell(layer2, rightCorner, x, y);
                     }
                 }
             }
         }
 
-        return layer;
+        return ImmutableList.of(layer1, layer2);
     }
 
     private CollisionLayer createCollisionLayer(LocationLayer base, LocationMap map) {

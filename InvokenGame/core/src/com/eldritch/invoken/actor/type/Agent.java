@@ -57,7 +57,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     static AssetManager assetManager = new AssetManager();
     static float MAX_FREEZE = 25f;
     static float DAMPING = 5f;
-    static float FORGET_THRESHOLD = 3;
+    static float FORGET_THRESHOLD = 10;
     
     private final GameCamera defaultCamera = new AgentCamera();
     private GameCamera camera = defaultCamera;
