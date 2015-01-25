@@ -4,6 +4,7 @@ import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.eldritch.invoken.InvokenGame;
+import com.eldritch.invoken.util.Settings;
 
 public class DesktopLauncher {
 	public static void main(String[] arg) {
@@ -16,8 +17,8 @@ public class DesktopLauncher {
 		config.title = "Invoken";
 		
 		// define the window's size
-		config.width = 800;
-		config.height = 480;
+		config.width = Settings.MENU_VIEWPORT_WIDTH;
+		config.height = Settings.MENU_VIEWPORT_HEIGHT;
 		
 		// whether to use OpenGL ES 2.0
 		// causes a blank screen when using v1.4.1

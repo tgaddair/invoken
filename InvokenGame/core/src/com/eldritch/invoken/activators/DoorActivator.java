@@ -1,5 +1,8 @@
 package com.eldritch.invoken.activators;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
 import com.badlogic.gdx.graphics.g2d.Batch;
@@ -15,7 +18,7 @@ import com.eldritch.invoken.util.Settings;
 
 public class DoorActivator extends ClickActivator {
     private static final TextureRegion[] regions = GameScreen.getMergedRegion(
-            "sprite/activators/blast-door.png", 64, 96);
+            "sprite/activators/blast-door-short.png", 64, 64);
     
     // for bounding area
     private static final int WIDTH = 2;
@@ -24,7 +27,7 @@ public class DoorActivator extends ClickActivator {
     private boolean open = false;
     private boolean locked = false;
     
-    private Body body;
+    private final List<Body> bodies = new ArrayList<Body>();
     
     private boolean activating = false;
     private float stateTime = 0;
@@ -52,7 +55,9 @@ public class DoorActivator extends ClickActivator {
         
         activating = true;
         open = !open;
-        body.setActive(!open);
+        for (Body body : bodies) {
+            body.setActive(!open);
+        }
     }
 
 	@Override
@@ -60,7 +65,8 @@ public class DoorActivator extends ClickActivator {
 	    Vector2 position = getPosition();
 	    int x = (int) position.x;
 	    int y = (int) position.y;
-	    body = location.createEdge(x, y, x + WIDTH, y);
+	    bodies.add(location.createEdge(x, y, x + WIDTH, y));
+	    bodies.add(location.createEdge(x, y + 1, x + WIDTH, y + 1));
 	}
 
     @Override
