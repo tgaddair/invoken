@@ -20,6 +20,7 @@ import com.eldritch.invoken.screens.GameScreen;
 
 public class FireWeapon extends ProjectileAugmentation {
     private static final float DAMAGE_SCALE = 5;
+    private static final int BASE_COST = 3;
     
     private static class Holder {
         private static final FireWeapon INSTANCE = new FireWeapon();
@@ -50,12 +51,16 @@ public class FireWeapon extends ProjectileAugmentation {
     
     @Override
     public int getCost(Agent owner) {
-        return 5;
+        return BASE_COST;
     }
     
     @Override
     public float quality(Agent owner, Agent target, Location location) {
-        return 1;
+        float percent = owner.getInfo().getEnergyPercent();
+        float range = Math.max(0, 100 - owner.dst2(target));
+        float quality = range * percent;
+        System.out.println("quality: " + quality);
+        return quality > 25 ? 1 : 0;
     }
 
     public class FireAction extends AnimatedAction {

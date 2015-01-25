@@ -123,6 +123,11 @@ public class Player extends SteeringAgent {
     }
     
     @Override
+    public void alertTo(Agent other) {
+        // does nothing
+    }
+    
+    @Override
     public boolean canTargetProjectile(Agent other) {
     	// let the player make seemingly bad shots
     	return true;

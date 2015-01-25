@@ -196,6 +196,10 @@ public class AgentInfo {
         return energy;
     }
     
+    public float getEnergyPercent() {
+        return energy / getBaseEnergy();
+    }
+    
     public void changeBaseEnergy(float delta) {
     	energyOffset += delta;
     }

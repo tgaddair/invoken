@@ -87,6 +87,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     private final List<Agent> neighbors = new ArrayList<Agent>();
     private final Set<Agent> visibleNeighbors = new HashSet<Agent>();
     private final Map<Agent, Boolean> lineOfSightCache = new HashMap<Agent, Boolean>();
+    private final Map<Agent, Float> distanceCache = new HashMap<Agent, Float>();
     private final LinkedList<Action> actions = new LinkedList<Action>();
     private final List<Effect> effects = new LinkedList<Effect>();
     private Action action = null;
@@ -197,7 +198,10 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     }
 
     public float dst2(Agent other) {
-        return position.dst2(other.position);
+        if (!distanceCache.containsKey(other)) {
+            distanceCache.put(other, position.dst2(other.position));
+        }
+        return distanceCache.get(other);
     }
 
     public void useAugmentation(int index) {
@@ -825,6 +829,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         
         // clear iteration caches
         lineOfSightCache.clear();
+        distanceCache.clear();
         
         // update neighbors
     	location.getNeighbors(this);
