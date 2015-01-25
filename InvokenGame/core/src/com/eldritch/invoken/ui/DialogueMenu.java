@@ -16,7 +16,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.eldritch.invoken.actor.type.Agent;
-import com.eldritch.invoken.actor.type.Npc;
 import com.eldritch.invoken.actor.type.Player;
 import com.eldritch.invoken.proto.Actors.DialogueTree.Choice;
 import com.eldritch.invoken.proto.Actors.DialogueTree.Response;
@@ -72,11 +71,11 @@ public class DialogueMenu {
 	    }
 	}
 	
-	private void setup(Npc npc) {
+	private void setup(Agent npc) {
 		setup(npc, npc.getDialogueHandler().getGreeting());
 	}
 	
-	private void setup(Npc npc, Response response) {
+	private void setup(Agent npc, Response response) {
 		if (response != null) {
 			// remove old content
 		    choiceBar.clear();
@@ -130,7 +129,7 @@ public class DialogueMenu {
 		cell.height(label.getPrefHeight());
 	}
 	
-	private void addChoiceButton(final Choice c, final Npc npc) {
+	private void addChoiceButton(final Choice c, final Agent npc) {
 		TextButtonStyle buttonStyle = skin.get("choice", TextButtonStyle.class);
 		final TextButton choice = new TextButton(c.getText(), buttonStyle);
 		choice.addListener(new DefaultInputListener() {

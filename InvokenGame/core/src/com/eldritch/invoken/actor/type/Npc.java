@@ -46,7 +46,7 @@ import com.eldritch.invoken.proto.Prerequisites.Standing;
 import com.eldritch.invoken.util.PrerequisiteVerifier;
 import com.google.common.base.Optional;
 
-public abstract class Npc extends SteeringAgent implements Telegraph, Conversable {
+public abstract class Npc extends SteeringAgent implements Telegraph {
 	private final NonPlayerActor data;
     private final Optional<ActorScenario> scenario;
     private final ConversationHandler dialogue;
@@ -330,11 +330,6 @@ public abstract class Npc extends SteeringAgent implements Telegraph, Conversabl
 	
 	public Behavior getBehavior() {
 	    return behavior;
-	}
-	
-	@Override
-	public void handleInteract(Agent other) {
-		other.interact(this);
 	}
 	
 	@Override

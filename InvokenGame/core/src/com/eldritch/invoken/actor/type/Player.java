@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
+import com.eldritch.invoken.actor.ConversationHandler;
 import com.eldritch.invoken.actor.GameCamera;
 import com.eldritch.invoken.actor.Profession;
 import com.eldritch.invoken.actor.ai.AgentMover;
@@ -113,7 +114,10 @@ public class Player extends SteeringAgent {
     public boolean select(Agent other, Location location) {
         if (other == this || other == null || canTarget(other, location)) {
             setTarget(other);
-            interact(null);
+            if (inDialogue()) {
+                getInteractor().interact(null);
+                interact(null);
+            }
             return true;
         }
         return false;
@@ -121,18 +125,14 @@ public class Player extends SteeringAgent {
 
     public void reselect(Agent other) {
         if (canInteract(other)) {
-            other.handleInteract(this);
+            interact(other);
+            other.interact(this);
         }
     }
 
     @Override
     protected void handleConfusion(boolean confused) {
         // do nothing, for now, will change to make attack at random
-    }
-
-    @Override
-    public void handleInteract(Agent other) {
-        // do nothing
     }
     
     @Override
@@ -172,5 +172,11 @@ public class Player extends SteeringAgent {
 		public Vector2 getPosition() {
 			return Player.this.position;
 		}
+    }
+
+    @Override
+    public ConversationHandler getDialogueHandler() {
+        // not implemented
+        return null;
     }
 }

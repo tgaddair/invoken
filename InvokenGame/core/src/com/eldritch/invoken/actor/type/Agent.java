@@ -31,6 +31,7 @@ import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Array;
 import com.eldritch.invoken.actor.AgentInfo;
+import com.eldritch.invoken.actor.Conversable;
 import com.eldritch.invoken.actor.GameCamera;
 import com.eldritch.invoken.actor.Inventory;
 import com.eldritch.invoken.actor.Profession;
@@ -48,7 +49,7 @@ import com.eldritch.invoken.proto.Actors.ActorParams;
 import com.eldritch.invoken.ui.MultiTextureRegionDrawable;
 import com.eldritch.invoken.util.Settings;
 
-public abstract class Agent extends CollisionEntity implements Steerable<Vector2> {
+public abstract class Agent extends CollisionEntity implements Steerable<Vector2>, Conversable {
     public static final int MAX_DST2 = 175;
     public static final int ASSAULT_PENALTY = -10;
 
@@ -100,7 +101,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     private float lastAction = 0;
 
     private Agent target;
-    private Npc interactor;
+    private Agent interactor;
     private final Set<Class<?>> toggles = new HashSet<Class<?>>();
     private final Set<ProjectileHandler> projectileHandlers = new HashSet<ProjectileHandler>();
     private final LineOfSightHandler losHandler = new LineOfSightHandler();
@@ -533,11 +534,11 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         return animations.get(activity).get(direction);
     }
 
-    public void interact(Npc other) {
+    public void interact(Agent other) {
         interactor = other;
     }
 
-    public Npc getInteractor() {
+    public Agent getInteractor() {
         return interactor;
     }
 
@@ -879,9 +880,18 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         }
 
         // do this separately so we can still get the standing state
-        if (target != null && target != this) {
-            float dx = target.position.x - position.x;
-            float dy = target.position.y - position.y;
+        Agent observed = null;
+        if (inDialogue()) {
+            // face the interacting agent
+            observed = getInteractor();
+        } else if (target != null && target != this) {
+            // face the target
+            observed = target;
+        }
+        
+        if (observed != null) {
+            float dx = observed.position.x - position.x;
+            float dy = observed.position.y - position.y;
             direction = getDominantDirection(dx, dy);
         }
         
@@ -1082,8 +1092,6 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
 
     protected abstract void takeAction(float delta, Location screen);
 
-    protected abstract void handleInteract(Agent agent);
-	
 	private class LineOfSightHandler implements RayCastCallback {
 		private boolean lineOfSight = true;
 		private Agent target = null;

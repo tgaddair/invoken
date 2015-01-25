@@ -7,7 +7,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.eldritch.invoken.actor.Inventory;
 import com.eldritch.invoken.actor.items.Item;
-import com.eldritch.invoken.actor.type.Npc;
+import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Player;
 import com.eldritch.invoken.util.DefaultInputListener;
 import com.eldritch.invoken.util.Settings;
@@ -56,14 +56,14 @@ public class LootMenu {
                 height / 2 - container.getHeight() / 2);
 	}
 	
-	public void setup(Player player, Npc npc) {
+	public void setup(Player player, Agent npc) {
 		table.clear();
 		for (Inventory.ItemState item : npc.getInfo().getInventory().getItems()) {
 			addItemButton(item, player, npc);
 		}
 	}
 	
-	private void addItemButton(Inventory.ItemState itemState, final Player player, final Npc npc) {
+	private void addItemButton(Inventory.ItemState itemState, final Player player, final Agent npc) {
 		final Item item = itemState.getItem();
 		final TextButton itemButton = new TextButton(getText(item, itemState.getCount()), skin);
 		itemButton.addListener(new DefaultInputListener() {
