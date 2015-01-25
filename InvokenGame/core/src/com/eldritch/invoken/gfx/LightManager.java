@@ -12,7 +12,7 @@ import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector3;
 import com.eldritch.invoken.proto.Locations.Location;
-import com.eldritch.invoken.screens.AbstractScreen;
+import com.eldritch.invoken.util.Settings;
 
 public class LightManager {
     // values passed to the shader
@@ -52,7 +52,7 @@ public class LightManager {
         defaultShader = new ShaderProgram(vertexShader, defaultPixelShader);
         finalShader = createShader(finalPixelShader, ambientColor, ambientIntensity);
         pauseShader = createShader(finalPixelShader, pauseColor, ambientIntensity * 2);
-        resize(AbstractScreen.MENU_VIEWPORT_WIDTH, AbstractScreen.MENU_VIEWPORT_HEIGHT);
+        resize(Settings.MENU_VIEWPORT_WIDTH, Settings.MENU_VIEWPORT_HEIGHT);
     }
     
     private ShaderProgram createShader(String pixelShader, Vector3 color, float intensity) {

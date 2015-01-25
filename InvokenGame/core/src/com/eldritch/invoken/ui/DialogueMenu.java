@@ -20,8 +20,8 @@ import com.eldritch.invoken.actor.type.Npc;
 import com.eldritch.invoken.actor.type.Player;
 import com.eldritch.invoken.proto.Actors.DialogueTree.Choice;
 import com.eldritch.invoken.proto.Actors.DialogueTree.Response;
-import com.eldritch.invoken.screens.AbstractScreen;
 import com.eldritch.invoken.util.DefaultInputListener;
+import com.eldritch.invoken.util.Settings;
 
 public class DialogueMenu {
 	private final Table container;
@@ -34,8 +34,8 @@ public class DialogueMenu {
 	    this.skin = skin;
 	    
 	    container = new Table(skin);
-	    container.setHeight(AbstractScreen.MENU_VIEWPORT_HEIGHT / 2);
-	    container.setWidth(AbstractScreen.MENU_VIEWPORT_WIDTH);
+	    container.setHeight(Settings.MENU_VIEWPORT_HEIGHT / 2);
+	    container.setWidth(Settings.MENU_VIEWPORT_WIDTH);
 		container.bottom();
 
 	    bubble = new Table(null);

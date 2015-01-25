@@ -9,8 +9,8 @@ import com.eldritch.invoken.actor.Inventory;
 import com.eldritch.invoken.actor.items.Item;
 import com.eldritch.invoken.actor.type.Npc;
 import com.eldritch.invoken.actor.type.Player;
-import com.eldritch.invoken.screens.AbstractScreen;
 import com.eldritch.invoken.util.DefaultInputListener;
+import com.eldritch.invoken.util.Settings;
 
 public class LootMenu {
 	private final Table container;
@@ -21,7 +21,7 @@ public class LootMenu {
 	public LootMenu(Skin skin) {
 		this.skin = skin;
 	    container = new Table(skin);
-	    resize(AbstractScreen.MENU_VIEWPORT_WIDTH, AbstractScreen.MENU_VIEWPORT_HEIGHT);
+	    resize(Settings.MENU_VIEWPORT_WIDTH, Settings.MENU_VIEWPORT_HEIGHT);
 		container.center();
 
 	    table = new Table(skin);

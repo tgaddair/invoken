@@ -11,15 +11,12 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.eldritch.invoken.InvokenGame;
+import com.eldritch.invoken.util.Settings;
 
 /**
  * The base class for all game screens.
  */
 public abstract class AbstractScreen implements Screen {
-	// the fixed viewport dimensions (ratio: 1.6)
-	public static final int GAME_VIEWPORT_WIDTH = 400, GAME_VIEWPORT_HEIGHT = 240;
-	public static int MENU_VIEWPORT_WIDTH = 800, MENU_VIEWPORT_HEIGHT = 480;
-
 	protected final InvokenGame game;
 	protected final Stage stage;
 
@@ -35,8 +32,8 @@ public abstract class AbstractScreen implements Screen {
 	public AbstractScreen(InvokenGame game) {
 		this.game = game;
 		this.stage = new Stage();
-		width = (isGameScreen() ? GAME_VIEWPORT_WIDTH : MENU_VIEWPORT_WIDTH);
-		height = (isGameScreen() ? GAME_VIEWPORT_HEIGHT : MENU_VIEWPORT_HEIGHT);
+		width = (isGameScreen() ? Settings.GAME_VIEWPORT_WIDTH : Settings.MENU_VIEWPORT_WIDTH);
+		height = (isGameScreen() ? Settings.GAME_VIEWPORT_HEIGHT : Settings.MENU_VIEWPORT_HEIGHT);
 		stage.getViewport().update(width, height);
 	}
 

@@ -43,7 +43,7 @@ public abstract class CollisionEntity implements Entity {
     
     @Override
     public float getZ() {
-        return position.y;
+        return getPosition().y;
     }
     
     public Vector2 getPosition() {

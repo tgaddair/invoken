@@ -11,8 +11,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.eldritch.invoken.actor.PreparedAugmentations;
 import com.eldritch.invoken.actor.aug.Augmentation;
 import com.eldritch.invoken.actor.type.Player;
-import com.eldritch.invoken.screens.AbstractScreen;
 import com.eldritch.invoken.util.DefaultInputListener;
+import com.eldritch.invoken.util.Settings;
 
 public class ActionBar {
     private final Map<Augmentation, Image> images = new HashMap<Augmentation, Image>();
@@ -24,7 +24,7 @@ public class ActionBar {
         augmentations = player.getInfo().getAugmentations();
         
         container = new Table();
-        resize(AbstractScreen.MENU_VIEWPORT_WIDTH, AbstractScreen.MENU_VIEWPORT_HEIGHT);
+        resize(Settings.MENU_VIEWPORT_WIDTH, Settings.MENU_VIEWPORT_HEIGHT);
         container.bottom();
         
         for (final Augmentation aug : augmentations.getAugmentations()) {

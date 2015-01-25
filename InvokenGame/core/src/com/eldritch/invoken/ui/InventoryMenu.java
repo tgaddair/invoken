@@ -12,8 +12,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.eldritch.invoken.actor.Inventory;
 import com.eldritch.invoken.actor.items.Item;
 import com.eldritch.invoken.actor.type.Player;
-import com.eldritch.invoken.screens.AbstractScreen;
 import com.eldritch.invoken.util.DefaultInputListener;
+import com.eldritch.invoken.util.Settings;
 
 public class InventoryMenu {
     private static final Color EQUIPPED_COLOR = new Color(0x7693E9FF);
@@ -35,10 +35,10 @@ public class InventoryMenu {
         splitPane = new SplitPane(getPlayerView(), scroll, false, skin, "default-horizontal");
 
         window = new Window("Inventory", skin);
-        window.setHeight(AbstractScreen.MENU_VIEWPORT_HEIGHT - 100);
-        window.setWidth(AbstractScreen.MENU_VIEWPORT_WIDTH - 100);
-        window.setPosition(AbstractScreen.MENU_VIEWPORT_WIDTH / 2 - window.getWidth() / 2,
-                AbstractScreen.MENU_VIEWPORT_HEIGHT / 2 - window.getHeight() / 2);
+        window.setHeight(Settings.MENU_VIEWPORT_HEIGHT - 100);
+        window.setWidth(Settings.MENU_VIEWPORT_WIDTH - 100);
+        window.setPosition(Settings.MENU_VIEWPORT_WIDTH / 2 - window.getWidth() / 2,
+                Settings.MENU_VIEWPORT_HEIGHT / 2 - window.getHeight() / 2);
         window.center();
 
         TextButton closeButton = new TextButton("X", skin);
