@@ -81,7 +81,7 @@ public abstract class AbstractScreen implements Screen {
 		if (table == null) {
 			table = new Table(getSkin());
 			table.setFillParent(true);
-			if (InvokenGame.DEV_MODE) {
+			if (Settings.DEBUG_DRAW) {
 				table.debug();
 			}
 			stage.addActor(table);

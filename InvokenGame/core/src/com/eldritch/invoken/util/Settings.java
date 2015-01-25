@@ -22,6 +22,7 @@ public class Settings {
 	// debug settings
 	public static final boolean GOD_MODE = true;
 	public static final boolean DEBUG_DRAW = false;
+	public static final boolean SKIP_MENU = false;
 	
 	public static DebugGraph DRAW_GRAPH = DebugGraph.Enemies;
 	public enum DebugGraph {

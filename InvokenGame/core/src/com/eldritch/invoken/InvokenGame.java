@@ -5,6 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.eldritch.invoken.screens.CharacterCreationScreen;
 import com.eldritch.invoken.screens.GameScreen;
 import com.eldritch.invoken.screens.MenuScreen;
 import com.eldritch.invoken.screens.SplashScreen;
@@ -14,10 +15,10 @@ import com.eldritch.invoken.util.FactionMarshaller;
 import com.eldritch.invoken.util.ItemMarshaller;
 import com.eldritch.invoken.util.LocationMarshaller;
 import com.eldritch.invoken.util.RoomMarshaller;
+import com.eldritch.invoken.util.Settings;
 
 public class InvokenGame extends Game {
 	public static final String LOG = InvokenGame.class.getSimpleName();
-	public static boolean DEV_MODE = true;
 	
 	public final static ActorMarshaller ACTOR_READER = new ActorMarshaller();
 	public final static AugmentationMarshaller AUG_READER = new AugmentationMarshaller();
@@ -65,7 +66,7 @@ public class InvokenGame extends Game {
 		super.render();
 		
 		// output the current FPS
-		if (DEV_MODE) {
+		if (Settings.SKIP_MENU) {
 			// fpsLogger.log();
 		}
 	}
@@ -79,10 +80,10 @@ public class InvokenGame extends Game {
 		// show the splash screen when the game is resized for the first time;
 		// this approach avoids calling the screen's resize method repeatedly
 		if (getScreen() == null) {
-			if (DEV_MODE) {
+			if (Settings.SKIP_MENU) {
 				setScreen(new GameScreen(this));
 			} else {
-				setScreen(new SplashScreen(this));
+				setScreen(new CharacterCreationScreen(this));
 			}
 		}
 	}
