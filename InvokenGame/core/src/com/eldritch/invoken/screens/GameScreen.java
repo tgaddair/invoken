@@ -190,7 +190,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 				State<Npc> state = npc.getStateMachine().getCurrentState();
 				float freezing = npc.getFreezing();
 				boolean agitated = npc.isAgitated();
-				int enemies = npc.getEnemies().size();
+				int enemies = npc.getEnemyCount();
 				
 				int i = 0;
 				batch.begin();

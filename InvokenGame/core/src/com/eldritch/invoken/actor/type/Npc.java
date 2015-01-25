@@ -219,7 +219,7 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
 	}
 	
 	public boolean isAgitated() {
-		return behavior.shouldAssault(getNeighbors());
+		return behavior.shouldAssault(getVisibleNeighbors());
 	}
 	
 	public boolean isCombatReady() {
@@ -242,7 +242,7 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
 		}
 		
 		// update relations
-		for (Agent neighbor : getNeighbors()) {
+		for (Agent neighbor : getVisibleNeighbors()) {
 			getRelation(neighbor);
 		}
 		
@@ -302,8 +302,8 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
 	
 	public boolean canTarget(Agent other, Location location) {
         // within distance constraint
-        if (!super.canTarget(other, location)) {
-            return false;
+        if (super.canTarget(other, location)) {
+            return true;
         }
         
         // if we're hostile, then we can target when within range
@@ -316,8 +316,12 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
             return true;
         }
         
-        // has line of sight
-        return hasLineOfSight(other);
+        return false;
+    }
+	
+	@Override
+    public boolean isVisible(Agent other) {
+        return super.isVisible(other) && hasLineOfSight(other) && inFieldOfView(other);
     }
 	
 	public boolean inFieldOfView(Agent other) {

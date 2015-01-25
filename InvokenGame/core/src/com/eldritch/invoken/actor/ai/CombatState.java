@@ -94,7 +94,7 @@ public enum CombatState implements State<Npc> {
 		
 		private List<Agent> fillTargets(Npc entity) {
 	        targets.clear();
-	        entity.getBehavior().getAssaultTargets(entity.getNeighbors(), targets);
+	        entity.getBehavior().getAssaultTargets(entity.getVisibleNeighbors(), targets);
 	        return targets;
 	    }
 		
