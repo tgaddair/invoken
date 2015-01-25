@@ -18,7 +18,7 @@ public enum PatrolState implements State<Npc> {
 		public void update(Npc entity) {
 			if (entity.isFollowing()) {
 				entity.getStateMachine().changeState(NpcState.PATROL, FOLLOW);
-			} else if (!entity.getStateMachine().getValidator().isValid()) {
+			} else if (entity.inDialogue() || !entity.getStateMachine().getValidator().isValid()) {
 				entity.getStateMachine().changeState(NpcState.PATROL, IDLE);
 			}
 		}
@@ -70,7 +70,7 @@ public enum PatrolState implements State<Npc> {
 		public void update(Npc entity) {
 			if (entity.isFollowing()) {
 				entity.getStateMachine().changeState(NpcState.PATROL, FOLLOW);
-			} else if (!entity.getStateMachine().getValidator().isValid()) {
+			} else if (!entity.inDialogue() && !entity.getStateMachine().getValidator().isValid()) {
 				entity.getStateMachine().changeState(NpcState.PATROL, WANDER);
 			}
 		}
