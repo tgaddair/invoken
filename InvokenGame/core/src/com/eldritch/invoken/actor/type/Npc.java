@@ -299,25 +299,6 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
 	    }
 	}
 	
-	public boolean canTarget(Agent other, Location location) {
-        // within distance constraint
-        if (super.canTarget(other, location)) {
-            return true;
-        }
-        
-        // if we're hostile, then we can target when within range
-        if (hostileTo(other)) {
-            return true;
-        }
-        
-        // recently seen and nearby
-        if (detected.contains(other)) {
-            return true;
-        }
-        
-        return false;
-    }
-	
 	@Override
     public boolean isVisible(Agent other) {
         return super.isVisible(other) && hasLineOfSight(other) && inFieldOfView(other);

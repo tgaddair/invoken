@@ -23,7 +23,7 @@ public class Settings {
 	public static final boolean GOD_MODE = true;
 	public static final boolean DEBUG_DRAW = false;
 	
-	public static DebugGraph DRAW_GRAPH = DebugGraph.Visible;
+	public static DebugGraph DRAW_GRAPH = DebugGraph.Enemies;
 	public enum DebugGraph {
 	    None, Disposition, Enemies, LOS, Visible
 	}

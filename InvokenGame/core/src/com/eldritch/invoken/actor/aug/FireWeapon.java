@@ -56,11 +56,7 @@ public class FireWeapon extends ProjectileAugmentation {
     
     @Override
     public float quality(Agent owner, Agent target, Location location) {
-        float percent = owner.getInfo().getEnergyPercent();
-        float range = Math.max(0, 100 - owner.dst2(target));
-        float quality = range * percent;
-        System.out.println("quality: " + quality);
-        return quality > 25 ? 1 : 0;
+        return 1;
     }
 
     public class FireAction extends AnimatedAction {

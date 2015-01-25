@@ -8,6 +8,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import com.badlogic.gdx.ai.steer.Steerable;
@@ -50,12 +51,13 @@ import com.eldritch.invoken.ui.MultiTextureRegionDrawable;
 import com.eldritch.invoken.util.Settings;
 
 public abstract class Agent extends CollisionEntity implements Steerable<Vector2>, Conversable {
-    public static final int MAX_DST2 = 175;
+    public static final int MAX_DST2 = 150;
     public static final int ASSAULT_PENALTY = -10;
 
     static AssetManager assetManager = new AssetManager();
     static float MAX_FREEZE = 25f;
     static float DAMPING = 5f;
+    static float FORGET_THRESHOLD = 3;
     
     private final GameCamera defaultCamera = new AgentCamera();
     private GameCamera camera = defaultCamera;
@@ -88,6 +90,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     private final Set<Agent> visibleNeighbors = new HashSet<Agent>();
     private final Map<Agent, Boolean> lineOfSightCache = new HashMap<Agent, Boolean>();
     private final Map<Agent, Float> distanceCache = new HashMap<Agent, Float>();
+    private final Map<Agent, Float> lastSeen = new HashMap<Agent, Float>();
     private final LinkedList<Action> actions = new LinkedList<Action>();
     private final List<Effect> effects = new LinkedList<Effect>();
     private Action action = null;
@@ -831,12 +834,23 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         lineOfSightCache.clear();
         distanceCache.clear();
         
+        // update last seen
+        Iterator<Entry<Agent, Float>> observations = lastSeen.entrySet().iterator();
+        while (observations.hasNext()) {
+            Entry<Agent, Float> observation = observations.next();
+            observation.setValue(observation.getValue() + delta);
+            if (observation.getValue() > FORGET_THRESHOLD) {
+                observations.remove();
+            }
+        }
+        
         // update neighbors
     	location.getNeighbors(this);
     	visibleNeighbors.clear();
     	for (Agent neighbor: neighbors) {
     	    if (isVisible(neighbor)) {
     	        visibleNeighbors.add(neighbor);
+    	        lastSeen.put(neighbor, 0f);
     	    }
     	}
         
@@ -893,8 +907,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         Iterator<Agent> enemyIterator = enemies.iterator();
         while (enemyIterator.hasNext()) {
             Agent enemy = enemyIterator.next();
-            if (!enemy.isAlive() || !canTarget(enemy, location)) {
-                System.out.println("remove: " + enemy.getInfo().getName());
+            if (!enemy.isAlive() || !lastSeen.containsKey(enemy)) {
                 enemyIterator.remove();
             }
         }
