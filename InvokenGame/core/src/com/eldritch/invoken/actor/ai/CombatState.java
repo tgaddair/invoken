@@ -22,13 +22,14 @@ public enum CombatState implements State<Npc> {
 		@Override
 		public void update(Npc entity) {
 			// update target enemy
-	        List<Agent> targets = fillTargets(entity);
+	        fillTargets(entity, targets);
 	        Agent target = selectBestTarget(entity, targets);
 	        
 	        // update our target
 	        entity.setTarget(target);
 	        if (target == null || !target.isAlive()) {
-	            // can't do anything if we are unable to find a target to attack
+	            // can't do anything if we are unable to find a target to attack, so wander
+	            entity.getStateMachine().changeState(NpcState.COMBAT, WANDER);
 	            return;
 	        }
 	        
@@ -54,7 +55,7 @@ public enum CombatState implements State<Npc> {
 		}
 		
 		@Override
-		public void exit(Npc entity) {
+		protected void afterExit(Npc entity) {
 			entity.getHide().setEnabled(false);
 			entity.getPursue().setEnabled(false);
 			entity.getEvade().setEnabled(false);
@@ -92,32 +93,6 @@ public enum CombatState implements State<Npc> {
 	        }
 		}
 		
-		private List<Agent> fillTargets(Npc entity) {
-	        targets.clear();
-	        entity.getBehavior().getAssaultTargets(entity.getVisibleNeighbors(), targets);
-	        return targets;
-	    }
-		
-		private Agent selectBestTarget(Npc entity, Collection<Agent> targets) {
-	        // get one of our enemies
-	        Agent current = null;
-	        float bestDistance = Float.MAX_VALUE;
-	        for (Agent agent : targets) {
-	            if (!agent.isAlive()) {
-	                // no point in attacking a dead enemy
-	                continue;
-	            }
-
-	            float distance = entity.dst2(agent);
-	            if (current == null || distance < bestDistance) {
-	                // attack the closer enemy
-	                current = agent;
-	                bestDistance = distance;
-	            }
-	        }
-	        return current;
-	    }
-		
 		private boolean shouldPursue(Npc npc, Agent target) {
 	        // don't wait till we've lost them in our sights
 	        float maxDistance = npc.getInfo().getMaxTargetDistance() * 0.8f;
@@ -139,6 +114,35 @@ public enum CombatState implements State<Npc> {
 	        return target.getPosition().dst2(npc.getPosition()) <= minDistance;
 	    }
 	},
+	
+	WANDER() {
+	    private final List<Agent> targets = new ArrayList<Agent>();
+	    
+        @Override
+        public void enter(Npc entity) {
+            entity.getWander().setEnabled(true);
+        }
+
+        @Override
+        public void update(Npc entity) {
+            // update target enemy
+            fillTargets(entity, targets);
+            Agent target = selectBestTarget(entity, targets);
+            
+            // update our target
+            entity.setTarget(target);
+            if (target != null && target.isAlive()) {
+                // can't do anything if we are unable to find a target to attack, so wander
+                entity.getStateMachine().changeState(NpcState.COMBAT, ATTACK);
+                return;
+            }
+        }
+        
+        @Override
+        protected void afterExit(Npc entity) {
+            entity.getWander().setEnabled(false);
+        }
+    },
 	
 	ASSIST() {
 		@Override
@@ -177,10 +181,39 @@ public enum CombatState implements State<Npc> {
 	@Override
 	public void exit(Npc entity) {
 		entity.getStateMachine().resetValidator();
+		afterExit(entity);
 	}
 
 	@Override
 	public boolean onMessage(Npc entity, Telegram telegram) {
 		return false;
 	}
+    
+    protected final void fillTargets(Npc entity, Collection<Agent> targets) {
+        targets.clear();
+        entity.getBehavior().getAssaultTargets(entity.getVisibleNeighbors(), targets);
+    }
+    
+    protected final Agent selectBestTarget(Npc entity, Collection<Agent> targets) {
+        // get one of our enemies
+        Agent current = null;
+        float bestDistance = Float.MAX_VALUE;
+        for (Agent agent : targets) {
+            if (!agent.isAlive()) {
+                // no point in attacking a dead enemy
+                continue;
+            }
+
+            float distance = entity.dst2(agent);
+            if (current == null || distance < bestDistance) {
+                // attack the closer enemy
+                current = agent;
+                bestDistance = distance;
+            }
+        }
+        return current;
+    }
+	
+    protected void afterExit(Npc entity) {
+    }
 }

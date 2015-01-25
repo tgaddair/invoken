@@ -94,10 +94,12 @@ public class Behavior {
             return !actors.isEmpty();
         }
         for (Agent agent : actors) {
-            if (npc.hostileTo(agent) || wantsToAttack(agent)) {
-                // we have reason to attack this actor, so we should assault
-                if (willingToAttack(agent)) {
-                    return true;
+            if (agent.isAlive()) {
+                if (npc.hostileTo(agent) || wantsToAttack(agent)) {
+                    // we have reason to attack this actor, so we should assault
+                    if (willingToAttack(agent)) {
+                        return true;
+                    }
                 }
             }
         }
