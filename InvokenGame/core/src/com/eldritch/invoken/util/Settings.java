@@ -21,9 +21,18 @@ public class Settings {
 	
 	// debug settings
 	public static final boolean GOD_MODE = true;
-	public static boolean DEBUG_DRAW = false;
-	public static boolean DRAW_DISPOSITION = true;
-	public static boolean DRAW_LOS = false;
+	public static final boolean DEBUG_DRAW = false;
+	
+	public static DebugGraph DRAW_GRAPH = DebugGraph.Enemies;
+	public enum DebugGraph {
+	    None, Disposition, LOS, Enemies
+	}
+	
+	public static void nextDebugGraph() {
+	    int current = DRAW_GRAPH.ordinal();
+	    int next = (current + 1) % DebugGraph.values().length;
+	    DRAW_GRAPH = DebugGraph.values()[next];
+	}
 
 	private Settings() {}
 }

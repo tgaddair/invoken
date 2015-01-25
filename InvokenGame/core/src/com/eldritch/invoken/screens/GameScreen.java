@@ -77,7 +77,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false, (w / h) * 10, 10);
-		camera.zoom = 1.25f;
+		camera.zoom = 1.15f;
 		camera.update();
 
 		font = new BitmapFont();
@@ -189,10 +189,15 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 				Npc npc = (Npc) player.getTarget();
 				State<Npc> state = npc.getStateMachine().getCurrentState();
 				float freezing = npc.getFreezing();
+				boolean agitated = npc.isAgitated();
+				int enemies = npc.getEnemies().size();
 				
+				int i = 0;
 				batch.begin();
-		        font.draw(batch, "State: " + state, 10, getHeight() - 30);
-		        font.draw(batch, String.format("Freezing: %.2f", freezing), 10, getHeight() - 50);
+		        font.draw(batch, "State: " + state, 10, getHeight() - (30 + 20 * i++));
+		        font.draw(batch, String.format("Freezing: %.2f", freezing), 10, getHeight() - (30 + 20 * i++));
+		        font.draw(batch, String.format("Agitated: %s", agitated), 10, getHeight() - (30 + 20 * i++));
+		        font.draw(batch, String.format("Enemies: %d", enemies), 10, getHeight() - (30 + 20 * i++));
 		        batch.end();
 			}
 		}
@@ -248,6 +253,9 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 		        return true;
 		    }
 		    return false;
+		case Keys.EQUALS:
+		    Settings.nextDebugGraph();
+		    return true;
 		default:
 			return false;
 		}

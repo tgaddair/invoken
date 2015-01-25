@@ -96,7 +96,7 @@ public class Behavior {
         for (Agent agent : actors) {
             if (npc.hostileTo(agent) || wantsToAttack(agent)) {
                 // we have reason to attack this actor, so we should assault
-                if (willingToAttack(agent) && npc.hasLineOfSight(agent)) {
+                if (willingToAttack(agent)) {
                     return true;
                 }
             }

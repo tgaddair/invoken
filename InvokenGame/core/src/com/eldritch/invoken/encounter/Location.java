@@ -475,10 +475,17 @@ public class Location {
         // draw the disposition graph
         if (player.getTarget() != null) {
         	Agent target = player.getTarget();
-        	if (Settings.DRAW_DISPOSITION) {
-        		relationRenderer.renderDispositions(target, activeEntities, camera);
-        	} else if (Settings.DRAW_LOS) {
-        		relationRenderer.renderLineOfSight(target, activeEntities, camera);
+        	switch (Settings.DRAW_GRAPH) {
+        	    case Disposition:
+                    relationRenderer.renderDispositions(target, activeEntities, camera);
+        	        break;
+        	    case LOS:
+        	        relationRenderer.renderLineOfSight(target, activeEntities, camera);
+        	        break;
+        	    case Enemies:
+        	        relationRenderer.renderEnemies(target, activeEntities, camera);
+        	        break;
+        	    case None:
         	}
         }
         

@@ -693,7 +693,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         return enemies.contains(other);
     }
 
-    public Iterable<Agent> getEnemies() {
+    public Set<Agent> getEnemies() {
         return enemies;
     }
 
