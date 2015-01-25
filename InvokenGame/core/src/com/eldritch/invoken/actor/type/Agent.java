@@ -231,6 +231,11 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     public float damage(Agent source, float value) {
         if (isAlive()) {
             addHostility(source, value);
+            
+            // if we have line of sight to the damager, then alert the agent
+            if (hasLineOfSight(source)) {
+                alertTo(source);
+            }
         }
         return damage(value);
     }
@@ -584,7 +589,6 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         if (!hasTarget()) {
             // set the target so we'll face it if we have nothing better to do
             setTarget(target);
-            System.out.println("alerted: " + target.getInfo().getName());
         }
     }
 
@@ -885,6 +889,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         while (enemyIterator.hasNext()) {
             Agent enemy = enemyIterator.next();
             if (!enemy.isAlive() || !canTarget(enemy, location)) {
+                System.out.println("remove: " + enemy.getInfo().getName());
                 enemyIterator.remove();
             }
         }

@@ -19,6 +19,8 @@ import com.eldritch.invoken.encounter.Location;
 import com.eldritch.invoken.screens.GameScreen;
 
 public class FireWeapon extends ProjectileAugmentation {
+    private static final float DAMAGE_SCALE = 5;
+    
     private static class Holder {
         private static final FireWeapon INSTANCE = new FireWeapon();
 	}
@@ -48,7 +50,7 @@ public class FireWeapon extends ProjectileAugmentation {
     
     @Override
     public int getCost(Agent owner) {
-        return 1;
+        return 5;
     }
     
     @Override
@@ -138,7 +140,7 @@ public class FireWeapon extends ProjectileAugmentation {
 
         @Override
         protected void apply(Agent owner, Agent target) {
-        	float magnitude = getDamage(target);
+        	float magnitude = DAMAGE_SCALE * getDamage(target);
             target.applyForce(velocity.cpy().nor().scl(100));
             target.addEffect(new Stunned(owner, target, 0.2f));
             target.addEffect(new Bleed(owner, target, magnitude));

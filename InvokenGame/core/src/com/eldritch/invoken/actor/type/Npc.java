@@ -25,7 +25,6 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
-import com.eldritch.invoken.actor.Conversable;
 import com.eldritch.invoken.actor.ConversationHandler;
 import com.eldritch.invoken.actor.ConversationHandler.DialogueVerifier;
 import com.eldritch.invoken.actor.Inventory.ItemState;
