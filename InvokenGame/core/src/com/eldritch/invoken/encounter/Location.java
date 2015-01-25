@@ -54,6 +54,7 @@ import com.eldritch.invoken.gfx.Light;
 import com.eldritch.invoken.gfx.LightManager;
 import com.eldritch.invoken.proto.Locations.Encounter;
 import com.eldritch.invoken.proto.Locations.Encounter.ActorParams.ActorScenario;
+import com.eldritch.invoken.ui.AgentStatusRenderer;
 import com.eldritch.invoken.ui.RelationRenderer;
 import com.eldritch.invoken.util.Settings;
 import com.google.common.base.Optional;
@@ -497,6 +498,13 @@ public class Location {
         // render the overlay layers
         overlayRenderer.setView(camera);
         overlayRenderer.render();
+        
+        // render status info
+        renderer.getSpriteBatch().begin();
+        for (Agent agent : activeEntities) {
+            AgentStatusRenderer.render(agent, player, renderer);
+        }
+        renderer.getSpriteBatch().end();
         
         if (Settings.DEBUG_DRAW) {
 	        // draw NPC debug rays

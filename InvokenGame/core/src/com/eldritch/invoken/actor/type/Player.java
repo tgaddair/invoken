@@ -120,7 +120,9 @@ public class Player extends SteeringAgent {
     }
 
     public void reselect(Agent other) {
-        other.handleInteract(this);
+        if (canInteract(other)) {
+            other.handleInteract(this);
+        }
     }
 
     @Override

@@ -23,7 +23,7 @@ public class HealthBar extends ProgressBar {
     }
 
     public void update(Agent agent, Camera camera) {
-        if (agent == null) {
+        if (agent == null || !agent.hasEnemies()) {
             this.agent = null;
             setVisible(false);
             return;
