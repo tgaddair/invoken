@@ -17,6 +17,14 @@ public enum CombatState implements State<Npc> {
 		
 		@Override
 		public void enter(Npc entity) {
+		    fillTargets(entity, targets);
+            Agent target = selectBestTarget(entity, targets);
+            if (target != null) {
+                // alert neighbors of attack
+                for (Agent neighbor : entity.getNeighbors()) {
+                    neighbor.alertTo(target);
+                }
+            }
 		}
 
 		@Override

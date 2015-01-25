@@ -579,6 +579,14 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     public boolean isLooting() {
         return interactor != null && !interactor.isAlive();
     }
+    
+    public void alertTo(Agent target) {
+        if (!hasTarget()) {
+            // set the target so we'll face it if we have nothing better to do
+            setTarget(target);
+            System.out.println("alerted: " + target.getInfo().getName());
+        }
+    }
 
     public void setTarget(Agent target) {
         this.target = target;
