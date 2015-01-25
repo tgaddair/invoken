@@ -16,7 +16,7 @@ public class Observe extends Augmentation {
 	}
 	
     private Observe() {
-        super("observe", true);
+        super("observe", false);
     }
     
     @Override
@@ -26,7 +26,7 @@ public class Observe extends Augmentation {
     
     @Override
     public Action getAction(Agent owner, Vector2 target) {
-        return null;
+        return getAction(owner, owner);
     }
     
     @Override
@@ -36,12 +36,13 @@ public class Observe extends Augmentation {
     
     @Override
     public boolean isValid(Agent owner, Vector2 target) {
-        return false;
+        // only to dispel
+        return owner.isToggled(Observe.class);
     }
     
     @Override
     public int getCost(Agent owner) {
-        return owner.isToggled(Observe.class) ? 0 : 5;
+        return owner.isToggled(Observe.class) ? 0 : 1;
     }
     
     @Override

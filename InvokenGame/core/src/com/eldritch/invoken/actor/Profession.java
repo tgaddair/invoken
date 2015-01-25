@@ -20,6 +20,7 @@ import com.eldritch.invoken.actor.aug.Implode;
 import com.eldritch.invoken.actor.aug.Infect;
 import com.eldritch.invoken.actor.aug.Jaunt;
 import com.eldritch.invoken.actor.aug.Mirror;
+import com.eldritch.invoken.actor.aug.Observe;
 import com.eldritch.invoken.actor.aug.Paralyze;
 import com.eldritch.invoken.actor.aug.RendWeapon;
 import com.eldritch.invoken.actor.aug.Resurrect;
@@ -156,7 +157,9 @@ public enum Profession {
 		
 		@Override
 		public List<Augmentation> getStartingAugmentations() {
-			return ImmutableList.<Augmentation>of(FireWeapon.getInstance());
+			return ImmutableList.<Augmentation>of(
+			        FireWeapon.getInstance(),
+			        Observe.getInstance());
 		}
 	},
 	
@@ -177,7 +180,7 @@ public enum Profession {
 	public abstract List<Augmentation> getStartingAugmentations();
 	
 	public static Profession getDefault() {
-        return Centurion;
+        return Agent;
     }
 	
 	public static List<Skill> getSorted(List<Skill> skills, final Collection<Discipline> masteries) {
