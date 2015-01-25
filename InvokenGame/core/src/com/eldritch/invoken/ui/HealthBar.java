@@ -9,6 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Human;
+import com.eldritch.invoken.actor.type.Player;
 
 public class HealthBar extends ProgressBar {
     private static final Color C = new Color(0xDC143CFF);
@@ -22,8 +23,8 @@ public class HealthBar extends ProgressBar {
         setColor(C);
     }
 
-    public void update(Agent agent, Camera camera) {
-        if (agent == null || !agent.hasEnemies()) {
+    public void update(Player player, Agent agent, Camera camera) {
+        if (agent == null || player.canInteract(agent)) {
             this.agent = null;
             setVisible(false);
             return;

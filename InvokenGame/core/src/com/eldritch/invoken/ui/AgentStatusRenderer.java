@@ -18,7 +18,7 @@ public class AgentStatusRenderer {
         
         Batch batch = renderer.getSpriteBatch();
         if (agent.isAlive()) {
-            if (agent.canInteract(player) && !agent.inDialogue() && agent != player) {
+            if (player.canInteract(agent) && !agent.inDialogue() && agent != player) {
                 batch.draw(DIALOGUE_ICON, position.x, position.y + SCALE * i, SCALE, SCALE);
             }
         }

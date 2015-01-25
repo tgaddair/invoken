@@ -13,6 +13,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.activators.Activator;
 import com.eldritch.invoken.actor.type.Agent;
@@ -22,10 +23,12 @@ import com.eldritch.invoken.encounter.Location;
 import com.eldritch.invoken.encounter.proc.LocationGenerator;
 import com.eldritch.invoken.ui.ActionBar;
 import com.eldritch.invoken.ui.DialogueMenu;
-import com.eldritch.invoken.ui.EnergyBar;
+import com.eldritch.invoken.ui.StatusBar;
 import com.eldritch.invoken.ui.HealthBar;
 import com.eldritch.invoken.ui.InventoryMenu;
 import com.eldritch.invoken.ui.LootMenu;
+import com.eldritch.invoken.ui.StatusBar.EnergyCalculator;
+import com.eldritch.invoken.ui.StatusBar.HealthCalculator;
 import com.eldritch.invoken.util.Settings;
 
 public class GameScreen extends AbstractScreen implements InputProcessor {
@@ -34,10 +37,12 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 	private final DialogueMenu dialogue;
 	private final LootMenu loot;
 	private ActionBar actionBar;
-	private EnergyBar energyBar;
 	private InventoryMenu inventoryMenu;
 	
-	private HealthBar playerHealth;
+	private Table statusTable;
+	private StatusBar playerHealth;
+	private StatusBar energyBar;
+	
 	private HealthBar selectedHealth;
 
 	private Player player;
@@ -93,13 +98,22 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 		
 		// create player menus
 		actionBar = new ActionBar(player);
-		energyBar = new EnergyBar(player, getSkin());
+		energyBar = new StatusBar(player, new EnergyCalculator(), getSkin());
 		inventoryMenu = new InventoryMenu(player, getSkin());
-		playerHealth = new HealthBar(getSkin());
+		playerHealth = new StatusBar(player, new HealthCalculator(), getSkin());
 		selectedHealth = new HealthBar(getSkin());
 		
+		statusTable = new Table(getSkin());
+		statusTable.setHeight(Settings.MENU_VIEWPORT_HEIGHT / 2);
+		statusTable.setWidth(Settings.MENU_VIEWPORT_WIDTH);
+		statusTable.bottom();
+		statusTable.left();
+		
+		statusTable.add(playerHealth).expand().bottom().left();
+		statusTable.add(energyBar).expand().bottom().right();
+		
 		stage.addActor(actionBar.getTable());
-		stage.addActor(energyBar);
+		stage.addActor(statusTable);
         stage.addActor(dialogue.getTable());
 		stage.addActor(inventoryMenu.getTable());
         stage.addActor(loot.getTable());
@@ -122,8 +136,8 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 		// update UI menus
         actionBar.update();
         energyBar.update();
-        playerHealth.update(player, camera);
-        selectedHealth.update(player.getTarget(), camera);
+        playerHealth.update();
+        selectedHealth.update(player, player.getTarget(), camera);
 		dialogue.update(player, camera);
 		loot.update(player);
 		
@@ -132,7 +146,6 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 		
 		// draw health bars
 		batch.begin();
-		playerHealth.draw(batch);
 		selectedHealth.draw(batch);
 		dialogue.draw(batch);
 		batch.end();
@@ -151,7 +164,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
     public void resize(int width, int height) {
 	    super.resize(width, height);
 	    actionBar.resize(width, height);
-        energyBar.resize(width, height);
+	    statusTable.setSize(width, height / 2);
         loot.resize(width, height);
         location.resize(width, height);
     }
