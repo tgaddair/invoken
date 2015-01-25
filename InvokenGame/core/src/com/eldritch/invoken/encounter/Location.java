@@ -422,8 +422,15 @@ public class Location {
         camera.update();
         
         // update the player (process input, collision detection, position update)
-        resetActiveTiles(position, camera.zoom);
-        resetActiveEntities();
+        NaturalVector2 origin = NaturalVector2.of((int) position.x, (int) position.y);
+        if (origin != currentCell || camera.zoom != currentZoom || activeTiles.isEmpty()) {
+            currentCell = origin;
+            currentZoom = camera.zoom;
+            
+            resetActiveTiles(origin);
+            resetActiveEntities();
+        }
+        
         if (!paused) {
             for (Agent actor : activeEntities) {
                 actor.update(delta, this);
@@ -583,39 +590,33 @@ public class Location {
         return NaturalVector2.of((int) position.x, (int) position.y);
     }
 
-    private void resetActiveTiles(Vector2 position, float zoom) {
-        NaturalVector2 origin = NaturalVector2.of((int) position.x, (int) position.y);
-        if (origin != currentCell || zoom != currentZoom || activeTiles.isEmpty()) {
-            currentCell = origin;
-            currentZoom = zoom;
-            
-            map.update(null);
-            activeTiles.clear();
-            
-            final float layerTileWidth = 1;
-            final float layerTileHeight = 1;
-            
-            Rectangle viewBounds = renderer.getViewBounds();
-            final int x1 = Math.max(0, (int) (viewBounds.x / layerTileWidth) - 1);
-            final int x2 = Math.min(Settings.MAX_WIDTH,
-                    (int) ((viewBounds.x + viewBounds.width + layerTileWidth) / layerTileWidth) + 1);
+    private void resetActiveTiles(NaturalVector2 origin) {
+        map.update(null);
+        activeTiles.clear();
+        
+        final float layerTileWidth = 1;
+        final float layerTileHeight = 1;
+        
+        Rectangle viewBounds = renderer.getViewBounds();
+        final int x1 = Math.max(0, (int) (viewBounds.x / layerTileWidth) - 1);
+        final int x2 = Math.min(Settings.MAX_WIDTH,
+                (int) ((viewBounds.x + viewBounds.width + layerTileWidth) / layerTileWidth) + 1);
 
-            final int y1 = Math.max(0, (int) (viewBounds.y / layerTileHeight) - 1);
-            final int y2 = Math.min(Settings.MAX_HEIGHT,
-                    (int) ((viewBounds.y + viewBounds.height + layerTileHeight) / layerTileHeight) + 1);
-            
-            // sanity check
-            if (origin.x < x1 || origin.x > x2 || origin.y < y1 || origin.y > y2) {
-                return;
-            }
-
-            for (int i = x1; i <= x2; i++) {
-                for (int j = y1; j <= y2; j++) {
-                    NaturalVector2 tile = NaturalVector2.of(i, j);
-                    activeTiles.add(tile);
-                }
-            } 
+        final int y1 = Math.max(0, (int) (viewBounds.y / layerTileHeight) - 1);
+        final int y2 = Math.min(Settings.MAX_HEIGHT,
+                (int) ((viewBounds.y + viewBounds.height + layerTileHeight) / layerTileHeight) + 1);
+        
+        // sanity check
+        if (origin.x < x1 || origin.x > x2 || origin.y < y1 || origin.y > y2) {
+            return;
         }
+
+        for (int i = x1; i <= x2; i++) {
+            for (int j = y1; j <= y2; j++) {
+                NaturalVector2 tile = NaturalVector2.of(i, j);
+                activeTiles.add(tile);
+            }
+        } 
         
         /*
         ConnectedRoom[][] rooms = map.getRooms();
