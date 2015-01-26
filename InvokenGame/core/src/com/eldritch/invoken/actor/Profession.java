@@ -229,7 +229,7 @@ public enum Profession {
 
         @Override
         public Outfit getDefaultOutfit() {
-            return new Outfit(InvokenGame.ITEM_READER.readAsset("IcarianOperativeExosuit"));
+            return new Outfit(InvokenGame.ITEM_READER.readAsset("InfiltratorWetsuit"));
         }
         
         @Override
@@ -253,7 +253,7 @@ public enum Profession {
 		
 		@Override
         public Outfit getDefaultOutfit() {
-            return new Outfit(InvokenGame.ITEM_READER.readAsset("IcarianOperativeExosuit"));
+            return new Outfit(InvokenGame.ITEM_READER.readAsset("AgentAttire"));
         }
 		
 		@Override

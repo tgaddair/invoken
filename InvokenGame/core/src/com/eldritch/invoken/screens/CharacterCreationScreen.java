@@ -58,7 +58,7 @@ public class CharacterCreationScreen extends AbstractScreen {
 		
 		scroll = new ScrollPane(infoTable, getSkin());
         scroll.setVisible(false);
-        container.add(scroll).expand().fill().bottom();
+        container.add(scroll).expandX().fill().bottom().uniform().space(25);
 	}
 	
     private TextButton createMenuItem(final Profession p) {
