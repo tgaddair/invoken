@@ -52,6 +52,7 @@ import com.eldritch.invoken.util.Settings;
 
 public abstract class Agent extends CollisionEntity implements Steerable<Vector2>, Conversable {
     public static final int MAX_DST2 = 150;
+    public static final int INTERACT_RANGE = 5;
     public static final int ASSAULT_PENALTY = -10;
 
     static AssetManager assetManager = new AssetManager();
@@ -581,7 +582,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     }
     
     public boolean canInteract(Agent other) {
-        return dst2(other) < 5 && !other.hasEnemies();
+        return dst2(other) < INTERACT_RANGE && !other.hasEnemies();
     }
 
     public boolean inDialogue() {
@@ -964,6 +965,11 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
             float dx = observed.position.x - position.x;
             float dy = observed.position.y - position.y;
             direction = getDominantDirection(dx, dy);
+        }
+        
+        // end interactions if outside range
+        if (inDialogue() && dst2(getInteractor()) > INTERACT_RANGE) {
+            endDialogue();
         }
         
         position.set(body.getPosition().cpy().add(0, getHeight() / 2 - radius));
