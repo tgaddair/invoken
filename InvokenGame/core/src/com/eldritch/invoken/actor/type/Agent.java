@@ -642,14 +642,22 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     public boolean hasLineOfSight(Agent other) {
     	if (!lineOfSightCache.containsKey(other)) {
     		losHandler.reset(other);
-    		world.rayCast(losHandler, body.getPosition(), other.body.getPosition());
-    		lineOfSightCache.put(other, losHandler.hasLineOfSight());
+    		lineOfSightCache.put(other, rayCast(other.body.getPosition()));
     	}
     	return lineOfSightCache.get(other);
     }
     
     public boolean hasLineOfSight(Vector2 target) {
     	losHandler.reset(null);
+    	return rayCast(target);
+    }
+    
+    private boolean rayCast(Vector2 target) {
+        if (body.getPosition().equals(target)) {
+            // if we don't do this check explicitly, we can get the following error:
+            // Expression: r.LengthSquared() > 0.0f
+            return true;
+        }
         world.rayCast(losHandler, body.getPosition(), target);
         return losHandler.hasLineOfSight();
     }
