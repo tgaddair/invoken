@@ -582,7 +582,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     }
     
     public boolean canInteract(Agent other) {
-        return dst2(other) < INTERACT_RANGE && !other.hasEnemies();
+        return other != this && dst2(other) < INTERACT_RANGE && !other.hasEnemies();
     }
 
     public boolean inDialogue() {
@@ -617,6 +617,10 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     }
 
     public boolean canTarget(Agent other, Location location) {
+        if (other == this) {
+            // can always target ourselves
+            return true;
+        }
         if (!isNear(other)) {
             // not within distance constraint
             return false;
