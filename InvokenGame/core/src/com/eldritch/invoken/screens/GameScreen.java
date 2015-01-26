@@ -16,6 +16,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.activators.Activator;
+import com.eldritch.invoken.actor.Profession;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Npc;
 import com.eldritch.invoken.actor.type.Player;
@@ -36,6 +37,8 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 	
 	private final DialogueMenu dialogue;
 	private final LootMenu loot;
+	private final Profession profession;  // TODO: this will become a proto containing play info
+	
 	private ActionBar actionBar;
 	private InventoryMenu inventoryMenu;
 	
@@ -60,10 +63,11 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 	int targetX;
 	int targetY;
 
-	public GameScreen(InvokenGame game) {
+	public GameScreen(InvokenGame game, Profession profession) {
 		super(game);
 		dialogue = new DialogueMenu(getSkin());
 		loot = new LootMenu(getSkin());
+		this.profession = profession;
 	}
 
 	@Override
@@ -94,7 +98,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         		InvokenGame.LOCATION_READER.readAsset("DebugPlayground");
 		LocationGenerator generator = new LocationGenerator(data.getBiome());
 		location = generator.generate(data);
-		player = location.getPlayer();
+		player = location.createPlayer(profession);
 		
 		// create player menus
 		actionBar = new ActionBar(player);

@@ -1,17 +1,21 @@
 package com.eldritch.invoken.screens;
 
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
+import com.badlogic.gdx.scenes.scene2d.ui.SplitPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextArea;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.eldritch.invoken.InvokenGame;
-import com.eldritch.invoken.proto.Disciplines.Profession;
+import com.eldritch.invoken.actor.Profession;
 import com.eldritch.invoken.util.DefaultInputListener;
 import com.eldritch.invoken.util.Settings;
 
 public class CharacterCreationScreen extends AbstractScreen {
-    private Profession selectedProfession = null;
+    private Profession selectedProfession = Profession.Centurion;
     private ScrollPane scroll;
+    private SplitPane descriptionPane;
     
 	public CharacterCreationScreen(InvokenGame game) {
 		super(game);
@@ -39,11 +43,18 @@ public class CharacterCreationScreen extends AbstractScreen {
 		
 		container.add(table);
 		
-		Table infoTable = new Table(getSkin());
-		infoTable.bottom().right();
+		TextArea area = new TextArea("", getSkin());
+		descriptionPane = new SplitPane(
+		        getPlayerView(), area,
+		        false, getSkin(), "default-horizontal");
 		
+		Table infoTable = new Table(getSkin());
+		infoTable.add(descriptionPane).expand().fill().spaceBottom(50);
+
+		infoTable.row();
+		infoTable.bottom().right();
 		TextButton start = createStartButton();
-		infoTable.add(start).size(200, 50);
+		infoTable.add(start).size(200, 50).right();
 		
 		scroll = new ScrollPane(infoTable, getSkin());
         scroll.setVisible(false);
@@ -58,6 +69,7 @@ public class CharacterCreationScreen extends AbstractScreen {
                     int pointer, int button) {
                 super.touchUp(event, x, y, pointer, button);
                 selectedProfession = p;
+                refreshPortrait();
                 scroll.setVisible(true);
             }
         });
@@ -71,10 +83,19 @@ public class CharacterCreationScreen extends AbstractScreen {
             public void touchUp(InputEvent event, float x, float y,
                     int pointer, int button) {
                 super.touchUp(event, x, y, pointer, button);
-                //game.getSoundManager().play(TyrianSound.CLICK);
-                game.setScreen(new GameScreen(game));
+                game.setScreen(new GameScreen(game, selectedProfession));
             }
         });
         return button;
+    }
+    
+    private void refreshPortrait() {
+        descriptionPane.setFirstWidget(getPlayerView());
+        descriptionPane.setSecondWidget(
+                new TextArea(selectedProfession.getDescription(), getSkin()));
+    }
+    
+    private ScrollPane getPlayerView() {
+        return new ScrollPane(new Image(selectedProfession.getPortrait()));
     }
 }

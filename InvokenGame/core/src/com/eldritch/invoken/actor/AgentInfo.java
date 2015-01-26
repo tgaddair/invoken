@@ -108,6 +108,10 @@ public class AgentInfo {
 		return species;
 	}
 	
+	public Profession getProfession() {
+	    return profession;
+	}
+	
 	public int getLevel() {
 	    return level;
 	}

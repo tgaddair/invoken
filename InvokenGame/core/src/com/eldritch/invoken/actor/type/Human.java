@@ -26,11 +26,15 @@ public class Human {
     public static float getHeight() {
         return 1 / 32f * PX;
     }
-
+    
     public static Animation getAnimation(String assetName) {
         TextureRegion[][] regions = GameScreen.getRegions(assetName, PX, PX);
         Animation anim = new Animation(0.15f, regions[0]);
         return anim;
+    }
+    
+    public static Map<Activity, Map<Direction, Animation>> getDefaultAnimations() {
+        return getAllAnimations("sprite/characters/light-blue-hair.png");
     }
     
     public static Map<Direction, Animation> getAnimations(String assetName) {

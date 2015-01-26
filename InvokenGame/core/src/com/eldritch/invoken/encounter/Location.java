@@ -69,7 +69,7 @@ public class Location {
     
     private final Color actionsColor = new Color(1, 0, 0, 1);
 
-    private final Player player;
+    private Player player;
     private final LocationMap map;
     private final List<Agent> entities = new ArrayList<Agent>();
     private final List<Agent> activeEntities = new ArrayList<Agent>();
@@ -125,11 +125,6 @@ public class Location {
   		world = new World(new Vector2(0, 0), true);
   		addWalls(world);
 
-        // spawn and add the player
-        Vector2 spawn = getSpawnLocation();
-        this.player = createPlayer(world, spawn.x, spawn.y);
-        addActor(player);
-        
         // add encounters
         addEntities(data, map);
     }
@@ -138,13 +133,21 @@ public class Location {
     	return player;
     }
     
-    private Player createPlayer(World world, float x, float y) {
+    public Player createPlayer(Profession profession) {
+        // spawn and add the player
+        Vector2 spawn = getSpawnLocation();
+        this.player = createPlayer(world, profession, spawn.x, spawn.y);
+        addActor(player);
+        return player;
+    }
+    
+    private Player createPlayer(World world, Profession profession, float x, float y) {
     	// create the Player we want to move around the world
-		Player player = new Player(Profession.getDefault(), 25, x, y,
+		Player player = new Player(profession, 25, x, y,
 				world, "sprite/characters/light-blue-hair.png");
 //    			player.addFaction(playerFaction, 9, 0);
 		
-		Item outfit = Item.fromProto(InvokenGame.ITEM_READER.readAsset("IcarianOperativeExosuit"));
+		Item outfit = profession.getDefaultOutfit();
 		player.getInfo().getInventory().addItem(outfit);
 		player.getInfo().getInventory().equip(outfit);
 		

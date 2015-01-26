@@ -5,6 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.eldritch.invoken.actor.Profession;
 import com.eldritch.invoken.screens.CharacterCreationScreen;
 import com.eldritch.invoken.screens.GameScreen;
 import com.eldritch.invoken.screens.MenuScreen;
@@ -81,7 +82,7 @@ public class InvokenGame extends Game {
 		// this approach avoids calling the screen's resize method repeatedly
 		if (getScreen() == null) {
 			if (Settings.SKIP_MENU) {
-				setScreen(new GameScreen(this));
+				setScreen(new GameScreen(this, Profession.getDefault()));
 			} else {
 				setScreen(new CharacterCreationScreen(this));
 			}

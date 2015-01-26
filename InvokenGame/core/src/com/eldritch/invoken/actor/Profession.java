@@ -9,6 +9,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.actor.aug.Augmentation;
 import com.eldritch.invoken.actor.aug.Barrier;
 import com.eldritch.invoken.actor.aug.Cloak;
@@ -26,8 +29,14 @@ import com.eldritch.invoken.actor.aug.RendWeapon;
 import com.eldritch.invoken.actor.aug.Resurrect;
 import com.eldritch.invoken.actor.aug.Scramble;
 import com.eldritch.invoken.actor.aug.ThrowGrenade;
+import com.eldritch.invoken.actor.items.Item;
+import com.eldritch.invoken.actor.items.Outfit;
+import com.eldritch.invoken.actor.type.Human;
+import com.eldritch.invoken.actor.type.Agent.Activity;
+import com.eldritch.invoken.actor.type.Agent.Direction;
 import com.eldritch.invoken.proto.Actors.ActorParams.Skill;
 import com.eldritch.invoken.proto.Disciplines.Discipline;
+import com.eldritch.invoken.ui.MultiTextureRegionDrawable;
 import com.google.common.collect.ImmutableList;
 
 public enum Profession {
@@ -45,6 +54,16 @@ public enum Profession {
 					ThrowGrenade.getInstance(),
 					Implode.getInstance());
 		}
+		
+		@Override
+        public Outfit getDefaultOutfit() {
+            return new Outfit(InvokenGame.ITEM_READER.readAsset("IcarianInfantryArmor"));
+        }
+
+        @Override
+        public String getDescription() {
+            return "Centurion";
+        }
 	},
 	
 	Executor() {
@@ -61,6 +80,16 @@ public enum Profession {
 					Mirror.getInstance(),
 					Barrier.getInstance());
 		}
+		
+		@Override
+        public Outfit getDefaultOutfit() {
+            return new Outfit(InvokenGame.ITEM_READER.readAsset("EruInfantryArmor"));
+        }
+		
+		@Override
+        public String getDescription() {
+            return "Executor";
+        }
 	},
 	
 	Assassin() {
@@ -75,6 +104,16 @@ public enum Profession {
 					RendWeapon.getInstance(),
 					FireWeapon.getInstance());
 		}
+		
+		@Override
+        public Outfit getDefaultOutfit() {
+            return new Outfit(InvokenGame.ITEM_READER.readAsset("LorentAssasinGarb"));
+        }
+		
+		@Override
+        public String getDescription() {
+            return "Assassin";
+        }
 	},
 	
 	Warden() {
@@ -89,6 +128,16 @@ public enum Profession {
 					FireWeapon.getInstance(),
 					ThrowGrenade.getInstance());
 		}
+		
+		@Override
+        public Outfit getDefaultOutfit() {
+            return new Outfit(InvokenGame.ITEM_READER.readAsset("EruInfantryArmor"));
+        }
+		
+		@Override
+        public String getDescription() {
+            return "Warden";
+        }
 	},
 	
 	Architect() {
@@ -104,6 +153,16 @@ public enum Profession {
 					Infect.getInstance(),
 					Resurrect.getInstance());
 		}
+		
+		@Override
+        public Outfit getDefaultOutfit() {
+            return new Outfit(InvokenGame.ITEM_READER.readAsset("EruInquisitorVestments"));
+        }
+		
+		@Override
+        public String getDescription() {
+            return "Architect";
+        }
 	},
 	
 	Ghost() {
@@ -120,6 +179,16 @@ public enum Profession {
 					Crack.getInstance(),
 					Scramble.getInstance());
 		}
+		
+		@Override
+        public Outfit getDefaultOutfit() {
+            return new Outfit(InvokenGame.ITEM_READER.readAsset("IcarianOperativeExosuit"));
+        }
+		
+		@Override
+        public String getDescription() {
+            return "Ghost";
+        }
 	},
 	
 	Inquisitor() {
@@ -135,6 +204,16 @@ public enum Profession {
 					Paralyze.getInstance(),
 					Frenzy.getInstance());
 		}
+		
+		@Override
+        public Outfit getDefaultOutfit() {
+            return new Outfit(InvokenGame.ITEM_READER.readAsset("EruInquisitorVestments"));
+        }
+		
+		@Override
+        public String getDescription() {
+            return "Inquisitor";
+        }
 	},
 	
 	Infiltrator() {
@@ -147,6 +226,16 @@ public enum Profession {
 		public List<Augmentation> getStartingAugmentations() {
 			return ImmutableList.<Augmentation>of(FireWeapon.getInstance());
 		}
+
+        @Override
+        public Outfit getDefaultOutfit() {
+            return new Outfit(InvokenGame.ITEM_READER.readAsset("IcarianOperativeExosuit"));
+        }
+        
+        @Override
+        public String getDescription() {
+            return "Infiltrator";
+        }
 	},
 	
 	Agent() {
@@ -161,6 +250,16 @@ public enum Profession {
 			        FireWeapon.getInstance(),
 			        Observe.getInstance());
 		}
+		
+		@Override
+        public Outfit getDefaultOutfit() {
+            return new Outfit(InvokenGame.ITEM_READER.readAsset("IcarianOperativeExosuit"));
+        }
+		
+		@Override
+        public String getDescription() {
+            return "Agent";
+        }
 	},
 	
 	Broker() {
@@ -173,11 +272,25 @@ public enum Profession {
 		public List<Augmentation> getStartingAugmentations() {
 			return ImmutableList.<Augmentation>of(FireWeapon.getInstance());
 		}
+		
+		@Override
+        public Outfit getDefaultOutfit() {
+            return new Outfit(InvokenGame.ITEM_READER.readAsset("ImperialCitizenAttire"));
+        }
+		
+		@Override
+        public String getDescription() {
+            return "Broker";
+        }
 	};
 	
 	public abstract List<Discipline> getMasteries();
 	
 	public abstract List<Augmentation> getStartingAugmentations();
+	
+	public abstract Outfit getDefaultOutfit();
+	
+	public abstract String getDescription();
 	
 	public static Profession getDefault() {
         return Agent;
@@ -244,6 +357,18 @@ public enum Profession {
 		}
 		return getSorted(result, masteries);
 	}
+	
+	public TextureRegionDrawable getPortrait() {
+        TextureRegion region = Human.getDefaultAnimations()
+                .get(Activity.Explore).get(Direction.Right).getKeyFrame(0);
+        Outfit outfit = getDefaultOutfit();
+        TextureRegion outfitRegion = outfit.getPortrait();
+        if (outfit.covers()) {
+            return new MultiTextureRegionDrawable(outfitRegion);
+        } else {
+            return new MultiTextureRegionDrawable(region, outfitRegion);
+        }
+    }
 	
 	public static Profession fromProto(com.eldritch.invoken.proto.Disciplines.Profession p) {
 		switch (p) {

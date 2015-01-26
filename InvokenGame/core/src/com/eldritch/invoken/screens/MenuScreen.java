@@ -4,6 +4,7 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.eldritch.invoken.InvokenGame;
+import com.eldritch.invoken.actor.Profession;
 import com.eldritch.invoken.util.DefaultInputListener;
 
 public class MenuScreen extends AbstractScreen {
@@ -28,7 +29,7 @@ public class MenuScreen extends AbstractScreen {
 					int pointer, int button) {
 				super.touchUp(event, x, y, pointer, button);
 				//game.getSoundManager().play(TyrianSound.CLICK);
-				game.setScreen(new GameScreen(game));
+				game.setScreen(new GameScreen(game, Profession.getDefault()));
 			}
 		});
 		table.add(startGameButton).size(300, 60).uniform().spaceBottom(10);
