@@ -1,5 +1,6 @@
 package com.eldritch.invoken.screens;
 
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
@@ -32,7 +33,6 @@ public class CharacterCreationScreen extends AbstractScreen {
 		
 		Table table = new Table(getSkin());
 		table.left();
-		
 		for (Profession p : Profession.values()) {
             TextButton button = createMenuItem(p);
             
@@ -40,25 +40,44 @@ public class CharacterCreationScreen extends AbstractScreen {
             table.add(button).size(200, 50).uniform().spaceBottom(10);
             table.row();
         }
-		
 		container.add(table);
 		
-		TextArea area = new TextArea("", getSkin());
-		descriptionPane = new SplitPane(
-		        getPlayerView(), area,
-		        false, getSkin(), "default-horizontal");
-		
-		Table infoTable = new Table(getSkin());
-		infoTable.add(descriptionPane).expand().fill().spaceBottom(50);
-
-		infoTable.row();
-		infoTable.bottom().right();
-		TextButton start = createStartButton();
-		infoTable.add(start).size(200, 50).right();
-		
-		scroll = new ScrollPane(infoTable, getSkin());
+		scroll = new ScrollPane(getInfoTable(), getSkin());
         scroll.setVisible(false);
         container.add(scroll).expandX().fill().bottom().uniform().space(25);
+	}
+	
+	private Table getInfoTable() {
+	    Table rightTable = new Table(getSkin());
+	    
+	    Table iconTable = new Table(getSkin());
+	    for (Texture icon : selectedProfession.getIcons()) {
+	        Image image = new Image(icon);
+	        iconTable.add(image).left().uniform().space(10);
+	    }
+	    rightTable.add(iconTable).space(20);
+	    rightTable.row();
+	    
+	    TextArea area = new TextArea(selectedProfession.getDescription(), getSkin());
+	    rightTable.add(area).expand().fill();
+	    
+        descriptionPane = new SplitPane(
+                getPlayerView(), rightTable,
+                false, getSkin(), "default-horizontal");
+        
+        Table infoTable = new Table(getSkin());
+        infoTable.add(descriptionPane).expand().fill().spaceBottom(50);
+
+        infoTable.row();
+        infoTable.bottom().right();
+        TextButton start = createStartButton();
+        infoTable.add(start).size(200, 50).right();
+        
+        return infoTable;
+	}
+	
+	private void setInfoTable(Table table) {
+	    scroll.setWidget(table);
 	}
 	
     private TextButton createMenuItem(final Profession p) {
@@ -69,7 +88,7 @@ public class CharacterCreationScreen extends AbstractScreen {
                     int pointer, int button) {
                 super.touchUp(event, x, y, pointer, button);
                 selectedProfession = p;
-                refreshPortrait();
+                setInfoTable(getInfoTable());
                 scroll.setVisible(true);
             }
         });
@@ -87,12 +106,6 @@ public class CharacterCreationScreen extends AbstractScreen {
             }
         });
         return button;
-    }
-    
-    private void refreshPortrait() {
-        descriptionPane.setFirstWidget(getPlayerView());
-        descriptionPane.setSecondWidget(
-                new TextArea(selectedProfession.getDescription(), getSkin()));
     }
     
     private ScrollPane getPlayerView() {

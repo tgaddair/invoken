@@ -214,7 +214,7 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
 	}
 	
 	public boolean isThreatened() {
-		return hasEnemies() || !detected.isEmpty();
+		return hasEnemies();
 	}
 	
 	public boolean isAgitated() {

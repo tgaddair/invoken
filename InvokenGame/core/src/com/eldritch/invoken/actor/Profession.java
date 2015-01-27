@@ -4,11 +4,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.EnumMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.eldritch.invoken.InvokenGame;
@@ -29,13 +31,13 @@ import com.eldritch.invoken.actor.aug.RendWeapon;
 import com.eldritch.invoken.actor.aug.Resurrect;
 import com.eldritch.invoken.actor.aug.Scramble;
 import com.eldritch.invoken.actor.aug.ThrowGrenade;
-import com.eldritch.invoken.actor.items.Item;
 import com.eldritch.invoken.actor.items.Outfit;
 import com.eldritch.invoken.actor.type.Human;
 import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.actor.type.Agent.Direction;
 import com.eldritch.invoken.proto.Actors.ActorParams.Skill;
 import com.eldritch.invoken.proto.Disciplines.Discipline;
+import com.eldritch.invoken.screens.GameScreen;
 import com.eldritch.invoken.ui.MultiTextureRegionDrawable;
 import com.google.common.collect.ImmutableList;
 
@@ -370,6 +372,14 @@ public enum Profession {
         }
     }
 	
+	public List<Texture> getIcons() {
+	    ImmutableList.Builder<Texture> builder = ImmutableList.builder();
+	    for (Discipline d : getMasteries()) {
+	        builder.add(DISCIPLINE_ICONS.get(d));
+	    }
+	    return builder.build();
+	}
+	
 	public static Profession fromProto(com.eldritch.invoken.proto.Disciplines.Profession p) {
 		switch (p) {
 			case CENTURION:
@@ -395,5 +405,18 @@ public enum Profession {
 			default:
 				throw new IllegalArgumentException("Unrecognized Profession: " + p);
 		}
+	}
+	
+	private static final EnumMap<Discipline, Texture> DISCIPLINE_ICONS = 
+            new EnumMap<Discipline, Texture>(Discipline.class);
+	static {
+	    DISCIPLINE_ICONS.put(Discipline.WARFARE, getTexture("discipline-warfare"));
+	    DISCIPLINE_ICONS.put(Discipline.AUTOMATA, getTexture("discipline-automata"));
+	    DISCIPLINE_ICONS.put(Discipline.SUBTERFUGE, getTexture("discipline-subterfuge"));
+	    DISCIPLINE_ICONS.put(Discipline.CHARISMA, getTexture("discipline-charisma"));
+	}
+	
+	private static Texture getTexture(String asset) {
+	    return GameScreen.getTexture("icon/" + asset + ".png");
 	}
 }
