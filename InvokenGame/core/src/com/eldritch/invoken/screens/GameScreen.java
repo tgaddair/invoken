@@ -309,7 +309,8 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 		boolean selection = false;
 		Vector3 world = camera.unproject(new Vector3(screenX, screenY, 0));
 		for (Agent entity : location.getActors()) {
-			if (entity.contains(world.x, world.y)) {
+			if (entity.contains(world.x, world.y) && player.canTarget(entity, location)) {
+			    selection = true;
 			    if (player.getInfo().getAugmentations().hasActiveAugmentation()
 			    		&& player.select(entity, location)) {
 		            player.getInfo().getAugmentations().useActiveAugmentation(
@@ -320,9 +321,13 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 				} else if (!tacticalPause) {
 					// already selected -> start interaction
 					player.reselect(entity);
+				} else {
+				    selection = false;
 				}
-				selection = true;
-				break;
+				
+			    if (selection) {
+			        break;
+			    }
 			}
 		}
 		
