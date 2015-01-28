@@ -8,10 +8,11 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.eldritch.invoken.actor.type.Agent;
 
-public class RelationRenderer {
+public class LineRenderer {
     private final BitmapFont debugFont = new BitmapFont();
     ShapeRenderer sr = new ShapeRenderer();
     SpriteBatch batch = new SpriteBatch();
@@ -107,4 +108,13 @@ public class RelationRenderer {
         }
         sr.end();
     }
+	
+	public void drawBetween(Vector2 source, Vector2 target, OrthographicCamera camera) {
+	    sr.setProjectionMatrix(camera.combined);
+        sr.begin(ShapeType.Line);
+        Color c = Color.WHITE;
+        sr.setColor(c);
+        sr.line(target.x, target.y, source.x, source.y);
+        sr.end();
+	}
 }

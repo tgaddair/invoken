@@ -21,6 +21,7 @@ import com.eldritch.scifirpg.editor.tables.ItemTable;
 import com.eldritch.scifirpg.editor.tables.SkillTable;
 import com.eldritch.scifirpg.editor.tables.TraitTable;
 import com.eldritch.scifirpg.editor.util.ProfessionUtil;
+import com.eldritch.scifirpg.editor.viz.DialogueEditor;
 import com.eldritch.invoken.proto.Actors.ActorParams;
 import com.eldritch.invoken.proto.Actors.ActorParams.InventoryItem;
 import com.eldritch.invoken.proto.Actors.DialogueTree;
@@ -156,7 +157,10 @@ public class ActorEditorPanel extends AssetEditorPanel<NonPlayerActor, ActorTabl
 		r += 2;
 		
 		builder.addLabel("Dialogue Tree", cc.xy(c, r));
-		builder.add(new AssetTablePanel(dialogueTable), cc.xy(c + 2, r));
+//		builder.add(new AssetTablePanel(dialogueTable), cc.xy(c + 2, r));
+		
+		List<Response> dialogue = prev.isPresent() ? prev.get().getDialogue().getDialogueList() : new ArrayList<Response>();
+		builder.add(new DialogueEditor(dialogue), cc.xy(c + 2, r));
 		r += 2;
 		
 		JButton saveButton = new JButton("Save");

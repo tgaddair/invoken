@@ -13,6 +13,9 @@ public class Application {
         // Add content to the window.
         frame.add(new MainPanel(), BorderLayout.CENTER);
         
+//        Example ex = new Example();
+//        frame.getContentPane().add(ex);
+        
         // Display the window.
         frame.pack();
         frame.setVisible(true);

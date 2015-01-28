@@ -83,7 +83,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 		camera.setToOrtho(false, (w / h) * 10, 10);
 		camera.zoom = 1.15f;
 		camera.update();
-
+		
 		font = new BitmapFont();
 		batch = new SpriteBatch();
 		
@@ -144,6 +144,10 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         selectedHealth.update(player, player.getTarget(), camera);
 		dialogue.update(player, camera);
 		loot.update(player);
+		
+		// update mouse position
+		Vector3 world = camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
+        location.setFocusPoint(world.x, world.y);
 		
 		// render the location
 		location.render(delta, camera, selector, tacticalPause);

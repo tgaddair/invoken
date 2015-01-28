@@ -55,7 +55,7 @@ import com.eldritch.invoken.gfx.LightManager;
 import com.eldritch.invoken.proto.Locations.Encounter;
 import com.eldritch.invoken.proto.Locations.Encounter.ActorParams.ActorScenario;
 import com.eldritch.invoken.ui.AgentStatusRenderer;
-import com.eldritch.invoken.ui.RelationRenderer;
+import com.eldritch.invoken.ui.LineRenderer;
 import com.eldritch.invoken.util.Settings;
 import com.google.common.base.Optional;
 
@@ -90,12 +90,13 @@ public class Location {
     private final int groundIndex = 0;
     
     private final World world;
+    private final Vector2 focusPoint = new Vector2();
     
     private NaturalVector2 currentCell = null;
     private float currentZoom = 0;
     private Rectangle viewBounds = new Rectangle();
     
-    RelationRenderer relationRenderer = new RelationRenderer();
+    LineRenderer lineRenderer = new LineRenderer();
     Box2DDebugRenderer debugRenderer = new Box2DDebugRenderer();
     
     public Location(com.eldritch.invoken.proto.Locations.Location data) {
@@ -411,6 +412,10 @@ public class Location {
     public World getWorld() {
     	return world;
     }
+    
+    public void setFocusPoint(float x, float y) {
+        focusPoint.set(x, y);
+    }
 
     public void render(float delta, OrthographicCamera camera, TextureRegion selector,
             boolean paused) {
@@ -482,16 +487,16 @@ public class Location {
         	Agent target = player.getTarget();
         	switch (Settings.DRAW_GRAPH) {
         	    case Disposition:
-                    relationRenderer.renderDispositions(target, activeEntities, camera);
+                    lineRenderer.renderDispositions(target, activeEntities, camera);
         	        break;
         	    case LOS:
-        	        relationRenderer.renderLineOfSight(target, activeEntities, camera);
+        	        lineRenderer.renderLineOfSight(target, activeEntities, camera);
         	        break;
         	    case Enemies:
-        	        relationRenderer.renderEnemies(target, activeEntities, camera);
+        	        lineRenderer.renderEnemies(target, activeEntities, camera);
         	        break;
         	    case Visible:
-                    relationRenderer.renderVisible(target, activeEntities, camera);
+                    lineRenderer.renderVisible(target, activeEntities, camera);
                     break;
         	    case None:
         	}
@@ -508,6 +513,9 @@ public class Location {
                 drawCentered(selector, agent.getRenderPosition(), color);
             }
         }
+        
+        // draw targeting reticle
+//        lineRenderer.drawBetween(player.getPosition(), focusPoint, camera);
 
         // render the drawables
         for (Drawable drawable : drawables) {
