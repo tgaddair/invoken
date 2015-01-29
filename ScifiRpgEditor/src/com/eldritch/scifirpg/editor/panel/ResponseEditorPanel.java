@@ -16,16 +16,16 @@ import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
+import com.eldritch.invoken.proto.Actors.DialogueTree.Choice;
+import com.eldritch.invoken.proto.Actors.DialogueTree.Response;
+import com.eldritch.invoken.proto.Outcomes.Outcome;
+import com.eldritch.invoken.proto.Prerequisites.Prerequisite;
 import com.eldritch.scifirpg.editor.AssetTablePanel;
 import com.eldritch.scifirpg.editor.tables.AssetPointerTable;
 import com.eldritch.scifirpg.editor.tables.AssetTable;
 import com.eldritch.scifirpg.editor.tables.DialogueTable;
 import com.eldritch.scifirpg.editor.tables.OutcomeTable;
 import com.eldritch.scifirpg.editor.tables.PrerequisiteTable;
-import com.eldritch.invoken.proto.Actors.DialogueTree.Choice;
-import com.eldritch.invoken.proto.Actors.DialogueTree.Response;
-import com.eldritch.invoken.proto.Outcomes.Outcome;
-import com.eldritch.invoken.proto.Prerequisites.Prerequisite;
 import com.google.common.base.Optional;
 import com.jgoodies.forms.builder.DefaultFormBuilder;
 import com.jgoodies.forms.layout.FormLayout;
@@ -71,7 +71,7 @@ public class ResponseEditorPanel extends AssetEditorPanel<Response, DialogueTabl
 		builder.nextLine();
 		
 		builder.appendRow("fill:120dlu");
-		choiceTable = new ChoiceTable(owner);
+		choiceTable = new ChoiceTable(owner, dialoguePanel);
 		builder.append("Choices:", new AssetTablePanel(choiceTable));
 		builder.nextLine();
 
@@ -121,8 +121,8 @@ public class ResponseEditorPanel extends AssetEditorPanel<Response, DialogueTabl
 	}
 	
 	@Override
-	public void actionPerformed(ActionEvent e) {
-		super.actionPerformed(e);
+	protected void save() {
+		super.save();
 		dialoguePanel.handleSaveAction();
 	}
 	
@@ -149,16 +149,29 @@ public class ResponseEditorPanel extends AssetEditorPanel<Response, DialogueTabl
 				.build();
 	}
 	
-	private static class ChoiceTable extends AssetTable<Choice> {
+	private static final String[] COLUMN_NAMES = { 
+		"Text", "Successors" };
+	
+	private class ChoiceTable extends AssetTable<Choice> {
 		private static final long serialVersionUID = 1L;
-		private static final String[] COLUMN_NAMES = { 
-			"Text", "Successors" };
 		
 		private final DialogueTable dialogueTable;
+		private final DialogueEditorPanel editor;
 		
-		public ChoiceTable(DialogueTable dialogueTable) {
+		public ChoiceTable(DialogueTable dialogueTable, DialogueEditorPanel editor) {
 			super(COLUMN_NAMES, "Choice");
 			this.dialogueTable = dialogueTable;
+			this.editor = editor;
+		}
+		
+		@Override
+		protected void handleCreateAsset(Optional<Choice> asset) {
+			editor.editChoice(new ChoiceEditorPanel(this, new JFrame(), asset));
+			
+//			JFrame frame = new JFrame("Dialogue Editor");
+//			frame.add(new ChoiceEditorPanel(this, frame, asset));
+//			frame.pack();
+//	        frame.setVisible(true);
 		}
 		
 		public List<Choice> getSortedAssets() {
@@ -187,7 +200,7 @@ public class ResponseEditorPanel extends AssetEditorPanel<Response, DialogueTabl
 		}
 	}
 	
-	private static class ChoiceEditorPanel extends AssetEditorPanel<Choice, ChoiceTable> {
+	public class ChoiceEditorPanel extends AssetEditorPanel<Choice, ChoiceTable> {
 		private static final long serialVersionUID = 1L;
 
 		private final JTextArea textField = createArea(true, 30, new Dimension(100, 100));
@@ -235,7 +248,13 @@ public class ResponseEditorPanel extends AssetEditorPanel<Response, DialogueTabl
 			}
 
 			add(builder.getPanel());
-			setPreferredSize(new Dimension(700, 500));
+			setPreferredSize(new Dimension(650, 750));
+		}
+		
+		@Override
+		protected void save() {
+			super.save();
+			ResponseEditorPanel.this.save();
 		}
 
 		@Override

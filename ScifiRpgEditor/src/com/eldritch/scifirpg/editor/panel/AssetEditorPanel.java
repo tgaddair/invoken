@@ -65,6 +65,10 @@ public abstract class AssetEditorPanel<T extends Message, S extends AssetTable<T
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
+		save();
+	}
+	
+	protected void save() {
 		T asset = createAsset();
 		table.saveAsset(prev, asset);
 		frame.dispose();

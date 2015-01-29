@@ -15,6 +15,7 @@ import prefuse.visual.NodeItem;
 import prefuse.visual.VisualItem;
 
 import com.eldritch.invoken.proto.Actors.DialogueTree.Response;
+import com.eldritch.scifirpg.editor.panel.ResponseEditorPanel.ChoiceEditorPanel;
 import com.eldritch.scifirpg.editor.tables.DialogueTable;
 import com.eldritch.scifirpg.editor.viz.DialogueEditor;
 import com.eldritch.scifirpg.editor.viz.DialogueEditor.NodeType;
@@ -28,6 +29,7 @@ public class DialogueEditorPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
 	
 	private final DialogueTable table;
+	private final JPanel leftPanel = new JPanel(new BorderLayout());
 	private final JPanel editorPanel = new JPanel(new BorderLayout());
 	private DialogueEditor editor;
 	private ResponseEditorPanel responseEditor;
@@ -35,7 +37,10 @@ public class DialogueEditorPanel extends JPanel {
 	public DialogueEditorPanel(DialogueTable table) {
 		super(new BorderLayout());
 		this.table = table;
-		responseEditor = new ResponseEditorPanel(table, this, new JFrame(), Optional.<Response>absent());
+		
+		responseEditor = new ResponseEditorPanel(
+				table, this, new JFrame(), Optional.<Response>absent());
+		leftPanel.add(responseEditor);
 		
 		if (!table.getAssets().isEmpty()) {
 			editor = new DialogueEditor(table.getAssets(), new InfoClickListener());
@@ -54,7 +59,7 @@ public class DialogueEditorPanel extends JPanel {
 		CellConstraints cc = new CellConstraints();
 
 		// column, row
-		builder.add(responseEditor, cc.xy(3, 1));
+		builder.add(leftPanel, cc.xy(3, 1));
 		builder.add(editorPanel, cc.xy(7, 1));
 		
 //		JButton saveButton = new JButton("Save");
@@ -69,6 +74,22 @@ public class DialogueEditorPanel extends JPanel {
 		editorPanel.removeAll();
 		editor = new DialogueEditor(table.getAssets(), new InfoClickListener());
 		editorPanel.add(editor);
+	}
+	
+	public void editResponse(Response response) {
+		responseEditor.init(response);
+		leftPanel.removeAll();
+		leftPanel.add(responseEditor);
+		leftPanel.invalidate();
+		leftPanel.validate();
+	}
+	
+	public void editChoice(ChoiceEditorPanel editorPanel) {
+		System.out.println("edit choice");
+		leftPanel.removeAll();
+		leftPanel.add(editorPanel);
+		leftPanel.invalidate();
+		leftPanel.validate();
 	}
 	
 	public class InfoClickListener extends ControlAdapter implements Control {
@@ -87,7 +108,7 @@ public class DialogueEditorPanel extends JPanel {
 				}
 
 				Response response = editor.getResponse(id);
-				responseEditor.init(response);
+				editResponse(response);
 				
 				if (e.isPopupTrigger()) {
 					JPopupMenu jpub = new JPopupMenu();
