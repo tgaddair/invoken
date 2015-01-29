@@ -44,14 +44,10 @@ public class DialogueTable extends IdentifiedAssetTable<Response> {
         frame.pack();
         frame.setVisible(true);
 	}
-	
-	public ResponseEditorPanel getEditorPanel() {
-		return new ResponseEditorPanel(this, new JFrame(), Optional.<Response>absent());
-	}
 
 	@Override
 	protected JPanel getEditorPanel(Optional<Response> prev, JFrame frame) {
-		return new ResponseEditorPanel(this, frame, prev);
+		return new ResponseEditorPanel(this, null, frame, prev);
 	}
 	
 	@Override

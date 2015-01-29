@@ -146,7 +146,6 @@ public class DialogueEditor extends Display {
 		Graph g = new Graph(nodeData, edgeData, true);
 
 		// Create the nodes in the graph, which are response and choices
-		System.out.println("build graph");
 		Map<String, Node> responseNodes = new HashMap<>();
 		for (Response response : dialogue) {
 			Node node = g.addNode();
@@ -156,7 +155,6 @@ public class DialogueEditor extends Display {
 			node.set("type", response.getGreeting() ? NodeType.Greeting : NodeType.Response);
 			responseNodes.put(response.getId(), node);
 			responses.put(response.getId(), response);
-			System.out.println("response: " + response.getId());
 		}
 		
 		for (Response response : dialogue) {

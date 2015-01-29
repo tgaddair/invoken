@@ -1,6 +1,7 @@
 package com.eldritch.scifirpg.editor.panel;
 
 import java.awt.Dimension;
+import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -31,6 +32,7 @@ import com.jgoodies.forms.layout.FormLayout;
 public class ResponseEditorPanel extends AssetEditorPanel<Response, DialogueTable> {
 	private static final long serialVersionUID = 1L;
 
+	private final DialogueEditorPanel dialoguePanel;
 	private final JTextField idField = new JTextField();
 	private final JTextArea textField = createArea(true, 30, new Dimension(100, 100));
 	private final JCheckBox greetingCheck = new JCheckBox();
@@ -39,8 +41,9 @@ public class ResponseEditorPanel extends AssetEditorPanel<Response, DialogueTabl
 	private final OutcomeTable outcomeTable = new OutcomeTable();
 	private final ChoiceTable choiceTable;
 
-	public ResponseEditorPanel(DialogueTable owner, JFrame frame, Optional<Response> prev) {
+	public ResponseEditorPanel(DialogueTable owner, DialogueEditorPanel dialoguePanel, JFrame frame, Optional<Response> prev) {
 		super(owner, frame, prev);
+		this.dialoguePanel = dialoguePanel;
 
 		DefaultFormBuilder builder = new DefaultFormBuilder(new FormLayout(""));
 		builder.border(BorderFactory.createEmptyBorder(5, 5, 5, 5));
@@ -85,6 +88,8 @@ public class ResponseEditorPanel extends AssetEditorPanel<Response, DialogueTabl
 	}
 	
 	public void init(Response resp) {
+		setPrev(resp);
+		
 		prereqTable.clearAssets();
 		outcomeTable.clearAssets();
 		choiceTable.clearAssets();
@@ -102,6 +107,12 @@ public class ResponseEditorPanel extends AssetEditorPanel<Response, DialogueTabl
 		for (Choice asset : resp.getChoiceList()) {
 			choiceTable.addAsset(asset);
 		}
+	}
+	
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		super.actionPerformed(e);
+		dialoguePanel.handleSaveAction();
 	}
 
 	@Override

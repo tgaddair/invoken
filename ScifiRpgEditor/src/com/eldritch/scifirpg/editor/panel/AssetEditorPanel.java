@@ -25,7 +25,7 @@ public abstract class AssetEditorPanel<T extends Message, S extends AssetTable<T
 
 	private final S table;
 	private final JFrame frame;
-	private final Optional<T> prev;
+	private Optional<T> prev;
 
 	public AssetEditorPanel(S table, JFrame frame, Optional<T> prev) {
 		super(new BorderLayout());
@@ -53,6 +53,10 @@ public abstract class AssetEditorPanel<T extends Message, S extends AssetTable<T
 
 	public JFrame getFrame() {
 		return frame;
+	}
+	
+	public void setPrev(T value) {
+		prev = Optional.of(value);
 	}
 
 	public Optional<T> getPrev() {
