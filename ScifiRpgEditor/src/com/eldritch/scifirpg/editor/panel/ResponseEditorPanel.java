@@ -77,24 +77,31 @@ public class ResponseEditorPanel extends AssetEditorPanel<Response, DialogueTabl
 		builder.nextLine();
 		
 		if (prev.isPresent()) {
-			Response resp = prev.get();
-			idField.setText(resp.getId());
-			textField.setText(resp.getText());
-			greetingCheck.setSelected(resp.getGreeting());
-			weightField.setText(resp.getWeight() + "");
-			for (Prerequisite asset : resp.getPrereqList()) {
-				prereqTable.addAsset(asset);
-			}
-			for (Outcome asset : resp.getOutcomeList()) {
-				outcomeTable.addAsset(asset);
-			}
-			for (Choice asset : resp.getChoiceList()) {
-				choiceTable.addAsset(asset);
-			}
+			init(prev.get());
 		}
 
 		add(builder.getPanel());
 		setPreferredSize(new Dimension(650, 750));
+	}
+	
+	public void init(Response resp) {
+		prereqTable.clearAssets();
+		outcomeTable.clearAssets();
+		choiceTable.clearAssets();
+		
+		idField.setText(resp.getId());
+		textField.setText(resp.getText());
+		greetingCheck.setSelected(resp.getGreeting());
+		weightField.setText(resp.getWeight() + "");
+		for (Prerequisite asset : resp.getPrereqList()) {
+			prereqTable.addAsset(asset);
+		}
+		for (Outcome asset : resp.getOutcomeList()) {
+			outcomeTable.addAsset(asset);
+		}
+		for (Choice asset : resp.getChoiceList()) {
+			choiceTable.addAsset(asset);
+		}
 	}
 
 	@Override

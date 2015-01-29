@@ -6,7 +6,7 @@ import java.util.Map;
 
 import com.eldritch.invoken.proto.Actors.DialogueTree.Choice;
 import com.eldritch.invoken.proto.Actors.DialogueTree.Response;
-import com.eldritch.scifirpg.editor.tables.DialogueTable;
+import com.eldritch.scifirpg.editor.panel.DialogueEditorPanel.InfoClickListener;
 
 import prefuse.Constants;
 import prefuse.Display;
@@ -15,12 +15,7 @@ import prefuse.action.ActionList;
 import prefuse.action.RepaintAction;
 import prefuse.action.assignment.ColorAction;
 import prefuse.action.assignment.DataColorAction;
-import prefuse.action.assignment.DataShapeAction;
-import prefuse.action.layout.graph.BalloonTreeLayout;
-import prefuse.action.layout.graph.ForceDirectedLayout;
 import prefuse.action.layout.graph.NodeLinkTreeLayout;
-import prefuse.action.layout.graph.RadialTreeLayout;
-import prefuse.action.layout.graph.SquarifiedTreeMapLayout;
 import prefuse.activity.Activity;
 import prefuse.controls.DragControl;
 import prefuse.controls.PanControl;
@@ -37,8 +32,15 @@ import prefuse.visual.VisualItem;
 
 public class DialogueEditor extends Display {
 	private static final long serialVersionUID = 3309144726299972847L;
+	
+	public enum NodeType {
+		Greeting, Response, Choice
+	}
+	
+	private final Map<String, Response> responses = new HashMap<>();
+	private final Map<String, Choice> choices = new HashMap<>();
 
-	public DialogueEditor(List<Response> dialogue) {
+	public DialogueEditor(List<Response> dialogue, InfoClickListener clickListener) {
 		super(new Visualization());
 
 		Graph graph = makeGraph(dialogue);
@@ -48,7 +50,7 @@ public class DialogueEditor extends Display {
 				Constants.SHAPE_ELLIPSE));
 
 		// draw the "name" label for NodeItems
-		LabelRenderer nodeR = new LabelRenderer("id");
+		LabelRenderer nodeR = new LabelRenderer("summary");
 		nodeR.setRoundedCorner(8, 8); // round the corners
 //		Renderer nodeR = new ShapeRenderer(20);
 		
@@ -106,7 +108,7 @@ public class DialogueEditor extends Display {
 //		setSize(1200, 500); // set display size
 		pan(360, 250);
 		setHighQuality(true);
-		addControlListener(new InfoClickListener());
+		addControlListener(clickListener);
 		addControlListener(new DragControl());
 		addControlListener(new PanControl());
 		addControlListener(new ZoomControl()); // right mouse down and drag
@@ -116,14 +118,19 @@ public class DialogueEditor extends Display {
 		m_vis.run("layout");
 	}
 	
-	private enum NodeType {
-		Greeting, Response, Choice
+	public Response getResponse(String id) {
+		return responses.get(id);
 	}
-
+	
+	public Choice getChoice(String id) {
+		return choices.get(id);
+	}
+	
 	private Graph makeGraph(List<Response> dialogue) {
 		// Create tables for node and edge data, and configure their columns.
 		Table nodeData = new Table();
 		nodeData.addColumn("id", String.class);
+		nodeData.addColumn("summary", String.class);
 		nodeData.addColumn("text", String.class);
 		nodeData.addColumn("type", NodeType.class);
 		
@@ -143,19 +150,25 @@ public class DialogueEditor extends Display {
 		Map<String, Node> responseNodes = new HashMap<>();
 		for (Response response : dialogue) {
 			Node node = g.addNode();
-			node.setString("id", truncate(response.getText()));
+			node.setString("id", response.getId());
+			node.setString("summary", truncate(response.getText()));
 			node.setString("text", response.getText());
 			node.set("type", response.getGreeting() ? NodeType.Greeting : NodeType.Response);
 			responseNodes.put(response.getId(), node);
+			responses.put(response.getId(), response);
 			System.out.println("response: " + response.getId());
 		}
 		
 		for (Response response : dialogue) {
+			int i = 0;
 			for (Choice choice : response.getChoiceList()) {
 				Node node = g.addNode();
-				node.setString("id", truncate(choice.getText()));
+				String choiceId = response.getId() + i++;
+				node.setString("id", choiceId);
+				node.setString("summary", truncate(choice.getText()));
 				node.setString("text", choice.getText());
 				node.set("type", NodeType.Choice);
+				choices.put(choiceId, choice);
 				
 				// Add an edge from the response to this choice.
 				Node parent = responseNodes.get(response.getId());

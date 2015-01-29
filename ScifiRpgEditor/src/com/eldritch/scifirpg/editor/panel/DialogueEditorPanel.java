@@ -2,27 +2,19 @@ package com.eldritch.scifirpg.editor.panel;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
 
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
 
-import com.eldritch.scifirpg.editor.AssetTablePanel;
-import com.eldritch.scifirpg.editor.tables.AugmentationTable;
+import prefuse.controls.Control;
+import prefuse.controls.ControlAdapter;
+import prefuse.visual.NodeItem;
+import prefuse.visual.VisualItem;
+
+import com.eldritch.invoken.proto.Actors.DialogueTree.Response;
 import com.eldritch.scifirpg.editor.tables.DialogueTable;
-import com.eldritch.scifirpg.editor.tables.EffectTable;
-import com.eldritch.scifirpg.editor.tables.RequirementTable;
 import com.eldritch.scifirpg.editor.viz.DialogueEditor;
-import com.eldritch.invoken.proto.Augmentations.Augmentation;
-import com.eldritch.invoken.proto.Augmentations.Augmentation.Requirement;
-import com.eldritch.invoken.proto.Augmentations.Augmentation.Type;
-import com.eldritch.invoken.proto.Effects.Effect;
-import com.google.common.base.Optional;
+import com.eldritch.scifirpg.editor.viz.DialogueEditor.NodeType;
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.layout.CellConstraints;
@@ -31,13 +23,14 @@ import com.jgoodies.forms.layout.FormLayout;
 public class DialogueEditorPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
 	
-	private final JTextField idField = new JTextField();
+	private final DialogueTable table;
 	private final DialogueEditor editor;
-	private final ResponseEditorPanel responseEditor;
+	private ResponseEditorPanel responseEditor;
 
 	public DialogueEditorPanel(DialogueTable table) {
 		super(new BorderLayout());
-		editor = new DialogueEditor(table.getAssets());
+		this.table = table;
+		editor = new DialogueEditor(table.getAssets(), new InfoClickListener());
 		responseEditor = table.getEditorPanel();
 
 		FormLayout layout = new FormLayout(
@@ -66,5 +59,21 @@ public class DialogueEditorPanel extends JPanel {
 
 		add(builder.getPanel());
 		setPreferredSize(new Dimension(1400, 600));
+	}
+	
+	public class InfoClickListener extends ControlAdapter implements Control {
+		public void itemClicked(VisualItem item, MouseEvent e) {
+			if (item instanceof NodeItem) {
+				String id = ((String) item.get("id"));
+				
+				NodeType type = ((NodeType) item.get("type"));
+				if (type == NodeType.Choice) {
+					id = (String) ((NodeItem) item).getParent().get("id");
+				}
+
+				Response response = editor.getResponse(id);
+				responseEditor.init(response);
+			}
+		}
 	}
 }
