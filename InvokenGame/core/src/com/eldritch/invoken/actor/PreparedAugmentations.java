@@ -17,7 +17,8 @@ public class PreparedAugmentations {
 	private final List<Augmentation> augs = new ArrayList<Augmentation>();
 	private final Agent owner;
 	private final Set<Augmentation> activeSelfAugmentations = new HashSet<Augmentation>();
-	private Map<Integer, Augmentation> activeAugmentations = new HashMap<Integer, Augmentation>();
+	private final Map<Integer, Augmentation> activeAugmentations = new HashMap<Integer, Augmentation>();
+	private final Set<Augmentation> prepared = new HashSet<Augmentation>();
 	
 	public PreparedAugmentations(Agent owner) {
 		this.owner = owner;
@@ -81,9 +82,11 @@ public class PreparedAugmentations {
 			}
 	        if (activeAugmentations.get(slot) == aug) {
 	        	// already active in this slot
+	            unprepare(aug);
 	        	activeAugmentations.remove(slot);
 	        } else {
 	        	// activate the aug
+	            prepare(aug);
 	        	activeAugmentations.put(slot, aug);
 	        }
 	    }
@@ -132,5 +135,19 @@ public class PreparedAugmentations {
             return aug.invoke(owner, position);
         }
         return false;
+    }
+    
+    private void prepare(Augmentation aug) {
+        if (!prepared.contains(aug)) {
+            aug.prepare(owner);
+            prepared.add(aug);
+        }
+    }
+    
+    private void unprepare(Augmentation aug) {
+        if (prepared.contains(aug)) {
+            aug.unprepare(owner);
+            prepared.remove(aug);
+        }
     }
 }

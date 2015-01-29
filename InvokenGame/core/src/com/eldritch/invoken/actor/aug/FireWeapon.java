@@ -33,6 +33,15 @@ public class FireWeapon extends ProjectileAugmentation {
     private FireWeapon() {
         super("fire");
     }
+    
+    @Override
+    public void prepare(Agent owner) {
+        // add an effect that shows a rotating weapon
+    }
+    
+    @Override
+    public void unprepare(Agent owner) {
+    }
 
     @Override
     public Action getAction(Agent owner, Vector2 target) {

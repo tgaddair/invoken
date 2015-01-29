@@ -28,6 +28,12 @@ public abstract class Augmentation {
 	    return agent.getInfo().getEnergy() >= getCost(agent);
 	}
 	
+	public void prepare(Agent owner) {
+	}
+	
+	public void unprepare(Agent owner) {
+    }
+	
 	public boolean invoke(Agent owner, Agent target) {
 		if (isValid(owner, target)) {
 		    Action action = getAction(owner, target);
