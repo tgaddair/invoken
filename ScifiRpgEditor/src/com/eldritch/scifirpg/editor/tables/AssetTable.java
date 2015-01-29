@@ -69,8 +69,7 @@ public abstract class AssetTable<T extends Message> extends JTable {
 	            
 	            if (me.getClickCount() == 2) {
 	            	if (row >= 0) {
-	            		T asset = getModel().getAsset(row);
-	            		handleCreateAsset(Optional.<T>of(asset));
+	            		editAsset(row);
 	            	} else {
 	            		handleCreateAsset(Optional.<T>absent());
 	            	}
@@ -101,6 +100,11 @@ public abstract class AssetTable<T extends Message> extends JTable {
         // Display the window.
         frame.pack();
         frame.setVisible(true);
+	}
+	
+	public void editAsset(int row) {
+		T asset = getModel().getAsset(row);
+		handleCreateAsset(Optional.<T>of(asset));
 	}
 	
 	public void deleteAsset(T asset) {

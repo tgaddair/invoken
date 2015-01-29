@@ -120,6 +120,10 @@ public class ResponseEditorPanel extends AssetEditorPanel<Response, DialogueTabl
 		}
 	}
 	
+	public void editChoiceAt(int index) {
+		choiceTable.editAsset(index);
+	}
+	
 	@Override
 	protected void save() {
 		super.save();
@@ -167,11 +171,6 @@ public class ResponseEditorPanel extends AssetEditorPanel<Response, DialogueTabl
 		@Override
 		protected void handleCreateAsset(Optional<Choice> asset) {
 			editor.editChoice(new ChoiceEditorPanel(this, new JFrame(), asset));
-			
-//			JFrame frame = new JFrame("Dialogue Editor");
-//			frame.add(new ChoiceEditorPanel(this, frame, asset));
-//			frame.pack();
-//	        frame.setVisible(true);
 		}
 		
 		public List<Choice> getSortedAssets() {

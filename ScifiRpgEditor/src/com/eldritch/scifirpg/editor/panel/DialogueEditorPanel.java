@@ -82,14 +82,15 @@ public class DialogueEditorPanel extends JPanel {
 		leftPanel.add(responseEditor);
 		leftPanel.invalidate();
 		leftPanel.validate();
+		leftPanel.repaint();
 	}
 	
 	public void editChoice(ChoiceEditorPanel editorPanel) {
-		System.out.println("edit choice");
 		leftPanel.removeAll();
 		leftPanel.add(editorPanel);
 		leftPanel.invalidate();
 		leftPanel.validate();
+		leftPanel.repaint();
 	}
 	
 	public class InfoClickListener extends ControlAdapter implements Control {
@@ -104,12 +105,19 @@ public class DialogueEditorPanel extends JPanel {
 						// the graph is broken
 						return;
 					}
-					id = (String) ((NodeItem) item).getParent().get("id");
+					
+					id = (String) parent.get("id");
+					Response response = editor.getResponse(id);
+					editResponse(response);
+					
+					int index = (int) ((NodeItem) item).get("index");
+					responseEditor.editChoiceAt(index);
+					
+				} else {
+					Response response = editor.getResponse(id);
+					editResponse(response);
 				}
 
-				Response response = editor.getResponse(id);
-				editResponse(response);
-				
 				if (e.isPopupTrigger()) {
 					JPopupMenu jpub = new JPopupMenu();
 					jpub.add("Delete node");

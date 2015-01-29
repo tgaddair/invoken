@@ -130,6 +130,7 @@ public class DialogueEditor extends Display {
 		// Create tables for node and edge data, and configure their columns.
 		Table nodeData = new Table();
 		nodeData.addColumn("id", String.class);
+		nodeData.addColumn("index", int.class);
 		nodeData.addColumn("summary", String.class);
 		nodeData.addColumn("text", String.class);
 		nodeData.addColumn("type", NodeType.class);
@@ -150,6 +151,7 @@ public class DialogueEditor extends Display {
 		for (Response response : dialogue) {
 			Node node = g.addNode();
 			node.setString("id", response.getId());
+			node.setInt("index", 0);
 			node.setString("summary", truncate(response.getText()));
 			node.setString("text", response.getText());
 			node.set("type", response.getGreeting() ? NodeType.Greeting : NodeType.Response);
@@ -161,8 +163,9 @@ public class DialogueEditor extends Display {
 			int i = 0;
 			for (Choice choice : response.getChoiceList()) {
 				Node node = g.addNode();
-				String choiceId = response.getId() + i++;
+				String choiceId = response.getId() + i;
 				node.setString("id", choiceId);
+				node.setInt("index", i++);
 				node.setString("summary", truncate(choice.getText()));
 				node.setString("text", choice.getText());
 				node.set("type", NodeType.Choice);
