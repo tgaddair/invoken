@@ -16,7 +16,11 @@ import prefuse.action.RepaintAction;
 import prefuse.action.assignment.ColorAction;
 import prefuse.action.assignment.DataColorAction;
 import prefuse.action.assignment.DataShapeAction;
+import prefuse.action.layout.graph.BalloonTreeLayout;
 import prefuse.action.layout.graph.ForceDirectedLayout;
+import prefuse.action.layout.graph.NodeLinkTreeLayout;
+import prefuse.action.layout.graph.RadialTreeLayout;
+import prefuse.action.layout.graph.SquarifiedTreeMapLayout;
 import prefuse.activity.Activity;
 import prefuse.controls.DragControl;
 import prefuse.controls.PanControl;
@@ -60,15 +64,16 @@ public class DialogueEditor extends Display {
 		drf.setDefaultEdgeRenderer(edgeR);
 		m_vis.setRendererFactory(drf);
 
-		int[] palette = new int[] { ColorLib.rgb(255, 180, 180),
-				ColorLib.rgb(190, 190, 255) };
 		ColorAction nStroke = new ColorAction("graph.nodes",
 				VisualItem.STROKECOLOR);
 		nStroke.setDefaultColor(ColorLib.gray(100));
 
-		DataColorAction nFill = new DataColorAction("graph.nodes", "greeting",
+		int[] palette = new int[] { 
+				ColorLib.rgb(170, 240, 209), 
+				ColorLib.rgb(190, 190, 255),
+				ColorLib.rgb(255, 180, 180) };
+		DataColorAction nFill = new DataColorAction("graph.nodes", "type",
 				Constants.NOMINAL, VisualItem.FILLCOLOR, palette);
-		DataShapeAction shape = new DataShapeAction("graph.nodes", "choice");
 		
 		// use black for node text
 		ColorAction text = new ColorAction("graph.nodes",
@@ -80,19 +85,25 @@ public class DialogueEditor extends Display {
 		ActionList color = new ActionList();
 		color.add(nStroke);
 		color.add(nFill);
-		color.add(shape);
 		color.add(text);
 		color.add(edges);
 		color.add(arrow);
 
 		ActionList layout = new ActionList(Activity.INFINITY);
-		layout.add(new ForceDirectedLayout("graph"));
+//		layout.add(new ForceDirectedLayout("graph"));
 		layout.add(new RepaintAction());
+		
+		ActionList formatter = new ActionList();
+//		formatter.add(new BalloonTreeLayout("graph", 10));
+//		formatter.add(new SquarifiedTreeMapLayout("graph", 10));
+//		formatter.add(new RadialTreeLayout("graph", 250));
+		formatter.add(new NodeLinkTreeLayout("graph", Constants.ORIENT_TOP_BOTTOM, 50, 50, 50));
 
 		m_vis.putAction("color", color);
+		m_vis.putAction("formatter", formatter);
 		m_vis.putAction("layout", layout);
 
-//		setSize(720, 500); // set display size
+//		setSize(1200, 500); // set display size
 		pan(360, 250);
 		setHighQuality(true);
 		addControlListener(new InfoClickListener());
@@ -101,7 +112,12 @@ public class DialogueEditor extends Display {
 		addControlListener(new ZoomControl()); // right mouse down and drag
 
 		m_vis.run("color");
+		m_vis.run("formatter");
 		m_vis.run("layout");
+	}
+	
+	private enum NodeType {
+		Greeting, Response, Choice
 	}
 
 	private Graph makeGraph(List<Response> dialogue) {
@@ -109,8 +125,7 @@ public class DialogueEditor extends Display {
 		Table nodeData = new Table();
 		nodeData.addColumn("id", String.class);
 		nodeData.addColumn("text", String.class);
-		nodeData.addColumn("greeting", boolean.class);
-		nodeData.addColumn("choice", boolean.class);
+		nodeData.addColumn("type", NodeType.class);
 		
 		Table edgeData = new Table(0, 1);
 		edgeData.addColumn(Graph.DEFAULT_SOURCE_KEY, int.class);
@@ -130,8 +145,7 @@ public class DialogueEditor extends Display {
 			Node node = g.addNode();
 			node.setString("id", truncate(response.getText()));
 			node.setString("text", response.getText());
-			node.setBoolean("greeting", response.getGreeting());
-			node.setBoolean("choice", false);
+			node.set("type", response.getGreeting() ? NodeType.Greeting : NodeType.Response);
 			responseNodes.put(response.getId(), node);
 			System.out.println("response: " + response.getId());
 		}
@@ -141,8 +155,7 @@ public class DialogueEditor extends Display {
 				Node node = g.addNode();
 				node.setString("id", truncate(choice.getText()));
 				node.setString("text", choice.getText());
-				node.setBoolean("greeting", false);
-				node.setBoolean("choice", true);
+				node.set("type", NodeType.Choice);
 				
 				// Add an edge from the response to this choice.
 				Node parent = responseNodes.get(response.getId());

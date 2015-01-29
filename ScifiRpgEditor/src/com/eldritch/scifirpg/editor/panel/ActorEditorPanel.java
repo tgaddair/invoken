@@ -157,10 +157,10 @@ public class ActorEditorPanel extends AssetEditorPanel<NonPlayerActor, ActorTabl
 		r += 2;
 		
 		builder.addLabel("Dialogue Tree", cc.xy(c, r));
-//		builder.add(new AssetTablePanel(dialogueTable), cc.xy(c + 2, r));
+		builder.add(new AssetTablePanel(dialogueTable), cc.xy(c + 2, r));
 		
-		List<Response> dialogue = prev.isPresent() ? prev.get().getDialogue().getDialogueList() : new ArrayList<Response>();
-		builder.add(new DialogueEditor(dialogue), cc.xy(c + 2, r));
+//		List<Response> dialogue = prev.isPresent() ? prev.get().getDialogue().getDialogueList() : new ArrayList<Response>();
+//		builder.add(new DialogueEditor(dialogue), cc.xy(c + 2, r));
 		r += 2;
 		
 		JButton saveButton = new JButton("Save");

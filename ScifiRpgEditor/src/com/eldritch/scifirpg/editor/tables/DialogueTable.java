@@ -1,5 +1,6 @@
 package com.eldritch.scifirpg.editor.tables;
 
+import java.awt.BorderLayout;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -8,6 +9,7 @@ import java.util.List;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import com.eldritch.scifirpg.editor.panel.DialogueEditorPanel;
 import com.eldritch.scifirpg.editor.panel.ResponseEditorPanel;
 import com.eldritch.invoken.proto.Actors.DialogueTree.Response;
 import com.google.common.base.Optional;
@@ -32,6 +34,20 @@ public class DialogueTable extends IdentifiedAssetTable<Response> {
 		return assets;
 	}
 
+	@Override
+	protected void handleCreateAsset(Optional<Response> asset) {
+		// Create and set up the window.
+        JFrame frame = new JFrame("Dialogue Editor");
+        frame.add(new DialogueEditorPanel(this), BorderLayout.CENTER);
+        
+        // Display the window.
+        frame.pack();
+        frame.setVisible(true);
+	}
+	
+	public ResponseEditorPanel getEditorPanel() {
+		return new ResponseEditorPanel(this, new JFrame(), Optional.<Response>absent());
+	}
 
 	@Override
 	protected JPanel getEditorPanel(Optional<Response> prev, JFrame frame) {
