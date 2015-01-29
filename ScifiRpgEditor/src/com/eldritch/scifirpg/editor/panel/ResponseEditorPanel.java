@@ -2,6 +2,7 @@ package com.eldritch.scifirpg.editor.panel;
 
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -79,6 +80,16 @@ public class ResponseEditorPanel extends AssetEditorPanel<Response, DialogueTabl
 		builder.append(saveButton);
 		builder.nextLine();
 		
+		JButton deleteButton = new JButton("Delete");
+		deleteButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				delete();
+			}
+		});
+		builder.append(deleteButton);
+		builder.nextLine();
+		
 		if (prev.isPresent()) {
 			init(prev.get());
 		}
@@ -113,6 +124,13 @@ public class ResponseEditorPanel extends AssetEditorPanel<Response, DialogueTabl
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
 		dialoguePanel.handleSaveAction();
+	}
+	
+	protected void delete() {
+		if (getPrev().isPresent()) {
+			getTable().deleteAsset(getPrev().get());
+			dialoguePanel.handleSaveAction();
+		}
 	}
 
 	@Override

@@ -103,6 +103,11 @@ public abstract class AssetTable<T extends Message> extends JTable {
         frame.setVisible(true);
 	}
 	
+	public void deleteAsset(T asset) {
+		int index = getModel().getAssets().indexOf(asset);
+		handleDeleteAsset(index);
+	}
+	
 	protected void handleDeleteAsset(int row) {
 		getModel().removeAssetAt(row);
 	}

@@ -6,9 +6,11 @@ import java.awt.event.MouseEvent;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 
 import prefuse.controls.Control;
 import prefuse.controls.ControlAdapter;
+import prefuse.data.Node;
 import prefuse.visual.NodeItem;
 import prefuse.visual.VisualItem;
 
@@ -76,11 +78,22 @@ public class DialogueEditorPanel extends JPanel {
 				
 				NodeType type = ((NodeType) item.get("type"));
 				if (type == NodeType.Choice) {
+					Node parent = ((NodeItem) item).getParent();
+					if (parent == null) {
+						// the graph is broken
+						return;
+					}
 					id = (String) ((NodeItem) item).getParent().get("id");
 				}
 
 				Response response = editor.getResponse(id);
 				responseEditor.init(response);
+				
+				if (e.isPopupTrigger()) {
+					JPopupMenu jpub = new JPopupMenu();
+					jpub.add("Delete node");
+					jpub.show(e.getComponent(), (int) e.getX(), (int) e.getY());
+				}
 			}
 		}
 	}
