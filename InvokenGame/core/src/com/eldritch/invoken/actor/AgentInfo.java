@@ -21,6 +21,8 @@ import com.eldritch.invoken.proto.Disciplines.Discipline;
 import com.google.common.base.Functions;
 
 public class AgentInfo {
+    private static final float BASE_ENERGY_RATE = 3f;
+    
     final String name;
     final Species species;
     
@@ -219,6 +221,7 @@ public class AgentInfo {
 	}
 	
 	public float restore(float value) {
+	    value *= BASE_ENERGY_RATE;
         float delta = Math.max(Math.min(value, getBaseEnergy() - energy), 0);
         energy += delta;
         return delta;

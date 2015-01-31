@@ -20,7 +20,7 @@ import com.eldritch.invoken.screens.GameScreen;
 
 public class FireWeapon extends ProjectileAugmentation {
     private static final float DAMAGE_SCALE = 5;
-    private static final int BASE_COST = 3;
+    private static final int BASE_COST = 10;
     
     private static class Holder {
         private static final FireWeapon INSTANCE = new FireWeapon();

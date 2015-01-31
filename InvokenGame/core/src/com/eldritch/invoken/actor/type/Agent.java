@@ -85,7 +85,6 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     Direction direction = Direction.Down;
     private final Map<Activity, Map<Direction, Animation>> animations;
     float stateTime = 0;
-    float elapsed = 0;
 
     private final List<Agent> neighbors = new ArrayList<Agent>();
     private final Set<Agent> visibleNeighbors = new HashSet<Agent>();
@@ -867,12 +866,8 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     	    }
     	}
         
-        elapsed += delta;
-        if (elapsed >= 3) {
-            // restore 1 unit of energy every 3 seconds
-            info.restore(1);
-            elapsed = 0;
-        }
+        // restore energy in proportion to elapsed time
+        info.restore(delta);
         
         updateHeading();
 
