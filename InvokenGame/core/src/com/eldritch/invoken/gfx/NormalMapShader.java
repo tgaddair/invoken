@@ -1,12 +1,16 @@
 package com.eldritch.invoken.gfx;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Pixmap.Format;
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.eldritch.invoken.actor.type.Player;
@@ -89,6 +93,20 @@ public class NormalMapShader {
         shader.end();
         
         fbo = new FrameBuffer(Format.RGBA8888, width, height, false);
+    }
+    
+    public void setLightGeomtry(List<Light> lights, OrthographicCamera camera) {
+        float[] values = new float[lights.size() * 3];
+        for (int i = 0; i < lights.size(); i++) {
+            Light light = lights.get(i);
+            Vector2 position = light.getPosition();
+            Vector3 world = camera.unproject(new Vector3(position.x, position.y, 0));
+            values[i * 3 + 0] = world.x;
+            values[i * 3 + 1] = world.y;
+            values[i * 3 + 2] = light.getRadius();  // store radius in z
+        }
+        shader.setUniform3fv("lightGeomtry[0]", values, 0, lights.size());
+        shader.setUniformi("lightCount", lights.size());
     }
     
     public void begin() {

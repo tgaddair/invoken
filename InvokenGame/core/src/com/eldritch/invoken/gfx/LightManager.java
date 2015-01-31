@@ -91,6 +91,10 @@ public class LightManager {
         shader.setUniformf("resolution", width, height);
         shader.end();
     }
+    
+    public List<Light> getLights() {
+        return lights;
+    }
 
     public void addLight(Light light) {
         lights.add(light);

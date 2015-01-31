@@ -22,6 +22,8 @@ uniform vec3 LightPos;           //light position, normalized
 uniform LOWP vec4 LightColor;    //light RGBA -- alpha is intensity
 uniform LOWP vec4 AmbientColor;  //ambient RGBA -- alpha is intensity 
 uniform vec3 Falloff;            //attenuation coefficients
+uniform vec3 lightGeometry[64];
+uniform int lightCount;
 
 void main() {
    //RGBA of our diffuse color

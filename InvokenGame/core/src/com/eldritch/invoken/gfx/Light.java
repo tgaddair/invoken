@@ -30,6 +30,10 @@ public abstract class Light {
     public void bind(int unit) {
         light.bind(unit);
     }
+    
+    public float getRadius() {
+        return magnitude;
+    }
 
     public abstract Vector2 getPosition();
     

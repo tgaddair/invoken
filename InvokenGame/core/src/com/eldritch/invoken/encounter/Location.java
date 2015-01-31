@@ -448,6 +448,9 @@ public class Location {
 
             resetActiveTiles(origin);
             resetActiveEntities();
+            
+            // reset lights
+            normalMapShader.setLightGeomtry(lightManager.getLights(), camera);
         }
 
         if (!paused) {
