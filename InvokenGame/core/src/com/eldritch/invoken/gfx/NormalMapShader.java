@@ -104,16 +104,19 @@ public class NormalMapShader {
         fbo = new FrameBuffer(Format.RGBA8888, width, height, false);
     }
     
-    public void setLightGeometry(List<Light> lights, Rectangle viewBounds) {
+    public void setLightGeometry(List<Light> lights, OrthographicCamera camera) {
         Circle c = new Circle();
+        Rectangle bounds = new Rectangle(0, 0, fbo.getWidth(), fbo.getHeight());
         visibleLights.clear();
         for (Light light : lights) {
             Vector2 position = light.getPosition();
-            c.set(position, light.getRadius());
-            if (Intersector.overlaps(c, viewBounds)) {
+            Vector3 screen = camera.project(new Vector3(position.x, position.y, 0));
+            c.set(screen.x, screen.y, light.getRadius());
+            if (Intersector.overlaps(c, bounds)) {
                 visibleLights.add(light);
             }
         }
+//        System.out.println("visible lights: " + visibleLights.size());
         values = new float[(visibleLights.size() + 1) * 3];
     }
     
