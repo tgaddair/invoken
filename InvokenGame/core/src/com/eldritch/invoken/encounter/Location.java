@@ -450,7 +450,7 @@ public class Location {
             resetActiveEntities();
             
             // reset lights
-            normalMapShader.setLightGeomtry(lightManager.getLights(), camera);
+            normalMapShader.setLightGeometry(lightManager.getLights(), camera);
         }
 
         if (!paused) {
@@ -475,7 +475,7 @@ public class Location {
         lightMasker.render(overlayRenderer);
         renderer.getSpriteBatch().setShader(lightManager.getDefaultShader());
         overlayRenderer.getSpriteBatch().setShader(lightManager.getDefaultShader());
-        normalMapShader.render(lightManager, player, delta, renderer, overlayRenderer);
+        normalMapShader.render(lightManager, player, delta, camera, renderer, overlayRenderer);
 
         // set the tile map render view based on what the
         // camera sees and render the map

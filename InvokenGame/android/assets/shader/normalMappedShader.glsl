@@ -32,37 +32,51 @@ void main() {
    //RGB of our normal map
    vec2 globalCoord = (gl_FragCoord.xy / Resolution.xy);
    vec3 NormalMap = texture2D(u_normals, globalCoord).rgb;
-   vec4 light = texture2D(u_lights, globalCoord);
-   vec4 overlay = texture2D(u_overlay, globalCoord);
-   light = light * (1 - overlay);
-   
-   //The delta position of light
-   //vec3 LightDir = vec3(LightPos.xy - (gl_FragCoord.xy / Resolution.xy), LightPos.z);
-   
-   //Correct for aspect ratio
-   //LightDir.x *= Resolution.x / Resolution.y;
-   
-   //Determine distance (used for attenuation) BEFORE we normalize our LightDir
-   //float D = length(LightDir);
-   
-   //normalize our vectors
-   //vec3 N = normalize(NormalMap * 2.0 - 1.0);
-   //vec3 L = normalize(LightDir);
-   
-   //Pre-multiply light color with intensity
-   //Then perform \"N dot L\" to determine our diffuse term
-   //vec3 Diffuse = (LightColor.rgb * LightColor.a) * max(dot(N, L), 0.0);
-   vec3 Diffuse = light.rgb;
+   //vec4 light = texture2D(u_lights, globalCoord);
+   //vec4 overlay = texture2D(u_overlay, globalCoord);
+   //light = light * (1 - overlay);
 
-   //pre-multiply ambient color with intensity
+   // normalize the normal map
+   vec3 N = normalize(NormalMap * 2.0 - 1.0);
+
+   // accumulate light into single vector
+   vec3 DiffuseTotal = vec3(0.0, 0.0, 0.0);
+
+   // apply light contributions
+   for (int i = 0; i < lightCount; i++) {
+     vec3 light = lightGeometry[i];
+     vec2 lightCoord = light.xy / Resolution.xy;
+     //vec2 lightCoord = LightPos.xy;
+     //vec2 lightCoord = lightGeometry[0];
+
+     // the delta position of light
+     vec3 LightDir = vec3(lightCoord - globalCoord, LightPos.z);
+
+     // correct for aspect ratio
+     LightDir.x *= Resolution.x / Resolution.y;
+     
+     // determine distance (used for attenuation) BEFORE we normalize LightDir
+     float D = length(LightDir);
+     
+     // normalize our vector
+     vec3 L = normalize(LightDir);
+     
+     // pre-multiply light color with intensity
+     // then perform \"N dot L\" to determine our diffuse term
+     vec3 Diffuse = (LightColor.rgb * LightColor.a) * max(dot(N, L), 0.0);
+     
+     // calculate attenuation
+     float Attenuation = 1.0 / ( Falloff.x + (Falloff.y*D) + (Falloff.z*D*D) );
+
+     // sum the diffuse and attenuation int the diffuse total
+     DiffuseTotal += Diffuse * Attenuation;
+   }
+
+   // pre-multiply ambient color with intensity
    vec3 Ambient = AmbientColor.rgb * AmbientColor.a;
    
-   //calculate attenuation
-   //float Attenuation = 1.0 / ( Falloff.x + (Falloff.y*D) + (Falloff.z*D*D) );
-   
-   //the calculation which brings it all together
-   //vec3 Intensity = Ambient + Diffuse * Attenuation;
-   vec3 Intensity = Ambient + Diffuse;
+   // the calculation which brings it all together
+   vec3 Intensity = Ambient + DiffuseTotal;
    vec3 FinalColor = DiffuseColor.rgb * Intensity;
    gl_FragColor = vColor * vec4(FinalColor, DiffuseColor.a);
 }

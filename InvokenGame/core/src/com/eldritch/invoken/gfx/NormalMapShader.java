@@ -47,6 +47,9 @@ public class NormalMapShader {
     // no changes except for LOWP for color values
     // we would store this in a file for increased readability
     final String FRAG = Gdx.files.internal("shader/normalMappedShader.glsl").readString();
+    
+    private final List<Light> visibleLights = new ArrayList<Light>();
+    private float[] values;
 
     ShaderProgram shader;
     SpriteBatch batch;
@@ -70,6 +73,9 @@ public class NormalMapShader {
         shader.setUniformi("u_normals", 1); // GL_TEXTURE1
         shader.setUniformi("u_lights", 2); // GL_TEXTURE2
         shader.setUniformi("u_overlay", 3); // GL_TEXTURE2
+        
+        shader.setUniform3fv("lightGeomtry[0]", new float[] {}, 0, 0);
+        shader.setUniformi("lightCount", 0);
 
         // light/ambient colors
         // LibGDX doesn't have Vector4 class at the moment, so we pass them individually...
@@ -95,18 +101,32 @@ public class NormalMapShader {
         fbo = new FrameBuffer(Format.RGBA8888, width, height, false);
     }
     
-    public void setLightGeomtry(List<Light> lights, OrthographicCamera camera) {
-        float[] values = new float[lights.size() * 3];
-        for (int i = 0; i < lights.size(); i++) {
-            Light light = lights.get(i);
+    public void setLightGeometry(List<Light> lights, OrthographicCamera camera) {
+        visibleLights.clear();
+        for (Light light : lights) {
             Vector2 position = light.getPosition();
-            Vector3 world = camera.unproject(new Vector3(position.x, position.y, 0));
-            values[i * 3 + 0] = world.x;
-            values[i * 3 + 1] = world.y;
-            values[i * 3 + 2] = light.getRadius();  // store radius in z
+            Vector3 screen = camera.project(new Vector3(position.x, position.y, 0));
+            if (screen.x >= 0 && screen.y >= 0 && screen.x < fbo.getWidth() && screen.y < fbo.getHeight()) {
+                visibleLights.add(light);
+            }
         }
-        shader.setUniform3fv("lightGeomtry[0]", values, 0, lights.size());
-        shader.setUniformi("lightCount", lights.size());
+        values = new float[visibleLights.size() * 3];
+    }
+    
+    private void updateLightGeometry(OrthographicCamera camera) {
+        for (int i = 0; i < visibleLights.size(); i++) {
+            Light light = visibleLights.get(i);
+            Vector2 position = light.getPosition();
+            Vector3 screen = camera.project(new Vector3(position.x, position.y, 0));
+            values[i * 3 + 0] = screen.x;
+            values[i * 3 + 1] = screen.y;
+            values[i * 3 + 2] = light.getRadius();
+        }
+        
+        shader.begin();
+        shader.setUniform3fv("lightGeometry", values, 0, values.length);
+        shader.setUniformi("lightCount", visibleLights.size());
+        shader.end();
     }
     
     public void begin() {
@@ -114,7 +134,7 @@ public class NormalMapShader {
         shader.setUniformf("LightPos", LIGHT_POS);
     }
 
-    public void render(LightManager lightManager, Player player, float delta, OrthogonalShadedTiledMapRenderer... renderers) {
+    public void render(LightManager lightManager, Player player, float delta, OrthographicCamera camera, OrthogonalShadedTiledMapRenderer... renderers) {
 //        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         
         // reset light Z
@@ -128,6 +148,13 @@ public class NormalMapShader {
         float y = 1 - Gdx.input.getY() / (float) Gdx.graphics.getHeight();
         LIGHT_POS.x = x;
         LIGHT_POS.y = y;
+        
+//        shader.begin();
+//        shader.setUniform3fv("lightGeometry", new float[] { LIGHT_POS.x, LIGHT_POS.y, 0.0f }, 0, 3);
+//        shader.setUniformi("lightCount", 1);
+//        shader.end();
+        
+        updateLightGeometry(camera);
 
 //        LIGHT_POS.x = player.getPosition().x;
 //        LIGHT_POS.y = player.getPosition().y;
