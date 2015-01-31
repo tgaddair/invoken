@@ -53,6 +53,7 @@ import com.eldritch.invoken.gfx.Light;
 import com.eldritch.invoken.gfx.LightManager;
 import com.eldritch.invoken.gfx.NormalMapShader;
 import com.eldritch.invoken.gfx.OrthogonalShadedTiledMapRenderer;
+import com.eldritch.invoken.gfx.OverlayLightMasker;
 import com.eldritch.invoken.proto.Locations.Encounter;
 import com.eldritch.invoken.proto.Locations.Encounter.ActorParams.ActorScenario;
 import com.eldritch.invoken.ui.AgentStatusRenderer;
@@ -81,6 +82,7 @@ public class Location {
     private final Set<NaturalVector2> activeTiles = new HashSet<NaturalVector2>();
     private final LightManager lightManager;
     private final NormalMapShader normalMapShader;
+    private final OverlayLightMasker lightMasker;
 
     private final Optional<Faction> owningFaction;
 
@@ -110,6 +112,7 @@ public class Location {
         owningFaction = Optional.fromNullable(Faction.of(data.getFactionId()));
         lightManager = new LightManager(data);
         normalMapShader = new NormalMapShader();
+        lightMasker = new OverlayLightMasker(lightManager.getVertexShaderDef());
 
         // find layers we care about
         for (int i = 0; i < map.getLayers().getCount(); i++) {
@@ -372,6 +375,7 @@ public class Location {
     public void resize(int width, int height) {
         lightManager.resize(width, height);
         normalMapShader.resize(width, height);
+        lightMasker.resize(width, height);
     }
 
     public void addLights(List<Light> lights) {
@@ -465,7 +469,7 @@ public class Location {
 
         // draw lights
         lightManager.render(renderer, delta, paused);
-//        lightManager.render(overlayRenderer, delta, paused);
+        lightMasker.render(overlayRenderer);
         renderer.getSpriteBatch().setShader(lightManager.getDefaultShader());
         overlayRenderer.getSpriteBatch().setShader(lightManager.getDefaultShader());
         normalMapShader.render(lightManager, player, delta, renderer, overlayRenderer);

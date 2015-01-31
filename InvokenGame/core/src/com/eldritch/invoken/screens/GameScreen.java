@@ -34,7 +34,9 @@ import com.eldritch.invoken.util.Settings;
 
 public class GameScreen extends AbstractScreen implements InputProcessor {
     public static final AssetManager textureManager = new AssetManager();
-	
+    
+    public static boolean SCREEN_GRAB = false;
+    
 	private final DialogueMenu dialogue;
 	private final LootMenu loot;
 	private final Profession profession;  // TODO: this will become a proto containing play info
@@ -166,6 +168,9 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 		stage.draw();
 
 		drawFps();
+		
+		// reset
+		SCREEN_GRAB = false;
 	}
 	
 	@Override
@@ -267,6 +272,10 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 		    return true;
 		case Keys.EQUALS:
 		    Settings.nextDebugGraph();
+		    return true;
+		case Keys.F1:
+		    // print screen
+		    SCREEN_GRAB = true;
 		    return true;
 		default:
 			return false;
