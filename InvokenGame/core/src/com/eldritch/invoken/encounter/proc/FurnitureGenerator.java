@@ -63,7 +63,7 @@ public abstract class FurnitureGenerator {
                     // with some probability, add a light to the wall
                     if (lastLight == 1 && Math.random() < 0.75) {
                         addCell(layer, light, x, y);
-                        lights.add(new StaticLight(new Vector2(x + 0.5f, y + 1)));
+                        lights.add(new StaticLight(new Vector2(x + 0.5f, y)));
                     }
                     lastLight = (lastLight + 1) % 5;
                 } else {

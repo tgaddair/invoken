@@ -450,7 +450,7 @@ public class Location {
             resetActiveEntities();
             
             // reset lights
-            normalMapShader.setLightGeometry(lightManager.getLights(), camera);
+            normalMapShader.setLightGeometry(lightManager.getLights(), getWorldBounds());
         }
 
         if (!paused) {
@@ -553,7 +553,7 @@ public class Location {
             AgentStatusRenderer.render(agent, player, renderer);
         }
         renderer.getSpriteBatch().end();
-
+        
         if (Settings.DEBUG_DRAW) {
             // draw NPC debug rays
             for (Agent agent : activeEntities) {
@@ -562,6 +562,9 @@ public class Location {
                     npc.render(camera);
                 }
             }
+            
+            // draw lights
+            lightManager.debugRender(camera);
 
             // debug render the world
             debugRenderer.render(world, camera.combined);
@@ -636,6 +639,22 @@ public class Location {
     private NaturalVector2 getCellPosition(Drawable drawable) {
         Vector2 position = drawable.getPosition();
         return NaturalVector2.of((int) position.x, (int) position.y);
+    }
+    
+    private Rectangle getWorldBounds() {
+        final float layerTileWidth = 1;
+        final float layerTileHeight = 1;
+
+        Rectangle viewBounds = renderer.getViewBounds();
+        final int x1 = Math.max(0, (int) (viewBounds.x / layerTileWidth) - 1);
+        final int x2 = Math.min(Settings.MAX_WIDTH,
+                (int) ((viewBounds.x + viewBounds.width + layerTileWidth) / layerTileWidth) + 1);
+
+        final int y1 = Math.max(0, (int) (viewBounds.y / layerTileHeight) - 1);
+        final int y2 = Math.min(Settings.MAX_HEIGHT,
+                (int) ((viewBounds.y + viewBounds.height + layerTileHeight) / layerTileHeight) + 1);
+        
+        return new Rectangle(x1, y1, x2 - x1 + 1, y2 - y1 + 1);
     }
 
     private void resetActiveTiles(NaturalVector2 origin) {

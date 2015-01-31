@@ -55,7 +55,7 @@ public abstract class Light {
         private final Vector2 position;
         
         public StaticLight(Vector2 position) {
-            super(10, Math.random() < 0.2);
+            super(5, Math.random() < 0.2);
             this.position = position;
         }
 

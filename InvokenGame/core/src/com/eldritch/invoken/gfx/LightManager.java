@@ -5,11 +5,15 @@ import java.util.List;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.eldritch.invoken.proto.Locations.Location;
 import com.eldritch.invoken.util.Settings;
@@ -35,6 +39,8 @@ public class LightManager {
     final String vertexShader = Gdx.files.internal("shader/vertexShader.glsl").readString();
     final String lightPixelShader = Gdx.files.internal("shader/lightPixelShader.glsl").readString();
     final String finalPixelShader = Gdx.files.internal("shader/pixelShader.glsl").readString();
+    
+    private final ShapeRenderer debugRenderer = new ShapeRenderer();
 
     private final List<Light> lights = new ArrayList<Light>();
     private FrameBuffer fbo;
@@ -133,6 +139,16 @@ public class LightManager {
             // you can basically bind anything, it doesn't matter
             light.bind(0);
         }
+    }
+    
+    public void debugRender(OrthographicCamera camera) {
+        debugRenderer.setProjectionMatrix(camera.combined);
+        debugRenderer.begin(ShapeType.Line);
+        for (Light light : lights) {
+            Vector2 position = light.getPosition();
+            debugRenderer.circle(position.x, position.y, light.getRadius());
+        }
+        debugRenderer.end();
     }
     
     private static Vector3 getColor(int r, int g, int b) {
