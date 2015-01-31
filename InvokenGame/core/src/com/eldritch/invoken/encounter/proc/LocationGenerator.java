@@ -86,8 +86,8 @@ public class LocationGenerator {
     // private final TiledMapTile midWallCenter;
     private final TiledMapTile midWallBottom;
 
-    private final TiledMapTile leftTrim;
-    private final TiledMapTile rightTrim;
+    private final NormalMappedTile leftTrim;
+    private final NormalMappedTile rightTrim;
     private final TiledMapTile narrowWall;
     private final TiledMapTile narrowTop;
     private final TiledMapTile collider;
@@ -106,9 +106,12 @@ public class LocationGenerator {
 
         leftTrim = getTile(LEFT_TRIM);
         rightTrim = getTile(RIGHT_TRIM);
-        narrowWall = merge(rightTrim.getTextureRegion(), leftTrim.getTextureRegion());
-        narrowTop = merge(atlas.findRegion(biome + TOP_LEFT_TRIM),
-                atlas.findRegion(biome + TOP_RIGHT_TRIM));
+        narrowWall = merge(rightTrim, leftTrim);
+        
+        NormalMappedTile topLeft = getTile(TOP_LEFT_TRIM);
+        NormalMappedTile topRight = getTile(TOP_RIGHT_TRIM);
+        narrowTop = merge(topLeft, topRight);
+        
         collider = new StaticTiledMapTile(atlas.findRegion(COLLISION));
     }
     
@@ -779,8 +782,14 @@ public class LocationGenerator {
     public TextureAtlas getAtlas() {
         return atlas;
     }
+    
+    private static NormalMappedTile merge(NormalMappedTile left, NormalMappedTile right) {
+        TextureRegion diffuse = merge(left.getTextureRegion(), right.getTextureRegion());
+        TextureRegion normal = merge(left.getNormalRegion(), right.getNormalRegion());
+        return new NormalMappedTile(diffuse, normal);
+    }
 
-    private static TiledMapTile merge(TextureRegion left, TextureRegion right) {
+    private static TextureRegion merge(TextureRegion left, TextureRegion right) {
         FrameBuffer buffer = new FrameBuffer(Format.RGB888, Settings.PX, Settings.PX, false);
         TextureRegion region = new TextureRegion(buffer.getColorBufferTexture());
         region.flip(false, true);
@@ -804,7 +813,7 @@ public class LocationGenerator {
         batch.end();
         buffer.end();
 
-        return new StaticTiledMapTile(region);
+        return region;
     }
 
     private void saveLayer(LocationLayer layer) {

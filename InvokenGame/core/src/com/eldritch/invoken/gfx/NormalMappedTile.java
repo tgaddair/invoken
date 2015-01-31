@@ -15,4 +15,8 @@ public class NormalMappedTile extends StaticTiledMapTile {
     public Texture getNormal() {
         return normalRegion.getTexture();
     }
+    
+    public TextureRegion getNormalRegion() {
+        return normalRegion;
+    }
 }
