@@ -117,7 +117,7 @@ public class LightManager {
 
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         batch.setShader(paused ? pauseShader : finalShader);
-        fbo.getColorBufferTexture().bind(1); // this is important! bind the FBO to the 2nd texture
+        fbo.getColorBufferTexture().bind(2); // this is important! bind the FBO to the 3rd texture
                                              // unit
         for (Light light : lights) {
             // we force the binding of a texture on first texture unit to avoid artifacts

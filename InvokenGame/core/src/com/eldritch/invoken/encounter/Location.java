@@ -464,7 +464,7 @@ public class Location {
         overlayRenderer.setView(camera);
 
         // draw lights
-//        lightManager.render(renderer, delta, paused);
+        lightManager.render(renderer, delta, paused);
 //        lightManager.render(overlayRenderer, delta, paused);
         renderer.getSpriteBatch().setShader(lightManager.getDefaultShader());
         overlayRenderer.getSpriteBatch().setShader(lightManager.getDefaultShader());

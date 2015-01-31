@@ -58,6 +58,7 @@ public class NormalMapShader {
             + "//our texture samplers\n"
             + "uniform sampler2D u_texture;   //diffuse map\n"
             + "uniform sampler2D u_normals;   //normal map\n"
+            + "uniform sampler2D u_lights;   //light map\n"
             + "\n"
             + "//values used for shading algorithm...\n"
             + "uniform vec2 Resolution;         //resolution of screen\n"
@@ -71,8 +72,9 @@ public class NormalMapShader {
             + "   vec4 DiffuseColor = texture2D(u_texture, vTexCoord);\n"
             + "   \n"
             + "   //RGB of our normal map\n"
-            + "   vec2 normalCoord = (gl_FragCoord.xy / Resolution.xy);\n"
-            + "   vec3 NormalMap = texture2D(u_normals, normalCoord).rgb;\n"
+            + "   vec2 globalCoord = (gl_FragCoord.xy / Resolution.xy);\n"
+            + "   vec3 NormalMap = texture2D(u_normals, globalCoord).rgb;\n"
+            + "   vec4 light = texture2D(u_lights, globalCoord);\n"
             + "   \n"
             + "   //The delta position of light\n"
             + "   vec3 LightDir = vec3(LightPos.xy - (gl_FragCoord.xy / Resolution.xy), LightPos.z);\n"
@@ -81,24 +83,26 @@ public class NormalMapShader {
             + "   LightDir.x *= Resolution.x / Resolution.y;\n"
             + "   \n"
             + "   //Determine distance (used for attenuation) BEFORE we normalize our LightDir\n"
-            + "   float D = length(LightDir);\n"
+            + "   //float D = length(LightDir);\n"
             + "   \n"
             + "   //normalize our vectors\n"
-            + "   vec3 N = normalize(NormalMap * 2.0 - 1.0);\n"
-            + "   vec3 L = normalize(LightDir);\n"
+            + "   //vec3 N = normalize(NormalMap * 2.0 - 1.0);\n"
+            + "   //vec3 L = normalize(LightDir);\n"
             + "   \n"
             + "   //Pre-multiply light color with intensity\n"
             + "   //Then perform \"N dot L\" to determine our diffuse term\n"
-            + "   vec3 Diffuse = (LightColor.rgb * LightColor.a) * max(dot(N, L), 0.0);\n"
+            + "   //vec3 Diffuse = (LightColor.rgb * LightColor.a) * max(dot(N, L), 0.0);\n"
+            + "   vec3 Diffuse = light.rgb;\n"
             + "\n"
             + "   //pre-multiply ambient color with intensity\n"
             + "   vec3 Ambient = AmbientColor.rgb * AmbientColor.a;\n"
             + "   \n"
             + "   //calculate attenuation\n"
-            + "   float Attenuation = 1.0 / ( Falloff.x + (Falloff.y*D) + (Falloff.z*D*D) );\n"
+            + "   //float Attenuation = 1.0 / ( Falloff.x + (Falloff.y*D) + (Falloff.z*D*D) );\n"
             + "   \n"
             + "   //the calculation which brings it all together\n"
-            + "   vec3 Intensity = Ambient + Diffuse * Attenuation;\n"
+            + "   //vec3 Intensity = Ambient + Diffuse * Attenuation;\n"
+            + "   vec3 Intensity = Ambient + Diffuse;\n"
             + "   vec3 FinalColor = DiffuseColor.rgb * Intensity;\n"
             + "   gl_FragColor = vColor * vec4(FinalColor, DiffuseColor.a);\n" + "}";
 
@@ -120,8 +124,9 @@ public class NormalMapShader {
         // setup default uniforms
         shader.begin();
 
-        // our normal map
+        // our normal map and lights
         shader.setUniformi("u_normals", 1); // GL_TEXTURE1
+        shader.setUniformi("u_lights", 2); // GL_TEXTURE2
 
         // light/ambient colors
         // LibGDX doesn't have Vector4 class at the moment, so we pass them individually...
