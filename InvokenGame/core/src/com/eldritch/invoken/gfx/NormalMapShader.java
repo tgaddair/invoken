@@ -14,7 +14,8 @@ import com.eldritch.invoken.actor.type.Player;
 public class NormalMapShader {
     // our constants...
     public static final float DEFAULT_LIGHT_Z = 0.075f;
-    public static final float AMBIENT_INTENSITY = 0.2f;
+//    public static final float AMBIENT_INTENSITY = 0.2f;
+    public static final float AMBIENT_INTENSITY = 0.7f;
     public static final float LIGHT_INTENSITY = 1f;
 
     public static final Vector3 LIGHT_POS = new Vector3(0f, 0f, DEFAULT_LIGHT_Z);
@@ -160,31 +161,23 @@ public class NormalMapShader {
         // shader will now be in use...
 
         // update light position, normalized to screen resolution
-//        float x = Mouse.getX() / (float) Display.getWidth();
-//        float y = Mouse.getY() / (float) Display.getHeight();
+        float x = Gdx.input.getX() / (float) Gdx.graphics.getWidth();
+        float y = 1 - Gdx.input.getY() / (float) Gdx.graphics.getHeight();
+        LIGHT_POS.x = x;
+        LIGHT_POS.y = y;
 
-        LIGHT_POS.x = player.getPosition().x;
-        LIGHT_POS.y = player.getPosition().y;
+//        LIGHT_POS.x = player.getPosition().x;
+//        LIGHT_POS.y = player.getPosition().y;
 
-        Batch batch = renderer.getSpriteBatch();
         fbo.begin();
-//        batch.setShader(lightManager.getFinalShader());
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         renderer.setNormalRender(true);
         renderer.render();
         renderer.setNormalRender(false);
         fbo.end();
-
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-//        batch.setShader(shader);
-//        batch.setShader(lightManager.getFinalShader());
         
         // this is important! bind the FBO to the 2nd texture unit
         fbo.getColorBufferTexture().bind(1);
-        
-        // bind diffuse color to texture unit 0
-        // important that we specify 0 otherwise we'll still be bound to
-        // glActiveTexture(GL_TEXTURE1)
-//        region.getTexture().bind(0);
     }
 }

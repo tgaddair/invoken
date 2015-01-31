@@ -461,17 +461,21 @@ public class Location {
         }
         
         renderer.setView(camera);
+        overlayRenderer.setView(camera);
 
         // draw lights
 //        lightManager.render(renderer, delta, paused);
 //        lightManager.render(overlayRenderer, delta, paused);
+        renderer.getSpriteBatch().setShader(lightManager.getDefaultShader());
         normalMapShader.render(renderer, lightManager, player, delta);
+        
+        overlayRenderer.getSpriteBatch().setShader(lightManager.getDefaultShader());
+        normalMapShader.render(overlayRenderer, lightManager, player, delta);
 
         // set the tile map render view based on what the
         // camera sees and render the map
         renderer.getSpriteBatch().setShader(normalMapShader.getShader());
         renderer.render();
-        renderer.getSpriteBatch().setShader(lightManager.getDefaultShader());
 
         if (paused) {
             // render all pending player actions
@@ -535,7 +539,7 @@ public class Location {
         }
 
         // render the overlay layers
-        overlayRenderer.setView(camera);
+        overlayRenderer.getSpriteBatch().setShader(normalMapShader.getShader());
         overlayRenderer.render();
 
         // render status info

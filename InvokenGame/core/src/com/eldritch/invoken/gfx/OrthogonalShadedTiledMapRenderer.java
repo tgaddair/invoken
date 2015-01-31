@@ -22,7 +22,6 @@ import static com.badlogic.gdx.graphics.g2d.Batch.Y3;
 import static com.badlogic.gdx.graphics.g2d.Batch.Y4;
 
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
@@ -191,6 +190,7 @@ public class OrthogonalShadedTiledMapRenderer extends OrthogonalTiledMapRenderer
                     if (normalRender && tile instanceof NormalMappedTile) {
                         NormalMappedTile normalTile = (NormalMappedTile) tile;
                         spriteBatch.draw(normalTile.getNormal(), vertices, 0, 20);
+                        normalTile.getNormal().bind(0);
                     } else {
                         region.getTexture().bind(0);
                         spriteBatch.draw(region.getTexture(), vertices, 0, 20);
