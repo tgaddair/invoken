@@ -467,10 +467,8 @@ public class Location {
 //        lightManager.render(renderer, delta, paused);
 //        lightManager.render(overlayRenderer, delta, paused);
         renderer.getSpriteBatch().setShader(lightManager.getDefaultShader());
-        normalMapShader.render(renderer, lightManager, player, delta);
-        
         overlayRenderer.getSpriteBatch().setShader(lightManager.getDefaultShader());
-        normalMapShader.render(overlayRenderer, lightManager, player, delta);
+        normalMapShader.render(lightManager, player, delta, renderer, overlayRenderer);
 
         // set the tile map render view based on what the
         // camera sees and render the map

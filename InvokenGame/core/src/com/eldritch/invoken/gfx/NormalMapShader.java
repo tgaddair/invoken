@@ -152,7 +152,7 @@ public class NormalMapShader {
         shader.setUniformf("LightPos", LIGHT_POS);
     }
 
-    public void render(OrthogonalShadedTiledMapRenderer renderer, LightManager lightManager, Player player, float delta) {
+    public void render(LightManager lightManager, Player player, float delta, OrthogonalShadedTiledMapRenderer... renderers) {
 //        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         
         // reset light Z
@@ -172,9 +172,11 @@ public class NormalMapShader {
 
         fbo.begin();
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        renderer.setNormalRender(true);
-        renderer.render();
-        renderer.setNormalRender(false);
+        for (OrthogonalShadedTiledMapRenderer renderer : renderers) {
+            renderer.setNormalRender(true);
+            renderer.render();
+            renderer.setNormalRender(false);
+        }
         fbo.end();
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         
