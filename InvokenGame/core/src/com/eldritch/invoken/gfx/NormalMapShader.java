@@ -10,6 +10,9 @@ import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
+import com.badlogic.gdx.math.Circle;
+import com.badlogic.gdx.math.Intersector;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.GdxRuntimeException;
@@ -101,12 +104,13 @@ public class NormalMapShader {
         fbo = new FrameBuffer(Format.RGBA8888, width, height, false);
     }
     
-    public void setLightGeometry(List<Light> lights, OrthographicCamera camera) {
+    public void setLightGeometry(List<Light> lights, Rectangle viewBounds) {
+        Circle c = new Circle();
         visibleLights.clear();
         for (Light light : lights) {
             Vector2 position = light.getPosition();
-            Vector3 screen = camera.project(new Vector3(position.x, position.y, 0));
-            if (screen.x >= 0 && screen.y >= 0 && screen.x < fbo.getWidth() && screen.y < fbo.getHeight()) {
+            c.set(position, light.getRadius());
+            if (Intersector.overlaps(c, viewBounds)) {
                 visibleLights.add(light);
             }
         }

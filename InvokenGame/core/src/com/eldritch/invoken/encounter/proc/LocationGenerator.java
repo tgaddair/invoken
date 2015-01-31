@@ -145,7 +145,7 @@ public class LocationGenerator {
         map.getLayers().add(collision);
 
         InvokenGame.log("Creating Roof");
-        TiledMapTile roofTile = new StaticTiledMapTile(atlas.findRegion(biome + ROOF));
+        TiledMapTile roofTile = getTile(ROOF);
         for (int i = 0; i < typeMap.length; i++) {
             for (int j = 0; j < typeMap[i].length; j++) {
                 if (typeMap[i][j] != CellType.Floor) {
@@ -411,8 +411,7 @@ public class LocationGenerator {
         layer.setOpacity(1.0f);
         layer.setName("overlay");
 
-        TiledMapTile belowTrim = new StaticTiledMapTile(
-                atlas.findRegion(biome + OVERLAY_BELOW_TRIM));
+        TiledMapTile belowTrim = getTile(OVERLAY_BELOW_TRIM);
         for (int x = 0; x < base.getWidth(); x++) {
             for (int y = 0; y < base.getHeight(); y++) {
                 Cell cell = base.getCell(x, y);
@@ -436,10 +435,8 @@ public class LocationGenerator {
         layer1.setOpacity(1.0f);
         layer1.setName("overlay-trim-2");
 
-        TiledMapTile overlayLeftTrim = new StaticTiledMapTile(atlas.findRegion(biome
-                + OVERLAY_LEFT_TRIM));
-        TiledMapTile overlayRightTrim = new StaticTiledMapTile(atlas.findRegion(biome
-                + OVERLAY_RIGHT_TRIM));
+        TiledMapTile overlayLeftTrim = getTile(OVERLAY_LEFT_TRIM);
+        TiledMapTile overlayRightTrim = getTile(OVERLAY_RIGHT_TRIM);
 
         // fill in sides
         for (int x = 0; x < overlay.getWidth(); x++) {
@@ -465,10 +462,10 @@ public class LocationGenerator {
         }
 
         // bottom left
-        TiledMapTile leftCorner = new StaticTiledMapTile(atlas.findRegion(biome + LEFT_CORNER));
+        TiledMapTile leftCorner = getTile(LEFT_CORNER);
 
         // bottom right
-        TiledMapTile rightCorner = new StaticTiledMapTile(atlas.findRegion(biome + RIGHT_CORNER));
+        TiledMapTile rightCorner = getTile(RIGHT_CORNER);
 
         // required offsets
         leftCorner.setOffsetX(Settings.PX / 2);
