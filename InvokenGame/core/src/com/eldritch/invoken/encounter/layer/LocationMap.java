@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
@@ -21,6 +22,7 @@ public class LocationMap extends TiledMap {
     private Set<NaturalVector2> activeTiles = null;
     private final List<Activator> activators = new ArrayList<Activator>();
     private final TiledMap overlayMap = new TiledMap();
+    private final Map<Texture, Texture> normals = new HashMap<Texture, Texture>();
     
     private ConnectedRoom[][] rooms;
     

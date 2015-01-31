@@ -796,3 +796,134 @@ industry/terminal-small
   orig: 32, 32
   offset: 0, 0
   index: -1
+
+normal/industry-walls.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+normal/industry/roof
+  rotate: false
+  xy: 208, 368
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+normal/industry/left-wall-top
+  rotate: false
+  xy: 256, 96
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+normal/industry/right-wall-top
+  rotate: false
+  xy: 288, 96
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+normal/industry/left-wall-bottom
+  rotate: false
+  xy: 256, 128
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+normal/industry/right-wall-bottom
+  rotate: false
+  xy: 288, 128
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+normal/industry/mid-wall-top
+  rotate: false
+  xy: 272, 96
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+normal/industry/mid-wall-center
+  rotate: false
+  xy: 272, 112
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+normal/industry/mid-wall-bottom
+  rotate: false
+  xy: 272, 128
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+normal/industry/left-trim
+  rotate: false
+  xy: 224, 368
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+normal/industry/right-trim
+  rotate: false
+  xy: 192, 368
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+normal/industry/overlay-left-trim
+  rotate: false
+  xy: 224, 352
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+normal/industry/overlay-right-trim
+  rotate: false
+  xy: 192, 352
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+normal/industry/left-corner
+  rotate: false
+  xy: 240, 320
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+normal/industry/right-corner
+  rotate: false
+  xy: 224, 320
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+normal/industry/below-trim
+  rotate: false
+  xy: 208, 352
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+normal/industry/overlay-below-trim
+  rotate: false
+  xy: 208, 352
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+normal/industry/top-left-trim
+  rotate: false
+  xy: 192, 352
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+normal/industry/top-right-trim
+  rotate: false
+  xy: 224, 352
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1

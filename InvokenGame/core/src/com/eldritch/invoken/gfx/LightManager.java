@@ -55,6 +55,10 @@ public class LightManager {
         resize(Settings.MENU_VIEWPORT_WIDTH, Settings.MENU_VIEWPORT_HEIGHT);
     }
     
+    public ShaderProgram getFinalShader() {
+        return finalShader;
+    }
+    
     private ShaderProgram createShader(String pixelShader, Vector3 color, float intensity) {
         ShaderProgram shader = new ShaderProgram(vertexShader, pixelShader);
         shader.begin();

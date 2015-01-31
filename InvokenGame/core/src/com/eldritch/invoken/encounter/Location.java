@@ -21,7 +21,6 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
-import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
@@ -52,6 +51,8 @@ import com.eldritch.invoken.encounter.layer.EncounterLayer;
 import com.eldritch.invoken.encounter.layer.LocationMap;
 import com.eldritch.invoken.gfx.Light;
 import com.eldritch.invoken.gfx.LightManager;
+import com.eldritch.invoken.gfx.NormalMapShader;
+import com.eldritch.invoken.gfx.OrthogonalShadedTiledMapRenderer;
 import com.eldritch.invoken.proto.Locations.Encounter;
 import com.eldritch.invoken.proto.Locations.Encounter.ActorParams.ActorScenario;
 import com.eldritch.invoken.ui.AgentStatusRenderer;
@@ -60,13 +61,13 @@ import com.eldritch.invoken.util.Settings;
 import com.google.common.base.Optional;
 
 public class Location {
-	private static Pool<Rectangle> rectPool = new Pool<Rectangle>() {
+    private static Pool<Rectangle> rectPool = new Pool<Rectangle>() {
         @Override
         protected Rectangle newObject() {
             return new Rectangle();
         }
     };
-    
+
     private final Color actionsColor = new Color(1, 0, 0, 1);
 
     private Player player;
@@ -79,26 +80,27 @@ public class Location {
     private final List<SecurityCamera> securityCameras = new ArrayList<SecurityCamera>();
     private final Set<NaturalVector2> activeTiles = new HashSet<NaturalVector2>();
     private final LightManager lightManager;
-    
+    private final NormalMapShader normalMapShader;
+
     private final Optional<Faction> owningFaction;
 
-    private OrthogonalTiledMapRenderer renderer;
-    private OrthogonalTiledMapRenderer overlayRenderer;
+    private OrthogonalShadedTiledMapRenderer renderer;
+    private OrthogonalShadedTiledMapRenderer overlayRenderer;
     private Array<Rectangle> tiles = new Array<Rectangle>();
 
     private int collisionIndex = -1;
     private final int groundIndex = 0;
-    
+
     private final World world;
     private final Vector2 focusPoint = new Vector2();
-    
+
     private NaturalVector2 currentCell = null;
     private float currentZoom = 0;
     private Rectangle viewBounds = new Rectangle();
-    
+
     LineRenderer lineRenderer = new LineRenderer();
     Box2DDebugRenderer debugRenderer = new Box2DDebugRenderer();
-    
+
     public Location(com.eldritch.invoken.proto.Locations.Location data) {
         this(data, readMap(data));
     }
@@ -107,7 +109,8 @@ public class Location {
         this.map = map;
         owningFaction = Optional.fromNullable(Faction.of(data.getFactionId()));
         lightManager = new LightManager(data);
-        
+        normalMapShader = new NormalMapShader();
+
         // find layers we care about
         for (int i = 0; i < map.getLayers().getCount(); i++) {
             TiledMapTileLayer layer = (TiledMapTileLayer) map.getLayers().get(i);
@@ -119,21 +122,22 @@ public class Location {
 
         // objects are rendered by y-ordering with other entities
         float unitScale = 1.0f / Settings.PX;
-        renderer = new OrthogonalTiledMapRenderer(map, unitScale);
-        overlayRenderer = new OrthogonalTiledMapRenderer(map.getOverlayMap(), unitScale);
-        
+        renderer = new OrthogonalShadedTiledMapRenderer(map, unitScale, normalMapShader);
+        overlayRenderer = new OrthogonalShadedTiledMapRenderer(map.getOverlayMap(), unitScale,
+                normalMapShader);
+
         // Instantiate a new World with no gravity and tell it to sleep when possible.
-  		world = new World(new Vector2(0, 0), true);
-  		addWalls(world);
+        world = new World(new Vector2(0, 0), true);
+        addWalls(world);
 
         // add encounters
         addEntities(data, map);
     }
-    
+
     public Player getPlayer() {
-    	return player;
+        return player;
     }
-    
+
     public Player createPlayer(Profession profession) {
         // spawn and add the player
         Vector2 spawn = getSpawnLocation();
@@ -141,155 +145,155 @@ public class Location {
         addActor(player);
         return player;
     }
-    
+
     private Player createPlayer(World world, Profession profession, float x, float y) {
-    	// create the Player we want to move around the world
-		Player player = new Player(profession, 25, x, y,
-				world, "sprite/characters/light-blue-hair.png");
-//    			player.addFaction(playerFaction, 9, 0);
-		
-		Item outfit = profession.getDefaultOutfit();
-		player.getInfo().getInventory().addItem(outfit);
-		player.getInfo().getInventory().equip(outfit);
-		
-		Item weapon = Item.fromProto(InvokenGame.ITEM_READER.readAsset("AssaultRifle"));
+        // create the Player we want to move around the world
+        Player player = new Player(profession, 25, x, y, world,
+                "sprite/characters/light-blue-hair.png");
+        // player.addFaction(playerFaction, 9, 0);
+
+        Item outfit = profession.getDefaultOutfit();
+        player.getInfo().getInventory().addItem(outfit);
+        player.getInfo().getInventory().equip(outfit);
+
+        Item weapon = Item.fromProto(InvokenGame.ITEM_READER.readAsset("AssaultRifle"));
         player.getInfo().getInventory().addItem(weapon);
         player.getInfo().getInventory().equip(weapon);
-        
+
         Item melee = Item.fromProto(InvokenGame.ITEM_READER.readAsset("Hammer"));
         player.getInfo().getInventory().addItem(melee);
         player.getInfo().getInventory().equip(melee);
-        
+
         return player;
     }
-    
+
     private void addWalls(World world) {
-    	for (int y = 1; y < map.getHeight(); y++) {
-    		boolean contiguous = false;
-    		int x0 = 0;
-    		
-    		// scan through the rows looking for collision stripes and ground below
-    		for (int x = 0; x < map.getWidth(); x++) {
-    			if (isObstacle(x, y) && !isObstacle(x, y - 1)) {
-    				// this is part of a valid edge
-    				if (!contiguous) {
-    					// this is the first point in the edge
-    					x0 = x;
-    					contiguous = true;
-    				}
-    			} else {
-    				// this point is not part of a valid edge
-    				if (contiguous) {
-    					// this point marks the end of our last edge
-    					addEdge(x0, y, x, y, world);
-    					contiguous = false;
-    				}
-    			}
-    		}
-    		
-    		contiguous = false;
-    		x0 = 0;
-    		
-    		// scan through the rows looking for collision stripes and ground above
-    		for (int x = 0; x < map.getWidth(); x++) {
-    			if (!isObstacle(x, y) && isObstacle(x, y - 1)) {
-    				// this is part of a valid edge
-    				if (!contiguous) {
-    					// this is the first point in the edge
-    					x0 = x;
-    					contiguous = true;
-    				}
-    			} else {
-    				// this point is not part of a valid edge
-    				if (contiguous) {
-    					// this point marks the end of our last edge
-    					addEdge(x0, y, x, y, world);
-    					contiguous = false;
-    				}
-    			}
-    		}
-    	}
-    	
-    	for (int x = 1; x < map.getWidth(); x++) {
-    		boolean contiguous = false;
-    		int y0 = 0;
-    		
-    		// scan through the columns looking for collision stripes and ground left
-    		for (int y = 0; y < map.getHeight(); y++) {
-    			if (isObstacle(x, y) && !isObstacle(x - 1, y)) {
-    				// this is part of a valid edge
-    				if (!contiguous) {
-    					// this is the first point in the edge
-    					y0 = y;
-    					contiguous = true;
-    				}
-    			} else {
-    				// this point is not part of a valid edge
-    				if (contiguous) {
-    					// this point marks the end of our last edge
-    					addEdge(x, y0, x, y, world);
-    					contiguous = false;
-    				}
-    			}
-    		}
-    		
-    		contiguous = false;
-    		y0 = 0;
-    		
-    		// scan through the rows looking for collision stripes and ground right
-    		for (int y = 0; y < map.getHeight(); y++) {
-    			if (!isObstacle(x, y) && isObstacle(x - 1, y)) {
-    				// this is part of a valid edge
-    				if (!contiguous) {
-    					// this is the first point in the edge
-    					y0 = y;
-    					contiguous = true;
-    				}
-    			} else {
-    				// this point is not part of a valid edge
-    				if (contiguous) {
-    					// this point marks the end of our last edge
-    					addEdge(x, y0, x, y, world);
-    					contiguous = false;
-    				}
-    			}
-    		}
-    	}
+        for (int y = 1; y < map.getHeight(); y++) {
+            boolean contiguous = false;
+            int x0 = 0;
+
+            // scan through the rows looking for collision stripes and ground below
+            for (int x = 0; x < map.getWidth(); x++) {
+                if (isObstacle(x, y) && !isObstacle(x, y - 1)) {
+                    // this is part of a valid edge
+                    if (!contiguous) {
+                        // this is the first point in the edge
+                        x0 = x;
+                        contiguous = true;
+                    }
+                } else {
+                    // this point is not part of a valid edge
+                    if (contiguous) {
+                        // this point marks the end of our last edge
+                        addEdge(x0, y, x, y, world);
+                        contiguous = false;
+                    }
+                }
+            }
+
+            contiguous = false;
+            x0 = 0;
+
+            // scan through the rows looking for collision stripes and ground above
+            for (int x = 0; x < map.getWidth(); x++) {
+                if (!isObstacle(x, y) && isObstacle(x, y - 1)) {
+                    // this is part of a valid edge
+                    if (!contiguous) {
+                        // this is the first point in the edge
+                        x0 = x;
+                        contiguous = true;
+                    }
+                } else {
+                    // this point is not part of a valid edge
+                    if (contiguous) {
+                        // this point marks the end of our last edge
+                        addEdge(x0, y, x, y, world);
+                        contiguous = false;
+                    }
+                }
+            }
+        }
+
+        for (int x = 1; x < map.getWidth(); x++) {
+            boolean contiguous = false;
+            int y0 = 0;
+
+            // scan through the columns looking for collision stripes and ground left
+            for (int y = 0; y < map.getHeight(); y++) {
+                if (isObstacle(x, y) && !isObstacle(x - 1, y)) {
+                    // this is part of a valid edge
+                    if (!contiguous) {
+                        // this is the first point in the edge
+                        y0 = y;
+                        contiguous = true;
+                    }
+                } else {
+                    // this point is not part of a valid edge
+                    if (contiguous) {
+                        // this point marks the end of our last edge
+                        addEdge(x, y0, x, y, world);
+                        contiguous = false;
+                    }
+                }
+            }
+
+            contiguous = false;
+            y0 = 0;
+
+            // scan through the rows looking for collision stripes and ground right
+            for (int y = 0; y < map.getHeight(); y++) {
+                if (!isObstacle(x, y) && isObstacle(x - 1, y)) {
+                    // this is part of a valid edge
+                    if (!contiguous) {
+                        // this is the first point in the edge
+                        y0 = y;
+                        contiguous = true;
+                    }
+                } else {
+                    // this point is not part of a valid edge
+                    if (contiguous) {
+                        // this point marks the end of our last edge
+                        addEdge(x, y0, x, y, world);
+                        contiguous = false;
+                    }
+                }
+            }
+        }
     }
-    
+
     public Body createEdge(int x0, int y0, int x1, int y1) {
         return addEdge(x0, y0, x1, y1, world);
     }
-    
-    private Body addEdge(int x0, int y0, int x1, int y1, World world) {
-    	EdgeShape edge = new EdgeShape();
-		Vector2 start = new Vector2(x0, y0);
-		Vector2 end = new Vector2(x1, y1);
-		edge.set(start, end);
-		
-		BodyDef groundBodyDef = new BodyDef();
-		groundBodyDef.type = BodyType.StaticBody;
-		groundBodyDef.position.set(0, 0);
 
-		FixtureDef fixtureDef = new FixtureDef();
-		fixtureDef.shape = edge;
-		fixtureDef.filter.groupIndex = 0;
-		
-		Body body = world.createBody(groundBodyDef);
-		Fixture fixture = body.createFixture(fixtureDef);
-		
-		// collision filters
+    private Body addEdge(int x0, int y0, int x1, int y1, World world) {
+        EdgeShape edge = new EdgeShape();
+        Vector2 start = new Vector2(x0, y0);
+        Vector2 end = new Vector2(x1, y1);
+        edge.set(start, end);
+
+        BodyDef groundBodyDef = new BodyDef();
+        groundBodyDef.type = BodyType.StaticBody;
+        groundBodyDef.position.set(0, 0);
+
+        FixtureDef fixtureDef = new FixtureDef();
+        fixtureDef.shape = edge;
+        fixtureDef.filter.groupIndex = 0;
+
+        Body body = world.createBody(groundBodyDef);
+        Fixture fixture = body.createFixture(fixtureDef);
+
+        // collision filters
         Filter filter = fixture.getFilterData();
         filter.categoryBits = Settings.BIT_PHYSICAL;
         filter.maskBits = Settings.BIT_ANYTHING;
         fixture.setFilterData(filter);
-		
-		edge.dispose();
-		
-		System.out.println("edge: " + start + " " + end);
-		return body;
+
+        edge.dispose();
+
+        System.out.println("edge: " + start + " " + end);
+        return body;
     }
-    
+
     public void alertTo(Agent intruder) {
         if (owningFaction.isPresent()) {
             Faction faction = owningFaction.get();
@@ -308,23 +312,23 @@ public class Location {
     public void addActivators(List<Activator> activators) {
         this.activators.addAll(activators);
         for (Activator activator : activators) {
-        	activator.register(this);
+            activator.register(this);
         }
     }
-    
+
     public void addSecurityCamera(SecurityCamera camera) {
-    	if (!securityCameras.isEmpty()) {
-    		securityCameras.get(securityCameras.size() - 1).setNext(camera);
-    	}
-    	securityCameras.add(camera);
+        if (!securityCameras.isEmpty()) {
+            securityCameras.get(securityCameras.size() - 1).setNext(camera);
+        }
+        securityCameras.add(camera);
     }
-    
+
     public SecurityCamera getFirstSecurityCamera() {
-    	return securityCameras.get(0);
+        return securityCameras.get(0);
     }
-    
+
     public boolean hasSecurityCamera() {
-    	return !securityCameras.isEmpty();
+        return !securityCameras.isEmpty();
     }
 
     public void addEntities(com.eldritch.invoken.proto.Locations.Location data, TiledMap map) {
@@ -364,9 +368,10 @@ public class Location {
         }
         return list;
     }
-    
+
     public void resize(int width, int height) {
         lightManager.resize(width, height);
+        normalMapShader.resize(width, height);
     }
 
     public void addLights(List<Light> lights) {
@@ -408,39 +413,39 @@ public class Location {
     private void addActor(Agent actor) {
         entities.add(actor);
     }
-    
+
     public World getWorld() {
-    	return world;
+        return world;
     }
-    
+
     public void setFocusPoint(float x, float y) {
         focusPoint.set(x, y);
     }
 
     public void render(float delta, OrthographicCamera camera, TextureRegion selector,
             boolean paused) {
-    	// update the world simulation
-    	world.step(1 / 60f, 8, 3);
-        
+        // update the world simulation
+        world.step(1 / 60f, 8, 3);
+
         // let the camera follow the player
         Vector2 position = player.getCamera().getPosition();
         float scale = Settings.PX * camera.zoom * 1.25f;
         camera.position.x = Math.round(position.x * scale) / scale;
         camera.position.y = Math.round(position.y * scale) / scale;
         camera.update();
-        
+
         // update the player (process input, collision detection, position update)
         NaturalVector2 origin = NaturalVector2.of((int) position.x, (int) position.y);
-        if (origin != currentCell || camera.zoom != currentZoom || activeTiles.isEmpty() 
+        if (origin != currentCell || camera.zoom != currentZoom || activeTiles.isEmpty()
                 || changedViewBounds(renderer.getViewBounds())) {
             currentCell = origin;
             currentZoom = camera.zoom;
             viewBounds.set(renderer.getViewBounds());
-            
+
             resetActiveTiles(origin);
             resetActiveEntities();
         }
-        
+
         if (!paused) {
             for (Agent actor : activeEntities) {
                 actor.update(delta, this);
@@ -454,26 +459,28 @@ public class Location {
                 }
             }
         }
+        
+        renderer.setView(camera);
 
         // draw lights
-        lightManager.render(renderer, delta, paused);
-        lightManager.render(overlayRenderer, delta, paused);
+//        lightManager.render(renderer, delta, paused);
+//        lightManager.render(overlayRenderer, delta, paused);
+//        normalMapShader.render(renderer, lightManager, player, delta);
 
         // set the tile map render view based on what the
         // camera sees and render the map
-        renderer.setView(camera);
         renderer.render();
-        
+
         if (paused) {
             // render all pending player actions
             actionsColor.set(actionsColor.r, actionsColor.g, actionsColor.b, 1);
             for (Action action : player.getReverseActions()) {
                 drawCentered(selector, action.getPosition(), actionsColor);
-                actionsColor.set(
-                        actionsColor.r, actionsColor.g, actionsColor.b, actionsColor.a * 0.5f);
+                actionsColor.set(actionsColor.r, actionsColor.g, actionsColor.b,
+                        actionsColor.a * 0.5f);
             }
         }
-        
+
         // sort drawables by descending y
         Collections.sort(drawables, new Comparator<Drawable>() {
             @Override
@@ -481,27 +488,27 @@ public class Location {
                 return Float.compare(a2.getZ(), a1.getZ());
             }
         });
-        
+
         // draw the disposition graph
         if (player.getTarget() != null) {
-        	Agent target = player.getTarget();
-        	switch (Settings.DRAW_GRAPH) {
-        	    case Disposition:
+            Agent target = player.getTarget();
+            switch (Settings.DRAW_GRAPH) {
+                case Disposition:
                     lineRenderer.renderDispositions(target, activeEntities, camera);
-        	        break;
-        	    case LOS:
-        	        lineRenderer.renderLineOfSight(target, activeEntities, camera);
-        	        break;
-        	    case Enemies:
-        	        lineRenderer.renderEnemies(target, activeEntities, camera);
-        	        break;
-        	    case Visible:
+                    break;
+                case LOS:
+                    lineRenderer.renderLineOfSight(target, activeEntities, camera);
+                    break;
+                case Enemies:
+                    lineRenderer.renderEnemies(target, activeEntities, camera);
+                    break;
+                case Visible:
                     lineRenderer.renderVisible(target, activeEntities, camera);
                     break;
-        	    case None:
-        	}
+                case None:
+            }
         }
-        
+
         // draw selected entity
         for (Agent agent : activeEntities) {
             if (agent == player.getTarget() && !paused) {
@@ -513,7 +520,7 @@ public class Location {
                 drawCentered(selector, agent.getRenderPosition(), color);
             }
         }
-        
+
         // draw targeting reticle
 //        lineRenderer.drawBetween(player.getPosition(), focusPoint, camera);
 
@@ -528,25 +535,25 @@ public class Location {
         // render the overlay layers
         overlayRenderer.setView(camera);
         overlayRenderer.render();
-        
+
         // render status info
         renderer.getSpriteBatch().begin();
         for (Agent agent : activeEntities) {
             AgentStatusRenderer.render(agent, player, renderer);
         }
         renderer.getSpriteBatch().end();
-        
+
         if (Settings.DEBUG_DRAW) {
-	        // draw NPC debug rays
-	        for (Agent agent : activeEntities) {
-	        	if (agent instanceof Npc) {
-	        		Npc npc = (Npc) agent;
-	        		npc.render(camera);
-	        	}
-	        }
-	        
-	        // debug render the world
-	        debugRenderer.render(world, camera.combined);
+            // draw NPC debug rays
+            for (Agent agent : activeEntities) {
+                if (agent instanceof Npc) {
+                    Npc npc = (Npc) agent;
+                    npc.render(camera);
+                }
+            }
+
+            // debug render the world
+            debugRenderer.render(world, camera.combined);
         }
     }
 
@@ -561,13 +568,12 @@ public class Location {
         batch.end();
         batch.setColor(Color.WHITE);
     }
-    
+
     private boolean changedViewBounds(Rectangle cameraBounds) {
-        return 
-                ((int) viewBounds.x) != ((int) cameraBounds.x) ||
-                ((int) viewBounds.y) != ((int) cameraBounds.y) ||
-                ((int) viewBounds.width) != ((int) cameraBounds.width) ||
-                ((int) viewBounds.height) != ((int) cameraBounds.height);
+        return ((int) viewBounds.x) != ((int) cameraBounds.x)
+                || ((int) viewBounds.y) != ((int) cameraBounds.y)
+                || ((int) viewBounds.width) != ((int) cameraBounds.width)
+                || ((int) viewBounds.height) != ((int) cameraBounds.height);
     }
 
     public List<Agent> getActors() {
@@ -595,7 +601,7 @@ public class Location {
     private void resetActiveEntities() {
         activeEntities.clear();
         drawables.clear();
-        
+
         // add agents
         for (Agent other : entities) {
             if (activeTiles.contains(other.getCellPosition())) {
@@ -604,10 +610,10 @@ public class Location {
             } else if (other.hasEnemies() && player.isNear(other)) {
                 activeEntities.add(other);
             } else if (other == player) {
-            	activeEntities.add(other);
+                activeEntities.add(other);
             }
         }
-        
+
         // add activators
         for (Activator activator : activators) {
             if (activeTiles.contains(getCellPosition(activator))) {
@@ -615,7 +621,7 @@ public class Location {
             }
         }
     }
-    
+
     private NaturalVector2 getCellPosition(Drawable drawable) {
         Vector2 position = drawable.getPosition();
         return NaturalVector2.of((int) position.x, (int) position.y);
@@ -624,10 +630,10 @@ public class Location {
     private void resetActiveTiles(NaturalVector2 origin) {
         map.update(null);
         activeTiles.clear();
-        
+
         final float layerTileWidth = 1;
         final float layerTileHeight = 1;
-        
+
         Rectangle viewBounds = renderer.getViewBounds();
         final int x1 = Math.max(0, (int) (viewBounds.x / layerTileWidth) - 1);
         final int x2 = Math.min(Settings.MAX_WIDTH,
@@ -636,7 +642,7 @@ public class Location {
         final int y1 = Math.max(0, (int) (viewBounds.y / layerTileHeight) - 1);
         final int y2 = Math.min(Settings.MAX_HEIGHT,
                 (int) ((viewBounds.y + viewBounds.height + layerTileHeight) / layerTileHeight) + 1);
-        
+
         // sanity check
         if (origin.x < x1 || origin.x > x2 || origin.y < y1 || origin.y > y2) {
             return;
@@ -647,102 +653,58 @@ public class Location {
                 NaturalVector2 tile = NaturalVector2.of(i, j);
                 activeTiles.add(tile);
             }
-        } 
-        
-        /*
-        ConnectedRoom[][] rooms = map.getRooms();
-        if (rooms[origin.x][origin.y] != currentRoom) {
-            System.out.println("new room!");
-            currentRoom = rooms[origin.x][origin.y];
-            
-            map.update(null);
-            activeTiles.clear();
-
-            for (int i = 0; i < map.getWidth(); i++) {
-                for (int j = 0; j < map.getHeight(); j++) {
-                    NaturalVector2 tile = NaturalVector2.of(i, j);
-                    if (currentRoom.isConnected(tile, rooms)) {
-                        activeTiles.add(tile);
-                    }
-                }
-            }
         }
-        */
 
         /*
-        final float layerTileWidth = 1;
-        final float layerTileHeight = 1;
-        
-        Rectangle viewBounds = renderer.getViewBounds();
-        final int x1 = Math.max(0, (int) (viewBounds.x / layerTileWidth));
-        final int x2 = Math.min(Settings.MAX_WIDTH,
-                (int) ((viewBounds.x + viewBounds.width + layerTileWidth) / layerTileWidth));
+         * ConnectedRoom[][] rooms = map.getRooms(); if (rooms[origin.x][origin.y] != currentRoom) {
+         * System.out.println("new room!"); currentRoom = rooms[origin.x][origin.y];
+         * 
+         * map.update(null); activeTiles.clear();
+         * 
+         * for (int i = 0; i < map.getWidth(); i++) { for (int j = 0; j < map.getHeight(); j++) {
+         * NaturalVector2 tile = NaturalVector2.of(i, j); if (currentRoom.isConnected(tile, rooms))
+         * { activeTiles.add(tile); } } } }
+         */
 
-        final int y1 = Math.max(0, (int) (viewBounds.y / layerTileHeight));
-        final int y2 = Math.min(Settings.MAX_HEIGHT,
-                (int) ((viewBounds.y + viewBounds.height + layerTileHeight) / layerTileHeight));
-
-        Set<NaturalVector2> visited = new HashSet<NaturalVector2>();
-        LinkedList<NaturalVector2> queue = new LinkedList<NaturalVector2>();
-        
-        for (int i = x1; i <= x2; i++) {
-            for (int j = y1; j <= y2; j++) {
-                NaturalVector2 tile = NaturalVector2.of(i, j);
-                if (currentRoom.isConnected(tile, rooms)) {
-                    activeTiles.add(tile);
-                }
-            }
-        }   
-        
-        visited.add(origin);
-        activeTiles.add(origin);
-
-        queue.add(origin);
-        while (!queue.isEmpty()) {
-            NaturalVector2 point = queue.remove();
-            for (int dx = -1; dx <= 1; dx++) {
-                for (int dy = -1; dy <= 1; dy++) {
-                    if (dx == 0 && dy == 0) {
-                        continue;
-                    }
-
-                    int x = point.x + dx;
-                    int y = point.y + dy;
-                    NaturalVector2 neighbor = NaturalVector2.of(x, y);
-                    if (x >= x1 && x < x2 && y >= y1 && y < y2 && !visited.contains(neighbor)) {
-                        if (!isObstacle(point) && isGround(point)) {
-                            // ground can spread to anything except collision below
-                            if (dy >= 0 || !isObstacle(neighbor)) {
-                                visited.add(neighbor);
-                                activeTiles.add(neighbor);
-                                queue.add(neighbor);
-                            }
-                        } else if (isObstacle(point) && isGround(neighbor) && isObstacle(neighbor)) {
-                            // obstacles can spread up to ground collisions
-                            if (dy == 1 && dx == 0) {
-                                visited.add(neighbor);
-                                activeTiles.add(neighbor);
-                                queue.add(neighbor);
-                            }
-                        } else if (isObstacle(point) && isGround(point) && !isGround(neighbor)
-                                && isObstacle(neighbor)) {
-                            // grounded obstacles can spread sideways to non-ground obstacles
-                            if (dy == 0 && dx != 0) {
-                                visited.add(neighbor);
-                                activeTiles.add(neighbor);
-                                queue.add(neighbor);
-                            }
-                        } else if (isObstacle(point) && isGround(point) && isOverlay(neighbor)) {
-                            // grounded obstacles can spread to overlays, but overlays cannot
-                            // spread further
-                            visited.add(neighbor);
-                            activeTiles.add(neighbor);
-                        }
-                    }
-                }
-            }
-        }
-        */
+        /*
+         * final float layerTileWidth = 1; final float layerTileHeight = 1;
+         * 
+         * Rectangle viewBounds = renderer.getViewBounds(); final int x1 = Math.max(0, (int)
+         * (viewBounds.x / layerTileWidth)); final int x2 = Math.min(Settings.MAX_WIDTH, (int)
+         * ((viewBounds.x + viewBounds.width + layerTileWidth) / layerTileWidth));
+         * 
+         * final int y1 = Math.max(0, (int) (viewBounds.y / layerTileHeight)); final int y2 =
+         * Math.min(Settings.MAX_HEIGHT, (int) ((viewBounds.y + viewBounds.height + layerTileHeight)
+         * / layerTileHeight));
+         * 
+         * Set<NaturalVector2> visited = new HashSet<NaturalVector2>(); LinkedList<NaturalVector2>
+         * queue = new LinkedList<NaturalVector2>();
+         * 
+         * for (int i = x1; i <= x2; i++) { for (int j = y1; j <= y2; j++) { NaturalVector2 tile =
+         * NaturalVector2.of(i, j); if (currentRoom.isConnected(tile, rooms)) {
+         * activeTiles.add(tile); } } }
+         * 
+         * visited.add(origin); activeTiles.add(origin);
+         * 
+         * queue.add(origin); while (!queue.isEmpty()) { NaturalVector2 point = queue.remove(); for
+         * (int dx = -1; dx <= 1; dx++) { for (int dy = -1; dy <= 1; dy++) { if (dx == 0 && dy == 0)
+         * { continue; }
+         * 
+         * int x = point.x + dx; int y = point.y + dy; NaturalVector2 neighbor =
+         * NaturalVector2.of(x, y); if (x >= x1 && x < x2 && y >= y1 && y < y2 &&
+         * !visited.contains(neighbor)) { if (!isObstacle(point) && isGround(point)) { // ground can
+         * spread to anything except collision below if (dy >= 0 || !isObstacle(neighbor)) {
+         * visited.add(neighbor); activeTiles.add(neighbor); queue.add(neighbor); } } else if
+         * (isObstacle(point) && isGround(neighbor) && isObstacle(neighbor)) { // obstacles can
+         * spread up to ground collisions if (dy == 1 && dx == 0) { visited.add(neighbor);
+         * activeTiles.add(neighbor); queue.add(neighbor); } } else if (isObstacle(point) &&
+         * isGround(point) && !isGround(neighbor) && isObstacle(neighbor)) { // grounded obstacles
+         * can spread sideways to non-ground obstacles if (dy == 0 && dx != 0) {
+         * visited.add(neighbor); activeTiles.add(neighbor); queue.add(neighbor); } } else if
+         * (isObstacle(point) && isGround(point) && isOverlay(neighbor)) { // grounded obstacles can
+         * spread to overlays, but overlays cannot // spread further visited.add(neighbor);
+         * activeTiles.add(neighbor); } } } } }
+         */
 
         map.update(activeTiles);
     }
@@ -789,16 +751,16 @@ public class Location {
         }
         return tiles;
     }
-    
+
     public boolean collides(Vector2 start, Vector2 end, Collision<Vector2> output) {
-    	Array<Rectangle> tiles = getTiles((int) start.x, (int) start.y, (int) end.x, (int) end.y);
+        Array<Rectangle> tiles = getTiles((int) start.x, (int) start.y, (int) end.x, (int) end.y);
         Vector2 tmp = new Vector2();
         for (Rectangle tile : tiles) {
-        	Vector2 center = tile.getCenter(tmp);
+            Vector2 center = tile.getCenter(tmp);
             float r = Math.max(tile.width, tile.height);
             if (Intersector.intersectSegmentCircle(start, end, center, r)) {
-            	output.point = center;
-            	output.normal = start.cpy().sub(end).nor().scl(5);
+                output.point = center;
+                output.normal = start.cpy().sub(end).nor().scl(5);
                 return true;
             }
         }

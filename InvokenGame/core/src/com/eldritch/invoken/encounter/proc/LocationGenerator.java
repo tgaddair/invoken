@@ -44,6 +44,7 @@ import com.eldritch.invoken.encounter.layer.LocationMap;
 import com.eldritch.invoken.encounter.proc.BspGenerator.CellType;
 import com.eldritch.invoken.encounter.proc.RoomGenerator.RoomType;
 import com.eldritch.invoken.gfx.Light;
+import com.eldritch.invoken.gfx.NormalMappedTile;
 import com.eldritch.invoken.proto.Locations.Biome;
 import com.eldritch.invoken.proto.Locations.Encounter;
 import com.eldritch.invoken.proto.Locations.Encounter.ActorParams.ActorScenario;
@@ -97,17 +98,22 @@ public class LocationGenerator {
         AtlasRegion region = atlas.findRegion(biome + FLOOR);
         ground = new StaticTiledMapTile(region);
 
-        midWallTop = new StaticTiledMapTile(atlas.findRegion(biome + MID_WALL_TOP));
+        midWallTop = getTile(MID_WALL_TOP);
         // midWallCenter = new StaticTiledMapTile(atlas.findRegion(biome +
         // MID_WALL_CENTER));
-        midWallBottom = new StaticTiledMapTile(atlas.findRegion(biome + MID_WALL_BOTTOM));
+        midWallBottom = getTile(MID_WALL_BOTTOM);
 
-        leftTrim = new StaticTiledMapTile(atlas.findRegion(biome + LEFT_TRIM));
-        rightTrim = new StaticTiledMapTile(atlas.findRegion(biome + RIGHT_TRIM));
+        leftTrim = getTile(LEFT_TRIM);
+        rightTrim = getTile(RIGHT_TRIM);
         narrowWall = merge(rightTrim.getTextureRegion(), leftTrim.getTextureRegion());
         narrowTop = merge(atlas.findRegion(biome + TOP_LEFT_TRIM),
                 atlas.findRegion(biome + TOP_RIGHT_TRIM));
         collider = new StaticTiledMapTile(atlas.findRegion(COLLISION));
+    }
+    
+    private NormalMappedTile getTile(String asset) {
+        return new NormalMappedTile(
+                atlas.findRegion(biome + asset), atlas.findRegion("normal/" + biome + asset));
     }
 
     public Location generate(com.eldritch.invoken.proto.Locations.Location proto) {
