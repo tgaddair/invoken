@@ -192,7 +192,7 @@ public class OrthogonalShadedTiledMapRenderer extends OrthogonalTiledMapRenderer
                         NormalMappedTile normalTile = (NormalMappedTile) tile;
                         spriteBatch.draw(normalTile.getNormal(), vertices, 0, 20);
                     } else {
-//                        region.getTexture().bind(0);
+                        region.getTexture().bind(0);
                         spriteBatch.draw(region.getTexture(), vertices, 0, 20);
                     }
                 }

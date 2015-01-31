@@ -133,7 +133,15 @@ public class NormalMapShader {
         shader.end();
     }
     
+    public ShaderProgram getShader() {
+        return shader;
+    }
+    
     public void resize(int width, int height) {
+        shader.begin();
+        shader.setUniformf("Resolution", width, height);
+        shader.end();
+        
         fbo = new FrameBuffer(Format.RGBA8888, width, height, false);
     }
     
@@ -160,20 +168,19 @@ public class NormalMapShader {
 
         Batch batch = renderer.getSpriteBatch();
         fbo.begin();
-        batch.setShader(shader);
+//        batch.setShader(lightManager.getFinalShader());
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-//        batch.begin();
         renderer.setNormalRender(true);
-//        renderer.render();
-//        renderer.setNormalRender(false);
-//        batch.end();
+        renderer.render();
+        renderer.setNormalRender(false);
         fbo.end();
 
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+//        batch.setShader(shader);
 //        batch.setShader(lightManager.getFinalShader());
         
         // this is important! bind the FBO to the 2nd texture unit
-//        fbo.getColorBufferTexture().bind(1);
+        fbo.getColorBufferTexture().bind(1);
         
         // bind diffuse color to texture unit 0
         // important that we specify 0 otherwise we'll still be bound to

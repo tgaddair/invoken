@@ -465,11 +465,13 @@ public class Location {
         // draw lights
 //        lightManager.render(renderer, delta, paused);
 //        lightManager.render(overlayRenderer, delta, paused);
-//        normalMapShader.render(renderer, lightManager, player, delta);
+        normalMapShader.render(renderer, lightManager, player, delta);
 
         // set the tile map render view based on what the
         // camera sees and render the map
+        renderer.getSpriteBatch().setShader(normalMapShader.getShader());
         renderer.render();
+        renderer.getSpriteBatch().setShader(lightManager.getDefaultShader());
 
         if (paused) {
             // render all pending player actions

@@ -55,6 +55,10 @@ public class LightManager {
         resize(Settings.MENU_VIEWPORT_WIDTH, Settings.MENU_VIEWPORT_HEIGHT);
     }
     
+    public ShaderProgram getDefaultShader() {
+        return defaultShader;
+    }
+    
     public ShaderProgram getFinalShader() {
         return finalShader;
     }
