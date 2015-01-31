@@ -1,0 +1,798 @@
+pages.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+level-screen/ship-model-gencore-phoenix
+  rotate: false
+  xy: 1, 1
+  size: 24, 28
+  orig: 24, 28
+  offset: 0, 0
+  index: 0
+level-screen/ship-model-gencore-phoenix
+  rotate: false
+  xy: 27, 1
+  size: 24, 28
+  orig: 24, 28
+  offset: 0, 0
+  index: 1
+level-screen/ship-model-gencore-phoenix
+  rotate: false
+  xy: 53, 1
+  size: 24, 28
+  orig: 24, 28
+  offset: 0, 0
+  index: 2
+level-screen/ship-model-gencore
+  rotate: false
+  xy: 79, 1
+  size: 24, 28
+  orig: 24, 28
+  offset: 0, 0
+  index: 0
+level-screen/ship-model-gencore
+  rotate: false
+  xy: 105, 1
+  size: 24, 28
+  orig: 24, 28
+  offset: 0, 0
+  index: 1
+level-screen/ship-model-gencore
+  rotate: false
+  xy: 131, 1
+  size: 24, 28
+  orig: 24, 28
+  offset: 0, 0
+  index: 2
+level-screen/ship-model-microsol-stalker
+  rotate: false
+  xy: 157, 1
+  size: 24, 28
+  orig: 24, 28
+  offset: 0, 0
+  index: 0
+level-screen/ship-model-microsol-stalker
+  rotate: false
+  xy: 183, 1
+  size: 24, 28
+  orig: 24, 28
+  offset: 0, 0
+  index: 1
+level-screen/ship-model-microsol-stalker
+  rotate: false
+  xy: 209, 1
+  size: 24, 28
+  orig: 24, 28
+  offset: 0, 0
+  index: 2
+level-screen/ship-model-super-carrot
+  rotate: false
+  xy: 235, 1
+  size: 24, 28
+  orig: 24, 28
+  offset: 0, 0
+  index: 0
+level-screen/ship-model-super-carrot
+  rotate: false
+  xy: 261, 1
+  size: 24, 28
+  orig: 24, 28
+  offset: 0, 0
+  index: 1
+level-screen/ship-model-super-carrot
+  rotate: false
+  xy: 287, 1
+  size: 24, 28
+  orig: 24, 28
+  offset: 0, 0
+  index: 2
+level-screen/ship-model-usp-talon
+  rotate: false
+  xy: 313, 1
+  size: 24, 28
+  orig: 24, 28
+  offset: 0, 0
+  index: 0
+level-screen/ship-model-usp-talon
+  rotate: false
+  xy: 339, 1
+  size: 24, 28
+  orig: 24, 28
+  offset: 0, 0
+  index: 1
+level-screen/ship-model-usp-talon
+  rotate: false
+  xy: 365, 1
+  size: 24, 28
+  orig: 24, 28
+  offset: 0, 0
+  index: 2
+
+pages2.png
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+splash-screen/splash-image
+  rotate: false
+  xy: 1, 1
+  size: 512, 301
+  orig: 512, 301
+  offset: 0, 0
+  index: -1
+
+pages3.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+start-game-screen/front-gun-missile-launcher
+  rotate: false
+  xy: 1, 1
+  size: 22, 28
+  orig: 22, 28
+  offset: 0, 0
+  index: -1
+start-game-screen/front-gun-proton-launcher
+  rotate: false
+  xy: 25, 1
+  size: 22, 28
+  orig: 22, 28
+  offset: 0, 0
+  index: -1
+start-game-screen/front-gun-pulse-cannon
+  rotate: false
+  xy: 49, 1
+  size: 22, 28
+  orig: 22, 28
+  offset: 0, 0
+  index: -1
+start-game-screen/front-gun-vulcan-cannon
+  rotate: false
+  xy: 73, 1
+  size: 22, 28
+  orig: 22, 28
+  offset: 0, 0
+  index: -1
+start-game-screen/front-gun-wave-cannon
+  rotate: false
+  xy: 97, 1
+  size: 22, 28
+  orig: 22, 28
+  offset: 0, 0
+  index: -1
+start-game-screen/shield-aif
+  rotate: false
+  xy: 121, 1
+  size: 22, 28
+  orig: 22, 28
+  offset: 0, 0
+  index: -1
+start-game-screen/shield-ghef
+  rotate: false
+  xy: 145, 1
+  size: 22, 28
+  orig: 22, 28
+  offset: 0, 0
+  index: -1
+start-game-screen/shield-gles
+  rotate: false
+  xy: 169, 1
+  size: 22, 28
+  orig: 22, 28
+  offset: 0, 0
+  index: -1
+start-game-screen/shield-mlxs
+  rotate: false
+  xy: 193, 1
+  size: 22, 28
+  orig: 22, 28
+  offset: 0, 0
+  index: -1
+start-game-screen/shield-sif
+  rotate: false
+  xy: 217, 1
+  size: 22, 28
+  orig: 22, 28
+  offset: 0, 0
+  index: -1
+start-game-screen/ship-model-gencore-ii
+  rotate: false
+  xy: 241, 1
+  size: 22, 28
+  orig: 22, 28
+  offset: 0, 0
+  index: -1
+start-game-screen/ship-model-gencore-phoenix
+  rotate: false
+  xy: 265, 1
+  size: 22, 28
+  orig: 22, 28
+  offset: 0, 0
+  index: -1
+start-game-screen/ship-model-microsol-stalker
+  rotate: false
+  xy: 289, 1
+  size: 22, 28
+  orig: 22, 28
+  offset: 0, 0
+  index: -1
+start-game-screen/ship-model-super-carrot
+  rotate: false
+  xy: 313, 1
+  size: 22, 28
+  orig: 22, 28
+  offset: 0, 0
+  index: -1
+start-game-screen/ship-model-usp-talon
+  rotate: false
+  xy: 337, 1
+  size: 22, 28
+  orig: 22, 28
+  offset: 0, 0
+  index: -1
+
+scifi-atlas.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+test-biome/light1
+  rotate: false
+  xy: 96, 192
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+test-biome/floor1
+  rotate: false
+  xy: 160, 64
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+test-biome/floor2
+  rotate: false
+  xy: 192, 64
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+test-biome/floor3
+  rotate: false
+  xy: 224, 192
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+industry/floor4
+  rotate: false
+  xy: 0, 608
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+test-biome/mid-wall-top
+  rotate: false
+  xy: 32, 480
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+test-biome/mid-wall-center
+  rotate: false
+  xy: 32, 512
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+test-biome/mid-wall-bottom
+  rotate: false
+  xy: 32, 544
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+test-biome/left-trim
+  rotate: false
+  xy: 32, 608
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+test-biome/left-corner
+  rotate: false
+  xy: 32, 640
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+test-biome/overlay-left-trim
+  rotate: false
+  xy: 128, 608
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+test-biome/right-trim
+  rotate: false
+  xy: 64, 608
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+test-biome/overlay-right-trim
+  rotate: false
+  xy: 96, 608
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+test-biome/right-corner
+  rotate: false
+  xy: 64, 640
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+test-biome/below-trim
+  rotate: false
+  xy: 32, 576
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+test-biome/overlay-below-trim
+  rotate: false
+  xy: 416, 576
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+test-biome/door-front-top-left
+  rotate: false
+  xy: 224, 0
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+test-biome/door-front-bottom-left
+  rotate: false
+  xy: 224, 32
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+test-biome/door-front-top-right
+  rotate: false
+  xy: 256, 0
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+test-biome/door-front-bottom-right
+  rotate: false
+  xy: 256, 32
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+test-biome/door-over-right
+  rotate: false
+  xy: 416, 608
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+test-biome/door-over-left
+  rotate: false
+  xy: 448, 608
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+test-biome/door-over-left-top
+  rotate: false
+  xy: 480, 608
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+test-biome/door-over-right-top
+  rotate: false
+  xy: 512, 608
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+test-biome/door-over-right-bottom
+  rotate: false
+  xy: 416, 672
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+test-biome/door-over-left-bottom
+  rotate: false
+  xy: 448, 672
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+test-biome/door-activator
+  rotate: false
+  xy: 0, 96
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+test-biome/door-activator-locked
+  rotate: false
+  xy: 480, 0
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+test-biome/furn-cache-sm
+  rotate: false
+  xy: 288, 320
+  size: 96, 32
+  orig: 96, 32
+  offset: 0, 0
+  index: -1
+test-biome/furn-cache-lg
+  rotate: false
+  xy: 384, 320
+  size: 128, 32
+  orig: 128, 32
+  offset: 0, 0
+  index: -1
+test-biome/furn-server1
+  rotate: false
+  xy: 288, 352
+  size: 32, 64
+  orig: 32, 64
+  offset: 0, 0
+  index: -1
+test-biome/furn-server2
+  rotate: false
+  xy: 320, 352
+  size: 32, 64
+  orig: 32, 64
+  offset: 0, 0
+  index: -1
+test-biome/furn-server3
+  rotate: false
+  xy: 352, 352
+  size: 32, 64
+  orig: 32, 64
+  offset: 0, 0
+  index: -1
+test-biome/furn-core1
+  rotate: false
+  xy: 384, 352
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+test-biome/furn-table1
+  rotate: false
+  xy: 0, 0
+  size: 96, 96
+  orig: 96, 96
+  offset: 0, 0
+  index: -1
+markers/collision
+  rotate: false
+  xy: 0, 704
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+
+industry-walls.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+industry/roof
+  rotate: false
+  xy: 208, 368
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+industry/left-wall-top
+  rotate: false
+  xy: 256, 96
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+industry/right-wall-top
+  rotate: false
+  xy: 288, 96
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+industry/left-wall-bottom
+  rotate: false
+  xy: 256, 128
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+industry/right-wall-bottom
+  rotate: false
+  xy: 288, 128
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+industry/mid-wall-top
+  rotate: false
+  xy: 272, 96
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+industry/mid-wall-center
+  rotate: false
+  xy: 272, 112
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+industry/mid-wall-bottom
+  rotate: false
+  xy: 272, 128
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+industry/left-trim
+  rotate: false
+  xy: 224, 368
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+industry/right-trim
+  rotate: false
+  xy: 192, 368
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+industry/overlay-left-trim
+  rotate: false
+  xy: 224, 352
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+industry/overlay-right-trim
+  rotate: false
+  xy: 192, 352
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+industry/left-corner
+  rotate: false
+  xy: 240, 320
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+industry/right-corner
+  rotate: false
+  xy: 224, 320
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+industry/below-trim
+  rotate: false
+  xy: 208, 352
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+industry/overlay-below-trim
+  rotate: false
+  xy: 208, 352
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+industry/top-left-trim
+  rotate: false
+  xy: 192, 352
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+industry/top-right-trim
+  rotate: false
+  xy: 224, 352
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+
+misc-walls.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+grime/roof
+  rotate: false
+  xy: 400, 368
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+grime/mid-wall-top
+  rotate: false
+  xy: 464, 416
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+grime/mid-wall-center
+  rotate: false
+  xy: 464, 432
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+grime/mid-wall-bottom
+  rotate: false
+  xy: 464, 448
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+grime/left-trim
+  rotate: false
+  xy: 416, 368
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+grime/right-trim
+  rotate: false
+  xy: 384, 368
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+grime/top-left-trim
+  rotate: false
+  xy: 384, 352
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+grime/top-right-trim
+  rotate: false
+  xy: 416, 352
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+grime/left-corner
+  rotate: false
+  xy: 432, 320
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+grime/right-corner
+  rotate: false
+  xy: 416, 320
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+grime/overlay-below-trim
+  rotate: false
+  xy: 400, 352
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+grime/overlay-left-trim
+  rotate: false
+  xy: 416, 352
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+grime/overlay-right-trim
+  rotate: false
+  xy: 384, 352
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+
+gates.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+industry/gate1
+  rotate: false
+  xy: 257, 0
+  size: 85, 228
+  orig: 85, 228
+  offset: 0, 0
+  index: -1
+
+floors.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+industry/floor
+  rotate: false
+  xy: 0, 0
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+grime/floor
+  rotate: false
+  xy: 32, 0
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+
+modern-activators.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+industry/camera-on
+  rotate: false
+  xy: 0, 0
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+industry/camera-off
+  rotate: false
+  xy: 0, 32
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+industry/terminal-blue
+  rotate: false
+  xy: 32, 0
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+industry/terminal-green
+  rotate: false
+  xy: 32, 32
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+
+apocalypse.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+industry/terminal-large
+  rotate: false
+  xy: 192, 384
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+industry/terminal-small
+  rotate: false
+  xy: 256, 384
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1

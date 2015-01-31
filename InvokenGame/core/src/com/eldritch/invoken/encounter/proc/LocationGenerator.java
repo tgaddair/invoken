@@ -79,6 +79,7 @@ public class LocationGenerator {
 
     private final String biome;
     private final TextureAtlas atlas;
+    private final TextureAtlas normalAtlas;
 
     private final TiledMapTile ground;
     private final TiledMapTile midWallTop;
@@ -94,9 +95,9 @@ public class LocationGenerator {
     public LocationGenerator(Biome biomeType) {
         this.biome = biomeType.name().toLowerCase();
         atlas = new TextureAtlas(Gdx.files.internal("image-atlases/pages.atlas"));
+        normalAtlas = new TextureAtlas(Gdx.files.internal("image-atlases/normal/pages.atlas"));
 
-        AtlasRegion region = atlas.findRegion(biome + FLOOR);
-        ground = new StaticTiledMapTile(region);
+        ground = getTile(FLOOR);
 
         midWallTop = getTile(MID_WALL_TOP);
         // midWallCenter = new StaticTiledMapTile(atlas.findRegion(biome +
@@ -113,7 +114,7 @@ public class LocationGenerator {
     
     private NormalMappedTile getTile(String asset) {
         return new NormalMappedTile(
-                atlas.findRegion(biome + asset), atlas.findRegion("normal/" + biome + asset));
+                atlas.findRegion(biome + asset), normalAtlas.findRegion(biome + asset));
     }
 
     public Location generate(com.eldritch.invoken.proto.Locations.Location proto) {

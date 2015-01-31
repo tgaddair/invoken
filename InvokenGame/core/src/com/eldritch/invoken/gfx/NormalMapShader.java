@@ -110,7 +110,7 @@ public class NormalMapShader {
                 visibleLights.add(light);
             }
         }
-        values = new float[visibleLights.size() * 3];
+        values = new float[(visibleLights.size() + 1) * 3];
     }
     
     private void updateLightGeometry(OrthographicCamera camera) {
@@ -123,9 +123,13 @@ public class NormalMapShader {
             values[i * 3 + 2] = light.getRadius();
         }
         
+        values[visibleLights.size() * 3 + 0] = LIGHT_POS.x;
+        values[visibleLights.size() * 3 + 1] = LIGHT_POS.y;
+        values[visibleLights.size() * 3 + 2] = 10;
+        
         shader.begin();
         shader.setUniform3fv("lightGeometry", values, 0, values.length);
-        shader.setUniformi("lightCount", visibleLights.size());
+        shader.setUniformi("lightCount", visibleLights.size() + 1);
         shader.end();
     }
     
@@ -144,8 +148,8 @@ public class NormalMapShader {
         // shader will now be in use...
 
         // update light position, normalized to screen resolution
-        float x = Gdx.input.getX() / (float) Gdx.graphics.getWidth();
-        float y = 1 - Gdx.input.getY() / (float) Gdx.graphics.getHeight();
+        float x = Gdx.input.getX();
+        float y = Gdx.graphics.getHeight() - Gdx.input.getY() - 1;
         LIGHT_POS.x = x;
         LIGHT_POS.y = y;
         
