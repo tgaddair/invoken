@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.badlogic.gdx.ai.fsm.State;
 import com.badlogic.gdx.ai.msg.Telegram;
+import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.actor.aug.Augmentation;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Npc;
@@ -134,6 +135,8 @@ public enum CombatState implements State<Npc> {
 
         @Override
         public void update(Npc entity) {
+            Vector2 lastSeen = entity.getLastSeen().getPosition();
+            
             // update target enemy
             fillTargets(entity, targets);
             Agent target = selectBestTarget(entity, targets);
@@ -143,7 +146,7 @@ public enum CombatState implements State<Npc> {
             if (target != null && target.isAlive()) {
                 // can't do anything if we are unable to find a target to attack, so wander
                 entity.getStateMachine().changeState(NpcState.COMBAT, ATTACK);
-            } else if (entity.getPosition().dst2(entity.getLastSeen().getPosition()) < 1) {
+            } else if (entity.getPosition().dst2(lastSeen) < 1 || !entity.hasLineOfSight(lastSeen)) {
                 entity.getStateMachine().changeState(NpcState.COMBAT, WANDER);
             }
         }
@@ -164,6 +167,8 @@ public enum CombatState implements State<Npc> {
 
         @Override
         public void update(Npc entity) {
+            Vector2 lastSeen = entity.getLastSeen().getPosition();
+            
             // update target enemy
             fillTargets(entity, targets);
             Agent target = selectBestTarget(entity, targets);
@@ -173,7 +178,8 @@ public enum CombatState implements State<Npc> {
             if (target != null && target.isAlive()) {
                 // can't do anything if we are unable to find a target to attack, so wander
                 entity.getStateMachine().changeState(NpcState.COMBAT, ATTACK);
-                return;
+            } else if (entity.getPosition().dst2(lastSeen) > 5 && entity.hasLineOfSight(lastSeen)) {
+                entity.getStateMachine().changeState(NpcState.COMBAT, HUNT);
             }
         }
         

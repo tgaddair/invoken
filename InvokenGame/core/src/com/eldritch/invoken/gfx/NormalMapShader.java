@@ -141,7 +141,7 @@ public class NormalMapShader {
         
         values[visibleLights.size() * 3 + 0] = LIGHT_POS.x;
         values[visibleLights.size() * 3 + 1] = LIGHT_POS.y;
-        values[visibleLights.size() * 3 + 2] = player.hasLightOn() ? 10 : 0;
+        values[visibleLights.size() * 3 + 2] = player.hasLightOn() ? 3 : 0;
         
         shader.begin();
         shader.setUniform3fv("lightGeometry", values, 0, values.length);
