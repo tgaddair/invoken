@@ -13,15 +13,14 @@ import javax.swing.*;
 import com.eldritch.scifirpg.editor.AssetTablePanel;
 import com.eldritch.scifirpg.editor.MainPanel;
 import com.eldritch.scifirpg.editor.tables.ActorTable;
-import com.eldritch.scifirpg.editor.tables.AssetPointerTable;
 import com.eldritch.scifirpg.editor.tables.AssetTable;
+import com.eldritch.scifirpg.editor.tables.AugmentationTable;
 import com.eldritch.scifirpg.editor.tables.DialogueTable;
 import com.eldritch.scifirpg.editor.tables.FactionStatusTable;
 import com.eldritch.scifirpg.editor.tables.ItemTable;
 import com.eldritch.scifirpg.editor.tables.SkillTable;
 import com.eldritch.scifirpg.editor.tables.TraitTable;
 import com.eldritch.scifirpg.editor.util.ProfessionUtil;
-import com.eldritch.scifirpg.editor.viz.DialogueEditor;
 import com.eldritch.invoken.proto.Actors.ActorParams;
 import com.eldritch.invoken.proto.Actors.ActorParams.InventoryItem;
 import com.eldritch.invoken.proto.Actors.DialogueTree;
@@ -35,7 +34,7 @@ import com.eldritch.invoken.proto.Actors.NonPlayerActor.Aggression;
 import com.eldritch.invoken.proto.Actors.NonPlayerActor.Assistance;
 import com.eldritch.invoken.proto.Actors.NonPlayerActor.Confidence;
 import com.eldritch.invoken.proto.Actors.NonPlayerActor.Trait;
-import com.eldritch.invoken.proto.Augmentations.Augmentation;
+import com.eldritch.invoken.proto.Augmentations.AugmentationProto;
 import com.eldritch.invoken.proto.Disciplines.Profession;
 import com.google.common.base.Optional;
 import com.jgoodies.forms.builder.DefaultFormBuilder;
@@ -53,8 +52,7 @@ public class ActorEditorPanel extends AssetEditorPanel<NonPlayerActor, ActorTabl
 	private final JComboBox<Species> speciesBox = new JComboBox<Species>(Species.values());
 	private final JComboBox<Gender> genderBox = new JComboBox<Gender>(Gender.values());
 	private final JTextField levelField = new JTextField();
-	private final AssetPointerTable<Augmentation> augmentationTable =
-			new AssetPointerTable<Augmentation>(MainPanel.AUGMENTATION_TABLE);
+	private final AugmentationTable augmentationTable = new AugmentationTable();
 	private final InventoryTable itemTable = new InventoryTable();
 	private final SkillTable skillTable = new SkillTable();
 	private final FactionStatusTable factionTable = new FactionStatusTable();
@@ -192,8 +190,8 @@ public class ActorEditorPanel extends AssetEditorPanel<NonPlayerActor, ActorTabl
 			for (InventoryItem item : params.getInventoryItemList()) {
 				itemTable.addAsset(item);
 			}
-			for (String augId : params.getKnownAugIdList()) {
-				augmentationTable.addAssetId(augId);
+			for (AugmentationProto aug : params.getKnownAugIdList()) {
+				augmentationTable.addAsset(aug);
 			}
 			
 			// NPC params
@@ -224,7 +222,7 @@ public class ActorEditorPanel extends AssetEditorPanel<NonPlayerActor, ActorTabl
 				.addAllSkill(skillTable.getAssets())
 				.addAllFactionStatus(factionTable.getAssets())
 				.addAllInventoryItem(itemTable.getAssets())
-				.addAllKnownAugId(augmentationTable.getAssetIds());
+				.addAllKnownAugId(augmentationTable.getAssets());
 		if (genderBox.isEnabled()) {
 			params.setGender((Gender) genderBox.getSelectedItem());
 		}

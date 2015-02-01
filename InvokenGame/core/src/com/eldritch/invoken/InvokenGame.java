@@ -11,7 +11,6 @@ import com.eldritch.invoken.screens.GameScreen;
 import com.eldritch.invoken.screens.MenuScreen;
 import com.eldritch.invoken.screens.SplashScreen;
 import com.eldritch.invoken.util.ActorMarshaller;
-import com.eldritch.invoken.util.AugmentationMarshaller;
 import com.eldritch.invoken.util.FactionMarshaller;
 import com.eldritch.invoken.util.ItemMarshaller;
 import com.eldritch.invoken.util.LocationMarshaller;
@@ -22,7 +21,6 @@ public class InvokenGame extends Game {
 	public static final String LOG = InvokenGame.class.getSimpleName();
 	
 	public final static ActorMarshaller ACTOR_READER = new ActorMarshaller();
-	public final static AugmentationMarshaller AUG_READER = new AugmentationMarshaller();
 	public final static ItemMarshaller ITEM_READER = new ItemMarshaller();
 	public final static FactionMarshaller FACTION_READER = new FactionMarshaller();
 	public final static LocationMarshaller LOCATION_READER = new LocationMarshaller();

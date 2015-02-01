@@ -18,9 +18,8 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
 import com.google.common.base.Optional;
-import com.google.protobuf.Message;
 
-public abstract class AssetTable<T extends Message> extends JTable {
+public abstract class AssetTable<T> extends JTable {
 	private static final long serialVersionUID = 1L;
 	
 	private final JPopupMenu popup;
@@ -140,7 +139,7 @@ public abstract class AssetTable<T extends Message> extends JTable {
 		setModel(new AssetTableModel<T>(columnNames));
 	}
 	
-	public static class AssetTableModel<T extends Message> extends DefaultTableModel {
+	public static class AssetTableModel<T> extends DefaultTableModel {
 		private static final long serialVersionUID = 1L;
 		private final List<T> assets;
 		

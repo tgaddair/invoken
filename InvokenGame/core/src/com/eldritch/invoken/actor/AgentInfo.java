@@ -17,6 +17,7 @@ import com.eldritch.invoken.proto.Actors.ActorParams.FactionStatus;
 import com.eldritch.invoken.proto.Actors.ActorParams.InventoryItem;
 import com.eldritch.invoken.proto.Actors.ActorParams.Skill;
 import com.eldritch.invoken.proto.Actors.ActorParams.Species;
+import com.eldritch.invoken.proto.Augmentations.AugmentationProto;
 import com.eldritch.invoken.proto.Disciplines.Discipline;
 import com.google.common.base.Functions;
 
@@ -30,7 +31,7 @@ public class AgentInfo {
 	final FactionManager factions;
 	private final Inventory inventory = new Inventory();
 	final Map<Discipline, SkillState> skills = new HashMap<Discipline, SkillState>();
-	final Set<String> knownAugmentations = new HashSet<String>();
+	final Set<AugmentationProto> knownAugmentations = new HashSet<AugmentationProto>();
 	final Map<Agent, Float> personalRelations = new HashMap<Agent, Float>();
 	
 	final PreparedAugmentations augmentations;
@@ -60,9 +61,9 @@ public class AgentInfo {
 		for (Skill skill : params.getSkillList()) {
             skills.put(skill.getDiscipline(), new SkillState(skill));
         }
-		for (String knownAug : params.getKnownAugIdList()) {
+		for (AugmentationProto knownAug : params.getKnownAugIdList()) {
             knownAugmentations.add(knownAug);
-            Augmentation aug = Augmentation.fromProto(InvokenGame.AUG_READER.readAsset(knownAug));
+            Augmentation aug = Augmentation.fromProto(knownAug);
             if (aug != null) {
                 addAugmentation(aug);
             }
@@ -158,7 +159,7 @@ public class AgentInfo {
         return augmentations;
     }
 	
-	public Collection<String> getKnownAugmentations() {
+	public Collection<AugmentationProto> getKnownAugmentations() {
         return knownAugmentations;
     }
 	

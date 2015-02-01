@@ -16,6 +16,7 @@ import javax.swing.JTextField;
 import com.eldritch.scifirpg.editor.MainPanel;
 import com.eldritch.scifirpg.editor.tables.OutcomeTable;
 import com.eldritch.scifirpg.editor.util.StateMarkers;
+import com.eldritch.invoken.proto.Augmentations.AugmentationProto;
 import com.eldritch.invoken.proto.Disciplines.Discipline;
 import com.eldritch.invoken.proto.Outcomes.Outcome;
 import com.eldritch.invoken.proto.Outcomes.Outcome.Type;
@@ -118,7 +119,9 @@ public class OutcomeEditorPanel extends AssetEditorPanel<Outcome, OutcomeTable> 
 			case AUG_GAIN:
 				countEnabled = false;
 			case AUG_USE:
-				values.addAll(MainPanel.AUGMENTATION_TABLE.getAssetIds());
+				for (AugmentationProto aug : AugmentationProto.values()) {
+					values.add(aug.name());
+				}
 				break;
 			case KILL:
 			case GAIN_FOLLOWER:

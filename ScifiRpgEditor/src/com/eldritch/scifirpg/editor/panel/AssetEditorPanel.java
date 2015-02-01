@@ -18,9 +18,8 @@ import org.apache.commons.lang3.text.WordUtils;
 
 import com.eldritch.scifirpg.editor.tables.AssetTable;
 import com.google.common.base.Optional;
-import com.google.protobuf.Message;
 
-public abstract class AssetEditorPanel<T extends Message, S extends AssetTable<T>> extends JPanel implements ActionListener {
+public abstract class AssetEditorPanel<T, S extends AssetTable<T>> extends JPanel implements ActionListener {
 	private static final long serialVersionUID = 1L;
 
 	private final S table;

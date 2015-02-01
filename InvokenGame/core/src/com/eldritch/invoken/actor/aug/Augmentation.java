@@ -7,6 +7,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.encounter.Location;
+import com.eldritch.invoken.proto.Augmentations.AugmentationProto;
 import com.eldritch.invoken.screens.GameScreen;
 
 public abstract class Augmentation {
@@ -81,9 +82,8 @@ public abstract class Augmentation {
 	
 	public abstract Action getAction(Agent owner, Vector2 target);
 	
-	public static Augmentation fromProto(
-	        com.eldritch.invoken.proto.Augmentations.Augmentation proto) {
-	    String className = Augmentation.class.getPackage().getName() + "." + proto.getId();
+	public static Augmentation fromProto(AugmentationProto proto) {
+	    String className = Augmentation.class.getPackage().getName() + "." + proto.name();
 	    try {
 	    	Object o = Class.forName(className).getMethod("getInstance").invoke(null);
             return (Augmentation) o;

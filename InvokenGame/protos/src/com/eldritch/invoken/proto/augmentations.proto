@@ -3,33 +3,21 @@ syntax = "proto2";
 package scifirpg;
 option java_package = "com.eldritch.invoken.proto";
 
-import "com/eldritch/invoken/proto/disciplines.proto";
-import "com/eldritch/invoken/proto/effects.proto";
-import "com/eldritch/invoken/proto/prerequisites.proto";
-
-message Augmentation {
-	enum Type {
-		ATTACK = 0; // Playable to make hostile
-		DECEIVE = 1; // Playable when not detected
-		EXECUTE = 2; // Playable in encounter
-		DIALOGUE = 3; // Playable in dialogue
-		COUNTER = 4; // Playable when targeted
-		TRAP = 5; // Playable at any time, activates when targeted and effect applies
-		PASSIVE = 6; // Playable when attuning outside encounter
-	}
-
-	message Requirement {
-		required Discipline discipline = 1;
-		required int32 value = 2;
-		required int32 slots = 3;
-	}
-
-	optional string id = 1; // unique key
-	required string name = 2;
-	required string description = 3;
-	required int32 value = 4;
-	required Type type = 5;
-	optional int32 subtype_id = 6;
-	repeated Requirement requirement = 7;
-	repeated Effect effect = 8;
+enum AugmentationProto {
+	Barrier = 1;
+	Cloak = 2;
+	Crack = 3;
+	Drain = 4;
+	FireWeapon = 5;
+	Frenzy = 6;
+	Implode = 7;
+	Infect = 8;
+	Jaunt = 9;
+	Mirror = 10;
+	Observe = 11;
+	Paralyze = 12;
+	RendWeapon = 13;
+	Resurrect = 14;
+	Scramble = 15;
+	ThrowGrenade = 16;
 }
