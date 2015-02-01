@@ -109,14 +109,16 @@ public class LightManager {
     public void removeLight(Light light) {
     	lights.remove(light);
     }
-
-    public void render(OrthogonalTiledMapRenderer renderer, float delta, boolean paused) {
-        // draw lights to frame buffer
+    
+    public void update(float delta) {
+        // update oscillation state
         zAngle += delta * zSpeed;
         while (zAngle > PI2) {
             zAngle -= PI2;
         }
+    }
 
+    public void render(OrthogonalTiledMapRenderer renderer, boolean paused) {
         // draw the light to the FBO
         Batch batch = renderer.getSpriteBatch();
         fbo.begin();

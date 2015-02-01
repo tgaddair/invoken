@@ -24,6 +24,7 @@ uniform LOWP vec4 AmbientColor;  //ambient RGBA -- alpha is intensity
 uniform vec3 Falloff;            //attenuation coefficients
 uniform vec3 lightGeometry[64];
 uniform int lightCount;
+uniform bool useNormal;
 
 void main() {
    //RGBA of our diffuse color
@@ -32,6 +33,10 @@ void main() {
    //RGB of our normal map
    vec2 globalCoord = (gl_FragCoord.xy / Resolution.xy);
    vec3 NormalMap = texture2D(u_normals, globalCoord).rgb;
+   if (!useNormal) {
+     NormalMap = vec3(1, 1, 1);
+   }
+
    //vec4 light = texture2D(u_lights, globalCoord);
    //vec4 overlay = texture2D(u_overlay, globalCoord);
    //light = light * (1 - overlay);

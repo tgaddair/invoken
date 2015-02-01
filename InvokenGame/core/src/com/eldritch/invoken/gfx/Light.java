@@ -15,7 +15,7 @@ public abstract class Light {
     public Light(float magnitude, boolean oscillate) {
         this.magnitude = magnitude;
         this.oscillate = oscillate;
-        light = new Texture("light/light2.png");
+        light = new Texture("light/light3.png");
     }
     
     public void update(float zAngle) {

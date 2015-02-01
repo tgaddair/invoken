@@ -469,10 +469,15 @@ public class Location {
         
         renderer.setView(camera);
         overlayRenderer.setView(camera);
+        
+        lightManager.update(delta);
+        
+        // TODO: must render EVERYTHING as a normal map onto the frame buffer, then render
+        // all the diffuse to avoid artifacts appearing over entities
 
         // draw lights
-        lightManager.render(renderer, delta, paused);
-        lightMasker.render(overlayRenderer);
+//        lightManager.render(renderer, paused);
+//        lightMasker.render(overlayRenderer);
         renderer.getSpriteBatch().setShader(lightManager.getDefaultShader());
         overlayRenderer.getSpriteBatch().setShader(lightManager.getDefaultShader());
         normalMapShader.render(lightManager, player, delta, camera, renderer, overlayRenderer);
@@ -480,7 +485,9 @@ public class Location {
         // set the tile map render view based on what the
         // camera sees and render the map
         renderer.getSpriteBatch().setShader(normalMapShader.getShader());
+        normalMapShader.useNormalMap(true);
         renderer.render();
+        normalMapShader.useNormalMap(false);
 
         if (paused) {
             // render all pending player actions
@@ -545,6 +552,7 @@ public class Location {
 
         // render the overlay layers
         overlayRenderer.getSpriteBatch().setShader(normalMapShader.getShader());
+        normalMapShader.useNormalMap(true);
         overlayRenderer.render();
 
         // render status info

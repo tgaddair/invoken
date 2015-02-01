@@ -21,8 +21,7 @@ import com.eldritch.invoken.actor.type.Player;
 public class NormalMapShader {
     // our constants...
     public static final float DEFAULT_LIGHT_Z = 0.075f;
-    public static final float AMBIENT_INTENSITY = 0.6f;
-//    public static final float AMBIENT_INTENSITY = 0.7f;
+    public static final float AMBIENT_INTENSITY = 0.8f;
     public static final float LIGHT_INTENSITY = .3f;
 
     public static final Vector3 LIGHT_POS = new Vector3(0f, 0f, DEFAULT_LIGHT_Z);
@@ -58,7 +57,8 @@ public class NormalMapShader {
     ShaderProgram shader;
     SpriteBatch batch;
     FrameBuffer fbo;
-
+    FrameBuffer emptyFrame;
+    
     public NormalMapShader() {
         ShaderProgram.pedantic = false;
         shader = new ShaderProgram(VERT, FRAG);
@@ -78,8 +78,9 @@ public class NormalMapShader {
         shader.setUniformi("u_lights", 2); // GL_TEXTURE2
         shader.setUniformi("u_overlay", 3); // GL_TEXTURE2
         
-        shader.setUniform3fv("lightGeomtry[0]", new float[] {}, 0, 0);
+        shader.setUniform3fv("lightGeometry", new float[] {}, 0, 0);
         shader.setUniformi("lightCount", 0);
+        shader.setUniformi("useNormal", 0);
 
         // light/ambient colors
         // LibGDX doesn't have Vector4 class at the moment, so we pass them individually...
@@ -97,12 +98,19 @@ public class NormalMapShader {
         return shader;
     }
     
+    public void useNormalMap(boolean use) {
+        shader.begin();
+        shader.setUniformi("useNormal", use ? 1 : 0);
+        shader.end();
+    }
+    
     public void resize(int width, int height) {
         shader.begin();
         shader.setUniformf("Resolution", width, height);
         shader.end();
         
         fbo = new FrameBuffer(Format.RGBA8888, width, height, false);
+        emptyFrame = new FrameBuffer(Format.RGBA8888, width, height, false);
     }
     
     public void setLightGeometry(List<Light> lights, Rectangle worldBounds) {
