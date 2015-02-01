@@ -602,8 +602,13 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         return interactor != null && !interactor.isAlive();
     }
     
+    public void setFocusPoint(Vector2 point) {
+        setFocusPoint(point.x, point.y);
+    }
+    
     public void setFocusPoint(float x, float y) {
         focusPoint.set(x, y);
+        weaponSentry.update();
     }
     
     public Vector2 getFocusPoint() {
@@ -1237,11 +1242,15 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         private final Vector2 position = new Vector2();
         private final Vector2 direction = new Vector2();
         
-        @Override
-        public void update(float delta, Location location) {
+        public void update() {
             Vector2 origin = getRenderPosition();
             direction.set(getFocusPoint()).sub(origin).nor();
             position.set(origin.x + direction.x, origin.y + direction.y);
+        }
+        
+        @Override
+        public void update(float delta, Location location) {
+            update();
         }
 
         @Override

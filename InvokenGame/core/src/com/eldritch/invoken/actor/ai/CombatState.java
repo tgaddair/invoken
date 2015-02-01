@@ -93,6 +93,7 @@ public enum CombatState implements State<Npc> {
 
 	            // if an aug was chosen, then go ahead and use it
 	            if (chosen != null) {
+	                npc.getInfo().getAugmentations().setActive(chosen, 0);
 	                npc.getInfo().getAugmentations().use(chosen);
 	                npc.setCanAttack(true);
 	            } else {

@@ -292,6 +292,7 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
 	    if (other != null) {
 	        detected.add(other);
 	        lastSeen.setPosition(other.getPosition());
+	        setFocusPoint(other.getPosition());
 	    }
 	}
 	

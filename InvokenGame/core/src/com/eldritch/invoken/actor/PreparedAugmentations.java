@@ -76,23 +76,41 @@ public class PreparedAugmentations {
 	            activeSelfAugmentations.add(aug);
 	        }
 	    } else {
-	    	Iterator<Entry<Integer, Augmentation>> it = activeAugmentations.entrySet().iterator();
-	    	while (it.hasNext()) {
-	    		Entry<Integer, Augmentation> active = it.next();
-				if (active.getValue() == aug && active.getKey() != slot) {
-					// the aug is already active in a different slot, so remove it
-					it.remove();
-				}
-			}
 	        if (activeAugmentations.get(slot) == aug) {
 	        	// already active in this slot
-	            unprepare(aug);
-	        	activeAugmentations.remove(slot);
+	            setInactive(slot);
 	        } else {
-	        	// activate the aug
-	            prepare(aug);
-	        	activeAugmentations.put(slot, aug);
+	        	setActive(aug, slot);
 	        }
+	    }
+	}
+	
+	public void setActive(Augmentation aug, int slot) {
+	    if (activeAugmentations.get(slot) == aug) {
+	        // already active in this slot
+	        return;
+	    }
+	    
+	    Iterator<Entry<Integer, Augmentation>> it = activeAugmentations.entrySet().iterator();
+        while (it.hasNext()) {
+            Entry<Integer, Augmentation> active = it.next();
+            if (active.getValue() == aug && active.getKey() != slot) {
+                // the aug is already active in a different slot, so remove it
+                it.remove();
+            }
+        }
+        
+        // deactivate the previous aug then prepare this one
+        setInactive(slot);
+        prepare(aug);
+        activeAugmentations.put(slot, aug);
+	}
+	
+	public void setInactive(int slot) {
+	    Augmentation aug = activeAugmentations.get(slot);
+	    if (aug != null) {
+	        unprepare(aug);
+	        activeAugmentations.remove(slot);
 	    }
 	}
 	
