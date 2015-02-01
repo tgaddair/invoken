@@ -12,10 +12,16 @@ import com.eldritch.invoken.proto.Actors.DialogueTree.Response;
 public class ConversationHandler {
 	private final DialogueTree tree;
 	private final DialogueVerifier verifier;
+	private final boolean canSpeak;
 	
 	public ConversationHandler(DialogueTree tree, DialogueVerifier verifier) {
 		this.tree = tree;
 		this.verifier = verifier;
+		canSpeak = !tree.getDialogueList().isEmpty();
+	}
+	
+	public boolean canSpeak() {
+	    return canSpeak;
 	}
 	
 	public List<Choice> getChoicesFor(Response response) {

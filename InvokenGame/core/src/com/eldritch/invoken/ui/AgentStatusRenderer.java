@@ -11,14 +11,15 @@ import com.eldritch.invoken.screens.GameScreen;
 public class AgentStatusRenderer {
     private static Texture DIALOGUE_ICON = GameScreen.getTexture("icon/dialogue.png");
     private static float SCALE = 0.5f;
-    
+
     public static void render(Agent agent, Player player, OrthogonalTiledMapRenderer renderer) {
         Vector2 position = agent.getRenderPosition();
         int i = 1;
-        
+
         Batch batch = renderer.getSpriteBatch();
         if (agent.isAlive()) {
-            if (player.canInteract(agent) && !agent.inDialogue() && agent != player) {
+            if (player.canInteract(agent) && !agent.inDialogue() && agent.canSpeak()
+                    && agent != player) {
                 batch.draw(DIALOGUE_ICON, position.x, position.y + SCALE * i, SCALE, SCALE);
             }
         }

@@ -154,6 +154,11 @@ public class Player extends SteeringAgent {
         }
         return false;
     }
+    
+    @Override
+    public boolean canSpeak() {
+        return false;
+    }
 
     @Override
     public ConversationHandler getDialogueHandler() {

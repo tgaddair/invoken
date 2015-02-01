@@ -1164,11 +1164,13 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     public String toString() {
         return info.getName();
     }
+    
+    public abstract boolean canSpeak();
 
     public abstract float getMaxVelocity();
 
     protected abstract void takeAction(float delta, Location screen);
-
+    
 	private class LineOfSightHandler implements RayCastCallback {
 		private boolean lineOfSight = true;
 		private Agent target = null;

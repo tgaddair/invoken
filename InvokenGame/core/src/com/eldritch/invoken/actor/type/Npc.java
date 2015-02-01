@@ -326,6 +326,11 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
 	}
 	
 	@Override
+	public boolean canSpeak() {
+	    return dialogue.canSpeak();
+	}
+	
+	@Override
 	public ConversationHandler getDialogueHandler() {
 		return dialogue;
     }

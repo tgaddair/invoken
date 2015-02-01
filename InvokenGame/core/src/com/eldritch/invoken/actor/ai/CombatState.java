@@ -146,7 +146,7 @@ public enum CombatState implements State<Npc> {
             if (target != null && target.isAlive()) {
                 // can't do anything if we are unable to find a target to attack, so wander
                 entity.getStateMachine().changeState(NpcState.COMBAT, ATTACK);
-            } else if (entity.getPosition().dst2(lastSeen) < 1 || !entity.hasLineOfSight(lastSeen)) {
+            } else if (entity.getPosition().dst2(lastSeen) < 1) {
                 entity.getStateMachine().changeState(NpcState.COMBAT, WANDER);
             }
         }
