@@ -17,6 +17,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.activators.Activator;
+import com.eldritch.invoken.actor.PreparedAugmentations;
 import com.eldritch.invoken.actor.Profession;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Npc;
@@ -295,18 +296,68 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 			return true;
 		}
 		
-		Vector3 world = camera.unproject(new Vector3(screenX, screenY, 0));
-		for (Agent entity : location.getActors()) {
-			if (entity.contains(world.x, world.y)) {
-				if (entity == player) {
-					playerClicked = true;
-					return true;
-				}
-				return false;
-			}
-		}
-		
-		return false;
+		// handle entity selection
+        boolean selection = false;
+        Vector3 world = camera.unproject(new Vector3(screenX, screenY, 0));
+        for (Agent entity : location.getActors()) {
+            if (entity.contains(world.x, world.y) && player.canTarget(entity, location)) {
+                selection = true;
+                if (player.getInfo().getAugmentations().hasActiveAugmentation()
+                        && player.select(entity, location)) {
+                    player.getInfo().getAugmentations().useActiveAugmentation(
+                            button, tacticalPause);
+                } else if (player.getTarget() != entity) {
+                    // initial selection -> set target
+                    player.select(entity, location);
+                } else if (!tacticalPause) {
+                    // already selected -> start interaction
+                    player.reselect(entity);
+                } else {
+                    selection = false;
+                }
+                
+                if (selection) {
+                    break;
+                }
+            }
+        }
+        
+        // handle activators
+        for (Activator activator : location.getActivators()) {
+            if (activator.click(player, location, world.x, world.y)) {
+                selection = true;
+                break;
+            }
+        }
+        
+        if (!playerClicked && !selection) {
+            // clicked on a non-interactive object, so deselect
+            player.select(null, location);
+        }
+        playerClicked = false;
+        
+        if (!selection) {
+            // click on arbitrary position
+//          if (player.holdingPosition()) {
+//              player.getInfo().getAugmentations().useActiveAugmentation(
+//                      new Vector2(world.x, world.y), tacticalPause);
+//          } else {
+//              // move to destination
+//                player.moveToFixedTarget(world.x, world.y);
+//          }
+            if (player.getInfo().getAugmentations().hasActiveAugmentation(button)) {
+                player.getInfo().getAugmentations().useActiveAugmentation(
+                        new Vector2(world.x, world.y), button, tacticalPause);
+            } else {
+                if (button == Input.Buttons.RIGHT) {
+                    // turn on light
+                    player.toggleLight();
+                }
+            }
+            selection = true;
+        }
+        
+        return selection;
 	}
 
 	@Override
@@ -319,68 +370,13 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 		// always stop moving when no longer being dragged
 		player.setMoving(false);
 		
-		// handle entity selection
-		boolean selection = false;
-		Vector3 world = camera.unproject(new Vector3(screenX, screenY, 0));
-		for (Agent entity : location.getActors()) {
-			if (entity.contains(world.x, world.y) && player.canTarget(entity, location)) {
-			    selection = true;
-			    if (player.getInfo().getAugmentations().hasActiveAugmentation()
-			    		&& player.select(entity, location)) {
-		            player.getInfo().getAugmentations().useActiveAugmentation(
-		            		button, tacticalPause);
-                } else if (player.getTarget() != entity) {
-					// initial selection -> set target
-					player.select(entity, location);
-				} else if (!tacticalPause) {
-					// already selected -> start interaction
-					player.reselect(entity);
-				} else {
-				    selection = false;
-				}
-				
-			    if (selection) {
-			        break;
-			    }
-			}
+		// handle the release of a sustained active augmentation, like the shield
+		PreparedAugmentations prepared = player.getInfo().getAugmentations();
+		if (prepared.hasActiveAugmentation(button)) {
+		    prepared.release(button);
 		}
 		
-		// handle activators
-		for (Activator activator : location.getActivators()) {
-            if (activator.click(player, location, world.x, world.y)) {
-                selection = true;
-                break;
-            }
-        }
-		
-		if (!playerClicked && !selection) {
-	        // clicked on a non-interactive object, so deselect
-	        player.select(null, location);
-		}
-		playerClicked = false;
-		
-		if (!selection) {
-		    // click on arbitrary position
-//		    if (player.holdingPosition()) {
-//		        player.getInfo().getAugmentations().useActiveAugmentation(
-//		                new Vector2(world.x, world.y), tacticalPause);
-//		    } else {
-//		        // move to destination
-//                player.moveToFixedTarget(world.x, world.y);
-//		    }
-		    if (player.getInfo().getAugmentations().hasActiveAugmentation(button)) {
-    		    player.getInfo().getAugmentations().useActiveAugmentation(
-                        new Vector2(world.x, world.y), button, tacticalPause);
-		    } else {
-		        if (button == Input.Buttons.RIGHT) {
-	                // turn on light
-		            player.toggleLight();
-	            }
-		    }
-		    selection = true;
-		}
-		
-		return selection;
+		return false;
 	}
 
 	@Override

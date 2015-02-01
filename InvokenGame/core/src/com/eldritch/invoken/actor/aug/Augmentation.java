@@ -34,6 +34,9 @@ public abstract class Augmentation {
 	public void unprepare(Agent owner) {
     }
 	
+	public void release(Agent owner) {
+    }
+	
 	public boolean invoke(Agent owner, Agent target) {
 		if (isValid(owner, target)) {
 		    Action action = getAction(owner, target);

@@ -16,7 +16,12 @@ public class Barrier extends Augmentation {
 	}
 	
     private Barrier() {
-        super("barrier", true);
+        super("barrier", false);
+    }
+    
+    @Override
+    public void release(Agent owner) {
+        owner.toggleOff(Shield.class);
     }
     
 	@Override

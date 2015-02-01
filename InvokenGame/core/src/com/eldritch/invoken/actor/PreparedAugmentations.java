@@ -134,6 +134,10 @@ public class PreparedAugmentations {
         return use(index, false);
     }
     
+    public void release(int slot) {
+        activeAugmentations.get(slot).release(owner);
+    }
+    
     public boolean use(int index, boolean queued) {
         if (index < augs.size()) {
             return use(augs.get(index), queued);
