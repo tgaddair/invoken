@@ -127,7 +127,7 @@ public class FireWeapon extends ProjectileAugmentation {
         public void apply(Location location) {
             // add bullet to scene
             Bullet bullet = bulletPool.obtain();
-            bullet.setup(owner, target);
+            bullet.setup(owner, owner.getWeaponSentry());
             location.addEntity(bullet);
             
             // update agent to fact the direction of their shots

@@ -305,6 +305,7 @@ public class Location {
 
     public void addEntity(TemporaryEntity entity) {
         tempEntities.add(entity);
+        drawables.add(entity);
     }
 
     public void addEntities(List<Agent> entities) {
@@ -462,6 +463,7 @@ public class Location {
                 entity.update(delta, this);
                 if (entity.isFinished()) {
                     it.remove();
+                    drawables.remove(entity);  // TODO: could be more efficient
                 }
             }
         }
@@ -470,9 +472,6 @@ public class Location {
         overlayRenderer.setView(camera);
         
         lightManager.update(delta);
-        
-        // TODO: must render EVERYTHING as a normal map onto the frame buffer, then render
-        // all the diffuse to avoid artifacts appearing over entities
 
         // draw lights
 //        lightManager.render(renderer, paused);
@@ -544,9 +543,6 @@ public class Location {
         // render the drawables
         for (Drawable drawable : drawables) {
             drawable.render(delta, renderer);
-        }
-        for (TemporaryEntity entity : tempEntities) {
-            entity.render(delta, renderer);
         }
 
         // render the overlay layers
@@ -641,6 +637,9 @@ public class Location {
                 drawables.add(activator);
             }
         }
+        
+        // add temporary entities
+        drawables.addAll(tempEntities);
     }
 
     private NaturalVector2 getCellPosition(Drawable drawable) {

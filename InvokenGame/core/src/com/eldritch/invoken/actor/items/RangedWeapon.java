@@ -43,7 +43,7 @@ public class RangedWeapon extends Item {
                 width / 2, height / 2,  // origin
                 width, height,  // size
                 1f, 1f,  // scale
-                direction.angle() + 90);
+                direction.angle());
         batch.end();    
 	}
 	

@@ -43,46 +43,6 @@ public abstract class Item {
 		batch.end();
 	}
 	
-	public void render(Agent agent, Activity activity, OrthogonalTiledMapRenderer renderer, 
-	        float angle) {
-	    // get direction from angle
-	    Direction direction;
-	    int adjusted = (int) angle - 45;
-//	    System.out.println("angle: " + adjusted);
-	    if (adjusted < 45) {
-	        direction = Direction.Right;
-	    } else if (adjusted >= 45 && adjusted < 135) {
-	        direction = Direction.Up;
-	        angle -= 90;
-	    } else if (adjusted >= 135 && adjusted < 225) {
-	        direction = Direction.Left;
-	        angle -= 180;
-	    } else if (adjusted >= 225 && adjusted < 315) {
-	        direction = Direction.Down;
-	        angle -= 270;
-	    } else {
-	        throw new IllegalStateException("Invalid angle: " + angle);
-	    }
-	    
-	    if (getAnimation(activity, direction) == null) {
-            // not all items are rendered
-            return;
-        }
-        
-        TextureRegion frame = getAnimation(activity, direction).getKeyFrame(0);
-        Vector2 position = agent.getRenderPosition();
-        
-        Batch batch = renderer.getSpriteBatch();
-        batch.begin();
-        batch.draw(frame,
-                position.x, position.y,  // position
-                width / 2, height / 2,  // origin
-                width, height,  // size
-                1f, 1f,  // scale
-                angle);
-        batch.end();
-	}
-	
 	protected abstract Animation getAnimation(Activity activity, Direction direction);
 	
 	public TextureRegion getPortrait() {

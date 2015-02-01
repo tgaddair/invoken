@@ -22,7 +22,9 @@ public class NormalMapShader {
     // our constants...
     public static final float DEFAULT_LIGHT_Z = 0.075f;
     public static final float AMBIENT_INTENSITY = 0.8f;
-    public static final float LIGHT_INTENSITY = .2f;
+    public static final float DEFAULT_LIGHT_INTENSITY = .2f;
+    
+    public static float LIGHT_INTENSITY = DEFAULT_LIGHT_INTENSITY;
 
     public static final Vector3 LIGHT_POS = new Vector3(0f, 0f, DEFAULT_LIGHT_Z);
 
@@ -162,6 +164,7 @@ public class NormalMapShader {
         LIGHT_POS.x = x;
         LIGHT_POS.y = y;
         LIGHT_POS.z = 0.1f / camera.zoom;
+//        LIGHT_INTENSITY = DEFAULT_LIGHT_INTENSITY / camera.zoom;
         
         // shader will now be in use...
         updateLightGeometry(camera, player);

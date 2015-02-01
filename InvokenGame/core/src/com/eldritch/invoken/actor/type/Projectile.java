@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.eldritch.invoken.actor.type.Agent.WeaponSentry;
 import com.eldritch.invoken.encounter.Location;
 import com.eldritch.invoken.util.Settings;
 
@@ -52,6 +53,15 @@ public abstract class Projectile extends CollisionEntity implements TemporaryEnt
         Vector2 delta = target.cpy().sub(center).nor().scl(0.5f);
         position.set(center.add(delta));
         reset(source, target);
+    }
+    
+    public void setup(Agent source, WeaponSentry sentry) {
+        finished = false;
+        stateTime = 0;
+        
+        position.set(sentry.getPosition());
+        owner = source;
+        velocity.set(sentry.getDirection());
     }
     
     public void reset(Agent source, Vector2 target) {
@@ -105,13 +115,18 @@ public abstract class Projectile extends CollisionEntity implements TemporaryEnt
 
     @Override
     public void render(float delta, OrthogonalTiledMapRenderer renderer) {
+        float width = getWidth();
+        float height = getHeight();
+        
         Batch batch = renderer.getSpriteBatch();
         batch.begin();
         preRender(batch);
         batch.draw(getTexture(stateTime),
-        		position.x - getWidth(), position.y - getHeight(),
-        		getWidth() / 2, getHeight() / 2,
-        		getWidth(), getHeight(), 1f, 1f, velocity.angle());
+        		position.x - width / 2, position.y - height / 2,  // position
+        		width / 2, height / 2,  // origin
+        		width, height,  // size
+        		1f, 1f,  // scale
+        		velocity.angle());
         postRender(batch);
         batch.end();
     }

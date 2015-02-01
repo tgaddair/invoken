@@ -42,8 +42,10 @@ import com.eldritch.invoken.actor.aug.Augmentation;
 import com.eldritch.invoken.actor.aug.Cloak;
 import com.eldritch.invoken.actor.factions.Faction;
 import com.eldritch.invoken.actor.items.Outfit;
+import com.eldritch.invoken.actor.items.RangedWeapon;
 import com.eldritch.invoken.actor.type.HandledProjectile.ProjectileHandler;
 import com.eldritch.invoken.effects.Effect;
+import com.eldritch.invoken.effects.HoldingWeapon;
 import com.eldritch.invoken.encounter.Location;
 import com.eldritch.invoken.encounter.NaturalVector2;
 import com.eldritch.invoken.proto.Actors.ActorParams;
@@ -67,6 +69,8 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     private final Location location;
     protected final Body body;
     private final float radius;
+    
+    private final WeaponSentry weaponSentry = new WeaponSentry();
 
     public enum Direction {
         Up, Left, Down, Right
@@ -1178,6 +1182,10 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         return info.getName();
     }
     
+    public WeaponSentry getWeaponSentry() {
+        return weaponSentry;
+    }
+    
     public abstract boolean canSpeak();
 
     public abstract float getMaxVelocity();
@@ -1224,6 +1232,43 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
 			return false;
 		}
 	};
+	
+    public class WeaponSentry implements TemporaryEntity {
+        private final Vector2 position = new Vector2();
+        private final Vector2 direction = new Vector2();
+        
+        @Override
+        public void update(float delta, Location location) {
+            Vector2 origin = getRenderPosition();
+            direction.set(getFocusPoint()).sub(origin).nor();
+            position.set(origin.x + direction.x, origin.y + direction.y);
+        }
+
+        @Override
+        public void render(float delta, OrthogonalTiledMapRenderer renderer) {
+            RangedWeapon weapon = getInventory().getRangedWeapon();
+            weapon.render(position, direction, renderer);
+        }
+
+        @Override
+        public float getZ() {
+            return position.y;
+        }
+
+        @Override
+        public Vector2 getPosition() {
+            return position;
+        }
+        
+        public Vector2 getDirection() {
+            return direction;
+        }
+
+        @Override
+        public boolean isFinished() {
+            return !isToggled(HoldingWeapon.class);
+        }
+    }
 	
     private class AgentCamera implements GameCamera {
         @Override
