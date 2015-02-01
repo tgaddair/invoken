@@ -22,7 +22,7 @@ public class NormalMapShader {
     // our constants...
     public static final float DEFAULT_LIGHT_Z = 0.075f;
     public static final float AMBIENT_INTENSITY = 0.8f;
-    public static final float LIGHT_INTENSITY = .3f;
+    public static final float LIGHT_INTENSITY = .2f;
 
     public static final Vector3 LIGHT_POS = new Vector3(0f, 0f, DEFAULT_LIGHT_Z);
 
@@ -36,7 +36,7 @@ public class NormalMapShader {
 
     // Attenuation coefficients for light falloff
     // the greater the falloff, the lower the dispersion of light
-    public static final Vector3 FALLOFF = new Vector3(.04f, .03f, 3f);
+    public static final Vector3 FALLOFF = new Vector3(.04f, .03f, 2f);
 
     final String VERT = "attribute vec4 " + ShaderProgram.POSITION_ATTRIBUTE + ";\n"
             + "attribute vec4 " + ShaderProgram.COLOR_ATTRIBUTE + ";\n" + "attribute vec2 "
