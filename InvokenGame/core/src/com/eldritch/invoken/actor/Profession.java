@@ -295,7 +295,7 @@ public enum Profession {
 	public abstract String getDescription();
 	
 	public static Profession getDefault() {
-        return Agent;
+        return Executor;
     }
 	
 	public static List<Skill> getSorted(List<Skill> skills, final Collection<Discipline> masteries) {
