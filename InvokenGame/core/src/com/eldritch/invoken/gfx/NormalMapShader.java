@@ -35,7 +35,7 @@ public class NormalMapShader {
 
     // Attenuation coefficients for light falloff
     // the greater the falloff, the lower the dispersion of light
-    public static final Vector3 FALLOFF = new Vector3(.04f, .03f, 3f);
+    public static final Vector3 FALLOFF = new Vector3(.04f, .03f, 5f);
 
     final String VERT = "attribute vec4 " + ShaderProgram.POSITION_ATTRIBUTE + ";\n"
             + "attribute vec4 " + ShaderProgram.COLOR_ATTRIBUTE + ";\n" + "attribute vec2 "
