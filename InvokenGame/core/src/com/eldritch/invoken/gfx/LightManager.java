@@ -124,6 +124,7 @@ public class LightManager {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         batch.begin();
         for (Light light : lights) {
+            light.update(zAngle);
             light.render(batch, zAngle);
         }
         batch.end();

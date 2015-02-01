@@ -10,17 +10,20 @@ public abstract class Light {
     private final float magnitude;
     private boolean oscillate;
     private Texture light;
+    private float zAngle;
     
     public Light(float magnitude, boolean oscillate) {
         this.magnitude = magnitude;
         this.oscillate = oscillate;
         light = new Texture("light/light2.png");
     }
+    
+    public void update(float zAngle) {
+        this.zAngle = zAngle;
+    }
 
     public void render(Batch batch, float zAngle) {
-        float lightSize = oscillate
-                ? (magnitude * 0.75f + 0.25f * (float) Math.sin(zAngle) + .2f * MathUtils.random())
-                : magnitude;
+        float lightSize = getRadius();
         Vector2 position = getPosition();
         batch.draw(light,
                 position.x - lightSize * 0.5f, position.y - lightSize * 0.5f,
@@ -32,7 +35,9 @@ public abstract class Light {
     }
     
     public float getRadius() {
-        return magnitude;
+        return oscillate
+                ? (magnitude * 0.75f + 0.25f * (float) Math.sin(zAngle) + .2f * MathUtils.random())
+                : magnitude;
     }
 
     public abstract Vector2 getPosition();

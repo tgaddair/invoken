@@ -66,7 +66,8 @@ void main() {
        vec3 Diffuse = (LightColor.rgb * LightColor.a) * max(dot(N, L), 0.0);
        
        // calculate attenuation
-       float Attenuation = 1.0 / ( Falloff.x + (Falloff.y*D) + (Falloff.z*D*D) );
+       float r = radius / 5;
+       float Attenuation = r / ( Falloff.x + (Falloff.y*D) + (Falloff.z*D*D) );
 
        // sum the diffuse and attenuation int the diffuse total
        DiffuseTotal += Diffuse * Attenuation;
