@@ -2,7 +2,7 @@ package com.eldritch.invoken.util;
 
 public class Settings {
 	public static final int PX = 32;
-	public static final float SCALE = 1 / 32f;
+	public static final float SCALE = 1.0f / PX;
 	public static final int MAX_WIDTH = 100;
 	public static final int MAX_HEIGHT = 100;
 	public static final float MIN_ZOOM = 1.0f;

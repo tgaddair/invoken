@@ -123,7 +123,7 @@ public class Location {
         }
 
         // objects are rendered by y-ordering with other entities
-        float unitScale = 1.0f / Settings.PX;
+        float unitScale = Settings.SCALE;
         renderer = new OrthogonalShadedTiledMapRenderer(map, unitScale, normalMapShader);
         overlayRenderer = new OrthogonalShadedTiledMapRenderer(map.getOverlayMap(), unitScale,
                 normalMapShader);

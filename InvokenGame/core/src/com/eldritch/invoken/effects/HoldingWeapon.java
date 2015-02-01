@@ -2,6 +2,7 @@ package com.eldritch.invoken.effects;
 
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
+import com.eldritch.invoken.actor.items.RangedWeapon;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.TemporaryEntity;
 import com.eldritch.invoken.encounter.Location;
@@ -13,6 +14,7 @@ public class HoldingWeapon extends BasicEffect {
 
     @Override
     public void doApply() {
+        target.getLocation().addEntity(new WeaponSentry());
     }
 
     @Override
@@ -27,41 +29,37 @@ public class HoldingWeapon extends BasicEffect {
     @Override
     protected void update(float delta) {
     }
-
-    @Override
-    public void render(float delta, OrthogonalTiledMapRenderer renderer) {
-        // render weapon
-        target.getInventory().getRangedWeapon().render(target, renderer);
-    }
     
     public class WeaponSentry implements TemporaryEntity {
+        private final Vector2 position = new Vector2();
+        private final Vector2 direction = new Vector2();
+        
         @Override
         public void update(float delta, Location location) {
-            // TODO Auto-generated method stub
-            
+            Vector2 origin = target.getRenderPosition();
+            direction.set(target.getFocusPoint()).sub(origin).nor();
+            position.set(origin.x + direction.x, origin.y + direction.y);
         }
 
         @Override
         public void render(float delta, OrthogonalTiledMapRenderer renderer) {
-            // TODO Auto-generated method stub
+            RangedWeapon weapon = target.getInventory().getRangedWeapon();
+            weapon.render(position, direction, renderer);
         }
 
         @Override
         public float getZ() {
-            // TODO Auto-generated method stub
-            return 0;
+            return position.y;
         }
 
         @Override
         public Vector2 getPosition() {
-            // TODO Auto-generated method stub
-            return null;
+            return position;
         }
 
         @Override
         public boolean isFinished() {
-            // TODO Auto-generated method stub
-            return false;
+            return HoldingWeapon.this.isFinished();
         }
     }
 }
