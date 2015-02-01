@@ -54,7 +54,6 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
 	private final BasicSteerable lastSeen = new BasicSteerable();
 	
 	// used in AI routine calculations to determine things like the target
-	private final Location location;
 	private final Set<Agent> squad = new HashSet<Agent>();
 	
 	// AI controllers
@@ -74,12 +73,11 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
 	
 	public Npc(NonPlayerActor data, float x, float y, float width, float height,
 	        Map<Activity, Map<Direction, Animation>> animations, Location location) {
-		super(data.getParams(), x, y, width, height, location.getWorld(), animations);
+		super(data.getParams(), x, y, width, height, location, animations);
 		this.data = data;
 		scenario = Optional.absent();
 		dialogue = new ConversationHandler(data.getDialogue(), new NpcDialogueVerifier());
 		behavior = new Behavior(this, data);
-		this.location = location;
 		
 		// equip items
 		for (ItemState item : info.getInventory().getItems()) {
@@ -224,10 +222,6 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
 	
 	public boolean isCombatReady() {
 	    return isThreatened() || isAgitated();
-	}
-	
-	public Location getLocation() {
-		return location;
 	}
 	
 	@Override

@@ -64,7 +64,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     private final GameCamera defaultCamera = new AgentCamera();
     private GameCamera camera = defaultCamera;
     
-    private final World world;
+    private final Location location;
     protected final Body body;
     private final float radius;
 
@@ -118,30 +118,30 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     private final Color color = new Color(1, 1, 1, 1);
 
     public Agent(ActorParams params, float x, float y, float width, float height,
-            World world, Map<Activity, Map<Direction, Animation>> animations) {
-        this(x, y, width, height, world, animations);
+            Location location, Map<Activity, Map<Direction, Animation>> animations) {
+        this(x, y, width, height, location, animations);
         
         // health, level, augmentations, etc.
         this.info = new AgentInfo(this, params);
     }
 
     public Agent(float x, float y, float width, float height, Profession profession, int level,
-            World world, Map<Activity, Map<Direction, Animation>> animations) {
-        this(x, y, width, height, world, animations);
+            Location location, Map<Activity, Map<Direction, Animation>> animations) {
+        this(x, y, width, height, location, animations);
         
         // health, level, augmentations, etc.
         this.info = new AgentInfo(this, profession, level);
     }
     
     public Agent(float x, float y, float width, float height,
-            World world, Map<Activity, Map<Direction, Animation>> animations) {
+            Location location, Map<Activity, Map<Direction, Animation>> animations) {
         super(width, height);
         setPosition(x, y);
         this.animations = animations;
 
         radius = Math.max(width, height) / 5;
-        this.world = world;
-        body = createBody(x, y, width, height, world);
+        this.location = location;
+        body = createBody(x, y, width, height, location.getWorld());
     }
     
 	private Body createBody(float x, float y, float width, float height, World world) {
@@ -171,6 +171,10 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
 
 		circleShape.dispose();
 		return body;
+	}
+	
+	public Location getLocation() {
+	    return location;
 	}
 	
     public void setCamera(GameCamera camera) {
@@ -672,7 +676,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
             // Expression: r.LengthSquared() > 0.0f
             return true;
         }
-        world.rayCast(losHandler, body.getPosition(), target);
+        location.getWorld().rayCast(losHandler, body.getPosition(), target);
         return losHandler.hasLineOfSight();
     }
     

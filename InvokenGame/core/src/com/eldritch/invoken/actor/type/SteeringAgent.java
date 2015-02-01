@@ -8,8 +8,8 @@ import com.badlogic.gdx.ai.steer.SteeringBehavior;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.World;
 import com.eldritch.invoken.actor.Profession;
+import com.eldritch.invoken.encounter.Location;
 import com.eldritch.invoken.proto.Actors.ActorParams;
 
 public abstract class SteeringAgent extends Agent {
@@ -29,13 +29,13 @@ public abstract class SteeringAgent extends Agent {
     private float maxLinearVelocity = 5;
 	
 	public SteeringAgent(ActorParams params, float x, float y, float width, float height,
-            World world, Map<Activity, Map<Direction, Animation>> animations) {
-		super(params, x, y, width, height, world, animations);
+            Location location, Map<Activity, Map<Direction, Animation>> animations) {
+		super(params, x, y, width, height, location, animations);
 	}
 	
 	public SteeringAgent(float x, float y, float width, float height, Profession profession, int level,
-            World world, Map<Activity, Map<Direction, Animation>> animations) {
-		super(x, y, width, height, profession, level, world, animations);
+	        Location location, Map<Activity, Map<Direction, Animation>> animations) {
+		super(x, y, width, height, profession, level, location, animations);
 	}
 	
 	protected void setBehavior(SteeringBehavior<Vector2> behavior) {

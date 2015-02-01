@@ -143,14 +143,14 @@ public class Location {
     public Player createPlayer(Profession profession) {
         // spawn and add the player
         Vector2 spawn = getSpawnLocation();
-        this.player = createPlayer(world, profession, spawn.x, spawn.y);
+        this.player = createPlayer(profession, spawn.x, spawn.y);
         addActor(player);
         return player;
     }
 
-    private Player createPlayer(World world, Profession profession, float x, float y) {
+    private Player createPlayer(Profession profession, float x, float y) {
         // create the Player we want to move around the world
-        Player player = new Player(profession, 25, x, y, world,
+        Player player = new Player(profession, 25, x, y, this,
                 "sprite/characters/light-blue-hair.png");
         // player.addFaction(playerFaction, 9, 0);
 

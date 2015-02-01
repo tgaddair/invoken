@@ -3,7 +3,6 @@ package com.eldritch.invoken.actor.type;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.World;
 import com.eldritch.invoken.actor.ConversationHandler;
 import com.eldritch.invoken.actor.Profession;
 import com.eldritch.invoken.actor.ai.AgentMover;
@@ -19,8 +18,8 @@ public class Player extends SteeringAgent {
     private boolean fixedTarget = false;
     private boolean lightOn = false;
 
-    public Player(Profession profession, int level, float x, float y, World world, String body) {
-        super(x, y, Human.getWidth(), Human.getHeight(), profession, level, world, 
+    public Player(Profession profession, int level, float x, float y, Location location, String body) {
+        super(x, y, Human.getWidth(), Human.getHeight(), profession, level, location, 
         		Human.getAllAnimations(body));
         mover = new AgentMover(this, getMaxVelocity(), 0.01f);
     }

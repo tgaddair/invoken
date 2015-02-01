@@ -24,13 +24,16 @@ public class RangedWeapon extends Item {
 		super(item, 18);
 		if (!Strings.isNullOrEmpty(item.getAsset())) {
 		    texture = new TextureRegion(GameScreen.getTexture(item.getAsset()));
-//		    animations.putAll(Human.getAnimations(item.getAsset(), 64));
 		} else {
 		    texture = null;
 		}
 	}
 	
 	public void render(Agent owner, OrthogonalTiledMapRenderer renderer) {
+	    if (texture == null) {
+	        return;
+	    }
+	    
 	    // TODO: pull this calculation into the Agent to make it more efficient
         Vector2 direction = owner.getFocusPoint().cpy().sub(owner.getRenderPosition()).nor();
         float angle = direction.angle() + 90;
