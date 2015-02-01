@@ -137,7 +137,6 @@ public class NormalMapShader {
         shader.begin();
         shader.setUniform3fv("lightGeometry", values, 0, values.length);
         shader.setUniformi("lightCount", visibleLights.size() + 1);
-        shader.setUniformMatrix("u_projTrans", camera.combined);
         shader.end();
     }
     
