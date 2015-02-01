@@ -411,7 +411,8 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     public void setCloaked(boolean cloaked) {
         if (cloaked) {
             toggles.add(Cloak.class);
-            setAlpha(0.1f);
+//            setAlpha(0.1f);
+            setAlpha(0);
         } else {
             toggles.remove(Cloak.class);
             setAlpha(1);

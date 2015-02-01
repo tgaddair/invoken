@@ -27,14 +27,16 @@ public class NormalMapShader {
     public static final Vector3 LIGHT_POS = new Vector3(0f, 0f, DEFAULT_LIGHT_Z);
 
     // Light RGB and intensity (alpha)
-    public static final Vector3 LIGHT_COLOR = new Vector3(0.8f, 0.6f, 0.9f);
+//    public static final Vector3 LIGHT_COLOR = new Vector3(0.8f, 0.6f, 0.9f);
+//    public static final Vector3 LIGHT_COLOR = new Vector3(1, 0.8f, 0.6f);
+    public static final Vector3 LIGHT_COLOR = new Vector3(0.71f, 0.25f, 0.05f);  // rust
 
     // Ambient RGB and intensity (alpha)
     public static final Vector3 AMBIENT_COLOR = new Vector3(0.6f, 0.6f, 1f);
 
     // Attenuation coefficients for light falloff
     // the greater the falloff, the lower the dispersion of light
-    public static final Vector3 FALLOFF = new Vector3(.04f, .03f, 5f);
+    public static final Vector3 FALLOFF = new Vector3(.04f, .03f, 3f);
 
     final String VERT = "attribute vec4 " + ShaderProgram.POSITION_ATTRIBUTE + ";\n"
             + "attribute vec4 " + ShaderProgram.COLOR_ATTRIBUTE + ";\n" + "attribute vec2 "
