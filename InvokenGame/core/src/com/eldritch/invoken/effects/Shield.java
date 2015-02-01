@@ -24,12 +24,14 @@ public class Shield extends BasicEffect {
     @Override
     public void doApply() {
         target.addProjectileHandler(handler);
+        target.setStunted(true);  // cannot regain energy when shielded
     }
     
     @Override
     public void dispel() {
         target.removeProjectileHandler(handler);
         target.getInfo().getAugmentations().removeSelfAugmentation(aug);
+        target.setStunted(false);
     }
     
 	@Override
@@ -64,6 +66,7 @@ public class Shield extends BasicEffect {
         public boolean handle(HandledProjectile handledProjectile) {
             float damage = handledProjectile.getDamage(target);
             if (damage > 0) {
+                System.out.println("expend: " + damage);
                 target.getInfo().expend(damage);
                 if (target.getInfo().getEnergy() < damage) {
                     target.toggleOff(Shield.class);

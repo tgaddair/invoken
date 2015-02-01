@@ -110,6 +110,8 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     private int confused = 0;
     private int paralyzed = 0;
     private int imploding = 0;
+    private int stunted = 0;
+    
     private float freezing = 0;
     private float lastAction = 0;
 
@@ -374,6 +376,14 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     	} else {
     		this.paralyzed--;
     	}
+    }
+    
+    public void setStunted(boolean stunted) {
+        this.stunted += stunted ? 1 : -1;
+    }
+    
+    public boolean isStunted() {
+        return stunted > 0;
     }
     
     public void addFollower(Agent follower) {
@@ -890,7 +900,9 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     	}
         
         // restore energy in proportion to elapsed time
-        info.restore(delta);
+    	if (!isStunted()) {
+    	    info.restore(delta);
+    	}
         
         updateHeading();
 
