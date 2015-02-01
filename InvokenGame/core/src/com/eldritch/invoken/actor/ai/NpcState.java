@@ -47,7 +47,7 @@ public enum NpcState implements State<Npc> {
 			entity.getPursue().setEnabled(false);
 			entity.getEvade().setEnabled(false);
 			entity.getSeek().setEnabled(false);
-			entity.getInfo().getAugmentations().setInactive(0);
+			entity.getInfo().getAugmentations().unprepareAll();
 		}
 	};
 	

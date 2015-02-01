@@ -110,6 +110,15 @@ public class PreparedAugmentations {
         activeAugmentations.put(slot, aug);
 	}
 	
+	public void unprepareAll() {
+	    for (Augmentation aug : prepared) {
+	        aug.release(owner);
+            aug.unprepare(owner);
+	    }
+	    prepared.clear();
+	    activeAugmentations.clear();
+	}
+	
 	public void setInactive(int slot) {
 	    Augmentation aug = activeAugmentations.get(slot);
 	    if (aug != null) {
@@ -176,6 +185,7 @@ public class PreparedAugmentations {
     
     private void unprepare(Augmentation aug) {
         if (prepared.contains(aug)) {
+            aug.release(owner);
             aug.unprepare(owner);
             prepared.remove(aug);
         }
