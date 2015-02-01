@@ -51,7 +51,14 @@ public class Barrier extends Augmentation {
 	
 	@Override
     public float quality(Agent owner, Agent target, Location location) {
-        return 1;
+	    if (target != null && target.getInventory().hasRangedWeapon()) {
+	        if (!owner.isToggled(Shield.class)) {
+	            return 2;
+	        }
+	    }
+	    
+	    // turn off the shield if not facing an enemy with a ranged weapon
+        return owner.isToggled(Shield.class) ? 2 : 0;
     }
 	
 	public class ShieldAction extends AnimatedAction {

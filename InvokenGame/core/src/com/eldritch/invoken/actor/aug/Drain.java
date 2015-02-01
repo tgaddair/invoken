@@ -12,6 +12,9 @@ import com.eldritch.invoken.encounter.Location;
 import com.eldritch.invoken.screens.GameScreen;
 
 public class Drain extends ProjectileAugmentation {
+    private static final float DAMAGE_SCALE = 25;
+    private static final int BASE_COST = 10;
+    
 	private static class Holder {
         private static final Drain INSTANCE = new Drain();
 	}
@@ -31,7 +34,7 @@ public class Drain extends ProjectileAugmentation {
 
     @Override
     public int getCost(Agent owner) {
-        return 2;
+        return BASE_COST;
     }
 
     @Override
@@ -73,7 +76,7 @@ public class Drain extends ProjectileAugmentation {
 
         @Override
         protected void apply(Agent owner, Agent target) {
-            target.addEffect(new Draining(owner, target, 5, 2));
+            target.addEffect(new Draining(owner, target, DAMAGE_SCALE, 2));
         }
 
         @Override
