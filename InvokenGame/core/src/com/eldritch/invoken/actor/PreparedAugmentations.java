@@ -53,6 +53,10 @@ public class PreparedAugmentations {
 	    return !activeAugmentations.isEmpty();
 	}
 	
+	public boolean hasActiveAugmentation(int slot) {
+	    return activeAugmentations.containsKey(slot);
+	}
+	
 	public void toggleActiveAugmentation(int index) {
 	    if (index < augs.size()) {
 	        toggleActiveAugmentation(augs.get(index), 0);

@@ -17,6 +17,7 @@ public class Player extends SteeringAgent {
     private boolean holding = false;
     private boolean moving = false;
     private boolean fixedTarget = false;
+    private boolean lightOn = false;
 
     public Player(Profession profession, int level, float x, float y, World world, String body) {
         super(x, y, Human.getWidth(), Human.getHeight(), profession, level, world, 
@@ -52,6 +53,14 @@ public class Player extends SteeringAgent {
             body.applyForceToCenter(new Vector2(0, -1 * getMaxVelocity()), true);
             moving = false;
         }
+    }
+    
+    public void toggleLight() {
+        lightOn = !lightOn;
+    }
+    
+    public boolean hasLightOn() {
+        return lightOn;
     }
     
     public boolean holdingPosition() {

@@ -1,6 +1,7 @@
 package com.eldritch.invoken.screens;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.ai.fsm.State;
@@ -353,8 +354,8 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         }
 		
 		if (!playerClicked && !selection) {
-			// clicked on a non-interactive object, so deselect
-			player.select(null, location);
+	        // clicked on a non-interactive object, so deselect
+	        player.select(null, location);
 		}
 		playerClicked = false;
 		
@@ -367,8 +368,15 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 //		        // move to destination
 //                player.moveToFixedTarget(world.x, world.y);
 //		    }
-		    player.getInfo().getAugmentations().useActiveAugmentation(
-                    new Vector2(world.x, world.y), button, tacticalPause);
+		    if (player.getInfo().getAugmentations().hasActiveAugmentation(button)) {
+    		    player.getInfo().getAugmentations().useActiveAugmentation(
+                        new Vector2(world.x, world.y), button, tacticalPause);
+		    } else {
+		        if (button == Input.Buttons.RIGHT) {
+	                // turn on light
+		            player.toggleLight();
+	            }
+		    }
 		    selection = true;
 		}
 		

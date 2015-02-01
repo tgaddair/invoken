@@ -41,7 +41,7 @@ public abstract class Light {
         private final Agent owner;
         
         public AgentLight(Agent owner) {
-            super(15, false);
+            super(5, false);
             this.owner = owner;
         }
 

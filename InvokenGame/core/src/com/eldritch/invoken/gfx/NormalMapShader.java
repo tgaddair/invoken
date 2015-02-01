@@ -21,20 +21,21 @@ import com.eldritch.invoken.actor.type.Player;
 public class NormalMapShader {
     // our constants...
     public static final float DEFAULT_LIGHT_Z = 0.075f;
-//    public static final float AMBIENT_INTENSITY = 0.2f;
-    public static final float AMBIENT_INTENSITY = 0.7f;
-    public static final float LIGHT_INTENSITY = 1f;
+    public static final float AMBIENT_INTENSITY = 0.6f;
+//    public static final float AMBIENT_INTENSITY = 0.7f;
+    public static final float LIGHT_INTENSITY = .3f;
 
     public static final Vector3 LIGHT_POS = new Vector3(0f, 0f, DEFAULT_LIGHT_Z);
 
     // Light RGB and intensity (alpha)
-    public static final Vector3 LIGHT_COLOR = new Vector3(1f, 0.8f, 0.6f);
+    public static final Vector3 LIGHT_COLOR = new Vector3(0.8f, 0.6f, 0.9f);
 
     // Ambient RGB and intensity (alpha)
     public static final Vector3 AMBIENT_COLOR = new Vector3(0.6f, 0.6f, 1f);
 
     // Attenuation coefficients for light falloff
-    public static final Vector3 FALLOFF = new Vector3(.4f, 3f, 20f);
+    // the greater the falloff, the lower the dispersion of light
+    public static final Vector3 FALLOFF = new Vector3(.04f, .03f, 3f);
 
     final String VERT = "attribute vec4 " + ShaderProgram.POSITION_ATTRIBUTE + ";\n"
             + "attribute vec4 " + ShaderProgram.COLOR_ATTRIBUTE + ";\n" + "attribute vec2 "
@@ -115,11 +116,11 @@ public class NormalMapShader {
 //                System.out.println("light: " + screen.x + ", " + screen.y);
             }
         }
-        System.out.println("visible lights: " + visibleLights.size());
+//        System.out.println("visible lights: " + visibleLights.size());
         values = new float[(visibleLights.size() + 1) * 3];
     }
     
-    private void updateLightGeometry(OrthographicCamera camera) {
+    private void updateLightGeometry(OrthographicCamera camera, Player player) {
         for (int i = 0; i < visibleLights.size(); i++) {
             Light light = visibleLights.get(i);
             Vector2 position = light.getPosition();
@@ -131,11 +132,12 @@ public class NormalMapShader {
         
         values[visibleLights.size() * 3 + 0] = LIGHT_POS.x;
         values[visibleLights.size() * 3 + 1] = LIGHT_POS.y;
-        values[visibleLights.size() * 3 + 2] = 10;
+        values[visibleLights.size() * 3 + 2] = player.hasLightOn() ? 10 : 0;
         
         shader.begin();
         shader.setUniform3fv("lightGeometry", values, 0, values.length);
         shader.setUniformi("lightCount", visibleLights.size() + 1);
+        shader.setUniformMatrix("u_projTrans", camera.combined);
         shader.end();
     }
     
@@ -145,29 +147,15 @@ public class NormalMapShader {
     }
 
     public void render(LightManager lightManager, Player player, float delta, OrthographicCamera camera, OrthogonalShadedTiledMapRenderer... renderers) {
-//        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        
-        // reset light Z
-//        LIGHT_POS.z = DEFAULT_LIGHT_Z;
-//      System.out.println("New light Z: " + LIGHT_POS.z);
-
-        // shader will now be in use...
-
         // update light position, normalized to screen resolution
         float x = Gdx.input.getX();
         float y = Gdx.graphics.getHeight() - Gdx.input.getY() - 1;
         LIGHT_POS.x = x;
         LIGHT_POS.y = y;
+        LIGHT_POS.z = 0.1f / camera.zoom;
         
-//        shader.begin();
-//        shader.setUniform3fv("lightGeometry", new float[] { LIGHT_POS.x, LIGHT_POS.y, 0.0f }, 0, 3);
-//        shader.setUniformi("lightCount", 1);
-//        shader.end();
-        
-        updateLightGeometry(camera);
-
-//        LIGHT_POS.x = player.getPosition().x;
-//        LIGHT_POS.y = player.getPosition().y;
+        // shader will now be in use...
+        updateLightGeometry(camera, player);
 
         fbo.begin();
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);

@@ -46,8 +46,7 @@ void main() {
    for (int i = 0; i < lightCount; i++) {
      vec3 light = lightGeometry[i];
      vec2 lightCoord = light.xy / Resolution.xy;
-     //vec2 lightCoord = LightPos.xy;
-     //vec2 lightCoord = lightGeometry[0];
+     float radius = light.z;
 
      // the delta position of light
      vec3 LightDir = vec3(lightCoord - globalCoord, LightPos.z);
@@ -57,19 +56,21 @@ void main() {
      
      // determine distance (used for attenuation) BEFORE we normalize LightDir
      float D = length(LightDir);
-     
-     // normalize our vector
-     vec3 L = normalize(LightDir);
-     
-     // pre-multiply light color with intensity
-     // then perform \"N dot L\" to determine our diffuse term
-     vec3 Diffuse = (LightColor.rgb * LightColor.a) * max(dot(N, L), 0.0);
-     
-     // calculate attenuation
-     float Attenuation = 1.0 / ( Falloff.x + (Falloff.y*D) + (Falloff.z*D*D) );
 
-     // sum the diffuse and attenuation int the diffuse total
-     DiffuseTotal += Diffuse * Attenuation;
+     if (radius > 0) {
+       // normalize our vector
+       vec3 L = normalize(LightDir);
+       
+       // pre-multiply light color with intensity
+       // then perform \"N dot L\" to determine our diffuse term
+       vec3 Diffuse = (LightColor.rgb * LightColor.a) * max(dot(N, L), 0.0);
+       
+       // calculate attenuation
+       float Attenuation = 1.0 / ( Falloff.x + (Falloff.y*D) + (Falloff.z*D*D) );
+
+       // sum the diffuse and attenuation int the diffuse total
+       DiffuseTotal += Diffuse * Attenuation;
+     }
    }
 
    // pre-multiply ambient color with intensity
