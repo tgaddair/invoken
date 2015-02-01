@@ -199,27 +199,31 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 //			}
 //		}
 		
-		if (player.getTarget() != null) {
-			if (player.getTarget() instanceof Npc) {
-				Npc npc = (Npc) player.getTarget();
+	    Agent target = player.getTarget();
+		if (target != null) {
+		    float energy = target.getInfo().getEnergy();
+            int level = target.getInfo().getLevel();
+            float freezing = target.getFreezing();
+            int enemies = target.getEnemyCount();
+            
+            int i = 0;
+            batch.begin();
+            font.draw(batch, String.format("Energy: %.0f", energy), 10, getHeight() - (30 + 20 * i++));
+            font.draw(batch, String.format("Level: %d", level), 10, getHeight() - (30 + 20 * i++));
+            font.draw(batch, String.format("Freezing: %.2f", freezing), 10, getHeight() - (30 + 20 * i++));
+            font.draw(batch, String.format("Enemies: %d", enemies), 10, getHeight() - (30 + 20 * i++));
+		    
+			if (target instanceof Npc) {
+				Npc npc = (Npc) target;
 				State<Npc> state = npc.getStateMachine().getCurrentState();
-				float energy = npc.getInfo().getEnergy();
-				int level = npc.getInfo().getLevel();
-				float freezing = npc.getFreezing();
 				boolean agitated = npc.isAgitated();
-				int enemies = npc.getEnemyCount();
 				
-				int i = 0;
-				batch.begin();
-				font.draw(batch, String.format("Energy: %.2f", energy), 10, getHeight() - (30 + 20 * i++));
-				font.draw(batch, String.format("Level: %d", level), 10, getHeight() - (30 + 20 * i++));
 		        font.draw(batch, "Graph: " + Settings.DRAW_GRAPH, 10, getHeight() - (30 + 20 * i++));
 		        font.draw(batch, "State: " + state, 10, getHeight() - (30 + 20 * i++));
-		        font.draw(batch, String.format("Freezing: %.2f", freezing), 10, getHeight() - (30 + 20 * i++));
 		        font.draw(batch, String.format("Agitated: %s", agitated), 10, getHeight() - (30 + 20 * i++));
-		        font.draw(batch, String.format("Enemies: %d", enemies), 10, getHeight() - (30 + 20 * i++));
-		        batch.end();
 			}
+			
+			batch.end();
 		}
 	}
 	

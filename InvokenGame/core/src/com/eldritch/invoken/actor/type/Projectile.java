@@ -44,21 +44,15 @@ public abstract class Projectile extends CollisionEntity implements TemporaryEnt
     }
     
     public void setup(Agent source, Vector2 target) {
-        finished = false;
-        stateTime = 0;
-
-        // get the center of the agent launching the projectile, then offset the starting position
-        // slightly towards its target so it appears to be coming from the agent's hands
-        Vector2 center = source.getVisibleCenter();
-        Vector2 delta = target.cpy().sub(center).nor().scl(0.5f);
-        position.set(center.add(delta));
-        reset(source, target);
+        source.setFocusPoint(target);
+        setup(source);
     }
     
-    public void setup(Agent source, WeaponSentry sentry) {
+    public void setup(Agent source) {
         finished = false;
         stateTime = 0;
         
+        WeaponSentry sentry = source.getWeaponSentry();
         position.set(sentry.getPosition());
         owner = source;
         velocity.set(sentry.getDirection());
