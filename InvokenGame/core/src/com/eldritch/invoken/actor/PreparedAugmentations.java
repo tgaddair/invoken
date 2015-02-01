@@ -57,6 +57,10 @@ public class PreparedAugmentations {
 	    return activeAugmentations.containsKey(slot);
 	}
 	
+	public Augmentation getActiveAugmentation(int slot) {
+	    return activeAugmentations.get(slot);
+	}
+	
 	public void toggleActiveAugmentation(int index) {
 	    if (index < augs.size()) {
 	        toggleActiveAugmentation(augs.get(index), 0);

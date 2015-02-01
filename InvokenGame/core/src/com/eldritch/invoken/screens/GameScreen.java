@@ -257,6 +257,9 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 		case Keys.I:
 			inventoryMenu.toggle();
 			return true;
+		case Keys.F:
+		    player.toggleLastAugmentation();
+		    return true;
 		case Keys.SPACE:
 		    tacticalPause = !tacticalPause;
 		    return true;

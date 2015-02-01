@@ -4,7 +4,9 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.actor.ConversationHandler;
+import com.eldritch.invoken.actor.PreparedAugmentations;
 import com.eldritch.invoken.actor.Profession;
+import com.eldritch.invoken.actor.aug.Augmentation;
 import com.eldritch.invoken.encounter.Location;
 import com.eldritch.invoken.util.Settings;
 
@@ -15,10 +17,21 @@ public class Player extends SteeringAgent {
     private boolean moving = false;
     private boolean fixedTarget = false;
     private boolean lightOn = false;
+    private Augmentation lastAug = null;
 
     public Player(Profession profession, int level, float x, float y, Location location, String body) {
         super(x, y, Human.getWidth(), Human.getHeight(), Human.MAX_VELOCITY, profession, level, location, 
         		Human.getAllAnimations(body));
+    }
+    
+    public void toggleLastAugmentation() {
+        PreparedAugmentations prepared = getInfo().getAugmentations();
+        if (prepared.hasActiveAugmentation(0)) {
+            lastAug = prepared.getActiveAugmentation(0);
+            prepared.toggleActiveAugmentation(lastAug, 0);
+        } else if (lastAug != null) {
+            prepared.toggleActiveAugmentation(lastAug, 0);
+        }
     }
 
     @Override
