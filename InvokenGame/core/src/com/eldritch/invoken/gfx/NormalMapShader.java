@@ -28,8 +28,8 @@ public class NormalMapShader {
 
     // Light RGB and intensity (alpha)
 //    public static final Vector3 LIGHT_COLOR = new Vector3(0.8f, 0.6f, 0.9f);
-//    public static final Vector3 LIGHT_COLOR = new Vector3(1, 0.8f, 0.6f);
-    public static final Vector3 LIGHT_COLOR = new Vector3(0.71f, 0.25f, 0.05f);  // rust
+    public static final Vector3 LIGHT_COLOR = new Vector3(1, 0.8f, 0.6f);
+//    public static final Vector3 LIGHT_COLOR = new Vector3(0.71f, 0.25f, 0.05f).scl(0.5f);  // rust
 
     // Ambient RGB and intensity (alpha)
     public static final Vector3 AMBIENT_COLOR = new Vector3(0.6f, 0.6f, 1f);
@@ -50,7 +50,6 @@ public class NormalMapShader {
             + "   gl_Position =  u_projTrans * " + ShaderProgram.POSITION_ATTRIBUTE + ";\n" + "}";
 
     // no changes except for LOWP for color values
-    // we would store this in a file for increased readability
     final String FRAG = Gdx.files.internal("shader/normalMappedShader.glsl").readString();
     
     private final List<Light> visibleLights = new ArrayList<Light>();

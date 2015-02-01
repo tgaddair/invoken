@@ -51,6 +51,7 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
     private final ConversationHandler dialogue;
 	private final Behavior behavior;
 	private final Set<Agent> detected = new HashSet<Agent>();
+	private final BasicSteerable lastSeen = new BasicSteerable();
 	
 	// used in AI routine calculations to determine things like the target
 	private final Location location;
@@ -296,12 +297,17 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
 	    super.setTarget(other);
 	    if (other != null) {
 	        detected.add(other);
+	        lastSeen.setPosition(other.getPosition());
 	    }
 	}
 	
 	@Override
     public boolean isVisible(Agent other) {
         return super.isVisible(other) && hasLineOfSight(other) && inFieldOfView(other);
+    }
+	
+	public BasicSteerable getLastSeen() {
+        return lastSeen;
     }
 	
 	public boolean inFieldOfView(Agent other) {

@@ -37,7 +37,7 @@ public enum CombatState implements State<Npc> {
 	        entity.setTarget(target);
 	        if (target == null || !target.isAlive()) {
 	            // can't do anything if we are unable to find a target to attack, so wander
-	            entity.getStateMachine().changeState(NpcState.COMBAT, WANDER);
+	            entity.getStateMachine().changeState(NpcState.COMBAT, HUNT);
 	            return;
 	        }
 	        
@@ -121,6 +121,37 @@ public enum CombatState implements State<Npc> {
 	        }
 	        return target.getPosition().dst2(npc.getPosition()) <= minDistance;
 	    }
+	},
+	
+	HUNT() {
+	    private final List<Agent> targets = new ArrayList<Agent>();
+        
+        @Override
+        public void enter(Npc entity) {
+            entity.getSeek().setTarget(entity.getLastSeen());
+            entity.getSeek().setEnabled(true);
+        }
+
+        @Override
+        public void update(Npc entity) {
+            // update target enemy
+            fillTargets(entity, targets);
+            Agent target = selectBestTarget(entity, targets);
+            
+            // update our target
+            entity.setTarget(target);
+            if (target != null && target.isAlive()) {
+                // can't do anything if we are unable to find a target to attack, so wander
+                entity.getStateMachine().changeState(NpcState.COMBAT, ATTACK);
+            } else if (entity.getPosition().dst2(entity.getLastSeen().getPosition()) < 1) {
+                entity.getStateMachine().changeState(NpcState.COMBAT, WANDER);
+            }
+        }
+        
+        @Override
+        protected void afterExit(Npc entity) {
+            entity.getSeek().setEnabled(false);
+        }
 	},
 	
 	WANDER() {
