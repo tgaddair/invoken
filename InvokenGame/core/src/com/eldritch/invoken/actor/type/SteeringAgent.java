@@ -53,7 +53,7 @@ public abstract class SteeringAgent extends Agent {
 
     @Override
     public float getMaxAngularSpeed() {
-        return Math.max(maxAngularVelocity - getVelocityPenalty(), 0);
+        return maxAngularVelocity;
     }
 
     @Override
@@ -63,7 +63,7 @@ public abstract class SteeringAgent extends Agent {
 
     @Override
     public float getMaxLinearSpeed() {
-        return maxLinearVelocity;
+        return Math.max(maxLinearVelocity - getVelocityPenalty(), 0);
     }
 
     @Override

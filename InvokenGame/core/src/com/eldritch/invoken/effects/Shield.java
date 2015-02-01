@@ -11,6 +11,8 @@ import com.eldritch.invoken.actor.type.HandledProjectile.ProjectileHandler;
 import com.eldritch.invoken.screens.GameScreen;
 
 public class Shield extends BasicEffect {
+    private static final float V_PENALTY = 5;
+    
     private final Augmentation aug;
     private static final TextureRegion region = new TextureRegion(
             GameScreen.getTexture("sprite/effects/shield1.png"));
@@ -25,7 +27,7 @@ public class Shield extends BasicEffect {
     public void doApply() {
         target.addProjectileHandler(handler);
         target.setStunted(true);  // cannot regain energy when shielded
-        target.addVelocityPenalty(3);  // shielding slows down the caster
+        target.addVelocityPenalty(V_PENALTY);  // shielding slows down the caster
     }
     
     @Override
@@ -33,7 +35,7 @@ public class Shield extends BasicEffect {
         target.removeProjectileHandler(handler);
         target.getInfo().getAugmentations().removeSelfAugmentation(aug);
         target.setStunted(false);
-        target.addVelocityPenalty(-3);
+        target.addVelocityPenalty(-V_PENALTY);
     }
     
 	@Override

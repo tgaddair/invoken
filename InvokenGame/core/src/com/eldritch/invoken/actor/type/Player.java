@@ -5,7 +5,6 @@ import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.actor.ConversationHandler;
 import com.eldritch.invoken.actor.Profession;
-import com.eldritch.invoken.actor.ai.AgentMover;
 import com.eldritch.invoken.encounter.Location;
 import com.eldritch.invoken.util.Settings;
 
