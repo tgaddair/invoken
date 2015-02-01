@@ -20,7 +20,7 @@ import com.eldritch.invoken.encounter.Location;
 import com.eldritch.invoken.screens.GameScreen;
 
 public class FireWeapon extends ProjectileAugmentation {
-    private static final float DAMAGE_SCALE = 5;
+    private static final float DAMAGE_SCALE = 25;
     private static final int BASE_COST = 10;
     
     private static class Holder {
@@ -149,12 +149,12 @@ public class FireWeapon extends ProjectileAugmentation {
                 GameScreen.getTexture("sprite/effects/bullet1.png"));
 
         public Bullet() {
-            super(texture, 40, 5);
+            super(texture, 40, DAMAGE_SCALE);
         }
 
         @Override
         protected void apply(Agent owner, Agent target) {
-        	float magnitude = DAMAGE_SCALE * getDamage(target);
+        	float magnitude = getDamage(target);
             target.applyForce(velocity.cpy().nor().scl(100));
             target.addEffect(new Stunned(owner, target, 0.2f));
             target.addEffect(new Bleed(owner, target, magnitude));
