@@ -1,19 +1,23 @@
 package com.eldritch.invoken.effects;
 
-import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.actor.aug.Augmentation;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.HandledProjectile;
 import com.eldritch.invoken.actor.type.HandledProjectile.ProjectileHandler;
 import com.eldritch.invoken.screens.GameScreen;
 
-public class Shield extends AnimatedEffect {
+public class Shield extends BasicEffect {
     private final Augmentation aug;
+    private static final TextureRegion region = new TextureRegion(
+            GameScreen.getTexture("sprite/effects/shield1.png"));
     private final ProjectileHandler handler = new ShieldProjectileHandler();
     
 	public Shield(Agent actor, Augmentation aug) {
-		super(actor, GameScreen.getRegions("sprite/effects/shield.png", 96, 96)[2],
-				Animation.PlayMode.LOOP);
+		super(actor);
 		this.aug = aug;
 	}
 	
@@ -32,6 +36,28 @@ public class Shield extends AnimatedEffect {
 	public boolean isFinished() {
 		return !getTarget().isToggled(Shield.class);
 	}
+	
+    @Override
+    protected void update(float delta) {
+    }
+    
+    @Override
+    public void render(float delta, OrthogonalTiledMapRenderer renderer) {
+        Vector2 position = target.getRenderPosition();
+        Vector2 direction = target.getWeaponSentry().getDirection();
+        float width = target.getWidth();
+        float height = target.getHeight();
+        
+        Batch batch = renderer.getSpriteBatch();
+        batch.begin();
+        batch.draw(region,
+                position.x - width / 2, position.y - height / 2,  // position
+                width / 2, height / 2,  // origin
+                width, height,  // size
+                1f, 1f,  // scale
+                direction.angle());
+        batch.end();  
+    }
 	
 	private class ShieldProjectileHandler implements ProjectileHandler {
         @Override
