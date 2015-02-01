@@ -212,7 +212,8 @@ public class AgentInfo {
     }
 	
 	public float getBaseEnergy() {
-        return getAutomata() + energyOffset;
+	    // 30 base energy (enough for 3 shots), then give 1 point for every 3 automata
+        return 30 + getAutomata() / 2 + energyOffset;
     }
 	
 	public float expend(float value) {

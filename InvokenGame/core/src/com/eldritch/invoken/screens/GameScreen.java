@@ -203,12 +203,16 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 			if (player.getTarget() instanceof Npc) {
 				Npc npc = (Npc) player.getTarget();
 				State<Npc> state = npc.getStateMachine().getCurrentState();
+				float energy = npc.getInfo().getEnergy();
+				int level = npc.getInfo().getLevel();
 				float freezing = npc.getFreezing();
 				boolean agitated = npc.isAgitated();
 				int enemies = npc.getEnemyCount();
 				
 				int i = 0;
 				batch.begin();
+				font.draw(batch, String.format("Energy: %.2f", energy), 10, getHeight() - (30 + 20 * i++));
+				font.draw(batch, String.format("Level: %d", level), 10, getHeight() - (30 + 20 * i++));
 		        font.draw(batch, "Graph: " + Settings.DRAW_GRAPH, 10, getHeight() - (30 + 20 * i++));
 		        font.draw(batch, "State: " + state, 10, getHeight() - (30 + 20 * i++));
 		        font.draw(batch, String.format("Freezing: %.2f", freezing), 10, getHeight() - (30 + 20 * i++));
@@ -227,6 +231,14 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 		batch.begin();
 		font.draw(batch, String.format("%.2f", agent.getHealth()), screen.x, screen.y);
 		batch.end();
+	}
+	
+	private void printPlayerStatus() {
+	    StringBuilder sb = new StringBuilder("Player:\n");
+	    sb.append(String.format("Health: %.2f\n", player.getInfo().getHealth()));
+	    sb.append(String.format("Energy: %.2f\n", player.getInfo().getEnergy()));
+	    sb.append(String.format("Level: %d\n", player.getInfo().getLevel()));
+	    System.out.println(sb.toString());
 	}
 
 	@Override
@@ -259,6 +271,9 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 			return true;
 		case Keys.F:
 		    player.toggleLastAugmentation();
+		    return true;
+		case Keys.P:
+		    printPlayerStatus();
 		    return true;
 		case Keys.SPACE:
 		    tacticalPause = !tacticalPause;
@@ -362,7 +377,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         
         return selection;
 	}
-
+	
 	@Override
 	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
 		// let UI handle first

@@ -46,7 +46,7 @@ public class Barrier extends Augmentation {
 
     @Override
     public int getCost(Agent owner) {
-        return owner.isToggled(Shield.class) ? 0 : 5;
+        return owner.isToggled(Shield.class) ? 0 : 1;
     }
 
     @Override
