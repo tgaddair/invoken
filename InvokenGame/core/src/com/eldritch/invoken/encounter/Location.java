@@ -94,7 +94,6 @@ public class Location {
     private final int groundIndex = 0;
 
     private final World world;
-    private final Vector2 focusPoint = new Vector2();
 
     private NaturalVector2 currentCell = null;
     private float currentZoom = 0;
@@ -423,7 +422,7 @@ public class Location {
     }
 
     public void setFocusPoint(float x, float y) {
-        focusPoint.set(x, y);
+        player.setFocusPoint(x, y);
     }
 
     public void render(float delta, OrthographicCamera camera, TextureRegion selector,

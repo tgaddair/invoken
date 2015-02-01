@@ -4,21 +4,52 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
-import com.eldritch.invoken.actor.type.Human;
+import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import com.badlogic.gdx.math.Vector2;
+import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.actor.type.Agent.Direction;
 import com.eldritch.invoken.actor.Inventory;
 import com.eldritch.invoken.proto.Items.Item.DamageMod;
+import com.eldritch.invoken.screens.GameScreen;
 import com.google.common.base.Strings;
 
 public class RangedWeapon extends Item {
 	private final Map<Direction, Animation> animations = new HashMap<Direction, Animation>();
+	private final TextureRegion texture;
 	
 	public RangedWeapon(com.eldritch.invoken.proto.Items.Item item) {
-		super(item, 64);
+		super(item, 18);
 		if (!Strings.isNullOrEmpty(item.getAsset())) {
-		    animations.putAll(Human.getAnimations(item.getAsset(), 64));
+		    texture = new TextureRegion(GameScreen.getTexture(item.getAsset()));
+//		    animations.putAll(Human.getAnimations(item.getAsset(), 64));
+		} else {
+		    texture = null;
 		}
+	}
+	
+	public void render(Agent owner, OrthogonalTiledMapRenderer renderer) {
+	    // TODO: pull this calculation into the Agent to make it more efficient
+        Vector2 direction = owner.getFocusPoint().cpy().sub(owner.getRenderPosition()).nor();
+        float angle = direction.angle() + 90;
+        
+        Vector2 position = owner.getRenderPosition();
+        float x = position.x + direction.x;
+        float y = position.y + direction.y;
+        float width = getWidth();
+        float height = getHeight();
+        
+        Batch batch = renderer.getSpriteBatch();
+        batch.begin();
+        batch.draw(texture,
+                x - width / 2, y - height / 2,  // position
+                width / 2, height / 2,  // origin
+                width, height,  // size
+                1f, 1f,  // scale
+                angle);
+        batch.end();    
 	}
 	
 	@Override

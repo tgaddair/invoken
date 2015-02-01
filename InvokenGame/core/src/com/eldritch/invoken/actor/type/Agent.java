@@ -60,6 +60,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     static float DAMPING = 5f;
     static float FORGET_THRESHOLD = 10;
     
+    private final Vector2 focusPoint = new Vector2();
     private final GameCamera defaultCamera = new AgentCamera();
     private GameCamera camera = defaultCamera;
     
@@ -591,6 +592,14 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
 
     public boolean isLooting() {
         return interactor != null && !interactor.isAlive();
+    }
+    
+    public void setFocusPoint(float x, float y) {
+        focusPoint.set(x, y);
+    }
+    
+    public Vector2 getFocusPoint() {
+        return focusPoint;
     }
     
     public void alertTo(Agent target) {

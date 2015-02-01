@@ -14,6 +14,7 @@ import com.eldritch.invoken.actor.type.HandledProjectile;
 import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.actor.type.Agent.Direction;
 import com.eldritch.invoken.effects.Bleed;
+import com.eldritch.invoken.effects.HoldingWeapon;
 import com.eldritch.invoken.effects.Stunned;
 import com.eldritch.invoken.encounter.Location;
 import com.eldritch.invoken.screens.GameScreen;
@@ -37,10 +38,13 @@ public class FireWeapon extends ProjectileAugmentation {
     @Override
     public void prepare(Agent owner) {
         // add an effect that shows a rotating weapon
+        owner.toggleOn(HoldingWeapon.class);
+        owner.addEffect(new HoldingWeapon(owner));
     }
     
     @Override
     public void unprepare(Agent owner) {
+        owner.toggleOff(HoldingWeapon.class);
     }
 
     @Override

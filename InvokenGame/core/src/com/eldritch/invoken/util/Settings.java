@@ -24,7 +24,7 @@ public class Settings {
 	public static final boolean DEBUG_DRAW = false;
 	public static final boolean SKIP_MENU = true;
 	
-	public static DebugGraph DRAW_GRAPH = DebugGraph.Enemies;
+	public static DebugGraph DRAW_GRAPH = DebugGraph.None;
 	public enum DebugGraph {
 	    None, Disposition, Enemies, LOS, Visible
 	}
