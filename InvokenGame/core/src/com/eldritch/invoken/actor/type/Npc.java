@@ -303,7 +303,10 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
 	
 	@Override
     public boolean isVisible(Agent other) {
-        return super.isVisible(other) && hasLineOfSight(other) && inFieldOfView(other);
+	    // ignore FOV check if we're already in combat with the agent, as it's primarily for
+	    // handling stealth
+        return super.isVisible(other) && hasLineOfSight(other) 
+                && (hostileTo(other) || inFieldOfView(other));
     }
 	
 	public BasicSteerable getLastSeen() {
