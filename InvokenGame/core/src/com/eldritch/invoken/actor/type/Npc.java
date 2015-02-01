@@ -71,9 +71,9 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
 	private final Arrive<Vector2> arrive;
 	private final Wander<Vector2> wander;
 	
-	public Npc(NonPlayerActor data, float x, float y, float width, float height,
+	public Npc(NonPlayerActor data, float x, float y, float width, float height, float maxVelocity,
 	        Map<Activity, Map<Direction, Animation>> animations, Location location) {
-		super(data.getParams(), x, y, width, height, location, animations);
+		super(data.getParams(), x, y, width, height, maxVelocity, location, animations);
 		this.data = data;
 		scenario = Optional.absent();
 		dialogue = new ConversationHandler(data.getDialogue(), new NpcDialogueVerifier());

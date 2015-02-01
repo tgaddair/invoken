@@ -25,6 +25,7 @@ public class Shield extends BasicEffect {
     public void doApply() {
         target.addProjectileHandler(handler);
         target.setStunted(true);  // cannot regain energy when shielded
+        target.addVelocityPenalty(3);  // shielding slows down the caster
     }
     
     @Override
@@ -32,6 +33,7 @@ public class Shield extends BasicEffect {
         target.removeProjectileHandler(handler);
         target.getInfo().getAugmentations().removeSelfAugmentation(aug);
         target.setStunted(false);
+        target.addVelocityPenalty(-3);
     }
     
 	@Override

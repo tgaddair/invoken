@@ -11,7 +11,6 @@ import com.eldritch.invoken.util.Settings;
 
 /** The player character, has state and state time, */
 public class Player extends SteeringAgent {
-    private final AgentMover mover;
     private final Vector2 targetCoord = new Vector2();
     private boolean holding = false;
     private boolean moving = false;
@@ -19,37 +18,36 @@ public class Player extends SteeringAgent {
     private boolean lightOn = false;
 
     public Player(Profession profession, int level, float x, float y, Location location, String body) {
-        super(x, y, Human.getWidth(), Human.getHeight(), profession, level, location, 
+        super(x, y, Human.getWidth(), Human.getHeight(), Human.MAX_VELOCITY, profession, level, location, 
         		Human.getAllAnimations(body));
-        mover = new AgentMover(this, getMaxVelocity(), 0.01f);
     }
 
     @Override
     protected void takeAction(float delta, Location screen) {
         if (moving) {
-            moving = mover.takeAction(delta, targetCoord, screen);
+//            moving = mover.takeAction(delta, targetCoord, screen);
             if (!moving) {
                 fixedTarget = false;
             }
         }
 
         if (Gdx.input.isKeyPressed(Keys.LEFT) || Gdx.input.isKeyPressed(Keys.A)) {
-        	body.applyForceToCenter(new Vector2(-1 * getMaxVelocity(), 0), true);
+        	body.applyForceToCenter(new Vector2(-1 * getMaxLinearSpeed(), 0), true);
             moving = false;
         }
 
         if (Gdx.input.isKeyPressed(Keys.RIGHT) || Gdx.input.isKeyPressed(Keys.D)) {
-            body.applyForceToCenter(new Vector2(1 * getMaxVelocity(), 0), true);
+            body.applyForceToCenter(new Vector2(1 * getMaxLinearSpeed(), 0), true);
             moving = false;
         }
 
         if (Gdx.input.isKeyPressed(Keys.UP) || Gdx.input.isKeyPressed(Keys.W)) {
-            body.applyForceToCenter(new Vector2(0, 1 * getMaxVelocity()), true);
+            body.applyForceToCenter(new Vector2(0, 1 * getMaxLinearSpeed()), true);
             moving = false;
         }
 
         if (Gdx.input.isKeyPressed(Keys.DOWN) || Gdx.input.isKeyPressed(Keys.S)) {
-            body.applyForceToCenter(new Vector2(0, -1 * getMaxVelocity()), true);
+            body.applyForceToCenter(new Vector2(0, -1 * getMaxLinearSpeed()), true);
             moving = false;
         }
     }
@@ -115,11 +113,6 @@ public class Player extends SteeringAgent {
     @Override
     protected void handleConfusion(boolean confused) {
         // do nothing, for now, will change to make attack at random
-    }
-    
-    @Override
-    public float getMaxVelocity() {
-        return Human.MAX_VELOCITY;
     }
     
     @Override

@@ -14,7 +14,7 @@ public class SeekBehavior extends AbstractSteeringBehavior {
         Npc agent = getNpc();
         Vector2 position = agent.getPosition();
         target = target.cpy();
-        Vector2 desired = target.sub(position).nor().scl(agent.getMaxVelocity());
+        Vector2 desired = target.sub(position).nor().scl(agent.getMaxLinearSpeed());
         return desired.sub(agent.getVelocity());
     }
 }

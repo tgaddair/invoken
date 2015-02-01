@@ -14,12 +14,7 @@ public class Hollow extends Npc {
     public static int PX = 96;
 
     public Hollow(NonPlayerActor data, float x, float y, String asset, Location location) {
-        super(data, x, y, 1 / 32f * PX, 1 / 32f * PX, getAllAnimations(asset), location);
-    }
-
-    @Override
-    public float getMaxVelocity() {
-        return MAX_VELOCITY;
+        super(data, x, y, 1 / 32f * PX, 1 / 32f * PX, MAX_VELOCITY, getAllAnimations(asset), location);
     }
 
     public static Map<Activity, Map<Direction, Animation>> getAllAnimations(String assetName) {

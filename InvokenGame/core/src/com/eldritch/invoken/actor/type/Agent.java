@@ -114,6 +114,8 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     
     private float freezing = 0;
     private float lastAction = 0;
+    
+    private float velocityPenalty = 0;
 
     private Agent target;
     private Agent interactor;
@@ -177,6 +179,14 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
 
 		circleShape.dispose();
 		return body;
+	}
+	
+	public void addVelocityPenalty(float delta) {
+	    velocityPenalty += delta;
+	}
+	
+	protected float getVelocityPenalty() {
+	    return velocityPenalty;
 	}
 	
 	public Location getLocation() {
@@ -1204,8 +1214,6 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     }
     
     public abstract boolean canSpeak();
-
-    public abstract float getMaxVelocity();
 
     protected abstract void takeAction(float delta, Location screen);
     

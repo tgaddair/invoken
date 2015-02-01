@@ -14,19 +14,15 @@ public class Automaton extends Npc {
     public static int PX = 64;
 
     public Automaton(NonPlayerActor data, float x, float y, String asset, Location location) {
-        super(data, x, y, 1 / 32f * PX, 1 / 32f * PX, getAllAnimations(asset), location);
+        super(data, x, y, 1 / 32f * PX, 1 / 32f * PX, MAX_VELOCITY, getAllAnimations(asset),
+                location);
     }
-    
+
     @Override
     public float getDensity() {
-		return 2;
-	}
-    
-    @Override
-    public float getMaxVelocity() {
-        return MAX_VELOCITY;
+        return 2;
     }
-    
+
     @Override
     public boolean isVisible(Agent other) {
         // automatons do not see visible light, but other spectra

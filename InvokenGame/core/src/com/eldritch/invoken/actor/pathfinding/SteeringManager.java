@@ -15,7 +15,7 @@ public class SteeringManager {
     
     public SteeringManager(Agent agent, List<SteeringBehavior> behaviors) {
         this.agent = agent;
-        this.maxForce = agent.getMaxVelocity();
+        this.maxForce = agent.getMaxLinearSpeed();
         this.behaviors = behaviors;
         Collections.sort(behaviors, new Comparator<SteeringBehavior>() {
             @Override

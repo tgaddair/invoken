@@ -18,7 +18,7 @@ public class FleeBehavior extends AbstractSteeringBehavior {
         } else {
         	target = agent.getPosition();
         }
-    	Vector2 desired = position.sub(target).nor().scl(agent.getMaxVelocity());
+    	Vector2 desired = position.sub(target).nor().scl(agent.getMaxLinearSpeed());
         return desired.sub(agent.getVelocity());
     }
 }
