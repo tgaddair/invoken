@@ -73,6 +73,7 @@ public class ChoiceTable extends IdentifiedAssetTable<Choice> {
 	public class ChoiceEditorPanel extends AssetEditorPanel<Choice, ChoiceTable> {
 		private static final long serialVersionUID = 1L;
 
+		private final JTextField idField = new JTextField();
 		private final JTextArea textField = createArea(true, 30, new Dimension(100, 100));
 		private final JTextField weightField = new JTextField("0");
 		private final PrerequisiteTable prereqTable = new PrerequisiteTable();
@@ -86,6 +87,9 @@ public class ChoiceTable extends IdentifiedAssetTable<Choice> {
 			builder.appendColumn("right:pref");
 			builder.appendColumn("3dlu");
 			builder.appendColumn("fill:max(pref; 100px)");
+			
+			builder.append("ID:", idField);
+			builder.nextLine();
 
 			builder.append("Text:", textField);
 			builder.nextLine();
@@ -107,6 +111,7 @@ public class ChoiceTable extends IdentifiedAssetTable<Choice> {
 			
 			if (prev.isPresent()) {
 				Choice asset = prev.get();
+				idField.setText(asset.getId());
 				textField.setText(asset.getText());
 				weightField.setText(asset.getWeight() + "");
 				for (Prerequisite prereq : asset.getPrereqList()) {
@@ -124,6 +129,7 @@ public class ChoiceTable extends IdentifiedAssetTable<Choice> {
 		@Override
 		public Choice createAsset() {
 			return Choice.newBuilder()
+					.setId(idField.getText())
 					.setText(textField.getText())
 					.setWeight(Integer.parseInt(weightField.getText()))
 					.addAllPrereq(prereqTable.getAssets())

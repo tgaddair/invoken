@@ -8,6 +8,11 @@ import com.eldritch.invoken.proto.Actors.DialogueTree.Response;
 
 public class DialogueConverter {
 	public static DialogueTree convert(DialogueTree oldTree) {
+		if (oldTree.getChoiceCount() > 0) {
+			// new version
+			return oldTree;
+		}
+		
 		DialogueTree.Builder builder = DialogueTree.newBuilder();
 		
 		// extract all the deprecated choices and assign ids
