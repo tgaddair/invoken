@@ -4,13 +4,11 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.MouseEvent;
 
-import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 
 import prefuse.controls.Control;
 import prefuse.controls.ControlAdapter;
-import prefuse.data.Node;
 import prefuse.visual.NodeItem;
 import prefuse.visual.VisualItem;
 
@@ -49,6 +47,12 @@ public class DialogueEditorPanel extends JPanel {
 		
 		if (prev.isPresent()) {
 			DialogueTree tree = DialogueConverter.convert(prev.get());
+			for (Response response : tree.getDialogueList()) {
+				responses.addAsset(response);
+			}
+			for (Choice choice : tree.getChoiceList()) {
+				choices.addAsset(choice);
+			}
 			editor = new DialogueEditor(tree, new InfoClickListener());
 			editorPanel.add(editor);
 		}
