@@ -2,8 +2,12 @@ package com.eldritch.scifirpg.editor.panel;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 
+import javax.swing.JButton;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 
@@ -15,6 +19,7 @@ import prefuse.visual.VisualItem;
 import com.eldritch.invoken.proto.Actors.DialogueTree;
 import com.eldritch.invoken.proto.Actors.DialogueTree.Choice;
 import com.eldritch.invoken.proto.Actors.DialogueTree.Response;
+import com.eldritch.scifirpg.editor.tables.AssetTable;
 import com.eldritch.scifirpg.editor.tables.ChoiceTable;
 import com.eldritch.scifirpg.editor.tables.DialogueTable;
 import com.eldritch.scifirpg.editor.tables.ResponseTable;
@@ -61,7 +66,7 @@ public class DialogueEditorPanel extends JPanel {
 
 		FormLayout layout = new FormLayout(
 				"right:p, 4dlu, p, 7dlu, right:p, 4dlu, fill:default:grow, 4dlu, p", // columns
-				"fill:default:grow"); // rows
+				"fill:default:grow, 3dlu, p, 3dlu, p"); // rows
 		
 		// Specify that columns 1 & 5 as well as 3 & 7 have equal widths.       
 		layout.setColumnGroups(new int[][]{{1, 5}, {3, 7}});
@@ -74,12 +79,26 @@ public class DialogueEditorPanel extends JPanel {
 		builder.add(leftPanel, cc.xy(3, 1));
 		builder.add(editorPanel, cc.xy(7, 1));
 		
-//		JButton saveButton = new JButton("Save");
-//		saveButton.addActionListener(this);
-//		builder.add(saveButton, cc.xy(c + 4, 9));
+		JButton responseButton = new JButton("New Response");
+		responseButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent ev) {
+				editResponse(Optional.<Response>absent());
+			}
+	    });
+		builder.add(responseButton, cc.xy(3, 3));
+		
+		JButton choiceButton = new JButton("New Choice");
+		choiceButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent ev) {
+				editChoice(Optional.<Choice>absent());
+			}
+	    });
+		builder.add(choiceButton, cc.xy(7, 3));
 
 		add(builder.getPanel());
-		setPreferredSize(new Dimension(1400, 600));
+		setPreferredSize(new Dimension(1400, 700));
 	}
 	
 	public ResponseTable getResponseTable() {
@@ -140,10 +159,28 @@ public class DialogueEditorPanel extends JPanel {
 					editResponse(Optional.of(response));
 				}
 
-				if (e.isPopupTrigger()) {
-					JPopupMenu jpub = new JPopupMenu();
-					jpub.add("Delete node");
-					jpub.show(e.getComponent(), (int) e.getX(), (int) e.getY());
+				if (e.isControlDown()) {
+					JPopupMenu popup = new JPopupMenu();
+					
+					JMenuItem responseItem = new JMenuItem("New Response");
+					responseItem.addActionListener(new ActionListener() {
+						@Override
+						public void actionPerformed(ActionEvent ev) {
+							editResponse(Optional.<Response>absent());
+						}
+				    });
+					popup.add(responseItem);
+					
+					JMenuItem choiceItem = new JMenuItem("New Choice");
+					choiceItem.addActionListener(new ActionListener() {
+						@Override
+						public void actionPerformed(ActionEvent ev) {
+							editChoice(Optional.<Choice>absent());
+						}
+				    });
+					popup.add(choiceItem);
+					
+					popup.show(e.getComponent(), (int) e.getX(), (int) e.getY());
 				}
 			}
 		}

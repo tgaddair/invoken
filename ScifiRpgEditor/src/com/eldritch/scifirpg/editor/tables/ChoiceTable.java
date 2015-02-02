@@ -1,6 +1,8 @@
 package com.eldritch.scifirpg.editor.tables;
 
 import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -109,6 +111,16 @@ public class ChoiceTable extends IdentifiedAssetTable<Choice> {
 			builder.append(saveButton);
 			builder.nextLine();
 			
+			JButton deleteButton = new JButton("Delete");
+			deleteButton.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					delete();
+				}
+			});
+			builder.append(deleteButton);
+			builder.nextLine();
+			
 			if (prev.isPresent()) {
 				Choice asset = prev.get();
 				idField.setText(asset.getId());
@@ -124,6 +136,19 @@ public class ChoiceTable extends IdentifiedAssetTable<Choice> {
 
 			add(builder.getPanel());
 			setPreferredSize(new Dimension(650, 750));
+		}
+		
+		@Override
+		protected void save() {
+			super.save();
+			editor.handleSaveAction();
+		}
+		
+		protected void delete() {
+			if (getPrev().isPresent()) {
+				getTable().deleteAsset(getPrev().get());
+				editor.handleSaveAction();
+			}
 		}
 
 		@Override
