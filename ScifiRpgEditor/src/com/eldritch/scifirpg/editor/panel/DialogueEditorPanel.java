@@ -47,14 +47,16 @@ public class DialogueEditorPanel extends JPanel {
 		
 		if (prev.isPresent()) {
 			DialogueTree tree = DialogueConverter.convert(prev.get());
-			for (Response response : tree.getDialogueList()) {
-				responses.addAsset(response);
+			if (tree.getDialogueCount() > 0) {
+				for (Response response : tree.getDialogueList()) {
+					responses.addAsset(response);
+				}
+				for (Choice choice : tree.getChoiceList()) {
+					choices.addAsset(choice);
+				}
+				editor = new DialogueEditor(tree, new InfoClickListener());
+				editorPanel.add(editor);
 			}
-			for (Choice choice : tree.getChoiceList()) {
-				choices.addAsset(choice);
-			}
-			editor = new DialogueEditor(tree, new InfoClickListener());
-			editorPanel.add(editor);
 		}
 
 		FormLayout layout = new FormLayout(
