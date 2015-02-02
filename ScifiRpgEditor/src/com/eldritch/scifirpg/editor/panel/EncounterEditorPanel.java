@@ -69,7 +69,7 @@ public class EncounterEditorPanel extends AssetEditorPanel<Encounter, EncounterT
 	// Different cards for different types
 	private final JPanel cards;
 	private final StaticEncounterPanel staticPanel = new StaticEncounterPanel();
-	private final DecisionEncounterPanel decisionPanel = new DecisionEncounterPanel();
+//	private final DecisionEncounterPanel decisionPanel = new DecisionEncounterPanel();
 	private final ActorEncounterPanel actorPanel = new ActorEncounterPanel();
 	private final RegionEncounterPanel regionPanel = new RegionEncounterPanel();
 
@@ -119,7 +119,7 @@ public class EncounterEditorPanel extends AssetEditorPanel<Encounter, EncounterT
 		
 		cards = new JPanel(new CardLayout());
 		cards.add(staticPanel, Type.STATIC.name());
-		cards.add(decisionPanel, Type.DECISION.name());
+//		cards.add(decisionPanel, Type.DECISION.name());
 		cards.add(actorPanel, Type.ACTOR.name());
 		cards.add(regionPanel, Type.REGION.name());
 		
@@ -153,7 +153,7 @@ public class EncounterEditorPanel extends AssetEditorPanel<Encounter, EncounterT
 				staticPanel.setParams(asset.getStaticParams());
 			}
 			if (asset.hasDecisionParams()) {
-				decisionPanel.setParams(asset.getDecisionParams());
+//				decisionPanel.setParams(asset.getDecisionParams());
 			}
 			if (asset.hasActorParams()) {
 				actorPanel.setParams(asset.getActorParams());
@@ -188,7 +188,7 @@ public class EncounterEditorPanel extends AssetEditorPanel<Encounter, EncounterT
 				encounter.setStaticParams(staticPanel.getParams());
 				break;
 			case DECISION:
-				encounter.setDecisionParams(decisionPanel.getParams());
+//				encounter.setDecisionParams(decisionPanel.getParams());
 				break;
 			case ACTOR:
 				encounter.setActorParams(actorPanel.getParams());
@@ -248,36 +248,36 @@ public class EncounterEditorPanel extends AssetEditorPanel<Encounter, EncounterT
 			}
 		}
 	}
-	
-	private class DecisionEncounterPanel extends EncounterParamPanel<DecisionParams> {
-		private static final long serialVersionUID = 1L;
-		
-		private final DialogueTable decisionTable = new DialogueTable();
-		
-		public DecisionEncounterPanel() {
-			DefaultFormBuilder builder = createFormBuilder();
-			builder.appendRow("fill:200dlu");
-			builder.append("Decisions:", new AssetTablePanel(decisionTable));
-			builder.nextLine();
-			
-			add(builder.getPanel());
-		}
-		
-		@Override
-		public DecisionParams getParams() {
-			DialogueTree dt = DialogueTree.newBuilder()
-					.addAllDialogue(decisionTable.getAssets())
-					.build();
-			return DecisionParams.newBuilder().setDecisionTree(dt).build();
-		}
-
-		@Override
-		public void setParams(DecisionParams params) {
-			for (Response r : params.getDecisionTree().getDialogueList()) {
-				decisionTable.addAsset(r);
-			}
-		}
-	}
+//	
+//	private class DecisionEncounterPanel extends EncounterParamPanel<DecisionParams> {
+//		private static final long serialVersionUID = 1L;
+//		
+//		private final DialogueTable decisionTable = new DialogueTable();
+//		
+//		public DecisionEncounterPanel() {
+//			DefaultFormBuilder builder = createFormBuilder();
+//			builder.appendRow("fill:200dlu");
+//			builder.append("Decisions:", new AssetTablePanel(decisionTable));
+//			builder.nextLine();
+//			
+//			add(builder.getPanel());
+//		}
+//		
+//		@Override
+//		public DecisionParams getParams() {
+//			DialogueTree dt = DialogueTree.newBuilder()
+//					.addAllDialogue(decisionTable.getAsset())
+//					.build();
+//			return DecisionParams.newBuilder().setDecisionTree(dt).build();
+//		}
+//
+//		@Override
+//		public void setParams(DecisionParams params) {
+//			for (Response r : params.getDecisionTree().getDialogueList()) {
+//				decisionTable.addAsset(r);
+//			}
+//		}
+//	}
 	
 	private class RegionEncounterPanel extends EncounterParamPanel<RegionParams> {
 		private static final long serialVersionUID = 1L;
@@ -566,9 +566,7 @@ public class EncounterEditorPanel extends AssetEditorPanel<Encounter, EncounterT
 					outcomeTable.addAsset(o);
 				}
 				if (scenario.hasDialogue()) {
-					for (Response r : scenario.getDialogue().getDialogueList()) {
-						dialogueTable.addAsset(r);
-					}
+					dialogueTable.addAsset(scenario.getDialogue());
 				}
 			}
 
@@ -591,10 +589,7 @@ public class EncounterEditorPanel extends AssetEditorPanel<Encounter, EncounterT
 				as.setMax(Integer.parseInt(maxField.getText()));
 			}
 			if (!dialogueTable.getAssets().isEmpty()) {
-				DialogueTree dialogue = DialogueTree.newBuilder()
-						.addAllDialogue(dialogueTable.getAssets())
-						.build();
-				as.setDialogue(dialogue);
+				as.setDialogue(dialogueTable.getAsset());
 			}
 			return as.build();
 		}

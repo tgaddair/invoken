@@ -16,17 +16,21 @@ message DialogueTree {
 		optional string id = 1; // The unique ID for this Response within this tree
 		required string text = 2;
 		repeated Prerequisite prereq = 3;
-		repeated Choice choice = 4;
+		repeated string choice_id = 8;
 		repeated Outcome outcome = 5;
 		required bool greeting = 6 [default = false];
 
 		// Defines the order responses are traversed for finding one that meets prereqs.
 		// Higher weights drop down, lower weights bubble up.
 		optional int32 weight = 7 [default = 0];
+
+		// DEPRECATED
+		repeated Choice choice_DEPRECATED = 4 [deprecated = true];
 	}
 
 	// By storing successor pointers as strings, we allow for cycles
 	message Choice {
+		optional string id = 5;
 		required string text = 1;
 		repeated Prerequisite prereq = 2;
 		repeated string successor_id = 3;
@@ -47,6 +51,7 @@ message DialogueTree {
 	// A DialogueTree exists in isolation, unique to a particular Actor.  No Response is
 	// shared in this design.
 	repeated Response dialogue = 1;
+	repeated Choice choice = 2;
 }
 
 message ActorParams {

@@ -23,12 +23,10 @@ import com.eldritch.scifirpg.editor.tables.TraitTable;
 import com.eldritch.scifirpg.editor.util.ProfessionUtil;
 import com.eldritch.invoken.proto.Actors.ActorParams;
 import com.eldritch.invoken.proto.Actors.ActorParams.InventoryItem;
-import com.eldritch.invoken.proto.Actors.DialogueTree;
 import com.eldritch.invoken.proto.Actors.ActorParams.FactionStatus;
 import com.eldritch.invoken.proto.Actors.ActorParams.Gender;
 import com.eldritch.invoken.proto.Actors.ActorParams.Skill;
 import com.eldritch.invoken.proto.Actors.ActorParams.Species;
-import com.eldritch.invoken.proto.Actors.DialogueTree.Response;
 import com.eldritch.invoken.proto.Actors.NonPlayerActor;
 import com.eldritch.invoken.proto.Actors.NonPlayerActor.Aggression;
 import com.eldritch.invoken.proto.Actors.NonPlayerActor.Assistance;
@@ -197,9 +195,7 @@ public class ActorEditorPanel extends AssetEditorPanel<NonPlayerActor, ActorTabl
 			// NPC params
 			uniqueCheck.setSelected(asset.getUnique());
 			speakCheck.setSelected(asset.getCanSpeak());
-			for (Response resp : asset.getDialogue().getDialogueList()) {
-				dialogueTable.addAsset(resp);
-			}
+			dialogueTable.addAsset(asset.getDialogue());
 			aggressionBox.setSelectedItem(asset.getAggression());
 			assistanceBox.setSelectedItem(asset.getAssistance());
 			confidenceBox.setSelectedItem(asset.getConfidence());
@@ -230,10 +226,6 @@ public class ActorEditorPanel extends AssetEditorPanel<NonPlayerActor, ActorTabl
 			params.setProfession((Profession) professionBox.getSelectedItem());
 		}
 		
-		// TODO: Warn about choices without successors and responses without preceding choices.
-		DialogueTree dialogueTree = DialogueTree.newBuilder()
-				.addAllDialogue(dialogueTable.getSortedAssets()).build();
-		
 		return NonPlayerActor.newBuilder()
 				.setParams(params.build())
 				.setUnique(uniqueCheck.isSelected())
@@ -241,7 +233,7 @@ public class ActorEditorPanel extends AssetEditorPanel<NonPlayerActor, ActorTabl
 				.setAggression((Aggression) aggressionBox.getSelectedItem())
 				.setAssistance((Assistance) assistanceBox.getSelectedItem())
 				.setConfidence((Confidence) confidenceBox.getSelectedItem())
-				.setDialogue(dialogueTree)
+				.setDialogue(dialogueTable.getAsset())
 				.addAllTrait(traitTable.getAssets())
 				.build();
 	}

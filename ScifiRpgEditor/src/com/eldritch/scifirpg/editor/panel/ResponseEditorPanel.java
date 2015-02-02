@@ -26,11 +26,12 @@ import com.eldritch.scifirpg.editor.tables.AssetTable;
 import com.eldritch.scifirpg.editor.tables.DialogueTable;
 import com.eldritch.scifirpg.editor.tables.OutcomeTable;
 import com.eldritch.scifirpg.editor.tables.PrerequisiteTable;
+import com.eldritch.scifirpg.editor.tables.ResponseTable;
 import com.google.common.base.Optional;
 import com.jgoodies.forms.builder.DefaultFormBuilder;
 import com.jgoodies.forms.layout.FormLayout;
 
-public class ResponseEditorPanel extends AssetEditorPanel<Response, DialogueTable> {
+public class ResponseEditorPanel extends AssetEditorPanel<Response, ResponseTable> {
 	private static final long serialVersionUID = 1L;
 
 	private final DialogueEditorPanel dialoguePanel;
@@ -40,9 +41,9 @@ public class ResponseEditorPanel extends AssetEditorPanel<Response, DialogueTabl
 	private final JTextField weightField = new JTextField("0");
 	private final PrerequisiteTable prereqTable = new PrerequisiteTable();
 	private final OutcomeTable outcomeTable = new OutcomeTable();
-	private final ChoiceTable choiceTable;
+	private final AssetPointerTable<Choice> choiceTable;
 
-	public ResponseEditorPanel(DialogueTable owner, DialogueEditorPanel dialoguePanel, JFrame frame, Optional<Response> prev) {
+	public ResponseEditorPanel(ResponseTable owner, DialogueEditorPanel dialoguePanel, JFrame frame, Optional<Response> prev) {
 		super(owner, frame, prev);
 		this.dialoguePanel = dialoguePanel;
 
@@ -71,7 +72,7 @@ public class ResponseEditorPanel extends AssetEditorPanel<Response, DialogueTabl
 		builder.nextLine();
 		
 		builder.appendRow("fill:120dlu");
-		choiceTable = new ChoiceTable(owner, dialoguePanel);
+		choiceTable = new AssetPointerTable<Choice>(dialoguePanel.getChoiceTable());
 		builder.append("Choices:", new AssetTablePanel(choiceTable));
 		builder.nextLine();
 
@@ -98,9 +99,7 @@ public class ResponseEditorPanel extends AssetEditorPanel<Response, DialogueTabl
 		setPreferredSize(new Dimension(650, 750));
 	}
 	
-	public void init(Response resp) {
-		setPrev(resp);
-		
+	private void init(Response resp) {
 		prereqTable.clearAssets();
 		outcomeTable.clearAssets();
 		choiceTable.clearAssets();
@@ -115,13 +114,9 @@ public class ResponseEditorPanel extends AssetEditorPanel<Response, DialogueTabl
 		for (Outcome asset : resp.getOutcomeList()) {
 			outcomeTable.addAsset(asset);
 		}
-		for (Choice asset : resp.getChoiceList()) {
-			choiceTable.addAsset(asset);
+		for (String choiceId : resp.getChoiceIdList()) {
+			choiceTable.addAssetId(choiceId);
 		}
-	}
-	
-	public void editChoiceAt(int index) {
-		choiceTable.editAsset(index);
 	}
 	
 	@Override
@@ -149,121 +144,7 @@ public class ResponseEditorPanel extends AssetEditorPanel<Response, DialogueTabl
 				.setWeight(Integer.parseInt(weightField.getText()))
 				.addAllPrereq(prereqTable.getAssets())
 				.addAllOutcome(outcomeTable.getAssets())
-				.addAllChoice(choiceTable.getSortedAssets())
+				.addAllChoiceId(choiceTable.getAssetIds())
 				.build();
-	}
-	
-	private static final String[] COLUMN_NAMES = { 
-		"Text", "Successors" };
-	
-	private class ChoiceTable extends AssetTable<Choice> {
-		private static final long serialVersionUID = 1L;
-		
-		private final DialogueTable dialogueTable;
-		private final DialogueEditorPanel editor;
-		
-		public ChoiceTable(DialogueTable dialogueTable, DialogueEditorPanel editor) {
-			super(COLUMN_NAMES, "Choice");
-			this.dialogueTable = dialogueTable;
-			this.editor = editor;
-		}
-		
-		@Override
-		protected void handleCreateAsset(Optional<Choice> asset) {
-			editor.editChoice(new ChoiceEditorPanel(this, new JFrame(), asset));
-		}
-		
-		public List<Choice> getSortedAssets() {
-			List<Choice> assets = new ArrayList<>(getAssets());
-			Collections.sort(assets, new Comparator<Choice>() {
-				@Override
-				public int compare(Choice a1, Choice a2) {
-					return Integer.compare(a1.getWeight(), a2.getWeight());
-				}
-			});
-			return assets;
-		}
-
-		@Override
-		protected JPanel getEditorPanel(Optional<Choice> prev, JFrame frame) {
-			return new ChoiceEditorPanel(this, frame, prev);
-		}
-		
-		@Override
-		protected Object[] getDisplayFields(Choice asset) {
-			String successors = "";
-			for (String successor : asset.getSuccessorIdList()) {
-				successors += successor + " ";
-			}
-			return new Object[]{asset.getText(), successors};
-		}
-	}
-	
-	public class ChoiceEditorPanel extends AssetEditorPanel<Choice, ChoiceTable> {
-		private static final long serialVersionUID = 1L;
-
-		private final JTextArea textField = createArea(true, 30, new Dimension(100, 100));
-		private final JTextField weightField = new JTextField("0");
-		private final PrerequisiteTable prereqTable = new PrerequisiteTable();
-		private final AssetPointerTable<Response> successorTable;
-
-		public ChoiceEditorPanel(ChoiceTable owner, JFrame frame, Optional<Choice> prev) {
-			super(owner, frame, prev);
-
-			DefaultFormBuilder builder = new DefaultFormBuilder(new FormLayout(""));
-			builder.border(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-			builder.appendColumn("right:pref");
-			builder.appendColumn("3dlu");
-			builder.appendColumn("fill:max(pref; 100px)");
-
-			builder.append("Text:", textField);
-			builder.nextLine();
-
-			builder.append("Weight:", weightField);
-			builder.nextLine();
-			
-			builder.append("Prerequisites:", new AssetTablePanel(prereqTable));
-			builder.nextLine();
-			
-			successorTable = new AssetPointerTable<Response>(owner.dialogueTable);
-			builder.append("Successors:", new AssetTablePanel(successorTable));
-			builder.nextLine();
-
-			JButton saveButton = new JButton("Save");
-			saveButton.addActionListener(this);
-			builder.append(saveButton);
-			builder.nextLine();
-			
-			if (prev.isPresent()) {
-				Choice asset = prev.get();
-				textField.setText(asset.getText());
-				weightField.setText(asset.getWeight() + "");
-				for (Prerequisite prereq : asset.getPrereqList()) {
-					prereqTable.addAsset(prereq);
-				}
-				for (String s : asset.getSuccessorIdList()) {
-					successorTable.addAssetId(s);
-				}
-			}
-
-			add(builder.getPanel());
-			setPreferredSize(new Dimension(650, 750));
-		}
-		
-		@Override
-		protected void save() {
-			super.save();
-			ResponseEditorPanel.this.save();
-		}
-
-		@Override
-		public Choice createAsset() {
-			return Choice.newBuilder()
-					.setText(textField.getText())
-					.setWeight(Integer.parseInt(weightField.getText()))
-					.addAllPrereq(prereqTable.getAssets())
-					.addAllSuccessorId(successorTable.getAssetIds())
-					.build();
-		}
 	}
 }

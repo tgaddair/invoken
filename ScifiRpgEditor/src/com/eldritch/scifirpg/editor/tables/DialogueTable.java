@@ -1,44 +1,32 @@
 package com.eldritch.scifirpg.editor.tables;
 
 import java.awt.BorderLayout;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import com.eldritch.scifirpg.editor.panel.DialogueEditorPanel;
-import com.eldritch.scifirpg.editor.panel.ResponseEditorPanel;
-import com.eldritch.invoken.proto.Actors.DialogueTree.Response;
+import com.eldritch.invoken.proto.Actors.DialogueTree;
 import com.google.common.base.Optional;
 
-public class DialogueTable extends IdentifiedAssetTable<Response> {
+public class DialogueTable extends AssetTable<DialogueTree> {
 	private static final long serialVersionUID = 1L;
 	private static final String[] COLUMN_NAMES = { 
-		"ID", "Text", "Greeting" };
+		"Responses", "Choices" };
 	
 	public DialogueTable() {
 		super(COLUMN_NAMES, "Response");
 	}
 	
-	public List<Response> getSortedAssets() {
-		List<Response> assets = new ArrayList<>(getAssets());
-		Collections.sort(assets, new Comparator<Response>() {
-			@Override
-			public int compare(Response a1, Response a2) {
-				return Integer.compare(a1.getWeight(), a2.getWeight());
-			}
-		});
-		return assets;
+	public DialogueTree getAsset() {
+		return getAssets().get(0);
 	}
 
 	@Override
-	protected void handleCreateAsset(Optional<Response> asset) {
+	protected void handleCreateAsset(Optional<DialogueTree> asset) {
 		// Create and set up the window.
         JFrame frame = new JFrame("Dialogue Editor");
-        frame.add(new DialogueEditorPanel(this), BorderLayout.CENTER);
+        frame.add(new DialogueEditorPanel(this, asset), BorderLayout.CENTER);
         
         // Display the window.
         frame.pack();
@@ -46,18 +34,12 @@ public class DialogueTable extends IdentifiedAssetTable<Response> {
 	}
 
 	@Override
-	protected JPanel getEditorPanel(Optional<Response> prev, JFrame frame) {
-		return new ResponseEditorPanel(this, null, frame, prev);
+	protected JPanel getEditorPanel(Optional<DialogueTree> prev, JFrame frame) {
+		return new DialogueEditorPanel(this, prev);
 	}
 	
 	@Override
-	protected Object[] getDisplayFields(Response resp) {
-		Object greeting = resp.getGreeting() ? "yes" : "";
-		return new Object[]{resp.getId(), resp.getText(), greeting};
-	}
-
-	@Override
-	protected String getAssetId(Response asset) {
-		return asset.getId();
+	protected Object[] getDisplayFields(DialogueTree dialogue) {
+		return new Object[]{dialogue.getDialogueCount(), dialogue.getChoiceCount()};
 	}
 }

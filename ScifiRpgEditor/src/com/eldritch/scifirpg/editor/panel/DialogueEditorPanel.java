@@ -14,9 +14,13 @@ import prefuse.data.Node;
 import prefuse.visual.NodeItem;
 import prefuse.visual.VisualItem;
 
+import com.eldritch.invoken.proto.Actors.DialogueTree;
+import com.eldritch.invoken.proto.Actors.DialogueTree.Choice;
 import com.eldritch.invoken.proto.Actors.DialogueTree.Response;
-import com.eldritch.scifirpg.editor.panel.ResponseEditorPanel.ChoiceEditorPanel;
+import com.eldritch.scifirpg.editor.tables.ChoiceTable;
 import com.eldritch.scifirpg.editor.tables.DialogueTable;
+import com.eldritch.scifirpg.editor.tables.ResponseTable;
+import com.eldritch.scifirpg.editor.util.DialogueConverter;
 import com.eldritch.scifirpg.editor.viz.DialogueEditor;
 import com.eldritch.scifirpg.editor.viz.DialogueEditor.NodeType;
 import com.google.common.base.Optional;
@@ -28,22 +32,24 @@ import com.jgoodies.forms.layout.FormLayout;
 public class DialogueEditorPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
 	
-	private final DialogueTable table;
 	private final JPanel leftPanel = new JPanel(new BorderLayout());
 	private final JPanel editorPanel = new JPanel(new BorderLayout());
+	private final DialogueTable table;
 	private DialogueEditor editor;
-	private ResponseEditorPanel responseEditor;
+	private final ResponseTable responses;
+	private final ChoiceTable choices;
 
-	public DialogueEditorPanel(DialogueTable table) {
+	public DialogueEditorPanel(DialogueTable table, Optional<DialogueTree> prev) {
 		super(new BorderLayout());
 		this.table = table;
 		
-		responseEditor = new ResponseEditorPanel(
-				table, this, new JFrame(), Optional.<Response>absent());
-		leftPanel.add(responseEditor);
+		responses = new ResponseTable(this);
+		choices = new ChoiceTable(this);
+		leftPanel.add(responses.newEditorPanel(Optional.<Response>absent()));
 		
-		if (!table.getAssets().isEmpty()) {
-			editor = new DialogueEditor(table.getAssets(), new InfoClickListener());
+		if (prev.isPresent()) {
+			DialogueTree tree = DialogueConverter.convert(prev.get());
+			editor = new DialogueEditor(tree, new InfoClickListener());
 			editorPanel.add(editor);
 		}
 
@@ -70,24 +76,45 @@ public class DialogueEditorPanel extends JPanel {
 		setPreferredSize(new Dimension(1400, 600));
 	}
 	
-	public void handleSaveAction() {
-		editorPanel.removeAll();
-		editor = new DialogueEditor(table.getAssets(), new InfoClickListener());
-		editorPanel.add(editor);
+	public ResponseTable getResponseTable() {
+		return responses;
 	}
 	
-	public void editResponse(Response response) {
-		responseEditor.init(response);
+	public ChoiceTable getChoiceTable() {
+		return choices;
+	}
+	
+	public void handleSaveAction() {
+		DialogueTree tree = createDialogue();
+		table.clearAssets();
+		table.addAsset(tree);
+		
+		editorPanel.removeAll();
+		editor = new DialogueEditor(tree, new InfoClickListener());
+		editorPanel.add(editor);
+		editorPanel.invalidate();
+		editorPanel.validate();
+		editorPanel.repaint();
+	}
+	
+	private DialogueTree createDialogue() {
+		DialogueTree.Builder builder = DialogueTree.newBuilder();
+		builder.addAllDialogue(responses.getSortedAssets());
+		builder.addAllChoice(choices.getSortedAssets());
+		return builder.build();
+	}
+	
+	public void editResponse(Optional<Response> response) {
 		leftPanel.removeAll();
-		leftPanel.add(responseEditor);
+		leftPanel.add(responses.newEditorPanel(response));
 		leftPanel.invalidate();
 		leftPanel.validate();
 		leftPanel.repaint();
 	}
 	
-	public void editChoice(ChoiceEditorPanel editorPanel) {
+	public void editChoice(Optional<Choice> choice) {
 		leftPanel.removeAll();
-		leftPanel.add(editorPanel);
+		leftPanel.add(choices.newEditorPanel(choice));
 		leftPanel.invalidate();
 		leftPanel.validate();
 		leftPanel.repaint();
@@ -100,22 +127,11 @@ public class DialogueEditorPanel extends JPanel {
 				
 				NodeType type = ((NodeType) item.get("type"));
 				if (type == NodeType.Choice) {
-					Node parent = ((NodeItem) item).getParent();
-					if (parent == null) {
-						// the graph is broken
-						return;
-					}
-					
-					id = (String) parent.get("id");
-					Response response = editor.getResponse(id);
-					editResponse(response);
-					
-					int index = (int) ((NodeItem) item).get("index");
-					responseEditor.editChoiceAt(index);
-					
+					Choice choice = editor.getChoice(id);
+					editChoice(Optional.of(choice));
 				} else {
 					Response response = editor.getResponse(id);
-					editResponse(response);
+					editResponse(Optional.of(response));
 				}
 
 				if (e.isPopupTrigger()) {

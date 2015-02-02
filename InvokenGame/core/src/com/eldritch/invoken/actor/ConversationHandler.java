@@ -1,15 +1,18 @@
 package com.eldritch.invoken.actor;
 
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 
 import com.eldritch.invoken.proto.Actors.DialogueTree;
 import com.eldritch.invoken.proto.Actors.DialogueTree.Choice;
 import com.eldritch.invoken.proto.Actors.DialogueTree.Response;
 
 public class ConversationHandler {
+    private final Map<String, Response> responses = new HashMap<String, Response>();
+    private final Map<String, Choice> choices = new HashMap<String, Choice>();
+    
 	private final DialogueTree tree;
 	private final DialogueVerifier verifier;
 	private final boolean canSpeak;
@@ -18,6 +21,13 @@ public class ConversationHandler {
 		this.tree = tree;
 		this.verifier = verifier;
 		canSpeak = !tree.getDialogueList().isEmpty();
+		
+		for (Response response : tree.getDialogueList()) {
+		    responses.put(response.getId(), response);
+		}
+		for (Choice choice : tree.getChoiceList()) {
+		    choices.put(choice.getId(), choice);
+		}
 	}
 	
 	public boolean canSpeak() {
@@ -25,20 +35,21 @@ public class ConversationHandler {
 	}
 	
 	public List<Choice> getChoicesFor(Response response) {
-        List<Choice> choices = new ArrayList<Choice>();
-        for (Choice choice : response.getChoiceList()) {
+        List<Choice> validChoices = new ArrayList<Choice>();
+        for (String id : response.getChoiceIdList()) {
+            Choice choice = choices.get(id);
             if (verifier.isValid(choice)) {
-                choices.add(choice);
+                validChoices.add(choice);
             }
         }
-        return choices;
+        return validChoices;
     }
     
     public Response getResponseFor(Choice choice) {
-        Set<String> successors = new HashSet<String>(choice.getSuccessorIdList());
-        for (Response r : tree.getDialogueList()) {
-            if (successors.contains(r.getId()) && verifier.isValid(r)) {
-                return r;
+        for (String id : choice.getSuccessorIdList()) {
+            Response response = responses.get(id);
+            if (verifier.isValid(response)) {
+                return response;
             }
         }
         return null;
