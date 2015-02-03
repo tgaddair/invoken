@@ -47,6 +47,7 @@ import com.eldritch.invoken.gfx.Light;
 import com.eldritch.invoken.gfx.NormalMappedTile;
 import com.eldritch.invoken.proto.Locations.Biome;
 import com.eldritch.invoken.proto.Locations.Encounter;
+import com.eldritch.invoken.proto.Locations.Encounter.ActorParams;
 import com.eldritch.invoken.proto.Locations.Encounter.ActorParams.ActorScenario;
 import com.eldritch.invoken.proto.Locations.Room;
 import com.eldritch.invoken.util.Settings;
@@ -121,9 +122,17 @@ public class LocationGenerator {
     }
 
     public Location generate(com.eldritch.invoken.proto.Locations.Location proto) {
-//        int encounters = proto.getEncounterCount();
-//        BspGenerator bsp = new BspGenerator(encounters + 1);
-        BspGenerator bsp = new BspGenerator(Settings.MAX_WIDTH, Settings.MAX_HEIGHT);
+        int roomCount = 1;
+        for (Encounter encounter : proto.getEncounterList()) {
+            int count = 1;
+            if (!encounter.getUnique()) {
+                count += (int) (rand.nextDouble() * 5);
+            }
+            roomCount += count;
+        }
+        BspGenerator bsp = new BspGenerator(roomCount);
+        
+//        BspGenerator bsp = new BspGenerator(Settings.MAX_WIDTH, Settings.MAX_HEIGHT);
         
         bsp.generateSegments();
 //        bsp.save();

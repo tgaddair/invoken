@@ -53,7 +53,7 @@ public class BspGenerator {
     
     public BspGenerator(int roomCount) {
         this.RoomCount = roomCount;
-        this.Width = 3 * RoomCount;
+        this.Width = Math.max(RoomCount * 3, 50);
         this.Height = Width;
         map = new CellType[Width][Height];
     }
