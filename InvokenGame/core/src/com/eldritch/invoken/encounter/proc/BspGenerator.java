@@ -15,12 +15,13 @@ import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.encounter.NaturalVector2;
 
 public class BspGenerator {
+    private static final int MinRoomSize = 6;
+    private static final int MaxRoomSize = 12;
+    
     private final Random rand = new Random();
     private CellType[][] map;
     private final int Width;
     private final int Height;
-    int MinRoomSize;
-    int MaxRoomSize;
     int RoomCount;
 
     public int Grid = 16;
@@ -43,15 +44,33 @@ public class BspGenerator {
         this.Width = width;
         this.Height = height;
         map = new CellType[width][height];
-        MinRoomSize = 6;
-        MaxRoomSize = (int) (Math.min(width, height) / 8f);
         
+        // denominator:
         // 2 -> lots of big halls
         // 4 -> lots of corridors
         RoomCount = (int) (Math.sqrt(width * height) / 3f);
     }
+    
+    public BspGenerator(int roomCount) {
+        this.RoomCount = roomCount;
+        this.Width = 3 * RoomCount;
+        this.Height = Width;
+        map = new CellType[Width][Height];
+    }
+    
+    public int getWidth() {
+        return Width;
+    }
+    
+    public int getHeight() {
+        return Height;
+    }
 
     public void generateSegments() {
+        System.out.println("room count: " + RoomCount);
+        System.out.println("width: " + Width);
+        System.out.println("height: " + Height);
+        
         // fill with Wall tiles
         FillMap(CellType.Wall);
 

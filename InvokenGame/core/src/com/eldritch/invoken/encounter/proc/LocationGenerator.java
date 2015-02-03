@@ -121,14 +121,18 @@ public class LocationGenerator {
     }
 
     public Location generate(com.eldritch.invoken.proto.Locations.Location proto) {
-        int width = Settings.MAX_WIDTH;
-        int height = Settings.MAX_HEIGHT;
-        LocationMap map = getBaseMap(width, height);
-
-        BspGenerator bsp = new BspGenerator(width / SCALE, height / SCALE);
+//        int encounters = proto.getEncounterCount();
+//        BspGenerator bsp = new BspGenerator(encounters + 1);
+        BspGenerator bsp = new BspGenerator(Settings.MAX_WIDTH, Settings.MAX_HEIGHT);
+        
         bsp.generateSegments();
 //        bsp.save();
         CellType[][] typeMap = bsp.getMap();
+        
+        // create map
+        int width = bsp.getWidth();
+        int height = bsp.getHeight();
+        LocationMap map = getBaseMap(width, height);
 
         // create layers
         InvokenGame.log("Creating Base");
