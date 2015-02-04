@@ -17,9 +17,9 @@ import javax.swing.JTextField;
 import com.eldritch.scifirpg.editor.MainPanel;
 import com.eldritch.scifirpg.editor.tables.PrerequisiteTable;
 import com.eldritch.scifirpg.editor.util.StateMarkers;
+import com.eldritch.invoken.proto.Augmentations.AugmentationProto;
 import com.eldritch.invoken.proto.Disciplines.Discipline;
 import com.eldritch.invoken.proto.Disciplines.Influence;
-import com.eldritch.invoken.proto.Effects.Effect;
 import com.eldritch.invoken.proto.Prerequisites.Prerequisite;
 import com.eldritch.invoken.proto.Prerequisites.Prerequisite.Type;
 import com.eldritch.invoken.proto.Prerequisites.Standing;
@@ -126,8 +126,8 @@ public class PrerequisiteEditorPanel extends AssetEditorPanel<Prerequisite, Prer
 				targetEnabled = false;
 				break;
 			case AUG_AVAILABLE:
-				for (Effect.Type effect : Effect.Type.values()) {
-					values.add(effect.name());
+				for (AugmentationProto aug : AugmentationProto.values()) {
+					values.add(aug.name());
 				}
 				maxEnabled = false;
 				break;
