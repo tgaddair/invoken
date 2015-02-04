@@ -64,9 +64,33 @@ public class RoomGenerator {
         this.map = map;
     }
     
+    /**
+     * TODO: better way to do encounter and room matching.
+     * 
+     *  1. Build a dependency graph of encounters starting from the player entrance to the exit. 
+     *     Some encounters will be marked as "keys" to others, which implies a dependency.  If a
+     *     dependency exists, we must provide a locked door for the depending encounter whose
+     *     credential is provided by the key.  More than one encounter can be a key, implying an
+     *     "any of" option.
+     *  2. Choose a room as the origin, or player teleport location.  The encounter will need to be
+     *     explicitly marked as the 'origin' to resolve any ambiguities from multiple teleport
+     *     locations.
+     *  3. Our encounter placement algorithm will then navigate the room graph from the origin and
+     *     place a required encounter in each room.  The room graph will need to tell us (in the
+     *     directed edge) if there is a lock going from our current room to the next room.  If
+     *     there is a lock, then we can place exactly ONE dependent encounter in the subtree of
+     *     the room graph behind this locked door.  Once we've placed a locked encounter, we can
+     *     consider placing all the encounters that depend on it.  In this way, we traverse the
+     *     room graph in much the same way as the player would, which is why it works.
+     *  4. If any unplaced required encounters exist...
+     */
     public void generate(List<Rectangle> bounds, List<Encounter> encounters) {
         List<Encounter> available = new ArrayList<Encounter>(encounters);
+        
+        // remove any encounters that don't have a room specified, as they can go anywhere
         removeRoomless(available);
+        
+        // sort the encounters by priority so more important encounters get first dibs on rooms
         LocationGenerator.sortByWeight(available);
         
         List<Rectangle> unplaced = new ArrayList<Rectangle>(bounds);

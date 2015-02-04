@@ -126,13 +126,11 @@ public class LocationGenerator {
         for (Encounter encounter : proto.getEncounterList()) {
             int count = 1;
             if (!encounter.getUnique()) {
-                count += (int) (rand.nextDouble() * 5);
+                count += (int) (rand.nextDouble() * 3);
             }
             roomCount += count;
         }
-        BspGenerator bsp = new BspGenerator(roomCount);
-        
-//        BspGenerator bsp = new BspGenerator(Settings.MAX_WIDTH, Settings.MAX_HEIGHT);
+        BspGenerator bsp = new BspGenerator(roomCount * 2);
         
         bsp.generateSegments();
 //        bsp.save();

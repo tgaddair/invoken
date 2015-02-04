@@ -867,6 +867,11 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     }
     
     private void updateReaction(Agent agent, float relation) {
+        if (!isAlive()) {
+            // no need to do this check in this case
+            return;
+        }
+        
     	if (!enemies.contains(agent) && Behavior.isEnemyGiven(relation)) {
             // unfriendly, so mark them as an enemy
             enemies.add(agent);
