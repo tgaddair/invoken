@@ -131,6 +131,7 @@ public class LocationGenerator {
             roomCount += count;
         }
         EncounterGenerator bsp = new EncounterGenerator(roomCount * 2, proto.getEncounterList());
+//        BspGenerator bsp = new BspGenerator(roomCount * 2);
         
         bsp.generateSegments();
 //        bsp.save();
@@ -183,8 +184,8 @@ public class LocationGenerator {
         }
 
         InvokenGame.log("Adding Rooms");
-        RoomGenerator roomGenerator = new RoomGenerator(map);
-        roomGenerator.generate(bsp.getRooms(), proto.getEncounterList());
+//        RoomGenerator roomGenerator = new RoomGenerator(map);
+//        roomGenerator.generate(bsp.getRooms(), proto.getEncounterList());
         
         // create room connectivity map
         ConnectedRoom[][] rooms = createRooms(bsp.getRooms(), typeMap);

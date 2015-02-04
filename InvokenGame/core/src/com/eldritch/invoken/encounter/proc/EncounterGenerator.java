@@ -26,44 +26,64 @@ public class EncounterGenerator extends BspGenerator {
     
     @Override
     protected void PlaceRooms() {
+        InvokenGame.log("Room Count: " + getRoomCount());
+        
         // place all encounters at least once first
+        int count = 0;
         for (Encounter encounter : encounters) {
-            place(encounter);
+            if (place(encounter)) {
+                count++;
+            }
+        }
+        
+     // TODO: only sample from the non-unique encounters and weight them
+        List<Encounter> reusable = new ArrayList<Encounter>();
+        for (Encounter encounter : encounters) {
+            if (!encounter.getUnique()) {
+                reusable.add(encounter);
+            }
         }
         
         // place encounters randomly
-        // TODO: only sample from the non-unique encounters and weight them
-        int remaining = getRoomCount() - encounters.size();
+        int remaining = getRoomCount() - count;
+        InvokenGame.log("Remaining: " + remaining);
         while (remaining > 0) {
-            place(encounters.get((int) (Math.random() * encounters.size())));
+            place(reusable.get((int) (Math.random() * reusable.size())));
             remaining--;
         }
     }
     
-    private void place(Encounter encounter) {
+    private boolean place(Encounter encounter) {
         InvokenGame.log("Place: " + encounter.getId());
-        if (encounter.getRoomIdList().isEmpty()) {
-            // cannot place
-            return;
-        }
-        
-        // TODO: we should handle the case of this never breaking
         int count = 0;
         while (count < 1000) {
-            for (String roomId : encounter.getRoomIdList()) {
-                Room room = roomCache.lookupRoom(roomId);
-                RoomType type = RoomGenerator.get(room.getSize());
-                
-                int width = range(type);
-                int height = range(type);
+            if (encounter.getRoomIdList().isEmpty()) {
+                int width = range(MinRoomSize, MaxRoomSize);
+                int height = range(MinRoomSize, MaxRoomSize);
                 Rectangle rect = PlaceRectRoom(width, height);
                 if (rect != null) {
                     roomMap.put(encounter, rect);
-                    return;
+                    return true;
                 }
-                count++;
+            } else {
+                for (String roomId : encounter.getRoomIdList()) {
+                    Room room = roomCache.lookupRoom(roomId);
+                    RoomType type = RoomGenerator.get(room.getSize());
+                    
+                    int width = range(type);
+                    int height = range(type);
+                    Rectangle rect = PlaceRectRoom(width, height);
+                    if (rect != null) {
+                        roomMap.put(encounter, rect);
+                        return true;
+                    }
+                }
             }
+            count++;
         }
+        
+        // TODO: get first available
+        return false;
     }
     
     private int range(RoomType type) {
