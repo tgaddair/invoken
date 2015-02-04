@@ -5,19 +5,74 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.badlogic.gdx.math.Rectangle;
+import com.eldritch.invoken.InvokenGame;
+import com.eldritch.invoken.encounter.proc.RoomGenerator.RoomType;
 import com.eldritch.invoken.proto.Locations.Encounter;
+import com.eldritch.invoken.proto.Locations.Room;
 import com.google.common.base.Preconditions;
 
 public class EncounterGenerator extends BspGenerator {
+    private final RoomCache roomCache = new RoomCache();
     private final List<Encounter> encounters = new ArrayList<Encounter>();
+    private final Map<Encounter, Rectangle> roomMap = new HashMap<Encounter, Rectangle>();
+    private final EncounterNode dependencies;
 
     public EncounterGenerator(int roomCount, List<Encounter> encounters) {
         super(roomCount);
         this.encounters.addAll(encounters);
-        generateDependencyGraph(encounters);
+        dependencies = generateDependencyGraph(encounters);
+    }
+    
+    @Override
+    protected void PlaceRooms() {
+        // place all encounters at least once first
+        for (Encounter encounter : encounters) {
+            place(encounter);
+        }
+        
+        // place encounters randomly
+        // TODO: only sample from the non-unique encounters and weight them
+        int remaining = getRoomCount() - encounters.size();
+        while (remaining > 0) {
+            place(encounters.get((int) (Math.random() * encounters.size())));
+            remaining--;
+        }
+    }
+    
+    private void place(Encounter encounter) {
+        InvokenGame.log("Place: " + encounter.getId());
+        if (encounter.getRoomIdList().isEmpty()) {
+            // cannot place
+            return;
+        }
+        
+        // TODO: we should handle the case of this never breaking
+        int count = 0;
+        while (count < 1000) {
+            for (String roomId : encounter.getRoomIdList()) {
+                Room room = roomCache.lookupRoom(roomId);
+                RoomType type = RoomGenerator.get(room.getSize());
+                
+                int width = range(type);
+                int height = range(type);
+                Rectangle rect = PlaceRectRoom(width, height);
+                if (rect != null) {
+                    roomMap.put(encounter, rect);
+                    return;
+                }
+                count++;
+            }
+        }
+    }
+    
+    private int range(RoomType type) {
+        int min = Math.max(type.getMin(), MinRoomSize);
+        int max = Math.min(type.getMax(), MaxRoomSize);
+        return range(min, max);
     }
 
-    private static void generateDependencyGraph(List<Encounter> encounters) {
+    private static EncounterNode generateDependencyGraph(List<Encounter> encounters) {
         // scan through the list and pick out the origin
         List<EncounterNode> nodes = new ArrayList<EncounterNode>();
         EncounterNode origin = null;
@@ -56,6 +111,8 @@ public class EncounterGenerator extends BspGenerator {
                 }
             }
         }
+        
+        return origin;
     }
 
     private static class EncounterNode {

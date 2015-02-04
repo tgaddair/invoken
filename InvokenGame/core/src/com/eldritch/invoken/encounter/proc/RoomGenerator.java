@@ -25,7 +25,7 @@ public class RoomGenerator {
     public static final double MAX_FURNITURE = 0.2;
     
     enum RoomType {
-        SMALL(0, 49), MEDIUM(36, 100), LARGE(81, Integer.MAX_VALUE);
+        SMALL(0, 7), MEDIUM(6, 10), LARGE(9, Integer.MAX_VALUE);
 
         private final int min;
         private final int max;
@@ -35,9 +35,17 @@ public class RoomGenerator {
             this.max = max;
         }
         
+        public int getMin() {
+            return min;
+        }
+        
+        public int getMax() {
+            return max;
+        }
+        
         public boolean fitsBounds(Rectangle bounds) {
             float area = bounds.area();
-            return area >= min && area <= max;
+            return area >= (min * min) && area <= (max * max);
         }
     }
 
@@ -50,14 +58,7 @@ public class RoomGenerator {
         sizeToType.put(Room.Size.LARGE, RoomType.LARGE);
     }
     
-    private final LoadingCache<String, Room> availableRooms = CacheBuilder.newBuilder()
-            .build(new CacheLoader<String, Room>() {
-              public Room load(String roomId) {
-                  return InvokenGame.ROOM_READER.readAsset(roomId);
-              }
-            });
-    
-    private final Map<String, List<Rectangle>> roomsById = new HashMap<String, List<Rectangle>>();
+    private final RoomCache roomCache = new RoomCache();
     private final LocationMap map;
     
     public RoomGenerator(LocationMap map) {
@@ -122,12 +123,12 @@ public class RoomGenerator {
         while (it.hasNext()) {
             Rectangle rect = it.next();
             for (String roomId : encounter.getRoomIdList()) {
-                Room room = lookupRoom(roomId);
+                Room room = roomCache.lookupRoom(roomId);
                 RoomType type = get(room.getSize());
                 if (type.fitsBounds(rect)) {
                     // room type fits, so do the placement
                     place(rect, room);
-                    put(roomId, rect);
+                    roomCache.put(roomId, rect);
                     it.remove();
                     return true;
                 }
@@ -162,13 +163,6 @@ public class RoomGenerator {
         }
     }
     
-    private void put(String roomId, Rectangle rect) {
-        if (!roomsById.containsKey(roomId)) {
-            roomsById.put(roomId, new ArrayList<Rectangle>());
-        }
-        roomsById.get(roomId).add(rect);
-    }
-    
     private void removeRoomless(List<Encounter> encounters) {
         Iterator<Encounter> it = encounters.iterator();
         while (it.hasNext()) {
@@ -176,15 +170,6 @@ public class RoomGenerator {
             if (encounter.getRoomIdCount() == 0) {
                 it.remove();
             }
-        }
-    }
-    
-    private Room lookupRoom(String roomId) {
-        try {
-            return availableRooms.get(roomId);
-        } catch (Exception ex) {
-            InvokenGame.error("Failed to load room: " + roomId, ex);
-            return null;
         }
     }
     

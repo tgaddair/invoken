@@ -15,8 +15,8 @@ import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.encounter.NaturalVector2;
 
 public class BspGenerator {
-    private static final int MinRoomSize = 6;
-    private static final int MaxRoomSize = 12;
+    public static final int MinRoomSize = 6;
+    public static final int MaxRoomSize = 12;
     
     private final Random rand = new Random();
     private CellType[][] map;
@@ -65,7 +65,11 @@ public class BspGenerator {
     public int getHeight() {
         return Height;
     }
-
+    
+    public int getRoomCount() {
+        return RoomCount;
+    }
+    
     public void generateSegments() {
         System.out.println("room count: " + RoomCount);
         System.out.println("width: " + Width);
@@ -86,14 +90,16 @@ public class BspGenerator {
         }
     }
 
-    private void PlaceRooms() {
+    protected void PlaceRooms() {
         // place rooms
         int placed = 0;
         int count = 0;
         while (placed < RoomCount) {
             // choose to place a rectangle room, or a templated room
             // if (btrial()) {
-            if (PlaceRectRoom())
+            int width = range(MinRoomSize, MaxRoomSize);
+            int height = range(MinRoomSize, MaxRoomSize);
+            if (PlaceRectRoom(width, height) != null)
                 placed++;
             // } else {
             // if (PlaceTemplateRoom())
@@ -135,9 +141,7 @@ public class BspGenerator {
         }
     }
 
-    private boolean PlaceRectRoom() {
-        int width = range(MinRoomSize, MaxRoomSize);
-        int height = range(MinRoomSize, MaxRoomSize);
+    protected Rectangle PlaceRectRoom(int width, int height) {
         Rectangle room = new Rectangle(range(Padding, Width - width - Padding * 2), range(Padding,
                 Height - height - Padding * 2), width, height);
 
@@ -145,9 +149,9 @@ public class BspGenerator {
         if (Overlaps(room)) {
             Rooms.add(room);
             DigRoom(room);
-            return true;
+            return room;
         }
-        return false;
+        return null;
     }
 
     // / <summary>
@@ -323,7 +327,7 @@ public class BspGenerator {
         return btrial() ? a : b;
     }
 
-    private int range(int min, int max) {
+    protected int range(int min, int max) {
         return rand.nextInt(max - min + 1) + min;
     }
 
