@@ -107,11 +107,11 @@ public class EncounterEditorPanel extends
 		items.addAll(MainPanel.ITEM_TABLE.getAssetIds());
 		lockBox.setModel(new DefaultComboBoxModel<String>(items
 				.toArray(new String[0])));
-		builder.append("Lock:", lockBox);
+		builder.append("Key:", lockBox);
 		builder.nextLine();
 
 		builder.appendRow("fill:120dlu");
-		builder.append("Keys:", new AssetTablePanel(keyTable));
+		builder.append("Unlocks:", new AssetTablePanel(keyTable));
 		builder.nextLine();
 
 		builder.appendRow("fill:120dlu");
@@ -149,10 +149,10 @@ public class EncounterEditorPanel extends
 			}
 
 			originCheck.setSelected(asset.getOrigin());
-			if (asset.hasLock()) {
-				lockBox.setSelectedItem(asset.getLock());
+			if (asset.hasRequiredKey()) {
+				lockBox.setSelectedItem(asset.getRequiredKey());
 			}
-			for (String key : asset.getKeyList()) {
+			for (String key : asset.getAvailableKeyList()) {
 				keyTable.addAssetId(key);
 			}
 
@@ -187,8 +187,8 @@ public class EncounterEditorPanel extends
 				.setWeight(Double.parseDouble(weightField.getText()))
 				.setUnique(uniqueCheck.isSelected())
 				.setOrigin(originCheck.isSelected())
-				.setLock((String) lockBox.getSelectedItem())
-				.addAllKey(keyTable.getAssetIds())
+				.setRequiredKey((String) lockBox.getSelectedItem())
+				.addAllAvailableKey(keyTable.getAssetIds())
 				.addAllRoomId(roomTable.getAssetIds())
 				.addAllPrereq(prereqTable.getAssets())
 				.setActorParams(actorPanel.getParams());
