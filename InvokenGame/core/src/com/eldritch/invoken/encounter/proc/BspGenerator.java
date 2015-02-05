@@ -31,7 +31,7 @@ public class BspGenerator {
     private List<NaturalVector2> currentPath = new ArrayList<NaturalVector2>();
 
     enum CellType {
-        Floor(1), Wall(4), Stone(20), None(0);
+        Floor(1), Wall(4), Stone(20), Door(10), None(0);
 
         private CellType(int cost) {
             this.cost = cost;
@@ -116,26 +116,14 @@ public class BspGenerator {
     // / <summary>
     // / Places and digs out the tunnels from room-to-room
     // / </summary>
-    private void PlaceTunnels() {
+    protected void PlaceTunnels() {
         int count = 0;
 
         // pathfind tunnels
         Rectangle prev = Rooms.get(Rooms.size() - 1);
         for (Rectangle next : Rooms) {
             count++;
-
-            // pathfind from the center of the previous room to the center of the next room
-            Pathfind((int) (prev.x + prev.width / 2), (int) (prev.y + prev.height / 2),
-                    (int) (next.x + next.width / 2), (int) (next.y + next.height / 2));
-
-            // dig out the tunnel we just found
-            // int size = choose(1, 2);
-            int size = 2;
-            for (NaturalVector2 point : currentPath) {
-                Set(point.x - size / 2, point.y - size / 2, size, size, CellType.Floor,
-                        CellType.Stone);
-            }
-
+            DigTunnel(prev, next);
             prev = next;
             InvokenGame.log(String.format("Pathfound %d/%d", count, Rooms.size()));
         }
@@ -178,15 +166,29 @@ public class BspGenerator {
         }
 
         // make some doors
-        int doors = 2;
-        for (int i = 0; i < doors; i++) {
-            if (range(0, 2) == 0) {
-                Set((int) room.x + range(0, (int) room.width),
-                        (int) room.y + choose(-1, (int) room.height), CellType.Wall);
-            } else {
-                Set((int) room.x + choose(-1, (int) room.width),
-                        (int) room.y + range(0, (int) room.height), CellType.Wall);
-            }
+//        int doors = 2;
+//        for (int i = 0; i < doors; i++) {
+//            if (range(0, 2) == 0) {
+//                Set((int) room.x + range(0, (int) room.width),
+//                        (int) room.y + choose(-1, (int) room.height), CellType.Wall);
+//            } else {
+//                Set((int) room.x + choose(-1, (int) room.width),
+//                        (int) room.y + range(0, (int) room.height), CellType.Wall);
+//            }
+//        }
+    }
+    
+    protected void DigTunnel(Rectangle prev, Rectangle next) {
+        // pathfind from the center of the previous room to the center of the next room
+        Pathfind((int) (prev.x + prev.width / 2), (int) (prev.y + prev.height / 2),
+                (int) (next.x + next.width / 2), (int) (next.y + next.height / 2));
+
+        // dig out the tunnel we just found
+        // int size = choose(1, 2);
+        int size = 2;
+        for (NaturalVector2 point : currentPath) {
+            Set(point.x - size / 2, point.y - size / 2, size, size, CellType.Floor,
+                    CellType.Stone);
         }
     }
 
@@ -196,7 +198,7 @@ public class BspGenerator {
     // / NOTE: This is probably super horrible A* Pathfinding algorithm. I'm sure there's WAY better
     // ways of writing this
     // / </summary>
-    private void Pathfind(int x, int y, int x2, int y2) {
+    protected void Pathfind(int x, int y, int x2, int y2) {
         int[][] cost = new int[Width][Height];
         cost[x][y] = CellType.Floor.cost;
 
@@ -294,7 +296,7 @@ public class BspGenerator {
     // / <summary>
     // / Sets the given rectangle of cells to the type
     // / </summary>
-    private void Set(int x, int y, int w, int h, CellType type, CellType untype) {
+    protected void Set(int x, int y, int w, int h, CellType type, CellType untype) {
         for (int i = x; i < x + w; i++) {
             for (int j = y; j < y + h; j++) {
                 Set(i, j, type);
@@ -347,12 +349,12 @@ public class BspGenerator {
         return map;
     }
     
-    public void save() {
+    public void save(String base) {
         BufferedImage image = new BufferedImage(Width, Height,
                 BufferedImage.TYPE_INT_RGB);
         for (int x = 0; x < Width; x++) {
             for (int y = 0; y < Height; y++) {
-                switch (map[x][y]) {
+                switch (map[x][Height - y - 1]) {
                     case Floor:
                         image.setRGB(x, y, 0xffffff);
                         break;
@@ -362,13 +364,16 @@ public class BspGenerator {
                     case Stone:
                         image.setRGB(x, y, 0x0000ff);
                         break;
+                    case Door:
+                        image.setRGB(x, y, 0xff0000);
+                        break;
                     case None:
                         image.setRGB(x, y, 0);
                 }
             }
         }
 
-        File outputfile = new File(System.getProperty("user.home") + "/bsp.png");
+        File outputfile = new File(System.getProperty("user.home") + "/" + base + ".png");
         try {
             ImageIO.write(image, "png", outputfile);
         } catch (IOException e) {

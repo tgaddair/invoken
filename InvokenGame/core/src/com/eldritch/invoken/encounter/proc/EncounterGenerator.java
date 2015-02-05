@@ -3,9 +3,12 @@ package com.eldritch.invoken.encounter.proc;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.NavigableSet;
+import java.util.Set;
 import java.util.TreeSet;
 
 import com.badlogic.gdx.math.Rectangle;
@@ -19,12 +22,10 @@ public class EncounterGenerator extends BspGenerator {
     private final RoomCache roomCache = new RoomCache();
     private final List<Encounter> encounters = new ArrayList<Encounter>();
     private final Map<Rectangle, EncounterRoom> encounterRooms = new HashMap<Rectangle, EncounterRoom>();
-    private final EncounterNode dependencies;
 
     public EncounterGenerator(int roomCount, List<Encounter> encounters) {
         super(roomCount);
         this.encounters.addAll(encounters);
-        dependencies = generateDependencyGraph(encounters);
     }
 
     public Collection<EncounterRoom> getEncounterRooms() {
@@ -46,7 +47,7 @@ public class EncounterGenerator extends BspGenerator {
         // TODO: only sample from the non-unique encounters and weight them
         List<Encounter> repeatedEncounters = new ArrayList<Encounter>();
         for (Encounter encounter : encounters) {
-            if (!encounter.getUnique()) {
+            if (!encounter.getOrigin() && !encounter.getUnique()) {
                 repeatedEncounters.add(encounter);
             }
         }
@@ -60,6 +61,68 @@ public class EncounterGenerator extends BspGenerator {
             place(encounter);
             remaining--;
         }
+    }
+
+    @Override
+    protected void PlaceTunnels() {
+        save("no-tunnels");
+
+        // first, generate the dependency graph from all the encounter-room pairs
+        EncounterNode origin = generateDependencyGraph(encounterRooms.values());
+
+        LinkedList<EncounterNode> unlocked = new LinkedList<EncounterNode>(); // can place
+        List<EncounterNode> connectedSample = new ArrayList<EncounterNode>(); // can connect to
+        Set<EncounterNode> connected = new HashSet<EncounterNode>();
+
+        // seed the routine so we can connect to the origin, and we connected from a child
+        connectedSample.add(origin);
+        connected.add(origin);
+        for (EncounterNode lock : origin.locks) {
+            unlocked.add(lock);
+        }
+
+        while (!unlocked.isEmpty()) {
+            EncounterNode current = unlocked.removeFirst();
+            if (connected.contains(current)) {
+                // already placed
+                continue;
+            }
+            
+            EncounterNode connection = connectedSample
+                    .get((int) (Math.random() * connected.size()));
+            DigTunnel(connection.getBounds(), current.getBounds());
+
+            // add this node to the connected set, and maybe add its children if all its keys
+            // are also in the connected set
+            connectedSample.add(current);
+            connected.add(current);
+            for (EncounterNode lock : current.locks) {
+                if (connected.contains(lock)) {
+                    // already placed
+                    continue;
+                }
+                
+                // iterate over all dependencies and check that they've already been placed
+                boolean canConnect = true;
+                for (EncounterNode key : lock.keys) {
+                    if (!connected.contains(key)) {
+                        canConnect = false;
+                        break;
+                    }
+                }
+
+                // all dependencies placed, so add this one to the unlocked set
+                if (canConnect) {
+                    unlocked.add(lock);
+                }
+            }
+        }
+
+        // finally, asset that all the encounters were connected
+        Preconditions.checkState(
+                connected.size() == encounterRooms.size(),
+                String.format("expected %d connection, found %d", encounterRooms.size(),
+                        connected.size()));
     }
 
     private boolean place(Encounter encounter) {
@@ -126,17 +189,17 @@ public class EncounterGenerator extends BspGenerator {
             }
             totalWeight = total;
         }
-        
+
         public Encounter select() {
             search.cumulativeWeight = Math.random() * totalWeight;
             return selection.ceiling(search).encounter;
         }
     }
-    
+
     public static class WeightedEncounter implements Comparable<WeightedEncounter> {
         private final Encounter encounter;
         private double cumulativeWeight;
-        
+
         public WeightedEncounter(Encounter encounter, double weight) {
             this.encounter = encounter;
             this.cumulativeWeight = weight;
@@ -146,14 +209,14 @@ public class EncounterGenerator extends BspGenerator {
         public int compareTo(WeightedEncounter other) {
             return Double.compare(this.cumulativeWeight, other.cumulativeWeight);
         }
-        
+
     }
 
-    private static EncounterNode generateDependencyGraph(List<Encounter> encounters) {
+    private static EncounterNode generateDependencyGraph(Collection<EncounterRoom> encounters) {
         // scan through the list and pick out the origin
         List<EncounterNode> nodes = new ArrayList<EncounterNode>();
         EncounterNode origin = null;
-        for (Encounter encounter : encounters) {
+        for (EncounterRoom encounter : encounters) {
             EncounterNode node = new EncounterNode(encounter);
             if (node.isOrigin()) {
                 origin = node;
@@ -223,10 +286,12 @@ public class EncounterGenerator extends BspGenerator {
         // encounters that are unlocked by this one
         private final List<EncounterNode> locks = new ArrayList<EncounterNode>();
 
+        private final EncounterRoom encounterRoom;
         private final Encounter encounter;
 
-        public EncounterNode(Encounter encounter) {
-            this.encounter = encounter;
+        public EncounterNode(EncounterRoom encounterRoom) {
+            this.encounterRoom = encounterRoom;
+            this.encounter = encounterRoom.encounter;
         }
 
         public void addKey(EncounterNode key) {
@@ -251,6 +316,10 @@ public class EncounterGenerator extends BspGenerator {
 
         public List<String> getAvailableKeys() {
             return encounter.getAvailableKeyList();
+        }
+
+        public Rectangle getBounds() {
+            return encounterRoom.getBounds();
         }
     }
 }

@@ -135,7 +135,7 @@ public class LocationGenerator {
 //        BspGenerator bsp = new BspGenerator(roomCount * 2);
         
         bsp.generateSegments();
-//        bsp.save();
+        bsp.save("bsp");
         CellType[][] typeMap = bsp.getMap();
         
         // create map
