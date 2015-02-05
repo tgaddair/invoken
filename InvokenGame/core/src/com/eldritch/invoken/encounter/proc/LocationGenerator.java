@@ -42,6 +42,7 @@ import com.eldritch.invoken.encounter.layer.LocationLayer;
 import com.eldritch.invoken.encounter.layer.LocationLayer.CollisionLayer;
 import com.eldritch.invoken.encounter.layer.LocationMap;
 import com.eldritch.invoken.encounter.proc.BspGenerator.CellType;
+import com.eldritch.invoken.encounter.proc.EncounterGenerator.EncounterRoom;
 import com.eldritch.invoken.encounter.proc.RoomGenerator.RoomType;
 import com.eldritch.invoken.gfx.Light;
 import com.eldritch.invoken.gfx.NormalMappedTile;
@@ -188,13 +189,12 @@ public class LocationGenerator {
 //        roomGenerator.generate(bsp.getRooms(), proto.getEncounterList());
         
         // create room connectivity map
-        ConnectedRoom[][] rooms = createRooms(bsp.getRooms(), typeMap);
-        map.setRooms(rooms);
-        save(rooms, "connected-rooms");
+//        ConnectedRoom[][] rooms = createRooms(bsp.getRooms(), typeMap);
+//        map.setRooms(rooms);
+//        save(rooms, "connected-rooms");
 
         InvokenGame.log("Creating Spawn Layers");
-        for (LocationLayer layer : createSpawnLayers(base, collision, bsp.getRooms(),
-                proto.getEncounterList(), map)) {
+        for (LocationLayer layer : createSpawnLayers(base, collision, bsp, map)) {
             map.getLayers().add(layer);
         }
 
@@ -541,28 +541,26 @@ public class LocationGenerator {
     }
 
     private List<LocationLayer> createSpawnLayers(LocationLayer base, LocationLayer collision,
-            List<Rectangle> rooms, List<Encounter> encounters, LocationMap map) {
-        List<Encounter> availableEncounters = new ArrayList<Encounter>(encounters);
+            EncounterGenerator generator, LocationMap map) {
         List<LocationLayer> layers = new ArrayList<LocationLayer>();
         LocationLayer playerLayer = null;
-        for (Rectangle room : rooms) {
-            double total = getTotalWeight(encounters);
-            if (playerLayer == null) {
+        for (EncounterRoom encounterRoom : generator.getEncounterRooms()) {
+            Encounter encounter = encounterRoom.getEncounter();
+            Rectangle bounds = encounterRoom.getBounds();
+            
+            if (encounter.getOrigin()) {
                 playerLayer = new LocationLayer(base.getWidth(), base.getHeight(), PX, PX, map);
                 playerLayer.setVisible(false);
                 playerLayer.setOpacity(1.0f);
                 playerLayer.setName("player");
 
-                NaturalVector2 position = getPoint(room, base, playerLayer);
+                NaturalVector2 position = getPoint(bounds, base, playerLayer);
                 addCell(playerLayer, collider, position.x, position.y);
 
                 layers.add(playerLayer);
             } else {
-                Encounter encounter = popEncounter(room, availableEncounters, total);
-                if (encounter != null) {
-                    LocationLayer layer = createLayer(encounter, room, base, collision, map);
-                    layers.add(layer);
-                }
+                LocationLayer layer = createLayer(encounter, bounds, base, collision, map);
+                layers.add(layer);
             }
         }
 
@@ -683,16 +681,6 @@ public class LocationGenerator {
                 return diff > 0 ? -1 : diff < 0 ? 1 : 0;
             }
         });
-    }
-
-    public static double getTotalWeight(List<Encounter> encounters) {
-        double total = 0.0;
-        for (Encounter encounter : encounters) {
-            if (encounter.getType() == Encounter.Type.ACTOR) {
-                total += encounter.getWeight();
-            }
-        }
-        return total;
     }
 
     private void addWalls(LocationLayer layer) {

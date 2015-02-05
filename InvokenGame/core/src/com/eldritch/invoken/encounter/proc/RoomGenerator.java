@@ -96,7 +96,7 @@ public class RoomGenerator {
         
         List<Rectangle> unplaced = new ArrayList<Rectangle>(bounds);
         while (!unplaced.isEmpty() && !available.isEmpty()) {
-            double total = LocationGenerator.getTotalWeight(encounters);
+            double total = EncounterGenerator.getTotalWeight(encounters);
             process(available, unplaced, total);
         }
     }
