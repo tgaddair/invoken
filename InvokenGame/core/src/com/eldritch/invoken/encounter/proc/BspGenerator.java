@@ -5,7 +5,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.PriorityQueue;
 import java.util.Random;
 
 import javax.imageio.ImageIO;
@@ -17,7 +19,7 @@ import com.eldritch.invoken.encounter.NaturalVector2;
 public class BspGenerator {
     public static final int MinRoomSize = 6;
     public static final int MaxRoomSize = 12;
-    
+
     private final Random rand = new Random();
     private CellType[][] map;
     private final int Width;
@@ -44,37 +46,37 @@ public class BspGenerator {
         this.Width = width;
         this.Height = height;
         map = new CellType[width][height];
-        
+
         // denominator:
         // 2 -> lots of big halls
         // 4 -> lots of corridors
         RoomCount = (int) (Math.sqrt(width * height) / 3f);
     }
-    
+
     public BspGenerator(int roomCount) {
         this.RoomCount = roomCount;
         this.Width = Math.max(RoomCount * 3, 50);
         this.Height = Width;
         map = new CellType[Width][Height];
     }
-    
+
     public int getWidth() {
         return Width;
     }
-    
+
     public int getHeight() {
         return Height;
     }
-    
+
     public int getRoomCount() {
         return RoomCount;
     }
-    
+
     public void generateSegments() {
         System.out.println("room count: " + RoomCount);
         System.out.println("width: " + Width);
         System.out.println("height: " + Height);
-        
+
         // fill with Wall tiles
         FillMap(CellType.Wall);
 
@@ -166,18 +168,18 @@ public class BspGenerator {
         }
 
         // make some doors
-//        int doors = 2;
-//        for (int i = 0; i < doors; i++) {
-//            if (range(0, 2) == 0) {
-//                Set((int) room.x + range(0, (int) room.width),
-//                        (int) room.y + choose(-1, (int) room.height), CellType.Wall);
-//            } else {
-//                Set((int) room.x + choose(-1, (int) room.width),
-//                        (int) room.y + range(0, (int) room.height), CellType.Wall);
-//            }
-//        }
+        // int doors = 2;
+        // for (int i = 0; i < doors; i++) {
+        // if (range(0, 2) == 0) {
+        // Set((int) room.x + range(0, (int) room.width),
+        // (int) room.y + choose(-1, (int) room.height), CellType.Wall);
+        // } else {
+        // Set((int) room.x + choose(-1, (int) room.width),
+        // (int) room.y + range(0, (int) room.height), CellType.Wall);
+        // }
+        // }
     }
-    
+
     protected void DigTunnel(Rectangle prev, Rectangle next) {
         // pathfind from the center of the previous room to the center of the next room
         Pathfind((int) (prev.x + prev.width / 2), (int) (prev.y + prev.height / 2),
@@ -187,8 +189,7 @@ public class BspGenerator {
         // int size = choose(1, 2);
         int size = 2;
         for (NaturalVector2 point : currentPath) {
-            Set(point.x - size / 2, point.y - size / 2, size, size, CellType.Floor,
-                    CellType.Stone);
+            Set(point.x - size / 2, point.y - size / 2, size, size, CellType.Floor, CellType.Stone);
         }
     }
 
@@ -199,20 +200,22 @@ public class BspGenerator {
     // ways of writing this
     // / </summary>
     protected void Pathfind(int x, int y, int x2, int y2) {
-        int[][] cost = new int[Width][Height];
+        final int[][] cost = new int[Width][Height];
         cost[x][y] = CellType.Floor.cost;
 
-        List<NaturalVector2> active = new ArrayList<NaturalVector2>();
+        PriorityQueue<NaturalVector2> active = new PriorityQueue<NaturalVector2>(1,
+                new Comparator<NaturalVector2>() {
+                    @Override
+                    public int compare(NaturalVector2 p1, NaturalVector2 p2) {
+                        return Integer.compare(cost[p1.x][p1.y], cost[p2.x][p2.y]);
+                    }
+                });
+
         active.add(NaturalVector2.of(x, y));
         // pathfind
         while (true) {
             // get lowest cost point in active list
-            NaturalVector2 point = active.get(0);
-            for (int i = 1; i < active.size(); i++) {
-                NaturalVector2 p = active.get(i);
-                if (cost[p.x][p.y] < cost[point.x][point.y])
-                    point = p;
-            }
+            NaturalVector2 point = active.remove();
 
             // if end point
             if (point.x == x2 && point.y == y2)
@@ -221,23 +224,21 @@ public class BspGenerator {
             // move in directions
             int currentCost = cost[point.x][point.y];
             if (point.x - 1 >= 0 && cost[point.x - 1][point.y] == 0) {
-                active.add(NaturalVector2.of(point.x - 1, point.y));
                 cost[point.x - 1][point.y] = currentCost + map[point.x - 1][point.y].cost;
+                active.add(NaturalVector2.of(point.x - 1, point.y));
             }
             if (point.x + 1 < Width && cost[point.x + 1][point.y] == 0) {
-                active.add(NaturalVector2.of(point.x + 1, point.y));
                 cost[point.x + 1][point.y] = currentCost + map[point.x + 1][point.y].cost;
+                active.add(NaturalVector2.of(point.x + 1, point.y));
             }
             if (point.y - 1 >= 0 && cost[point.x][point.y - 1] == 0) {
-                active.add(NaturalVector2.of(point.x, point.y - 1));
                 cost[point.x][point.y - 1] = currentCost + map[point.x][point.y - 1].cost;
+                active.add(NaturalVector2.of(point.x, point.y - 1));
             }
             if (point.y + 1 < Height && cost[point.x][point.y + 1] == 0) {
-                active.add(NaturalVector2.of(point.x, point.y + 1));
                 cost[point.x][point.y + 1] = currentCost + map[point.x][point.y + 1].cost;
+                active.add(NaturalVector2.of(point.x, point.y + 1));
             }
-
-            active.remove(point);
         }
 
         // work backwards and find path
@@ -340,18 +341,17 @@ public class BspGenerator {
         }
         return min;
     }
-    
+
     public List<Rectangle> getRooms() {
         return Rooms;
     }
-    
+
     public CellType[][] getMap() {
         return map;
     }
-    
+
     public void save(String base) {
-        BufferedImage image = new BufferedImage(Width, Height,
-                BufferedImage.TYPE_INT_RGB);
+        BufferedImage image = new BufferedImage(Width, Height, BufferedImage.TYPE_INT_RGB);
         for (int x = 0; x < Width; x++) {
             for (int y = 0; y < Height; y++) {
                 switch (map[x][Height - y - 1]) {
