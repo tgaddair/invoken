@@ -5,6 +5,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NavigableSet;
+import java.util.TreeSet;
 
 import com.badlogic.gdx.math.Rectangle;
 import com.eldritch.invoken.InvokenGame;
@@ -24,7 +26,7 @@ public class EncounterGenerator extends BspGenerator {
         this.encounters.addAll(encounters);
         dependencies = generateDependencyGraph(encounters);
     }
-    
+
     public Collection<EncounterRoom> getEncounterRooms() {
         return encounterRooms.values();
     }
@@ -42,18 +44,20 @@ public class EncounterGenerator extends BspGenerator {
         }
 
         // TODO: only sample from the non-unique encounters and weight them
-        List<Encounter> reusable = new ArrayList<Encounter>();
+        List<Encounter> repeatedEncounters = new ArrayList<Encounter>();
         for (Encounter encounter : encounters) {
             if (!encounter.getUnique()) {
-                reusable.add(encounter);
+                repeatedEncounters.add(encounter);
             }
         }
+        EncounterSelector selector = new EncounterSelector(repeatedEncounters);
 
         // place encounters randomly
         int remaining = getRoomCount() - count;
         InvokenGame.log("Remaining: " + remaining);
         while (remaining > 0) {
-            place(reusable.get((int) (Math.random() * reusable.size())));
+            Encounter encounter = selector.select();
+            place(encounter);
             remaining--;
         }
     }
@@ -67,8 +71,8 @@ public class EncounterGenerator extends BspGenerator {
                 int height = range(MinRoomSize, MaxRoomSize);
                 Rectangle rect = PlaceRectRoom(width, height);
                 if (rect != null) {
-                    encounterRooms.put(rect,
-                            new EncounterRoom(encounter, Room.getDefaultInstance(), rect));
+                    encounterRooms.put(rect, new EncounterRoom(encounter,
+                            Room.getDefaultInstance(), rect));
                     return true;
                 }
             } else {
@@ -97,7 +101,7 @@ public class EncounterGenerator extends BspGenerator {
         int max = Math.min(type.getMax(), MaxRoomSize);
         return range(min, max);
     }
-    
+
     public static double getTotalWeight(List<Encounter> encounters) {
         double total = 0.0;
         for (Encounter encounter : encounters) {
@@ -106,6 +110,43 @@ public class EncounterGenerator extends BspGenerator {
             }
         }
         return total;
+    }
+
+    public static class EncounterSelector {
+        private final double totalWeight;
+        private final NavigableSet<WeightedEncounter> selection = new TreeSet<WeightedEncounter>();
+        private final WeightedEncounter search = new WeightedEncounter(null, 0);
+
+        public EncounterSelector(List<Encounter> repeatedEncounters) {
+            // calculate the cumulative sum map
+            double total = 0;
+            for (Encounter encounter : repeatedEncounters) {
+                total += encounter.getWeight();
+                selection.add(new WeightedEncounter(encounter, total));
+            }
+            totalWeight = total;
+        }
+        
+        public Encounter select() {
+            search.cumulativeWeight = Math.random() * totalWeight;
+            return selection.ceiling(search).encounter;
+        }
+    }
+    
+    public static class WeightedEncounter implements Comparable<WeightedEncounter> {
+        private final Encounter encounter;
+        private double cumulativeWeight;
+        
+        public WeightedEncounter(Encounter encounter, double weight) {
+            this.encounter = encounter;
+            this.cumulativeWeight = weight;
+        }
+
+        @Override
+        public int compareTo(WeightedEncounter other) {
+            return Double.compare(this.cumulativeWeight, other.cumulativeWeight);
+        }
+        
     }
 
     private static EncounterNode generateDependencyGraph(List<Encounter> encounters) {
@@ -150,7 +191,7 @@ public class EncounterGenerator extends BspGenerator {
 
         return origin;
     }
-    
+
     public static class EncounterRoom {
         private final Encounter encounter;
         private final Room room;
@@ -161,15 +202,15 @@ public class EncounterGenerator extends BspGenerator {
             this.room = room;
             this.bounds = bounds;
         }
-        
+
         public Encounter getEncounter() {
             return encounter;
         }
-        
+
         public Room getRoom() {
             return room;
         }
-        
+
         public Rectangle getBounds() {
             return bounds;
         }
