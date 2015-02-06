@@ -140,10 +140,10 @@ public class EncounterGenerator extends BspGenerator {
                 Rectangle bounds = room.getBounds();
                 
                 // boundary of the chamber, the stone border goes 1 unit out of the bounds
-                int startX = (int) bounds.x - 1;
-                int endX = (int) (bounds.x + bounds.width);
-                int startY = (int) bounds.y - 1;
-                int endY = (int) (bounds.y + bounds.height);
+                int startX = (int) bounds.x - 2;
+                int endX = (int) (bounds.x + bounds.width + 1);
+                int startY = (int) bounds.y - 2;
+                int endY = (int) (bounds.y + bounds.height + 1);
 
                 // the endpoints are exclusive, as a rectangle at (0, 0) with size
                 // (1, 1) should cover
@@ -168,22 +168,29 @@ public class EncounterGenerator extends BspGenerator {
         }
         
         private static int getCost(EncounterRoom room) {
+            int cost = 0;
+            
+            // origin should be somewhat costly to pass through to reduce traffic
+            if (room.getEncounter().getOrigin()) {
+                cost += 250;
+            }
+            
             // if the room has a dependency, then the cost should be very high
             if (room.getEncounter().hasRequiredKey() 
                     && !room.getEncounter().getRequiredKey().isEmpty()) {
-                return 1000;
+                cost += 1000;
             }
             
             // if the room is closed, then the cost should be very high
             
-            return 0;
+            return cost;
         }
     }
 
     private void rebuildWalls() {
         for (EncounterRoom room : encounterRooms.values()) {
-//            if (room.getEncounter().hasRequiredKey() 
-//                        && !room.getEncounter().getRequiredKey().isEmpty()) {
+            if (room.getEncounter().hasRequiredKey() 
+                        && !room.getEncounter().getRequiredKey().isEmpty()) {
 //                // fill with red
 //                Rectangle bounds = room.getBounds();
 //                int startX = (int) bounds.x;
@@ -199,7 +206,7 @@ public class EncounterGenerator extends BspGenerator {
 //                        Set(x, y, CellType.Door);
 //                    }
 //                }
-//            }
+            }
 //            rebuildWalls(room);
         }
     }
