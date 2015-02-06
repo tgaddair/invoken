@@ -13,6 +13,7 @@ import java.util.TreeSet;
 
 import com.badlogic.gdx.math.Rectangle;
 import com.eldritch.invoken.InvokenGame;
+import com.eldritch.invoken.encounter.proc.BspGenerator.CellType;
 import com.eldritch.invoken.encounter.proc.RoomGenerator.RoomType;
 import com.eldritch.invoken.proto.Locations.Encounter;
 import com.eldritch.invoken.proto.Locations.Room;
@@ -81,16 +82,17 @@ public class EncounterGenerator extends BspGenerator {
             unlocked.add(lock);
         }
 
+        CostMatrix costs = new EncounterCostMatrix(getWidth(), getHeight(), encounterRooms.values());
         while (!unlocked.isEmpty()) {
             EncounterNode current = unlocked.removeFirst();
             if (connected.contains(current)) {
                 // already placed
                 continue;
             }
-            
+
             EncounterNode connection = connectedSample
                     .get((int) (Math.random() * connected.size()));
-            DigTunnel(connection.getBounds(), current.getBounds());
+            DigTunnel(connection.getBounds(), current.getBounds(), costs);
 
             // add this node to the connected set, and maybe add its children if all its keys
             // are also in the connected set
@@ -101,7 +103,7 @@ public class EncounterGenerator extends BspGenerator {
                     // already placed
                     continue;
                 }
-                
+
                 // iterate over all dependencies and check that they've already been placed
                 boolean canConnect = true;
                 for (EncounterNode key : lock.keys) {
@@ -123,6 +125,101 @@ public class EncounterGenerator extends BspGenerator {
                 connected.size() == encounterRooms.size(),
                 String.format("expected %d connection, found %d", encounterRooms.size(),
                         connected.size()));
+
+        // now that we're done placing tunnels, we need to reconstruct the walls around our
+        // encounter rooms, if they're supposed to be locked
+        rebuildWalls();
+    }
+    
+    private static class EncounterCostMatrix implements CostMatrix {
+        private final EncounterRoom[][] rooms;
+        
+        public EncounterCostMatrix(int width, int height, Collection<EncounterRoom> list) {
+            rooms = new EncounterRoom[width][height];
+            for (EncounterRoom room : list) {
+                Rectangle bounds = room.getBounds();
+                
+                // boundary of the chamber, the stone border goes 1 unit out of the bounds
+                int startX = (int) bounds.x - 1;
+                int endX = (int) (bounds.x + bounds.width);
+                int startY = (int) bounds.y - 1;
+                int endY = (int) (bounds.y + bounds.height);
+
+                // the endpoints are exclusive, as a rectangle at (0, 0) with size
+                // (1, 1) should cover
+                // only rooms[0][0], not rooms[1][1]
+                for (int x = startX; x <= endX; x++) {
+                    for (int y = startY; y <= endY; y++) {
+                        if (rooms[x][y] == null || getCost(room) > getCost(rooms[x][y])) {
+                            // put the highest cost room in the cost matrix
+                            rooms[x][y] = room;
+                        }
+                    }
+                }
+            }
+        }
+        
+        public int getCost(int x, int y) {
+            EncounterRoom room = rooms[x][y];
+            if (room != null) {
+                return getCost(room);
+            }
+            return 0;
+        }
+        
+        private static int getCost(EncounterRoom room) {
+            // if the room has a dependency, then the cost should be very high
+            if (room.getEncounter().hasRequiredKey() 
+                    && !room.getEncounter().getRequiredKey().isEmpty()) {
+                return 1000;
+            }
+            
+            // if the room is closed, then the cost should be very high
+            
+            return 0;
+        }
+    }
+
+    private void rebuildWalls() {
+        for (EncounterRoom room : encounterRooms.values()) {
+//            if (room.getEncounter().hasRequiredKey() 
+//                        && !room.getEncounter().getRequiredKey().isEmpty()) {
+//                // fill with red
+//                Rectangle bounds = room.getBounds();
+//                int startX = (int) bounds.x;
+//                int endX = (int) (bounds.x + bounds.width);
+//                int startY = (int) bounds.y;
+//                int endY = (int) (bounds.y + bounds.height);
+//
+//                // the endpoints are exclusive, as a rectangle at (0, 0) with size
+//                // (1, 1) should cover
+//                // only rooms[0][0], not rooms[1][1]
+//                for (int x = startX; x < endX; x++) {
+//                    for (int y = startY; y < endY; y++) {
+//                        Set(x, y, CellType.Door);
+//                    }
+//                }
+//            }
+//            rebuildWalls(room);
+        }
+    }
+
+    private void rebuildWalls(EncounterRoom encounterRoom) {
+        Rectangle bounds = encounterRoom.getBounds();
+
+        // place stone around the entire thing
+        for (int i = 0; i < bounds.width; i++) {
+            Set((int) bounds.x + i, (int) bounds.y - 1, CellType.Stone);
+            Set((int) bounds.x + i, (int) (bounds.y + bounds.height), CellType.Stone);
+        }
+
+        for (int i = 0; i < bounds.height; i++) {
+            Set((int) bounds.x - 1, (int) bounds.y + i, CellType.Stone);
+            Set((int) (bounds.x + bounds.width), (int) bounds.y + i, CellType.Stone);
+        }
+        
+        // now the goal is to find a way out of each room
+        // we start from the middle and expand out in one of 8 directions
     }
 
     private boolean place(Encounter encounter) {

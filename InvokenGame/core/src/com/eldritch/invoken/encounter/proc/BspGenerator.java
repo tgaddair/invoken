@@ -119,13 +119,14 @@ public class BspGenerator {
     // / Places and digs out the tunnels from room-to-room
     // / </summary>
     protected void PlaceTunnels() {
+        CostMatrix base = new DefaultCostMatrix();
         int count = 0;
 
         // pathfind tunnels
         Rectangle prev = Rooms.get(Rooms.size() - 1);
         for (Rectangle next : Rooms) {
             count++;
-            DigTunnel(prev, next);
+            DigTunnel(prev, next, base);
             prev = next;
             InvokenGame.log(String.format("Pathfound %d/%d", count, Rooms.size()));
         }
@@ -180,10 +181,10 @@ public class BspGenerator {
         // }
     }
 
-    protected void DigTunnel(Rectangle prev, Rectangle next) {
+    protected void DigTunnel(Rectangle prev, Rectangle next, CostMatrix base) {
         // pathfind from the center of the previous room to the center of the next room
         Pathfind((int) (prev.x + prev.width / 2), (int) (prev.y + prev.height / 2),
-                (int) (next.x + next.width / 2), (int) (next.y + next.height / 2));
+                (int) (next.x + next.width / 2), (int) (next.y + next.height / 2), base);
 
         // dig out the tunnel we just found
         // int size = choose(1, 2);
@@ -199,7 +200,7 @@ public class BspGenerator {
     // / NOTE: This is probably super horrible A* Pathfinding algorithm. I'm sure there's WAY better
     // ways of writing this
     // / </summary>
-    protected void Pathfind(int x, int y, int x2, int y2) {
+    protected void Pathfind(int x, int y, int x2, int y2, CostMatrix base) {
         final int[][] cost = new int[Width][Height];
         cost[x][y] = CellType.Floor.cost;
 
@@ -227,19 +228,19 @@ public class BspGenerator {
             // cost coming from the previous node
             int currentCost = cost[point.x][point.y];
             if (point.x - 1 >= 0 && cost[point.x - 1][point.y] == 0) {
-                cost[point.x - 1][point.y] = currentCost + map[point.x - 1][point.y].cost;
+                cost[point.x - 1][point.y] = currentCost + map[point.x - 1][point.y].cost + base.getCost(point.x - 1, point.y);
                 active.add(NaturalVector2.of(point.x - 1, point.y));
             }
             if (point.x + 1 < Width && cost[point.x + 1][point.y] == 0) {
-                cost[point.x + 1][point.y] = currentCost + map[point.x + 1][point.y].cost;
+                cost[point.x + 1][point.y] = currentCost + map[point.x + 1][point.y].cost + base.getCost(point.x + 1, point.y);
                 active.add(NaturalVector2.of(point.x + 1, point.y));
             }
             if (point.y - 1 >= 0 && cost[point.x][point.y - 1] == 0) {
-                cost[point.x][point.y - 1] = currentCost + map[point.x][point.y - 1].cost;
+                cost[point.x][point.y - 1] = currentCost + map[point.x][point.y - 1].cost + base.getCost(point.x, point.y - 1);
                 active.add(NaturalVector2.of(point.x, point.y - 1));
             }
             if (point.y + 1 < Height && cost[point.x][point.y + 1] == 0) {
-                cost[point.x][point.y + 1] = currentCost + map[point.x][point.y + 1].cost;
+                cost[point.x][point.y + 1] = currentCost + map[point.x][point.y + 1].cost + base.getCost(point.x, point.y + 1);
                 active.add(NaturalVector2.of(point.x, point.y + 1));
             }
         }
@@ -282,8 +283,12 @@ public class BspGenerator {
         Collections.reverse(points);
         currentPath = points;
     }
+    
+    protected CellType get(int x, int y) {
+        return map[x][y];
+    }
 
-    private void Set(int x, int y, CellType type) {
+    protected void Set(int x, int y, CellType type) {
         Set(x, y, type, CellType.None);
     }
 
@@ -382,5 +387,16 @@ public class BspGenerator {
         } catch (IOException e) {
             InvokenGame.error("Failed saving level image!", e);
         }
+    }
+    
+    private static class DefaultCostMatrix implements CostMatrix {
+        @Override
+        public int getCost(int x, int y) {
+            return 0;
+        }
+    }
+    
+    protected static interface CostMatrix {
+        int getCost(int x, int y);
     }
 }
