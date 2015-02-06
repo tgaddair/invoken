@@ -222,6 +222,9 @@ public class BspGenerator {
                 break;
 
             // move in directions
+            // cost == 0 check tells us we haven't visited this node yet
+            // then we add the cost by checking the node's type in the map and adding it to the
+            // cost coming from the previous node
             int currentCost = cost[point.x][point.y];
             if (point.x - 1 >= 0 && cost[point.x - 1][point.y] == 0) {
                 cost[point.x - 1][point.y] = currentCost + map[point.x - 1][point.y].cost;

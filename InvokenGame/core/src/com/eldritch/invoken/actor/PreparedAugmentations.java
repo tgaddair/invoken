@@ -176,14 +176,14 @@ public class PreparedAugmentations {
         return false;
     }
     
-    private void prepare(Augmentation aug) {
+    public void prepare(Augmentation aug) {
         if (!prepared.contains(aug)) {
             aug.prepare(owner);
             prepared.add(aug);
         }
     }
     
-    private void unprepare(Augmentation aug) {
+    public void unprepare(Augmentation aug) {
         if (prepared.contains(aug)) {
             aug.release(owner);
             aug.unprepare(owner);
