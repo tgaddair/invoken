@@ -524,6 +524,9 @@ public class Location {
                 case Visible:
                     debugEntityRenderer.renderVisible(target, activeEntities, camera);
                     break;
+                case Cover:
+                    debugEntityRenderer.renderCover(target, activeCover, camera);
+                    break;
                 case None:
             }
         }

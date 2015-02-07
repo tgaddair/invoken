@@ -112,6 +112,19 @@ public class DebugEntityRenderer {
         sr.end();
     }
 	
+	public void renderCover(
+            Agent target, Collection<CoverPoint> points, OrthographicCamera camera) {
+        sr.setProjectionMatrix(camera.combined);
+        sr.begin(ShapeType.Line);
+        for (CoverPoint point : points) {
+            Color c = target.hasLineOfSight(point.getPosition()) ? Color.GREEN : Color.RED;
+            sr.setColor(c);
+            sr.line(target.getPosition().x, target.getPosition().y,
+                    point.getPosition().x, point.getPosition().y);
+        }
+        sr.end();
+    }
+	
 	public void drawBetween(Vector2 source, Vector2 target, OrthographicCamera camera) {
 	    sr.setProjectionMatrix(camera.combined);
         sr.begin(ShapeType.Line);
@@ -124,6 +137,7 @@ public class DebugEntityRenderer {
 	public void renderCover(List<CoverPoint> coverPoints, OrthographicCamera camera) {
 	    sr.setProjectionMatrix(camera.combined);
 	    sr.begin(ShapeType.Line);
+	    sr.setColor(Color.WHITE);
         for (CoverPoint point : coverPoints) {
             Vector2 position = point.getPosition();
             sr.circle(position.x, position.y, 0.5f);

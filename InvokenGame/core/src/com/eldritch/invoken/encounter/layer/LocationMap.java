@@ -95,6 +95,9 @@ public class LocationMap extends TiledMap {
         for (MapLayer layer : getLayers()) {
             map.put(layer.getName(), (LocationLayer) layer);
         }
+        for (MapLayer layer : overlayMap.getLayers()) {
+            map.put(layer.getName(), (LocationLayer) layer);
+        }
         return map;
     }
     

@@ -126,7 +126,9 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
 //		};
 //		Cohesion<Vector2> cohesion = new Cohesion<Vector2>(this, proximity);
 		
-		hide = new Hide<Vector2>(this, null, new CoverProximity());
+		hide = new Hide<Vector2>(this, null, new CoverProximity())
+		        .setArrivalTolerance(0.01f)
+		        .setDecelerationRadius(1f);
 		evade = new Evade<Vector2>(this, location.getPlayer());
 		pursue = new Pursue<Vector2>(this, location.getPlayer());
 		flee = new Flee<Vector2>(this);
@@ -371,6 +373,8 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
     }
     
     public class CoverProximity implements Proximity<Vector2> {
+        private Agent lastTarget = null;
+        
         @Override
         public Steerable<Vector2> getOwner() {
             return Npc.this;
@@ -385,12 +389,19 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
         public int findNeighbors(ProximityCallback<Vector2> callback) {
             int count = 0;
             if (getTarget() != null) {
-                Agent target = getTarget();
+                lastTarget = getTarget();
+            } else if (lastTarget != null) {
+                if (!lastTarget.isAlive()) {
+                    lastTarget = null;
+                }
+            }
+            
+            if (lastTarget != null) {
                 for (CoverPoint coverPoint : getLocation().getActiveCover()) {
                     Vector2 position = coverPoint.getPosition();
-                    if (!target.hasLineOfSight(position)) {
+                    if (!lastTarget.hasLineOfSight(position)) {
                         // we can see the cover, but our enemy can't, so it's a good hiding place
-//                        System.out.println("hide at " + position);
+                        System.out.println("hide at " + position);
                         callback.reportNeighbor(coverPoint);
                     }
                 }

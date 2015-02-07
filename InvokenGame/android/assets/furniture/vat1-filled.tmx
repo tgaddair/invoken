@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" width="3" height="3" tilewidth="32" tileheight="32">
+<map version="1.0" orientation="orthogonal" width="4" height="4" tilewidth="32" tileheight="32">
  <tileset firstgid="1" name="furniture-modern" tilewidth="32" tileheight="32">
   <image source="../maps/graphics/tiles/furniture-modern.png" width="512" height="512"/>
  </tileset>
@@ -22,24 +22,19 @@
  <tileset firstgid="263" name="furniture-lab" tilewidth="32" tileheight="32">
   <image source="../maps/graphics/tiles/furniture-lab.png" width="512" height="512"/>
  </tileset>
- <layer name="objects" width="3" height="3">
+ <layer name="objects" width="4" height="4">
   <data encoding="base64" compression="zlib">
-   eJxjYMAOPgLxJyD+DMQAFswC1w==
+   eJxjYMAERxkZGI4xIvhXgexrjFgUAgEAbOwDOw==
   </data>
  </layer>
- <layer name="overlay" width="3" height="3">
+ <layer name="constraints" width="4" height="4" visible="0">
   <data encoding="base64" compression="zlib">
-   eJy7yMDAcAmILwPxQyB+BMSPGVABAIPMBR0=
+   eJxjZmRgYCYBowMACBQAMQ==
   </data>
  </layer>
- <layer name="constraints" width="3" height="3" visible="0">
+ <layer name="collision" width="4" height="4" visible="0">
   <data encoding="base64" compression="zlib">
-   eJxjYEAAZkbsGAABbgAZ
-  </data>
- </layer>
- <layer name="collision" width="3" height="3">
-  <data encoding="base64" compression="zlib">
-   eJxjYEAANkbsGAACagAr
+   eJxjYMAEbIwQjIuPDAAD9AAd
   </data>
  </layer>
 </map>
