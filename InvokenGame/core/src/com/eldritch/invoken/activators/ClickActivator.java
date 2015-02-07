@@ -24,7 +24,7 @@ public abstract class ClickActivator implements Activator {
 	public boolean click(Agent agent, Location location, float x, float y) {
 		boolean clicked = x >= position.x && x <= position.x + width && y >= position.y
                 && y <= position.y + height;
-        if (clicked) {
+        if (clicked && canActivate(agent, x, y)) {
             activate(agent, location);
         }
         return clicked;
@@ -37,5 +37,9 @@ public abstract class ClickActivator implements Activator {
 	
 	public Vector2 getPosition() {
 		return position;
+	}
+	
+	protected boolean canActivate(Agent agent, float x, float y) {
+	    return agent.getPosition().dst2(position) < 6;
 	}
 }

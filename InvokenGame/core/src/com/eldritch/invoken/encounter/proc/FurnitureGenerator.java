@@ -47,7 +47,7 @@ public abstract class FurnitureGenerator {
             int lastLight = 0;
             for (int x = 0; x < base.getWidth(); x++) {
                 Cell cell = base.getCell(x, y);
-                if (cell != null && cell.getTile() == placer && !isMarked(x, y)) {
+                if (cell != null && cell.getTile() == placer && !marked(x, y)) {
                     // with some probability, add a light to the wall
                     if (lastLight == 1 && Math.random() < 0.75) {
                         addCell(layer, light, x, y);
@@ -71,6 +71,11 @@ public abstract class FurnitureGenerator {
                 int x = (int) bounds.x + i;
                 for (int j = 0; j < bounds.height; j++) {
                     int y = (int) (bounds.y + j);
+                    if (marked(x, y)) {
+                        // already something here
+                        continue;
+                    }
+                    
                     if (base.isGround(x, y) && base.isGround(x + 1, y) && isLowerGap(x, y, base)) {
                         DoorActivator activator = DoorActivator.createFront(x, y,
                                 LockInfo.from(metadata));
@@ -90,6 +95,11 @@ public abstract class FurnitureGenerator {
                 int y = (int) bounds.y + j;
                 for (int i = 0; i < bounds.width; i++) {
                     int x = (int) (bounds.x + i);
+                    if (marked(x, y)) {
+                        // already something here
+                        continue;
+                    }
+                    
                     if (base.isGround(x, y) && isSideGap(x, y, base)) {
                         DoorActivator activator = DoorActivator.createSide(x, y + 1,
                                 LockInfo.from(metadata));
@@ -125,7 +135,7 @@ public abstract class FurnitureGenerator {
         marked.add(NaturalVector2.of(x, y));
     }
 
-    public boolean isMarked(int x, int y) {
+    public boolean marked(int x, int y) {
         return marked.contains(NaturalVector2.of(x, y));
     }
 

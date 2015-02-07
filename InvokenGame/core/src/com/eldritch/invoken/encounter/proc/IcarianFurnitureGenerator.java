@@ -147,7 +147,7 @@ public class IcarianFurnitureGenerator extends FurnitureGenerator {
         public boolean canPlaceAt(int x, int y) {
             for (int i = 0; i < tiles.length; i++) {
                 for (int j = 0; j < tiles[i].length; j++) {
-                    if (isMarked(x + j, y - i)) {
+                    if (marked(x + j, y - i)) {
                         return false;
                     }
                 }
