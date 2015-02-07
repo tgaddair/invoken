@@ -221,7 +221,7 @@ public class LocationGenerator {
         location.addActivators(map.getActivators());
 
         // debug
-        // saveLayer(base);
+        saveLayer(base);
 
         return location;
     }
@@ -819,7 +819,7 @@ public class LocationGenerator {
                 BufferedImage.TYPE_INT_RGB);
         for (int x = 0; x < layer.getWidth(); x++) {
             for (int y = 0; y < layer.getHeight(); y++) {
-                Cell cell = layer.getCell(x, y);
+                Cell cell = layer.getCell(x, layer.getHeight() - y - 1);
                 if (layer.isGround(cell)) {
                     image.setRGB(x, y, 0xffffff);
                 } else {

@@ -63,7 +63,7 @@ public class EncounterGenerator extends BspGenerator {
 
     @Override
     protected void PlaceTunnels() {
-        save("no-tunnels");
+//        save("no-tunnels");
 
         // first, generate the dependency graph from all the encounter-room pairs
         EncounterNode origin = generateDependencyGraph(encounterRooms.values());
