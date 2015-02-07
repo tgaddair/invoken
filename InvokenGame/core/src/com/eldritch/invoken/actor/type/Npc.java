@@ -126,7 +126,7 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
 //		};
 //		Cohesion<Vector2> cohesion = new Cohesion<Vector2>(this, proximity);
 		
-		hide = new Hide<Vector2>(this);
+		hide = new Hide<Vector2>(this, null, new CoverProximity());
 		evade = new Evade<Vector2>(this, location.getPlayer());
 		pursue = new Pursue<Vector2>(this, location.getPlayer());
 		flee = new Flee<Vector2>(this);
@@ -388,8 +388,9 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
                 Agent target = getTarget();
                 for (CoverPoint coverPoint : getLocation().getActiveCover()) {
                     Vector2 position = coverPoint.getPosition();
-                    if (hasLineOfSight(position) && !target.hasLineOfSight(position)) {
+                    if (!target.hasLineOfSight(position)) {
                         // we can see the cover, but our enemy can't, so it's a good hiding place
+//                        System.out.println("hide at " + position);
                         callback.reportNeighbor(coverPoint);
                     }
                 }
