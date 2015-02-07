@@ -62,6 +62,10 @@ public class Inventory {
     public Collection<ItemState> getItems() {
         return items.values();
     }
+    
+    public boolean hasItem(Item item) {
+        return getItemCount(item) > 0;
+    }
 
     public int getItemCount(Item item) {
         return getItemCount(item.getId());

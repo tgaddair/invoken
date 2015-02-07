@@ -14,6 +14,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.activators.Activator;
 import com.eldritch.invoken.activators.DoorActivator;
+import com.eldritch.invoken.activators.DoorActivator.LockInfo;
 import com.eldritch.invoken.encounter.NaturalVector2;
 import com.eldritch.invoken.encounter.layer.LocationLayer;
 import com.eldritch.invoken.encounter.layer.LocationLayer.CollisionLayer;
@@ -71,12 +72,14 @@ public abstract class FurnitureGenerator {
                 for (int j = 0; j < bounds.height; j++) {
                     int y = (int) (bounds.y + j);
                     if (base.isGround(x, y) && base.isGround(x + 1, y) && isLowerGap(x, y, base)) {
-                        DoorActivator activator = DoorActivator.createFront(x, y);
+                        DoorActivator activator = DoorActivator.createFront(x, y,
+                                LockInfo.from(metadata));
                         activators.add(activator);
                         mark(x, y);
                     } else if (base.isGround(x, y - 1) && base.isGround(x + 1, y - 1)
                             && isUpperGap(x, y - 1, base)) {
-                        DoorActivator activator = DoorActivator.createFront(x, y - 1);
+                        DoorActivator activator = DoorActivator.createFront(x, y - 1,
+                                LockInfo.from(metadata));
                         activators.add(activator);
                         mark(x, y - 1);
                     }
@@ -88,7 +91,8 @@ public abstract class FurnitureGenerator {
                 for (int i = 0; i < bounds.width; i++) {
                     int x = (int) (bounds.x + i);
                     if (base.isGround(x, y) && isSideGap(x, y, base)) {
-                        DoorActivator activator = DoorActivator.createSide(x, y + 1);
+                        DoorActivator activator = DoorActivator.createSide(x, y + 1,
+                                LockInfo.from(metadata));
                         activators.add(activator);
                         mark(x, y);
                     }
@@ -140,39 +144,39 @@ public abstract class FurnitureGenerator {
         mark(x, y);
     }
 
-    private void addDoors(LocationLayer base, List<Activator> activators) {
-        // add front doors
-        for (int x = 0; x < base.getWidth(); x++) {
-            for (int y = 0; y < base.getHeight(); y++) {
-                if (base.isGround(x, y) && base.isGround(x + 1, y)) {
-                    // wall to the left, wall to the right
-                    if (isLowerGap(x, y, base)) {
-                        // add activator
-                        DoorActivator activator = DoorActivator.createFront(x, y);
-                        activators.add(activator);
-                        mark(x, y);
-                    }
-                }
-            }
-        }
-    }
-
-    private void addTrimDoors(LocationLayer base, List<Activator> activators) {
-        // add side doors
-        for (int x = 0; x < base.getWidth(); x++) {
-            for (int y = 0; y < base.getHeight(); y++) {
-                if (base.isGround(x, y)) {
-                    // wall up, wall down
-                    if (isSideGap(x, y, base)) {
-                        // add activator
-                        DoorActivator activator = DoorActivator.createSide(x, y + 1);
-                        activators.add(activator);
-                        mark(x, y);
-                    }
-                }
-            }
-        }
-    }
+//    private void addDoors(LocationLayer base, List<Activator> activators) {
+//        // add front doors
+//        for (int x = 0; x < base.getWidth(); x++) {
+//            for (int y = 0; y < base.getHeight(); y++) {
+//                if (base.isGround(x, y) && base.isGround(x + 1, y)) {
+//                    // wall to the left, wall to the right
+//                    if (isLowerGap(x, y, base)) {
+//                        // add activator
+//                        DoorActivator activator = DoorActivator.createFront(x, y);
+//                        activators.add(activator);
+//                        mark(x, y);
+//                    }
+//                }
+//            }
+//        }
+//    }
+//
+//    private void addTrimDoors(LocationLayer base, List<Activator> activators) {
+//        // add side doors
+//        for (int x = 0; x < base.getWidth(); x++) {
+//            for (int y = 0; y < base.getHeight(); y++) {
+//                if (base.isGround(x, y)) {
+//                    // wall up, wall down
+//                    if (isSideGap(x, y, base)) {
+//                        // add activator
+//                        DoorActivator activator = DoorActivator.createSide(x, y + 1);
+//                        activators.add(activator);
+//                        mark(x, y);
+//                    }
+//                }
+//            }
+//        }
+//    }
 
     public abstract LocationLayer generateClutter(LocationLayer base, LocationMap map);
 }

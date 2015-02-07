@@ -221,7 +221,7 @@ public class LocationGenerator {
         location.addActivators(map.getActivators());
 
         // debug
-        saveLayer(base);
+//        saveLayer(base);
 
         return location;
     }
