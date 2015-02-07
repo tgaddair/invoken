@@ -1,10 +1,7 @@
 package com.eldritch.invoken.encounter;
 
-import com.eldritch.invoken.util.Settings;
-
 public class NaturalVector2 {
-    private static final NaturalVector2[][] points =
-            new NaturalVector2[Settings.MAX_WIDTH][Settings.MAX_HEIGHT];
+    private static NaturalVector2[][] points;
     
     public final int x;
     public final int y;
@@ -12,6 +9,10 @@ public class NaturalVector2 {
     private NaturalVector2(int x, int y) {
         this.x = x;
         this.y = y;
+    }
+    
+    public static void init(int width, int height) {
+        points = new NaturalVector2[width][height];
     }
     
     public static NaturalVector2 of(int x, int y) {

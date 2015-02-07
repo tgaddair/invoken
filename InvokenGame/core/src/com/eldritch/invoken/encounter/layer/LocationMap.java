@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
@@ -19,15 +18,18 @@ import com.eldritch.invoken.util.Settings;
 
 public class LocationMap extends TiledMap {
     private final TiledMapTile ground;
+    private final int width;
+    private final int height;
     private Set<NaturalVector2> activeTiles = null;
     private final List<Activator> activators = new ArrayList<Activator>();
     private final TiledMap overlayMap = new TiledMap();
-    private final Map<Texture, Texture> normals = new HashMap<Texture, Texture>();
     
     private ConnectedRoom[][] rooms;
     
-    public LocationMap(TiledMapTile ground) {
+    public LocationMap(TiledMapTile ground, int width, int height) {
         this.ground = ground;
+        this.width = width;
+        this.height = height;
     }
     
     public void setRooms(ConnectedRoom[][] rooms) {
@@ -71,11 +73,11 @@ public class LocationMap extends TiledMap {
     }
     
     public int getWidth() {
-        return getLayers().getCount() > 0 ? ((LocationLayer) (getLayers().get(0))).getWidth() : 0;
+        return width;
     }
     
     public int getHeight() {
-        return getLayers().getCount() > 0 ? ((LocationLayer) (getLayers().get(0))).getHeight() : 0;
+        return height;
     }
     
     public Map<String, LocationLayer> getLayerMap() {

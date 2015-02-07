@@ -66,8 +66,10 @@ public class RoomGenerator {
     
     private void place(EncounterRoom encounter) {
         InvokenGame.log("placing: " + encounter.getEncounter().getId());
-        Rectangle bounds = encounter.getBounds();
         Room room = encounter.getRoom();
+        
+        // decrease bounds by 1 in each direction to prevent placing on border
+        Rectangle bounds = encounter.getRestrictedBounds();
         
         double area = bounds.area();
         int coveredTiles = 0;  // running count of covered tiles

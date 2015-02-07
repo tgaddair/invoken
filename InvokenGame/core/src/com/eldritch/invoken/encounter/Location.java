@@ -653,11 +653,11 @@ public class Location {
 
         Rectangle viewBounds = renderer.getViewBounds();
         final int x1 = Math.max(0, (int) (viewBounds.x / layerTileWidth) - 1);
-        final int x2 = Math.min(Settings.MAX_WIDTH,
+        final int x2 = Math.min(map.getWidth(),
                 (int) ((viewBounds.x + viewBounds.width + layerTileWidth) / layerTileWidth) + 1);
 
         final int y1 = Math.max(0, (int) (viewBounds.y / layerTileHeight) - 1);
-        final int y2 = Math.min(Settings.MAX_HEIGHT,
+        final int y2 = Math.min(map.getHeight(),
                 (int) ((viewBounds.y + viewBounds.height + layerTileHeight) / layerTileHeight) + 1);
         
         return new Rectangle(x1, y1, x2 - x1 + 1, y2 - y1 + 1);
@@ -672,11 +672,11 @@ public class Location {
 
         Rectangle viewBounds = renderer.getViewBounds();
         final int x1 = Math.max(0, (int) (viewBounds.x / layerTileWidth) - 1);
-        final int x2 = Math.min(Settings.MAX_WIDTH,
+        final int x2 = Math.min(map.getWidth(),
                 (int) ((viewBounds.x + viewBounds.width + layerTileWidth) / layerTileWidth) + 1);
 
         final int y1 = Math.max(0, (int) (viewBounds.y / layerTileHeight) - 1);
-        final int y2 = Math.min(Settings.MAX_HEIGHT,
+        final int y2 = Math.min(map.getHeight(),
                 (int) ((viewBounds.y + viewBounds.height + layerTileHeight) / layerTileHeight) + 1);
 
         // sanity check

@@ -336,6 +336,15 @@ public class EncounterGenerator extends BspGenerator {
         public Rectangle getBounds() {
             return bounds;
         }
+        
+        public Rectangle getRestrictedBounds() {
+            Rectangle restricted = new Rectangle(bounds);
+            restricted.x += 1;
+            restricted.y += 1;
+            restricted.width -= 1;
+            restricted.height -= 1;
+            return restricted;
+        }
     }
 
     private static class EncounterNode {

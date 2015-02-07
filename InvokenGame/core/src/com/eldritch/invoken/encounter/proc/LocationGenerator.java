@@ -22,7 +22,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.maps.MapProperties;
@@ -48,7 +47,6 @@ import com.eldritch.invoken.gfx.Light;
 import com.eldritch.invoken.gfx.NormalMappedTile;
 import com.eldritch.invoken.proto.Locations.Biome;
 import com.eldritch.invoken.proto.Locations.Encounter;
-import com.eldritch.invoken.proto.Locations.Encounter.ActorParams;
 import com.eldritch.invoken.proto.Locations.Encounter.ActorParams.ActorScenario;
 import com.eldritch.invoken.proto.Locations.Room;
 import com.eldritch.invoken.util.Settings;
@@ -133,6 +131,7 @@ public class LocationGenerator {
         }
         EncounterGenerator bsp = new EncounterGenerator(roomCount * 2, proto.getEncounterList());
 //        BspGenerator bsp = new BspGenerator(roomCount * 2);
+        NaturalVector2.init(bsp.getWidth(), bsp.getHeight());
         
         bsp.generateSegments();
         bsp.save("bsp");
@@ -205,8 +204,7 @@ public class LocationGenerator {
 
         // doors
         InvokenGame.log("Adding Doors");
-        furnitureGenerator.createDoors(base, overlayTrim1, overlay,
-                doorLayer, collision, map.getActivators());
+        furnitureGenerator.createDoors(bsp.getEncounterRooms(), base, map.getActivators());
 
         // lights
         InvokenGame.log("Adding Lights");
@@ -348,7 +346,7 @@ public class LocationGenerator {
     }
 
     private LocationMap getBaseMap(int width, int height) {
-        LocationMap map = new LocationMap(ground);
+        LocationMap map = new LocationMap(ground, width, height);
         MapProperties mapProperties = map.getProperties();
         mapProperties.put("width", width);
         mapProperties.put("height", height);
@@ -546,7 +544,7 @@ public class LocationGenerator {
         LocationLayer playerLayer = null;
         for (EncounterRoom encounterRoom : generator.getEncounterRooms()) {
             Encounter encounter = encounterRoom.getEncounter();
-            Rectangle bounds = encounterRoom.getBounds();
+            Rectangle bounds = encounterRoom.getRestrictedBounds();
             
             if (encounter.getOrigin()) {
                 playerLayer = new LocationLayer(base.getWidth(), base.getHeight(), PX, PX, map);
