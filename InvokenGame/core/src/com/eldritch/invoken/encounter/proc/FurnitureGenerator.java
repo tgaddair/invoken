@@ -83,21 +83,15 @@ public abstract class FurnitureGenerator {
                 }
             }
 
-            for (int i = 1; i < bounds.height - 1; i++) {
-                int y = (int) bounds.y + i;
-
-                int x1 = (int) bounds.x;
-                if (base.isGround(x1, y) && isSideGap(x1, y, base)) {
-                    DoorActivator activator = DoorActivator.createSide(x1, y + 1);
-                    activators.add(activator);
-                    mark(x1, y);
-                }
-
-                int x2 = (int) (bounds.x + bounds.width - 1);
-                if (base.isGround(x2, y) && isSideGap(x1, y, base)) {
-                    DoorActivator activator = DoorActivator.createSide(x2, y + 1);
-                    activators.add(activator);
-                    mark(x2, y);
+            for (int j = 0; j < bounds.height; j++) {
+                int y = (int) bounds.y + j;
+                for (int i = 0; i < bounds.width; i++) {
+                    int x = (int) (bounds.x + i);
+                    if (base.isGround(x, y) && isSideGap(x, y, base)) {
+                        DoorActivator activator = DoorActivator.createSide(x, y + 1);
+                        activators.add(activator);
+                        mark(x, y);
+                    }
                 }
             }
         }
@@ -119,8 +113,8 @@ public abstract class FurnitureGenerator {
     }
 
     private boolean isSideGap(int x, int y, LocationLayer base) {
-        return !base.isGround(x, y + 1) && !base.isGround(x, y - 1)
-                && (base.isGround(x - 1, y + 1) || base.isGround(x + 1, y + 1));
+        return !base.isGround(x, y + 1) && !base.isGround(x, y - 1) // walls above and below
+                && (base.isGround(x - 1, y + 1) || base.isGround(x + 1, y + 1)); // ground at side
     }
 
     private void mark(int x, int y) {
