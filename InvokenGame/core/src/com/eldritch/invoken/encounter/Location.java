@@ -263,11 +263,11 @@ public class Location {
         }
     }
 
-    public Body createEdge(int x0, int y0, int x1, int y1) {
+    public Body createEdge(float x0, float y0, float x1, float y1) {
         return addEdge(x0, y0, x1, y1, world);
     }
 
-    private Body addEdge(int x0, int y0, int x1, int y1, World world) {
+    private Body addEdge(float x0, float y0, float x1, float y1, World world) {
         EdgeShape edge = new EdgeShape();
         Vector2 start = new Vector2(x0, y0);
         Vector2 end = new Vector2(x1, y1);

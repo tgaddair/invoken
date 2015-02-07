@@ -17,13 +17,16 @@ import com.eldritch.invoken.screens.GameScreen;
 import com.eldritch.invoken.util.Settings;
 
 public class DoorActivator extends ClickActivator {
-    private static final TextureRegion[] regions = GameScreen.getMergedRegion(
+    private static final TextureRegion[] frontRegions = GameScreen.getMergedRegion(
             "sprite/activators/blast-door-short.png", 64, 64);
+    private static final TextureRegion[] sideRegions = GameScreen.getMergedRegion(
+            "sprite/activators/blast-door-side.png", 64, 64);
     
     // for bounding area
-    private static final int WIDTH = 2;
+    private static final int SIZE = 2;
     
     private final Animation animation;
+    private final boolean front;
     private boolean open = false;
     private boolean locked = false;
     
@@ -33,14 +36,21 @@ public class DoorActivator extends ClickActivator {
     private float stateTime = 0;
     
     public static DoorActivator createFront(int x, int y) {
-        Animation animation = new Animation(0.05f, regions);
+        Animation animation = new Animation(0.05f, frontRegions);
         animation.setPlayMode(Animation.PlayMode.NORMAL);
-        return new DoorActivator(x, y, animation);
+        return new DoorActivator(x, y, animation, true);
+    }
+    
+    public static DoorActivator createSide(int x, int y) {
+        Animation animation = new Animation(0.05f, sideRegions);
+        animation.setPlayMode(Animation.PlayMode.NORMAL);
+        return new DoorActivator(x, y, animation, false);
     }
 
-    public DoorActivator(int x, int y, Animation animation) {
+    public DoorActivator(int x, int y, Animation animation, boolean front) {
     	super(NaturalVector2.of(x, y), 2, 2);
         this.animation = animation;
+        this.front = front;
 //        locked = Math.random() < 0.5;
     }
 
@@ -63,10 +73,17 @@ public class DoorActivator extends ClickActivator {
 	@Override
 	public void register(Location location) {
 	    Vector2 position = getPosition();
-	    int x = (int) position.x;
-	    int y = (int) position.y;
-	    bodies.add(location.createEdge(x, y, x + WIDTH, y));
-	    bodies.add(location.createEdge(x, y + 1, x + WIDTH, y + 1));
+	    float x = (int) position.x;
+	    float y = (int) position.y;
+	    if (front) {
+	        bodies.add(location.createEdge(x, y, x + SIZE, y));
+	        bodies.add(location.createEdge(x, y + 1, x + SIZE, y + 1));
+	    } else {
+	        x += 1.5f;
+	        y -= 1;
+	        bodies.add(location.createEdge(x + 0.2f, y, x + 0.2f, y + SIZE));
+            bodies.add(location.createEdge(x + 0.5f, y, x + 0.5f, y + SIZE));
+	    }
 	}
 
     @Override

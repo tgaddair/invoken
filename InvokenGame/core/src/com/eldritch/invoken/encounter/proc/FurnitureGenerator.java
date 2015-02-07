@@ -10,6 +10,7 @@ import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
 import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
 import com.badlogic.gdx.math.Vector2;
+import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.activators.Activator;
 import com.eldritch.invoken.activators.DoorActivator;
 import com.eldritch.invoken.encounter.NaturalVector2;
@@ -108,54 +109,27 @@ public abstract class FurnitureGenerator {
 
     private void addTrimDoors(LocationLayer base, LocationLayer trim,
             LocationLayer overlayTrim, CollisionLayer collision, List<Activator> activators) {
-
-        List<RemovableCell> cells = new ArrayList<RemovableCell>();
+        // add side doors
         for (int x = 0; x < base.getWidth(); x++) {
             for (int y = 0; y < base.getHeight(); y++) {
-                Cell cell = base.getCell(x, y);
-                if (base.isGround(cell)) {
+                if (base.isGround(x, y)) {
                     // wall up, wall down
-                    if (overlayTrim.hasCell(x, y - 2) && base.isWall(x, y + 1)) {
-                        if (base.isGround(x - 1, y - 2) && base.isGround(x - 1, y + 1)) {
-                            // room left
-                            addTrimDoor(trim, overlayTrim, collision, doorOverLeft,
-                                    doorOverLeftTop, x, y, activators, cells);
-                        } else if (base.isGround(x + 1, y - 2) && base.isGround(x + 1, y + 1)
-                                && trim.getCell(x, y + 2) == null) {
-                            // room right and no pre-existing door panel in the way
-                            addTrimDoor(trim, overlayTrim, collision, doorOverRight,
-                                    doorOverRightTop, x, y, activators, cells);
-                        }
+                    if (isSideGap(x, y, base)) {
+                        // add activator
+                        InvokenGame.log("side door");
+                        DoorActivator activator = DoorActivator.createSide(x - 1, y + 1);
+                        activators.add(activator);
+                        mark(x, y);
                     }
                 }
             }
         }
     }
-
-    private void addTrimDoor(LocationLayer trim, LocationLayer overlayTrim,
-            CollisionLayer collision, TiledMapTile tile, TiledMapTile top, int x, int y,
-            List<Activator> activators, List<RemovableCell> cells) {
-        // add the doors
-//        addCell(overlayTrim, tile, x, y - 1, cells);
-//        addCell(overlayTrim, tile, x, y, cells);
-//        addCell(overlayTrim, tile, x, y + 1, cells);
-//        addCell(overlayTrim, tile, x, y + 2, cells);
-//        addCell(overlayTrim, top, x, y + 3, cells);
-
-        // add collision if absent so we don't delete collision cells when the door comes down
-//        collision.addCellIfAbsent(x, y - 2, cells, this);
-//        collision.addCellIfAbsent(x, y - 1, cells, this);
-//        collision.addCellIfAbsent(x, y, cells, this);
-//        collision.addCellIfAbsent(x, y + 1, cells, this);
-//        collision.addCellIfAbsent(x, y + 2, cells, this);
-//        collision.addCellIfAbsent(x, y + 3, cells, this);
-
-        // add activator
-//        DoorActivator activator = new DoorActivator(x, y + 2, cells, unlockedDoor, lockedDoor, trim);
-//        activators.add(activator);
-//        trim.setCell(x, y + 2, activator.getCell());
-//        mark(x, y + 2);
-//        cells.clear();
+    
+    private boolean isSideGap(int x, int y, LocationLayer base) {
+        return 
+                !base.isGround(x, y + 1) && !base.isGround(x, y - 1) &&
+                (base.isGround(x - 1, y + 1) || base.isGround(x + 1, y + 1));
     }
     
     private void mark(int x, int y) {
