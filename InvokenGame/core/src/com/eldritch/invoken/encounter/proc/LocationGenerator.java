@@ -235,13 +235,16 @@ public class LocationGenerator {
         List<CoverPoint> cover = new ArrayList<CoverPoint>();
         for (int x = 0; x < collision.getWidth(); x++) {
             for (int y = 0; y < collision.getHeight(); y++) {
-                if (collision.getCell(x, y) != null && isCorner(collision, x, y)) {
+                if (collision.getCell(x, y) != null) {
                     // collision tile, check the area around for ground
                     for (int dx = -1; dx <= 1; dx++) {
                         for (int dy = -1; dy <= 1; dy++) {
                             if ((dx == 0) != (dy == 0)) {
                                 // 4 cardinal directions, so one delta must be 0, but not both
-                                if (base.isGround(x + dx, y + dy)) {
+                                if (openGround(x + dx, y + dy, base, collision)
+                                        && hasOpenNeighbor(x, y, dx, dy, base, collision)) {
+                                    // now check the points along the perpendicular from the
+                                    // collision tile
                                     cover.add(new CoverPoint(new Vector2(x + dx + 0.5f, y + dy
                                             + 0.5f)));
                                 }
@@ -254,22 +257,21 @@ public class LocationGenerator {
         return cover;
     }
 
-    private boolean isCorner(CollisionLayer collision, int x, int y) {
-        // a corner has exactly two cardinal neighbors along different axes
-        int sumX = 0;
-        int sumY = 0;
-        for (int dx = -1; dx <= 1; dx++) {
-            for (int dy = -1; dy <= 1; dy++) {
-                if ((dx == 0) != (dy == 0)) {
-                    // 4 cardinal directions, so one delta must be 0, but not both
-                    if (collision.getCell(x + dx, y + dy) != null) {
-                        sumX += Math.abs(dx);
-                        sumY += Math.abs(dy);
-                    }
-                }
-            }
+    private boolean hasOpenNeighbor(int x, int y, int dx, int dy, LocationLayer base,
+            LocationLayer collision) {
+        if (Math.abs(dx) > 0) {
+            // check points above and below the origin
+            return openGround(x, y + 1, base, collision) || openGround(x, y - 1, base, collision);
+        } else if (Math.abs(dy) > 0) {
+            // check points left and right of the origin
+            return openGround(x + 1, y, base, collision) || openGround(x - 1, y, base, collision);
+        } else {
+            return false;
         }
-        return sumX == 1 && sumY == 1;
+    }
+
+    private boolean openGround(int x, int y, LocationLayer layer, LocationLayer collision) {
+        return layer.isGround(x, y) && collision.getCell(x, y) == null;
     }
 
     private ConnectedRoom[][] createRooms(List<Rectangle> chambers, CellType[][] typeMap) {

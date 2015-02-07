@@ -24,7 +24,12 @@
  </tileset>
  <layer name="objects" width="4" height="4">
   <data encoding="base64" compression="zlib">
-   eJxjYMAERxkZGI4xIvhXgexrjFgUAgEAbOwDOw==
+   eJxjYCAMrjIyMFxjxC4HACvOAa4=
+  </data>
+ </layer>
+ <layer name="overlay" width="4" height="4">
+  <data encoding="base64" compression="zlib">
+   eJxjYMAERxkZGI4xYpHAAgBBXgGO
   </data>
  </layer>
  <layer name="constraints" width="4" height="4" visible="0">
@@ -32,9 +37,9 @@
    eJxjZmRgYCYBowMACBQAMQ==
   </data>
  </layer>
- <layer name="collision" width="4" height="4" visible="0">
+ <layer name="collision" width="4" height="4">
   <data encoding="base64" compression="zlib">
-   eJxjYMAEbIwQjIuPDAAD9AAd
+   eJxjYCAM2BghGBsAAAGqAA8=
   </data>
  </layer>
 </map>
