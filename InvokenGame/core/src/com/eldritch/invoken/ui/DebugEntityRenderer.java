@@ -12,6 +12,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.eldritch.invoken.actor.type.Agent;
+import com.eldritch.invoken.actor.type.CoverPoint;
 import com.eldritch.invoken.gfx.Light;
 
 public class DebugEntityRenderer {
@@ -120,11 +121,12 @@ public class DebugEntityRenderer {
         sr.end();
 	}
 	
-	public void renderCover(List<Vector2> coverPoints, OrthographicCamera camera) {
+	public void renderCover(List<CoverPoint> coverPoints, OrthographicCamera camera) {
 	    sr.setProjectionMatrix(camera.combined);
 	    sr.begin(ShapeType.Line);
-        for (Vector2 point : coverPoints) {
-            sr.circle(point.x, point.y, 0.5f);
+        for (CoverPoint point : coverPoints) {
+            Vector2 position = point.getPosition();
+            sr.circle(position.x, position.y, 0.5f);
         }
         sr.end();
 	}

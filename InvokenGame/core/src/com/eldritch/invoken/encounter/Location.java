@@ -44,6 +44,7 @@ import com.eldritch.invoken.actor.aug.Action;
 import com.eldritch.invoken.actor.factions.Faction;
 import com.eldritch.invoken.actor.items.Item;
 import com.eldritch.invoken.actor.type.Agent;
+import com.eldritch.invoken.actor.type.CoverPoint;
 import com.eldritch.invoken.actor.type.Npc;
 import com.eldritch.invoken.actor.type.Player;
 import com.eldritch.invoken.actor.type.TemporaryEntity;
@@ -80,7 +81,7 @@ public class Location {
     private final List<Activator> activators = new ArrayList<Activator>();
     private final List<SecurityCamera> securityCameras = new ArrayList<SecurityCamera>();
     private final Set<NaturalVector2> activeTiles = new HashSet<NaturalVector2>();
-    private final List<Vector2> activeCover = new ArrayList<Vector2>();
+    private final List<CoverPoint> activeCover = new ArrayList<CoverPoint>();
     private final LightManager lightManager;
     private final NormalMapShader normalMapShader;
     private final OverlayLightMasker lightMasker;
@@ -651,11 +652,15 @@ public class Location {
     
     private void resetActiveCover() {
         activeCover.clear();
-        for (Vector2 point : map.getCover()) {
-            if (activeTiles.contains(getCellPosition(point))) {
+        for (CoverPoint point : map.getCover()) {
+            if (activeTiles.contains(getCellPosition(point.getPosition()))) {
                 activeCover.add(point);
             }
         }
+    }
+    
+    public List<CoverPoint> getActiveCover() {
+        return activeCover;
     }
 
     private NaturalVector2 getCellPosition(Drawable drawable) {

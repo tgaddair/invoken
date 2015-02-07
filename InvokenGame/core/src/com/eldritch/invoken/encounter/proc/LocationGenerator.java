@@ -32,6 +32,7 @@ import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.InvokenGame;
+import com.eldritch.invoken.actor.type.CoverPoint;
 import com.eldritch.invoken.encounter.ConnectedRoom;
 import com.eldritch.invoken.encounter.Location;
 import com.eldritch.invoken.encounter.NaturalVector2;
@@ -108,17 +109,17 @@ public class LocationGenerator {
         leftTrim = getTile(LEFT_TRIM);
         rightTrim = getTile(RIGHT_TRIM);
         narrowWall = merge(rightTrim, leftTrim);
-        
+
         NormalMappedTile topLeft = getTile(TOP_LEFT_TRIM);
         NormalMappedTile topRight = getTile(TOP_RIGHT_TRIM);
         narrowTop = merge(topLeft, topRight);
-        
+
         collider = new StaticTiledMapTile(atlas.findRegion(COLLISION));
     }
-    
+
     private NormalMappedTile getTile(String asset) {
-        return new NormalMappedTile(
-                atlas.findRegion(biome + asset), normalAtlas.findRegion(biome + asset));
+        return new NormalMappedTile(atlas.findRegion(biome + asset), normalAtlas.findRegion(biome
+                + asset));
     }
 
     public Location generate(com.eldritch.invoken.proto.Locations.Location proto) {
@@ -131,13 +132,13 @@ public class LocationGenerator {
             roomCount += count;
         }
         EncounterGenerator bsp = new EncounterGenerator(roomCount * 2, proto.getEncounterList());
-//        BspGenerator bsp = new BspGenerator(roomCount * 2);
+        // BspGenerator bsp = new BspGenerator(roomCount * 2);
         NaturalVector2.init(bsp.getWidth(), bsp.getHeight());
-        
+
         bsp.generateSegments();
         bsp.save("bsp");
         CellType[][] typeMap = bsp.getMap();
-        
+
         // create map
         int width = bsp.getWidth();
         int height = bsp.getHeight();
@@ -174,7 +175,7 @@ public class LocationGenerator {
         LocationLayer overlayTrim1 = createTrimLayer(base, overlay, map);
         LocationLayer doorLayer = createEmptyLayer(base, map, "doors");
         List<LocationLayer> overlayTrims = createOverlayTrimLayer(base, roof, overlay, map);
-        
+
         // add all the overlays
         map.addOverlay(roof);
         map.addOverlay(overlayTrim1);
@@ -187,12 +188,12 @@ public class LocationGenerator {
         InvokenGame.log("Adding Rooms");
         RoomGenerator roomGenerator = new RoomGenerator(map);
         roomGenerator.generate(bsp);
-        
+
         // create room connectivity map
-//        ConnectedRoom[][] rooms = createRooms(bsp.getRooms(), typeMap);
-//        map.setRooms(rooms);
-//        save(rooms, "connected-rooms");
-        
+        // ConnectedRoom[][] rooms = createRooms(bsp.getRooms(), typeMap);
+        // map.setRooms(rooms);
+        // save(rooms, "connected-rooms");
+
         InvokenGame.log("Creating Spawn Layers");
         for (LocationLayer layer : createSpawnLayers(base, collision, bsp, map)) {
             map.getLayers().add(layer);
@@ -215,7 +216,7 @@ public class LocationGenerator {
         // clutter
         InvokenGame.log("Adding Clutter");
         // map.getLayers().add(furnitureGenerator.generateClutter(base, map));
-        
+
         // add cover points now that all collidable furniture has been placed
         map.addAllCover(getCover(base, collision));
 
@@ -225,13 +226,13 @@ public class LocationGenerator {
         location.addActivators(map.getActivators());
 
         // debug
-//        saveLayer(base);
+        // saveLayer(base);
 
         return location;
     }
-    
-    private List<Vector2> getCover(LocationLayer base, CollisionLayer collision) {
-        List<Vector2> cover = new ArrayList<Vector2>();
+
+    private List<CoverPoint> getCover(LocationLayer base, CollisionLayer collision) {
+        List<CoverPoint> cover = new ArrayList<CoverPoint>();
         for (int x = 0; x < collision.getWidth(); x++) {
             for (int y = 0; y < collision.getHeight(); y++) {
                 if (collision.getCell(x, y) != null && isCorner(collision, x, y)) {
@@ -241,7 +242,8 @@ public class LocationGenerator {
                             if ((dx == 0) != (dy == 0)) {
                                 // 4 cardinal directions, so one delta must be 0, but not both
                                 if (base.isGround(x + dx, y + dy)) {
-                                    cover.add(new Vector2(x + dx + 0.5f, y + dy + 0.5f));
+                                    cover.add(new CoverPoint(new Vector2(x + dx + 0.5f, y + dy
+                                            + 0.5f)));
                                 }
                             }
                         }
@@ -251,21 +253,23 @@ public class LocationGenerator {
         }
         return cover;
     }
-    
+
     private boolean isCorner(CollisionLayer collision, int x, int y) {
-        // a corner has exactly two cardinal neighbors
-        int neighbors = 0;
+        // a corner has exactly two cardinal neighbors along different axes
+        int sumX = 0;
+        int sumY = 0;
         for (int dx = -1; dx <= 1; dx++) {
             for (int dy = -1; dy <= 1; dy++) {
                 if ((dx == 0) != (dy == 0)) {
                     // 4 cardinal directions, so one delta must be 0, but not both
                     if (collision.getCell(x + dx, y + dy) != null) {
-                        neighbors++;
+                        sumX += Math.abs(dx);
+                        sumY += Math.abs(dy);
                     }
                 }
             }
         }
-        return neighbors == 2;
+        return sumX == 1 && sumY == 1;
     }
 
     private ConnectedRoom[][] createRooms(List<Rectangle> chambers, CellType[][] typeMap) {
@@ -303,7 +307,7 @@ public class LocationGenerator {
                 }
             }
         }
-        
+
         // finally, connect the rooms together
         Set<NaturalVector2> visited = new HashSet<NaturalVector2>();
         for (int x = 0; x < typeMap.length; x++) {
@@ -319,8 +323,8 @@ public class LocationGenerator {
 
         return rooms;
     }
-    
-    private void fillNeighbors(NaturalVector2 seed, ConnectedRoom[][] rooms, 
+
+    private void fillNeighbors(NaturalVector2 seed, ConnectedRoom[][] rooms,
             Set<NaturalVector2> visited) {
         LinkedList<NaturalVector2> queue = new LinkedList<NaturalVector2>();
         queue.add(seed);
@@ -341,7 +345,7 @@ public class LocationGenerator {
 
                         if (inBounds(x + dx, y + dy, rooms) && rooms[x + dx][y + dy] != null) {
                             queue.add(NaturalVector2.of(x + dx, y + dy));
-                            
+
                             ConnectedRoom nextRoom = rooms[x + dx][y + dy];
                             if (currentRoom != nextRoom) {
                                 // neighbor in a different room, so it's connected
@@ -382,7 +386,7 @@ public class LocationGenerator {
             }
         }
     }
-    
+
     private <T> boolean inBounds(int x, int y, T[][] grid) {
         return x >= 0 && x < grid.length && y >= 0 && y < grid[x].length;
     }
@@ -526,7 +530,7 @@ public class LocationGenerator {
         leftCorner.setOffsetX(Settings.PX / 2);
         leftCorner.setOffsetY(Settings.PX / 2);
         rightCorner.setOffsetY(Settings.PX / 2);
-        
+
         // fill in corners
         for (int x = 0; x < roof.getWidth(); x++) {
             for (int y = 0; y < roof.getHeight(); y++) {
@@ -539,12 +543,12 @@ public class LocationGenerator {
                 }
             }
         }
-        
+
         LocationLayer layer2 = new LocationLayer(base.getWidth(), base.getHeight(), PX, PX, map);
         layer2.setVisible(true);
         layer2.setOpacity(1.0f);
         layer2.setName("overlay-trim-3");
-        
+
         for (int x = 0; x < roof.getWidth(); x++) {
             for (int y = 0; y < roof.getHeight(); y++) {
                 if (roof.isFilled(x, y) && !layer2.isFilled(x, y) && !overlay.isFilled(x, y)) {
@@ -587,7 +591,7 @@ public class LocationGenerator {
         for (EncounterRoom encounterRoom : generator.getEncounterRooms()) {
             Encounter encounter = encounterRoom.getEncounter();
             Rectangle bounds = encounterRoom.getRestrictedBounds();
-            
+
             if (encounter.getOrigin()) {
                 playerLayer = new LocationLayer(base.getWidth(), base.getHeight(), PX, PX, map);
                 playerLayer.setVisible(false);
@@ -822,7 +826,7 @@ public class LocationGenerator {
     public TextureAtlas getAtlas() {
         return atlas;
     }
-    
+
     private static NormalMappedTile merge(NormalMappedTile left, NormalMappedTile right) {
         TextureRegion diffuse = merge(left.getTextureRegion(), right.getTextureRegion());
         TextureRegion normal = merge(left.getNormalRegion(), right.getNormalRegion());
@@ -877,19 +881,19 @@ public class LocationGenerator {
             InvokenGame.error("Failed saving level image!", e);
         }
     }
-    
+
     public <T> void save(T[][] grid, String filename) {
         int width = grid.length;
         int height = grid[0].length;
         BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-        
+
         // every element has a unique color in the grid
         Random rand = new Random();
         Map<T, Color> colors = new HashMap<T, Color>();
-        
+
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
-                T elem = grid[x][height - y - 1];  // images have (0, 0) in upper-left
+                T elem = grid[x][height - y - 1]; // images have (0, 0) in upper-left
                 if (!colors.containsKey(elem)) {
                     if (elem == null) {
                         colors.put(elem, Color.BLACK);
@@ -901,7 +905,7 @@ public class LocationGenerator {
                         colors.put(elem, new Color(r, g, b));
                     }
                 }
-                
+
                 image.setRGB(x, y, colors.get(elem).getRGB());
             }
         }

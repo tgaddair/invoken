@@ -8,6 +8,14 @@ public class BasicSteerable implements Steerable<Vector2> {
     private final Vector2 velocity = new Vector2();
     private boolean tagged = false;
     
+    public BasicSteerable() {
+        this(Vector2.Zero);
+    }
+    
+    public BasicSteerable(Vector2 position) {
+        this.position.set(position);
+    }
+    
     public void setPosition(Vector2 position) {
         this.position.set(position);
     }
