@@ -989,7 +989,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         // standing
         if ((Math.abs(velocity.x) < .01 && Math.abs(velocity.y) < .01) || isParalyzed()) {
             state = State.Standing;
-        } else if (Math.abs(velocity.x) > .01 || Math.abs(velocity.y) > .01) {
+        } else if (Math.abs(velocity.x) > .1 || Math.abs(velocity.y) > .1) {
         	// only update direction if we are going pretty fast
             if (target == null || target == this) {
                 // update the current animation based on the maximal velocity

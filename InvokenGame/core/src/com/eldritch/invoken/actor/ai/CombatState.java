@@ -213,13 +213,38 @@ public enum CombatState implements State<Npc> {
 	},
 	
 	HIDE() {
-		@Override
-		public void enter(Npc entity) {
-		}
+	    private final List<Agent> targets = new ArrayList<Agent>();
+        
+        @Override
+        public void enter(Npc entity) {
+            entity.getHide().setTarget(entity.getLastSeen());
+            entity.getHide().setEnabled(true);
+            entity.getEvade().setTarget(entity.getLastSeen());
+            entity.getEvade().setEnabled(true);
+        }
 
-		@Override
-		public void update(Npc entity) {
-		}
+        @Override
+        public void update(Npc entity) {
+            // update target enemy
+            fillTargets(entity, targets);
+            Agent target = selectBestTarget(entity, targets);
+            
+            // update our target
+            entity.setTarget(target);
+            if (target != null && target.isAlive()) {
+                entity.getHide().setTarget(target);
+                entity.getEvade().setTarget(target);
+            } else {
+                entity.getHide().setTarget(entity.getLastSeen());
+                entity.getEvade().setTarget(entity.getLastSeen());
+            }
+        }
+        
+        @Override
+        protected void afterExit(Npc entity) {
+            entity.getHide().setEnabled(false);
+            entity.getEvade().setEnabled(false);
+        }
 	};
 
 	@Override

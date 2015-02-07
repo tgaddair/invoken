@@ -217,10 +217,12 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 				Npc npc = (Npc) target;
 				State<Npc> state = npc.getStateMachine().getCurrentState();
 				boolean agitated = npc.isAgitated();
+				String targetName = npc.hasTarget() ? npc.getTarget().getInfo().getName() : "None";
 				
 		        font.draw(batch, "Graph: " + Settings.DRAW_GRAPH, 10, getHeight() - (30 + 20 * i++));
 		        font.draw(batch, "State: " + state, 10, getHeight() - (30 + 20 * i++));
 		        font.draw(batch, String.format("Agitated: %s", agitated), 10, getHeight() - (30 + 20 * i++));
+		        font.draw(batch, String.format("Target: %s", targetName), 10, getHeight() - (30 + 20 * i++));
 			}
 			
 			batch.end();
