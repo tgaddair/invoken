@@ -6,6 +6,7 @@ import java.util.EnumMap;
 import java.util.List;
 
 import com.badlogic.gdx.math.Rectangle;
+import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.encounter.NaturalVector2;
 import com.eldritch.invoken.encounter.layer.LocationMap;
 import com.eldritch.invoken.encounter.proc.EncounterGenerator.EncounterRoom;
@@ -64,6 +65,7 @@ public class RoomGenerator {
     }
     
     private void place(EncounterRoom encounter) {
+        InvokenGame.log("placing: " + encounter.getEncounter().getId());
         Rectangle bounds = encounter.getBounds();
         Room room = encounter.getRoom();
         

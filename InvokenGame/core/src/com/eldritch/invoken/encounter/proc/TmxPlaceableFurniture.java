@@ -12,6 +12,7 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
 import com.badlogic.gdx.math.Rectangle;
+import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.encounter.NaturalVector2;
 import com.eldritch.invoken.encounter.layer.LocationLayer;
 import com.eldritch.invoken.encounter.layer.LocationMap;
@@ -136,10 +137,9 @@ public class TmxPlaceableFurniture implements PlaceableFurniture {
                 continue;
             }
             
+            // cell is free
+            visited.add(point);
             if (collision.getCell(point.x, point.y) == null) {
-                // cell is free
-                visited.add(point);
-                
                 if (!inBounds(x - point.x, y - point.y, collision2) 
                             || collision2.getCell(x - point.x, y - point.y) == null) {
                     for (NaturalVector2 neighbor : getNeighbors(point)) {

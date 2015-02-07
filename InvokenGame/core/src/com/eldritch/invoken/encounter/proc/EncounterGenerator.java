@@ -38,17 +38,14 @@ public class EncounterGenerator extends BspGenerator {
         InvokenGame.log("Room Count: " + getRoomCount());
 
         // place all encounters at least once first
+        List<Encounter> repeatedEncounters = new ArrayList<Encounter>();
         int count = 0;
         for (Encounter encounter : encounters) {
-            if (place(encounter)) {
-                count++;
-            }
-        }
-
-        // TODO: only sample from the non-unique encounters and weight them
-        List<Encounter> repeatedEncounters = new ArrayList<Encounter>();
-        for (Encounter encounter : encounters) {
-            if (!encounter.getOrigin() && !encounter.getUnique()) {
+            if (encounter.getOrigin() || encounter.getUnique()) {
+                if (place(encounter)) {
+                    count++;
+                }
+            } else {
                 repeatedEncounters.add(encounter);
             }
         }
