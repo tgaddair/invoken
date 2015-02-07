@@ -1241,8 +1241,11 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
 		public float reportRayFixture(Fixture fixture, Vector2 point, Vector2 normal, float fraction) {
 			if (isObstruction(fixture)) {
 				lineOfSight = false;
+				return fraction;
 			}
-			return fraction;
+			
+			// ignore this fixture and continue
+			return -1;
 		}
 		
 		private boolean isObstruction(Fixture fixture) {
