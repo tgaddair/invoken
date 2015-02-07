@@ -26,7 +26,7 @@ public class Automaton extends Npc {
     @Override
     public boolean isVisible(Agent other) {
         // automatons do not see visible light, but other spectra
-        return true;
+        return hasLineOfSight(other);
     }
 
     public static Map<Activity, Map<Direction, Animation>> getAllAnimations(String assetName) {
