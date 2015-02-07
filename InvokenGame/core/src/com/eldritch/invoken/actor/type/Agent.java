@@ -166,7 +166,9 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
 		charFixtureDef.density = getDensity();
 		charFixtureDef.shape = circleShape;
 		charFixtureDef.filter.groupIndex = 0;
+		
 		Fixture fixture = body.createFixture(charFixtureDef);
+		fixture.setUserData(this);  // allow callbacks to owning Agent
 		
 		// collision filters
         Filter filter = fixture.getFilterData();
@@ -1237,29 +1239,40 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
 		
 		@Override
 		public float reportRayFixture(Fixture fixture, Vector2 point, Vector2 normal, float fraction) {
-			if (!targetFixture(fixture)) {
+			if (isObstruction(fixture)) {
 				lineOfSight = false;
 			}
 			return fraction;
 		}
 		
-		private boolean targetFixture(Fixture fixture) {
+		private boolean isObstruction(Fixture fixture) {
 			for (Fixture f : body.getFixtureList()) {
 				if (fixture == f) {
-					return true;
+				    // we cannot obstruct our own view
+					return false;
 				}
 			}
 			
-			if (target == null) {
-				return false;
+			if (target != null) {
+    			for (Fixture f : target.body.getFixtureList()) {
+    				if (fixture == f) {
+    				    // it's not an obstruction if it's the thing we're aiming at
+    					return false;
+    				}
+    			}
 			}
 			
-			for (Fixture f : target.body.getFixtureList()) {
-				if (fixture == f) {
-					return true;
-				}
+			// check that the fixture belongs to another agent
+			if (fixture.getUserData() != null && fixture.getUserData() instanceof Agent) {
+			    Agent agent = (Agent) fixture.getUserData();
+			    if (!agent.isAlive()) {
+			        // cannot be obstructed by the body of a dead agent
+			        return false;
+			    }
 			}
-			return false;
+			
+			// whatever it is, it's in the way
+			return true;
 		}
 	};
 	
