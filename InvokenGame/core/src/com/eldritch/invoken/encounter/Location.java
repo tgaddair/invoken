@@ -80,6 +80,7 @@ public class Location {
     private final List<Activator> activators = new ArrayList<Activator>();
     private final List<SecurityCamera> securityCameras = new ArrayList<SecurityCamera>();
     private final Set<NaturalVector2> activeTiles = new HashSet<NaturalVector2>();
+    private final List<Vector2> activeCover = new ArrayList<Vector2>();
     private final LightManager lightManager;
     private final NormalMapShader normalMapShader;
     private final OverlayLightMasker lightMasker;
@@ -448,6 +449,7 @@ public class Location {
 
             resetActiveTiles(origin);
             resetActiveEntities();
+            resetActiveCover();
             
             // reset lights
             normalMapShader.setLightGeometry(lightManager.getLights(), getWorldBounds());
@@ -575,7 +577,7 @@ public class Location {
         }
         if (Settings.DEBUG_COVER) {
             // draw cover
-            debugEntityRenderer.renderCover(map.getCover(), camera);
+            debugEntityRenderer.renderCover(activeCover, camera);
         }
     }
 
@@ -646,9 +648,21 @@ public class Location {
         // add temporary entities
         drawables.addAll(tempEntities);
     }
+    
+    private void resetActiveCover() {
+        activeCover.clear();
+        for (Vector2 point : map.getCover()) {
+            if (activeTiles.contains(getCellPosition(point))) {
+                activeCover.add(point);
+            }
+        }
+    }
 
     private NaturalVector2 getCellPosition(Drawable drawable) {
-        Vector2 position = drawable.getPosition();
+        return getCellPosition(drawable.getPosition());
+    }
+    
+    private NaturalVector2 getCellPosition(Vector2 position) {
         return NaturalVector2.of((int) position.x, (int) position.y);
     }
     
