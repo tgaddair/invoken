@@ -185,8 +185,8 @@ public class LocationGenerator {
         }
 
         InvokenGame.log("Adding Rooms");
-//        RoomGenerator roomGenerator = new RoomGenerator(map);
-//        roomGenerator.generate(bsp.getRooms(), proto.getEncounterList());
+        RoomGenerator roomGenerator = new RoomGenerator(map);
+        roomGenerator.generate(bsp);
         
         // create room connectivity map
 //        ConnectedRoom[][] rooms = createRooms(bsp.getRooms(), typeMap);
