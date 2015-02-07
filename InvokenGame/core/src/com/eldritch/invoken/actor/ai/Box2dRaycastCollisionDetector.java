@@ -8,6 +8,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.RayCastCallback;
 import com.badlogic.gdx.physics.box2d.World;
+import com.eldritch.invoken.actor.type.Agent;
 
 public class Box2dRaycastCollisionDetector implements RaycastCollisionDetector<Vector2> {
 	private final World world;
@@ -40,9 +41,28 @@ public class Box2dRaycastCollisionDetector implements RaycastCollisionDetector<V
 
 		@Override
 		public float reportRayFixture(Fixture fixture, Vector2 point, Vector2 normal, float fraction) {
+		    if (!isObstruction(fixture)) {
+		        // no collision
+		        return 0;
+		    }
+		    
 			if (outputCollision != null) outputCollision.set(point, normal);
 			collided = true;
 			return fraction;
 		}
+		
+		private boolean isObstruction(Fixture fixture) {
+            // check that the fixture belongs to another agent
+            if (fixture.getUserData() != null && fixture.getUserData() instanceof Agent) {
+                Agent agent = (Agent) fixture.getUserData();
+                if (!agent.isAlive()) {
+                    // cannot be obstructed by the body of a dead agent
+                    return false;
+                }
+            }
+            
+            // whatever it is, it's in the way
+            return true;
+        }
 	}
 }
