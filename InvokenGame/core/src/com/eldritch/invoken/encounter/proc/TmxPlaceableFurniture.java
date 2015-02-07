@@ -132,21 +132,16 @@ public class TmxPlaceableFurniture implements PlaceableFurniture {
         LinkedList<NaturalVector2> points = getEntryPoints(rect, map);
         while (!points.isEmpty()) {
             NaturalVector2 point = points.removeFirst();
-            if (visited.contains(point)) {
-                // don't repeat work
-                continue;
-            }
-            
-            // cell is free
             visited.add(point);
+            
             if (collision.getCell(point.x, point.y) == null) {
                 if (!inBounds(x - point.x, y - point.y, collision2) 
                             || collision2.getCell(x - point.x, y - point.y) == null) {
                     for (NaturalVector2 neighbor : getNeighbors(point)) {
                         // add the neighbor if it's in the rectangle
-                        if (neighbor.x >= rect.x && neighbor.x < rect.x + rect.width 
-                                && neighbor.y >= rect.y && neighbor.y < rect.y + rect.height) {
+                        if (!visited.contains(neighbor) && rect.contains(neighbor.x, neighbor.y)) {
                             points.add(neighbor);
+                            visited.add(neighbor);
                         }
                     }
                 }

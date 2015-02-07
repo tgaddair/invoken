@@ -1,6 +1,5 @@
 package com.eldritch.invoken.encounter.proc;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -28,28 +27,9 @@ public abstract class FurnitureGenerator {
     private final TextureAtlas atlas;
     protected final TiledMapTile ground;
     
-    // door tiles
-    private final TiledMapTile doorLeft;
-    private final TiledMapTile doorRight;
-    private final TiledMapTile doorOverLeft;
-    private final TiledMapTile doorOverRight;
-    private final TiledMapTile doorOverLeftTop;
-    private final TiledMapTile doorOverRightTop;
-    private final TiledMapTile unlockedDoor;
-    private final TiledMapTile lockedDoor;
-    
     public FurnitureGenerator(TextureAtlas atlas, TiledMapTile ground) {
         this.atlas = atlas;
         this.ground = ground;
-        doorLeft = new StaticTiledMapTile(atlas.findRegion("test-biome/door-front-bottom-left"));
-        doorRight = new StaticTiledMapTile(atlas.findRegion("test-biome/door-front-bottom-right"));
-        doorOverLeft = new StaticTiledMapTile(atlas.findRegion("test-biome/door-over-left"));
-        doorOverRight = new StaticTiledMapTile(atlas.findRegion("test-biome/door-over-right"));
-        doorOverLeftTop = new StaticTiledMapTile(atlas.findRegion("test-biome/door-over-left-top"));
-        doorOverRightTop = new StaticTiledMapTile(
-                atlas.findRegion("test-biome/door-over-right-top"));
-        unlockedDoor = new StaticTiledMapTile(atlas.findRegion("test-biome/door-activator"));
-        lockedDoor = new StaticTiledMapTile(atlas.findRegion("test-biome/door-activator-locked"));
     }
     
     public void addLights(LocationLayer layer, LocationLayer base, List<Light> lights, TiledMapTile placer) {
