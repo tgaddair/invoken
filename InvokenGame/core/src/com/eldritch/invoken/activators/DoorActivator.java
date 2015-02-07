@@ -74,9 +74,11 @@ public class DoorActivator extends ClickActivator {
     @Override
     public void activate(Agent agent, Location location) {
         if (lock.isLocked()) {
-            // unlock
-            lock.setLocked(false);
-            location.alertTo(agent);
+            if (lock.canUnlock(agent)) {
+                // unlock
+                lock.setLocked(false);
+                location.alertTo(agent);
+            }
             return;
         }
 
@@ -162,6 +164,10 @@ public class DoorActivator extends ClickActivator {
 
         public boolean isLocked() {
             return locked;
+        }
+        
+        public boolean canUnlock(Agent agent) {
+            return hasKey(agent.getInventory());
         }
 
         public boolean hasKey(Inventory inventory) {
