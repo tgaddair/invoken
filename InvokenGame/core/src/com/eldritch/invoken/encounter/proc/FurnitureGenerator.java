@@ -117,7 +117,7 @@ public abstract class FurnitureGenerator {
                     if (isSideGap(x, y, base)) {
                         // add activator
                         InvokenGame.log("side door");
-                        DoorActivator activator = DoorActivator.createSide(x - 1, y + 1);
+                        DoorActivator activator = DoorActivator.createSide(x, y + 1);
                         activators.add(activator);
                         mark(x, y);
                     }

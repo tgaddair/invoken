@@ -79,7 +79,7 @@ public class DoorActivator extends ClickActivator {
 	        bodies.add(location.createEdge(x, y, x + SIZE, y));
 	        bodies.add(location.createEdge(x, y + 1, x + SIZE, y + 1));
 	    } else {
-	        x += 1.5f;
+	        x += 0.2f;
 	        y -= 1;
 	        bodies.add(location.createEdge(x + 0.2f, y, x + 0.2f, y + SIZE));
             bodies.add(location.createEdge(x + 0.5f, y, x + 0.5f, y + SIZE));
