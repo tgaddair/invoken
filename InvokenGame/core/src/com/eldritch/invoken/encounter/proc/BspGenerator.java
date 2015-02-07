@@ -158,7 +158,7 @@ public class BspGenerator {
         }
 
         // place stone around the entire thing
-        for (int i = 0; i < room.width; i++) {
+        for (int i = -1; i <= room.width; i++) {
             Set((int) room.x + i, (int) room.y - 1, CellType.Stone);
             Set((int) room.x + i, (int) (room.y + room.height), CellType.Stone);
         }
