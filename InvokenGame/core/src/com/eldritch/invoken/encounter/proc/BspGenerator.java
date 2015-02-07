@@ -99,8 +99,8 @@ public class BspGenerator {
         while (placed < RoomCount) {
             // choose to place a rectangle room, or a templated room
             // if (btrial()) {
-            int width = range(MinRoomSize, MaxRoomSize);
-            int height = range(MinRoomSize, MaxRoomSize);
+            int width = range(MinRoomSize, MaxRoomSize) + 2;
+            int height = range(MinRoomSize, MaxRoomSize) + 2;
             if (PlaceRectRoom(width, height) != null)
                 placed++;
             // } else {
@@ -158,14 +158,14 @@ public class BspGenerator {
         }
 
         // place stone around the entire thing
-        for (int i = -1; i <= room.width; i++) {
-            Set((int) room.x + i, (int) room.y - 1, CellType.Stone);
-            Set((int) room.x + i, (int) (room.y + room.height), CellType.Stone);
+        for (int i = 0; i < room.width; i++) {
+            Set((int) room.x + i, (int) room.y, CellType.Stone);
+            Set((int) room.x + i, (int) (room.y + room.height - 1), CellType.Stone);
         }
 
-        for (int i = 0; i < room.height; i++) {
-            Set((int) room.x - 1, (int) room.y + i, CellType.Stone);
-            Set((int) (room.x + room.width), (int) room.y + i, CellType.Stone);
+        for (int i = 1; i < room.height - 1; i++) {
+            Set((int) room.x, (int) room.y + i, CellType.Stone);
+            Set((int) (room.x + room.width - 1), (int) room.y + i, CellType.Stone);
         }
 
         // make some doors

@@ -125,7 +125,7 @@ public class EncounterGenerator extends BspGenerator {
 
         // now that we're done placing tunnels, we need to reconstruct the walls around our
         // encounter rooms, if they're supposed to be locked
-        rebuildWalls();
+//        rebuildWalls();
     }
     
     private static class EncounterCostMatrix implements CostMatrix {
@@ -137,10 +137,10 @@ public class EncounterGenerator extends BspGenerator {
                 Rectangle bounds = room.getBounds();
                 
                 // boundary of the chamber, the stone border goes 1 unit out of the bounds
-                int startX = (int) bounds.x - 2;
-                int endX = (int) (bounds.x + bounds.width + 1);
-                int startY = (int) bounds.y - 2;
-                int endY = (int) (bounds.y + bounds.height + 1);
+                int startX = (int) bounds.x - 1;
+                int endX = (int) (bounds.x + bounds.width);
+                int startY = (int) bounds.y - 1;
+                int endY = (int) (bounds.y + bounds.height);
 
                 // the endpoints are exclusive, as a rectangle at (0, 0) with size
                 // (1, 1) should cover
@@ -182,48 +182,6 @@ public class EncounterGenerator extends BspGenerator {
             
             return cost;
         }
-    }
-
-    private void rebuildWalls() {
-        for (EncounterRoom room : encounterRooms.values()) {
-            if (room.getEncounter().hasRequiredKey() 
-                        && !room.getEncounter().getRequiredKey().isEmpty()) {
-//                // fill with red
-//                Rectangle bounds = room.getBounds();
-//                int startX = (int) bounds.x;
-//                int endX = (int) (bounds.x + bounds.width);
-//                int startY = (int) bounds.y;
-//                int endY = (int) (bounds.y + bounds.height);
-//
-//                // the endpoints are exclusive, as a rectangle at (0, 0) with size
-//                // (1, 1) should cover
-//                // only rooms[0][0], not rooms[1][1]
-//                for (int x = startX; x < endX; x++) {
-//                    for (int y = startY; y < endY; y++) {
-//                        Set(x, y, CellType.Door);
-//                    }
-//                }
-            }
-//            rebuildWalls(room);
-        }
-    }
-
-    private void rebuildWalls(EncounterRoom encounterRoom) {
-        Rectangle bounds = encounterRoom.getBounds();
-
-        // place stone around the entire thing
-        for (int i = 0; i < bounds.width; i++) {
-            Set((int) bounds.x + i, (int) bounds.y - 1, CellType.Stone);
-            Set((int) bounds.x + i, (int) (bounds.y + bounds.height), CellType.Stone);
-        }
-
-        for (int i = 0; i < bounds.height; i++) {
-            Set((int) bounds.x - 1, (int) bounds.y + i, CellType.Stone);
-            Set((int) (bounds.x + bounds.width), (int) bounds.y + i, CellType.Stone);
-        }
-        
-        // now the goal is to find a way out of each room
-        // we start from the middle and expand out in one of 8 directions
     }
 
     private boolean place(Encounter encounter) {
