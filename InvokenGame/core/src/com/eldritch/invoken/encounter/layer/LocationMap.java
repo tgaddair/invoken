@@ -11,6 +11,7 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
+import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.activators.Activator;
 import com.eldritch.invoken.encounter.ConnectedRoom;
 import com.eldritch.invoken.encounter.NaturalVector2;
@@ -22,8 +23,9 @@ public class LocationMap extends TiledMap {
     private final int height;
     private Set<NaturalVector2> activeTiles = null;
     private final List<Activator> activators = new ArrayList<Activator>();
+    private final List<Vector2> coverPoints = new ArrayList<Vector2>();
     private final TiledMap overlayMap = new TiledMap();
-    
+
     private ConnectedRoom[][] rooms;
     
     public LocationMap(TiledMapTile ground, int width, int height) {
@@ -34,6 +36,14 @@ public class LocationMap extends TiledMap {
     
     public void setRooms(ConnectedRoom[][] rooms) {
         this.rooms = rooms;
+    }
+    
+    public void addAllCover(List<Vector2> points) {
+        coverPoints.addAll(points);
+    }
+    
+    public List<Vector2> getCover() {
+        return coverPoints;
     }
     
     public ConnectedRoom[][] getRooms() {

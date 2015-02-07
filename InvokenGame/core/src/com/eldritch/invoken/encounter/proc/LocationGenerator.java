@@ -30,6 +30,7 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
 import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.encounter.ConnectedRoom;
 import com.eldritch.invoken.encounter.Location;
@@ -191,7 +192,7 @@ public class LocationGenerator {
 //        ConnectedRoom[][] rooms = createRooms(bsp.getRooms(), typeMap);
 //        map.setRooms(rooms);
 //        save(rooms, "connected-rooms");
-
+        
         InvokenGame.log("Creating Spawn Layers");
         for (LocationLayer layer : createSpawnLayers(base, collision, bsp, map)) {
             map.getLayers().add(layer);
@@ -214,6 +215,9 @@ public class LocationGenerator {
         // clutter
         InvokenGame.log("Adding Clutter");
         // map.getLayers().add(furnitureGenerator.generateClutter(base, map));
+        
+        // add cover points now that all collidable furniture has been placed
+        map.addAllCover(getCover(base, collision));
 
         Location location = new Location(proto, map);
         location.addLights(lights);
@@ -224,6 +228,44 @@ public class LocationGenerator {
 //        saveLayer(base);
 
         return location;
+    }
+    
+    private List<Vector2> getCover(LocationLayer base, CollisionLayer collision) {
+        List<Vector2> cover = new ArrayList<Vector2>();
+        for (int x = 0; x < collision.getWidth(); x++) {
+            for (int y = 0; y < collision.getHeight(); y++) {
+                if (collision.getCell(x, y) != null && isCorner(collision, x, y)) {
+                    // collision tile, check the area around for ground
+                    for (int dx = -1; dx <= 1; dx++) {
+                        for (int dy = -1; dy <= 1; dy++) {
+                            if ((dx == 0) != (dy == 0)) {
+                                // 4 cardinal directions, so one delta must be 0, but not both
+                                if (base.isGround(x + dx, y + dy)) {
+                                    cover.add(new Vector2(x + dx + 0.5f, y + dy + 0.5f));
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return cover;
+    }
+    
+    private boolean isCorner(CollisionLayer collision, int x, int y) {
+        // a corner has exactly two cardinal neighbors
+        int neighbors = 0;
+        for (int dx = -1; dx <= 1; dx++) {
+            for (int dy = -1; dy <= 1; dy++) {
+                if ((dx == 0) != (dy == 0)) {
+                    // 4 cardinal directions, so one delta must be 0, but not both
+                    if (collision.getCell(x + dx, y + dy) != null) {
+                        neighbors++;
+                    }
+                }
+            }
+        }
+        return neighbors == 2;
     }
 
     private ConnectedRoom[][] createRooms(List<Rectangle> chambers, CellType[][] typeMap) {

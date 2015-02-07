@@ -20,6 +20,8 @@ public class Settings {
 	// debug settings
 	public static final boolean GOD_MODE = true;
 	public static final boolean DEBUG_DRAW = false;
+	public static final boolean DEBUG_LIGHTS = false;
+	public static final boolean DEBUG_COVER = false;
 	public static final boolean SKIP_MENU = true;
 	
 	public static DebugGraph DRAW_GRAPH = DebugGraph.None;

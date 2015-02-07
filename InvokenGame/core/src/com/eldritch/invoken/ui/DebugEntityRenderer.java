@@ -1,6 +1,7 @@
 package com.eldritch.invoken.ui;
 
 import java.util.Collection;
+import java.util.List;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -11,8 +12,9 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.eldritch.invoken.actor.type.Agent;
+import com.eldritch.invoken.gfx.Light;
 
-public class LineRenderer {
+public class DebugEntityRenderer {
     private final BitmapFont debugFont = new BitmapFont();
     ShapeRenderer sr = new ShapeRenderer();
     SpriteBatch batch = new SpriteBatch();
@@ -115,6 +117,15 @@ public class LineRenderer {
         Color c = Color.WHITE;
         sr.setColor(c);
         sr.line(target.x, target.y, source.x, source.y);
+        sr.end();
+	}
+	
+	public void renderCover(List<Vector2> coverPoints, OrthographicCamera camera) {
+	    sr.setProjectionMatrix(camera.combined);
+	    sr.begin(ShapeType.Line);
+        for (Vector2 point : coverPoints) {
+            sr.circle(point.x, point.y, 0.5f);
+        }
         sr.end();
 	}
 }

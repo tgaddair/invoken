@@ -57,7 +57,7 @@ import com.eldritch.invoken.gfx.OverlayLightMasker;
 import com.eldritch.invoken.proto.Locations.Encounter;
 import com.eldritch.invoken.proto.Locations.Encounter.ActorParams.ActorScenario;
 import com.eldritch.invoken.ui.AgentStatusRenderer;
-import com.eldritch.invoken.ui.LineRenderer;
+import com.eldritch.invoken.ui.DebugEntityRenderer;
 import com.eldritch.invoken.util.Settings;
 import com.google.common.base.Optional;
 
@@ -99,7 +99,7 @@ public class Location {
     private float currentZoom = 0;
     private Rectangle viewBounds = new Rectangle();
 
-    LineRenderer lineRenderer = new LineRenderer();
+    DebugEntityRenderer debugEntityRenderer = new DebugEntityRenderer();
     Box2DDebugRenderer debugRenderer = new Box2DDebugRenderer();
 
     public Location(com.eldritch.invoken.proto.Locations.Location data) {
@@ -510,16 +510,16 @@ public class Location {
             Agent target = player.getTarget();
             switch (Settings.DRAW_GRAPH) {
                 case Disposition:
-                    lineRenderer.renderDispositions(target, activeEntities, camera);
+                    debugEntityRenderer.renderDispositions(target, activeEntities, camera);
                     break;
                 case LOS:
-                    lineRenderer.renderLineOfSight(target, activeEntities, camera);
+                    debugEntityRenderer.renderLineOfSight(target, activeEntities, camera);
                     break;
                 case Enemies:
-                    lineRenderer.renderEnemies(target, activeEntities, camera);
+                    debugEntityRenderer.renderEnemies(target, activeEntities, camera);
                     break;
                 case Visible:
-                    lineRenderer.renderVisible(target, activeEntities, camera);
+                    debugEntityRenderer.renderVisible(target, activeEntities, camera);
                     break;
                 case None:
             }
@@ -566,11 +566,16 @@ public class Location {
                 }
             }
             
-            // draw lights
-            lightManager.debugRender(camera);
-
             // debug render the world
             debugRenderer.render(world, camera.combined);
+        }
+        if (Settings.DEBUG_LIGHTS) {
+            // draw lights
+            lightManager.debugRender(camera);
+        }
+        if (Settings.DEBUG_COVER) {
+            // draw cover
+            debugEntityRenderer.renderCover(map.getCover(), camera);
         }
     }
 

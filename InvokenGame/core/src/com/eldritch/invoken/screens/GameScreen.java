@@ -425,6 +425,10 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 		return true;
 	}
 	
+	public static void toast(String text) {
+	    // TODO
+	}
+	
 	public static TextureRegion[][] getRegions(String assetName, int w, int h) {
 		return TextureRegion.split(getTexture(assetName), w, h);
 	}
