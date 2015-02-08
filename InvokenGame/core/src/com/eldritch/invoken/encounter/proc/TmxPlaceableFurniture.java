@@ -163,24 +163,24 @@ public class TmxPlaceableFurniture implements PlaceableFurniture {
         LinkedList<NaturalVector2> points = new LinkedList<NaturalVector2>();
         LocationLayer base = (LocationLayer) map.getLayers().get("base");
         for (int y = (int) rect.y; y < rect.y + rect.height; y++) {
-            int x1 = (int) rect.x;
-            if (base.isGround(x1 - 1, y)) {
+            int x1 = (int) rect.x - 1;
+            if (base.isGround(x1, y)) {
                 points.add(NaturalVector2.of(x1, y));
             }
             
-            int x2 = (int) (rect.x + rect.width) - 1;
-            if (base.isGround(x2 + 1, y)) {
+            int x2 = (int) (rect.x + rect.width);
+            if (base.isGround(x2, y)) {
                 points.add(NaturalVector2.of(x2, y));
             }
         }
         for (int x = (int) rect.x; x < rect.x + rect.width; x++) {
-            int y1 = (int) rect.y;
-            if (base.isGround(x, y1 - 1)) {
+            int y1 = (int) rect.y - 1;
+            if (base.isGround(x, y1)) {
                 points.add(NaturalVector2.of(x, y1));
             }
             
-            int y2 = (int) (rect.y + rect.height) - 1;
-            if (base.isGround(x, y2 + 1)) {
+            int y2 = (int) (rect.y + rect.height);
+            if (base.isGround(x, y2)) {
                 points.add(NaturalVector2.of(x, y2));
             }
         }
