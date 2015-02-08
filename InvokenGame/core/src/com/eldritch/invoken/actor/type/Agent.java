@@ -261,11 +261,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     public float damage(Agent source, float value) {
         if (isAlive()) {
             addHostility(source, value);
-            
-            // if we have line of sight to the damager, then alert the agent
-            if (hasLineOfSight(source)) {
-                alertTo(source);
-            }
+            alertTo(source);
         }
         return damage(value);
     }
