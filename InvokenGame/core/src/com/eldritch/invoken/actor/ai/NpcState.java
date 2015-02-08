@@ -28,7 +28,7 @@ public enum NpcState implements State<Npc> {
 	COMBAT() {
 		@Override
 		public void enter(Npc entity) {
-			entity.getStateMachine().getMachine(COMBAT).changeState(CombatState.HIDE);
+			entity.getStateMachine().getMachine(COMBAT).changeState(CombatState.ATTACK);
 			
 			// dispatch a message to all nearby allies that we're in combat, in the hope
 			// that they'll assist us

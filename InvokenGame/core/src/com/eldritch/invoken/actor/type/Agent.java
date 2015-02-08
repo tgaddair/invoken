@@ -76,7 +76,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         Up, Left, Down, Right
     }
 
-    enum State {
+    enum MotionState {
         Standing, Moving
     }
 
@@ -85,7 +85,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     }
 
     AgentInfo info;
-    State state = State.Moving;
+    MotionState motionState = MotionState.Moving;
     Activity activity = Activity.Explore;
     Direction direction = Direction.Down;
     private final Map<Activity, Map<Direction, Animation>> animations;
@@ -988,7 +988,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         // clamp the velocity to 0 if it's < 1, and set the state to
         // standing
         if ((Math.abs(velocity.x) < .01 && Math.abs(velocity.y) < .01) || isParalyzed()) {
-            state = State.Standing;
+            motionState = MotionState.Standing;
         } else if (Math.abs(velocity.x) > .1 || Math.abs(velocity.y) > .1) {
         	// only update direction if we are going pretty fast
             if (target == null || target == this) {
@@ -999,7 +999,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
             		direction = getDominantDirection(velocity.x, velocity.y);
             	}
             }
-            state = State.Moving;
+            motionState = MotionState.Moving;
         }
 
         // do this separately so we can still get the standing state
@@ -1129,7 +1129,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         if (isAlive() && actionInProgress()) {
             stateTime = action.getStateTime();
             activity = action.getActivity();
-        } else if (state == State.Standing && activity == Activity.Explore) {
+        } else if (motionState == MotionState.Standing && activity == Activity.Explore) {
             stateTime = 0;
         }
 
@@ -1194,8 +1194,8 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
                 && y >= position.y - getHeight() / 2 && y <= position.y + getHeight() / 2;
     }
 
-    protected void setState(State state) {
-        this.state = state;
+    protected void setState(MotionState motionState) {
+        this.motionState = motionState;
     }
 
     public float getWeaponAccuracy() {

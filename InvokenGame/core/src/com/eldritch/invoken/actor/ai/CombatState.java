@@ -134,6 +134,8 @@ public enum CombatState implements State<Npc> {
         public void enter(Npc entity) {
             entity.getSeek().setTarget(entity.getLastSeen());
             entity.getSeek().setEnabled(true);
+            entity.getHide().setTarget(entity.getLastSeen());
+            entity.getHide().setEnabled(true);
         }
 
         @Override
@@ -217,6 +219,7 @@ public enum CombatState implements State<Npc> {
         
         @Override
         public void enter(Npc entity) {
+            entity.setBehavior(HIDE);
 //            entity.getHide().setTarget(entity.getLastSeen());
             entity.getHide().setTarget(entity.getLocation().getPlayer());
             entity.getHide().setEnabled(true);
@@ -244,6 +247,7 @@ public enum CombatState implements State<Npc> {
         
         @Override
         protected void afterExit(Npc entity) {
+            entity.setBehavior(null);
             entity.getHide().setEnabled(false);
             entity.getEvade().setEnabled(false);
         }

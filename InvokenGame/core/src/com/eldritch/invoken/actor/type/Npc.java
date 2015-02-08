@@ -1,15 +1,19 @@
 package com.eldritch.invoken.actor.type;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import com.badlogic.gdx.ai.fsm.State;
 import com.badlogic.gdx.ai.msg.Telegram;
 import com.badlogic.gdx.ai.msg.Telegraph;
 import com.badlogic.gdx.ai.steer.Proximity;
 import com.badlogic.gdx.ai.steer.Steerable;
+import com.badlogic.gdx.ai.steer.SteeringBehavior;
 import com.badlogic.gdx.ai.steer.behaviors.Arrive;
+import com.badlogic.gdx.ai.steer.behaviors.BlendedSteering;
 import com.badlogic.gdx.ai.steer.behaviors.Evade;
 import com.badlogic.gdx.ai.steer.behaviors.Flee;
 import com.badlogic.gdx.ai.steer.behaviors.Hide;
@@ -19,6 +23,7 @@ import com.badlogic.gdx.ai.steer.behaviors.RaycastObstacleAvoidance;
 import com.badlogic.gdx.ai.steer.behaviors.Seek;
 import com.badlogic.gdx.ai.steer.behaviors.Wander;
 import com.badlogic.gdx.ai.steer.limiters.LinearAccelerationLimiter;
+import com.badlogic.gdx.ai.steer.limiters.NullLimiter;
 import com.badlogic.gdx.ai.steer.utils.Ray;
 import com.badlogic.gdx.ai.steer.utils.rays.RayConfigurationBase;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -33,6 +38,7 @@ import com.eldritch.invoken.actor.Inventory.ItemState;
 import com.eldritch.invoken.actor.ai.AdaptiveRayWithWhiskersConfiguration;
 import com.eldritch.invoken.actor.ai.Behavior;
 import com.eldritch.invoken.actor.ai.Box2dRaycastCollisionDetector;
+import com.eldritch.invoken.actor.ai.CombatState;
 import com.eldritch.invoken.actor.ai.NpcState;
 import com.eldritch.invoken.actor.ai.NpcStateMachine;
 import com.eldritch.invoken.encounter.Location;
@@ -51,9 +57,9 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
     private final NonPlayerActor data;
     private final Optional<ActorScenario> scenario;
     private final ConversationHandler dialogue;
-    private final Behavior behavior;
     private final Set<Agent> detected = new HashSet<Agent>();
     private final BasicSteerable lastSeen = new BasicSteerable();
+    private final Behavior behavior;
 
     // used in AI routine calculations to determine things like the target
     private final Set<Agent> squad = new HashSet<Agent>();
@@ -61,6 +67,9 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
     // AI controllers
     private final NpcStateMachine stateMachine;
     private boolean canAttack = true;
+
+    private final Map<State<Npc>, SteeringBehavior<Vector2>> behaviors = new HashMap<State<Npc>, SteeringBehavior<Vector2>>();
+    private final SteeringBehavior<Vector2> defaultSteering;
 
     RayConfigurationBase<Vector2> rayConfiguration;
 
@@ -127,7 +136,8 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
 
         hide = new Hide<Vector2>(this, null, new CoverProximity()).setArrivalTolerance(.0001f)
                 .setDecelerationRadius(.001f).setDistanceFromBoundary(0f);
-        evade = new Evade<Vector2>(this, location.getPlayer());
+        evade = new Evade<Vector2>(this, location.getPlayer())
+                .setLimiter(new LinearAccelerationLimiter(10));
         pursue = new Pursue<Vector2>(this, location.getPlayer());
         flee = new Flee<Vector2>(this);
         seek = new Seek<Vector2>(this);
@@ -151,11 +161,15 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
         arrive.setEnabled(false);
 
         // order in descending priority
-        PrioritySteering<Vector2> prioritySteering = new PrioritySteering<Vector2>(this)
-                .add(obstacleAvoidance)
-                // .add(cohesion)
-                .add(hide).add(evade).add(pursue).add(flee).add(seek).add(arrive).add(wander);
-        setBehavior(prioritySteering);
+        defaultSteering = new PrioritySteering<Vector2>(this)
+                .setLimiter(NullLimiter.NEUTRAL_LIMITER).add(obstacleAvoidance).add(hide)
+                .add(evade).add(pursue).add(flee).add(seek).add(arrive).add(wander);
+        setBehavior(defaultSteering);
+
+        SteeringBehavior<Vector2> hideSteering = new BlendedSteering<Vector2>(this)
+                .setLimiter(NullLimiter.NEUTRAL_LIMITER).add(obstacleAvoidance, 1).add(hide, 1)
+                .add(evade, 1);
+        behaviors.put(CombatState.HIDE, hideSteering);
 
         // state machine
         stateMachine = new NpcStateMachine(this, NpcState.PATROL);
@@ -177,6 +191,13 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
 
     public boolean canAttack() {
         return canAttack;
+    }
+
+    public void setBehavior(State<Npc> state) {
+        if (state == null) {
+            setBehavior(defaultSteering);
+        }
+        setBehavior(behaviors.get(state));
     }
 
     public Hide<Vector2> getHide() {
