@@ -349,8 +349,8 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         // handle activators
         for (Activator activator : location.getActivators()) {
             if (activator.click(player, location, world.x, world.y)) {
+                // allow multiple activators
                 selection = true;
-                break;
             }
         }
         
