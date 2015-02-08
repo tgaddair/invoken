@@ -10,6 +10,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.actor.aug.Augmentation;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Npc;
+import com.eldritch.invoken.actor.type.Npc.SteeringMode;
 import com.eldritch.invoken.encounter.Location;
 
 public enum CombatState implements State<Npc> {
@@ -219,7 +220,7 @@ public enum CombatState implements State<Npc> {
         
         @Override
         public void enter(Npc entity) {
-            entity.setBehavior(HIDE);
+            entity.setBehavior(SteeringMode.Evade);
 //            entity.getHide().setTarget(entity.getLastSeen());
             entity.getHide().setTarget(entity.getLocation().getPlayer());
             entity.getHide().setEnabled(true);

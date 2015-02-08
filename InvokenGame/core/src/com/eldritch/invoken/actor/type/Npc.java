@@ -1,6 +1,6 @@
 package com.eldritch.invoken.actor.type;
 
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
@@ -8,9 +8,7 @@ import java.util.Set;
 
 import com.badlogic.gdx.ai.btree.BehaviorTree;
 import com.badlogic.gdx.ai.btree.Task;
-import com.badlogic.gdx.ai.btree.branch.Parallel;
 import com.badlogic.gdx.ai.btree.branch.Selector;
-import com.badlogic.gdx.ai.btree.branch.Sequence;
 import com.badlogic.gdx.ai.fsm.State;
 import com.badlogic.gdx.ai.msg.Telegram;
 import com.badlogic.gdx.ai.msg.Telegraph;
@@ -43,12 +41,11 @@ import com.eldritch.invoken.actor.Inventory.ItemState;
 import com.eldritch.invoken.actor.ai.AdaptiveRayWithWhiskersConfiguration;
 import com.eldritch.invoken.actor.ai.Behavior;
 import com.eldritch.invoken.actor.ai.Box2dRaycastCollisionDetector;
-import com.eldritch.invoken.actor.ai.CombatState;
 import com.eldritch.invoken.actor.ai.NpcState;
 import com.eldritch.invoken.actor.ai.NpcStateMachine;
 import com.eldritch.invoken.actor.ai.btree.Combat;
 import com.eldritch.invoken.actor.ai.btree.Patrol;
-import com.eldritch.invoken.actor.ai.btree.SeekCover;
+import com.eldritch.invoken.actor.aug.Augmentation;
 import com.eldritch.invoken.encounter.Location;
 import com.eldritch.invoken.proto.Actors.ActorParams.Species;
 import com.eldritch.invoken.proto.Actors.DialogueTree.Choice;
@@ -62,6 +59,10 @@ import com.eldritch.invoken.util.PrerequisiteVerifier;
 import com.google.common.base.Optional;
 
 public abstract class Npc extends SteeringAgent implements Telegraph {
+    public enum SteeringMode {
+        Default, Wander, Pursue, Evade, Follow
+    }
+
     private final NonPlayerActor data;
     private final Optional<ActorScenario> scenario;
     private final ConversationHandler dialogue;
@@ -75,23 +76,22 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
     // AI controllers
     private final BehaviorTree<Npc> behaviorTree;
     private float lastStep = 0;
+    private Augmentation chosenAug;
     
     private final NpcStateMachine stateMachine;
     private boolean canAttack = true;
 
-    private final Map<State<Npc>, SteeringBehavior<Vector2>> behaviors = new HashMap<State<Npc>, SteeringBehavior<Vector2>>();
-    private final SteeringBehavior<Vector2> defaultSteering;
-
+    private final Map<SteeringMode, SteeringBehavior<Vector2>> behaviors;
     RayConfigurationBase<Vector2> rayConfiguration;
 
     // behaviors that need to be updated periodically
-    private final Hide<Vector2> hide;
-    private final Evade<Vector2> evade;
-    private final Pursue<Vector2> pursue;
-    private final Flee<Vector2> flee;
-    private final Seek<Vector2> seek;
-    private final Arrive<Vector2> arrive;
-    private final Wander<Vector2> wander;
+    private Hide<Vector2> hide;
+    private Evade<Vector2> evade;
+    private Pursue<Vector2> pursue;
+    private Flee<Vector2> flee;
+    private Seek<Vector2> seek;
+    private Arrive<Vector2> arrive;
+    private Wander<Vector2> wander;
 
     public Npc(NonPlayerActor data, float x, float y, float width, float height, float maxVelocity,
             Map<Activity, Map<Direction, Animation>> animations, Location location) {
@@ -107,87 +107,23 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
         }
 
         // steering behaviors
-        rayConfiguration = new AdaptiveRayWithWhiskersConfiguration<Vector2>(this, 3, 1,
-                35 * MathUtils.degreesToRadians);
-        RaycastObstacleAvoidance<Vector2> obstacleAvoidance = new RaycastObstacleAvoidance<Vector2>(
-                this, rayConfiguration, new Box2dRaycastCollisionDetector(location.getWorld()), 1);
-
-        // ally proximity
-        // TODO: move this to Location, have a set of "squads" managed at a higher level with a
-        // shared proximity instance
-        // Proximity<Vector2> proximity = new Proximity<Vector2>() {
-        // private Steerable<Vector2> owner = Npc.this;
-        //
-        // @Override
-        // public Steerable<Vector2> getOwner() {
-        // return owner;
-        // }
-        //
-        // @Override
-        // public void setOwner(Steerable<Vector2> owner) {
-        // this.owner = owner;
-        // }
-        //
-        // @Override
-        // public int findNeighbors(
-        // com.badlogic.gdx.ai.steer.Proximity.ProximityCallback<Vector2> callback) {
-        // int count = 0;
-        // for (Agent neighbor : Npc.this.getNeighbors()) {
-        // if (neighbor.dst2(Npc.this) < 5) {
-        // if (Behavior.isAllyGiven(getRelation(neighbor))) {
-        // callback.reportNeighbor(neighbor);
-        // }
-        // }
-        // }
-        // return count;
-        // }
-        //
-        // };
-        // Cohesion<Vector2> cohesion = new Cohesion<Vector2>(this, proximity);
-
-        hide = new Hide<Vector2>(this, null, new CoverProximity()).setArrivalTolerance(.0001f)
-                .setDecelerationRadius(.001f).setDistanceFromBoundary(0f);
-        evade = new Evade<Vector2>(this, location.getPlayer())
-                .setLimiter(new LinearAccelerationLimiter(10));
-        pursue = new Pursue<Vector2>(this, location.getPlayer());
-        flee = new Flee<Vector2>(this);
-        seek = new Seek<Vector2>(this);
-        arrive = new Arrive<Vector2>(this).setArrivalTolerance(3f).setDecelerationRadius(5f);
-        wander = new Wander<Vector2>(this)
-                // Don't use Face internally because independent facing is off
-                .setFaceEnabled(false)
-                //
-                // We don't need a limiter supporting angular components because Face is not used
-                // No need to call setAlignTolerance, setDecelerationRadius and setTimeToTarget for
-                // the same reason
-                .setLimiter(new LinearAccelerationLimiter(5)).setWanderOffset(2)
-                .setWanderOrientation(0).setWanderRadius(0.5f).setWanderRate(MathUtils.PI / 5);
-
-        // initially disable our states
-        hide.setEnabled(false);
-        evade.setEnabled(false);
-        pursue.setEnabled(false);
-        flee.setEnabled(false);
-        seek.setEnabled(false);
-        arrive.setEnabled(false);
-
-        // order in descending priority
-        defaultSteering = new PrioritySteering<Vector2>(this)
-                .setLimiter(NullLimiter.NEUTRAL_LIMITER).add(obstacleAvoidance).add(hide)
-                .add(evade).add(pursue).add(flee).add(seek).add(arrive).add(wander);
-        setBehavior(defaultSteering);
-
-        SteeringBehavior<Vector2> hideSteering = new BlendedSteering<Vector2>(this)
-                .setLimiter(NullLimiter.NEUTRAL_LIMITER).add(obstacleAvoidance, 1).add(hide, 1)
-                .add(evade, 1);
-        behaviors.put(CombatState.HIDE, hideSteering);
-
+        behaviors = getSteeringBehaviors(location);
+        setBehavior(behaviors.get(SteeringMode.Default));
+        
         // state machine
         stateMachine = new NpcStateMachine(this, NpcState.PATROL);
         stateMachine.changeState(NpcState.PATROL);
         
         // behavior tree
         behaviorTree = new BehaviorTree<Npc>(createBehavior(), this);
+    }
+    
+    public void setChosen(Augmentation aug) {
+        this.chosenAug = aug;
+    }
+    
+    public Augmentation getChosen() {
+        return chosenAug;
     }
     
     public static Task<Npc> createBehavior() {
@@ -214,13 +150,13 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
         return canAttack;
     }
 
-    public void setBehavior(State<Npc> state) {
-        if (state == null) {
-            setBehavior(defaultSteering);
+    public void setBehavior(SteeringMode mode) {
+        if (mode == null) {
+            setBehavior(behaviors.get(SteeringMode.Default));
         }
-        setBehavior(behaviors.get(state));
+        setBehavior(behaviors.get(mode));
     }
-
+    
     public Hide<Vector2> getHide() {
         return hide;
     }
@@ -454,5 +390,104 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
             default:
                 throw new IllegalArgumentException("unrecognized species: " + species);
         }
+    }
+    
+    private Map<SteeringMode, SteeringBehavior<Vector2>> getSteeringBehaviors(Location location) {
+        Map<SteeringMode, SteeringBehavior<Vector2>> behaviors = new EnumMap<SteeringMode, SteeringBehavior<Vector2>>(
+                SteeringMode.class);
+
+        rayConfiguration = new AdaptiveRayWithWhiskersConfiguration<Vector2>(this, 3, 1,
+                35 * MathUtils.degreesToRadians);
+        RaycastObstacleAvoidance<Vector2> obstacleAvoidance = new RaycastObstacleAvoidance<Vector2>(
+                this, rayConfiguration, new Box2dRaycastCollisionDetector(location.getWorld()), 1);
+
+        // ally proximity
+        // TODO: move this to Location, have a set of "squads" managed at a higher level with a
+        // shared proximity instance
+        // Proximity<Vector2> proximity = new Proximity<Vector2>() {
+        // private Steerable<Vector2> owner = Npc.this;
+        //
+        // @Override
+        // public Steerable<Vector2> getOwner() {
+        // return owner;
+        // }
+        //
+        // @Override
+        // public void setOwner(Steerable<Vector2> owner) {
+        // this.owner = owner;
+        // }
+        //
+        // @Override
+        // public int findNeighbors(
+        // com.badlogic.gdx.ai.steer.Proximity.ProximityCallback<Vector2> callback) {
+        // int count = 0;
+        // for (Agent neighbor : Npc.this.getNeighbors()) {
+        // if (neighbor.dst2(Npc.this) < 5) {
+        // if (Behavior.isAllyGiven(getRelation(neighbor))) {
+        // callback.reportNeighbor(neighbor);
+        // }
+        // }
+        // }
+        // return count;
+        // }
+        //
+        // };
+        // Cohesion<Vector2> cohesion = new Cohesion<Vector2>(this, proximity);
+
+        hide = new Hide<Vector2>(this, null, new CoverProximity())
+                .setArrivalTolerance(.0001f).setDecelerationRadius(.001f)
+                .setDistanceFromBoundary(0f);
+        evade = new Evade<Vector2>(this, location.getPlayer())
+                .setLimiter(new LinearAccelerationLimiter(10));
+        pursue = new Pursue<Vector2>(this, location.getPlayer());
+        flee = new Flee<Vector2>(this);
+        seek = new Seek<Vector2>(this);
+        arrive = new Arrive<Vector2>(this).setArrivalTolerance(3f)
+                .setDecelerationRadius(5f);
+        wander = new Wander<Vector2>(this)
+                // Don't use Face internally because independent facing is off
+                .setFaceEnabled(false)
+                //
+                // We don't need a limiter supporting angular components because Face is not used
+                // No need to call setAlignTolerance, setDecelerationRadius and setTimeToTarget for
+                // the same reason
+                .setLimiter(new LinearAccelerationLimiter(5)).setWanderOffset(2)
+                .setWanderOrientation(0).setWanderRadius(0.5f).setWanderRate(MathUtils.PI / 5);
+
+        // initially disable our states
+        // hide.setEnabled(false);
+        // evade.setEnabled(false);
+        // pursue.setEnabled(false);
+        // flee.setEnabled(false);
+        // seek.setEnabled(false);
+        // arrive.setEnabled(false);
+
+        // order in descending priority
+        SteeringBehavior<Vector2> wanderSteering = new PrioritySteering<Vector2>(this)
+                .setLimiter(NullLimiter.NEUTRAL_LIMITER).add(obstacleAvoidance).add(hide) //
+                .add(wander);
+        behaviors.put(SteeringMode.Default, wanderSteering);
+        behaviors.put(SteeringMode.Wander, wanderSteering);
+        
+        SteeringBehavior<Vector2> pursueSteering = new PrioritySteering<Vector2>(this)
+                .setLimiter(NullLimiter.NEUTRAL_LIMITER) //
+                .add(obstacleAvoidance) //
+                .add(pursue);
+        behaviors.put(SteeringMode.Pursue, pursueSteering);
+        
+        SteeringBehavior<Vector2> evadeSteering = new BlendedSteering<Vector2>(this)
+                .setLimiter(NullLimiter.NEUTRAL_LIMITER) //
+                .add(obstacleAvoidance, 1) //
+                .add(hide, 1) //
+                .add(evade, 1);
+        behaviors.put(SteeringMode.Evade, evadeSteering);
+        
+        SteeringBehavior<Vector2> followSteering = new PrioritySteering<Vector2>(this)
+                .setLimiter(NullLimiter.NEUTRAL_LIMITER) //
+                .add(obstacleAvoidance) //
+                .add(arrive);
+        behaviors.put(SteeringMode.Follow, followSteering);
+
+        return behaviors;
     }
 }
