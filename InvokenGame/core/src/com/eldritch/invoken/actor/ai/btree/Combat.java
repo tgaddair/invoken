@@ -19,7 +19,13 @@ public class Combat extends Sequence<Npc> {
         selector.addChild(new Attack());
 
         // if we cannot engage with an enemy, then we attempt to pursue our last seen enemy
-        selector.addChild(new Pursue());
+        Sequence<Npc> pursueSequence = new Sequence<Npc>();
+        pursueSequence.addChild(new CanPursue());
+        pursueSequence.addChild(new Pursue());
+        selector.addChild(pursueSequence);
+        
+        // when we can no longer pursue our target, fall back to wandering
+        selector.addChild(new Wander());
 
         // whatever strategy we pick, we will not failover to the next task at this point
         addChild(new AlwaysSucceed<Npc>(selector));
@@ -38,6 +44,26 @@ public class Combat extends Sequence<Npc> {
             } else {
                 fail();
             }
+        }
+
+        @Override
+        protected Task<Npc> copyTo(Task<Npc> task) {
+            return task;
+        }
+    }
+    
+    private static class CanPursue extends LeafTask<Npc> {
+        @Override
+        public void run(Npc entity) {
+            if (check(entity)) {
+                success();
+            } else {
+                fail();
+            }
+        }
+        
+        private boolean check(Npc npc) {
+            return npc.getPosition().dst2(npc.getLastSeen().getPosition()) > 1;
         }
 
         @Override
