@@ -44,6 +44,7 @@ import com.eldritch.invoken.actor.ai.FatigueMonitor;
 import com.eldritch.invoken.actor.ai.NpcState;
 import com.eldritch.invoken.actor.ai.NpcStateMachine;
 import com.eldritch.invoken.actor.ai.btree.Combat;
+import com.eldritch.invoken.actor.ai.btree.Investigate;
 import com.eldritch.invoken.actor.ai.btree.Patrol;
 import com.eldritch.invoken.actor.aug.Augmentation;
 import com.eldritch.invoken.encounter.Location;
@@ -60,6 +61,7 @@ import com.google.common.base.Optional;
 
 public abstract class Npc extends SteeringAgent implements Telegraph {
     public static final float STEP = 0.008f;  // behavior action frequency
+    private static final float ALERT_DURATION = 3f;  // seconds
     
     public enum SteeringMode {
         Default, Wander, Pursue, Evade, Follow
@@ -80,6 +82,7 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
     private final FatigueMonitor fatigue;
     private Augmentation chosenAug;
     private float lastStep = 0;
+    private float alert = 0;
     
     private final NpcStateMachine stateMachine;
     private boolean canAttack = true;
@@ -137,6 +140,7 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
     public static Task<Npc> createBehavior() {
         Selector<Npc> selector = new Selector<Npc>();
         selector.addChild(new Combat());
+        selector.addChild(new Investigate());
         selector.addChild(new Patrol());
         return selector;
     }
@@ -230,6 +234,7 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
 
     public void update(float delta) {
 //        stateMachine.update(delta);
+        alert = Math.max(alert - delta, 0);
         
         lastStep += delta;
         if (lastStep > STEP) {
@@ -275,6 +280,16 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
         } else {
             behavior.resetAggression();
         }
+    }
+    
+    public boolean isAlerted() {
+        return alert > 0;
+    }
+    
+    @Override
+    public void alertTo(Agent other) {
+        super.alertTo(other);
+        alert = ALERT_DURATION;
     }
 
     @Override

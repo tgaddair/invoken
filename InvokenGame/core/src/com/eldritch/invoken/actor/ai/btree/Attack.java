@@ -172,8 +172,7 @@ public class Attack extends Sequence<Npc> {
         }
         
         private boolean check(Npc npc) {
-            return npc.getInventory().hasRangedWeapon() && npc.getTarget() != null 
-                    && npc.getTarget().getInventory().hasRangedWeapon();
+            return npc.getInventory().hasRangedWeapon() && npc.getTarget() != null;
         }
 
         @Override
