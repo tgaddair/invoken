@@ -6,6 +6,11 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import com.badlogic.gdx.ai.btree.BehaviorTree;
+import com.badlogic.gdx.ai.btree.Task;
+import com.badlogic.gdx.ai.btree.branch.Parallel;
+import com.badlogic.gdx.ai.btree.branch.Selector;
+import com.badlogic.gdx.ai.btree.branch.Sequence;
 import com.badlogic.gdx.ai.fsm.State;
 import com.badlogic.gdx.ai.msg.Telegram;
 import com.badlogic.gdx.ai.msg.Telegraph;
@@ -41,6 +46,9 @@ import com.eldritch.invoken.actor.ai.Box2dRaycastCollisionDetector;
 import com.eldritch.invoken.actor.ai.CombatState;
 import com.eldritch.invoken.actor.ai.NpcState;
 import com.eldritch.invoken.actor.ai.NpcStateMachine;
+import com.eldritch.invoken.actor.ai.btree.Combat;
+import com.eldritch.invoken.actor.ai.btree.Patrol;
+import com.eldritch.invoken.actor.ai.btree.SeekCover;
 import com.eldritch.invoken.encounter.Location;
 import com.eldritch.invoken.proto.Actors.ActorParams.Species;
 import com.eldritch.invoken.proto.Actors.DialogueTree.Choice;
@@ -65,6 +73,9 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
     private final Set<Agent> squad = new HashSet<Agent>();
 
     // AI controllers
+    private final BehaviorTree<Npc> behaviorTree;
+    private float lastStep = 0;
+    
     private final NpcStateMachine stateMachine;
     private boolean canAttack = true;
 
@@ -174,6 +185,16 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
         // state machine
         stateMachine = new NpcStateMachine(this, NpcState.PATROL);
         stateMachine.changeState(NpcState.PATROL);
+        
+        // behavior tree
+        behaviorTree = new BehaviorTree<Npc>(createBehavior(), this);
+    }
+    
+    public static Task<Npc> createBehavior() {
+        Selector<Npc> selector = new Selector<Npc>();
+        selector.addChild(new Combat());
+        selector.addChild(new Patrol());
+        return selector;
     }
 
     @Override
@@ -264,7 +285,14 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
     }
 
     public void update(float delta) {
-        stateMachine.update(delta);
+//        stateMachine.update(delta);
+        
+        lastStep += delta;
+        if (lastStep > 0.008f) {
+            behaviorTree.step();
+            lastStep = 0;
+        }
+        
         if (steeringBehavior != null) {
             // Calculate steering acceleration
             steeringBehavior.calculateSteering(steeringOutput);
