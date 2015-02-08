@@ -599,6 +599,13 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
             interact(null);
         }
     }
+    
+    public void endInteraction() {
+        if (interactor != null) {
+            interactor.interact(null);
+            interact(null);
+        }
+    }
 
     public Agent getInteractor() {
         return interactor;

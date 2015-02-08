@@ -9,6 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.SplitPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.eldritch.invoken.actor.Inventory;
 import com.eldritch.invoken.actor.items.Item;
 import com.eldritch.invoken.actor.type.Player;
@@ -97,7 +98,8 @@ public class InventoryMenu {
 
     private void addItemButton(Inventory.ItemState itemState) {
         final Item item = itemState.getItem();
-        final TextButton itemButton = new TextButton(getText(item, itemState.getCount()), skin);
+        TextButtonStyle buttonStyle = skin.get("choice", TextButtonStyle.class);
+        final TextButton itemButton = new TextButton(getText(item, itemState.getCount()), buttonStyle);
         refreshButton(itemButton, item);
         itemButton.addListener(new DefaultInputListener() {
             @Override
@@ -113,6 +115,7 @@ public class InventoryMenu {
                 System.out.println(item.toString());
             }
         });
+        
         table.row();
         table.add(itemButton).expandX().fillX().padLeft(5).padRight(5).padBottom(5).padTop(5);
     }

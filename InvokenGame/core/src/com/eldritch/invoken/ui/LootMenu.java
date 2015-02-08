@@ -5,6 +5,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.eldritch.invoken.actor.Inventory;
 import com.eldritch.invoken.actor.items.Item;
 import com.eldritch.invoken.actor.type.Agent;
@@ -65,7 +66,8 @@ public class LootMenu {
 	
 	private void addItemButton(Inventory.ItemState itemState, final Player player, final Agent npc) {
 		final Item item = itemState.getItem();
-		final TextButton itemButton = new TextButton(getText(item, itemState.getCount()), skin);
+		TextButtonStyle buttonStyle = skin.get("choice", TextButtonStyle.class);
+		final TextButton itemButton = new TextButton(getText(item, itemState.getCount()), buttonStyle);
 		itemButton.addListener(new DefaultInputListener() {
 			@Override
 			public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
