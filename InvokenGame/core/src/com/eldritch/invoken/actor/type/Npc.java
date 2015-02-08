@@ -40,6 +40,7 @@ import com.eldritch.invoken.actor.Inventory.ItemState;
 import com.eldritch.invoken.actor.ai.AdaptiveRayWithWhiskersConfiguration;
 import com.eldritch.invoken.actor.ai.Behavior;
 import com.eldritch.invoken.actor.ai.Box2dRaycastCollisionDetector;
+import com.eldritch.invoken.actor.ai.FatigueMonitor;
 import com.eldritch.invoken.actor.ai.NpcState;
 import com.eldritch.invoken.actor.ai.NpcStateMachine;
 import com.eldritch.invoken.actor.ai.btree.Combat;
@@ -58,6 +59,8 @@ import com.eldritch.invoken.util.PrerequisiteVerifier;
 import com.google.common.base.Optional;
 
 public abstract class Npc extends SteeringAgent implements Telegraph {
+    public static final float STEP = 0.008f;  // behavior action frequency
+    
     public enum SteeringMode {
         Default, Wander, Pursue, Evade, Follow
     }
@@ -74,8 +77,9 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
 
     // AI controllers
     private final BehaviorTree<Npc> behaviorTree;
-    private float lastStep = 0;
+    private final FatigueMonitor fatigue;
     private Augmentation chosenAug;
+    private float lastStep = 0;
     
     private final NpcStateMachine stateMachine;
     private boolean canAttack = true;
@@ -115,6 +119,7 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
         
         // behavior tree
         behaviorTree = new BehaviorTree<Npc>(createBehavior(), this);
+        fatigue = new FatigueMonitor(this);
     }
     
     public void setChosen(Augmentation aug) {
@@ -123,6 +128,10 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
     
     public Augmentation getChosen() {
         return chosenAug;
+    }
+    
+    public FatigueMonitor getFatigue() {
+        return fatigue;
     }
     
     public static Task<Npc> createBehavior() {
@@ -223,7 +232,7 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
 //        stateMachine.update(delta);
         
         lastStep += delta;
-        if (lastStep > 0.008f) {
+        if (lastStep > STEP) {
             behaviorTree.step();
             lastStep = 0;
         }

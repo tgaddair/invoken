@@ -29,7 +29,7 @@ public class Patrol extends Selector<Npc> {
         }
         
         private boolean check(Npc npc) {
-            return !npc.inDialogue();
+            return !npc.inDialogue() && !npc.getFatigue().isTired();
         }
 
         @Override

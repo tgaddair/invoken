@@ -9,6 +9,7 @@ public class Idle extends LeafTask<Npc> {
     @Override
     public void run(Npc entity) {
         entity.setBehavior(SteeringMode.Default);
+        entity.getFatigue().addFatigue(-Npc.STEP);
         success();
     }
 

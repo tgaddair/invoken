@@ -276,6 +276,15 @@ public class AgentInfo {
     	return Math.min(getDefenseBonus(), 1.0f);
     }
     
+    /**
+     * Returns a real value [0, 1] representing the endurance of the agent.  The higher the
+     * endurance, the longer the agent can act without resting.  This applies primarily to the
+     * wander/idle cycle of NPCs, but could be expanded to include other concepts.
+     */
+    public float getEndurance() {
+        return Math.max(Math.min(getWarfare() / 100f - getResistanceBonus(), 1.0f), 0);
+    }
+    
     public float getResistance() {
     	return Math.min(getAutomata() / 100f + getResistanceBonus(), 1.0f);
     }
