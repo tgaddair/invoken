@@ -23,9 +23,16 @@ public class Attack extends Sequence<Npc> {
         useAugSequence.addChild(new ChooseAugmentation());
         useAugSequence.addChild(new UseAugmentation());
         
+        // hide if we have line of sight to our last seen, otherwise we idle in defensive posture
+        Sequence<Npc> hideSequence = new Sequence<Npc>();
+        hideSequence.addChild(new HasCover());
+        hideSequence.addChild(new SeekCover());
+        
         Selector<Npc> selector = new Selector<Npc>();
         selector.addChild(useAugSequence);
-        selector.addChild(new SeekCover());
+        selector.addChild(hideSequence);
+        selector.addChild(new Idle());
+        
         addChild(selector);
     }
 
@@ -145,6 +152,26 @@ public class Attack extends Sequence<Npc> {
             npc.getInfo().getAugmentations().prepare(chosen);
             npc.getInfo().getAugmentations().use(chosen);
             return true;
+        }
+
+        @Override
+        protected Task<Npc> copyTo(Task<Npc> task) {
+            return task;
+        }
+    }
+    
+    private static class HasCover extends LeafTask<Npc> {
+        @Override
+        public void run(Npc entity) {
+            if (check(entity)) {
+                success();
+            } else {
+                fail();
+            }
+        }
+        
+        private boolean check(Npc npc) {
+            return !npc.hasLineOfSight(npc.getLastSeen().getPosition());
         }
 
         @Override

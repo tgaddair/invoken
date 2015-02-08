@@ -464,10 +464,15 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
         // arrive.setEnabled(false);
 
         // order in descending priority
+        SteeringBehavior<Vector2> idleSteering = new PrioritySteering<Vector2>(this)
+                .setLimiter(NullLimiter.NEUTRAL_LIMITER) //
+                .add(obstacleAvoidance);
+        behaviors.put(SteeringMode.Default, idleSteering);
+        
         SteeringBehavior<Vector2> wanderSteering = new PrioritySteering<Vector2>(this)
-                .setLimiter(NullLimiter.NEUTRAL_LIMITER).add(obstacleAvoidance).add(hide) //
+                .setLimiter(NullLimiter.NEUTRAL_LIMITER) //
+                .add(obstacleAvoidance) //
                 .add(wander);
-        behaviors.put(SteeringMode.Default, wanderSteering);
         behaviors.put(SteeringMode.Wander, wanderSteering);
         
         SteeringBehavior<Vector2> pursueSteering = new PrioritySteering<Vector2>(this)
