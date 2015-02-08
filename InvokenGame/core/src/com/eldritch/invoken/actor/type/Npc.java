@@ -9,7 +9,6 @@ import java.util.Set;
 import com.badlogic.gdx.ai.btree.BehaviorTree;
 import com.badlogic.gdx.ai.btree.Task;
 import com.badlogic.gdx.ai.btree.branch.Selector;
-import com.badlogic.gdx.ai.fsm.State;
 import com.badlogic.gdx.ai.msg.Telegram;
 import com.badlogic.gdx.ai.msg.Telegraph;
 import com.badlogic.gdx.ai.steer.Proximity;
@@ -362,14 +361,16 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
         @Override
         public int findNeighbors(ProximityCallback<Vector2> callback) {
             int count = 0;
-            for (CoverPoint coverPoint : getLocation().getActiveCover()) {
-                Vector2 position = coverPoint.getPosition();
-                if (hasLineOfSight(position)
-                        && !getLocation().hasLineOfSight(getHide().getTarget().getPosition(),
-                                position)) {
-                    // we can see the cover, but our enemy can't, so it's a good hiding place
-                    callback.reportNeighbor(coverPoint);
-                    count++;
+            if (getHide().getTarget() != null) {
+                for (CoverPoint coverPoint : getLocation().getActiveCover()) {
+                    Vector2 position = coverPoint.getPosition();
+                    if (hasLineOfSight(position)
+                            && !getLocation().hasLineOfSight(getHide().getTarget().getPosition(),
+                                    position)) {
+                        // we can see the cover, but our enemy can't, so it's a good hiding place
+                        callback.reportNeighbor(coverPoint);
+                        count++;
+                    }
                 }
             }
             return count;

@@ -7,7 +7,7 @@ import com.eldritch.invoken.actor.type.Npc.SteeringMode;
 public class Pursue extends AbstractCombatTask {
     @Override
     public void run(Npc entity) {
-        entity.getSeek().setTarget(entity.getLastSeen());
+        entity.getPursue().setTarget(entity.getLastSeen());
         entity.setBehavior(SteeringMode.Pursue);
         
 //        if (entity.getPosition().dst2(lastSeen) < 1)

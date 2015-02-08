@@ -42,6 +42,7 @@ public class Attack extends Sequence<Npc> {
             fillTargets(entity);
             Agent target = selectBestTarget(entity);
             if (target != null) {
+                entity.setTarget(target);
                 success();
             } else {
                 fail();
@@ -91,6 +92,11 @@ public class Attack extends Sequence<Npc> {
         
         private boolean canUse(Npc npc) {
             Agent target = npc.getTarget();
+            if (target == null) {
+                // nothing to use on
+                return false;
+            }
+            
             Location location = npc.getLocation();
             if (!npc.canTarget(target, location)) {
                 // can't attack invalid targets
