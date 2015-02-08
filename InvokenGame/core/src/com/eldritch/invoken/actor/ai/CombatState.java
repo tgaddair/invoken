@@ -217,9 +217,10 @@ public enum CombatState implements State<Npc> {
         
         @Override
         public void enter(Npc entity) {
-            entity.getHide().setTarget(entity.getLastSeen());
+//            entity.getHide().setTarget(entity.getLastSeen());
+            entity.getHide().setTarget(entity.getLocation().getPlayer());
             entity.getHide().setEnabled(true);
-            entity.getEvade().setTarget(entity.getLastSeen());
+            entity.getEvade().setTarget(entity.getLocation().getPlayer());
             entity.getEvade().setEnabled(true);
         }
 
@@ -232,12 +233,13 @@ public enum CombatState implements State<Npc> {
             // update our target
             entity.setTarget(target);
             if (target != null && target.isAlive()) {
-                entity.getHide().setTarget(target);
-                entity.getEvade().setTarget(target);
+//                entity.getHide().setTarget(target);
+//                entity.getEvade().setTarget(target);
             } else {
-                entity.getHide().setTarget(entity.getLastSeen());
-                entity.getEvade().setTarget(entity.getLastSeen());
+//                entity.getHide().setTarget(entity.getLastSeen());
+//                entity.getEvade().setTarget(entity.getLastSeen());
             }
+            entity.getEvade().setEnabled(entity.hasLineOfSight(entity.getLocation().getPlayer()));
         }
         
         @Override

@@ -32,6 +32,7 @@ import com.badlogic.gdx.physics.box2d.EdgeShape;
 import com.badlogic.gdx.physics.box2d.Filter;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.badlogic.gdx.physics.box2d.RayCastCallback;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
@@ -70,6 +71,7 @@ public class Location {
         }
     };
 
+    private final LineOfSightHandler losHandler = new LineOfSightHandler();
     private final Color actionsColor = new Color(1, 0, 0, 1);
 
     private Player player;
@@ -524,9 +526,6 @@ public class Location {
                 case Visible:
                     debugEntityRenderer.renderVisible(target, activeEntities, camera);
                     break;
-                case Cover:
-                    debugEntityRenderer.renderCover(target, activeCover, camera);
-                    break;
                 case None:
             }
         }
@@ -581,7 +580,7 @@ public class Location {
         }
         if (Settings.DEBUG_COVER) {
             // draw cover
-            debugEntityRenderer.renderCover(activeCover, camera);
+            debugEntityRenderer.renderCover(player.getTarget(), activeCover, camera);
         }
     }
 
@@ -839,4 +838,54 @@ public class Location {
         assetManager.finishLoading();
         return assetManager.get(mapAsset);
     }
+    
+    
+    public boolean hasLineOfSight(Vector2 origin, Vector2 target) {
+        losHandler.reset();
+        return rayCast(origin, target);
+    }
+    
+    private boolean rayCast(Vector2 origin, Vector2 target) {
+        if (origin.equals(target)) {
+            // if we don't do this check explicitly, we can get the following error:
+            // Expression: r.LengthSquared() > 0.0f
+            return true;
+        }
+        world.rayCast(losHandler, origin, target);
+        return losHandler.hasLineOfSight();
+    }
+    
+    private class LineOfSightHandler implements RayCastCallback {
+        private boolean lineOfSight = true;
+        
+        public boolean hasLineOfSight() {
+            return lineOfSight;
+        }
+        
+        public void reset() {
+            lineOfSight = true;
+        }
+        
+        @Override
+        public float reportRayFixture(Fixture fixture, Vector2 point, Vector2 normal, float fraction) {
+            if (isObstruction(fixture)) {
+                lineOfSight = false;
+                return fraction;
+            }
+            
+            // ignore this fixture and continue
+            return -1;
+        }
+        
+        private boolean isObstruction(Fixture fixture) {
+            // check that the fixture belongs to another agent
+            if (fixture.getUserData() != null && fixture.getUserData() instanceof Agent) {
+                // cannot be obstructed by an agent
+                return false;
+            }
+            
+            // whatever it is, it's in the way
+            return true;
+        }
+    };
 }
