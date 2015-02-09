@@ -18,7 +18,6 @@ import java.util.Set;
 
 import javax.imageio.ImageIO;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -51,6 +50,7 @@ import com.eldritch.invoken.proto.Locations.Biome;
 import com.eldritch.invoken.proto.Locations.Encounter;
 import com.eldritch.invoken.proto.Locations.Encounter.ActorParams.ActorScenario;
 import com.eldritch.invoken.proto.Locations.Room;
+import com.eldritch.invoken.screens.GameScreen;
 import com.eldritch.invoken.util.Settings;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -96,8 +96,8 @@ public class LocationGenerator {
 
     public LocationGenerator(Biome biomeType) {
         this.biome = biomeType.name().toLowerCase();
-        atlas = new TextureAtlas(Gdx.files.internal("image-atlases/pages.atlas"));
-        normalAtlas = new TextureAtlas(Gdx.files.internal("image-atlases/normal/pages.atlas"));
+        atlas = GameScreen.ATLAS;
+        normalAtlas = GameScreen.NORMAL_ATLAS;
 
         ground = getTile(FLOOR);
 

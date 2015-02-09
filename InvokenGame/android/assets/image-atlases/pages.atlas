@@ -486,6 +486,13 @@ markers/collision
   orig: 32, 32
   offset: 0, 0
   index: -1
+activators/container-small
+  rotate: false
+  xy: 288, 320
+  size: 96, 32
+  orig: 96, 32
+  offset: 0, 0
+  index: -1
 
 industry-walls.png
 format: RGBA8888
@@ -794,5 +801,17 @@ industry/terminal-small
   xy: 256, 384
   size: 32, 32
   orig: 32, 32
+  offset: 0, 0
+  index: -1
+
+lab-tiles.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+industry/terminal-bright
+  rotate: false
+  xy: 192, 448
+  size: 64, 64
+  orig: 64, 64
   offset: 0, 0
   index: -1

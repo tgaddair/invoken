@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
@@ -36,6 +37,10 @@ import com.eldritch.invoken.util.Settings;
 
 public class GameScreen extends AbstractScreen implements InputProcessor {
     public static final AssetManager textureManager = new AssetManager();
+    public final static TextureAtlas ATLAS = 
+            new TextureAtlas(Gdx.files.internal("image-atlases/pages.atlas"));
+    public final static TextureAtlas NORMAL_ATLAS =
+            new TextureAtlas(Gdx.files.internal("image-atlases/normal/pages.atlas"));
     
     public static boolean SCREEN_GRAB = false;
     
@@ -436,15 +441,18 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 	}
 	
 	public static TextureRegion[] getMergedRegion(String assetName, int w, int h) {
-		TextureRegion[][] regions = getRegions(assetName, w, h);
-		TextureRegion[] merged = new TextureRegion[regions.length * regions[0].length];
-		for (int i = 0; i < regions.length; i++) {
-			for (int j = 0; j < regions[i].length; j++) {
-				merged[i * regions[i].length + j] = regions[i][j];
-			}
-		}
-		return merged;
+		return getMergedRegion(getRegions(assetName, w, h));
 	}
+	
+	public static TextureRegion[] getMergedRegion(TextureRegion[][] regions) {
+	    TextureRegion[] merged = new TextureRegion[regions.length * regions[0].length];
+        for (int i = 0; i < regions.length; i++) {
+            for (int j = 0; j < regions[i].length; j++) {
+                merged[i * regions[i].length + j] = regions[i][j];
+            }
+        }
+        return merged;
+    }
 	
 	public static Texture getTexture(String assetName) {
 	    if (!textureManager.isLoaded(assetName, Texture.class)) {

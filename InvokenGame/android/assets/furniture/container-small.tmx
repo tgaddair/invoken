@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" width="2" height="2" tilewidth="32" tileheight="32">
+<map version="1.0" orientation="orthogonal" width="1" height="2" tilewidth="32" tileheight="32">
  <tileset firstgid="1" name="furniture-modern" tilewidth="32" tileheight="32">
   <image source="../maps/graphics/tiles/furniture-modern.png" width="512" height="512"/>
  </tileset>
@@ -25,19 +25,19 @@
  <tileset firstgid="267" name="lab-tiles" tilewidth="32" tileheight="32">
   <image source="../image-atlases/lab-tiles.png" width="512" height="512"/>
  </tileset>
- <layer name="objects" width="2" height="2">
+ <layer name="objects" width="1" height="2">
   <data encoding="base64" compression="zlib">
-   eJz7yMjA8AmIGZkYGJiAGAAatgHt
+   eJxjYIAAAAAIAAE=
   </data>
  </layer>
- <layer name="constraints" width="2" height="2" visible="0">
+ <layer name="constraints" width="1" height="2">
   <data encoding="base64" compression="zlib">
-   eJxjYWRgYEHCAADUABU=
+   eJxjYWRgYAZiAAA+AAo=
   </data>
  </layer>
- <layer name="collision" width="2" height="2" visible="0">
+ <layer name="collision" width="1" height="2">
   <data encoding="base64" compression="zlib">
-   eJxjYEAFAAAQAAE=
+   eJxjYGBgYGNkYAAAACMACA==
   </data>
  </layer>
 </map>
