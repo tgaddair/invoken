@@ -30,6 +30,7 @@ com.badlogic.gdx.scenes.scene2d.ui.TextButton$TextButtonStyle: {
 	default: { down: default-button-down, up: default-button-up, font: default-font, fontColor: maroon, overFontColor: white },
 	toggle: { down: default-button-down, up: default-button-up, checked: default-button-down, font: default-font, fontColor: maroon, downFontColor: red, overFontColor: white },
 	choice: { font: default-font, fontColor: wheat, overFontColor: white },
+	selected: { font: default-font, fontColor: green, overFontColor: white },
 },
 com.badlogic.gdx.scenes.scene2d.ui.SelectBox$SelectBoxStyle: {
 	default: {
@@ -53,7 +54,8 @@ com.badlogic.gdx.scenes.scene2d.ui.Slider$SliderStyle: {
 },
 com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle: {
 	default: { background: default-panel-inset, font: default-font, fontColor: maroon },
-	response: { font: default-font, fontColor: grey }
+	response: { font: default-font, fontColor: grey },
+	toast: { font: default-font, fontColor: white },
 },
 com.badlogic.gdx.scenes.scene2d.ui.TextField$TextFieldStyle: {
 	default: { selection: selection, background: textfield, font: default-font, fontColor: white, cursor: cursor }

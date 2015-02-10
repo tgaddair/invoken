@@ -75,6 +75,7 @@ public class Location {
     private final Color actionsColor = new Color(1, 0, 0, 1);
 
     private Player player;
+    private final com.eldritch.invoken.proto.Locations.Location data;
     private final LocationMap map;
     private final List<Agent> entities = new ArrayList<Agent>();
     private final List<Agent> activeEntities = new ArrayList<Agent>();
@@ -111,6 +112,7 @@ public class Location {
     }
 
     public Location(com.eldritch.invoken.proto.Locations.Location data, LocationMap map) {
+        this.data = data;
         this.map = map;
         owningFaction = Optional.fromNullable(Faction.of(data.getFactionId()));
         lightManager = new LightManager(data);
@@ -142,6 +144,10 @@ public class Location {
 
     public Player getPlayer() {
         return player;
+    }
+    
+    public String getName() {
+        return data.getName();
     }
 
     public Player createPlayer(Profession profession) {
@@ -429,6 +435,11 @@ public class Location {
     public void setFocusPoint(float x, float y) {
         player.setFocusPoint(x, y);
     }
+    
+    public float scale(float v, float zoom) {
+        float scale = Settings.PX * zoom * 1.25f;
+        return Math.round(v * scale) / scale;
+    }
 
     public void render(float delta, OrthographicCamera camera, TextureRegion selector,
             boolean paused) {
@@ -437,9 +448,12 @@ public class Location {
 
         // let the camera follow the player
         Vector2 position = player.getCamera().getPosition();
-        float scale = Settings.PX * camera.zoom * 1.25f;
-        camera.position.x = Math.round(position.x * scale) / scale;
-        camera.position.y = Math.round(position.y * scale) / scale;
+        float x = scale(position.x, camera.zoom);
+        float y = scale(position.y, camera.zoom);
+        
+        float lerp = 0.1f;
+        camera.position.x += (x - camera.position.x) * lerp;
+        camera.position.y += (y - camera.position.y) * lerp;
         camera.update();
 
         // update the player (process input, collision detection, position update)

@@ -489,8 +489,8 @@ markers/collision
 activators/container-small
   rotate: false
   xy: 288, 320
-  size: 96, 32
-  orig: 96, 32
+  size: 64, 32
+  orig: 64, 32
   offset: 0, 0
   index: -1
 

@@ -33,6 +33,8 @@ import com.eldritch.invoken.ui.InventoryMenu;
 import com.eldritch.invoken.ui.LootMenu;
 import com.eldritch.invoken.ui.StatusBar.EnergyCalculator;
 import com.eldritch.invoken.ui.StatusBar.HealthCalculator;
+import com.eldritch.invoken.ui.Toaster;
+import com.eldritch.invoken.ui.Toaster.Message;
 import com.eldritch.invoken.util.Settings;
 
 public class GameScreen extends AbstractScreen implements InputProcessor {
@@ -42,6 +44,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
     public final static TextureAtlas NORMAL_ATLAS =
             new TextureAtlas(Gdx.files.internal("image-atlases/normal/pages.atlas"));
     
+    private static Toaster toaster;
     public static boolean SCREEN_GRAB = false;
     
 	private final DialogueMenu dialogue;
@@ -109,6 +112,11 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 		location = generator.generate(data);
 		player = location.createPlayer(profession);
 		
+		// init camera position
+		Vector2 position = player.getCamera().getPosition();
+		camera.position.x = location.scale(position.x, camera.zoom);
+		camera.position.y = location.scale(position.y, camera.zoom);
+		
 		// create player menus
 		actionBar = new ActionBar(player);
 		energyBar = new StatusBar(player, new EnergyCalculator(), getSkin());
@@ -130,6 +138,11 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         stage.addActor(dialogue.getTable());
 		stage.addActor(inventoryMenu.getTable());
         stage.addActor(loot.getTable());
+        
+        // announce the new location
+        toaster = new Toaster(getSkin());
+        stage.addActor(toaster.getContainer());
+        toast(location.getName());
 
 		Gdx.input.setInputProcessor(this);
 		Gdx.app.log(InvokenGame.LOG, "start");
@@ -153,6 +166,9 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         selectedHealth.update(player, player.getTarget(), camera);
 		dialogue.update(player, camera);
 		loot.update(player);
+	      
+        // draw our toast
+        toaster.update(delta);
 		
 		// update mouse position
 		Vector3 world = camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
@@ -187,6 +203,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 	    statusTable.setSize(width, height / 2);
         loot.resize(width, height);
         location.resize(width, height);
+        toaster.resize(width, height);
     }
 	
 	private void drawFps() {
@@ -433,7 +450,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 	}
 	
 	public static void toast(String text) {
-	    // TODO
+	    toaster.add(new Message(text));
 	}
 	
 	public static TextureRegion[][] getRegions(String assetName, int w, int h) {
