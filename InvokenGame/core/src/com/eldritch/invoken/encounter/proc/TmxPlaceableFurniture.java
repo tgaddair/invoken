@@ -16,6 +16,7 @@ import com.eldritch.invoken.encounter.NaturalVector2;
 import com.eldritch.invoken.encounter.layer.LocationLayer;
 import com.eldritch.invoken.encounter.layer.LocationMap;
 import com.eldritch.invoken.encounter.proc.FurnitureLoader.PlaceableFurniture;
+import com.google.common.collect.Iterables;
 
 public class TmxPlaceableFurniture implements PlaceableFurniture {
     private final TiledMap tiles;
@@ -165,7 +166,8 @@ public class TmxPlaceableFurniture implements PlaceableFurniture {
         // try to find as many of the region points in 'steps' moves
         // in the end, all points must be found, or else the area is unreachable
         Set<NaturalVector2> visited = new HashSet<NaturalVector2>();
-        for (NaturalVector2 point : region) {
+        NaturalVector2 point = Iterables.getFirst(region, null);
+        if (point != null) {
             explore(point, x, y, 0, steps, base, collision, collision2, visited);
         }
 
