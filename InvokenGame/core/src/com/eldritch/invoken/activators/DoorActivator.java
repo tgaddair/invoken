@@ -78,6 +78,8 @@ public class DoorActivator extends ClickActivator {
                 // unlock
                 lock.setLocked(false);
                 location.alertTo(agent);
+            } else {
+                GameScreen.toast("Requires: " + lock.getKey().getName());
             }
             return;
         }

@@ -5,6 +5,7 @@ import com.eldritch.invoken.actor.aug.Crack;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.encounter.Location;
 import com.eldritch.invoken.encounter.NaturalVector2;
+import com.eldritch.invoken.screens.GameScreen;
 
 public class CameraHub extends ClickActivator {
 	public CameraHub(NaturalVector2 position) {
@@ -15,6 +16,8 @@ public class CameraHub extends ClickActivator {
 	public void activate(Agent agent, Location location) {
 		if (agent.isToggled(Crack.class) && location.hasSecurityCamera()) {
 			agent.setCamera(location.getFirstSecurityCamera());
+		} else {
+		    GameScreen.toast("Requires: Crack Augmentation");
 		}
 	}
 
