@@ -90,9 +90,9 @@ public class InventoryMenu {
     private void refreshButton(TextButton button, Item item) {
         Inventory inventory = player.getInfo().getInventory();
         if (item.isEquipped(inventory)) {
-            button.setColor(EQUIPPED_COLOR);
+            button.setStyle(skin.get("selected", TextButtonStyle.class));
         } else {
-            button.setColor(Color.WHITE);
+            button.setStyle(skin.get("choice", TextButtonStyle.class));
         }
     }
 

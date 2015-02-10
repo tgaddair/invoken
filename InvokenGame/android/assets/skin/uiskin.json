@@ -8,7 +8,10 @@ com.badlogic.gdx.graphics.Color: {
 	maroon: { a: 1, b: 0, g: 0, r: 0.35 },
 	buff: { a: 1, b: 0.51, g: 0.86, r: 0.94 },
 	wheat: { a: 1, b: 0.70, g: 0.87, r: 0.96 },
-	black: { a: 1, b: 0, g: 0, r: 0 }
+	royal-blue: { a: 1, b: 1, g: 0.73, r: 0.28 },
+	aquamarine: { a: 1, b: 0.57, g: 0.86, r: 0.44 },
+	mint: { a: 1, b: 0.59, g: 0.98, r: 0.59 },
+	black: { a: 1, b: 0, g: 0, r: 0 },
 },
 com.badlogic.gdx.scenes.scene2d.ui.ProgressBar$ProgressBarStyle: {
 	default-vertical: {
@@ -30,7 +33,7 @@ com.badlogic.gdx.scenes.scene2d.ui.TextButton$TextButtonStyle: {
 	default: { down: default-button-down, up: default-button-up, font: default-font, fontColor: maroon, overFontColor: white },
 	toggle: { down: default-button-down, up: default-button-up, checked: default-button-down, font: default-font, fontColor: maroon, downFontColor: red, overFontColor: white },
 	choice: { font: default-font, fontColor: wheat, overFontColor: white },
-	selected: { font: default-font, fontColor: green, overFontColor: white },
+	selected: { font: default-font, fontColor: aquamarine, overFontColor: mint },
 },
 com.badlogic.gdx.scenes.scene2d.ui.SelectBox$SelectBoxStyle: {
 	default: {
