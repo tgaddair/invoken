@@ -164,44 +164,18 @@ public class Attack extends Sequence<Npc> {
         }
     }
     
-    private static class DesiresCover extends LeafTask<Npc> {
+    private static class DesiresCover extends BooleanTask {
         @Override
-        public void run(Npc entity) {
-            if (check(entity)) {
-                success();
-            } else {
-                fail();
-            }
-        }
-        
-        private boolean check(Npc npc) {
+        protected boolean check(Npc npc) {
             return npc.getInventory().hasRangedWeapon() && npc.hasTarget();
-        }
-
-        @Override
-        protected Task<Npc> copyTo(Task<Npc> task) {
-            return task;
         }
     }
     
-    private static class HasCover extends LeafTask<Npc> {
+    private static class HasCover extends BooleanTask {
         @Override
-        public void run(Npc entity) {
-            if (check(entity)) {
-                success();
-            } else {
-                fail();
-            }
-        }
-        
-        private boolean check(Npc npc) {
+        protected boolean check(Npc npc) {
             return !npc.getLocation().hasLineOfSight(
                     npc.getPosition(), npc.getLastSeen().getPosition());
-        }
-
-        @Override
-        protected Task<Npc> copyTo(Task<Npc> task) {
-            return task;
         }
     }
 }

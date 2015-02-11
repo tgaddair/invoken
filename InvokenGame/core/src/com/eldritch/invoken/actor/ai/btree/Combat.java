@@ -37,59 +37,24 @@ public class Combat extends Sequence<Npc> {
         return task;
     }
 
-    private static class HasEnemies extends LeafTask<Npc> {
+    private static class HasEnemies extends BooleanTask {
         @Override
-        public void run(Npc entity) {
-            if (entity.isCombatReady()) {
-                success();
-            } else {
-                fail();
-            }
-        }
-
-        @Override
-        protected Task<Npc> copyTo(Task<Npc> task) {
-            return task;
+        protected boolean check(Npc entity) {
+            return entity.isCombatReady();
         }
     }
     
-    private static class CanPursue extends LeafTask<Npc> {
+    private static class CanPursue extends BooleanTask {
         @Override
-        public void run(Npc entity) {
-            if (check(entity)) {
-                success();
-            } else {
-                fail();
-            }
-        }
-        
-        private boolean check(Npc npc) {
+        protected boolean check(Npc npc) {
             return npc.getPosition().dst2(npc.getLastSeen().getPosition()) > 1;
         }
-
-        @Override
-        protected Task<Npc> copyTo(Task<Npc> task) {
-            return task;
-        }
     }
     
-    private static class HasSufficientEnergy extends LeafTask<Npc> {
+    private static class HasSufficientEnergy extends BooleanTask {
         @Override
-        public void run(Npc entity) {
-            if (check(entity)) {
-                success();
-            } else {
-                fail();
-            }
-        }
-        
-        private boolean check(Npc npc) {
+        protected boolean check(Npc npc) {
             return npc.getInfo().getEnergyPercent() > 0.25f;
-        }
-
-        @Override
-        protected Task<Npc> copyTo(Task<Npc> task) {
-            return task;
         }
     }
 }

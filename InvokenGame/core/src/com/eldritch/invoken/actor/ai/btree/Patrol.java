@@ -1,7 +1,5 @@
 package com.eldritch.invoken.actor.ai.btree;
 
-import com.badlogic.gdx.ai.btree.LeafTask;
-import com.badlogic.gdx.ai.btree.Task;
 import com.badlogic.gdx.ai.btree.branch.Selector;
 import com.badlogic.gdx.ai.btree.branch.Sequence;
 import com.eldritch.invoken.actor.type.Npc;
@@ -18,23 +16,10 @@ public class Patrol extends Selector<Npc> {
         addChild(new Idle());
     }
     
-    private static class CanWander extends LeafTask<Npc> {
+    private static class CanWander extends BooleanTask {
         @Override
-        public void run(Npc entity) {
-            if (check(entity)) {
-                success();
-            } else {
-                fail();
-            }
-        }
-        
-        private boolean check(Npc npc) {
+        protected boolean check(Npc npc) {
             return !npc.inDialogue() && !npc.getFatigue().isTired();
-        }
-
-        @Override
-        protected Task<Npc> copyTo(Task<Npc> task) {
-            return task;
         }
     }
 }
