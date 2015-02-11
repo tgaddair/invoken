@@ -33,7 +33,6 @@ public class Attack extends Sequence<Npc> {
         Selector<Npc> selector = new Selector<Npc>();
         selector.addChild(useAugSequence);
         selector.addChild(hideSequence);
-        selector.addChild(new Idle());
         
         addChild(selector);
     }
