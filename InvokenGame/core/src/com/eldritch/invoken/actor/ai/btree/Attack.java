@@ -175,7 +175,8 @@ public class Attack extends Sequence<Npc> {
         @Override
         protected boolean check(Npc npc) {
             return !npc.getLocation().hasLineOfSight(
-                    npc.getPosition(), npc.getLastSeen().getPosition());
+                    npc.getPosition(), npc.getLastSeen().getPosition()) && npc.getCover() != null 
+                    && npc.getCover().getPosition().dst2(npc.getPosition()) < 1;
         }
     }
 }

@@ -83,6 +83,7 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
     private Augmentation chosenAug;
     private float lastStep = 0;
     private float alert = 0;
+    private CoverPoint cover = null;
     
     private final NpcStateMachine stateMachine;
     private boolean canAttack = true;
@@ -123,6 +124,10 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
         // behavior tree
         behaviorTree = new BehaviorTree<Npc>(createBehavior(), this);
         fatigue = new FatigueMonitor(this);
+    }
+    
+    public CoverPoint getCover() {
+        return cover;
     }
     
     public void setChosen(Augmentation aug) {
@@ -384,17 +389,39 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
 
         @Override
         public int findNeighbors(ProximityCallback<Vector2> callback) {
+            cover = null;
             int count = 0;
-            if (getHide().getTarget() != null) {
+            if (getHide().getTarget() != null && !getLocation().getActiveCover().isEmpty()) {
+                CoverPoint bestCover = null;
+                boolean bestLos = false;
+                float bestDistance = Float.POSITIVE_INFINITY;
+                
                 for (CoverPoint coverPoint : getLocation().getActiveCover()) {
                     Vector2 position = coverPoint.getPosition();
-                    if (hasLineOfSight(position)
-                            && !getLocation().hasLineOfSight(getHide().getTarget().getPosition(),
-                                    position)) {
-                        // we can see the cover, but our enemy can't, so it's a good hiding place
-                        callback.reportNeighbor(coverPoint);
-                        count++;
+                    if (!getLocation().hasLineOfSight(getHide().getTarget().getPosition(), position)) {
+                        boolean los = hasLineOfSight(position);
+                        float distance = position.dst2(getPosition());
+                        if (los && !bestLos) {
+                            // any cover point we can see is immediately better
+                            bestLos = true;
+                            bestDistance = distance;
+                            bestCover = coverPoint;
+                        } else if (los == bestLos) {
+                            // use distance comparison
+                            if (distance < bestDistance) {
+                                bestDistance = distance;
+                                bestCover = coverPoint;
+                            }
+                        }
                     }
+                }
+                
+                
+                // only report the best cover
+                if (bestCover != null) {
+                    cover = bestCover;
+                    callback.reportNeighbor(bestCover);
+                    count++;
                 }
             }
             return count;
