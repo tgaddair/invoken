@@ -734,7 +734,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         enemies.clear();
         actions.clear();
         action = null;
-        target = null;
+        setTarget(null);
         toggles.clear();
         setRgb(1, 1, 1);
         setCollisionMask(Settings.BIT_PHYSICAL);
@@ -962,8 +962,8 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         }
 
         // remove target if we can no longer target them
-        if (hasTarget() && !canTarget(location)) {
-            target = null;
+        if (hasTarget() && !isNear(target)) {
+            setTarget(null);
         }
 
         // update enemies

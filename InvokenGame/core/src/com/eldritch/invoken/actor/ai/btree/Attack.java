@@ -52,6 +52,9 @@ public class Attack extends Sequence<Npc> {
             Agent target = selectBestTarget(entity);
             if (target != null) {
                 entity.setTarget(target);
+            }
+            
+            if (entity.hasTarget()) {
                 success();
             } else {
                 fail();
