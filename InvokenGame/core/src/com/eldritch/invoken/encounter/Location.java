@@ -596,6 +596,8 @@ public class Location {
             // draw cover
             debugEntityRenderer.renderCover(player.getTarget(), activeCover, camera);
         }
+        // draw last seen
+        debugEntityRenderer.renderLastSeen(player.getTarget(), camera);
     }
 
     private void drawCentered(TextureRegion region, Vector2 position, Color color) {

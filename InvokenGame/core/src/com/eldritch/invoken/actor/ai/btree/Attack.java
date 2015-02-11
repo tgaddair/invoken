@@ -7,6 +7,7 @@ import com.badlogic.gdx.ai.btree.LeafTask;
 import com.badlogic.gdx.ai.btree.Task;
 import com.badlogic.gdx.ai.btree.branch.Selector;
 import com.badlogic.gdx.ai.btree.branch.Sequence;
+import com.badlogic.gdx.ai.btree.decorator.Invert;
 import com.eldritch.invoken.actor.aug.Augmentation;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Npc;
@@ -26,7 +27,7 @@ public class Attack extends Sequence<Npc> {
         // hide if we have line of sight to our last seen, otherwise we idle in defensive posture
         Sequence<Npc> hideSequence = new Sequence<Npc>();
         hideSequence.addChild(new DesiresCover());
-        hideSequence.addChild(new HasCover());
+        hideSequence.addChild(new Invert<Npc>(new HasCover()));
         hideSequence.addChild(new SeekCover());
         
         Selector<Npc> selector = new Selector<Npc>();
@@ -172,7 +173,7 @@ public class Attack extends Sequence<Npc> {
         }
         
         private boolean check(Npc npc) {
-            return npc.getInventory().hasRangedWeapon() && npc.getTarget() != null;
+            return npc.getInventory().hasRangedWeapon() && npc.hasTarget();
         }
 
         @Override
@@ -192,7 +193,8 @@ public class Attack extends Sequence<Npc> {
         }
         
         private boolean check(Npc npc) {
-            return !npc.hasLineOfSight(npc.getLastSeen().getPosition());
+            return !npc.getLocation().hasLineOfSight(
+                    npc.getPosition(), npc.getLastSeen().getPosition());
         }
 
         @Override

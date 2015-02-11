@@ -13,6 +13,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.CoverPoint;
+import com.eldritch.invoken.actor.type.Npc;
 import com.eldritch.invoken.gfx.Light;
 
 public class DebugEntityRenderer {
@@ -129,6 +130,20 @@ public class DebugEntityRenderer {
             }
             sr.circle(position.x, position.y, 0.5f);
         }
+        sr.end();
+    }
+    
+    public void renderLastSeen(Agent target, OrthographicCamera camera) {
+        if (target == null || !(target instanceof Npc)) {
+            return;
+        }
+        Npc npc = (Npc) target;
+        
+        sr.setProjectionMatrix(camera.combined);
+        sr.begin(ShapeType.Line);
+        sr.setColor(Color.BLUE);
+        Vector2 position = npc.getLastSeen().getPosition();
+        sr.circle(position.x, position.y, 0.5f);
         sr.end();
     }
 }
