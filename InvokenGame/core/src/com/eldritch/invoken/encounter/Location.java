@@ -77,8 +77,12 @@ public class Location {
     private Player player;
     private final com.eldritch.invoken.proto.Locations.Location data;
     private final LocationMap map;
+    
     private final List<Agent> entities = new ArrayList<Agent>();
+    private final List<Agent> inactiveEntities = new ArrayList<Agent>();
     private final List<Agent> activeEntities = new ArrayList<Agent>();
+    private int inactiveIndex = 0;
+    
     private final List<Drawable> drawables = new ArrayList<Drawable>();
     private final List<TemporaryEntity> tempEntities = new ArrayList<TemporaryEntity>();
     private final List<Activator> activators = new ArrayList<Activator>();
@@ -472,10 +476,20 @@ public class Location {
             normalMapShader.setLightGeometry(lightManager.getLights(), getWorldBounds());
         }
 
+        // updates
         if (!paused) {
+            // update one inactive entity
+            if (!inactiveEntities.isEmpty()) {
+                inactiveIndex = (inactiveIndex + 1) % inactiveEntities.size();
+                inactiveEntities.get(inactiveIndex).update(delta, this);
+            }
+            
+            // update all active entities
             for (Agent actor : activeEntities) {
                 actor.update(delta, this);
             }
+            
+            // update all temporary entities
             Iterator<TemporaryEntity> it = tempEntities.iterator();
             while (it.hasNext()) {
                 TemporaryEntity entity = it.next();
@@ -493,8 +507,6 @@ public class Location {
         lightManager.update(delta);
 
         // draw lights
-//        lightManager.render(renderer, paused);
-//        lightMasker.render(overlayRenderer);
         renderer.getSpriteBatch().setShader(lightManager.getDefaultShader());
         overlayRenderer.getSpriteBatch().setShader(lightManager.getDefaultShader());
         normalMapShader.render(lightManager, player, delta, camera, renderer, overlayRenderer);
@@ -642,6 +654,7 @@ public class Location {
     }
 
     private void resetActiveEntities() {
+        inactiveEntities.clear();
         activeEntities.clear();
         drawables.clear();
 
@@ -654,6 +667,9 @@ public class Location {
                 activeEntities.add(other);
             } else if (other == player) {
                 activeEntities.add(other);
+            } else {
+                // not active
+                inactiveEntities.add(other);
             }
         }
 
