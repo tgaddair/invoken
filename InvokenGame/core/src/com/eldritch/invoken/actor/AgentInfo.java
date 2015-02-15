@@ -321,6 +321,30 @@ public class AgentInfo {
 	public float getMaxTargetDistance() {
 		return 250 * getPerception();
 	}
+	
+	/**
+	 * Fragments required to ascend to the given level.
+	 */
+	public static int getFragmentRequirement(int level) {
+	    int fragments = 500;  // base line
+	    
+	    // add 15 for every level up to 10
+	    int counted = Math.min(level, 10);
+	    fragments += counted * 15;
+	    
+	    // next add a linear increase of 10 to the previous increase for every level after 10
+	    int remaining = level - 10;
+	    if (remaining > 0) {
+	        // 15 * N + 10 * N * (N + 1) / 2
+	        // 15 + 15 + ... + 10 + 20 + 30 + ...
+	        int a = 15 * remaining;
+	        int b = (10 * remaining * (remaining + 1)) / 2;
+	        fragments += a + b;
+	    }
+	    
+	    
+	    return fragments;
+	}
     
 	public static class SkillState {
         private int level;
