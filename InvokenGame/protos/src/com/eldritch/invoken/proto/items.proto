@@ -15,6 +15,7 @@ message Item {
 		OUTFIT = 3;
 		ACCESSORY = 4;
 		CREDENTIAL = 5;
+		FRAGMENT = 7;
 		OTHER = 6;
 	}
 

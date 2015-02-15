@@ -1,6 +1,5 @@
 package com.eldritch.invoken.actor.ai.btree;
 
-import com.badlogic.gdx.ai.btree.LeafTask;
 import com.badlogic.gdx.ai.btree.Task;
 import com.badlogic.gdx.ai.btree.branch.Selector;
 import com.badlogic.gdx.ai.btree.branch.Sequence;
@@ -19,6 +18,8 @@ public class Combat extends Sequence<Npc> {
         selector.addChild(new Attack());
 
         // if we cannot engage with an enemy, then we attempt to pursue our last seen enemy
+        // TODO: flips into pursue, then back out as soon as it leaves cover, we should fix this
+        // by perhaps letting pursue come first?
         Sequence<Npc> pursueSequence = new Sequence<Npc>();
         pursueSequence.addChild(new CanPursue());
         pursueSequence.addChild(new HasSufficientEnergy());

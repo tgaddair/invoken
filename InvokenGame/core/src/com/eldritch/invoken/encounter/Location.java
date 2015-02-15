@@ -409,7 +409,7 @@ public class Location {
             for (int y = 0; y < spawnLayer.getHeight(); y++) {
                 Cell cell = spawnLayer.getCell(x, y);
                 if (cell != null) {
-                    return new Vector2(x, y);
+                    return new Vector2(x + 0.5f, y + 0.5f);
                 }
             }
         }
