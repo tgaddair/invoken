@@ -108,7 +108,7 @@ public class Location {
     private float currentZoom = 0;
     private Rectangle viewBounds = new Rectangle();
 
-    DebugEntityRenderer debugEntityRenderer = new DebugEntityRenderer();
+    DebugEntityRenderer debugEntityRenderer = DebugEntityRenderer.getInstance();
     Box2DDebugRenderer debugRenderer = new Box2DDebugRenderer();
 
     public Location(com.eldritch.invoken.proto.Locations.Location data) {

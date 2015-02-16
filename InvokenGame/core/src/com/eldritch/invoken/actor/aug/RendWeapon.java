@@ -7,6 +7,7 @@ import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.effects.Bleed;
 import com.eldritch.invoken.encounter.Location;
+import com.eldritch.invoken.ui.DebugEntityRenderer;
 
 public class RendWeapon extends Augmentation {
     private static class Holder {
@@ -73,7 +74,7 @@ public class RendWeapon extends Augmentation {
             owner.setDirection(owner.getRelativeDirection(center));
             
         	for (Agent neighbor : owner.getNeighbors()) {
-        		if (neighbor.inRange(center, weapon.getRange() / 2)) {
+        		if (neighbor.inRange(center, weapon.getRange() / 5)) {
         			neighbor.addEffect(new Bleed(owner, neighbor, weapon.getDamage()));
         		}
         	}
@@ -88,6 +89,11 @@ public class RendWeapon extends Augmentation {
             if (weapon.isVisible()) {
             	weapon.render(owner, Activity.Combat, getStateTime(), renderer);
             }
+            
+            // debug: draw attack radius
+//            Vector2 center = getCenter(owner.getPosition(), target, weapon.getRange());
+//            DebugEntityRenderer.getInstance().renderCircle(center, weapon.getRange() / 5,
+//                    renderer.getSpriteBatch().getProjectionMatrix());
         }
         
         @Override

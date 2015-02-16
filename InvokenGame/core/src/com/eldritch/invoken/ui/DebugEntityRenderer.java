@@ -9,12 +9,12 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
+import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.CoverPoint;
 import com.eldritch.invoken.actor.type.Npc;
-import com.eldritch.invoken.gfx.Light;
 
 public class DebugEntityRenderer {
     private final BitmapFont debugFont = new BitmapFont();
@@ -138,12 +138,26 @@ public class DebugEntityRenderer {
             return;
         }
         Npc npc = (Npc) target;
-        
-        sr.setProjectionMatrix(camera.combined);
+        renderCircle(npc.getLastSeen().getPosition(), 0.5f, camera.combined);
+    }
+    
+    public void renderCircle(Vector2 position, float radius, Matrix4 projection) {
+        sr.setProjectionMatrix(projection);
         sr.begin(ShapeType.Line);
         sr.setColor(Color.BLUE);
-        Vector2 position = npc.getLastSeen().getPosition();
         sr.circle(position.x, position.y, 0.5f);
         sr.end();
+    }
+    
+    private DebugEntityRenderer() {
+        // singleton
+    }
+    
+    public static DebugEntityRenderer getInstance() {
+        return Holder.INSTANCE;
+    }
+    
+    private static class Holder {
+        private static final DebugEntityRenderer INSTANCE = new DebugEntityRenderer();
     }
 }
