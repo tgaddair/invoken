@@ -13,7 +13,6 @@ import java.util.TreeSet;
 
 import com.badlogic.gdx.math.Rectangle;
 import com.eldritch.invoken.InvokenGame;
-import com.eldritch.invoken.encounter.proc.BspGenerator.CellType;
 import com.eldritch.invoken.encounter.proc.RoomGenerator.RoomType;
 import com.eldritch.invoken.proto.Locations.Encounter;
 import com.eldritch.invoken.proto.Locations.Room;
@@ -49,15 +48,17 @@ public class EncounterGenerator extends BspGenerator {
                 repeatedEncounters.add(encounter);
             }
         }
-        EncounterSelector selector = new EncounterSelector(repeatedEncounters);
 
-        // place encounters randomly
-        int remaining = getRoomCount() - count;
-        InvokenGame.log("Remaining: " + remaining);
-        while (remaining > 0) {
-            Encounter encounter = selector.select();
-            place(encounter);
-            remaining--;
+        if (!repeatedEncounters.isEmpty()) {
+            // place encounters randomly
+            EncounterSelector selector = new EncounterSelector(repeatedEncounters);
+            int remaining = getRoomCount() - count;
+            InvokenGame.log("Remaining: " + remaining);
+            while (remaining > 0) {
+                Encounter encounter = selector.select();
+                place(encounter);
+                remaining--;
+            }
         }
     }
 

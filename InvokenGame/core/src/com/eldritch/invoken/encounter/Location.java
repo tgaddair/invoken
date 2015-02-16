@@ -118,7 +118,8 @@ public class Location {
     public Location(com.eldritch.invoken.proto.Locations.Location data, LocationMap map) {
         this.data = data;
         this.map = map;
-        owningFaction = Optional.fromNullable(Faction.of(data.getFactionId()));
+        owningFaction = Optional.fromNullable(data.hasFactionId() 
+                ? Faction.of(data.getFactionId()) : null);
         lightManager = new LightManager(data);
         normalMapShader = new NormalMapShader();
         lightMasker = new OverlayLightMasker(lightManager.getVertexShaderDef());
