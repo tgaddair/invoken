@@ -553,7 +553,7 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
     }
     
     private static int getFragments(int level) {
-        int max = AgentInfo.getFragmentRequirement(level);
+        int max = AgentInfo.getFragmentRequirement(level) / 5;
         return (int) (Math.random() * max);
     }
 }

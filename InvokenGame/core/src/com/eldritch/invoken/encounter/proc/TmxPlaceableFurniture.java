@@ -1,6 +1,7 @@
 package com.eldritch.invoken.encounter.proc;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -44,14 +45,25 @@ public class TmxPlaceableFurniture implements PlaceableFurniture {
 
     @Override
     public NaturalVector2 findPosition(Rectangle rect, LocationMap map) {
-        Map<String, LocationLayer> presentLayers = map.getLayerMap();
+        List<NaturalVector2> origins = new ArrayList<NaturalVector2>();
         for (int x = (int) rect.x; x < rect.x + rect.width; x++) {
             for (int y = (int) rect.y; y < rect.y + rect.height; y++) {
-                if (isContiguous(rect, tiles, x, y, map) && compatible(presentLayers, tiles, x, y)) {
-                    return NaturalVector2.of(x, y);
-                }
+                origins.add(NaturalVector2.of(x, y));
             }
         }
+        
+        Map<String, LocationLayer> presentLayers = map.getLayerMap();
+        
+        // randomize the positions
+        Collections.shuffle(origins);
+        for (NaturalVector2 origin : origins) {
+            int x = origin.x;
+            int y = origin.y;
+            if (isContiguous(rect, tiles, x, y, map) && compatible(presentLayers, tiles, x, y)) {
+                return NaturalVector2.of(x, y);
+            }
+        }
+        
         return null;
     }
 

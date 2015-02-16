@@ -3,7 +3,10 @@ package com.eldritch.invoken.encounter.proc;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Random;
+import java.util.Set;
 
 import com.badlogic.gdx.math.Rectangle;
 import com.eldritch.invoken.InvokenGame;
@@ -53,6 +56,7 @@ public class RoomGenerator {
     }
     
     private final LocationMap map;
+    private final Random rand = new Random();
     
     public RoomGenerator(LocationMap map) {
         this.map = map;
@@ -76,21 +80,22 @@ public class RoomGenerator {
         List<Furniture> availableFurniture = new ArrayList<Furniture>(room.getFurnitureList());
         Collections.shuffle(availableFurniture);
         for (Furniture furniture : availableFurniture) {
-            PlaceableFurniture placeable = FurnitureLoader.load(furniture);
-            
-            // calculate the percentage of furniture coverage to ground tiles adding this piece of
-            // furniture would cost us
-            int cost = placeable.getCost();
-            double coverage = (coveredTiles + cost) / area;
-            
-            // find a suitable place in room that satisfies the constraints
-            if (coverage < MAX_FURNITURE) {
-                NaturalVector2 position = placeable.findPosition(bounds, map);
-                if (position != null) {
-                    // found a place to put the furniture, so merge it into the map
-                    placeable.place(position, map);
-                    coveredTiles += cost;
-                }
+            for (int i = 0; i < furniture.getMax(); i++) {
+                // calculate the percentage of furniture coverage to ground tiles adding this piece
+                // of furniture would cost us
+                PlaceableFurniture placeable = FurnitureLoader.load(furniture);
+                int cost = placeable.getCost();
+                double coverage = (coveredTiles + cost) / area;
+                
+                // find a suitable place in room that satisfies the constraints
+                if (coverage < MAX_FURNITURE) {
+                    NaturalVector2 position = placeable.findPosition(bounds, map);
+                    if (position != null) {
+                        // found a place to put the furniture, so merge it into the map
+                        placeable.place(position, map);
+                        coveredTiles += cost;
+                    }
+                } 
             }
         }
     }

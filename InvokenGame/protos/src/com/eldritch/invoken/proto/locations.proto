@@ -27,6 +27,7 @@ message Room {
 			ATLAS = 1;  // check the tile atlas
 			TMX = 2;  // Tiled TMX file
 			ACTIVATOR = 3;  // hardcoded
+			CONTAINER = 4;  // special activator that references a container type
 		}
 
 		optional string id = 1;
@@ -34,6 +35,9 @@ message Room {
 
 		// some pieces of furniture have custom behavior described by another asset proto
 		optional string asset_id = 3;
+
+		optional int32 min = 4 [default = 1];
+		optional int32 max = 5 [default = 1];
 	}
 
 	enum Size {
