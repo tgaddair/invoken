@@ -34,6 +34,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
+import com.eldritch.invoken.actor.AgentInfo;
 import com.eldritch.invoken.actor.ConversationHandler;
 import com.eldritch.invoken.actor.ConversationHandler.DialogueVerifier;
 import com.eldritch.invoken.actor.Inventory.ItemState;
@@ -47,6 +48,7 @@ import com.eldritch.invoken.actor.ai.btree.Combat;
 import com.eldritch.invoken.actor.ai.btree.Investigate;
 import com.eldritch.invoken.actor.ai.btree.Patrol;
 import com.eldritch.invoken.actor.aug.Augmentation;
+import com.eldritch.invoken.actor.items.Fragment;
 import com.eldritch.invoken.encounter.Location;
 import com.eldritch.invoken.proto.Actors.ActorParams.Species;
 import com.eldritch.invoken.proto.Actors.DialogueTree.Choice;
@@ -107,6 +109,9 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
         scenario = Optional.absent();
         dialogue = new ConversationHandler(data.getDialogue(), new NpcDialogueVerifier());
         behavior = new Behavior(this, data);
+        
+        // add random fragments proportional to the current level
+        info.getInventory().addItem(Fragment.getInstance(), getFragments(info.getLevel()));
 
         // equip items
         for (ItemState item : info.getInventory().getItems()) {
@@ -545,5 +550,10 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
         behaviors.put(SteeringMode.Follow, followSteering);
 
         return behaviors;
+    }
+    
+    private static int getFragments(int level) {
+        int max = AgentInfo.getFragmentRequirement(level);
+        return (int) (Math.random() * max);
     }
 }
