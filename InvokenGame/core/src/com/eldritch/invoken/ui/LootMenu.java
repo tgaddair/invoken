@@ -1,5 +1,6 @@
 package com.eldritch.invoken.ui;
 
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -71,11 +72,13 @@ public class LootMenu {
 		itemButton.addListener(new DefaultInputListener() {
 			@Override
 			public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-				npc.getInfo().getInventory().removeItem(item);
-				player.getInfo().getInventory().addItem(item);
+			    int count = button == Input.Buttons.RIGHT 
+			            ? 1 : npc.getInfo().getInventory().getItemCount(item);
+				npc.getInfo().getInventory().removeItem(item, count);
+				player.getInfo().getInventory().addItem(item, count);
 				
 				// update button with new count
-				int count = npc.getInfo().getInventory().getItemCount(item);
+				count = npc.getInfo().getInventory().getItemCount(item);
 				if (count > 0) {
 					itemButton.setText(getText(item, count));
 				} else {

@@ -101,6 +101,10 @@ public class Inventory {
     public void removeItem(Item item) {
         removeItem(item.getId(), 1);
     }
+    
+    public void removeItem(Item item, int count) {
+        removeItem(item.getId(), count);
+    }
 
     /**
      * Remove the requested number of instances of the given item from the actor's inventory. If the
