@@ -18,7 +18,6 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.activators.Activator;
-import com.eldritch.invoken.actor.AgentInfo;
 import com.eldritch.invoken.actor.PreparedAugmentations;
 import com.eldritch.invoken.actor.Profession;
 import com.eldritch.invoken.actor.type.Agent;
@@ -94,7 +93,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false, (w / h) * 10, 10);
-		camera.zoom = 1.15f;
+		camera.zoom = .9f;
 		camera.update();
 		
 		font = new BitmapFont();
@@ -400,7 +399,8 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
             } else {
                 if (button == Input.Buttons.RIGHT) {
                     // turn on light
-                    player.toggleLight();
+//                    player.toggleLight();
+                    player.setAiming(true);
                 }
             }
             selection = true;
@@ -423,7 +423,9 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 		PreparedAugmentations prepared = player.getInfo().getAugmentations();
 		if (prepared.hasActiveAugmentation(button)) {
 		    prepared.release(button);
-		}
+		} else if (button == Input.Buttons.RIGHT) {
+            player.setAiming(false);
+        }
 		
 		return false;
 	}

@@ -56,6 +56,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     public static final int MAX_DST2 = 150;
     public static final int INTERACT_RANGE = 5;
     public static final int ASSAULT_PENALTY = -10;
+    public static final float AIMING_V_PENALTY = 5;
 
     static AssetManager assetManager = new AssetManager();
     static float MAX_FREEZE = 25f;
@@ -115,8 +116,9 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     private float freezing = 0;
     private float lastAction = 0;
     
+    private boolean aiming = false;
     private float velocityPenalty = 0;
-
+    
     private Agent target;
     private Agent interactor;
     private final Set<Class<?>> toggles = new HashSet<Class<?>>();
@@ -181,6 +183,17 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
 
 		circleShape.dispose();
 		return body;
+	}
+	
+	public void setAiming(boolean aiming) {
+	    if (aiming != this.aiming) {
+            addVelocityPenalty(AIMING_V_PENALTY * (aiming ? 1 : -1));
+        }
+	    this.aiming = aiming;
+	}
+	
+	public boolean isAiming() {
+	    return aiming;
 	}
 	
 	public void addVelocityPenalty(float delta) {

@@ -104,6 +104,7 @@ public class Location {
 
     private final World world;
 
+    private final Vector2 offset = new Vector2();
     private NaturalVector2 currentCell = null;
     private float currentZoom = 0;
     private Rectangle viewBounds = new Rectangle();
@@ -445,16 +446,23 @@ public class Location {
         float scale = Settings.PX * zoom * 1.25f;
         return Math.round(v * scale) / scale;
     }
-
+    
     public void render(float delta, OrthographicCamera camera, TextureRegion selector,
             boolean paused) {
         // update the world simulation
         world.step(1 / 60f, 8, 3);
 
-        // let the camera follow the player
         Vector2 position = player.getCamera().getPosition();
-        float x = scale(position.x, camera.zoom);
-        float y = scale(position.y, camera.zoom);
+        if (player.isAiming()) {
+            // get direction to focus
+            offset.set(player.getFocusPoint()).sub(position).scl(.25f);
+        } else {
+            offset.set(Vector2.Zero);
+        }
+
+        // let the camera follow the player
+        float x = scale(position.x + offset.x, camera.zoom);
+        float y = scale(position.y + offset.y, camera.zoom);
         
         float lerp = 0.1f;
         camera.position.x += (x - camera.position.x) * lerp;
