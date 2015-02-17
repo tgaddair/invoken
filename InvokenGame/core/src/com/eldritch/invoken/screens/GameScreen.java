@@ -351,9 +351,20 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
             return true;
         }
 		
+		Vector3 world = camera.unproject(new Vector3(screenX, screenY, 0));
+		
+		// when the player is aiming, the only option is to use the augmentation
+		if (player.isAiming()) {
+		    if (player.getInfo().getAugmentations().hasActiveAugmentation(button)) {
+                player.getInfo().getAugmentations().useActiveAugmentation(
+                        new Vector2(world.x, world.y), button, tacticalPause);
+                return true;
+            }
+		    return false;
+		}
+		
 		// handle entity selection
         boolean selection = false;
-        Vector3 world = camera.unproject(new Vector3(screenX, screenY, 0));
         for (Agent entity : location.getActors()) {
             if (entity.contains(world.x, world.y) && player.canTarget(entity, location)) {
                 selection = true;
