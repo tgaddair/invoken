@@ -165,7 +165,7 @@ public class Location {
 
     private Player createPlayer(Profession profession, float x, float y) {
         // create the Player we want to move around the world
-        Player player = new Player(profession, 25, x, y, this,
+        Player player = new Player(profession, Settings.START_LEVEL, x, y, this,
                 "sprite/characters/light-blue-hair.png");
         // player.addFaction(playerFaction, 9, 0);
 

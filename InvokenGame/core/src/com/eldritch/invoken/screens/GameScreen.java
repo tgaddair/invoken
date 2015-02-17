@@ -109,7 +109,8 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         com.eldritch.invoken.proto.Locations.Location data = 
 //        		InvokenGame.LOCATION_READER.readAsset("IcarianEmbassy");
 //        		InvokenGame.LOCATION_READER.readAsset("DebugPlayground");
-                InvokenGame.LOCATION_READER.readAsset("CentralProcessing");
+//                InvokenGame.LOCATION_READER.readAsset("CentralProcessing");
+                InvokenGame.LOCATION_READER.readAsset("ShippingAndReceiving");
 		LocationGenerator generator = new LocationGenerator(data.getBiome());
 		location = generator.generate(data);
 		player = location.createPlayer(profession);
