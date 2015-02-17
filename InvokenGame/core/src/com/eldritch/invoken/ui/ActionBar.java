@@ -18,9 +18,10 @@ public class ActionBar {
     private final Map<Augmentation, Image> images = new HashMap<Augmentation, Image>();
     private final PreparedAugmentations augmentations;
     private final Table container;
-    private final Set<Augmentation> lastActive = new HashSet<Augmentation>();
+    private final Player player;
     
     public ActionBar(Player player) {
+        this.player = player;
         augmentations = player.getInfo().getAugmentations();
         
         container = new Table();
@@ -42,18 +43,11 @@ public class ActionBar {
     
     public void update() {
         for (Augmentation aug : augmentations.getAugmentations()) {
+            float a = aug.hasEnergy(player) ? 1 : 0.25f;
             if (augmentations.isActive(aug)) {
-                // check to see if this aug is already active to avoid costly color set operation
-                if (!lastActive.contains(aug)) {
-                    // state changed since last update, so change the color
-                    images.get(aug).setColor(1, 0, 0, 1);
-                    lastActive.add(aug);
-                }
+                images.get(aug).setColor(1, 0, 0, a);
             } else {
-                if (lastActive.contains(aug)) {
-                    images.get(aug).setColor(1, 1, 1, 1);
-                    lastActive.remove(aug);
-                }
+                images.get(aug).setColor(1, 1, 1, a);
             }
         }
     }
