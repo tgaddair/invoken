@@ -344,6 +344,13 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 			return true;
 		}
 		
+		if (button == Input.Buttons.RIGHT) {
+            // turn on light
+//            player.toggleLight();
+            player.setAiming(true);
+            return true;
+        }
+		
 		// handle entity selection
         boolean selection = false;
         Vector3 world = camera.unproject(new Vector3(screenX, screenY, 0));
@@ -396,12 +403,6 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
             if (player.getInfo().getAugmentations().hasActiveAugmentation(button)) {
                 player.getInfo().getAugmentations().useActiveAugmentation(
                         new Vector2(world.x, world.y), button, tacticalPause);
-            } else {
-                if (button == Input.Buttons.RIGHT) {
-                    // turn on light
-//                    player.toggleLight();
-                    player.setAiming(true);
-                }
             }
             selection = true;
         }
@@ -416,6 +417,11 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 			return true;
 		}
 		
+		if (button == Input.Buttons.RIGHT) {
+            player.setAiming(false);
+            return true;
+        }
+		
 		// always stop moving when no longer being dragged
 		player.setMoving(false);
 		
@@ -423,9 +429,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 		PreparedAugmentations prepared = player.getInfo().getAugmentations();
 		if (prepared.hasActiveAugmentation(button)) {
 		    prepared.release(button);
-		} else if (button == Input.Buttons.RIGHT) {
-            player.setAiming(false);
-        }
+		}
 		
 		return false;
 	}

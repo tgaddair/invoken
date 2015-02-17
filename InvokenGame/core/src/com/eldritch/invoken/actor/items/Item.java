@@ -90,6 +90,7 @@ public abstract class Item {
 				return new Outfit(item);
 			case ACCESSORY:
 			case CREDENTIAL:
+			    return new Credential(item);
 			case FRAGMENT:
 			    return Fragment.getInstance(item);
 			case OTHER:
