@@ -16,6 +16,7 @@ import com.eldritch.invoken.screens.GameScreen;
 import com.google.common.base.Strings;
 
 public class RangedWeapon extends Item {
+    private static final float COOLDOWN = 2f;
 	private final Map<Direction, Animation> animations = new HashMap<Direction, Animation>();
 	private final TextureRegion texture;
 	

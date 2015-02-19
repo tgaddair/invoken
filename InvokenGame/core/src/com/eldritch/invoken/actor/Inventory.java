@@ -132,6 +132,7 @@ public class Inventory {
     public static class ItemState {
         private final Item item;
         private int count;
+        private float cooldown = 0;
 
         public ItemState(Item item, int count) {
             this.item = item;
@@ -158,6 +159,18 @@ public class Inventory {
 
         public int getCount() {
             return count;
+        }
+        
+        public void setCooldown(float cooldown) {
+            this.cooldown = cooldown;
+        }
+        
+        public float getCooldown() {
+            return cooldown;
+        }
+        
+        public void cooldown(float delta) {
+            cooldown -= delta;
         }
     }
 }
