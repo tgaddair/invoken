@@ -934,6 +934,9 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     	if (!isStunted()) {
     	    info.restore(delta);
     	}
+    	
+        // update inventory
+        info.getInventory().update(delta);
         
         updateHeading();
 

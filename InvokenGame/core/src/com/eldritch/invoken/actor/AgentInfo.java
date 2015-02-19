@@ -212,7 +212,7 @@ public class AgentInfo {
     }
 	
 	public float getBaseEnergy() {
-        return getAutomata() / 2 + energyOffset;
+        return 10 + getAutomata() / 2 + energyOffset;
     }
 	
 	public float expend(float value) {

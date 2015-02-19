@@ -18,6 +18,27 @@ public class Inventory {
     private Outfit outfit;
     private RangedWeapon rangedWeapon;
     private MeleeWeapon meleeWeapon;
+    
+    public void update(float delta) {
+        if (hasRangedWeapon()) {
+            ItemState state = items.get(rangedWeapon.getId());
+            if (state.getCooldown() > 0) {
+                state.cooldown(delta);
+            }
+        }
+    }
+    
+    public boolean canUseRangedWeapon() {
+        return hasRangedWeapon() && !isCooling(rangedWeapon);
+    }
+    
+    public void setCooldown(Item item, float cooldown) {
+        items.get(item.getId()).setCooldown(cooldown);
+    }
+    
+    public boolean isCooling(Item item) {
+        return items.get(item.getId()).getCooldown() > 0;
+    }
 
     public boolean hasOutfit() {
         return outfit != null;

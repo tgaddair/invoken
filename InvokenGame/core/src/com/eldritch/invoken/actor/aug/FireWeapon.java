@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Pool;
+import com.eldritch.invoken.actor.items.RangedWeapon;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.HandledProjectile;
 import com.eldritch.invoken.actor.type.Agent.Activity;
@@ -54,12 +55,12 @@ public class FireWeapon extends ProjectileAugmentation {
     
     @Override
     public boolean isValid(Agent owner, Vector2 target) {
-        return super.isValid(owner, target) && owner.getInventory().hasRangedWeapon();
+        return super.isValid(owner, target) && owner.getInventory().canUseRangedWeapon();
     }
 
     @Override
     public boolean isValid(Agent owner, Agent target) {
-        return super.isValid(owner, target) && owner.getInventory().hasRangedWeapon();
+        return super.isValid(owner, target) && owner.getInventory().canUseRangedWeapon();
     }
     
     @Override
@@ -135,6 +136,10 @@ public class FireWeapon extends ProjectileAugmentation {
             
             // add camera shake
             owner.recoil();
+            
+            // add cooldown to weapon
+            RangedWeapon weapon = owner.getInventory().getRangedWeapon();
+            owner.getInventory().setCooldown(weapon, weapon.getCooldown());
             
             // alert all enemies in range if the weapon is not silenced
             for (Agent neighbor : owner.getNeighbors()) {
