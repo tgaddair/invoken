@@ -1239,6 +1239,10 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         return weaponSentry;
     }
     
+    public void recoil() {
+        // does nothing
+    }
+    
     public abstract boolean canSpeak();
 
     protected abstract void takeAction(float delta, Location screen);

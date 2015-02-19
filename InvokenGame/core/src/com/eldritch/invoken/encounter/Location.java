@@ -98,6 +98,7 @@ public class Location {
     private OrthogonalShadedTiledMapRenderer renderer;
     private OrthogonalShadedTiledMapRenderer overlayRenderer;
     private Array<Rectangle> tiles = new Array<Rectangle>();
+    private OrthographicCamera camera;
 
     private int collisionIndex = -1;
     private final int groundIndex = 0;
@@ -442,9 +443,22 @@ public class Location {
         player.setFocusPoint(x, y);
     }
     
+    public Vector2 getFocusPoint() {
+        return player.getFocusPoint();
+    }
+    
     public float scale(float v, float zoom) {
         float scale = Settings.PX * zoom * 1.25f;
         return Math.round(v * scale) / scale;
+    }
+    
+    public void setCamera(OrthographicCamera camera) {
+        this.camera = camera;
+    }
+    
+    public void shiftView(Vector2 offset) {
+        camera.position.x += offset.x;
+        camera.position.y += offset.y;
     }
     
     public void render(float delta, OrthographicCamera camera, TextureRegion selector,

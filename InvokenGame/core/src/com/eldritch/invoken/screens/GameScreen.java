@@ -93,7 +93,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false, (w / h) * 10, 10);
-		camera.zoom = .9f;
+		camera.zoom = 1f;
 		camera.update();
 		
 		font = new BitmapFont();
@@ -118,6 +118,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 		Vector2 position = player.getCamera().getPosition();
 		camera.position.x = location.scale(position.x, camera.zoom);
 		camera.position.y = location.scale(position.y, camera.zoom);
+		location.setCamera(camera);
 		
 		// create player menus
 		actionBar = new ActionBar(player);

@@ -131,6 +131,9 @@ public class FireWeapon extends ProjectileAugmentation {
             
             // update agent to fact the direction of their shots
             owner.setDirection(owner.getRelativeDirection(target));
+            
+            // add camera shake
+            owner.recoil();
         }
         
         @Override

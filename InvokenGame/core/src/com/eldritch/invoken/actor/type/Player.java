@@ -160,6 +160,12 @@ public class Player extends SteeringAgent {
     }
     
     @Override
+    public void recoil() {
+        Vector2 shift = getLocation().getFocusPoint().cpy().sub(getPosition()).nor().scl(0.25f);
+        getLocation().shiftView(shift);
+    }
+    
+    @Override
     public boolean canSpeak() {
         return false;
     }
