@@ -21,6 +21,7 @@ import com.eldritch.invoken.screens.GameScreen;
 public class FireWeapon extends ProjectileAugmentation {
     private static final float DAMAGE_SCALE = 25;
     private static final int BASE_COST = 10;
+    private static final float ALERT_RADIUS = 7;
     
     private static class Holder {
         private static final FireWeapon INSTANCE = new FireWeapon();
@@ -134,6 +135,13 @@ public class FireWeapon extends ProjectileAugmentation {
             
             // add camera shake
             owner.recoil();
+            
+            // alert all enemies in range if the weapon is not silenced
+            for (Agent neighbor : owner.getNeighbors()) {
+                if (owner.dst2(neighbor) < ALERT_RADIUS * ALERT_RADIUS) {
+                    neighbor.alertTo(owner);
+                }
+            }
         }
         
         @Override

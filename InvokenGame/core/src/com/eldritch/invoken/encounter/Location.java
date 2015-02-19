@@ -473,6 +473,7 @@ public class Location {
         } else {
             offset.set(Vector2.Zero);
         }
+        
 
         // let the camera follow the player
         float x = scale(position.x + offset.x, camera.zoom);
