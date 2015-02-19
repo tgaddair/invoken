@@ -161,7 +161,7 @@ public class Player extends SteeringAgent {
     
     @Override
     public void recoil() {
-        Vector2 shift = getLocation().getFocusPoint().cpy().sub(getPosition()).nor().scl(0.25f);
+        Vector2 shift = getPosition().cpy().sub(getLocation().getFocusPoint()).nor().scl(0.25f);
         getLocation().shiftView(shift);
     }
     
