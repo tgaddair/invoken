@@ -43,7 +43,7 @@ public class ActionBar {
     
     public void update() {
         for (Augmentation aug : augmentations.getAugmentations()) {
-            float a = aug.hasEnergy(player) ? 1 : 0.25f;
+            float a = aug.hasEnergy(player) && aug.isValid(player) ? 1 : 0.25f;
             if (augmentations.isActive(aug)) {
                 images.get(aug).setColor(1, 0, 0, a);
             } else {

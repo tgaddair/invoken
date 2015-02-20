@@ -70,6 +70,10 @@ public abstract class Augmentation {
 	    return self;
 	}
 	
+	public boolean isValid(Agent owner) {
+		return true;
+	}
+	
 	public abstract boolean isValid(Agent owner, Agent target);
 	
 	public abstract boolean isValid(Agent owner, Vector2 target);
