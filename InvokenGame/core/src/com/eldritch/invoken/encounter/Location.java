@@ -160,6 +160,11 @@ public class Location {
 		rayHandler.setAmbientLight(0f, 0f, 0f, 0.5f);
 		rayHandler.setBlurNum(3);
 //		rayHandler.setShadows(false);
+
+		short category = Settings.BIT_DEFAULT;
+		short group = 0;
+		short mask = Settings.BIT_WALL;  // only collide with walls 
+		PointLight.setContactFilter(category, group, mask);
     }
 
     public Player getPlayer() {
@@ -790,7 +795,7 @@ public class Location {
         addActor(player);
         
         PointLight light = new PointLight(
-				rayHandler, RAYS_PER_BALL, null, LIGHT_DISTANCE, 0, 0);
+				rayHandler, RAYS_PER_BALL, null, LIGHT_DISTANCE * 3, 0, 0);
         light.attachToBody(player.getBody(), 0, 0);
         
         return player;
@@ -934,7 +939,7 @@ public class Location {
 
         // collision filters
         Filter filter = fixture.getFilterData();
-        filter.categoryBits = Settings.BIT_PHYSICAL;
+        filter.categoryBits = Settings.BIT_WALL;
         filter.maskBits = Settings.BIT_ANYTHING;
         fixture.setFilterData(filter);
 

@@ -178,7 +178,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
 		
 		// collision filters
         Filter filter = fixture.getFilterData();
-        filter.categoryBits = Settings.BIT_PHYSICAL;
+        filter.categoryBits = Settings.BIT_AGENT;
         filter.maskBits = Settings.BIT_ANYTHING;
         fixture.setFilterData(filter);
 		
