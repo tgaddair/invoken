@@ -9,6 +9,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import box2dLight.PointLight;
+import box2dLight.RayHandler;
+
 import com.badlogic.gdx.ai.steer.utils.Collision;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
@@ -104,6 +107,7 @@ public class Location {
     private final int groundIndex = 0;
 
     private final World world;
+    private final RayHandler rayHandler;
 
     private final Vector2 offset = new Vector2();
     private NaturalVector2 currentCell = null;
@@ -147,6 +151,15 @@ public class Location {
 
         // add encounters
         addEntities(data, map);
+        
+        // add lighting and shadow engine
+        RayHandler.setGammaCorrection(true);
+		RayHandler.useDiffuseLight(true);
+		
+		rayHandler = new RayHandler(world);
+		rayHandler.setAmbientLight(0f, 0f, 0f, 0.5f);
+		rayHandler.setBlurNum(3);
+//		rayHandler.setShadows(false);
     }
 
     public Player getPlayer() {
@@ -156,161 +169,9 @@ public class Location {
     public String getName() {
         return data.getName();
     }
-
-    public Player createPlayer(Profession profession) {
-        // spawn and add the player
-        Vector2 spawn = getSpawnLocation();
-        this.player = createPlayer(profession, spawn.x, spawn.y);
-        addActor(player);
-        return player;
-    }
-
-    private Player createPlayer(Profession profession, float x, float y) {
-        // create the Player we want to move around the world
-        Player player = new Player(profession, Settings.START_LEVEL, x, y, this,
-                "sprite/characters/light-blue-hair.png");
-        // player.addFaction(playerFaction, 9, 0);
-
-        Item outfit = profession.getDefaultOutfit();
-        player.getInfo().getInventory().addItem(outfit);
-        player.getInfo().getInventory().equip(outfit);
-
-        Item weapon = Item.fromProto(InvokenGame.ITEM_READER.readAsset("AssaultRifle"));
-        player.getInfo().getInventory().addItem(weapon);
-        player.getInfo().getInventory().equip(weapon);
-
-        Item melee = Item.fromProto(InvokenGame.ITEM_READER.readAsset("Hammer"));
-        player.getInfo().getInventory().addItem(melee);
-        player.getInfo().getInventory().equip(melee);
-
-        return player;
-    }
-
-    private void addWalls(World world) {
-        for (int y = 1; y < map.getHeight(); y++) {
-            boolean contiguous = false;
-            int x0 = 0;
-
-            // scan through the rows looking for collision stripes and ground below
-            for (int x = 0; x < map.getWidth(); x++) {
-                if (isObstacle(x, y) && !isObstacle(x, y - 1)) {
-                    // this is part of a valid edge
-                    if (!contiguous) {
-                        // this is the first point in the edge
-                        x0 = x;
-                        contiguous = true;
-                    }
-                } else {
-                    // this point is not part of a valid edge
-                    if (contiguous) {
-                        // this point marks the end of our last edge
-                        addEdge(x0, y, x, y, world);
-                        contiguous = false;
-                    }
-                }
-            }
-
-            contiguous = false;
-            x0 = 0;
-
-            // scan through the rows looking for collision stripes and ground above
-            for (int x = 0; x < map.getWidth(); x++) {
-                if (!isObstacle(x, y) && isObstacle(x, y - 1)) {
-                    // this is part of a valid edge
-                    if (!contiguous) {
-                        // this is the first point in the edge
-                        x0 = x;
-                        contiguous = true;
-                    }
-                } else {
-                    // this point is not part of a valid edge
-                    if (contiguous) {
-                        // this point marks the end of our last edge
-                        addEdge(x0, y, x, y, world);
-                        contiguous = false;
-                    }
-                }
-            }
-        }
-
-        for (int x = 1; x < map.getWidth(); x++) {
-            boolean contiguous = false;
-            int y0 = 0;
-
-            // scan through the columns looking for collision stripes and ground left
-            for (int y = 0; y < map.getHeight(); y++) {
-                if (isObstacle(x, y) && !isObstacle(x - 1, y)) {
-                    // this is part of a valid edge
-                    if (!contiguous) {
-                        // this is the first point in the edge
-                        y0 = y;
-                        contiguous = true;
-                    }
-                } else {
-                    // this point is not part of a valid edge
-                    if (contiguous) {
-                        // this point marks the end of our last edge
-                        addEdge(x, y0, x, y, world);
-                        contiguous = false;
-                    }
-                }
-            }
-
-            contiguous = false;
-            y0 = 0;
-
-            // scan through the rows looking for collision stripes and ground right
-            for (int y = 0; y < map.getHeight(); y++) {
-                if (!isObstacle(x, y) && isObstacle(x - 1, y)) {
-                    // this is part of a valid edge
-                    if (!contiguous) {
-                        // this is the first point in the edge
-                        y0 = y;
-                        contiguous = true;
-                    }
-                } else {
-                    // this point is not part of a valid edge
-                    if (contiguous) {
-                        // this point marks the end of our last edge
-                        addEdge(x, y0, x, y, world);
-                        contiguous = false;
-                    }
-                }
-            }
-        }
-    }
-
-    public Body createEdge(float x0, float y0, float x1, float y1) {
-        return addEdge(x0, y0, x1, y1, world);
-    }
-
-    private Body addEdge(float x0, float y0, float x1, float y1, World world) {
-        EdgeShape edge = new EdgeShape();
-        Vector2 start = new Vector2(x0, y0);
-        Vector2 end = new Vector2(x1, y1);
-        edge.set(start, end);
-
-        BodyDef groundBodyDef = new BodyDef();
-        groundBodyDef.type = BodyType.StaticBody;
-        groundBodyDef.position.set(0, 0);
-
-        FixtureDef fixtureDef = new FixtureDef();
-        fixtureDef.shape = edge;
-        fixtureDef.filter.groupIndex = 0;
-
-        Body body = world.createBody(groundBodyDef);
-        Fixture fixture = body.createFixture(fixtureDef);
-
-        // collision filters
-        Filter filter = fixture.getFilterData();
-        filter.categoryBits = Settings.BIT_PHYSICAL;
-        filter.maskBits = Settings.BIT_ANYTHING;
-        fixture.setFilterData(filter);
-
-        edge.dispose();
-
-        System.out.println("edge: " + start + " " + end);
-        return body;
+    
+    public void dispose() {
+    	rayHandler.dispose();
     }
 
     public void alertTo(Agent intruder) {
@@ -351,53 +212,21 @@ public class Location {
         return !securityCameras.isEmpty();
     }
 
-    public void addEntities(com.eldritch.invoken.proto.Locations.Location data, TiledMap map) {
-        // find spawn nodes
-        for (MapLayer layer : map.getLayers()) {
-            if (layer instanceof EncounterLayer) {
-                EncounterLayer encounterLayer = (EncounterLayer) layer;
-                Encounter encounter = encounterLayer.encounter;
-                if (encounter.getType() == Encounter.Type.ACTOR) {
-                    // create NPCs
-                    LinkedList<Vector2> spawnNodes = getSpawnNodes(encounterLayer);
-                    for (ActorScenario scenario : encounter.getActorParams().getActorScenarioList()) {
-                        int min = scenario.getMin();
-                        int max = scenario.getMax();
-                        int count = (int) (Math.random() * (max - min + 1) + min);
-                        for (int i = 0; i < count; i++) {
-                            if (!spawnNodes.isEmpty()) {
-                                addActor(createTestNpc(spawnNodes.poll(), scenario.getActorId()));
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    private static LinkedList<Vector2> getSpawnNodes(TiledMapTileLayer layer) {
-        LinkedList<Vector2> list = new LinkedList<Vector2>();
-        layer.setVisible(false);
-        for (int x = 0; x < layer.getWidth(); x++) {
-            for (int y = 0; y < layer.getHeight(); y++) {
-                Cell cell = layer.getCell(x, y);
-                if (cell != null) {
-                    list.add(new Vector2(x, y));
-                }
-            }
-        }
-        return list;
-    }
-
     public void resize(int width, int height) {
         lightManager.resize(width, height);
         normalMapShader.resize(width, height);
         lightMasker.resize(width, height);
     }
+    
+    static final int RAYS_PER_BALL = 128;
+    static final float LIGHT_DISTANCE = 16f;
 
     public void addLights(List<Light> lights) {
         for (Light light : lights) {
             this.lightManager.addLight(light);
+//            PointLight pointLight = new PointLight(
+//					rayHandler, RAYS_PER_BALL, null, LIGHT_DISTANCE,
+//					light.getPosition().x, light.getPosition().y - 1);
         }
     }
 
@@ -407,28 +236,6 @@ public class Location {
 
     public Array<Rectangle> getTiles() {
         return tiles;
-    }
-
-    private Vector2 getSpawnLocation() {
-        TiledMapTileLayer spawnLayer = (TiledMapTileLayer) map.getLayers().get("player");
-        spawnLayer.setVisible(false);
-        for (int x = 0; x < spawnLayer.getWidth(); x++) {
-            for (int y = 0; y < spawnLayer.getHeight(); y++) {
-                Cell cell = spawnLayer.getCell(x, y);
-                if (cell != null) {
-                    return new Vector2(x + 0.5f, y + 0.5f);
-                }
-            }
-        }
-        return Vector2.Zero;
-    }
-
-    public Npc createTestNpc(Vector2 position, String id) {
-        return createTestNpc(position.x + 0.5f, position.y + 0.5f, id);
-    }
-
-    public Npc createTestNpc(float x, float y, String id) {
-        return Npc.create(InvokenGame.ACTOR_READER.readAsset(id), x, y, this);
     }
 
     private void addActor(Agent actor) {
@@ -604,6 +411,12 @@ public class Location {
         overlayRenderer.getSpriteBatch().setShader(normalMapShader.getShader());
         normalMapShader.useNormalMap(true);
         overlayRenderer.render();
+        
+        // render lighting
+        boolean stepped = fixedStep(delta);
+        rayHandler.setCombinedMatrix(camera);
+		if (stepped) rayHandler.update();
+		rayHandler.render();
 
         // render status info
         renderer.getSpriteBatch().begin();
@@ -895,7 +708,6 @@ public class Location {
         return assetManager.get(mapAsset);
     }
     
-    
     public boolean hasLineOfSight(Vector2 origin, Vector2 target) {
         losHandler.reset();
         return rayCast(origin, target);
@@ -909,6 +721,227 @@ public class Location {
         }
         world.rayCast(losHandler, origin, target);
         return losHandler.hasLineOfSight();
+    }
+    
+    private Vector2 getSpawnLocation() {
+        TiledMapTileLayer spawnLayer = (TiledMapTileLayer) map.getLayers().get("player");
+        spawnLayer.setVisible(false);
+        for (int x = 0; x < spawnLayer.getWidth(); x++) {
+            for (int y = 0; y < spawnLayer.getHeight(); y++) {
+                Cell cell = spawnLayer.getCell(x, y);
+                if (cell != null) {
+                    return new Vector2(x + 0.5f, y + 0.5f);
+                }
+            }
+        }
+        return Vector2.Zero;
+    }
+
+    public Npc createTestNpc(Vector2 position, String id) {
+        return createTestNpc(position.x + 0.5f, position.y + 0.5f, id);
+    }
+
+    public Npc createTestNpc(float x, float y, String id) {
+        return Npc.create(InvokenGame.ACTOR_READER.readAsset(id), x, y, this);
+    }
+
+    public void addEntities(com.eldritch.invoken.proto.Locations.Location data, TiledMap map) {
+        // find spawn nodes
+        for (MapLayer layer : map.getLayers()) {
+            if (layer instanceof EncounterLayer) {
+                EncounterLayer encounterLayer = (EncounterLayer) layer;
+                Encounter encounter = encounterLayer.encounter;
+                if (encounter.getType() == Encounter.Type.ACTOR) {
+                    // create NPCs
+                    LinkedList<Vector2> spawnNodes = getSpawnNodes(encounterLayer);
+                    for (ActorScenario scenario : encounter.getActorParams().getActorScenarioList()) {
+                        int min = scenario.getMin();
+                        int max = scenario.getMax();
+                        int count = (int) (Math.random() * (max - min + 1) + min);
+                        for (int i = 0; i < count; i++) {
+                            if (!spawnNodes.isEmpty()) {
+                                addActor(createTestNpc(spawnNodes.poll(), scenario.getActorId()));
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private static LinkedList<Vector2> getSpawnNodes(TiledMapTileLayer layer) {
+        LinkedList<Vector2> list = new LinkedList<Vector2>();
+        layer.setVisible(false);
+        for (int x = 0; x < layer.getWidth(); x++) {
+            for (int y = 0; y < layer.getHeight(); y++) {
+                Cell cell = layer.getCell(x, y);
+                if (cell != null) {
+                    list.add(new Vector2(x, y));
+                }
+            }
+        }
+        return list;
+    }
+
+    public Player createPlayer(Profession profession) {
+        // spawn and add the player
+        Vector2 spawn = getSpawnLocation();
+        this.player = createPlayer(profession, spawn.x, spawn.y);
+        addActor(player);
+        
+        PointLight light = new PointLight(
+				rayHandler, RAYS_PER_BALL, null, LIGHT_DISTANCE, 0, 0);
+        light.attachToBody(player.getBody(), 0, 0);
+        
+        return player;
+    }
+
+    private Player createPlayer(Profession profession, float x, float y) {
+        // create the Player we want to move around the world
+        Player player = new Player(profession, Settings.START_LEVEL, x, y, this,
+                "sprite/characters/light-blue-hair.png");
+        // player.addFaction(playerFaction, 9, 0);
+
+        Item outfit = profession.getDefaultOutfit();
+        player.getInfo().getInventory().addItem(outfit);
+        player.getInfo().getInventory().equip(outfit);
+
+        Item weapon = Item.fromProto(InvokenGame.ITEM_READER.readAsset("AssaultRifle"));
+        player.getInfo().getInventory().addItem(weapon);
+        player.getInfo().getInventory().equip(weapon);
+
+        Item melee = Item.fromProto(InvokenGame.ITEM_READER.readAsset("Hammer"));
+        player.getInfo().getInventory().addItem(melee);
+        player.getInfo().getInventory().equip(melee);
+
+        return player;
+    }
+
+    private void addWalls(World world) {
+        for (int y = 1; y < map.getHeight(); y++) {
+            boolean contiguous = false;
+            int x0 = 0;
+
+            // scan through the rows looking for collision stripes and ground below
+            for (int x = 0; x < map.getWidth(); x++) {
+                if (isObstacle(x, y) && !isObstacle(x, y - 1)) {
+                    // this is part of a valid edge
+                    if (!contiguous) {
+                        // this is the first point in the edge
+                        x0 = x;
+                        contiguous = true;
+                    }
+                } else {
+                    // this point is not part of a valid edge
+                    if (contiguous) {
+                        // this point marks the end of our last edge
+                        addEdge(x0, y, x, y, world);
+                        contiguous = false;
+                    }
+                }
+            }
+
+            contiguous = false;
+            x0 = 0;
+
+            // scan through the rows looking for collision stripes and ground above
+            for (int x = 0; x < map.getWidth(); x++) {
+                if (!isObstacle(x, y) && isObstacle(x, y - 1)) {
+                    // this is part of a valid edge
+                    if (!contiguous) {
+                        // this is the first point in the edge
+                        x0 = x;
+                        contiguous = true;
+                    }
+                } else {
+                    // this point is not part of a valid edge
+                    if (contiguous) {
+                        // this point marks the end of our last edge
+                        addEdge(x0, y, x, y, world);
+                        contiguous = false;
+                    }
+                }
+            }
+        }
+
+        for (int x = 1; x < map.getWidth(); x++) {
+            boolean contiguous = false;
+            int y0 = 0;
+
+            // scan through the columns looking for collision stripes and ground left
+            for (int y = 0; y < map.getHeight(); y++) {
+                if (isObstacle(x, y) && !isObstacle(x - 1, y)) {
+                    // this is part of a valid edge
+                    if (!contiguous) {
+                        // this is the first point in the edge
+                        y0 = y;
+                        contiguous = true;
+                    }
+                } else {
+                    // this point is not part of a valid edge
+                    if (contiguous) {
+                        // this point marks the end of our last edge
+                        addEdge(x, y0, x, y, world);
+                        contiguous = false;
+                    }
+                }
+            }
+
+            contiguous = false;
+            y0 = 0;
+
+            // scan through the rows looking for collision stripes and ground right
+            for (int y = 0; y < map.getHeight(); y++) {
+                if (!isObstacle(x, y) && isObstacle(x - 1, y)) {
+                    // this is part of a valid edge
+                    if (!contiguous) {
+                        // this is the first point in the edge
+                        y0 = y;
+                        contiguous = true;
+                    }
+                } else {
+                    // this point is not part of a valid edge
+                    if (contiguous) {
+                        // this point marks the end of our last edge
+                        addEdge(x, y0, x, y, world);
+                        contiguous = false;
+                    }
+                }
+            }
+        }
+    }
+
+    public Body createEdge(float x0, float y0, float x1, float y1) {
+        return addEdge(x0, y0, x1, y1, world);
+    }
+
+    private Body addEdge(float x0, float y0, float x1, float y1, World world) {
+        EdgeShape edge = new EdgeShape();
+        Vector2 start = new Vector2(x0, y0);
+        Vector2 end = new Vector2(x1, y1);
+        edge.set(start, end);
+
+        BodyDef groundBodyDef = new BodyDef();
+        groundBodyDef.type = BodyType.StaticBody;
+        groundBodyDef.position.set(0, 0);
+
+        FixtureDef fixtureDef = new FixtureDef();
+        fixtureDef.shape = edge;
+        fixtureDef.filter.groupIndex = 0;
+
+        Body body = world.createBody(groundBodyDef);
+        Fixture fixture = body.createFixture(fixtureDef);
+
+        // collision filters
+        Filter filter = fixture.getFilterData();
+        filter.categoryBits = Settings.BIT_PHYSICAL;
+        filter.maskBits = Settings.BIT_ANYTHING;
+        fixture.setFilterData(filter);
+
+        edge.dispose();
+
+        System.out.println("edge: " + start + " " + end);
+        return body;
     }
     
     private class LineOfSightHandler implements RayCastCallback {
@@ -944,4 +977,30 @@ public class Location {
             return true;
         }
     };
+    
+    private final static int MAX_FPS = 30;
+	private final static int MIN_FPS = 15;
+	public final static float TIME_STEP = 1f / MAX_FPS;
+	private final static float MAX_STEPS = 1f + MAX_FPS / MIN_FPS;
+	private final static float MAX_TIME_PER_FRAME = TIME_STEP * MAX_STEPS;
+	private final static int VELOCITY_ITERS = 6;
+	private final static int POSITION_ITERS = 2;
+
+	float physicsTimeLeft;
+	long aika;
+	int times;
+
+	private boolean fixedStep(float delta) {
+		physicsTimeLeft += delta;
+		if (physicsTimeLeft > MAX_TIME_PER_FRAME)
+			physicsTimeLeft = MAX_TIME_PER_FRAME;
+
+		boolean stepped = false;
+		while (physicsTimeLeft >= TIME_STEP) {
+//			world.step(TIME_STEP, VELOCITY_ITERS, POSITION_ITERS);
+			physicsTimeLeft -= TIME_STEP;
+			stepped = true;
+		}
+		return stepped;
+	}
 }

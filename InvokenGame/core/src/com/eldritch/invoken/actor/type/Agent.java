@@ -154,6 +154,10 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         body = createBody(x, y, width, height, location.getWorld());
     }
     
+    public Body getBody() {
+    	return body;
+    }
+    
 	private Body createBody(float x, float y, float width, float height, World world) {
 		CircleShape circleShape = new CircleShape();
 		circleShape.setPosition(new Vector2());
