@@ -67,6 +67,14 @@ public class LocationMap extends TiledMap {
         return rooms;
     }
     
+    public boolean inBounds(int x, int y) {
+        return x >= 0 && x < width && y >= 0 && y < height;
+    }
+    
+    public boolean isStrongLightWall(int x, int y) {
+        return lightWalls[x][y] > 1;
+    }
+    
     public boolean isLightWall(int x, int y) {
         return lightWalls[x][y] > 0;
     }
@@ -80,7 +88,7 @@ public class LocationMap extends TiledMap {
     	for (int i = 0; i < layer.getWidth(); i++) {
     	    for (int j = 0; j < layer.getHeight(); j++) {
     	        if (layer.isFilled(i, j)) {
-    	            lightWalls[i][j] = 1;
+    	            lightWalls[i][j] = 2;  // strong light wall
     	        }
     	    }
     	}

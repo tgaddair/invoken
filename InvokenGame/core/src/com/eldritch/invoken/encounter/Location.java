@@ -342,7 +342,7 @@ public class Location {
         overlayRenderer.setView(camera);
 
         lightManager.update(delta);
-        fowMasker.render(camera);
+        fowMasker.render(delta, camera);
 
         // draw lights
         renderer.getSpriteBatch().setShader(lightManager.getDefaultShader());
@@ -651,10 +651,19 @@ public class Location {
 
                     int x = point.x + dx;
                     int y = point.y + dy;
+                    if (!map.inBounds(x, y)) {
+                        continue;
+                    }
+                    
                     NaturalVector2 neighbor = NaturalVector2.of(x, y);
                     if (x >= x1 && x < x2 && y >= y1 && y < y2 && !visited.contains(neighbor)) {
-                        visited.add(neighbor);
                         filledTiles.add(neighbor);
+                        if (dx == 0 || dy == 0) {
+                            // we can add diagonals, but not explore them
+                            continue;
+                        }
+                        
+                        visited.add(neighbor);
                         if (!map.isLightWall(neighbor.x, neighbor.y)) {
                             // fill it and explore
                             queue.add(neighbor);
