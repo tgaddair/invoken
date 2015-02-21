@@ -190,9 +190,9 @@ public class LocationGenerator {
         roomGenerator.generate(bsp);
 
         // create room connectivity map
-        // ConnectedRoom[][] rooms = createRooms(bsp.getRooms(), typeMap);
-        // map.setRooms(rooms);
-        // save(rooms, "connected-rooms");
+        ConnectedRoom[][] rooms = createRooms(bsp.getRooms(), typeMap);
+        map.setRooms(rooms);
+//        save(rooms, "connected-rooms");
 
         InvokenGame.log("Creating Spawn Layers");
         for (LocationLayer layer : createSpawnLayers(base, collision, bsp, map)) {

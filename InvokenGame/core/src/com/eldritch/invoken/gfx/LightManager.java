@@ -2,6 +2,7 @@ package com.eldritch.invoken.gfx;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import box2dLight.PointLight;
 import box2dLight.RayHandler;
@@ -18,6 +19,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.eldritch.invoken.encounter.NaturalVector2;
 import com.eldritch.invoken.proto.Locations.Location;
 import com.eldritch.invoken.util.Settings;
 
@@ -117,9 +119,18 @@ public class LightManager {
 
 	public void addLight(Light light, RayHandler rayHandler) {
 		lights.add(light);
-//		pointLights.add(new PointLight(rayHandler, RAYS_PER_BALL, null,
-//				light.getRadius(), light.getPosition().x,
-//				light.getPosition().y));
+		
+		PointLight pointLight = new PointLight(rayHandler, RAYS_PER_BALL, null,
+                light.getRadius() * 5, light.getPosition().x,
+                light.getPosition().y - 2);
+		pointLights.add(pointLight);
+	}
+	
+	public void updateLights(Set<NaturalVector2> tiles) {
+	    for (PointLight light : pointLights) {
+	        NaturalVector2 point = NaturalVector2.of((int) light.getX(), (int) light.getY());
+            light.setActive(tiles.contains(point));
+	    }
 	}
 
 	public void update(float delta) {

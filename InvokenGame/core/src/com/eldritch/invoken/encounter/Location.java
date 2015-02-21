@@ -80,17 +80,18 @@ public class Location {
     private Player player;
     private final com.eldritch.invoken.proto.Locations.Location data;
     private final LocationMap map;
-    
+
     private final List<Agent> entities = new ArrayList<Agent>();
     private final List<Agent> inactiveEntities = new ArrayList<Agent>();
     private final List<Agent> activeEntities = new ArrayList<Agent>();
     private int inactiveIndex = 0;
-    
+
     private final List<Drawable> drawables = new ArrayList<Drawable>();
     private final List<TemporaryEntity> tempEntities = new ArrayList<TemporaryEntity>();
     private final List<Activator> activators = new ArrayList<Activator>();
     private final List<SecurityCamera> securityCameras = new ArrayList<SecurityCamera>();
     private final Set<NaturalVector2> activeTiles = new HashSet<NaturalVector2>();
+    private final Set<NaturalVector2> filledTiles = new HashSet<NaturalVector2>();
     private final List<CoverPoint> activeCover = new ArrayList<CoverPoint>();
     private final LightManager lightManager;
     private final NormalMapShader normalMapShader;
@@ -113,6 +114,7 @@ public class Location {
     private NaturalVector2 currentCell = null;
     private float currentZoom = 0;
     private Rectangle viewBounds = new Rectangle();
+    private ConnectedRoom currentRoom;
 
     DebugEntityRenderer debugEntityRenderer = DebugEntityRenderer.getInstance();
     Box2DDebugRenderer debugRenderer = new Box2DDebugRenderer();
@@ -124,8 +126,8 @@ public class Location {
     public Location(com.eldritch.invoken.proto.Locations.Location data, LocationMap map) {
         this.data = data;
         this.map = map;
-        owningFaction = Optional.fromNullable(data.hasFactionId() 
-                ? Faction.of(data.getFactionId()) : null);
+        owningFaction = Optional.fromNullable(data.hasFactionId() ? Faction.of(data.getFactionId())
+                : null);
         lightManager = new LightManager(data);
         normalMapShader = new NormalMapShader();
         lightMasker = new OverlayLightMasker(lightManager.getVertexShaderDef());
@@ -145,38 +147,39 @@ public class Location {
         overlayRenderer = new OrthogonalShadedTiledMapRenderer(map.getOverlayMap(), unitScale,
                 normalMapShader);
 
-        // Instantiate a new World with no gravity and tell it to sleep when possible.
+        // Instantiate a new World with no gravity and tell it to sleep when
+        // possible.
         world = new World(new Vector2(0, 0), true);
         addWalls(world);
 
         // add encounters
         addEntities(data, map);
-        
+
         // add lighting and shadow engine
         RayHandler.setGammaCorrection(true);
-		RayHandler.useDiffuseLight(true);
-		
-		rayHandler = new RayHandler(world);
-		rayHandler.setAmbientLight(0f, 0f, 0f, 0.5f);
-		rayHandler.setBlurNum(3);
-//		rayHandler.setShadows(false);
+        RayHandler.useDiffuseLight(true);
 
-		short category = Settings.BIT_DEFAULT;
-		short group = 0;
-		short mask = Settings.BIT_WALL;  // only collide with walls 
-		PointLight.setContactFilter(category, group, mask);
+        rayHandler = new RayHandler(world);
+        rayHandler.setAmbientLight(0f, 0f, 0f, 0.5f);
+        rayHandler.setBlurNum(3);
+        // rayHandler.setShadows(false);
+
+        short category = Settings.BIT_DEFAULT;
+        short group = 0;
+        short mask = Settings.BIT_WALL; // only collide with walls
+        PointLight.setContactFilter(category, group, mask);
     }
 
     public Player getPlayer() {
         return player;
     }
-    
+
     public String getName() {
         return data.getName();
     }
-    
+
     public void dispose() {
-    	rayHandler.dispose();
+        rayHandler.dispose();
     }
 
     public void alertTo(Agent intruder) {
@@ -248,25 +251,25 @@ public class Location {
     public void setFocusPoint(float x, float y) {
         player.setFocusPoint(x, y);
     }
-    
+
     public Vector2 getFocusPoint() {
         return player.getFocusPoint();
     }
-    
+
     public float scale(float v, float zoom) {
         float scale = Settings.PX * zoom * 1.25f;
         return Math.round(v * scale) / scale;
     }
-    
+
     public void setCamera(OrthographicCamera camera) {
         this.camera = camera;
     }
-    
+
     public void shiftView(Vector2 offset) {
         camera.position.x += offset.x;
         camera.position.y += offset.y;
     }
-    
+
     public void render(float delta, OrthographicCamera camera, TextureRegion selector,
             boolean paused) {
         // update the world simulation
@@ -279,18 +282,18 @@ public class Location {
         } else {
             offset.set(Vector2.Zero);
         }
-        
 
         // let the camera follow the player
         float x = scale(position.x + offset.x, camera.zoom);
         float y = scale(position.y + offset.y, camera.zoom);
-        
+
         float lerp = 0.1f;
         camera.position.x += (x - camera.position.x) * lerp;
         camera.position.y += (y - camera.position.y) * lerp;
         camera.update();
 
-        // update the player (process input, collision detection, position update)
+        // update the player (process input, collision detection, position
+        // update)
         NaturalVector2 origin = NaturalVector2.of((int) position.x, (int) position.y);
         if (origin != currentCell || camera.zoom != currentZoom || activeTiles.isEmpty()
                 || changedViewBounds(renderer.getViewBounds())) {
@@ -301,7 +304,7 @@ public class Location {
             resetActiveTiles(origin);
             resetActiveEntities();
             resetActiveCover();
-            
+
             // reset lights
             normalMapShader.setLightGeometry(lightManager.getLights(), getWorldBounds());
         }
@@ -313,12 +316,12 @@ public class Location {
                 inactiveIndex = (inactiveIndex + 1) % inactiveEntities.size();
                 inactiveEntities.get(inactiveIndex).update(delta, this);
             }
-            
+
             // update all active entities
             for (Agent actor : activeEntities) {
                 actor.update(delta, this);
             }
-            
+
             // update all temporary entities
             Iterator<TemporaryEntity> it = tempEntities.iterator();
             while (it.hasNext()) {
@@ -326,14 +329,14 @@ public class Location {
                 entity.update(delta, this);
                 if (entity.isFinished()) {
                     it.remove();
-                    drawables.remove(entity);  // TODO: could be more efficient
+                    drawables.remove(entity); // TODO: could be more efficient
                 }
             }
         }
-        
+
         renderer.setView(camera);
         overlayRenderer.setView(camera);
-        
+
         lightManager.update(delta);
 
         // draw lights
@@ -399,7 +402,7 @@ public class Location {
         }
 
         // draw targeting reticle
-//        lineRenderer.drawBetween(player.getPosition(), focusPoint, camera);
+        // lineRenderer.drawBetween(player.getPosition(), focusPoint, camera);
 
         // render the drawables
         for (Drawable drawable : drawables) {
@@ -410,12 +413,13 @@ public class Location {
         overlayRenderer.getSpriteBatch().setShader(normalMapShader.getShader());
         normalMapShader.useNormalMap(true);
         overlayRenderer.render();
-        
+
         // render lighting
         boolean stepped = fixedStep(delta);
         rayHandler.setCombinedMatrix(camera);
-		if (stepped) rayHandler.update();
-		rayHandler.render();
+        if (stepped)
+            rayHandler.update();
+        rayHandler.render();
 
         // render status info
         renderer.getSpriteBatch().begin();
@@ -423,7 +427,7 @@ public class Location {
             AgentStatusRenderer.render(agent, player, renderer);
         }
         renderer.getSpriteBatch().end();
-        
+
         if (Settings.DEBUG_DRAW) {
             // draw NPC debug rays
             for (Agent agent : activeEntities) {
@@ -432,7 +436,7 @@ public class Location {
                     npc.render(camera);
                 }
             }
-            
+
             // debug render the world
             debugRenderer.render(world, camera.combined);
         }
@@ -515,11 +519,11 @@ public class Location {
                 drawables.add(activator);
             }
         }
-        
+
         // add temporary entities
         drawables.addAll(tempEntities);
     }
-    
+
     private void resetActiveCover() {
         activeCover.clear();
         for (CoverPoint point : map.getCover()) {
@@ -528,7 +532,7 @@ public class Location {
             }
         }
     }
-    
+
     public List<CoverPoint> getActiveCover() {
         return activeCover;
     }
@@ -536,11 +540,11 @@ public class Location {
     private NaturalVector2 getCellPosition(Drawable drawable) {
         return getCellPosition(drawable.getPosition());
     }
-    
+
     private NaturalVector2 getCellPosition(Vector2 position) {
         return NaturalVector2.of((int) position.x, (int) position.y);
     }
-    
+
     private Rectangle getWorldBounds() {
         final float layerTileWidth = 1;
         final float layerTileHeight = 1;
@@ -553,7 +557,7 @@ public class Location {
         final int y1 = Math.max(0, (int) (viewBounds.y / layerTileHeight) - 1);
         final int y2 = Math.min(map.getHeight(),
                 (int) ((viewBounds.y + viewBounds.height + layerTileHeight) / layerTileHeight) + 1);
-        
+
         return new Rectangle(x1, y1, x2 - x1 + 1, y2 - y1 + 1);
     }
 
@@ -585,57 +589,66 @@ public class Location {
             }
         }
 
-        /*
-         * ConnectedRoom[][] rooms = map.getRooms(); if (rooms[origin.x][origin.y] != currentRoom) {
-         * System.out.println("new room!"); currentRoom = rooms[origin.x][origin.y];
-         * 
-         * map.update(null); activeTiles.clear();
-         * 
-         * for (int i = 0; i < map.getWidth(); i++) { for (int j = 0; j < map.getHeight(); j++) {
-         * NaturalVector2 tile = NaturalVector2.of(i, j); if (currentRoom.isConnected(tile, rooms))
-         * { activeTiles.add(tile); } } } }
-         */
+        // connected rooms fill
+        ConnectedRoom[][] rooms = map.getRooms();
+        if (rooms[origin.x][origin.y] != currentRoom && rooms[origin.x][origin.y] != null) {
+            System.out.println("new room!");
+            currentRoom = rooms[origin.x][origin.y];
+            
+            filledTiles.clear();
+            for (int i = 0; i < map.getWidth(); i++) {
+                for (int j = 0; j < map.getHeight(); j++) {
+                    NaturalVector2 tile = NaturalVector2.of(i, j);
+                    if (currentRoom.isConnected(tile, rooms)) {
+                        filledTiles.add(tile);
+                    }
+                }
+            }
+            lightManager.updateLights(filledTiles);
+        }
 
-        /*
-         * final float layerTileWidth = 1; final float layerTileHeight = 1;
-         * 
-         * Rectangle viewBounds = renderer.getViewBounds(); final int x1 = Math.max(0, (int)
-         * (viewBounds.x / layerTileWidth)); final int x2 = Math.min(Settings.MAX_WIDTH, (int)
-         * ((viewBounds.x + viewBounds.width + layerTileWidth) / layerTileWidth));
-         * 
-         * final int y1 = Math.max(0, (int) (viewBounds.y / layerTileHeight)); final int y2 =
-         * Math.min(Settings.MAX_HEIGHT, (int) ((viewBounds.y + viewBounds.height + layerTileHeight)
-         * / layerTileHeight));
-         * 
-         * Set<NaturalVector2> visited = new HashSet<NaturalVector2>(); LinkedList<NaturalVector2>
-         * queue = new LinkedList<NaturalVector2>();
-         * 
-         * for (int i = x1; i <= x2; i++) { for (int j = y1; j <= y2; j++) { NaturalVector2 tile =
-         * NaturalVector2.of(i, j); if (currentRoom.isConnected(tile, rooms)) {
-         * activeTiles.add(tile); } } }
-         * 
-         * visited.add(origin); activeTiles.add(origin);
-         * 
-         * queue.add(origin); while (!queue.isEmpty()) { NaturalVector2 point = queue.remove(); for
-         * (int dx = -1; dx <= 1; dx++) { for (int dy = -1; dy <= 1; dy++) { if (dx == 0 && dy == 0)
-         * { continue; }
-         * 
-         * int x = point.x + dx; int y = point.y + dy; NaturalVector2 neighbor =
-         * NaturalVector2.of(x, y); if (x >= x1 && x < x2 && y >= y1 && y < y2 &&
-         * !visited.contains(neighbor)) { if (!isObstacle(point) && isGround(point)) { // ground can
-         * spread to anything except collision below if (dy >= 0 || !isObstacle(neighbor)) {
-         * visited.add(neighbor); activeTiles.add(neighbor); queue.add(neighbor); } } else if
-         * (isObstacle(point) && isGround(neighbor) && isObstacle(neighbor)) { // obstacles can
-         * spread up to ground collisions if (dy == 1 && dx == 0) { visited.add(neighbor);
-         * activeTiles.add(neighbor); queue.add(neighbor); } } else if (isObstacle(point) &&
-         * isGround(point) && !isGround(neighbor) && isObstacle(neighbor)) { // grounded obstacles
-         * can spread sideways to non-ground obstacles if (dy == 0 && dx != 0) {
-         * visited.add(neighbor); activeTiles.add(neighbor); queue.add(neighbor); } } else if
-         * (isObstacle(point) && isGround(point) && isOverlay(neighbor)) { // grounded obstacles can
-         * spread to overlays, but overlays cannot // spread further visited.add(neighbor);
-         * activeTiles.add(neighbor); } } } } }
-         */
+//        for (int i = x1; i <= x2; i++) {
+//            for (int j = y1; j <= y2; j++) {
+//                NaturalVector2 tile = NaturalVector2.of(i, j);
+//                if (currentRoom.isConnected(tile, rooms)) {
+//                    activeTiles.add(tile);
+//                }
+//            }
+//        }
 
+        // visible ground tiles fill
+//        Set<NaturalVector2> visited = new HashSet<NaturalVector2>();
+//        visited.add(origin);
+//
+//        filledTiles.clear();
+//        filledTiles.add(origin);
+//
+//        LinkedList<NaturalVector2> queue = new LinkedList<NaturalVector2>();
+//        queue.add(origin);
+//        while (!queue.isEmpty()) {
+//            NaturalVector2 point = queue.remove();
+//            for (int dx = -1; dx <= 1; dx++) {
+//                for (int dy = -1; dy <= 1; dy++) {
+//                    if (dx == 0 && dy == 0) {
+//                        continue;
+//                    }
+//
+//                    int x = point.x + dx;
+//                    int y = point.y + dy;
+//                    NaturalVector2 neighbor = NaturalVector2.of(x, y);
+//                    if (x >= x1 && x < x2 && y >= y1 && y < y2 && !visited.contains(neighbor)) {
+//                        if (isGround(neighbor) && !isObstacle(neighbor)) {
+//                            // fill it and explore
+//                            visited.add(neighbor);
+//                            filledTiles.add(neighbor);
+//                            queue.add(neighbor);
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//
+//        lightManager.updateLights(filledTiles);
         map.update(activeTiles);
     }
 
@@ -706,22 +719,23 @@ public class Location {
         assetManager.finishLoading();
         return assetManager.get(mapAsset);
     }
-    
+
     public boolean hasLineOfSight(Vector2 origin, Vector2 target) {
         losHandler.reset();
         return rayCast(origin, target);
     }
-    
+
     private boolean rayCast(Vector2 origin, Vector2 target) {
         if (origin.equals(target)) {
-            // if we don't do this check explicitly, we can get the following error:
+            // if we don't do this check explicitly, we can get the following
+            // error:
             // Expression: r.LengthSquared() > 0.0f
             return true;
         }
         world.rayCast(losHandler, origin, target);
         return losHandler.hasLineOfSight();
     }
-    
+
     private Vector2 getSpawnLocation() {
         TiledMapTileLayer spawnLayer = (TiledMapTileLayer) map.getLayers().get("player");
         spawnLayer.setVisible(false);
@@ -787,12 +801,11 @@ public class Location {
         Vector2 spawn = getSpawnLocation();
         this.player = createPlayer(profession, spawn.x, spawn.y);
         addActor(player);
-        
-        PointLight light = new PointLight(
-				rayHandler, LightManager.RAYS_PER_BALL, null, LightManager.LIGHT_DISTANCE * 3,
-				0, 0);
+
+        PointLight light = new PointLight(rayHandler, LightManager.RAYS_PER_BALL, null,
+                LightManager.LIGHT_DISTANCE * 3, 0, 0);
         light.attachToBody(player.getBody(), 0, 0);
-        
+
         return player;
     }
 
@@ -816,47 +829,48 @@ public class Location {
 
         return player;
     }
-    
+
     private interface ObstaclePredicate {
-    	boolean isObstacle(int x, int y);
-    	
-    	boolean isWall();
+        boolean isObstacle(int x, int y);
+
+        boolean isWall();
     }
 
     private void addWalls(World world) {
-    	// add walls
-    	addWalls(world, new ObstaclePredicate() {
-			@Override
-			public boolean isObstacle(int x, int y) {
-				return map.isWall(x, y);
-			}
+        // add walls
+        addWalls(world, new ObstaclePredicate() {
+            @Override
+            public boolean isObstacle(int x, int y) {
+                return map.isWall(x, y);
+            }
 
-			@Override
-			public boolean isWall() {
-				return true;
-			}
-    	});
-    	
-    	// add objects
-    	addWalls(world, new ObstaclePredicate() {
-			@Override
-			public boolean isObstacle(int x, int y) {
-				return Location.this.isObstacle(x, y) && !map.isWall(x, y);
-			}
+            @Override
+            public boolean isWall() {
+                return true;
+            }
+        });
 
-			@Override
-			public boolean isWall() {
-				return false;
-			}
-    	});
+        // add objects
+        addWalls(world, new ObstaclePredicate() {
+            @Override
+            public boolean isObstacle(int x, int y) {
+                return Location.this.isObstacle(x, y) && !map.isWall(x, y);
+            }
+
+            @Override
+            public boolean isWall() {
+                return false;
+            }
+        });
     }
-    
+
     private void addWalls(World world, ObstaclePredicate predicate) {
         for (int y = 1; y < map.getHeight(); y++) {
             boolean contiguous = false;
             int x0 = 0;
 
-            // scan through the rows looking for collision stripes and ground below
+            // scan through the rows looking for collision stripes and ground
+            // below
             for (int x = 0; x < map.getWidth(); x++) {
                 if (predicate.isObstacle(x, y) && !predicate.isObstacle(x, y - 1)) {
                     // this is part of a valid edge
@@ -878,7 +892,8 @@ public class Location {
             contiguous = false;
             x0 = 0;
 
-            // scan through the rows looking for collision stripes and ground above
+            // scan through the rows looking for collision stripes and ground
+            // above
             for (int x = 0; x < map.getWidth(); x++) {
                 if (!predicate.isObstacle(x, y) && predicate.isObstacle(x, y - 1)) {
                     // this is part of a valid edge
@@ -902,7 +917,8 @@ public class Location {
             boolean contiguous = false;
             int y0 = 0;
 
-            // scan through the columns looking for collision stripes and ground left
+            // scan through the columns looking for collision stripes and ground
+            // left
             for (int y = 0; y < map.getHeight(); y++) {
                 if (predicate.isObstacle(x, y) && !predicate.isObstacle(x - 1, y)) {
                     // this is part of a valid edge
@@ -924,7 +940,8 @@ public class Location {
             contiguous = false;
             y0 = 0;
 
-            // scan through the rows looking for collision stripes and ground right
+            // scan through the rows looking for collision stripes and ground
+            // right
             for (int y = 0; y < map.getHeight(); y++) {
                 if (!predicate.isObstacle(x, y) && predicate.isObstacle(x - 1, y)) {
                     // this is part of a valid edge
@@ -965,7 +982,7 @@ public class Location {
 
         Body body = world.createBody(groundBodyDef);
         Fixture fixture = body.createFixture(fixtureDef);
-        
+
         // collision filters
         Filter filter = fixture.getFilterData();
         filter.categoryBits = wall ? Settings.BIT_WALL : Settings.BIT_OBSTACLE;
@@ -977,64 +994,64 @@ public class Location {
         System.out.println("edge: " + start + " " + end);
         return body;
     }
-    
+
     private class LineOfSightHandler implements RayCastCallback {
         private boolean lineOfSight = true;
-        
+
         public boolean hasLineOfSight() {
             return lineOfSight;
         }
-        
+
         public void reset() {
             lineOfSight = true;
         }
-        
+
         @Override
         public float reportRayFixture(Fixture fixture, Vector2 point, Vector2 normal, float fraction) {
             if (isObstruction(fixture)) {
                 lineOfSight = false;
                 return fraction;
             }
-            
+
             // ignore this fixture and continue
             return -1;
         }
-        
+
         private boolean isObstruction(Fixture fixture) {
             // check that the fixture belongs to another agent
             if (fixture.getUserData() != null && fixture.getUserData() instanceof Agent) {
                 // cannot be obstructed by an agent
                 return false;
             }
-            
+
             // whatever it is, it's in the way
             return true;
         }
     };
-    
+
     private final static int MAX_FPS = 30;
-	private final static int MIN_FPS = 15;
-	public final static float TIME_STEP = 1f / MAX_FPS;
-	private final static float MAX_STEPS = 1f + MAX_FPS / MIN_FPS;
-	private final static float MAX_TIME_PER_FRAME = TIME_STEP * MAX_STEPS;
-	private final static int VELOCITY_ITERS = 6;
-	private final static int POSITION_ITERS = 2;
+    private final static int MIN_FPS = 15;
+    public final static float TIME_STEP = 1f / MAX_FPS;
+    private final static float MAX_STEPS = 1f + MAX_FPS / MIN_FPS;
+    private final static float MAX_TIME_PER_FRAME = TIME_STEP * MAX_STEPS;
+    private final static int VELOCITY_ITERS = 6;
+    private final static int POSITION_ITERS = 2;
 
-	float physicsTimeLeft;
-	long aika;
-	int times;
+    float physicsTimeLeft;
+    long aika;
+    int times;
 
-	private boolean fixedStep(float delta) {
-		physicsTimeLeft += delta;
-		if (physicsTimeLeft > MAX_TIME_PER_FRAME)
-			physicsTimeLeft = MAX_TIME_PER_FRAME;
+    private boolean fixedStep(float delta) {
+        physicsTimeLeft += delta;
+        if (physicsTimeLeft > MAX_TIME_PER_FRAME)
+            physicsTimeLeft = MAX_TIME_PER_FRAME;
 
-		boolean stepped = false;
-		while (physicsTimeLeft >= TIME_STEP) {
-//			world.step(TIME_STEP, VELOCITY_ITERS, POSITION_ITERS);
-			physicsTimeLeft -= TIME_STEP;
-			stepped = true;
-		}
-		return stepped;
-	}
+        boolean stepped = false;
+        while (physicsTimeLeft >= TIME_STEP) {
+            // world.step(TIME_STEP, VELOCITY_ITERS, POSITION_ITERS);
+            physicsTimeLeft -= TIME_STEP;
+            stepped = true;
+        }
+        return stepped;
+    }
 }
