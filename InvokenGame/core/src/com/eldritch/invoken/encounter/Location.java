@@ -643,10 +643,10 @@ public class Location {
                     int y = point.y + dy;
                     NaturalVector2 neighbor = NaturalVector2.of(x, y);
                     if (x >= x1 && x < x2 && y >= y1 && y < y2 && !visited.contains(neighbor)) {
+                        visited.add(neighbor);
+                        filledTiles.add(neighbor);
                         if (isGround(neighbor) && !isObstacle(neighbor)) {
                             // fill it and explore
-                            visited.add(neighbor);
-                            filledTiles.add(neighbor);
                             queue.add(neighbor);
                         }
                     }
