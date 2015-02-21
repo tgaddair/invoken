@@ -222,16 +222,10 @@ public class Location {
         normalMapShader.resize(width, height);
         lightMasker.resize(width, height);
     }
-    
-    static final int RAYS_PER_BALL = 128;
-    static final float LIGHT_DISTANCE = 16f;
 
     public void addLights(List<Light> lights) {
         for (Light light : lights) {
-            this.lightManager.addLight(light);
-//            PointLight pointLight = new PointLight(
-//					rayHandler, RAYS_PER_BALL, null, LIGHT_DISTANCE,
-//					light.getPosition().x, light.getPosition().y - 1);
+            this.lightManager.addLight(light, rayHandler);
         }
     }
 
@@ -795,7 +789,8 @@ public class Location {
         addActor(player);
         
         PointLight light = new PointLight(
-				rayHandler, RAYS_PER_BALL, null, LIGHT_DISTANCE * 3, 0, 0);
+				rayHandler, LightManager.RAYS_PER_BALL, null, LightManager.LIGHT_DISTANCE * 3,
+				0, 0);
         light.attachToBody(player.getBody(), 0, 0);
         
         return player;
@@ -821,15 +816,49 @@ public class Location {
 
         return player;
     }
+    
+    private interface ObstaclePredicate {
+    	boolean isObstacle(int x, int y);
+    	
+    	boolean isWall();
+    }
 
     private void addWalls(World world) {
+    	// add walls
+    	addWalls(world, new ObstaclePredicate() {
+			@Override
+			public boolean isObstacle(int x, int y) {
+				return map.isWall(x, y);
+			}
+
+			@Override
+			public boolean isWall() {
+				return true;
+			}
+    	});
+    	
+    	// add objects
+    	addWalls(world, new ObstaclePredicate() {
+			@Override
+			public boolean isObstacle(int x, int y) {
+				return Location.this.isObstacle(x, y) && !map.isWall(x, y);
+			}
+
+			@Override
+			public boolean isWall() {
+				return false;
+			}
+    	});
+    }
+    
+    private void addWalls(World world, ObstaclePredicate predicate) {
         for (int y = 1; y < map.getHeight(); y++) {
             boolean contiguous = false;
             int x0 = 0;
 
             // scan through the rows looking for collision stripes and ground below
             for (int x = 0; x < map.getWidth(); x++) {
-                if (isObstacle(x, y) && !isObstacle(x, y - 1)) {
+                if (predicate.isObstacle(x, y) && !predicate.isObstacle(x, y - 1)) {
                     // this is part of a valid edge
                     if (!contiguous) {
                         // this is the first point in the edge
@@ -840,7 +869,7 @@ public class Location {
                     // this point is not part of a valid edge
                     if (contiguous) {
                         // this point marks the end of our last edge
-                        addEdge(x0, y, x, y, world);
+                        addEdge(x0, y, x, y, world, predicate.isWall());
                         contiguous = false;
                     }
                 }
@@ -851,7 +880,7 @@ public class Location {
 
             // scan through the rows looking for collision stripes and ground above
             for (int x = 0; x < map.getWidth(); x++) {
-                if (!isObstacle(x, y) && isObstacle(x, y - 1)) {
+                if (!predicate.isObstacle(x, y) && predicate.isObstacle(x, y - 1)) {
                     // this is part of a valid edge
                     if (!contiguous) {
                         // this is the first point in the edge
@@ -862,7 +891,7 @@ public class Location {
                     // this point is not part of a valid edge
                     if (contiguous) {
                         // this point marks the end of our last edge
-                        addEdge(x0, y, x, y, world);
+                        addEdge(x0, y, x, y, world, predicate.isWall());
                         contiguous = false;
                     }
                 }
@@ -875,7 +904,7 @@ public class Location {
 
             // scan through the columns looking for collision stripes and ground left
             for (int y = 0; y < map.getHeight(); y++) {
-                if (isObstacle(x, y) && !isObstacle(x - 1, y)) {
+                if (predicate.isObstacle(x, y) && !predicate.isObstacle(x - 1, y)) {
                     // this is part of a valid edge
                     if (!contiguous) {
                         // this is the first point in the edge
@@ -886,7 +915,7 @@ public class Location {
                     // this point is not part of a valid edge
                     if (contiguous) {
                         // this point marks the end of our last edge
-                        addEdge(x, y0, x, y, world);
+                        addEdge(x, y0, x, y, world, predicate.isWall());
                         contiguous = false;
                     }
                 }
@@ -897,7 +926,7 @@ public class Location {
 
             // scan through the rows looking for collision stripes and ground right
             for (int y = 0; y < map.getHeight(); y++) {
-                if (!isObstacle(x, y) && isObstacle(x - 1, y)) {
+                if (!predicate.isObstacle(x, y) && predicate.isObstacle(x - 1, y)) {
                     // this is part of a valid edge
                     if (!contiguous) {
                         // this is the first point in the edge
@@ -908,7 +937,7 @@ public class Location {
                     // this point is not part of a valid edge
                     if (contiguous) {
                         // this point marks the end of our last edge
-                        addEdge(x, y0, x, y, world);
+                        addEdge(x, y0, x, y, world, predicate.isWall());
                         contiguous = false;
                     }
                 }
@@ -917,10 +946,10 @@ public class Location {
     }
 
     public Body createEdge(float x0, float y0, float x1, float y1) {
-        return addEdge(x0, y0, x1, y1, world);
+        return addEdge(x0, y0, x1, y1, world, true);
     }
 
-    private Body addEdge(float x0, float y0, float x1, float y1, World world) {
+    private Body addEdge(float x0, float y0, float x1, float y1, World world, boolean wall) {
         EdgeShape edge = new EdgeShape();
         Vector2 start = new Vector2(x0, y0);
         Vector2 end = new Vector2(x1, y1);
@@ -936,10 +965,10 @@ public class Location {
 
         Body body = world.createBody(groundBodyDef);
         Fixture fixture = body.createFixture(fixtureDef);
-
+        
         // collision filters
         Filter filter = fixture.getFilterData();
-        filter.categoryBits = Settings.BIT_WALL;
+        filter.categoryBits = wall ? Settings.BIT_WALL : Settings.BIT_OBSTACLE;
         filter.maskBits = Settings.BIT_ANYTHING;
         fixture.setFilterData(filter);
 

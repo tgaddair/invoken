@@ -579,6 +579,7 @@ public class LocationGenerator {
                 if (cell == null || cell.getTile() != ground) {
                     // non-empty, non-ground space
                     addCell(layer, collider, x, y);
+                    map.setWall(x, y);
                 }
             }
         }

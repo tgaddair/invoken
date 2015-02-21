@@ -18,6 +18,11 @@ import com.eldritch.invoken.encounter.NaturalVector2;
 import com.eldritch.invoken.util.Settings;
 
 public class LocationMap extends TiledMap {
+	private enum Type {
+		Ground, Wall, Object
+	}
+	
+	private final Type[][] typeMap;
     private final TiledMapTile ground;
     private final int width;
     private final int height;
@@ -32,6 +37,15 @@ public class LocationMap extends TiledMap {
         this.ground = ground;
         this.width = width;
         this.height = height;
+        typeMap = new Type[width][height];
+    }
+    
+    public void setWall(int x, int y) {
+    	typeMap[x][y] = Type.Wall;
+    }
+    
+    public boolean isWall(int x, int y) {
+    	return typeMap[x][y] == Type.Wall;
     }
     
     public void setRooms(ConnectedRoom[][] rooms) {
@@ -76,6 +90,11 @@ public class LocationMap extends TiledMap {
             return true;
         }
         return activeTiles.contains(NaturalVector2.of(x, y));
+    }
+    
+    public boolean isGround(int x, int y) {
+    	LocationLayer base = (LocationLayer) getLayers().get(0);
+    	return base.isGround(x, y);
     }
     
     public TiledMapTile getGround() {

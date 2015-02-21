@@ -752,7 +752,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         setTarget(null);
         toggles.clear();
         setRgb(1, 1, 1);
-        setCollisionMask(Settings.BIT_PHYSICAL);
+        setCollisionMask(Settings.BIT_WALL);
     }
     
     private void setCollisionMask(short maskBits) {
@@ -1246,6 +1246,11 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     
     public void recoil() {
         // does nothing
+    }
+    
+    @Override
+    public float getZ() {
+        return isAlive() ? super.getZ() : Float.POSITIVE_INFINITY;
     }
     
     public abstract boolean canSpeak();
