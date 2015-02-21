@@ -27,6 +27,7 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
@@ -105,6 +106,7 @@ public class Location {
     private OrthogonalShadedTiledMapRenderer overlayRenderer;
     private Array<Rectangle> tiles = new Array<Rectangle>();
     private OrthographicCamera camera;
+    private final Vector3 cameraV = new Vector3();
 
     private int collisionIndex = -1;
     private final int groundIndex = 0;
@@ -270,8 +272,8 @@ public class Location {
     }
 
     public void shiftView(Vector2 offset) {
-        camera.position.x += offset.x;
-        camera.position.y += offset.y;
+        cameraV.x += offset.x;
+        cameraV.y += offset.y;
     }
 
     public void render(float delta, OrthographicCamera camera, TextureRegion selector,
@@ -291,9 +293,12 @@ public class Location {
         float x = scale(position.x + offset.x, camera.zoom);
         float y = scale(position.y + offset.y, camera.zoom);
 
-        float lerp = 0.1f;
-        camera.position.x += (x - camera.position.x) * lerp;
-        camera.position.y += (y - camera.position.y) * lerp;
+        float lerp = 0.01f;
+        cameraV.x += (x - camera.position.x) * lerp;
+        cameraV.y += (y - camera.position.y) * lerp;
+        cameraV.scl(0.75f);
+        
+        camera.position.add(cameraV);
         camera.update();
 
         // update the player (process input, collision detection, position
