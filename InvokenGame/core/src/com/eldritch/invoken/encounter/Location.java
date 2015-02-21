@@ -54,6 +54,7 @@ import com.eldritch.invoken.actor.type.Player;
 import com.eldritch.invoken.actor.type.TemporaryEntity;
 import com.eldritch.invoken.encounter.layer.EncounterLayer;
 import com.eldritch.invoken.encounter.layer.LocationMap;
+import com.eldritch.invoken.gfx.FogOfWarMasker;
 import com.eldritch.invoken.gfx.Light;
 import com.eldritch.invoken.gfx.LightManager;
 import com.eldritch.invoken.gfx.NormalMapShader;
@@ -96,6 +97,7 @@ public class Location {
     private final LightManager lightManager;
     private final NormalMapShader normalMapShader;
     private final OverlayLightMasker lightMasker;
+    private final FogOfWarMasker fowMasker;
 
     private final Optional<Faction> owningFaction;
 
@@ -131,6 +133,7 @@ public class Location {
         lightManager = new LightManager(data);
         normalMapShader = new NormalMapShader();
         lightMasker = new OverlayLightMasker(lightManager.getVertexShaderDef());
+        fowMasker = new FogOfWarMasker();
 
         // find layers we care about
         for (int i = 0; i < map.getLayers().getCount(); i++) {
@@ -162,7 +165,7 @@ public class Location {
         rayHandler = new RayHandler(world);
         rayHandler.setAmbientLight(0f, 0f, 0f, 0.5f);
         rayHandler.setBlurNum(3);
-        // rayHandler.setShadows(false);
+        rayHandler.setShadows(false);
 
         short category = Settings.BIT_DEFAULT;
         short group = 0;
@@ -224,6 +227,7 @@ public class Location {
         lightManager.resize(width, height);
         normalMapShader.resize(width, height);
         lightMasker.resize(width, height);
+        fowMasker.resize(width, height);
     }
 
     public void addLights(List<Light> lights) {
@@ -307,6 +311,7 @@ public class Location {
 
             // reset lights
             normalMapShader.setLightGeometry(lightManager.getLights(), getWorldBounds());
+            fowMasker.updateMask(filledTiles);
         }
 
         // updates
@@ -338,6 +343,7 @@ public class Location {
         overlayRenderer.setView(camera);
 
         lightManager.update(delta);
+        fowMasker.render(camera);
 
         // draw lights
         renderer.getSpriteBatch().setShader(lightManager.getDefaultShader());
@@ -415,11 +421,11 @@ public class Location {
         overlayRenderer.render();
 
         // render lighting
-        boolean stepped = fixedStep(delta);
-        rayHandler.setCombinedMatrix(camera);
-        if (stepped)
-            rayHandler.update();
-        rayHandler.render();
+//        boolean stepped = fixedStep(delta);
+//        rayHandler.setCombinedMatrix(camera);
+//        if (stepped)
+//            rayHandler.update();
+//        rayHandler.render();
 
         // render status info
         renderer.getSpriteBatch().begin();
@@ -427,7 +433,7 @@ public class Location {
             AgentStatusRenderer.render(agent, player, renderer);
         }
         renderer.getSpriteBatch().end();
-
+        
         if (Settings.DEBUG_DRAW) {
             // draw NPC debug rays
             for (Agent agent : activeEntities) {
@@ -590,22 +596,21 @@ public class Location {
         }
 
         // connected rooms fill
-        ConnectedRoom[][] rooms = map.getRooms();
-        if (rooms[origin.x][origin.y] != currentRoom && rooms[origin.x][origin.y] != null) {
-            System.out.println("new room!");
-            currentRoom = rooms[origin.x][origin.y];
-            
-            filledTiles.clear();
-            for (int i = 0; i < map.getWidth(); i++) {
-                for (int j = 0; j < map.getHeight(); j++) {
-                    NaturalVector2 tile = NaturalVector2.of(i, j);
-                    if (currentRoom.isConnected(tile, rooms)) {
-                        filledTiles.add(tile);
-                    }
-                }
-            }
-            lightManager.updateLights(filledTiles);
-        }
+//        ConnectedRoom[][] rooms = map.getRooms();
+//        if (rooms[origin.x][origin.y] != currentRoom && rooms[origin.x][origin.y] != null) {
+//            currentRoom = rooms[origin.x][origin.y];
+//            
+//            filledTiles.clear();
+//            for (int i = 0; i < map.getWidth(); i++) {
+//                for (int j = 0; j < map.getHeight(); j++) {
+//                    NaturalVector2 tile = NaturalVector2.of(i, j);
+//                    if (currentRoom.isConnected(tile, rooms)) {
+//                        filledTiles.add(tile);
+//                    }
+//                }
+//            }
+//            lightManager.updateLights(filledTiles);
+//        }
 
 //        for (int i = x1; i <= x2; i++) {
 //            for (int j = y1; j <= y2; j++) {
@@ -617,38 +622,39 @@ public class Location {
 //        }
 
         // visible ground tiles fill
-//        Set<NaturalVector2> visited = new HashSet<NaturalVector2>();
-//        visited.add(origin);
-//
-//        filledTiles.clear();
-//        filledTiles.add(origin);
-//
-//        LinkedList<NaturalVector2> queue = new LinkedList<NaturalVector2>();
-//        queue.add(origin);
-//        while (!queue.isEmpty()) {
-//            NaturalVector2 point = queue.remove();
-//            for (int dx = -1; dx <= 1; dx++) {
-//                for (int dy = -1; dy <= 1; dy++) {
-//                    if (dx == 0 && dy == 0) {
-//                        continue;
-//                    }
-//
-//                    int x = point.x + dx;
-//                    int y = point.y + dy;
-//                    NaturalVector2 neighbor = NaturalVector2.of(x, y);
-//                    if (x >= x1 && x < x2 && y >= y1 && y < y2 && !visited.contains(neighbor)) {
-//                        if (isGround(neighbor) && !isObstacle(neighbor)) {
-//                            // fill it and explore
-//                            visited.add(neighbor);
-//                            filledTiles.add(neighbor);
-//                            queue.add(neighbor);
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//
-//        lightManager.updateLights(filledTiles);
+        // TODO: create a mask, gaussian blur, and apply as overlay
+        Set<NaturalVector2> visited = new HashSet<NaturalVector2>();
+        visited.add(origin);
+
+        filledTiles.clear();
+        filledTiles.add(origin);
+
+        LinkedList<NaturalVector2> queue = new LinkedList<NaturalVector2>();
+        queue.add(origin);
+        while (!queue.isEmpty()) {
+            NaturalVector2 point = queue.remove();
+            for (int dx = -1; dx <= 1; dx++) {
+                for (int dy = -1; dy <= 1; dy++) {
+                    if (dx == 0 && dy == 0) {
+                        continue;
+                    }
+
+                    int x = point.x + dx;
+                    int y = point.y + dy;
+                    NaturalVector2 neighbor = NaturalVector2.of(x, y);
+                    if (x >= x1 && x < x2 && y >= y1 && y < y2 && !visited.contains(neighbor)) {
+                        if (isGround(neighbor) && !isObstacle(neighbor)) {
+                            // fill it and explore
+                            visited.add(neighbor);
+                            filledTiles.add(neighbor);
+                            queue.add(neighbor);
+                        }
+                    }
+                }
+            }
+        }
+
+        lightManager.updateLights(filledTiles);
         map.update(activeTiles);
     }
 

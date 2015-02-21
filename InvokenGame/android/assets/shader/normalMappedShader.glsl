@@ -27,19 +27,18 @@ uniform int lightCount;
 uniform bool useNormal;
 
 void main() {
-   //RGBA of our diffuse color
+   // RGBA of our diffuse color
    vec4 DiffuseColor = texture2D(u_texture, vTexCoord);
    
-   //RGB of our normal map
+   // RGB of our normal map
    vec2 globalCoord = (gl_FragCoord.xy / Resolution.xy);
    vec3 NormalMap = texture2D(u_normals, globalCoord).rgb;
    if (!useNormal) {
      NormalMap = vec3(1, 1, 1);
    }
 
-   //vec4 light = texture2D(u_lights, globalCoord);
-   //vec4 overlay = texture2D(u_overlay, globalCoord);
-   //light = light * (1 - overlay);
+   // overlay defines the fog of war effect to mask lights
+   vec4 overlay = texture2D(u_overlay, globalCoord);
 
    // normalize the normal map
    vec3 N = normalize(NormalMap * 2.0 - 1.0);
@@ -85,5 +84,5 @@ void main() {
    // the calculation which brings it all together
    vec3 Intensity = Ambient + DiffuseTotal;
    vec3 FinalColor = DiffuseColor.rgb * Intensity;
-   gl_FragColor = vColor * vec4(FinalColor, DiffuseColor.a);
+   gl_FragColor = vColor * vec4(FinalColor, DiffuseColor.a) * overlay;
 }
