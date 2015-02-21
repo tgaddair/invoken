@@ -23,6 +23,8 @@ public class LocationMap extends TiledMap {
 	}
 	
 	private final Type[][] typeMap;
+	private final int[][] lightWalls;
+	
     private final TiledMapTile ground;
     private final int width;
     private final int height;
@@ -38,6 +40,7 @@ public class LocationMap extends TiledMap {
         this.width = width;
         this.height = height;
         typeMap = new Type[width][height];
+        lightWalls = new int[width][height];
     }
     
     public void setWall(int x, int y) {
@@ -64,8 +67,23 @@ public class LocationMap extends TiledMap {
         return rooms;
     }
     
+    public boolean isLightWall(int x, int y) {
+        return lightWalls[x][y] > 0;
+    }
+    
+    public void setLightWall(int x, int y, boolean value) {
+        lightWalls[x][y] += value ? 1 : -1;
+    }
+    
     public void addOverlay(LocationLayer layer) {
     	overlayMap.getLayers().add(layer);
+    	for (int i = 0; i < layer.getWidth(); i++) {
+    	    for (int j = 0; j < layer.getHeight(); j++) {
+    	        if (layer.isFilled(i, j)) {
+    	            lightWalls[i][j] = 1;
+    	        }
+    	    }
+    	}
     }
     
     public TiledMap getOverlayMap() {

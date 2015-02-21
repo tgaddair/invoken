@@ -89,6 +89,19 @@ public class DoorActivator extends ClickActivator {
         for (Body body : bodies) {
             body.setActive(!open);
         }
+        setLightWalls(location, !open);
+    }
+    
+    private void setLightWalls(Location location, boolean value) {
+        Vector2 position = getPosition();
+        float x = (int) position.x;
+        float y = (int) position.y;
+        if (front) {
+            // add two rows for the front to prevent the flood fill from going around the bottom
+            location.setLightWalls((int) x, (int) y, (int) x + SIZE, (int) y + 2, value);
+        } else {
+            location.setLightWalls((int) x, (int) y, (int) x, (int) y + SIZE, value);
+        }
     }
 
     @Override
@@ -105,6 +118,7 @@ public class DoorActivator extends ClickActivator {
             bodies.add(location.createEdge(x + 0.2f, y, x + 0.2f, y + SIZE));
             bodies.add(location.createEdge(x + 0.5f, y, x + 0.5f, y + SIZE));
         }
+        setLightWalls(location, true);
     }
 
     @Override

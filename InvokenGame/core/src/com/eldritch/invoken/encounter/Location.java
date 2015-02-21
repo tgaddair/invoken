@@ -311,7 +311,6 @@ public class Location {
 
             // reset lights
             normalMapShader.setLightGeometry(lightManager.getLights(), getWorldBounds());
-            fowMasker.updateMask(filledTiles);
         }
 
         // updates
@@ -621,14 +620,25 @@ public class Location {
 //            }
 //        }
 
-        // visible ground tiles fill
+        resetFilledTiles(origin, getWorldBounds());
+
+        map.update(activeTiles);
+    }
+    
+    private void resetFilledTiles(NaturalVector2 origin, Rectangle bounds) {
+     // visible ground tiles fill
         // TODO: create a mask, gaussian blur, and apply as overlay
         Set<NaturalVector2> visited = new HashSet<NaturalVector2>();
         visited.add(origin);
 
         filledTiles.clear();
         filledTiles.add(origin);
-
+        
+        int x1 = (int) bounds.x;
+        int x2 = (int) (bounds.x + bounds.width);
+        int y1 = (int) bounds.y;
+        int y2 = (int) (bounds.y + bounds.height);
+        
         LinkedList<NaturalVector2> queue = new LinkedList<NaturalVector2>();
         queue.add(origin);
         while (!queue.isEmpty()) {
@@ -645,7 +655,7 @@ public class Location {
                     if (x >= x1 && x < x2 && y >= y1 && y < y2 && !visited.contains(neighbor)) {
                         visited.add(neighbor);
                         filledTiles.add(neighbor);
-                        if (isGround(neighbor) && !isObstacle(neighbor)) {
+                        if (!map.isLightWall(neighbor.x, neighbor.y)) {
                             // fill it and explore
                             queue.add(neighbor);
                         }
@@ -653,9 +663,9 @@ public class Location {
                 }
             }
         }
-
+        
         lightManager.updateLights(filledTiles);
-        map.update(activeTiles);
+        fowMasker.updateMask(filledTiles);
     }
 
     public boolean isGround(NaturalVector2 point) {
@@ -965,6 +975,19 @@ public class Location {
                     }
                 }
             }
+        }
+    }
+    
+    public void setLightWalls(int x0, int y0, int x1, int y1, boolean value) {
+        for (int x = x0; x <= x1; x++) {
+            for (int y = y0; y <= y1; y++) {
+                map.setLightWall(x, y, value);
+            }
+        }
+        
+        // don't wait for the player to move, update the filled tiles now
+        if (currentCell != null) {
+            resetFilledTiles(currentCell, getWorldBounds());
         }
     }
 
