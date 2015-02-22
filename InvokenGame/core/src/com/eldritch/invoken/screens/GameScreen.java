@@ -249,11 +249,17 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 				Npc npc = (Npc) target;
 				String task = npc.getLastTask();
 				boolean agitated = npc.isAgitated();
+				boolean fatigued = npc.getFatigue().isExpended();
+				float fatigue = npc.getFatigue().getValue();
+				boolean intimidated = npc.getIntimidation().isExpended();
+				float intimidation = npc.getIntimidation().getValue();
 				String targetName = npc.hasTarget() ? npc.getTarget().getInfo().getName() : "None";
 				
 		        font.draw(batch, "Graph: " + Settings.DRAW_GRAPH, 10, getHeight() - (30 + 20 * i++));
 		        font.draw(batch, "Task: " + task, 10, getHeight() - (30 + 20 * i++));
 		        font.draw(batch, String.format("Agitated: %s", agitated), 10, getHeight() - (30 + 20 * i++));
+		        font.draw(batch, String.format("Fatigued: %s (%.2f)", fatigued, fatigue), 10, getHeight() - (30 + 20 * i++));
+		        font.draw(batch, String.format("Intimidated: %s (%.2f)", intimidated, intimidation), 10, getHeight() - (30 + 20 * i++));
 		        font.draw(batch, String.format("Target: %s", targetName), 10, getHeight() - (30 + 20 * i++));
 			}
 			

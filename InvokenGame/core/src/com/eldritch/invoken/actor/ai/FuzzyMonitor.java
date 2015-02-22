@@ -14,6 +14,14 @@ public abstract class FuzzyMonitor {
         this.penalty = pentalty;
         limit = getLimit();
     }
+    
+    public void useUntilLimit(float delta) {
+        if (delta > 0 && !isExpended()) {
+            use(delta);
+        } else if (delta < 0 && isExpended()) {
+            use(delta);
+        }
+    }
 
     public void use(float delta) {
         if (delta > 0) {
@@ -29,6 +37,10 @@ public abstract class FuzzyMonitor {
             ready = true;
             limit = getLimit();
         }
+    }
+    
+    public float getValue() {
+        return value;
     }
 
     public boolean isExpended() {

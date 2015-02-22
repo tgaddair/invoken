@@ -32,10 +32,17 @@ public class Attack extends Sequence<Npc> {
         hideSequence.addChild(new IsIntimidated());
         hideSequence.addChild(new Invert<Npc>(new HasCover()));
         hideSequence.addChild(new SeekCover());
+        
+        // we can't attack and we don't want cover, so try suppressing fire
+        Sequence<Npc> suppressSequence = new Sequence<Npc>();
+        suppressSequence.addChild(new Invert<Npc>(new HasLineOfSight()));
+        useAugSequence.addChild(new HasLastSeen());
+//        useAugSequence.addChild(new ChooseUntargetedAugmentation());
 
         Selector<Npc> selector = new Selector<Npc>();
         selector.addChild(useAugSequence);
         selector.addChild(hideSequence);
+//        selector.addChild(suppressSequence);
 
         addChild(selector);
     }
@@ -202,6 +209,20 @@ public class Attack extends Sequence<Npc> {
                     npc.getLastSeen().getPosition())
                     && npc.getCover() != null
                     && npc.getCover().getPosition().dst2(npc.getPosition()) < 1;
+        }
+    }
+    
+    private static class HasLineOfSight extends BooleanTask {
+        @Override
+        protected boolean check(Npc npc) {
+            return npc.hasTarget() && npc.hasLineOfSight(npc.getTarget());
+        }
+    }
+    
+    private static class HasLastSeen extends BooleanTask {
+        @Override
+        protected boolean check(Npc npc) {
+            return npc.hasTarget() && npc.hasLineOfSight(npc.getLastSeen().getPosition());
         }
     }
 }

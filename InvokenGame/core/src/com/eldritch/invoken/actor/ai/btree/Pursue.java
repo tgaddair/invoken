@@ -10,7 +10,6 @@ public class Pursue extends LeafTask<Npc> {
     public void run(Npc entity) {
         entity.getPursue().setTarget(entity.getLastSeen());
         entity.setBehavior(SteeringMode.Pursue);
-        entity.getIntimidation().use(Npc.STEP);
         entity.setTask(getClass().getSimpleName());
         success();
     }
