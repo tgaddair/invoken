@@ -19,7 +19,7 @@ import com.eldritch.invoken.encounter.NaturalVector2;
 public class BspGenerator {
     // 2 -> lots of big halls
     // 4 -> lots of corridors
-    private static final float ROOM_SPARSITY = 4f;
+    private static final float ROOM_SPARSITY = 4.5f;
     
     public static final int MinRoomSize = 6;
     public static final int MaxRoomSize = 12;
