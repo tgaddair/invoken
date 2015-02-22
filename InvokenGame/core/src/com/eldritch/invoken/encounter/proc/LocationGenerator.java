@@ -5,6 +5,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -186,7 +187,7 @@ public class LocationGenerator {
         roomGenerator.generate(bsp);
 
         InvokenGame.log("Connecting Rooms");
-        ConnectedRoomManager rooms = createRooms(bsp.getRooms(), typeMap);
+        ConnectedRoomManager rooms = createRooms(bsp.getEncounterRooms(), typeMap);
         map.setRooms(rooms);
         save(rooms.getGrid(), "connected-rooms");
 
@@ -270,13 +271,15 @@ public class LocationGenerator {
         return layer.isGround(x, y) && collision.getCell(x, y) == null;
     }
 
-    private ConnectedRoomManager createRooms(List<Rectangle> chambers, CellType[][] typeMap) {
-        InvokenGame.log("Create Chambers");
+    private ConnectedRoomManager createRooms(Collection<EncounterRoom> chambers, CellType[][] typeMap) {
         ConnectedRoomManager rooms = new ConnectedRoomManager(typeMap.length, typeMap[0].length);
-        for (Rectangle rect : chambers) {
+        
+        InvokenGame.log("Create Chambers");
+        for (EncounterRoom encounter : chambers) {
             List<NaturalVector2> points = new ArrayList<NaturalVector2>();
 
             // boundary of the chamber
+            Rectangle rect = encounter.getBounds();
             int startX = (int) rect.x;
             int endX = (int) (rect.x + rect.width);
             int startY = (int) rect.y;
@@ -298,6 +301,7 @@ public class LocationGenerator {
             for (NaturalVector2 point : points) {
                 rooms.setRoom(point.x, point.y, room);
             }
+            rooms.addMapping(encounter, room);
         }
 
         // all chambers are identified, so any remaining floor points belong to
