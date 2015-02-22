@@ -22,6 +22,7 @@ public class Attack extends Sequence<Npc> {
         // fail over to evading the target
         Sequence<Npc> useAugSequence = new Sequence<Npc>();
         useAugSequence.addChild(new TakeAim());
+        useAugSequence.addChild(new HasSights());
         useAugSequence.addChild(new ChooseAugmentation());
         useAugSequence.addChild(new UseAugmentation());
         
@@ -103,6 +104,13 @@ public class Attack extends Sequence<Npc> {
         @Override
         protected Task<Npc> copyTo(Task<Npc> task) {
             return task;
+        }
+    }
+    
+    private static class HasSights extends BooleanTask {
+        @Override
+        protected boolean check(Npc npc) {
+            return npc.hasSights();
         }
     }
     

@@ -1324,13 +1324,16 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         private final Map<Agent, Boolean> lineOfSightCache = new HashMap<Agent, Boolean>();
         private final Vector2 position = new Vector2();
         private final Vector2 direction = new Vector2();
+        private final Vector2 tmp = new Vector2();
 
         public boolean hasLineOfSight(Agent target) {
             if (!lineOfSightCache.containsKey(target)) {
-                lineOfSightCache.put(
-                        target,
-                        Agent.this.hasLineOfSight(target)
-                                && Agent.this.hasLineOfSight(getRenderPosition(), target));
+                Vector2 origin = getRenderPosition();
+                tmp.set(target.getPosition()).sub(origin).nor().add(origin);
+                lineOfSightCache
+                        .put(target,
+                                Agent.this.hasLineOfSight(target)
+                                        && Agent.this.hasLineOfSight(tmp, target));
             }
             return lineOfSightCache.get(target);
         }

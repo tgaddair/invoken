@@ -21,6 +21,7 @@ import com.eldritch.invoken.screens.GameScreen;
 
 public class FireWeapon extends ProjectileAugmentation {
     private static final float DAMAGE_SCALE = 25;
+    private static final float BULLET_VELOCITY = 30;
     private static final int BASE_COST = 10;
     private static final float ALERT_RADIUS = 7;
     
@@ -164,7 +165,7 @@ public class FireWeapon extends ProjectileAugmentation {
                 GameScreen.getTexture("sprite/effects/bullet1.png"));
 
         public Bullet() {
-            super(texture, 40, DAMAGE_SCALE);
+            super(texture, BULLET_VELOCITY, DAMAGE_SCALE);
         }
 
         @Override

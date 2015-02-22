@@ -64,6 +64,7 @@ import com.google.common.base.Optional;
 public abstract class Npc extends SteeringAgent implements Telegraph {
     public static final float STEP = 0.008f;  // behavior action frequency
     private static final float ALERT_DURATION = 3f;  // seconds
+    private static final float SIGHTED_DURATION = 1f;
     
     public enum SteeringMode {
         Default, Wander, Pursue, Evade, Follow
@@ -85,6 +86,7 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
     private Augmentation chosenAug;
     private float lastStep = 0;
     private float alert = 0;
+    private float sighted = 0;
     private CoverPoint cover = null;
     
     private final NpcStateMachine stateMachine;
@@ -246,6 +248,13 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
 //        stateMachine.update(delta);
         alert = Math.max(alert - delta, 0);
         
+        // update sighted info
+        if (hasTarget() && hasLineOfSight(getTarget())) {
+            sighted += delta;
+        } else {
+            sighted = 0;
+        }
+        
         lastStep += delta;
         if (lastStep > STEP) {
             behaviorTree.step();
@@ -292,6 +301,10 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
         }
     }
     
+    public boolean hasSights() {
+        return sighted > SIGHTED_DURATION;
+    }
+    
     public boolean isAlerted() {
         return alert > 0;
     }
@@ -310,6 +323,11 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
 
     @Override
     public void setTarget(Agent other) {
+        if (other != getTarget()) {
+            // changed targets so reset
+            sighted = 0;
+        }
+        
         super.setTarget(other);
         if (other != null) {
             detected.add(other);

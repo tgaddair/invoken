@@ -284,7 +284,7 @@ public class Location {
         Vector2 position = player.getCamera().getPosition();
         if (player.isAiming()) {
             // get direction to focus
-            offset.set(player.getFocusPoint()).sub(position).scl(.25f);
+            offset.set(player.getFocusPoint()).sub(position).scl(.5f);
         } else {
             offset.set(Vector2.Zero);
         }
