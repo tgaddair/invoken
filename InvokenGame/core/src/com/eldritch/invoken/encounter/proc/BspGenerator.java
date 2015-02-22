@@ -17,6 +17,10 @@ import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.encounter.NaturalVector2;
 
 public class BspGenerator {
+    // 2 -> lots of big halls
+    // 4 -> lots of corridors
+    private static final float ROOM_SPARSITY = 4f;
+    
     public static final int MinRoomSize = 6;
     public static final int MaxRoomSize = 12;
 
@@ -47,15 +51,12 @@ public class BspGenerator {
         this.Height = height;
         map = new CellType[width][height];
 
-        // denominator:
-        // 2 -> lots of big halls
-        // 4 -> lots of corridors
-        RoomCount = (int) (Math.sqrt(width * height) / 3f);
+        RoomCount = (int) (Math.sqrt(width * height) / ROOM_SPARSITY);
     }
 
     public BspGenerator(int roomCount) {
         this.RoomCount = roomCount;
-        this.Width = Math.max(RoomCount * 3, 50);
+        this.Width = Math.max((int) (RoomCount * ROOM_SPARSITY), 50);
         this.Height = Width;
         map = new CellType[Width][Height];
     }

@@ -207,8 +207,14 @@ public class DoorActivator extends ClickActivator implements ProximityActivator 
         public LockInfo(String keyId, int strength) {
             this.key = !Strings.isNullOrEmpty(keyId) ? Item.fromProto(InvokenGame.ITEM_READER
                     .readAsset(keyId)) : null;
+            
+            // strength key:
+            //   0  -> open
+            //   1  -> closed
+            //   2+ -> locked
+            //   10 -> requires key
             this.strength = strength;
-            locked = key != null || strength > 0;
+            locked = key != null || strength > 1;
         }
 
         public Item getKey() {
