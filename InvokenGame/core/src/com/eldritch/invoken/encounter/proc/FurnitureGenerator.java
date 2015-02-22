@@ -63,7 +63,7 @@ public abstract class FurnitureGenerator {
             List<Activator> activators) {
         for (EncounterRoom encounter : encounters) {
             Encounter metadata = encounter.getEncounter();
-            Rectangle bounds = encounter.getBounds();
+            Rectangle bounds = encounter.getRestrictedBounds();
             for (int i = 0; i < bounds.width; i++) {
                 int x = (int) bounds.x + i;
                 for (int j = 0; j < bounds.height; j++) {
