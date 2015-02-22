@@ -51,7 +51,7 @@ public class FogOfWarMasker {
         final String VERT = Gdx.files.internal("shader/vertexShader.glsl").readString();
 
         // our fragment shader, which does the blur in one direction at a time
-        final String FRAG = Gdx.files.internal("shader/blur.frag").readString();
+        final String FRAG = Gdx.files.internal("shader/blur.glsl").readString();
 
         // create our shader program
         blurShader = new ShaderProgram(VERT, FRAG);

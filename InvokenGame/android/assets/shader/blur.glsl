@@ -25,8 +25,8 @@ void main() {
 	//   1.0 -> blur by one pixel
 	//   2.0 -> blur by two pixels, etc.
 	//float blur = radius/resolution; 
-	float blur = 0.0029; 
-	//float blur = 0.01; 
+	//float blur = 0.0029; 
+	float blur = 0.01; 
     
   // the direction of our blur
   //   (1.0, 0.0) -> x-axis blur
@@ -34,8 +34,6 @@ void main() {
 	float hstep = dir.x;
 	float vstep = dir.y;
 
-  vec4 DiffuseColor = texture2D(u_texture, vTexCoord);
-  if (DiffuseColor.x == 0) {
     // apply blurring, using a 9-tap filter with predefined gaussian weights
     sum += texture2D(u_texture, vec2(tc.x - 4.0*blur*hstep, tc.y - 4.0*blur*vstep)) * 0.0162162162;
     sum += texture2D(u_texture, vec2(tc.x - 3.0*blur*hstep, tc.y - 3.0*blur*vstep)) * 0.0540540541;
@@ -47,9 +45,6 @@ void main() {
     sum += texture2D(u_texture, vec2(tc.x + 2.0*blur*hstep, tc.y + 2.0*blur*vstep)) * 0.1216216216;
     sum += texture2D(u_texture, vec2(tc.x + 3.0*blur*hstep, tc.y + 3.0*blur*vstep)) * 0.0540540541;
     sum += texture2D(u_texture, vec2(tc.x + 4.0*blur*hstep, tc.y + 4.0*blur*vstep)) * 0.0162162162;
-  } else {
-    sum += DiffuseColor;
-  }
 
 	//discard alpha for our simple demo, multiply by vertex color and return
 	gl_FragColor = vColor * vec4(sum.rgb, 1.0);

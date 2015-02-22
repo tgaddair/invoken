@@ -56,6 +56,7 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
 
 public class LocationGenerator {
     // string constants required for all biome types
@@ -600,9 +601,16 @@ public class LocationGenerator {
                 playerLayer.setVisible(false);
                 playerLayer.setOpacity(1.0f);
                 playerLayer.setName("player");
-
-                NaturalVector2 position = getPoint(bounds, base, playerLayer);
-                addCell(playerLayer, collider, position.x, position.y);
+                
+                List<NaturalVector2> freeSpaces = getFreeSpaces(collision, bounds);
+                Collections.shuffle(freeSpaces);
+                NaturalVector2 position = Iterables.getFirst(freeSpaces, null);
+                if (position != null) {
+                    addCell(playerLayer, collider, position.x, position.y);
+                } else {
+                    // TODO: this should never happen, but just in case we should regenerate the
+                    // whole map
+                }
 
                 layers.add(playerLayer);
             } else {
@@ -612,69 +620,6 @@ public class LocationGenerator {
         }
 
         return layers;
-    }
-
-    private Encounter popEncounter(Rectangle room, List<Encounter> encounters, double total) {
-        double target = Math.random() * total;
-        double sum = 0.0;
-        Iterator<Encounter> it = encounters.iterator();
-        while (it.hasNext()) {
-            Encounter encounter = it.next();
-            if (!compatible(encounter, room)) {
-                // basic check to make sure the dimensions fit together
-                continue;
-            }
-
-            if (encounter.getType() == Encounter.Type.ACTOR) {
-                sum += encounter.getWeight();
-                if (sum >= target) {
-                    if (encounter.getUnique()) {
-                        it.remove();
-                    }
-
-                    return encounter;
-                }
-            }
-        }
-        return null;
-    }
-
-    private final LoadingCache<String, Room> availableRooms = CacheBuilder.newBuilder().build(
-            new CacheLoader<String, Room>() {
-                public Room load(String roomId) {
-                    return InvokenGame.ROOM_READER.readAsset(roomId);
-                }
-            });
-
-    private Room lookupRoom(String roomId) {
-        try {
-            return availableRooms.get(roomId);
-        } catch (Exception ex) {
-            InvokenGame.error("Failed to load room: " + roomId, ex);
-            return null;
-        }
-    }
-
-    // TODO: this is redundant, as we'll need to do this check again to actually
-    // fetch a compatible
-    // room for the encounter; better to just compute the actual room here and
-    // store it off
-    private boolean compatible(Encounter encounter, Rectangle bounds) {
-        // if the room list is empty, then the encounter can go in any room
-        if (encounter.getRoomIdList().isEmpty()) {
-            return true;
-        }
-
-        for (String roomId : encounter.getRoomIdList()) {
-            Room room = lookupRoom(roomId);
-            RoomType type = RoomGenerator.get(room.getSize());
-            if (type.fitsBounds(bounds)) {
-                return true;
-            }
-        }
-
-        // no match, but there were room restrictions in place
-        return false;
     }
 
     private LocationLayer createLayer(Encounter encounter, Rectangle room, LocationLayer base,
