@@ -62,15 +62,15 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     static float MAX_FREEZE = 25f;
     static float DAMPING = 5f;
     static float FORGET_THRESHOLD = 10;
-    
+
     private final Vector2 focusPoint = new Vector2();
     private final GameCamera defaultCamera = new AgentCamera();
     private GameCamera camera = defaultCamera;
-    
+
     private final Location location;
     protected final Body body;
     private final float radius;
-    
+
     private final WeaponSentry weaponSentry = new WeaponSentry();
 
     public enum Direction {
@@ -104,21 +104,23 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     private Agent followed = null;
 
     // hostilities: agents with negative reaction who have attacked us
-    private final Set<Agent> assaulters = new HashSet<Agent>();  // assaulters attack those who have no enemies
-    private final Set<Agent> enemies = new HashSet<Agent>();  // convenience collection for fast lookups
+    private final Set<Agent> assaulters = new HashSet<Agent>(); // assaulters attack those who have
+                                                                // no enemies
+    private final Set<Agent> enemies = new HashSet<Agent>(); // convenience collection for fast
+                                                             // lookups
     private final Map<Agent, Float> relations = new HashMap<Agent, Float>();
 
     private int confused = 0;
     private int paralyzed = 0;
     private int imploding = 0;
     private int stunted = 0;
-    
+
     private float freezing = 0;
     private float lastAction = 0;
-    
+
     private boolean aiming = false;
     private float velocityPenalty = 0;
-    
+
     private Agent target;
     private Agent interactor;
     private final Set<Class<?>> toggles = new HashSet<Class<?>>();
@@ -130,7 +132,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     public Agent(ActorParams params, float x, float y, float width, float height,
             Location location, Map<Activity, Map<Direction, Animation>> animations) {
         this(x, y, width, height, location, animations);
-        
+
         // health, level, augmentations, etc.
         this.info = new AgentInfo(this, params);
     }
@@ -138,13 +140,13 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     public Agent(float x, float y, float width, float height, Profession profession, int level,
             Location location, Map<Activity, Map<Direction, Animation>> animations) {
         this(x, y, width, height, location, animations);
-        
+
         // health, level, augmentations, etc.
         this.info = new AgentInfo(this, profession, level);
     }
-    
-    public Agent(float x, float y, float width, float height,
-            Location location, Map<Activity, Map<Direction, Animation>> animations) {
+
+    public Agent(float x, float y, float width, float height, Location location,
+            Map<Activity, Map<Direction, Animation>> animations) {
         super(width, height);
         setPosition(x, y);
         this.animations = animations;
@@ -153,84 +155,84 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         this.location = location;
         body = createBody(x, y, width, height, location.getWorld());
     }
-    
+
     public Body getBody() {
-    	return body;
+        return body;
     }
-    
-	private Body createBody(float x, float y, float width, float height, World world) {
-		CircleShape circleShape = new CircleShape();
-		circleShape.setPosition(new Vector2());
-		circleShape.setRadius(radius);
 
-		BodyDef characterBodyDef = new BodyDef();
-		characterBodyDef.position.set(x, y);
-		characterBodyDef.type = BodyType.DynamicBody;
-		Body body = world.createBody(characterBodyDef);
+    private Body createBody(float x, float y, float width, float height, World world) {
+        CircleShape circleShape = new CircleShape();
+        circleShape.setPosition(new Vector2());
+        circleShape.setRadius(radius);
 
-		FixtureDef charFixtureDef = new FixtureDef();
-		charFixtureDef.density = getDensity();
-		charFixtureDef.shape = circleShape;
-		charFixtureDef.filter.groupIndex = 0;
-		
-		Fixture fixture = body.createFixture(charFixtureDef);
-		fixture.setUserData(this);  // allow callbacks to owning Agent
-		
-		// collision filters
+        BodyDef characterBodyDef = new BodyDef();
+        characterBodyDef.position.set(x, y);
+        characterBodyDef.type = BodyType.DynamicBody;
+        Body body = world.createBody(characterBodyDef);
+
+        FixtureDef charFixtureDef = new FixtureDef();
+        charFixtureDef.density = getDensity();
+        charFixtureDef.shape = circleShape;
+        charFixtureDef.filter.groupIndex = 0;
+
+        Fixture fixture = body.createFixture(charFixtureDef);
+        fixture.setUserData(this); // allow callbacks to owning Agent
+
+        // collision filters
         Filter filter = fixture.getFilterData();
         filter.categoryBits = Settings.BIT_AGENT;
         filter.maskBits = Settings.BIT_ANYTHING;
         fixture.setFilterData(filter);
-		
-		body.setLinearDamping(DAMPING);
-		body.setAngularDamping(10);
 
-		circleShape.dispose();
-		return body;
-	}
-	
-	public void setAiming(boolean aiming) {
-	    if (aiming != this.aiming) {
+        body.setLinearDamping(DAMPING);
+        body.setAngularDamping(10);
+
+        circleShape.dispose();
+        return body;
+    }
+
+    public void setAiming(boolean aiming) {
+        if (aiming != this.aiming) {
             addVelocityPenalty(AIMING_V_PENALTY * (aiming ? 1 : -1));
         }
-	    this.aiming = aiming;
-	}
-	
-	public boolean isAiming() {
-	    return aiming;
-	}
-	
-	public void addVelocityPenalty(float delta) {
-	    velocityPenalty += delta;
-	}
-	
-	protected float getVelocityPenalty() {
-	    return velocityPenalty;
-	}
-	
-	public Location getLocation() {
-	    return location;
-	}
-	
+        this.aiming = aiming;
+    }
+
+    public boolean isAiming() {
+        return aiming;
+    }
+
+    public void addVelocityPenalty(float delta) {
+        velocityPenalty += delta;
+    }
+
+    protected float getVelocityPenalty() {
+        return velocityPenalty;
+    }
+
+    public Location getLocation() {
+        return location;
+    }
+
     public void setCamera(GameCamera camera) {
         this.camera = camera;
     }
-    
+
     public void resetCamera() {
         this.camera = defaultCamera;
     }
-    
+
     public boolean usingRemoteCamera() {
         return camera != defaultCamera;
     }
-    
+
     public GameCamera getCamera() {
         return camera;
     }
-	
-	public float getDensity() {
-		return 1;
-	}
+
+    public float getDensity() {
+        return 1;
+    }
 
     public void setRgb(float r, float g, float b) {
         color.set(r, g, b, color.a);
@@ -254,18 +256,18 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     public void addAugmentation(Augmentation aug) {
         info.addAugmentation(aug);
     }
-    
+
     public boolean inRange(Vector2 point, float radius) {
-    	return body.getPosition().dst2(point) <= radius * radius;
+        return body.getPosition().dst2(point) <= radius * radius;
     }
-    
-	public List<Agent> getNeighbors() {
-	    return neighbors;
-	}
-	
-	public Set<Agent> getVisibleNeighbors() {
-	    return visibleNeighbors;
-	}
+
+    public List<Agent> getNeighbors() {
+        return neighbors;
+    }
+
+    public Set<Agent> getVisibleNeighbors() {
+        return visibleNeighbors;
+    }
 
     public boolean isAlive() {
         return info.isAlive();
@@ -305,15 +307,15 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     public boolean isConfused() {
         return confused > 0;
     }
-    
+
     public void addProjectileHandler(ProjectileHandler handler) {
         projectileHandlers.add(handler);
     }
-    
+
     public void removeProjectileHandler(ProjectileHandler handler) {
         projectileHandlers.remove(handler);
     }
-    
+
     public void handleProjectile(HandledProjectile handledProjectile) {
         boolean handled = false;
         for (ProjectileHandler handler : projectileHandlers) {
@@ -323,7 +325,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
                 break;
             }
         }
-        
+
         if (!handled) {
             handledProjectile.apply(this);
         }
@@ -340,9 +342,9 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
             }
         }
     }
-    
+
     public void setImploding(boolean imploding) {
-    	this.imploding += imploding ? 1 : -1;
+        this.imploding += imploding ? 1 : -1;
         if (imploding || this.imploding == 0) {
             if (imploding) {
                 setRgb(0, 0, 1);
@@ -351,35 +353,35 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
             }
         }
     }
-    
+
     public void freeze(float magnitude) {
-    	// apply freezing effects
-    	freezing += magnitude;
-    	if (freezing > 0) {
-    		float f = Math.max((MAX_FREEZE - freezing) / MAX_FREEZE, 0f);
-    		setDamping(DAMPING * f);
-    		setRgb(0.69f, 0.88f, 0.90f);
-    	} else {
-    		setDamping(DAMPING);
-    		setRgb(1, 1, 1);
-    	}
+        // apply freezing effects
+        freezing += magnitude;
+        if (freezing > 0) {
+            float f = Math.max((MAX_FREEZE - freezing) / MAX_FREEZE, 0f);
+            setDamping(DAMPING * f);
+            setRgb(0.69f, 0.88f, 0.90f);
+        } else {
+            setDamping(DAMPING);
+            setRgb(1, 1, 1);
+        }
     }
-    
+
     public float getFreezing() {
-    	return freezing;
+        return freezing;
     }
-    
+
     public boolean isFrozen(float lastAction) {
-    	float percent = Math.min(freezing / MAX_FREEZE, 1f);
-    	return lastAction < percent;
+        float percent = Math.min(freezing / MAX_FREEZE, 1f);
+        return lastAction < percent;
     }
-    
+
     public boolean isFrozen() {
-    	return freezing / MAX_FREEZE >= 1;
+        return freezing / MAX_FREEZE >= 1;
     }
-    
+
     public void setDamping(float damping) {
-    	body.setLinearDamping(damping);
+        body.setLinearDamping(damping);
     }
 
     protected abstract void handleConfusion(boolean confused);
@@ -394,29 +396,29 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         }
         setParalyzed(paralyzed);
     }
-    
+
     public void setParalyzed(boolean paralyzed) {
-    	if (paralyzed) {
-    		this.paralyzed++;
-    	} else {
-    		this.paralyzed--;
-    	}
+        if (paralyzed) {
+            this.paralyzed++;
+        } else {
+            this.paralyzed--;
+        }
     }
-    
+
     public void setStunted(boolean stunted) {
         this.stunted += stunted ? 1 : -1;
     }
-    
+
     public boolean isStunted() {
         return stunted > 0;
     }
-    
+
     public void addFollower(Agent follower) {
-    	if (isFollowing(follower)) {
-    		// bidirectional following relationships can produce nasty side effects like infinite
-    		// loops, so this case must be explicitly disallowed
-    		follower.removeFollower(this);
-    	}
+        if (isFollowing(follower)) {
+            // bidirectional following relationships can produce nasty side effects like infinite
+            // loops, so this case must be explicitly disallowed
+            follower.removeFollower(this);
+        }
         follower.setFollowing(this);
     }
 
@@ -435,13 +437,13 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
             followed = null;
         }
     }
-    
+
     public Agent getFollowed() {
         return followed;
     }
-    
+
     public boolean isFollowing() {
-    	return followed != null;
+        return followed != null;
     }
 
     public boolean isFollowing(Agent agent) {
@@ -455,7 +457,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     public void setCloaked(boolean cloaked) {
         if (cloaked) {
             toggles.add(Cloak.class);
-//            setAlpha(0.1f);
+            // setAlpha(0.1f);
             setAlpha(0);
         } else {
             toggles.remove(Cloak.class);
@@ -473,11 +475,11 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
             return true;
         }
     }
-    
+
     public void toggleOn(Class<?> clazz) {
         toggles.add(clazz);
     }
-    
+
     public void toggleOff(Class<?> clazz) {
         toggles.remove(clazz);
     }
@@ -542,13 +544,13 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     public void setPosition(float x, float y) {
         position.set(x, y);
     }
-    
+
     public Vector2 getVisibleCenter() {
-    	return position.cpy().add(getWidth() / 2, 0);
+        return position.cpy().add(getWidth() / 2, 0);
     }
-    
+
     public Vector2 getRenderPosition() {
-    	return position;
+        return position;
     }
 
     @Override
@@ -559,13 +561,13 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     public NaturalVector2 getCellPosition() {
         return NaturalVector2.of((int) position.x, (int) position.y);
     }
-    
+
     public void applyForce(Vector2 force) {
-    	body.applyForceToCenter(force, true);
+        body.applyForceToCenter(force, true);
     }
-    
+
     public void stop() {
-    	body.setLinearVelocity(0, 0);
+        body.setLinearVelocity(0, 0);
     }
 
     public void setVelocity(float x, float y) {
@@ -573,11 +575,11 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     }
 
     public void setDirection(Direction direction) {
-    	this.direction = direction;
+        this.direction = direction;
     }
-    
+
     public Direction getRelativeDirection(Vector2 point) {
-    	return getDominantDirection(point.x - position.x, point.y - position.y);
+        return getDominantDirection(point.x - position.x, point.y - position.y);
     }
 
     public Direction getDirection() {
@@ -609,14 +611,14 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     public void interact(Agent other) {
         interactor = other;
     }
-    
+
     public void endDialogue() {
         if (inDialogue()) {
             getInteractor().interact(null);
             interact(null);
         }
     }
-    
+
     public void endInteraction() {
         if (interactor != null) {
             interactor.interact(null);
@@ -631,7 +633,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     public boolean isInteracting() {
         return interactor != null;
     }
-    
+
     public boolean canInteract(Agent other) {
         return isAlive() && other != this && dst2(other) < INTERACT_RANGE && !other.hasEnemies();
     }
@@ -643,20 +645,20 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     public boolean isLooting() {
         return interactor != null && !interactor.isAlive();
     }
-    
+
     public void setFocusPoint(Vector2 point) {
         setFocusPoint(point.x, point.y);
     }
-    
+
     public void setFocusPoint(float x, float y) {
         focusPoint.set(x, y);
         weaponSentry.update();
     }
-    
+
     public Vector2 getFocusPoint() {
         return focusPoint;
     }
-    
+
     public abstract void alertTo(Agent target);
 
     public void setTarget(Agent target) {
@@ -698,33 +700,33 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     public boolean isNear(Agent other) {
         return dst2(other) <= MAX_DST2;
     }
-    
+
     public boolean canTargetProjectile(Agent other) {
-    	return hasLineOfSight(other);
+        return hasLineOfSight(other);
     }
-    
+
     public boolean hasLineOfSight(Agent other) {
-    	if (!lineOfSightCache.containsKey(other)) {
-    		losHandler.reset(other);
-    		lineOfSightCache.put(other, rayCast(other.body.getPosition()));
-    	}
-    	return lineOfSightCache.get(other);
+        if (!lineOfSightCache.containsKey(other)) {
+            losHandler.reset(other);
+            lineOfSightCache.put(other, rayCast(other.body.getPosition()));
+        }
+        return lineOfSightCache.get(other);
     }
-    
+
     public boolean hasLineOfSight(Vector2 target) {
-    	losHandler.reset(null);
-    	return rayCast(target);
+        losHandler.reset(null);
+        return rayCast(target);
     }
-    
+
     public boolean hasLineOfSight(Vector2 source, Agent target) {
         losHandler.reset(target);
         return rayCast(source, target.getPosition());
     }
-    
+
     private boolean rayCast(Vector2 target) {
         return rayCast(body.getPosition(), target);
     }
-    
+
     private boolean rayCast(Vector2 source, Vector2 target) {
         if (source.equals(target)) {
             // if we don't do this check explicitly, we can get the following error:
@@ -734,7 +736,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         location.getWorld().rayCast(losHandler, source, target);
         return losHandler.hasLineOfSight();
     }
-    
+
     public float getAttackScale(Agent other) {
         return info.getAccuracy() * getWeaponAccuracy() * (1.0f - other.getInfo().getDefense());
     }
@@ -760,9 +762,9 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         setRgb(1, 1, 1);
         setCollisionMask(Settings.BIT_WALL);
     }
-    
+
     private void setCollisionMask(short maskBits) {
-    	// update all fixtures
+        // update all fixtures
         for (Fixture fixture : body.getFixtureList()) {
             // collision filters
             Filter filter = fixture.getFilterData();
@@ -772,15 +774,15 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     }
 
     protected void attemptTakeAction(float delta, Location location) {
-    	lastAction += delta;
+        lastAction += delta;
         if (isParalyzed()) {
             // can't do anything when paralyzed
             return;
         }
-        
+
         if (isFrozen(lastAction)) {
-        	// can't act as frequently when we're frozen
-        	return;
+            // can't act as frequently when we're frozen
+            return;
         }
 
         if (isConfused()) {
@@ -788,26 +790,26 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
             // the confusion handler
         } else {
             // no disorienting effects, so take conscious action
-        	lastAction = 0;
+            lastAction = 0;
             takeAction(delta, location);
         }
     }
-    
+
     public boolean assaultedBy(Agent other) {
         return assaulters.contains(other);
     }
-    
+
     public boolean hostileTo(Agent other) {
-    	if (isFollowing()) {
-    		// do not call hostileTo directly to avoid an infinite loop
-    		if (followed.enemies.contains(other)) {
-    			// always hostile to those our leader is hostile to
-    			return true;
-    		}
-    	}
+        if (isFollowing()) {
+            // do not call hostileTo directly to avoid an infinite loop
+            if (followed.enemies.contains(other)) {
+                // always hostile to those our leader is hostile to
+                return true;
+            }
+        }
         return enemies.contains(other);
     }
-    
+
     public int getEnemyCount() {
         return enemies.size();
     }
@@ -817,109 +819,109 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     }
 
     public boolean hasEnemies() {
-    	if (isFollowing() && !followed.enemies.isEmpty()) {
-    		// share enemies with leader
-    		return true;
-    	}
+        if (isFollowing() && !followed.enemies.isEmpty()) {
+            // share enemies with leader
+            return true;
+        }
         return !enemies.isEmpty();
     }
-    
+
     public void addHostility(Agent source, float magnitude) {
-    	if (!isAlive()) {
-    		return;
-    	}
-    	
-    	if (!hasEnemies()) {
-    		// we're not in combat with anyone, so this is considered assault
-    		assaulters.add(source);
-    	}
-    	
-    	changeRelation(source, -magnitude);
+        if (!isAlive()) {
+            return;
+        }
+
+        if (!hasEnemies()) {
+            // we're not in combat with anyone, so this is considered assault
+            assaulters.add(source);
+        }
+
+        changeRelation(source, -magnitude);
     }
-    
+
     public float changeRelation(Agent target, float delta) {
         info.changePersonalRelation(target, delta);
         updateDisposition(target);
         return getRelation(target);
     }
-    
+
     public float changeFactionRelations(Agent target, float delta) {
         target.info.getFactionManager().modifyReputationFor(this, delta);
         return getRelation(target);
     }
-    
+
     public float getRelation(Agent agent) {
-    	if (isFollowing()) {
-    		if (getFollowed() == agent) {
-    			// followers are always allies of their leaders
-    			return 100;
-    		}
-    		
-    		// followers take this disposition queues from their leader
-    		return followed.getRelationNoFollow(agent);
-    	}
-    	
-    	return getRelationNoFollow(agent);
+        if (isFollowing()) {
+            if (getFollowed() == agent) {
+                // followers are always allies of their leaders
+                return 100;
+            }
+
+            // followers take this disposition queues from their leader
+            return followed.getRelationNoFollow(agent);
+        }
+
+        return getRelationNoFollow(agent);
     }
-    
+
     // does not consider transitive effects to avoid infinite loops
     private float getRelationNoFollow(Agent agent) {
-    	if (agent.isFollowing(this)) {
-    		// leaders likes their followers, and followers like each other
-    		return 100;
-    	}
-    	
-    	if (!relations.containsKey(agent)) {
+        if (agent.isFollowing(this)) {
+            // leaders likes their followers, and followers like each other
+            return 100;
+        }
+
+        if (!relations.containsKey(agent)) {
             setRelation(agent, info.getDisposition(agent));
         }
         return relations.get(agent);
     }
-    
+
     public void changeFactionStatus(Faction faction, float delta) {
         info.getFactionManager().modifyReputationFor(faction, delta);
     }
-    
+
     public void updateDisposition(Agent agent) {
         if (relations.containsKey(agent)) {
             // only update the disposition if it was previously calculated
-        	float relation = info.getDisposition(agent);
-        	setRelation(agent, relation);
+            float relation = info.getDisposition(agent);
+            setRelation(agent, relation);
         }
     }
-    
+
     private void setRelation(Agent agent, float relation) {
-    	relations.put(agent, relation);
+        relations.put(agent, relation);
         updateReaction(agent, relation);
     }
-    
+
     private void updateReaction(Agent agent, float relation) {
         if (!isAlive()) {
             // no need to do this check in this case
             return;
         }
-        
-    	if (!enemies.contains(agent) && Behavior.isEnemyGiven(relation)) {
+
+        if (!enemies.contains(agent) && Behavior.isEnemyGiven(relation)) {
             // unfriendly, so mark them as an enemy
             enemies.add(agent);
-            
+
             if (assaultedBy(agent)) {
                 // they attacked us, mark them as an assaulter
                 // assault carriers a severe penalty for ranking factions
                 changeFactionRelations(agent, ASSAULT_PENALTY);
-        	}
-    	}
+            }
+        }
     }
-    
+
     @Override
     public void update(float delta, Location location) {
         if (delta == 0)
             return;
         stateTime += delta;
-        
+
         // clear iteration caches
         lineOfSightCache.clear();
         distanceCache.clear();
-        
+
         // update last seen
         Iterator<Entry<Agent, Float>> observations = lastSeen.entrySet().iterator();
         while (observations.hasNext()) {
@@ -929,25 +931,25 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
                 observations.remove();
             }
         }
-        
+
         // update neighbors
-    	location.getNeighbors(this);
-    	visibleNeighbors.clear();
-    	for (Agent neighbor: neighbors) {
-    	    if (isVisible(neighbor)) {
-    	        visibleNeighbors.add(neighbor);
-    	        lastSeen.put(neighbor, 0f);
-    	    }
-    	}
-        
+        location.getNeighbors(this);
+        visibleNeighbors.clear();
+        for (Agent neighbor : neighbors) {
+            if (isVisible(neighbor)) {
+                visibleNeighbors.add(neighbor);
+                lastSeen.put(neighbor, 0f);
+            }
+        }
+
         // restore energy in proportion to elapsed time
-    	if (!isStunted()) {
-    	    info.restore(delta);
-    	}
-    	
+        if (!isStunted()) {
+            info.restore(delta);
+        }
+
         // update inventory
         info.getInventory().update(delta);
-        
+
         updateHeading();
 
         // apply all active effects, remove any that are finished
@@ -976,7 +978,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
                         action.update(delta, location);
                     }
                 }
-    
+
                 // take conscious action
                 attemptTakeAction(delta, location);
             }
@@ -1017,14 +1019,14 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         if ((Math.abs(velocity.x) < .01 && Math.abs(velocity.y) < .01) || isParalyzed()) {
             motionState = MotionState.Standing;
         } else if (Math.abs(velocity.x) > .1 || Math.abs(velocity.y) > .1) {
-        	// only update direction if we are going pretty fast
+            // only update direction if we are going pretty fast
             if (target == null || target == this) {
                 // update the current animation based on the maximal velocity
                 // component
-            	if (!actionInProgress()) {
-            		// don't update the direction if we're currently performing an action
-            		direction = getDominantDirection(velocity.x, velocity.y);
-            	}
+                if (!actionInProgress()) {
+                    // don't update the direction if we're currently performing an action
+                    direction = getDominantDirection(velocity.x, velocity.y);
+                }
             }
             motionState = MotionState.Moving;
         }
@@ -1038,7 +1040,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
             // face the target
             observed = target;
         }
-        
+
         if (observed != null) {
             float dx = observed.position.x - position.x;
             float dy = observed.position.y - position.y;
@@ -1047,14 +1049,14 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
             // face the aimed direction
             direction = getDominantDirection(weaponSentry.direction.x, weaponSentry.direction.y);
         }
-        
+
         // end interactions if outside range
         if (inDialogue() && dst2(getInteractor()) > INTERACT_RANGE) {
             endDialogue();
         }
-        
+
         position.set(body.getPosition().cpy().add(0, getHeight() / 2 - radius));
-		velocity.set(body.getLinearVelocity());
+        velocity.set(body.getLinearVelocity());
     }
 
     public boolean collidesWith(float x, float y) {
@@ -1115,12 +1117,12 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         }
         return result;
     }
-    
+
     public Vector2 getBackwardVector() {
         // used for wall normals
         return getForwardVector().scl(-1);
     }
-    
+
     private Direction getDominantDirection(float x, float y) {
         if (Math.abs(x) > Math.abs(y)) {
             if (x < 0) {
@@ -1208,16 +1210,16 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
                 getHeight());
         return rect;
     }
-    
+
     public Rectangle getBoundingBox(Rectangle rect) {
         float w = getWidth() / 3f;
         rect.set(position.x - w / 2, position.y - getHeight() / 2, w, getHeight() / 4);
         return rect;
     }
-    
-	public float getBoundingRadius() {
-		return getWidth() / 2f;
-	}
+
+    public float getBoundingRadius() {
+        return getWidth() / 2f;
+    }
 
     public boolean contains(float x, float y) {
         return x >= position.x - getWidth() / 2 && x <= position.x + getWidth() / 2
@@ -1245,94 +1247,101 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     public String toString() {
         return info.getName();
     }
-    
+
     public WeaponSentry getWeaponSentry() {
         return weaponSentry;
     }
-    
+
     public void recoil() {
         // does nothing
     }
-    
+
     @Override
     public float getZ() {
         return isAlive() ? super.getZ() : Float.POSITIVE_INFINITY;
     }
-    
+
     public abstract boolean canSpeak();
 
     protected abstract void takeAction(float delta, Location screen);
-    
-	private class LineOfSightHandler implements RayCastCallback {
-		private boolean lineOfSight = true;
-		private Agent target = null;
-		
-		public boolean hasLineOfSight() {
-			return lineOfSight;
-		}
-		
-		public void reset(Agent agent) {
-			lineOfSight = true;
-			target = agent;
-		}
-		
-		@Override
-		public float reportRayFixture(Fixture fixture, Vector2 point, Vector2 normal, float fraction) {
-			if (isObstruction(fixture)) {
-				lineOfSight = false;
-				return fraction;
-			}
-			
-			// ignore this fixture and continue
-			return -1;
-		}
-		
-		private boolean isObstruction(Fixture fixture) {
-			for (Fixture f : body.getFixtureList()) {
-				if (fixture == f) {
-				    // we cannot obstruct our own view
-					return false;
-				}
-			}
-			
-			if (target != null) {
-    			for (Fixture f : target.body.getFixtureList()) {
-    				if (fixture == f) {
-    				    // it's not an obstruction if it's the thing we're aiming at
-    					return false;
-    				}
-    			}
-			}
-			
-			// check that the fixture belongs to another agent
-			if (fixture.getUserData() != null && fixture.getUserData() instanceof Agent) {
-			    Agent agent = (Agent) fixture.getUserData();
-			    if (!agent.isAlive()) {
-			        // cannot be obstructed by the body of a dead agent
-			        return false;
-			    }
-			}
-			
-			// whatever it is, it's in the way
-			return true;
-		}
-	};
-	
+
+    private class LineOfSightHandler implements RayCastCallback {
+        private boolean lineOfSight = true;
+        private Agent target = null;
+
+        public boolean hasLineOfSight() {
+            return lineOfSight;
+        }
+
+        public void reset(Agent agent) {
+            lineOfSight = true;
+            target = agent;
+        }
+
+        @Override
+        public float reportRayFixture(Fixture fixture, Vector2 point, Vector2 normal, float fraction) {
+            if (isObstruction(fixture)) {
+                lineOfSight = false;
+                return fraction;
+            }
+
+            // ignore this fixture and continue
+            return -1;
+        }
+
+        private boolean isObstruction(Fixture fixture) {
+            for (Fixture f : body.getFixtureList()) {
+                if (fixture == f) {
+                    // we cannot obstruct our own view
+                    return false;
+                }
+            }
+
+            if (target != null) {
+                for (Fixture f : target.body.getFixtureList()) {
+                    if (fixture == f) {
+                        // it's not an obstruction if it's the thing we're aiming at
+                        return false;
+                    }
+                }
+            }
+
+            // check that the fixture belongs to another agent
+            if (fixture.getUserData() != null && fixture.getUserData() instanceof Agent) {
+                Agent agent = (Agent) fixture.getUserData();
+                if (!agent.isAlive()) {
+                    // cannot be obstructed by the body of a dead agent
+                    return false;
+                }
+            }
+
+            // whatever it is, it's in the way
+            return true;
+        }
+    };
+
     public class WeaponSentry implements TemporaryEntity {
+        private final Map<Agent, Boolean> lineOfSightCache = new HashMap<Agent, Boolean>();
         private final Vector2 position = new Vector2();
         private final Vector2 direction = new Vector2();
-        
+
         public boolean hasLineOfSight(Agent target) {
-            return Agent.this.hasLineOfSight(target) 
-                    && Agent.this.hasLineOfSight(getRenderPosition(), target);
+            if (!lineOfSightCache.containsKey(target)) {
+                lineOfSightCache.put(
+                        target,
+                        Agent.this.hasLineOfSight(target)
+                                && Agent.this.hasLineOfSight(getRenderPosition(), target));
+            }
+            return lineOfSightCache.get(target);
         }
-        
+
         public void update() {
             Vector2 origin = getRenderPosition();
             direction.set(getFocusPoint()).sub(origin).nor();
             position.set(origin.x + direction.x, origin.y + direction.y);
+            lineOfSightCache.clear();
         }
-        
+
         @Override
         public void update(float delta, Location location) {
             update();
@@ -1353,7 +1362,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         public Vector2 getPosition() {
             return position;
         }
-        
+
         public Vector2 getDirection() {
             return direction;
         }
@@ -1363,7 +1372,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
             return !isToggled(HoldingWeapon.class);
         }
     }
-	
+
     private class AgentCamera implements GameCamera {
         @Override
         public Vector2 getPosition() {
