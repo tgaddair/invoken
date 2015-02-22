@@ -203,7 +203,7 @@ public class LocationGenerator {
 
         // doors
         InvokenGame.log("Adding Doors");
-        furnitureGenerator.createDoors(bsp.getEncounterRooms(), base, map.getActivators());
+        furnitureGenerator.createDoors(rooms, base, map.getActivators());
 
         // lights
         InvokenGame.log("Adding Lights");

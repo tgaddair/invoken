@@ -1,19 +1,20 @@
 package com.eldritch.invoken.encounter.proc;
 
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
 import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.activators.Activator;
 import com.eldritch.invoken.activators.DoorActivator;
 import com.eldritch.invoken.activators.DoorActivator.LockInfo;
+import com.eldritch.invoken.encounter.ConnectedRoom;
+import com.eldritch.invoken.encounter.ConnectedRoomManager;
 import com.eldritch.invoken.encounter.NaturalVector2;
 import com.eldritch.invoken.encounter.layer.LocationCell;
 import com.eldritch.invoken.encounter.layer.LocationLayer;
@@ -59,56 +60,50 @@ public abstract class FurnitureGenerator {
         }
     }
 
-    public void createDoors(Collection<EncounterRoom> encounters, LocationLayer base,
+    public void createDoors(ConnectedRoomManager rooms, LocationLayer base,
             List<Activator> activators) {
-        for (EncounterRoom encounter : encounters) {
-            Encounter metadata = encounter.getEncounter();
-            Rectangle bounds = encounter.getRestrictedBounds();
-            for (int i = 0; i < bounds.width; i++) {
-                int x = (int) bounds.x + i;
-                for (int j = 0; j < bounds.height; j++) {
-                    int y = (int) (bounds.y + j);
-                    if (marked(x, y)) {
-                        // already something here
-                        continue;
-                    }
-                    
-                    if (base.isGround(x, y) && base.isGround(x + 1, y) && isLowerGap(x, y, base)) {
-                        DoorActivator activator = DoorActivator.createFront(x, y,
-                                LockInfo.from(metadata));
-                        activators.add(activator);
-                        mark(x, y);
-                    } else if (base.isGround(x, y - 1) && base.isGround(x + 1, y - 1)
-                            && isUpperGap(x, y - 1, base)) {
-                        DoorActivator activator = DoorActivator.createFront(x, y - 1,
-                                LockInfo.from(metadata));
-                        activators.add(activator);
-                        mark(x, y - 1);
-                    }
+        for (Entry<EncounterRoom, ConnectedRoom> room : rooms.getChambers()) {
+            Encounter metadata = room.getKey().getEncounter();
+            for (NaturalVector2 point : room.getValue().getPoints()) {
+                int x = point.x;
+                int y = point.y;
+
+                if (marked(x, y)) {
+                    // already something here
+                    continue;
+                }
+
+                if (base.isGround(x, y) && base.isGround(x + 1, y) && isLowerGap(x, y, base)) {
+                    DoorActivator activator = DoorActivator.createFront(x, y,
+                            LockInfo.from(metadata));
+                    activators.add(activator);
+                    mark(x, y);
+                } else if (base.isGround(x, y - 1) && base.isGround(x + 1, y - 1)
+                        && isUpperGap(x, y - 1, base)) {
+                    DoorActivator activator = DoorActivator.createFront(x, y - 1,
+                            LockInfo.from(metadata));
+                    activators.add(activator);
+                    mark(x, y - 1);
                 }
             }
 
-            for (int j = 0; j < bounds.height; j++) {
-                int y = (int) bounds.y + j;
-                for (int i = 0; i < bounds.width; i++) {
-                    int x = (int) (bounds.x + i);
-                    if (marked(x, y)) {
-                        // already something here
-                        continue;
-                    }
-                    
-                    if (base.isGround(x, y) && isSideGap(x, y, base)) {
-                        DoorActivator activator = DoorActivator.createSide(x, y + 1,
-                                LockInfo.from(metadata));
-                        activators.add(activator);
-                        mark(x, y);
-                    }
+            for (NaturalVector2 point : room.getValue().getPoints()) {
+                int x = point.x;
+                int y = point.y;
+
+                if (marked(x, y)) {
+                    // already something here
+                    continue;
+                }
+
+                if (base.isGround(x, y) && isSideGap(x, y, base)) {
+                    DoorActivator activator = DoorActivator.createSide(x, y + 1,
+                            LockInfo.from(metadata));
+                    activators.add(activator);
+                    mark(x, y);
                 }
             }
         }
-
-        // addDoors(base, activators);
-        // addTrimDoors(base, activators);
     }
 
     private boolean isLowerGap(int x, int y, LocationLayer base) {
@@ -150,40 +145,6 @@ public abstract class FurnitureGenerator {
         cells.add(new RemovableCell(cell, layer, x, y));
         mark(x, y);
     }
-
-//    private void addDoors(LocationLayer base, List<Activator> activators) {
-//        // add front doors
-//        for (int x = 0; x < base.getWidth(); x++) {
-//            for (int y = 0; y < base.getHeight(); y++) {
-//                if (base.isGround(x, y) && base.isGround(x + 1, y)) {
-//                    // wall to the left, wall to the right
-//                    if (isLowerGap(x, y, base)) {
-//                        // add activator
-//                        DoorActivator activator = DoorActivator.createFront(x, y);
-//                        activators.add(activator);
-//                        mark(x, y);
-//                    }
-//                }
-//            }
-//        }
-//    }
-//
-//    private void addTrimDoors(LocationLayer base, List<Activator> activators) {
-//        // add side doors
-//        for (int x = 0; x < base.getWidth(); x++) {
-//            for (int y = 0; y < base.getHeight(); y++) {
-//                if (base.isGround(x, y)) {
-//                    // wall up, wall down
-//                    if (isSideGap(x, y, base)) {
-//                        // add activator
-//                        DoorActivator activator = DoorActivator.createSide(x, y + 1);
-//                        activators.add(activator);
-//                        mark(x, y);
-//                    }
-//                }
-//            }
-//        }
-//    }
 
     public abstract LocationLayer generateClutter(LocationLayer base, LocationMap map);
 }
