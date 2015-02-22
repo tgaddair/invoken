@@ -168,6 +168,7 @@ public class Attack extends Sequence<Npc> {
         @Override
         public void run(Npc entity) {
             if (use(entity)) {
+                entity.setTask(getClass().getSimpleName());
                 success();
             } else {
                 fail();

@@ -10,6 +10,7 @@ public class Idle extends LeafTask<Npc> {
     public void run(Npc entity) {
         entity.setBehavior(SteeringMode.Default);
         entity.getFatigue().addFatigue(-Npc.STEP);
+        entity.setTask(getClass().getSimpleName());
         success();
     }
 

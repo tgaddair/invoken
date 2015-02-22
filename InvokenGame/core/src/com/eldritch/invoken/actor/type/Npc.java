@@ -103,6 +103,9 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
     private Seek<Vector2> seek;
     private Arrive<Vector2> arrive;
     private Wander<Vector2> wander;
+    
+    // debug
+    private String lastTask = "";
 
     public Npc(NonPlayerActor data, float x, float y, float width, float height, float maxVelocity,
             Map<Activity, Map<Direction, Animation>> animations, Location location) {
@@ -147,6 +150,14 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
     
     public FatigueMonitor getFatigue() {
         return fatigue;
+    }
+    
+    public void setTask(String taskName) {
+        lastTask = taskName;
+    }
+    
+    public String getLastTask() {
+        return lastTask;
     }
     
     public static Task<Npc> createBehavior() {
