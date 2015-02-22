@@ -298,8 +298,14 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
     
     @Override
     public void alertTo(Agent other) {
-        super.alertTo(other);
-        alert = ALERT_DURATION;
+        if (!hasTarget()) {
+            setTarget(other);
+            alert = ALERT_DURATION;
+        } else if (other == getTarget()) {
+            lastSeen.setPosition(other.getPosition());
+            setFocusPoint(other.getPosition());
+            alert = ALERT_DURATION;
+        }
     }
 
     @Override

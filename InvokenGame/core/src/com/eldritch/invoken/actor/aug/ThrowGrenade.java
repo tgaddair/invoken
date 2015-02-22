@@ -51,7 +51,7 @@ public class ThrowGrenade extends Augmentation {
     
     @Override
     public float quality(Agent owner, Agent target, Location location) {
-        return 1;
+        return owner.getWeaponSentry().hasLineOfSight(target) ? 1 : 0;
     }
 
     public class ThrowAction extends AnimatedAction {

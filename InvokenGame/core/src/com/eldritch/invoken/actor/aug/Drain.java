@@ -37,11 +37,6 @@ public class Drain extends ProjectileAugmentation {
         return BASE_COST;
     }
 
-    @Override
-    public float quality(Agent owner, Agent target, Location location) {
-        return 1;
-    }
-
     public class DrainAction extends AnimatedAction {
         private final Vector2 target;
 

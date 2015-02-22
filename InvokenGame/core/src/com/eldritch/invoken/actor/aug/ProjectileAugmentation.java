@@ -2,6 +2,7 @@ package com.eldritch.invoken.actor.aug;
 
 import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.actor.type.Agent;
+import com.eldritch.invoken.encounter.Location;
 
 public abstract class ProjectileAugmentation extends Augmentation {
     public ProjectileAugmentation(String asset) {
@@ -22,5 +23,10 @@ public abstract class ProjectileAugmentation extends Augmentation {
     public boolean isValid(Agent owner, Agent target) {
         return owner.isAiming() && target != null
                 && target != owner && owner.canTargetProjectile(target);
+    }
+    
+    @Override
+    public float quality(Agent owner, Agent target, Location location) {
+        return owner.getWeaponSentry().hasLineOfSight(target) ? 1 : 0;
     }
 }

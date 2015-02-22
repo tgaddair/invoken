@@ -72,11 +72,6 @@ public class FireWeapon extends ProjectileAugmentation {
     public int getCost(Agent owner) {
         return BASE_COST;
     }
-    
-    @Override
-    public float quality(Agent owner, Agent target, Location location) {
-        return 1;
-    }
 
     public class FireAction extends AnimatedAction {
         private final Vector2 target;

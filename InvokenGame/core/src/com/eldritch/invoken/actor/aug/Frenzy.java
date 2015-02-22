@@ -37,11 +37,6 @@ public class Frenzy extends ProjectileAugmentation {
         return 2;
     }
 	
-    @Override
-    public float quality(Agent owner, Agent target, Location location) {
-        return 1;
-    }
-	
 	public class FrenzyAction extends AnimatedAction {
 		private final Vector2 target;
 		

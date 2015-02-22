@@ -657,10 +657,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         return focusPoint;
     }
     
-    public void alertTo(Agent target) {
-        // set the target so we'll face it if we have nothing better to do
-        setTarget(target);
-    }
+    public abstract void alertTo(Agent target);
 
     public void setTarget(Agent target) {
         this.target = target;
