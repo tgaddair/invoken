@@ -944,7 +944,8 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
 
         // restore energy in proportion to elapsed time
         if (!isStunted()) {
-            info.restore(delta);
+            float scale = isAiming() ? 1f : 2f;
+            info.restore(delta * scale);
         }
 
         // update inventory

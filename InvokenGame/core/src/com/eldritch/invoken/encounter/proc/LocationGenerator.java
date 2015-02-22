@@ -181,15 +181,15 @@ public class LocationGenerator {
         for (LocationLayer layer : overlayTrims) {
             map.addOverlay(layer);
         }
-
-        InvokenGame.log("Adding Rooms");
-        RoomGenerator roomGenerator = new RoomGenerator(map);
-        roomGenerator.generate(bsp);
-
+        
         InvokenGame.log("Connecting Rooms");
         ConnectedRoomManager rooms = createRooms(bsp.getEncounterRooms(), typeMap);
         map.setRooms(rooms);
         save(rooms.getGrid(), "connected-rooms");
+
+        InvokenGame.log("Adding Furniture");
+        RoomGenerator roomGenerator = new RoomGenerator(map);
+        roomGenerator.generate(bsp);
 
         InvokenGame.log("Creating Spawn Layers");
         for (LocationLayer layer : createSpawnLayers(base, collision, bsp, map)) {
@@ -197,7 +197,7 @@ public class LocationGenerator {
         }
 
         // add furniture
-        InvokenGame.log("Adding Furniture");
+//        InvokenGame.log("Adding Furniture");
         // List<Activator> activators = new ArrayList<Activator>();
         IcarianFurnitureGenerator furnitureGenerator = new IcarianFurnitureGenerator(atlas, ground);
 
