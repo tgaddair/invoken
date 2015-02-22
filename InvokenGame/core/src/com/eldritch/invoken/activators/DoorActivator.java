@@ -142,8 +142,8 @@ public class DoorActivator extends ClickActivator implements ProximityActivator 
         float x = (int) position.x;
         float y = (int) position.y;
         if (front) {
-            // add two rows for the front to prevent the flood fill from going around the bottom
-            location.setLightWalls((int) x, (int) y + 1, (int) x + SIZE, (int) y + 1, value);
+            // add two columns for the front to prevent the flood fill from going around the bottom
+            location.setLightWalls((int) x - 1, (int) y + 1, (int) x + SIZE + 1, (int) y + 1, value);
         } else {
             location.setLightWalls((int) x, (int) y, (int) x, (int) y + SIZE, value);
         }
