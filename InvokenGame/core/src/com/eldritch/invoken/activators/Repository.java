@@ -8,7 +8,7 @@ import com.eldritch.invoken.screens.GameScreen;
 
 public class Repository extends ClickActivator {
 	public Repository(NaturalVector2 position) {
-		super(position);
+		super(position, 1, 2);
 	}
 
 	@Override
