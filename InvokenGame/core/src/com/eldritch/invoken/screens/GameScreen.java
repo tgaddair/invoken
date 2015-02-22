@@ -4,8 +4,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputProcessor;
-import com.badlogic.gdx.ai.fsm.State;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -27,10 +27,10 @@ import com.eldritch.invoken.encounter.Location;
 import com.eldritch.invoken.encounter.proc.LocationGenerator;
 import com.eldritch.invoken.ui.ActionBar;
 import com.eldritch.invoken.ui.DialogueMenu;
-import com.eldritch.invoken.ui.StatusBar;
 import com.eldritch.invoken.ui.HealthBar;
 import com.eldritch.invoken.ui.InventoryMenu;
 import com.eldritch.invoken.ui.LootMenu;
+import com.eldritch.invoken.ui.StatusBar;
 import com.eldritch.invoken.ui.StatusBar.EnergyCalculator;
 import com.eldritch.invoken.ui.StatusBar.HealthCalculator;
 import com.eldritch.invoken.ui.Toaster;
@@ -512,4 +512,18 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         }
 	    return textureManager.get(assetName, Texture.class);
 	}
+	   
+    public static void save(Location location) {
+        save(location.getPlayer());
+    }
+    
+    private static void save(Player player) {
+        FileHandle handle = Gdx.files.local("saves/" + player.getInfo().getName() + ".dat");
+        try {
+            final boolean append = false;
+            handle.writeBytes(player.serialize().toByteArray(), append);
+        } catch (Exception ex) {
+            InvokenGame.error("Failed writing " + handle.name(), ex);
+        }
+    }
 }

@@ -4,9 +4,11 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import com.eldritch.invoken.InvokenGame;
+import com.eldritch.invoken.actor.Inventory.ItemState;
 import com.eldritch.invoken.actor.aug.Augmentation;
 import com.eldritch.invoken.actor.factions.Faction;
 import com.eldritch.invoken.actor.factions.FactionManager;
@@ -42,6 +44,34 @@ public class AgentInfo {
 	float energyOffset = 0;
 	
 	int activeDefense = 0;
+	
+	public ActorParams serialize() {
+	    ActorParams.Builder builder = ActorParams.newBuilder();
+	    builder.setName(name);
+	    builder.setSpecies(species);
+	    builder.setProfession(profession.toProto());
+	    builder.setLevel(level);
+	    
+	    // add factions
+	    for (Faction faction : factions.getFactions()) {
+	        builder.addFactionStatus(factions.toProto(faction));
+	    }
+	    
+	    // add inventory
+	    for (ItemState item : inventory.getItems()) {
+	        builder.addInventoryItem(item.toProto());
+	    }
+	    
+	    // add skills
+	    for (Entry<Discipline, SkillState> skill : skills.entrySet()) {
+	        builder.addSkill(skill.getValue().toProto(skill.getKey()));
+	    }
+	    
+	    // add known augs
+	    builder.addAllKnownAugId(knownAugmentations);
+	    
+	    return builder.build();
+	}
 	
 	public AgentInfo(Agent agent, ActorParams params) {
 	    this.name = params.getName();
@@ -365,6 +395,10 @@ public class AgentInfo {
 
         public int getXp() {
             return xp;
+        }
+        
+        public Skill toProto(Discipline discipline) {
+            return Skill.newBuilder().setDiscipline(discipline).setLevel(level).setXp(xp).build();
         }
     }
 }

@@ -193,5 +193,9 @@ public class Inventory {
         public void cooldown(float delta) {
             cooldown -= delta;
         }
+        
+        public InventoryItem toProto() {
+            return InventoryItem.newBuilder().setItemId(item.getId()).setCount(count).build();
+        }
     }
 }

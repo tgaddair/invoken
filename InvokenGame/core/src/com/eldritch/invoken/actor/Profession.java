@@ -36,6 +36,7 @@ import com.eldritch.invoken.actor.type.Human;
 import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.actor.type.Agent.Direction;
 import com.eldritch.invoken.proto.Actors.ActorParams.Skill;
+import com.eldritch.invoken.proto.Disciplines;
 import com.eldritch.invoken.proto.Disciplines.Discipline;
 import com.eldritch.invoken.screens.GameScreen;
 import com.eldritch.invoken.ui.MultiTextureRegionDrawable;
@@ -66,6 +67,11 @@ public enum Profession {
         public String getDescription() {
             return "Centurion";
         }
+
+        @Override
+        public Disciplines.Profession toProto() {
+            return Disciplines.Profession.CENTURION;
+        }
 	},
 	
 	Executor() {
@@ -92,6 +98,11 @@ public enum Profession {
         public String getDescription() {
             return "Executor";
         }
+		
+		@Override
+        public Disciplines.Profession toProto() {
+            return Disciplines.Profession.EXECUTOR;
+        }
 	},
 	
 	Assassin() {
@@ -115,6 +126,11 @@ public enum Profession {
 		@Override
         public String getDescription() {
             return "Assassin";
+        }
+		
+		@Override
+        public Disciplines.Profession toProto() {
+            return Disciplines.Profession.ASSASSIN;
         }
 	},
 	
@@ -140,6 +156,11 @@ public enum Profession {
         public String getDescription() {
             return "Warden";
         }
+		
+		@Override
+        public Disciplines.Profession toProto() {
+            return Disciplines.Profession.WARDEN;
+        }
 	},
 	
 	Architect() {
@@ -164,6 +185,11 @@ public enum Profession {
 		@Override
         public String getDescription() {
             return "Architect";
+        }
+		
+		@Override
+        public Disciplines.Profession toProto() {
+            return Disciplines.Profession.ARCHITECT;
         }
 	},
 	
@@ -191,6 +217,11 @@ public enum Profession {
         public String getDescription() {
             return "Ghost";
         }
+		
+		@Override
+        public Disciplines.Profession toProto() {
+            return Disciplines.Profession.GHOST;
+        }
 	},
 	
 	Inquisitor() {
@@ -216,6 +247,11 @@ public enum Profession {
         public String getDescription() {
             return "Inquisitor";
         }
+		
+		@Override
+        public Disciplines.Profession toProto() {
+            return Disciplines.Profession.INQUISITOR;
+        }
 	},
 	
 	Infiltrator() {
@@ -237,6 +273,11 @@ public enum Profession {
         @Override
         public String getDescription() {
             return "Infiltrator";
+        }
+        
+        @Override
+        public Disciplines.Profession toProto() {
+            return Disciplines.Profession.INFILTRATOR;
         }
 	},
 	
@@ -262,6 +303,11 @@ public enum Profession {
         public String getDescription() {
             return "Agent";
         }
+		
+		@Override
+        public Disciplines.Profession toProto() {
+            return Disciplines.Profession.AGENT;
+        }
 	},
 	
 	Broker() {
@@ -284,6 +330,11 @@ public enum Profession {
         public String getDescription() {
             return "Broker";
         }
+		
+		@Override
+        public Disciplines.Profession toProto() {
+            return Disciplines.Profession.BROKER;
+        }
 	};
 	
 	public abstract List<Discipline> getMasteries();
@@ -293,6 +344,8 @@ public enum Profession {
 	public abstract Outfit getDefaultOutfit();
 	
 	public abstract String getDescription();
+	
+	public abstract Disciplines.Profession toProto();
 	
 	public static Profession getDefault() {
         return Executor;
@@ -380,7 +433,7 @@ public enum Profession {
 	    return builder.build();
 	}
 	
-	public static Profession fromProto(com.eldritch.invoken.proto.Disciplines.Profession p) {
+	public static Profession fromProto(Disciplines.Profession p) {
 		switch (p) {
 			case CENTURION:
 				return Centurion;

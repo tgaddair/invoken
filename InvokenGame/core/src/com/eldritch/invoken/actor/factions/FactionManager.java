@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Set;
 
 import com.eldritch.invoken.actor.type.Agent;
+import com.eldritch.invoken.proto.Actors.ActorParams;
 
 public class FactionManager {
     private final Map<Faction, FactionStatus> factions = new HashMap<Faction, FactionStatus>();
@@ -100,7 +101,7 @@ public class FactionManager {
                 // the better our reputation in this faction, the more strongly we feel
                 // about others in relation to it
                 float a = getReputation(faction) / 10f;
-                
+
                 // only consider factions we're currently on good terms with
                 if (a > 0) {
                     // find a faction we have a reaction towards
@@ -112,13 +113,13 @@ public class FactionManager {
 
                             // r: [-100, 100]
                             float r = a * b * f;
-                            
+
                             // check if they're hated by a faction we hate
                             if (b < 0 && f < 0) {
                                 // scale down "the enemy of my enemy is my friend" bonus
                                 r = Math.min(r, 5);
                             }
-                            
+
                             reaction += r;
                         }
                     }
@@ -128,16 +129,22 @@ public class FactionManager {
         return reaction;
     }
 
-    public FactionStatus getStatus(Faction faction) {
+    public ActorParams.FactionStatus toProto(Faction faction) {
+        FactionStatus status = getStatus(faction);
+        return ActorParams.FactionStatus.newBuilder().setFactionId(faction.getId())
+                .setRank(status.rank).setReputation(status.reputation).build();
+    }
+
+    private FactionStatus getStatus(Faction faction) {
         if (!factions.containsKey(faction)) {
             factions.put(faction, new FactionStatus(0, 0));
         }
         return factions.get(faction);
     }
 
-    private static class FactionStatus {
+    public static class FactionStatus {
         private int rank;
-        private float reputation;
+        private int reputation;
 
         public FactionStatus(int rank, int reputation) {
             this.rank = rank;

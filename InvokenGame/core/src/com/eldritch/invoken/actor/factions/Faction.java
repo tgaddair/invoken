@@ -67,6 +67,10 @@ public class Faction {
         }
         return 0;
     }
+    
+    public String getId() {
+        return id;
+    }
 
     public String getName() {
         return name;

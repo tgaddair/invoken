@@ -14,6 +14,7 @@ public class Repository extends ClickActivator {
 	@Override
 	public void activate(Agent agent, Location location) {
 	    GameScreen.toast("Saving...");
+	    GameScreen.save(location);
 	}
 
 	@Override

@@ -8,6 +8,7 @@ import com.eldritch.invoken.actor.PreparedAugmentations;
 import com.eldritch.invoken.actor.Profession;
 import com.eldritch.invoken.actor.aug.Augmentation;
 import com.eldritch.invoken.encounter.Location;
+import com.eldritch.invoken.proto.Actors.PlayerActor;
 import com.eldritch.invoken.util.Settings;
 
 /** The player character, has state and state time, */
@@ -20,10 +21,15 @@ public class Player extends SteeringAgent {
     private Augmentation lastAug = null;
 
     public Player(Profession profession, int level, float x, float y, Location location, String body) {
-        super(x, y, Human.getWidth(), Human.getHeight(), Human.MAX_VELOCITY, profession, level, location, 
-        		Human.getAllAnimations(body));
+        super(x, y, Human.getWidth(), Human.getHeight(), Human.MAX_VELOCITY, profession, level,
+                location, Human.getAllAnimations(body));
     }
-    
+
+    public Player(PlayerActor data, Location location, String body) {
+        super(data.getParams(), data.getX(), data.getY(), Human.getWidth(), Human.getHeight(),
+                Human.MAX_VELOCITY, location, Human.getAllAnimations(body));
+    }
+
     public void toggleLastAugmentation() {
         PreparedAugmentations prepared = getInfo().getAugmentations();
         if (prepared.hasActiveAugmentation(0)) {
@@ -37,14 +43,14 @@ public class Player extends SteeringAgent {
     @Override
     protected void takeAction(float delta, Location screen) {
         if (moving) {
-//            moving = mover.takeAction(delta, targetCoord, screen);
+            // moving = mover.takeAction(delta, targetCoord, screen);
             if (!moving) {
                 fixedTarget = false;
             }
         }
 
         if (Gdx.input.isKeyPressed(Keys.LEFT) || Gdx.input.isKeyPressed(Keys.A)) {
-        	body.applyForceToCenter(new Vector2(-1 * getMaxLinearSpeed(), 0), true);
+            body.applyForceToCenter(new Vector2(-1 * getMaxLinearSpeed(), 0), true);
             moving = false;
         }
 
@@ -63,26 +69,26 @@ public class Player extends SteeringAgent {
             moving = false;
         }
     }
-    
+
     public void toggleLight() {
         lightOn = !lightOn;
     }
-    
+
     public boolean hasLightOn() {
         return lightOn;
     }
-    
+
     public boolean holdingPosition() {
         return holding;
     }
-    
+
     public void holdPosition(boolean hold) {
         this.holding = hold;
         if (hold) {
             setMoving(false);
         }
     }
-    
+
     public void moveToFixedTarget(float x, float y) {
         moveTo(x, y);
         setMoving(true);
@@ -93,7 +99,7 @@ public class Player extends SteeringAgent {
         targetCoord.x = x;
         targetCoord.y = y;
     }
-    
+
     public void setMoving(boolean moving) {
         this.moving = moving;
     }
@@ -101,7 +107,7 @@ public class Player extends SteeringAgent {
     public boolean isMoving() {
         return moving;
     }
-    
+
     public boolean hasFixedTarget() {
         return fixedTarget;
     }
@@ -126,24 +132,24 @@ public class Player extends SteeringAgent {
     protected void handleConfusion(boolean confused) {
         // do nothing, for now, will change to make attack at random
     }
-    
+
     @Override
     public float damage(float value) {
-    	if (Settings.GOD_MODE) {
-    		return 0;
-    	}
-		return super.damage(value);
+        if (Settings.GOD_MODE) {
+            return 0;
+        }
+        return super.damage(value);
     }
-    
+
     @Override
     public void alertTo(Agent other) {
         // does nothing
     }
-    
+
     @Override
     public boolean canTargetProjectile(Agent other) {
-    	// let the player make seemingly bad shots
-    	return true;
+        // let the player make seemingly bad shots
+        return true;
     }
 
     private boolean isTouched(float startX, float endX) {
@@ -158,13 +164,13 @@ public class Player extends SteeringAgent {
         }
         return false;
     }
-    
+
     @Override
     public void recoil() {
         Vector2 shift = getPosition().cpy().sub(getLocation().getFocusPoint()).nor().scl(0.25f);
         getLocation().shiftView(shift);
     }
-    
+
     @Override
     public boolean canSpeak() {
         return false;
@@ -174,5 +180,13 @@ public class Player extends SteeringAgent {
     public ConversationHandler getDialogueHandler() {
         // not implemented
         return null;
+    }
+
+    public PlayerActor serialize() {
+        PlayerActor.Builder builder = PlayerActor.newBuilder();
+        builder.setParams(info.serialize());
+        builder.setX(getPosition().x);
+        builder.setY(getPosition().y);
+        return builder.build();
     }
 }
