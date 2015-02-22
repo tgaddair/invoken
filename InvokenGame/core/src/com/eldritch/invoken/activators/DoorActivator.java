@@ -38,6 +38,7 @@ public class DoorActivator extends ClickActivator implements ProximityActivator 
     // for bounding area
     private static final int SIZE = 2;
 
+    private final Vector2 center;
     private final LockInfo lock;
     private final Animation unlockedAnimation;
     private final Animation lockedAnimation;
@@ -67,11 +68,13 @@ public class DoorActivator extends ClickActivator implements ProximityActivator 
             unlockedAnimation.setPlayMode(Animation.PlayMode.NORMAL);
             lockedAnimation = new Animation(0.05f, frontRegionsLocked);
             lockedAnimation.setPlayMode(Animation.PlayMode.NORMAL);
+            center = new Vector2(x + 1, y + 0.5f);
         } else {
             unlockedAnimation = new Animation(0.05f, sideRegions);
             unlockedAnimation.setPlayMode(Animation.PlayMode.NORMAL);
             lockedAnimation = new Animation(0.05f, sideRegionsLocked);
             lockedAnimation.setPlayMode(Animation.PlayMode.NORMAL);
+            center = new Vector2(x + 0.5f, y - 1);
         }
     }
 
@@ -81,7 +84,7 @@ public class DoorActivator extends ClickActivator implements ProximityActivator 
         if (!proximityCache.containsKey(agent)
                 || position != proximityCache.get(agent).lastPosition) {
             proximityCache.put(agent,
-                    new LastProximity(position, agent.getPosition().dst2(getPosition()) < 3));
+                    new LastProximity(position, agent.getPosition().dst2(center) < 3));
         }
         return proximityCache.get(agent).inProximity;
     }
