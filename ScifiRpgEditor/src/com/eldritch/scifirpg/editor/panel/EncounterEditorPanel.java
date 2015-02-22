@@ -61,6 +61,7 @@ public class EncounterEditorPanel extends
 	private final AssetPointerTable<Room> roomTable = new AssetPointerTable<>(
 			MainPanel.ROOM_TABLE);
 
+	private final JTextField lockField = new JTextField();
 	private final JCheckBox originCheck = new JCheckBox();
 	private final JComboBox<String> lockBox = new JComboBox<>();
 	private final AssetPointerTable<Item> keyTable = new AssetPointerTable<>(
@@ -101,6 +102,10 @@ public class EncounterEditorPanel extends
 
 		builder.append("Origin:", originCheck);
 		builder.nextLine();
+		
+		lockField.setText("0");
+		builder.append("Lock:", lockField);
+		builder.nextLine();
 
 		List<String> items = new ArrayList<>();
 		items.add("");
@@ -110,15 +115,15 @@ public class EncounterEditorPanel extends
 		builder.append("Key:", lockBox);
 		builder.nextLine();
 
-		builder.appendRow("fill:120dlu");
+		builder.appendRow("fill:100dlu");
 		builder.append("Unlocks:", new AssetTablePanel(keyTable));
 		builder.nextLine();
 
-		builder.appendRow("fill:120dlu");
+		builder.appendRow("fill:100dlu");
 		builder.append("Rooms:", new AssetTablePanel(roomTable));
 		builder.nextLine();
 
-		builder.appendRow("fill:120dlu");
+		builder.appendRow("fill:80dlu");
 		builder.append("Prerequisites:", new AssetTablePanel(prereqTable));
 		builder.nextLine();
 
@@ -144,6 +149,7 @@ public class EncounterEditorPanel extends
 //			typeBox.setSelectedItem(asset.getType());
 			weightField.setText(asset.getWeight() + "");
 			uniqueCheck.setSelected(asset.getUnique());
+			lockField.setText(asset.getLockStrength() + "");
 			for (String roomId : asset.getRoomIdList()) {
 				roomTable.addAssetId(roomId);
 			}
@@ -187,6 +193,7 @@ public class EncounterEditorPanel extends
 				.setWeight(Double.parseDouble(weightField.getText()))
 				.setUnique(uniqueCheck.isSelected())
 				.setOrigin(originCheck.isSelected())
+				.setLockStrength(Integer.parseInt(lockField.getText()))
 				.setRequiredKey((String) lockBox.getSelectedItem())
 				.addAllAvailableKey(keyTable.getAssetIds())
 				.addAllRoomId(roomTable.getAssetIds())
