@@ -75,7 +75,8 @@ public class LocationGenerator {
 
     private static final int PX = Settings.PX;
     private static final int SCALE = 1;
-    private final Random rand = new Random();
+    private final long seed;
+    private final Random rand;
 
     private final String biome;
     private final TextureAtlas atlas;
@@ -92,7 +93,9 @@ public class LocationGenerator {
     private final TiledMapTile narrowTop;
     private final TiledMapTile collider;
 
-    public LocationGenerator(Biome biomeType) {
+    public LocationGenerator(Biome biomeType, long seed) {
+        this.seed = seed;
+        this.rand = new Random(seed);
         this.biome = biomeType.name().toLowerCase();
         atlas = GameScreen.ATLAS;
         normalAtlas = GameScreen.NORMAL_ATLAS;
@@ -129,7 +132,7 @@ public class LocationGenerator {
             }
             roomCount += count;
         }
-        EncounterGenerator bsp = new EncounterGenerator(roomCount * 2, proto.getEncounterList());
+        EncounterGenerator bsp = new EncounterGenerator(roomCount * 2, proto.getEncounterList(), seed);
         NaturalVector2.init(bsp.getWidth(), bsp.getHeight());
 
         bsp.generateSegments();
@@ -188,7 +191,7 @@ public class LocationGenerator {
         save(rooms.getGrid(), "connected-rooms");
 
         InvokenGame.log("Adding Furniture");
-        RoomGenerator roomGenerator = new RoomGenerator(map);
+        RoomGenerator roomGenerator = new RoomGenerator(map, seed);
         roomGenerator.generate(rooms);
 
         InvokenGame.log("Creating Spawn Layers");
@@ -199,7 +202,7 @@ public class LocationGenerator {
         // add furniture
 //        InvokenGame.log("Adding Furniture");
         // List<Activator> activators = new ArrayList<Activator>();
-        IcarianFurnitureGenerator furnitureGenerator = new IcarianFurnitureGenerator(atlas, ground);
+        IcarianFurnitureGenerator furnitureGenerator = new IcarianFurnitureGenerator(atlas, ground, seed);
 
         // doors
         InvokenGame.log("Adding Doors");
@@ -217,7 +220,7 @@ public class LocationGenerator {
         // add cover points now that all collidable furniture has been placed
         map.addAllCover(getCover(base, collision));
 
-        Location location = new Location(proto, map);
+        Location location = new Location(proto, map, seed);
         location.addLights(lights);
         // location.addActivators(activators);
         location.addActivators(map.getActivators());

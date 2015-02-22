@@ -1,6 +1,7 @@
 package com.eldritch.invoken.activators;
 
 import java.lang.reflect.Constructor;
+import java.util.Random;
 
 import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.encounter.ConnectedRoom;
@@ -25,8 +26,8 @@ public class PlaceableActivator implements PlaceableFurniture {
 	}
 
 	@Override
-	public NaturalVector2 findPosition(ConnectedRoom room, LocationMap map) {
-		return tiles.findPosition(room, map);
+	public NaturalVector2 findPosition(ConnectedRoom room, LocationMap map, Random rand) {
+		return tiles.findPosition(room, map, rand);
 	}
 
 	@Override

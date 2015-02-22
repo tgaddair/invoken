@@ -23,8 +23,8 @@ public class EncounterGenerator extends BspGenerator {
     private final List<Encounter> encounters = new ArrayList<Encounter>();
     private final Map<Rectangle, EncounterRoom> encounterRooms = new HashMap<Rectangle, EncounterRoom>();
 
-    public EncounterGenerator(int roomCount, List<Encounter> encounters) {
-        super(roomCount);
+    public EncounterGenerator(int roomCount, List<Encounter> encounters, long seed) {
+        super(roomCount, seed);
         this.encounters.addAll(encounters);
     }
 
@@ -89,7 +89,7 @@ public class EncounterGenerator extends BspGenerator {
             }
 
             EncounterNode connection = connectedSample
-                    .get((int) (Math.random() * connected.size()));
+                    .get((int) (random() * connected.size()));
             DigTunnel(connection.getBounds(), current.getBounds(), costs);
 
             // add this node to the connected set, and maybe add its children if all its keys
@@ -238,7 +238,7 @@ public class EncounterGenerator extends BspGenerator {
         return total;
     }
 
-    public static class EncounterSelector {
+    public class EncounterSelector {
         private final double totalWeight;
         private final NavigableSet<WeightedEncounter> selection = new TreeSet<WeightedEncounter>();
         private final WeightedEncounter search = new WeightedEncounter(null, 0);
@@ -254,7 +254,7 @@ public class EncounterGenerator extends BspGenerator {
         }
 
         public Encounter select() {
-            search.cumulativeWeight = Math.random() * totalWeight;
+            search.cumulativeWeight = random() * totalWeight;
             return selection.ceiling(search).encounter;
         }
     }

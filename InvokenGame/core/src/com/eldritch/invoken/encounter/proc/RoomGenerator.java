@@ -57,10 +57,11 @@ public class RoomGenerator {
     }
     
     private final LocationMap map;
-    private final Random rand = new Random();
+    private final Random rand;
     
-    public RoomGenerator(LocationMap map) {
+    public RoomGenerator(LocationMap map, long seed) {
         this.map = map;
+        this.rand = new Random(seed);
     }
     
     public void generate(ConnectedRoomManager rooms) {
@@ -79,7 +80,7 @@ public class RoomGenerator {
         double area = bounds.area();
         int coveredTiles = 0;  // running count of covered tiles
         List<Furniture> availableFurniture = new ArrayList<Furniture>(room.getFurnitureList());
-        Collections.shuffle(availableFurniture);
+        Collections.shuffle(availableFurniture, rand);
         for (Furniture furniture : availableFurniture) {
             for (int i = 0; i < furniture.getMax(); i++) {
                 // calculate the percentage of furniture coverage to ground tiles adding this piece
@@ -90,7 +91,7 @@ public class RoomGenerator {
                 
                 // find a suitable place in room that satisfies the constraints
                 if (coverage < MAX_FURNITURE) {
-                    NaturalVector2 position = placeable.findPosition(connected, map);
+                    NaturalVector2 position = placeable.findPosition(connected, map, rand);
                     if (position != null) {
                         // found a place to put the furniture, so merge it into the map
                         placeable.place(position, map);

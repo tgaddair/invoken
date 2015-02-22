@@ -3,6 +3,7 @@ package com.eldritch.invoken.encounter.proc;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Random;
 import java.util.Set;
 
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -27,11 +28,13 @@ import com.eldritch.invoken.proto.Locations.Encounter;
 import com.eldritch.invoken.util.Settings;
 
 public abstract class FurnitureGenerator {
+    private final Random rand;
     private final Set<NaturalVector2> marked = new HashSet<NaturalVector2>();
     private final TextureAtlas atlas;
     protected final TiledMapTile ground;
 
-    public FurnitureGenerator(TextureAtlas atlas, TiledMapTile ground) {
+    public FurnitureGenerator(TextureAtlas atlas, TiledMapTile ground, long seed) {
+        this.rand = new Random(seed);
         this.atlas = atlas;
         this.ground = ground;
     }
@@ -47,7 +50,7 @@ public abstract class FurnitureGenerator {
                 Cell cell = base.getCell(x, y);
                 if (cell != null && cell.getTile() == placer && !marked(x, y)) {
                     // with some probability, add a light to the wall
-                    if (lastLight == 1 && Math.random() < 0.75) {
+                    if (lastLight == 1 && rand.nextDouble() < 0.75) {
                         addCell(layer, light, x, y);
                         lights.add(new StaticLight(new Vector2(x + 0.5f, y)));
                     }

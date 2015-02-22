@@ -2,6 +2,7 @@ package com.eldritch.invoken.encounter.proc;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 import java.util.concurrent.ExecutionException;
 
 import com.badlogic.gdx.maps.tiled.TiledMap;
@@ -30,7 +31,7 @@ public abstract class FurnitureLoader {
     public interface PlaceableFurniture {
     	int getCost();
     	
-    	NaturalVector2 findPosition(ConnectedRoom room, LocationMap map);
+    	NaturalVector2 findPosition(ConnectedRoom room, LocationMap map, Random rand);
     	
     	void place(NaturalVector2 position, LocationMap map);
     }

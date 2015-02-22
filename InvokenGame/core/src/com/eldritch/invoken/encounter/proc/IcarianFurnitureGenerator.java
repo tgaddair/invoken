@@ -20,8 +20,8 @@ public class IcarianFurnitureGenerator extends FurnitureGenerator {
     
     private int lastServerX = 0;
 
-    public IcarianFurnitureGenerator(TextureAtlas atlas, TiledMapTile ground) {
-        super(atlas, ground);
+    public IcarianFurnitureGenerator(TextureAtlas atlas, TiledMapTile ground, long seed) {
+        super(atlas, ground, seed);
         servers.add(new MultiTileStatic(atlas.findRegion("test-biome/furn-server1")));
         servers.add(new MultiTileStatic(atlas.findRegion("test-biome/furn-server2")));
         servers.add(new MultiTileStatic(atlas.findRegion("test-biome/furn-server3")));

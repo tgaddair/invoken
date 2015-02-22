@@ -24,7 +24,7 @@ public class BspGenerator {
     public static final int MinRoomSize = 6;
     public static final int MaxRoomSize = 12;
 
-    private final Random rand = new Random();
+    private final Random rand;
     private CellType[][] map;
     private final int Width;
     private final int Height;
@@ -47,6 +47,7 @@ public class BspGenerator {
     }
 
     public BspGenerator(int width, int height) {
+        this.rand = new Random();
         this.Width = width;
         this.Height = height;
         map = new CellType[width][height];
@@ -54,11 +55,16 @@ public class BspGenerator {
         RoomCount = (int) (Math.sqrt(width * height) / ROOM_SPARSITY);
     }
 
-    public BspGenerator(int roomCount) {
+    public BspGenerator(int roomCount, long seed) {
+        this.rand = new Random(seed);
         this.RoomCount = roomCount;
         this.Width = Math.max((int) (RoomCount * ROOM_SPARSITY), 50);
         this.Height = Width;
         map = new CellType[Width][Height];
+    }
+    
+    public double random() {
+        return rand.nextDouble();
     }
 
     public int getWidth() {

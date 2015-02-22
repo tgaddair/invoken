@@ -3,17 +3,15 @@ package com.eldritch.invoken.encounter.proc;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
-import com.badlogic.gdx.math.Rectangle;
-import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.encounter.ConnectedRoom;
 import com.eldritch.invoken.encounter.NaturalVector2;
 import com.eldritch.invoken.encounter.layer.LocationLayer;
@@ -46,12 +44,12 @@ public class TmxPlaceableFurniture implements PlaceableFurniture {
     }
 
     @Override
-    public NaturalVector2 findPosition(ConnectedRoom room, LocationMap map) {
+    public NaturalVector2 findPosition(ConnectedRoom room, LocationMap map, Random rand) {
         List<NaturalVector2> origins = new ArrayList<NaturalVector2>(room.getPoints());
         Map<String, LocationLayer> presentLayers = map.getLayerMap();
 
         // randomize the positions
-        Collections.shuffle(origins);
+        Collections.shuffle(origins, rand);
         for (NaturalVector2 origin : origins) {
             int x = origin.x;
             int y = origin.y;

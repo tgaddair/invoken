@@ -1,5 +1,7 @@
 package com.eldritch.invoken.screens;
 
+import java.util.Random;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Input.Keys;
@@ -26,6 +28,7 @@ import com.eldritch.invoken.actor.type.Player;
 import com.eldritch.invoken.encounter.Location;
 import com.eldritch.invoken.encounter.proc.LocationGenerator;
 import com.eldritch.invoken.proto.Actors.PlayerActor;
+import com.eldritch.invoken.proto.Locations;
 import com.eldritch.invoken.ui.ActionBar;
 import com.eldritch.invoken.ui.DialogueMenu;
 import com.eldritch.invoken.ui.HealthBar;
@@ -114,22 +117,28 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 		// load the selector
 		selector = new TextureRegion(new Texture("sprite/selection.png"));
 		
-//		location = new Location(
-//		        InvokenGame.LOCATION_READER.readAsset("NostorraPlaza"), player);
-		
-        com.eldritch.invoken.proto.Locations.Location data = 
-//        		InvokenGame.LOCATION_READER.readAsset("IcarianEmbassy");
-//        		InvokenGame.LOCATION_READER.readAsset("DebugPlayground");
-//                InvokenGame.LOCATION_READER.readAsset("CentralProcessing");
-//                InvokenGame.LOCATION_READER.readAsset("ShippingAndReceiving");
-                InvokenGame.LOCATION_READER.readAsset("CustomsAdministration");
-		LocationGenerator generator = new LocationGenerator(data.getBiome());
-		location = generator.generate(data);
-		
 		if (profession == null) {
+		    // saved state
+		    PlayerActor state = load(playerName);
+		    
+		    // load the location
+		    Locations.Location data = InvokenGame.LOCATION_READER.readAsset(state.getLocation());
+		    LocationGenerator generator = new LocationGenerator(data.getBiome(), state.getSeed());
+            location = generator.generate(data);
+		    
 		    // load from disk
-		    player = location.createPlayer(load(playerName));
+		    player = location.createPlayer(state);
 		} else {
+		    Random rand = new Random();
+	        Locations.Location data = 
+//	              InvokenGame.LOCATION_READER.readAsset("IcarianEmbassy");
+//	              InvokenGame.LOCATION_READER.readAsset("DebugPlayground");
+//	                InvokenGame.LOCATION_READER.readAsset("CentralProcessing");
+//	                InvokenGame.LOCATION_READER.readAsset("ShippingAndReceiving");
+	                InvokenGame.LOCATION_READER.readAsset("CustomsAdministration");
+	        LocationGenerator generator = new LocationGenerator(data.getBiome(), rand.nextLong());
+	        location = generator.generate(data);
+		    
 		    // create a new player
 		    player = location.createPlayer(profession);
 		}

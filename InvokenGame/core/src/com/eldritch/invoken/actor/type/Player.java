@@ -185,8 +185,15 @@ public class Player extends SteeringAgent {
     public PlayerActor serialize() {
         PlayerActor.Builder builder = PlayerActor.newBuilder();
         builder.setParams(info.serialize());
+        
+        // position
         builder.setX(getPosition().x);
         builder.setY(getPosition().y);
+        
+        // location
+        builder.setSeed(getLocation().getSeed());
+        builder.setLocation(getLocation().getId());
+        
         return builder.build();
     }
 }

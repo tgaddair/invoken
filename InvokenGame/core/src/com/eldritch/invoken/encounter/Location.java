@@ -83,6 +83,7 @@ public class Location {
     private Player player;
     private final com.eldritch.invoken.proto.Locations.Location data;
     private final LocationMap map;
+    private final long seed;
 
     private final List<Agent> entities = new ArrayList<Agent>();
     private final List<Agent> inactiveEntities = new ArrayList<Agent>();
@@ -124,13 +125,14 @@ public class Location {
     DebugEntityRenderer debugEntityRenderer = DebugEntityRenderer.getInstance();
     Box2DDebugRenderer debugRenderer = new Box2DDebugRenderer();
 
-    public Location(com.eldritch.invoken.proto.Locations.Location data) {
-        this(data, readMap(data));
+    public Location(com.eldritch.invoken.proto.Locations.Location data, long seed) {
+        this(data, readMap(data), seed);
     }
 
-    public Location(com.eldritch.invoken.proto.Locations.Location data, LocationMap map) {
+    public Location(com.eldritch.invoken.proto.Locations.Location data, LocationMap map, long seed) {
         this.data = data;
         this.map = map;
+        this.seed = seed;
         owningFaction = Optional.fromNullable(data.hasFactionId() ? Faction.of(data.getFactionId())
                 : null);
         lightManager = new LightManager(data);
@@ -182,6 +184,14 @@ public class Location {
 
     public List<Agent> getActiveEntities() {
         return activeEntities;
+    }
+    
+    public long getSeed() {
+        return seed;
+    }
+    
+    public String getId() {
+        return data.getId();
     }
 
     public String getName() {
