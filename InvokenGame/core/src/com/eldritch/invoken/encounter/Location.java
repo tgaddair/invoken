@@ -61,6 +61,7 @@ import com.eldritch.invoken.gfx.LightManager;
 import com.eldritch.invoken.gfx.NormalMapShader;
 import com.eldritch.invoken.gfx.OrthogonalShadedTiledMapRenderer;
 import com.eldritch.invoken.gfx.OverlayLightMasker;
+import com.eldritch.invoken.proto.Actors.PlayerActor;
 import com.eldritch.invoken.proto.Locations.Encounter;
 import com.eldritch.invoken.proto.Locations.Encounter.ActorParams.ActorScenario;
 import com.eldritch.invoken.ui.AgentStatusRenderer;
@@ -178,7 +179,7 @@ public class Location {
     public Player getPlayer() {
         return player;
     }
-    
+
     public List<Agent> getActiveEntities() {
         return activeEntities;
     }
@@ -301,7 +302,7 @@ public class Location {
         cameraV.x += (x - camera.position.x) * lerp;
         cameraV.y += (y - camera.position.y) * lerp;
         cameraV.scl(0.75f);
-        
+
         camera.position.add(cameraV);
         camera.update();
 
@@ -334,7 +335,7 @@ public class Location {
             for (Agent actor : activeEntities) {
                 actor.update(delta, this);
             }
-            
+
             // update the activators
             for (Activator activator : activators) {
                 activator.update(delta, this);
@@ -434,11 +435,11 @@ public class Location {
         overlayRenderer.render();
 
         // render lighting
-//        boolean stepped = fixedStep(delta);
-//        rayHandler.setCombinedMatrix(camera);
-//        if (stepped)
-//            rayHandler.update();
-//        rayHandler.render();
+        // boolean stepped = fixedStep(delta);
+        // rayHandler.setCombinedMatrix(camera);
+        // if (stepped)
+        // rayHandler.update();
+        // rayHandler.render();
 
         // render status info
         renderer.getSpriteBatch().begin();
@@ -446,7 +447,7 @@ public class Location {
             AgentStatusRenderer.render(agent, player, renderer);
         }
         renderer.getSpriteBatch().end();
-        
+
         if (Settings.DEBUG_DRAW) {
             // draw NPC debug rays
             for (Agent agent : activeEntities) {
@@ -609,50 +610,50 @@ public class Location {
         }
 
         // connected rooms fill
-//        ConnectedRoom[][] rooms = map.getRooms();
-//        if (rooms[origin.x][origin.y] != currentRoom && rooms[origin.x][origin.y] != null) {
-//            currentRoom = rooms[origin.x][origin.y];
-//            
-//            filledTiles.clear();
-//            for (int i = 0; i < map.getWidth(); i++) {
-//                for (int j = 0; j < map.getHeight(); j++) {
-//                    NaturalVector2 tile = NaturalVector2.of(i, j);
-//                    if (currentRoom.isConnected(tile, rooms)) {
-//                        filledTiles.add(tile);
-//                    }
-//                }
-//            }
-//            lightManager.updateLights(filledTiles);
-//        }
+        // ConnectedRoom[][] rooms = map.getRooms();
+        // if (rooms[origin.x][origin.y] != currentRoom && rooms[origin.x][origin.y] != null) {
+        // currentRoom = rooms[origin.x][origin.y];
+        //
+        // filledTiles.clear();
+        // for (int i = 0; i < map.getWidth(); i++) {
+        // for (int j = 0; j < map.getHeight(); j++) {
+        // NaturalVector2 tile = NaturalVector2.of(i, j);
+        // if (currentRoom.isConnected(tile, rooms)) {
+        // filledTiles.add(tile);
+        // }
+        // }
+        // }
+        // lightManager.updateLights(filledTiles);
+        // }
 
-//        for (int i = x1; i <= x2; i++) {
-//            for (int j = y1; j <= y2; j++) {
-//                NaturalVector2 tile = NaturalVector2.of(i, j);
-//                if (currentRoom.isConnected(tile, rooms)) {
-//                    activeTiles.add(tile);
-//                }
-//            }
-//        }
+        // for (int i = x1; i <= x2; i++) {
+        // for (int j = y1; j <= y2; j++) {
+        // NaturalVector2 tile = NaturalVector2.of(i, j);
+        // if (currentRoom.isConnected(tile, rooms)) {
+        // activeTiles.add(tile);
+        // }
+        // }
+        // }
 
         resetFilledTiles(origin, getWorldBounds());
 
         map.update(activeTiles);
     }
-    
+
     private void resetFilledTiles(NaturalVector2 origin, Rectangle bounds) {
-     // visible ground tiles fill
+        // visible ground tiles fill
         // TODO: create a mask, gaussian blur, and apply as overlay
         Set<NaturalVector2> visited = new HashSet<NaturalVector2>();
         visited.add(origin);
 
         filledTiles.clear();
         filledTiles.add(origin);
-        
+
         int x1 = (int) bounds.x;
         int x2 = (int) (bounds.x + bounds.width);
         int y1 = (int) bounds.y;
         int y2 = (int) (bounds.y + bounds.height);
-        
+
         LinkedList<NaturalVector2> queue = new LinkedList<NaturalVector2>();
         queue.add(origin);
         while (!queue.isEmpty()) {
@@ -668,7 +669,7 @@ public class Location {
                     if (!map.inBounds(x, y)) {
                         continue;
                     }
-                    
+
                     NaturalVector2 neighbor = NaturalVector2.of(x, y);
                     if (x >= x1 && x < x2 && y >= y1 && y < y2 && !visited.contains(neighbor)) {
                         filledTiles.add(neighbor);
@@ -676,7 +677,7 @@ public class Location {
                             // we can add diagonals, but not explore them
                             continue;
                         }
-                        
+
                         visited.add(neighbor);
                         if (!map.isLightWall(neighbor.x, neighbor.y)) {
                             // fill it and explore
@@ -686,7 +687,7 @@ public class Location {
                 }
             }
         }
-        
+
         lightManager.updateLights(filledTiles);
         fowMasker.updateMask(filledTiles);
     }
@@ -835,6 +836,17 @@ public class Location {
         return list;
     }
 
+    public Player createPlayer(PlayerActor proto) {
+        this.player = new Player(proto, this, "sprite/characters/light-blue-hair.png");
+        addActor(player);
+
+        PointLight light = new PointLight(rayHandler, LightManager.RAYS_PER_BALL, null,
+                LightManager.LIGHT_DISTANCE * 3, 0, 0);
+        light.attachToBody(player.getBody(), 0, 0);
+
+        return player;
+    }
+
     public Player createPlayer(Profession profession) {
         // spawn and add the player
         Vector2 spawn = getSpawnLocation();
@@ -852,7 +864,7 @@ public class Location {
         // create the Player we want to move around the world
         Player player = new Player(profession, Settings.START_LEVEL, x, y, this,
                 "sprite/characters/light-blue-hair.png");
-        
+
         Faction playerFaction = Faction.of("_PlayerFaction");
         player.getInfo().addFaction(playerFaction, 9, 0);
 
@@ -1002,14 +1014,14 @@ public class Location {
             }
         }
     }
-    
+
     public void setLightWalls(int x0, int y0, int x1, int y1, boolean value) {
         for (int x = x0; x <= x1; x++) {
             for (int y = y0; y <= y1; y++) {
                 map.setLightWall(x, y, value);
             }
         }
-        
+
         // don't wait for the player to move, update the filled tiles now
         if (currentCell != null) {
             resetFilledTiles(currentCell, getWorldBounds());

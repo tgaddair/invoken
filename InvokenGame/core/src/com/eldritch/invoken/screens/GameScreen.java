@@ -25,6 +25,7 @@ import com.eldritch.invoken.actor.type.Npc;
 import com.eldritch.invoken.actor.type.Player;
 import com.eldritch.invoken.encounter.Location;
 import com.eldritch.invoken.encounter.proc.LocationGenerator;
+import com.eldritch.invoken.proto.Actors.PlayerActor;
 import com.eldritch.invoken.ui.ActionBar;
 import com.eldritch.invoken.ui.DialogueMenu;
 import com.eldritch.invoken.ui.HealthBar;
@@ -49,7 +50,9 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
     
 	private final DialogueMenu dialogue;
 	private final LootMenu loot;
-	private final Profession profession;  // TODO: this will become a proto containing play info
+	
+	private final String playerName;
+	private Profession profession = null;  // TODO: this will become a proto containing play info
 	
 	private ActionBar actionBar;
 	private InventoryMenu inventoryMenu;
@@ -74,12 +77,21 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 	boolean playerClicked = false;
 	int targetX;
 	int targetY;
+	
+	public GameScreen(InvokenGame game, String playerName) {
+	    this(game, playerName, null);
+	}
 
 	public GameScreen(InvokenGame game, Profession profession) {
-		super(game);
-		dialogue = new DialogueMenu(getSkin());
-		loot = new LootMenu(getSkin());
-		this.profession = profession;
+		this(game, "Player", profession);
+	}
+	
+	private GameScreen(InvokenGame game, String playerName, Profession profession) {
+	    super(game);
+        dialogue = new DialogueMenu(getSkin());
+        loot = new LootMenu(getSkin());
+        this.playerName = playerName;
+        this.profession = profession;
 	}
 
 	@Override
@@ -113,7 +125,14 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
                 InvokenGame.LOCATION_READER.readAsset("CustomsAdministration");
 		LocationGenerator generator = new LocationGenerator(data.getBiome());
 		location = generator.generate(data);
-		player = location.createPlayer(profession);
+		
+		if (profession == null) {
+		    // load from disk
+		    player = location.createPlayer(load(playerName));
+		} else {
+		    // create a new player
+		    player = location.createPlayer(profession);
+		}
 		
 		// init camera position
 		Vector2 position = player.getCamera().getPosition();
@@ -161,6 +180,12 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         if (player.isMoving() && !player.hasFixedTarget()) {
             Vector3 world = camera.unproject(new Vector3(targetX, targetY, 0));
             player.moveTo(world.x, world.y);
+        }
+        
+        // check that the player is still alive
+        if (!location.getPlayer().isAlive()) {
+            // game over
+            game.setScreen(new GameOverScreen(game, location.getPlayer().getInfo().getName()));
         }
 		
 		// update UI menus
@@ -512,7 +537,17 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         }
 	    return textureManager.get(assetName, Texture.class);
 	}
-	   
+	
+	public PlayerActor load(String name) {
+	    FileHandle handle = Gdx.files.local("saves/" + name + ".dat");
+        try {
+            return PlayerActor.parseFrom(handle.readBytes());
+        } catch (Exception ex) {
+            InvokenGame.error("Failed reading " + handle.name(), ex);
+            return null;
+        }
+	}
+	
     public static void save(Location location) {
         save(location.getPlayer());
     }
