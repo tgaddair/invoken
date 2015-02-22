@@ -131,9 +131,9 @@ public class DoorActivator extends ClickActivator implements ProximityActivator 
         activating = true;
         open = opened;
         for (Body body : bodies) {
-            body.setActive(!open);
+            body.setActive(!opened);
         }
-        setLightWalls(location, opened);
+        setLightWalls(location, !opened);
     }
 
     private void setLightWalls(Location location, boolean value) {
