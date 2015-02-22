@@ -48,6 +48,14 @@ public class RangedWeapon extends Item {
         batch.end();    
 	}
 	
+	public float getDamage() {
+	    float damage = 0;
+	    for (DamageMod mod : getData().getDamageModifierList()) {
+	        damage += mod.getMagnitude();
+	    }
+	    return damage;
+	}
+	
 	public float getCooldown() {
 	    return COOLDOWN;
 	}
