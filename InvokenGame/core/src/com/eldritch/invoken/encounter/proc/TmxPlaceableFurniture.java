@@ -49,17 +49,17 @@ public class TmxPlaceableFurniture implements PlaceableFurniture {
     public NaturalVector2 findPosition(ConnectedRoom room, LocationMap map) {
         List<NaturalVector2> origins = new ArrayList<NaturalVector2>(room.getPoints());
         Map<String, LocationLayer> presentLayers = map.getLayerMap();
-        
+
         // randomize the positions
         Collections.shuffle(origins);
         for (NaturalVector2 origin : origins) {
             int x = origin.x;
             int y = origin.y;
-            if (isContiguous(room, tiles, x, y, map) && compatible(presentLayers, tiles, x, y)) {
+            if (isContiguous(tiles, x, y, map) && compatible(presentLayers, tiles, x, y)) {
                 return NaturalVector2.of(x, y);
             }
         }
-        
+
         return null;
     }
 
@@ -149,18 +149,23 @@ public class TmxPlaceableFurniture implements PlaceableFurniture {
         }
     }
 
-    private boolean isContiguous(ConnectedRoom room, TiledMap candidate, int x, int y, LocationMap map) {
+    private boolean isContiguous(TiledMap candidate, int x, int y,
+            LocationMap map) {
         LocationLayer base = (LocationLayer) map.getLayers().get("base");
         LocationLayer collision = (LocationLayer) map.getLayers().get("collision");
         TiledMapTileLayer collision2 = (TiledMapTileLayer) candidate.getLayers().get("collision");
 
         Set<NaturalVector2> region = new HashSet<NaturalVector2>();
-        for (NaturalVector2 point : room.getPoints()) {
-            int i = point.x;
-            int j = point.y;
-            if (base.isGround(i, j) && !collision.hasCell(i, j)
-                    && !isPresent(i - x, j - y, collision2)) {
-                region.add(point);
+        int x1 = x - 1;
+        int x2 = x + collision2.getWidth();
+        int y1 = y - 1;
+        int y2 = y + collision2.getHeight();
+        for (int i = x1; i <= x2; i++) {
+            for (int j = y1; j <= y2; j++) {
+                if (base.isGround(i, j) && !collision.hasCell(i, j)
+                        && !isPresent(i - x, j - y, collision2)) {
+                    region.add(NaturalVector2.of(i, j));
+                }
             }
         }
 

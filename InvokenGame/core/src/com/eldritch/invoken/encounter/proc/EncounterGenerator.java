@@ -181,7 +181,7 @@ public class EncounterGenerator extends BspGenerator {
             
             // if the room is closed, then the cost should be very high
             if (room.getEncounter().getLockStrength() > 0) {
-                cost += 100;
+                cost += 500;
             }
             
             return cost;
