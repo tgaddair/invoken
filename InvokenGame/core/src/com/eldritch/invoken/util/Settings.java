@@ -28,7 +28,7 @@ public class Settings {
 	public static final boolean SKIP_MENU = true;
 	public static final int START_LEVEL = 1;  // 25
 	
-	public static DebugGraph DRAW_GRAPH = DebugGraph.None;
+	public static DebugGraph DRAW_GRAPH = DebugGraph.Disposition;
 	public enum DebugGraph {
 	    None, Disposition, Enemies, LOS, Visible
 	}

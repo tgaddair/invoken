@@ -843,7 +843,9 @@ public class Location {
         // create the Player we want to move around the world
         Player player = new Player(profession, Settings.START_LEVEL, x, y, this,
                 "sprite/characters/light-blue-hair.png");
-        // player.addFaction(playerFaction, 9, 0);
+        
+        Faction playerFaction = Faction.of("_PlayerFaction");
+        player.getInfo().addFaction(playerFaction, 9, 0);
 
         Item outfit = profession.getDefaultOutfit();
         player.getInfo().getInventory().addItem(outfit);
