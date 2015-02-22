@@ -190,7 +190,6 @@ public class LocationGenerator {
         RoomGenerator roomGenerator = new RoomGenerator(map);
         roomGenerator.generate(bsp);
 
-        // create room connectivity map
         InvokenGame.log("Connecting Rooms");
         ConnectedRoom[][] rooms = createRooms(bsp.getRooms(), typeMap);
         map.setRooms(rooms);
@@ -351,7 +350,7 @@ public class LocationGenerator {
             int x = current.x;
             int y = current.y;
 
-            if (typeMap[x][y] == CellType.Floor && !points.contains(current)) {
+            if (typeMap[x][y] == CellType.Floor && rooms[x][y] == null && !points.contains(current)) {
                 points.add(current);
 
                 for (int dx = -1; dx <= 1; dx++) {

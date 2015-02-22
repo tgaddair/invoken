@@ -9,6 +9,7 @@ public class LowerWeapon extends LeafTask<Npc> {
     public void run(Npc entity) {
         entity.setAiming(false);
         entity.getInfo().getAugmentations().unprepareAll();
+        entity.setTarget(null);
         success();
     }
 
