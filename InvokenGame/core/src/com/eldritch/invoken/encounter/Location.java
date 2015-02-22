@@ -178,6 +178,10 @@ public class Location {
     public Player getPlayer() {
         return player;
     }
+    
+    public List<Agent> getActiveEntities() {
+        return activeEntities;
+    }
 
     public String getName() {
         return data.getName();
@@ -329,6 +333,11 @@ public class Location {
             // update all active entities
             for (Agent actor : activeEntities) {
                 actor.update(delta, this);
+            }
+            
+            // update the activators
+            for (Activator activator : activators) {
+                activator.update(delta, this);
             }
 
             // update all temporary entities

@@ -1,7 +1,9 @@
 package com.eldritch.invoken.activators;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
@@ -21,7 +23,7 @@ import com.eldritch.invoken.screens.GameScreen;
 import com.eldritch.invoken.util.Settings;
 import com.google.common.base.Strings;
 
-public class DoorActivator extends ClickActivator {
+public class DoorActivator extends ClickActivator implements ProximityActivator {
     private static final TextureRegion[] frontRegions = GameScreen.getMergedRegion(
             "sprite/activators/blast-door-short.png", 64, 64);
     private static final TextureRegion[] frontRegionsLocked = GameScreen.getMergedRegion(
@@ -31,13 +33,15 @@ public class DoorActivator extends ClickActivator {
     private static final TextureRegion[] sideRegionsLocked = GameScreen.getMergedRegion(
             "sprite/activators/blast-door-side-locked.png", 64, 64);
 
+    private final Map<Agent, LastProximity> proximityCache = new HashMap<Agent, LastProximity>();
+
     // for bounding area
     private static final int SIZE = 2;
 
     private final LockInfo lock;
     private final Animation unlockedAnimation;
     private final Animation lockedAnimation;
-    
+
     private final boolean front;
     private boolean open = false;
 
@@ -72,6 +76,34 @@ public class DoorActivator extends ClickActivator {
     }
 
     @Override
+    public boolean inProximity(Agent agent) {
+        NaturalVector2 position = agent.getNaturalPosition();
+        if (!proximityCache.containsKey(agent)
+                || position != proximityCache.get(agent).lastPosition) {
+            proximityCache.put(agent,
+                    new LastProximity(position, agent.getPosition().dst2(getPosition()) < 3));
+        }
+        return proximityCache.get(agent).inProximity;
+    }
+    
+    @Override
+    public void update(float delta, Location location) {
+        // if a single agent is in the proximity, then open the door, otherwise close it
+        boolean shouldOpen = false;
+        for (Agent agent : location.getActiveEntities()) {
+            if (inProximity(agent)) {
+                shouldOpen = true;
+                break;
+            }
+        }
+        
+        // only change the state of the door if it differs from the current state
+        if (shouldOpen != open) {
+            setOpened(shouldOpen, location);
+        }
+    }
+
+    @Override
     public void activate(Agent agent, Location location) {
         if (lock.isLocked()) {
             if (lock.canUnlock(agent)) {
@@ -84,14 +116,23 @@ public class DoorActivator extends ClickActivator {
             return;
         }
 
+        setOpened(!open, location);
+    }
+    
+    public void setOpened(boolean opened, Location location) {
+        if (lock.isLocked()) {
+            // must click to unlock
+            return;
+        }
+        
         activating = true;
-        open = !open;
+        open = opened;
         for (Body body : bodies) {
             body.setActive(!open);
         }
-        setLightWalls(location, !open);
+        setLightWalls(location, opened);
     }
-    
+
     private void setLightWalls(Location location, boolean value) {
         Vector2 position = getPosition();
         float x = (int) position.x;
@@ -181,7 +222,7 @@ public class DoorActivator extends ClickActivator {
         public boolean isLocked() {
             return locked;
         }
-        
+
         public boolean canUnlock(Agent agent) {
             return hasKey(agent.getInventory());
         }
@@ -189,9 +230,19 @@ public class DoorActivator extends ClickActivator {
         public boolean hasKey(Inventory inventory) {
             return inventory.hasItem(key);
         }
-        
+
         public static LockInfo from(Encounter encounter) {
             return new LockInfo(encounter.getRequiredKey(), encounter.getLockStrength());
+        }
+    }
+
+    private static class LastProximity {
+        private final NaturalVector2 lastPosition;
+        private final boolean inProximity;
+
+        public LastProximity(NaturalVector2 position, boolean proxmity) {
+            this.lastPosition = position;
+            this.inProximity = proxmity;
         }
     }
 }

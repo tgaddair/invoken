@@ -21,6 +21,11 @@ public abstract class ClickActivator implements Activator {
 	}
 	
 	@Override
+	public void update(float delta, Location location) {
+	    // does nothing
+	}
+	
+	@Override
 	public boolean click(Agent agent, Location location, float x, float y) {
 		boolean clicked = x >= position.x && x <= position.x + width && y >= position.y
                 && y <= position.y + height;

@@ -4,6 +4,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.eldritch.invoken.actor.Entity;
 import com.eldritch.invoken.encounter.Location;
+import com.eldritch.invoken.encounter.NaturalVector2;
 
 public abstract class CollisionEntity implements Entity {
     protected final Vector2 position = new Vector2();
@@ -52,6 +53,10 @@ public abstract class CollisionEntity implements Entity {
     
     public Vector2 getVelocity() {
         return velocity;
+    }
+    
+    public NaturalVector2 getNaturalPosition() {
+        return NaturalVector2.of((int) getPosition().x, (int) getPosition().y);
     }
     
     protected void updateHeading() {

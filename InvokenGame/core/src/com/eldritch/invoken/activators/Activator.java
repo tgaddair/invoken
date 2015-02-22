@@ -5,6 +5,8 @@ import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.encounter.Location;
 
 public interface Activator extends Drawable {
+    void update(float delta, Location location);
+    
     boolean click(Agent agent, Location location, float x, float y);
     
     void activate(Agent agent, Location location);
