@@ -64,7 +64,7 @@ import com.google.common.base.Optional;
 
 public abstract class Npc extends SteeringAgent implements Telegraph {
     public static final float STEP = 0.008f;  // behavior action frequency
-    private static final float ALERT_DURATION = 3f;  // seconds
+    private static final float ALERT_DURATION = 5f;  // seconds
     private static final float SIGHTED_DURATION = 1f;  // time enemy is in sights before firing
     
     public enum SteeringMode {
@@ -574,8 +574,8 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
         behaviors.put(SteeringMode.Wander, wanderSteering);
         
         SteeringBehavior<Vector2> blendedPursuing = new BlendedSteering<Vector2>(this)
-                .add(pursue, 0.75f)
-                .add(wander, 0.25f);
+                .add(pursue, .5f)
+                .add(wander, .5f);
         SteeringBehavior<Vector2> pursueSteering = new PrioritySteering<Vector2>(this)
                 .setLimiter(NullLimiter.NEUTRAL_LIMITER) //
                 .add(obstacleAvoidance) //

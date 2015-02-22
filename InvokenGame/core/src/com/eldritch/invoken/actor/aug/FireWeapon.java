@@ -23,7 +23,7 @@ public class FireWeapon extends ProjectileAugmentation {
     private static final float DAMAGE_SCALE = 25;
     private static final float BULLET_VELOCITY = 30;
     private static final int BASE_COST = 10;
-    private static final float ALERT_RADIUS = 7;
+    private static final float ALERT_RADIUS = 10;
     
     private static class Holder {
         private static final FireWeapon INSTANCE = new FireWeapon();
