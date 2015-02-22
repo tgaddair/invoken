@@ -29,7 +29,7 @@ public class Attack extends Sequence<Npc> {
         Sequence<Npc> hideSequence = new Sequence<Npc>();
         hideSequence.addChild(new DesiresCover());
         hideSequence.addChild(new Invert<Npc>(new HasCover()));
-        hideSequence.addChild(new LowerWeapon());
+//        hideSequence.addChild(new LowerWeapon());
         hideSequence.addChild(new SeekCover());
         
         Selector<Npc> selector = new Selector<Npc>();
