@@ -1,9 +1,14 @@
 package com.eldritch.invoken.actor.type;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.actor.ConversationHandler;
+import com.eldritch.invoken.actor.Inventory;
+import com.eldritch.invoken.actor.Inventory.ItemState;
 import com.eldritch.invoken.actor.PreparedAugmentations;
 import com.eldritch.invoken.actor.Profession;
 import com.eldritch.invoken.actor.aug.Augmentation;
@@ -28,6 +33,14 @@ public class Player extends SteeringAgent {
     public Player(PlayerActor data, Location location, String body) {
         super(data.getParams(), data.getX(), data.getY(), Human.getWidth(), Human.getHeight(),
                 Human.MAX_VELOCITY, location, Human.getAllAnimations(body));
+        
+        // equip items
+        Set<String> equipped = new HashSet<String>(data.getEquippedItemIdList());
+        for (ItemState item : getInfo().getInventory().getItems()) {
+            if (equipped.contains(item.getItem().getId())) {
+                getInfo().getInventory().equip(item.getItem());
+            }
+        }
     }
 
     public void toggleLastAugmentation() {
@@ -193,6 +206,18 @@ public class Player extends SteeringAgent {
         // location
         builder.setSeed(getLocation().getSeed());
         builder.setLocation(getLocation().getId());
+        
+        // equipped items
+        Inventory inventory = info.getInventory();
+        if (inventory.hasOutfit()) {
+            builder.addEquippedItemId(inventory.getOutfit().getId());
+        }
+        if (inventory.hasMeleeWeapon()) {
+            builder.addEquippedItemId(inventory.getMeleeWeapon().getId());
+        }
+        if (inventory.hasRangedWeapon()) {
+            builder.addEquippedItemId(inventory.getRangedWeapon().getId());
+        }
         
         return builder.build();
     }

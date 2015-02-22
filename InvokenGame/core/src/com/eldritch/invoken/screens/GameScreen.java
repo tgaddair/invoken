@@ -141,6 +141,9 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 		    
 		    // create a new player
 		    player = location.createPlayer(profession);
+		    
+		    // save in case they die before reaching the first save point
+		    save(player);
 		}
 		
 		// init camera position
