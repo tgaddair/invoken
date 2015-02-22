@@ -96,8 +96,8 @@ public abstract class FurnitureGenerator {
                     continue;
                 }
 
-                if (base.isGround(x, y) && isSideGap(x, y, base)) {
-                    DoorActivator activator = DoorActivator.createSide(x, y + 1,
+                if (base.isGround(x, y - 1) && isSideGap(x, y - 1, base)) {
+                    DoorActivator activator = DoorActivator.createSide(x, y,
                             LockInfo.from(metadata));
                     activators.add(activator);
                     mark(x, y);
