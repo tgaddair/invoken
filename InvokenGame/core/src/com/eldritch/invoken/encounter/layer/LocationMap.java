@@ -13,7 +13,7 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
 import com.eldritch.invoken.activators.Activator;
 import com.eldritch.invoken.actor.type.CoverPoint;
-import com.eldritch.invoken.encounter.ConnectedRoom;
+import com.eldritch.invoken.encounter.ConnectedRoomManager;
 import com.eldritch.invoken.encounter.NaturalVector2;
 import com.eldritch.invoken.util.Settings;
 
@@ -33,7 +33,7 @@ public class LocationMap extends TiledMap {
     private final List<CoverPoint> coverPoints = new ArrayList<CoverPoint>();
     private final TiledMap overlayMap = new TiledMap();
 
-    private ConnectedRoom[][] rooms;
+    private ConnectedRoomManager rooms;
     
     public LocationMap(TiledMapTile ground, int width, int height) {
         this.ground = ground;
@@ -51,7 +51,7 @@ public class LocationMap extends TiledMap {
     	return typeMap[x][y] == Type.Wall;
     }
     
-    public void setRooms(ConnectedRoom[][] rooms) {
+    public void setRooms(ConnectedRoomManager rooms) {
         this.rooms = rooms;
     }
     
@@ -63,7 +63,7 @@ public class LocationMap extends TiledMap {
         return coverPoints;
     }
     
-    public ConnectedRoom[][] getRooms() {
+    public ConnectedRoomManager getRooms() {
         return rooms;
     }
     

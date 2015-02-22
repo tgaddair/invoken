@@ -29,6 +29,10 @@ public class ConnectedRoom {
 	    points.add(NaturalVector2.of(x, y));
 	}
 	
+	public void removePoint(int x, int y) {
+	    points.remove(NaturalVector2.of(x, y));
+	}
+	
 	public void addNeighbor(ConnectedRoom neighbor) {
 		neighbors.add(neighbor);
 	}
