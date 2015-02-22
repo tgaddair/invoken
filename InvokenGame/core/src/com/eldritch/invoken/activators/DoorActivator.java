@@ -101,7 +101,8 @@ public class DoorActivator extends ClickActivator implements ProximityActivator 
         }
         
         // only change the state of the door if it differs from the current state
-        if (shouldOpen != open) {
+        // must click to unlock
+        if (shouldOpen != open && !lock.isLocked()) {
             setOpened(shouldOpen, location);
         }
     }
@@ -122,9 +123,9 @@ public class DoorActivator extends ClickActivator implements ProximityActivator 
         setOpened(!open, location);
     }
     
-    public void setOpened(boolean opened, Location location) {
-        if (lock.isLocked()) {
-            // must click to unlock
+    private synchronized void setOpened(boolean opened, Location location) {
+        if (activating) {
+            // cannot interrupt
             return;
         }
         
