@@ -4,6 +4,7 @@ import com.badlogic.gdx.ai.btree.Task;
 import com.badlogic.gdx.ai.btree.branch.Selector;
 import com.badlogic.gdx.ai.btree.branch.Sequence;
 import com.badlogic.gdx.ai.btree.decorator.AlwaysSucceed;
+import com.badlogic.gdx.ai.btree.decorator.Invert;
 import com.eldritch.invoken.actor.type.Npc;
 
 public class Combat extends Sequence<Npc> {
@@ -22,6 +23,7 @@ public class Combat extends Sequence<Npc> {
         // by perhaps letting pursue come first?
         Sequence<Npc> pursueSequence = new Sequence<Npc>();
         pursueSequence.addChild(new CanPursue());
+        pursueSequence.addChild(new Invert<Npc>(new IsIntimidated()));
         pursueSequence.addChild(new HasSufficientEnergy());
         pursueSequence.addChild(new Pursue());
         selector.addChild(pursueSequence);
@@ -48,7 +50,7 @@ public class Combat extends Sequence<Npc> {
     private static class CanPursue extends BooleanTask {
         @Override
         protected boolean check(Npc npc) {
-            return npc.getPosition().dst2(npc.getLastSeen().getPosition()) > 1;
+            return npc.getPosition().dst2(npc.getLastSeen().getPosition()) > 5;
         }
     }
     

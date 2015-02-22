@@ -17,7 +17,7 @@ public class Attack extends Sequence<Npc> {
     public Attack() {
         // if we can't select a target, then attacking fails
         addChild(new SelectBestTarget());
-        
+
         // next we attempt to use the augmentation, if we cannot use the augmentation then we
         // fail over to evading the target
         Sequence<Npc> useAugSequence = new Sequence<Npc>();
@@ -25,17 +25,18 @@ public class Attack extends Sequence<Npc> {
         useAugSequence.addChild(new HasSights());
         useAugSequence.addChild(new ChooseAugmentation());
         useAugSequence.addChild(new UseAugmentation());
-        
+
         // hide if we have line of sight to our last seen, otherwise we idle in defensive posture
         Sequence<Npc> hideSequence = new Sequence<Npc>();
         hideSequence.addChild(new DesiresCover());
+        hideSequence.addChild(new IsIntimidated());
         hideSequence.addChild(new Invert<Npc>(new HasCover()));
         hideSequence.addChild(new SeekCover());
-        
+
         Selector<Npc> selector = new Selector<Npc>();
         selector.addChild(useAugSequence);
         selector.addChild(hideSequence);
-        
+
         addChild(selector);
     }
 
@@ -43,10 +44,10 @@ public class Attack extends Sequence<Npc> {
     protected Task<Npc> copyTo(Task<Npc> task) {
         return task;
     }
-    
+
     private static class SelectBestTarget extends LeafTask<Npc> {
         private final List<Agent> targets = new ArrayList<Agent>();
-        
+
         @Override
         public void run(Npc entity) {
             fillTargets(entity);
@@ -54,19 +55,19 @@ public class Attack extends Sequence<Npc> {
             if (target != null) {
                 entity.setTarget(target);
             }
-            
+
             if (entity.hasTarget()) {
                 success();
             } else {
                 fail();
             }
         }
-        
+
         protected final void fillTargets(Npc entity) {
             targets.clear();
             entity.getBehavior().getAssaultTargets(entity.getVisibleNeighbors(), targets);
         }
-        
+
         protected final Agent selectBestTarget(Npc entity) {
             // get one of our enemies
             Agent current = null;
@@ -92,7 +93,7 @@ public class Attack extends Sequence<Npc> {
             return task;
         }
     }
-    
+
     private static class TakeAim extends LeafTask<Npc> {
         @Override
         public void run(Npc entity) {
@@ -105,14 +106,14 @@ public class Attack extends Sequence<Npc> {
             return task;
         }
     }
-    
+
     private static class HasSights extends BooleanTask {
         @Override
         protected boolean check(Npc npc) {
             return npc.hasSights();
         }
     }
-    
+
     private static class ChooseAugmentation extends LeafTask<Npc> {
         @Override
         public void run(Npc entity) {
@@ -122,20 +123,20 @@ public class Attack extends Sequence<Npc> {
                 fail();
             }
         }
-        
+
         private boolean canUse(Npc npc) {
             Agent target = npc.getTarget();
             if (target == null) {
                 // nothing to use on
                 return false;
             }
-            
+
             Location location = npc.getLocation();
             if (!npc.canTarget(target, location)) {
                 // can't attack invalid targets
                 return false;
             }
-            
+
             if (!npc.hasPendingAction() && !npc.actionInProgress()) {
                 // choose the aug with the highest situational quality score
                 Augmentation chosen = null;
@@ -162,7 +163,7 @@ public class Attack extends Sequence<Npc> {
             return task;
         }
     }
-    
+
     private static class UseAugmentation extends LeafTask<Npc> {
         @Override
         public void run(Npc entity) {
@@ -173,7 +174,7 @@ public class Attack extends Sequence<Npc> {
                 fail();
             }
         }
-        
+
         private boolean use(Npc npc) {
             Augmentation chosen = npc.getChosen();
             npc.getInfo().getAugmentations().prepare(chosen);
@@ -186,20 +187,20 @@ public class Attack extends Sequence<Npc> {
             return task;
         }
     }
-    
+
     private static class DesiresCover extends BooleanTask {
         @Override
         protected boolean check(Npc npc) {
-            return npc.getInventory().hasRangedWeapon() && npc.hasTarget() 
-                    && npc.getIntimidation().isExpended();
+            return npc.getInventory().hasRangedWeapon() && npc.hasTarget();
         }
     }
     
     private static class HasCover extends BooleanTask {
         @Override
         protected boolean check(Npc npc) {
-            return !npc.getLocation().hasLineOfSight(
-                    npc.getPosition(), npc.getLastSeen().getPosition()) && npc.getCover() != null 
+            return !npc.getLocation().hasLineOfSight(npc.getPosition(),
+                    npc.getLastSeen().getPosition())
+                    && npc.getCover() != null
                     && npc.getCover().getPosition().dst2(npc.getPosition()) < 1;
         }
     }
