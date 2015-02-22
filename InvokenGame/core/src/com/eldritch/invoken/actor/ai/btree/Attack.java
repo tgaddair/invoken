@@ -21,6 +21,7 @@ public class Attack extends Sequence<Npc> {
         // next we attempt to use the augmentation, if we cannot use the augmentation then we
         // fail over to evading the target
         Sequence<Npc> useAugSequence = new Sequence<Npc>();
+        useAugSequence.addChild(new TakeAim());
         useAugSequence.addChild(new ChooseAugmentation());
         useAugSequence.addChild(new UseAugmentation());
         
@@ -28,6 +29,7 @@ public class Attack extends Sequence<Npc> {
         Sequence<Npc> hideSequence = new Sequence<Npc>();
         hideSequence.addChild(new DesiresCover());
         hideSequence.addChild(new Invert<Npc>(new HasCover()));
+        hideSequence.addChild(new LowerWeapon());
         hideSequence.addChild(new SeekCover());
         
         Selector<Npc> selector = new Selector<Npc>();
@@ -83,6 +85,19 @@ public class Attack extends Sequence<Npc> {
                 }
             }
             return current;
+        }
+
+        @Override
+        protected Task<Npc> copyTo(Task<Npc> task) {
+            return task;
+        }
+    }
+    
+    private static class TakeAim extends LeafTask<Npc> {
+        @Override
+        public void run(Npc entity) {
+            entity.setAiming(true);
+            success();
         }
 
         @Override

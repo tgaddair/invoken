@@ -719,13 +719,22 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     	return rayCast(target);
     }
     
+    public boolean hasLineOfSight(Vector2 source, Agent target) {
+        losHandler.reset(target);
+        return rayCast(source, target.getPosition());
+    }
+    
     private boolean rayCast(Vector2 target) {
-        if (body.getPosition().equals(target)) {
+        return rayCast(body.getPosition(), target);
+    }
+    
+    private boolean rayCast(Vector2 source, Vector2 target) {
+        if (source.equals(target)) {
             // if we don't do this check explicitly, we can get the following error:
             // Expression: r.LengthSquared() > 0.0f
             return true;
         }
-        location.getWorld().rayCast(losHandler, body.getPosition(), target);
+        location.getWorld().rayCast(losHandler, source, target);
         return losHandler.hasLineOfSight();
     }
     
@@ -1315,6 +1324,11 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     public class WeaponSentry implements TemporaryEntity {
         private final Vector2 position = new Vector2();
         private final Vector2 direction = new Vector2();
+        
+        public boolean hasLineOfSight(Agent target) {
+            return Agent.this.hasLineOfSight(target) 
+                    && Agent.this.hasLineOfSight(getRenderPosition(), target);
+        }
         
         public void update() {
             Vector2 origin = getRenderPosition();
