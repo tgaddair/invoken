@@ -13,6 +13,7 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
 import com.badlogic.gdx.math.Rectangle;
+import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.encounter.NaturalVector2;
 import com.eldritch.invoken.encounter.layer.LocationLayer;
 import com.eldritch.invoken.encounter.layer.LocationMap;
@@ -188,43 +189,6 @@ public class TmxPlaceableFurniture implements PlaceableFurniture {
 
     private boolean isPresent(int x, int y, TiledMapTileLayer layer) {
         return inBounds(x, y, layer) && layer.getCell(x, y) != null;
-    }
-
-    private List<NaturalVector2> getNeighbors(NaturalVector2 point) {
-        List<NaturalVector2> neighbors = new ArrayList<NaturalVector2>();
-        neighbors.add(NaturalVector2.of(point.x - 1, point.y));
-        neighbors.add(NaturalVector2.of(point.x + 1, point.y));
-        neighbors.add(NaturalVector2.of(point.x, point.y - 1));
-        neighbors.add(NaturalVector2.of(point.x, point.y + 1));
-        return neighbors;
-    }
-
-    private LinkedList<NaturalVector2> getEntryPoints(Rectangle rect, LocationMap map) {
-        LinkedList<NaturalVector2> points = new LinkedList<NaturalVector2>();
-        LocationLayer base = (LocationLayer) map.getLayers().get("base");
-        for (int y = (int) rect.y; y < rect.y + rect.height; y++) {
-            int x1 = (int) rect.x - 1;
-            if (base.isGround(x1, y)) {
-                points.add(NaturalVector2.of(x1, y));
-            }
-
-            int x2 = (int) (rect.x + rect.width);
-            if (base.isGround(x2, y)) {
-                points.add(NaturalVector2.of(x2, y));
-            }
-        }
-        for (int x = (int) rect.x; x < rect.x + rect.width; x++) {
-            int y1 = (int) rect.y - 1;
-            if (base.isGround(x, y1)) {
-                points.add(NaturalVector2.of(x, y1));
-            }
-
-            int y2 = (int) (rect.y + rect.height);
-            if (base.isGround(x, y2)) {
-                points.add(NaturalVector2.of(x, y2));
-            }
-        }
-        return points;
     }
 
     private boolean inBounds(int x, int y, TiledMapTileLayer layer) {

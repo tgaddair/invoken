@@ -5,7 +5,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.eldritch.invoken.actor.Profession;
 import com.eldritch.invoken.screens.CharacterCreationScreen;
 import com.eldritch.invoken.screens.GameScreen;
@@ -98,6 +97,10 @@ public class InvokenGame extends Game {
 	public static void log(String text) {
 		Gdx.app.log(InvokenGame.LOG, text);
 	}
+	
+	public static void logfmt(String text, Object... args) {
+        Gdx.app.log(InvokenGame.LOG, String.format(text, args));
+    }
 	
 	public static void error(String text, Exception ex) {
 	    Gdx.app.error(InvokenGame.LOG, text, ex);
