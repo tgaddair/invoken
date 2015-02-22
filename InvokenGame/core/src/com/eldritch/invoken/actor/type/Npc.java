@@ -42,6 +42,7 @@ import com.eldritch.invoken.actor.ai.AdaptiveRayWithWhiskersConfiguration;
 import com.eldritch.invoken.actor.ai.Behavior;
 import com.eldritch.invoken.actor.ai.Box2dRaycastCollisionDetector;
 import com.eldritch.invoken.actor.ai.FatigueMonitor;
+import com.eldritch.invoken.actor.ai.IntimidationMonitor;
 import com.eldritch.invoken.actor.ai.NpcState;
 import com.eldritch.invoken.actor.ai.NpcStateMachine;
 import com.eldritch.invoken.actor.ai.btree.Combat;
@@ -64,7 +65,7 @@ import com.google.common.base.Optional;
 public abstract class Npc extends SteeringAgent implements Telegraph {
     public static final float STEP = 0.008f;  // behavior action frequency
     private static final float ALERT_DURATION = 3f;  // seconds
-    private static final float SIGHTED_DURATION = 1f;
+    private static final float SIGHTED_DURATION = 1f;  // time enemy is in sights before firing
     
     public enum SteeringMode {
         Default, Wander, Pursue, Evade, Follow
@@ -82,12 +83,13 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
 
     // AI controllers
     private final BehaviorTree<Npc> behaviorTree;
+    private CoverPoint cover = null;
     private final FatigueMonitor fatigue;
+    private final IntimidationMonitor intimidation;
     private Augmentation chosenAug;
     private float lastStep = 0;
     private float alert = 0;
     private float sighted = 0;
-    private CoverPoint cover = null;
     
     private final NpcStateMachine stateMachine;
     private boolean canAttack = true;
@@ -134,6 +136,7 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
         // behavior tree
         behaviorTree = new BehaviorTree<Npc>(createBehavior(), this);
         fatigue = new FatigueMonitor(this);
+        intimidation = new IntimidationMonitor(this);
     }
     
     public CoverPoint getCover() {
@@ -150,6 +153,10 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
     
     public FatigueMonitor getFatigue() {
         return fatigue;
+    }
+    
+    public IntimidationMonitor getIntimidation() {
+        return intimidation;
     }
     
     public void setTask(String taskName) {
@@ -256,7 +263,6 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
     }
 
     public void update(float delta) {
-//        stateMachine.update(delta);
         alert = Math.max(alert - delta, 0);
         
         // update sighted info

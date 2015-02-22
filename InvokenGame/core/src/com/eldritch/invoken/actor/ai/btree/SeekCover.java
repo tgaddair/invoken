@@ -11,6 +11,7 @@ public class SeekCover extends LeafTask<Npc> {
         npc.getHide().setTarget(npc.getLastSeen());
         npc.getEvade().setTarget(npc.getLastSeen());
         npc.setBehavior(SteeringMode.Evade);
+        npc.getIntimidation().use(-Npc.STEP);
         npc.setTask(getClass().getSimpleName());
         success();
     }

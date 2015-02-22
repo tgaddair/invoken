@@ -9,7 +9,7 @@ public class Wander extends LeafTask<Npc> {
     @Override
     public void run(Npc entity) {
         entity.setBehavior(SteeringMode.Wander);
-        entity.getFatigue().addFatigue(Npc.STEP);
+        entity.getFatigue().use(Npc.STEP);
         entity.setTask(getClass().getSimpleName());
         success();
     }

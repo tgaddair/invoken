@@ -30,7 +30,6 @@ public class Attack extends Sequence<Npc> {
         Sequence<Npc> hideSequence = new Sequence<Npc>();
         hideSequence.addChild(new DesiresCover());
         hideSequence.addChild(new Invert<Npc>(new HasCover()));
-//        hideSequence.addChild(new LowerWeapon());
         hideSequence.addChild(new SeekCover());
         
         Selector<Npc> selector = new Selector<Npc>();
@@ -191,7 +190,8 @@ public class Attack extends Sequence<Npc> {
     private static class DesiresCover extends BooleanTask {
         @Override
         protected boolean check(Npc npc) {
-            return npc.getInventory().hasRangedWeapon() && npc.hasTarget();
+            return npc.getInventory().hasRangedWeapon() && npc.hasTarget() 
+                    && npc.getIntimidation().isExpended();
         }
     }
     
