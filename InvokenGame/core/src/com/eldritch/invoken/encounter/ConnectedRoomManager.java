@@ -1,5 +1,8 @@
 package com.eldritch.invoken.encounter;
 
+import java.util.Map.Entry;
+import java.util.Set;
+
 import com.eldritch.invoken.encounter.proc.EncounterGenerator.EncounterRoom;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
@@ -32,6 +35,8 @@ public class ConnectedRoomManager {
     }
     
     public void addMapping(EncounterRoom encounter, ConnectedRoom connected) {
+        // every encounter will have exactly one connected room
+        // every connected room will have at most one encounter (only chambers)
         roomMap.put(encounter, connected);
     }
     
@@ -45,6 +50,14 @@ public class ConnectedRoomManager {
     
     public boolean hasEncounter(ConnectedRoom connected) {
         return roomMap.inverse().containsKey(connected);
+    }
+    
+    public Set<EncounterRoom> getEncounters() {
+        return roomMap.keySet();
+    }
+    
+    public Set<Entry<EncounterRoom, ConnectedRoom>> getChambers() {
+        return roomMap.entrySet();
     }
 
     public ConnectedRoom[][] getGrid() {

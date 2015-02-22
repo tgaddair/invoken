@@ -2,8 +2,8 @@ package com.eldritch.invoken.activators;
 
 import java.lang.reflect.Constructor;
 
-import com.badlogic.gdx.math.Rectangle;
 import com.eldritch.invoken.InvokenGame;
+import com.eldritch.invoken.encounter.ConnectedRoom;
 import com.eldritch.invoken.encounter.NaturalVector2;
 import com.eldritch.invoken.encounter.layer.LocationMap;
 import com.eldritch.invoken.encounter.proc.FurnitureLoader.PlaceableFurniture;
@@ -25,8 +25,8 @@ public class PlaceableActivator implements PlaceableFurniture {
 	}
 
 	@Override
-	public NaturalVector2 findPosition(Rectangle rect, LocationMap map) {
-		return tiles.findPosition(rect, map);
+	public NaturalVector2 findPosition(ConnectedRoom room, LocationMap map) {
+		return tiles.findPosition(room, map);
 	}
 
 	@Override

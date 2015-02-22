@@ -6,9 +6,9 @@ import java.util.concurrent.ExecutionException;
 
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
-import com.badlogic.gdx.math.Rectangle;
 import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.activators.PlaceableActivator;
+import com.eldritch.invoken.encounter.ConnectedRoom;
 import com.eldritch.invoken.encounter.NaturalVector2;
 import com.eldritch.invoken.encounter.layer.LocationMap;
 import com.eldritch.invoken.proto.Locations.Room.Furniture;
@@ -30,7 +30,7 @@ public abstract class FurnitureLoader {
     public interface PlaceableFurniture {
     	int getCost();
     	
-    	NaturalVector2 findPosition(Rectangle rect, LocationMap map);
+    	NaturalVector2 findPosition(ConnectedRoom room, LocationMap map);
     	
     	void place(NaturalVector2 position, LocationMap map);
     }

@@ -189,7 +189,7 @@ public class LocationGenerator {
 
         InvokenGame.log("Adding Furniture");
         RoomGenerator roomGenerator = new RoomGenerator(map);
-        roomGenerator.generate(bsp);
+        roomGenerator.generate(rooms);
 
         InvokenGame.log("Creating Spawn Layers");
         for (LocationLayer layer : createSpawnLayers(base, collision, bsp, map)) {

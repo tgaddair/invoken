@@ -25,6 +25,10 @@ public class ConnectedRoom {
 	    return center;
 	}
 	
+	public Set<NaturalVector2> getPoints() {
+	    return points;
+	}
+	
 	public void addPoint(int x, int y) {
 	    points.add(NaturalVector2.of(x, y));
 	}

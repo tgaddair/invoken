@@ -3,13 +3,14 @@ package com.eldritch.invoken.encounter.proc;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumMap;
-import java.util.HashSet;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Random;
-import java.util.Set;
 
 import com.badlogic.gdx.math.Rectangle;
 import com.eldritch.invoken.InvokenGame;
+import com.eldritch.invoken.encounter.ConnectedRoom;
+import com.eldritch.invoken.encounter.ConnectedRoomManager;
 import com.eldritch.invoken.encounter.NaturalVector2;
 import com.eldritch.invoken.encounter.layer.LocationMap;
 import com.eldritch.invoken.encounter.proc.EncounterGenerator.EncounterRoom;
@@ -62,13 +63,13 @@ public class RoomGenerator {
         this.map = map;
     }
     
-    public void generate(EncounterGenerator generator) {
-        for (EncounterRoom encounter : generator.getEncounterRooms()) {
-            place(encounter);
+    public void generate(ConnectedRoomManager rooms) {
+        for (Entry<EncounterRoom, ConnectedRoom> room : rooms.getChambers()) {
+            place(room.getKey(), room.getValue());
         }
     }
     
-    private void place(EncounterRoom encounter) {
+    private void place(EncounterRoom encounter, ConnectedRoom connected) {
         InvokenGame.log("placing: " + encounter.getEncounter().getId());
         Room room = encounter.getRoom();
         
@@ -89,7 +90,7 @@ public class RoomGenerator {
                 
                 // find a suitable place in room that satisfies the constraints
                 if (coverage < MAX_FURNITURE) {
-                    NaturalVector2 position = placeable.findPosition(bounds, map);
+                    NaturalVector2 position = placeable.findPosition(connected, map);
                     if (position != null) {
                         // found a place to put the furniture, so merge it into the map
                         placeable.place(position, map);

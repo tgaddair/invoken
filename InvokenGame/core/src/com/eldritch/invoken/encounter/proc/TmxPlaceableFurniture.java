@@ -14,6 +14,7 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
 import com.badlogic.gdx.math.Rectangle;
 import com.eldritch.invoken.InvokenGame;
+import com.eldritch.invoken.encounter.ConnectedRoom;
 import com.eldritch.invoken.encounter.NaturalVector2;
 import com.eldritch.invoken.encounter.layer.LocationLayer;
 import com.eldritch.invoken.encounter.layer.LocationMap;
@@ -45,14 +46,8 @@ public class TmxPlaceableFurniture implements PlaceableFurniture {
     }
 
     @Override
-    public NaturalVector2 findPosition(Rectangle rect, LocationMap map) {
-        List<NaturalVector2> origins = new ArrayList<NaturalVector2>();
-        for (int x = (int) rect.x; x < rect.x + rect.width; x++) {
-            for (int y = (int) rect.y; y < rect.y + rect.height; y++) {
-                origins.add(NaturalVector2.of(x, y));
-            }
-        }
-        
+    public NaturalVector2 findPosition(ConnectedRoom room, LocationMap map) {
+        List<NaturalVector2> origins = new ArrayList<NaturalVector2>(room.getPoints());
         Map<String, LocationLayer> presentLayers = map.getLayerMap();
         
         // randomize the positions
@@ -60,7 +55,7 @@ public class TmxPlaceableFurniture implements PlaceableFurniture {
         for (NaturalVector2 origin : origins) {
             int x = origin.x;
             int y = origin.y;
-            if (isContiguous(rect, tiles, x, y, map) && compatible(presentLayers, tiles, x, y)) {
+            if (isContiguous(room, tiles, x, y, map) && compatible(presentLayers, tiles, x, y)) {
                 return NaturalVector2.of(x, y);
             }
         }
@@ -154,22 +149,18 @@ public class TmxPlaceableFurniture implements PlaceableFurniture {
         }
     }
 
-    private boolean isContiguous(Rectangle rect, TiledMap candidate, int x, int y, LocationMap map) {
+    private boolean isContiguous(ConnectedRoom room, TiledMap candidate, int x, int y, LocationMap map) {
         LocationLayer base = (LocationLayer) map.getLayers().get("base");
         LocationLayer collision = (LocationLayer) map.getLayers().get("collision");
         TiledMapTileLayer collision2 = (TiledMapTileLayer) candidate.getLayers().get("collision");
 
         Set<NaturalVector2> region = new HashSet<NaturalVector2>();
-        int x1 = x - 1;
-        int x2 = x + collision2.getWidth();
-        int y1 = y - 1;
-        int y2 = y + collision2.getHeight();
-        for (int i = x1; i <= x2; i++) {
-            for (int j = y1; j <= y2; j++) {
-                if (base.isGround(i, j) && !collision.hasCell(i, j)
-                        && !isPresent(i - x, j - y, collision2)) {
-                    region.add(NaturalVector2.of(i, j));
-                }
+        for (NaturalVector2 point : room.getPoints()) {
+            int i = point.x;
+            int j = point.y;
+            if (base.isGround(i, j) && !collision.hasCell(i, j)
+                    && !isPresent(i - x, j - y, collision2)) {
+                region.add(point);
             }
         }
 
