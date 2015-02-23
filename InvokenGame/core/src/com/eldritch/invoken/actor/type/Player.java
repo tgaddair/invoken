@@ -127,6 +127,11 @@ public class Player extends SteeringAgent {
     public boolean hasFixedTarget() {
         return fixedTarget;
     }
+    
+    @Override
+    public void setLocation(Location location, float x, float y) {
+        super.setLocation(location, x, y);
+    }
 
     public boolean select(Agent other, Location location) {
         if (other == this || other == null || canTarget(other, location)) {

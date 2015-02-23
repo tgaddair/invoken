@@ -573,7 +573,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         Locations.Location data = InvokenGame.LOCATION_READER.readAsset(locationName);
         LocationGenerator generator = new LocationGenerator(gameState, data.getBiome(), state.getSeed());
         location = generator.generate(data);
-        player = location.spawnPlayer(state);
+        location.spawnPlayer(player);
         
         // resize
         location.resize(getWidth(), getHeight());

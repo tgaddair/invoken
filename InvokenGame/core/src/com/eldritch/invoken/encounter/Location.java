@@ -862,9 +862,12 @@ public class Location {
         return createPlayer(proto, proto.getX(), proto.getY());
     }
     
-    public Player spawnPlayer(PlayerActor proto) {
+    public Player spawnPlayer(Player player) {
         Vector2 spawn = getSpawnLocation();
-        return createPlayer(proto, spawn.x, spawn.y);
+        player.setLocation(this, spawn.x, spawn.y);
+        this.player = player;
+        addActor(player);
+        return player;
     }
     
     public Player createPlayer(PlayerActor proto, float x, float y) {

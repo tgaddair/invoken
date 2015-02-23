@@ -67,8 +67,8 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     private final GameCamera defaultCamera = new AgentCamera();
     private GameCamera camera = defaultCamera;
 
-    private final Location location;
-    protected final Body body;
+    private Location location;
+    protected Body body;
     private final float radius;
 
     private final WeaponSentry weaponSentry = new WeaponSentry();
@@ -153,14 +153,14 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
 
         radius = Math.max(width, height) / 5;
         this.location = location;
-        body = createBody(x, y, width, height, location.getWorld());
+        body = createBody(x, y, location.getWorld());
     }
 
     public Body getBody() {
         return body;
     }
 
-    private Body createBody(float x, float y, float width, float height, World world) {
+    private Body createBody(float x, float y, World world) {
         CircleShape circleShape = new CircleShape();
         circleShape.setPosition(new Vector2());
         circleShape.setRadius(radius);
@@ -1260,6 +1260,12 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     @Override
     public float getZ() {
         return isAlive() ? super.getZ() : Float.POSITIVE_INFINITY;
+    }
+    
+    protected void setLocation(Location location, float x, float y) {
+        this.location = location;
+        body = createBody(x, y, location.getWorld());
+        position.set(x, y);
     }
 
     public abstract boolean canSpeak();
