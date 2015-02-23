@@ -18,6 +18,11 @@
  </tileset>
  <tileset firstgid="261" name="collision" tilewidth="32" tileheight="32">
   <image source="../maps/graphics/tiles/collision.png" width="64" height="32"/>
+  <tile id="0">
+   <properties>
+    <property name="collision" value="short"/>
+   </properties>
+  </tile>
  </tileset>
  <layer name="objects" width="1" height="2">
   <data encoding="base64" compression="zlib">
@@ -29,9 +34,9 @@
    eJxjYWRgYAZiAAA+AAo=
   </data>
  </layer>
- <layer name="collision" width="1" height="2" visible="0">
+ <layer name="collision" width="1" height="2">
   <data encoding="base64" compression="zlib">
-   eJxjY2RgYANiAABaAA8=
+   eJxjZWRgYAViAABOAA0=
   </data>
  </layer>
 </map>
