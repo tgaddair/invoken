@@ -434,9 +434,8 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
             if (entity.contains(world.x, world.y) && player.canTarget(entity, location)) {
                 selection = true;
                 if (player.getInfo().getAugmentations().hasActiveAugmentation(button)
-                        && player.select(entity, location)
                         && player.getInfo().getAugmentations().getActiveAugmentation(button)
-                                .isValid(player)) {
+                                .isValid(player) && player.select(entity, location)) {
                     player.getInfo().getAugmentations()
                             .useActiveAugmentation(button, tacticalPause);
                 } else if (player.getTarget() != entity) {
