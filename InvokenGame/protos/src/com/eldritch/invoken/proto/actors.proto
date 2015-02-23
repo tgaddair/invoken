@@ -182,11 +182,19 @@ message PlayerActor {
 
 	required ActorParams params = 1;
 
-	optional int32 health = 7; // remaining, max health is calculated
+	optional float health = 7; // remaining, max health is calculated
 	repeated string equipped_item_id = 21; // NPC: if not specified, inferred from inventory
 	repeated StagedAugmentation staged_augmentation = 16; // if not specified, inferred from known augs
 
 	repeated StateMarker state_marker = 19;
 	repeated string known_npc = 20;
 	repeated Mission mission = 22;
+
+	// position
+	optional float x = 23;
+	optional float y = 24;
+
+	// location generation
+	optional int64 seed = 25;
+	optional string location = 26;
 }

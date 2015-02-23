@@ -24,6 +24,11 @@ public class NormalMapShader {
     public static final float AMBIENT_INTENSITY = 0.8f;
     public static final float DEFAULT_LIGHT_INTENSITY = .2f;
     
+    // TODO: future biome has:
+    //  ambient intensity = 0.9f
+    //  light intensity = 0.1f
+    //  light color = new Vector3(0.8f, 0.6f, 0.9f)
+    
     public static float LIGHT_INTENSITY = DEFAULT_LIGHT_INTENSITY;
 
     public static final Vector3 LIGHT_POS = new Vector3(0f, 0f, DEFAULT_LIGHT_Z);

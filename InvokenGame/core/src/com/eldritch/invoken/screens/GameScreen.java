@@ -28,6 +28,7 @@ import com.eldritch.invoken.actor.type.Player;
 import com.eldritch.invoken.encounter.Location;
 import com.eldritch.invoken.encounter.proc.LocationGenerator;
 import com.eldritch.invoken.proto.Actors.PlayerActor;
+import com.eldritch.invoken.proto.Locations.Biome;
 import com.eldritch.invoken.proto.Locations;
 import com.eldritch.invoken.ui.ActionBar;
 import com.eldritch.invoken.ui.DialogueMenu;

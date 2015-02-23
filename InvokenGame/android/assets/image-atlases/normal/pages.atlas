@@ -796,3 +796,111 @@ industry/terminal-small
   orig: 32, 32
   offset: 0, 0
   index: -1
+
+future-floors.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+future/floor
+  rotate: false
+  xy: 64, 32
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+
+future-walls.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+future/roof
+  rotate: false
+  xy: 272, 368
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+future/mid-wall-top
+  rotate: false
+  xy: 208, 416
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+future/mid-wall-center
+  rotate: false
+  xy: 208, 432
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+future/mid-wall-bottom
+  rotate: false
+  xy: 208, 448
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+future/left-trim
+  rotate: false
+  xy: 288, 368
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+future/right-trim
+  rotate: false
+  xy: 256, 368
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+future/top-left-trim
+  rotate: false
+  xy: 256, 352
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+future/top-right-trim
+  rotate: false
+  xy: 288, 352
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+future/left-corner
+  rotate: false
+  xy: 304, 320
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+future/right-corner
+  rotate: false
+  xy: 288, 320
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+future/overlay-below-trim
+  rotate: false
+  xy: 272, 352
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+future/overlay-left-trim
+  rotate: false
+  xy: 288, 352
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+future/overlay-right-trim
+  rotate: false
+  xy: 256, 352
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1

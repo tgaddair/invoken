@@ -54,6 +54,7 @@ message Room {
 enum Biome {
 	INDUSTRY = 0;
 	GRIME = 1;
+	FUTURE = 2;
 }
 
 message Light {
