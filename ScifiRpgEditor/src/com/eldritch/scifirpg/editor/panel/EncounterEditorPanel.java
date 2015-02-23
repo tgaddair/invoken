@@ -108,7 +108,7 @@ public class EncounterEditorPanel extends
 		fIds.add("");
 		fIds.addAll(MainPanel.LOCATION_TABLE.getAssetIds());
 		successorBox.setModel(new DefaultComboBoxModel<String>(fIds.toArray(new String[0])));
-		builder.append("Faction:", successorBox);
+		builder.append("Successor:", successorBox);
 		builder.nextLine();
 		
 		lockField.setText("0");
