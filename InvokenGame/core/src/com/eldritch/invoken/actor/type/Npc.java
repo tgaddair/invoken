@@ -578,8 +578,8 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
         behaviors.put(SteeringMode.Wander, wanderSteering);
         
         SteeringBehavior<Vector2> blendedPursuing = new BlendedSteering<Vector2>(this)
-                .add(pursue, .5f)
-                .add(combatWander, .5f);
+                .add(pursue, 2f)
+                .add(combatWander, 3f);
         SteeringBehavior<Vector2> pursueSteering = new PrioritySteering<Vector2>(this)
                 .setLimiter(NullLimiter.NEUTRAL_LIMITER) //
                 .add(obstacleAvoidance) //
