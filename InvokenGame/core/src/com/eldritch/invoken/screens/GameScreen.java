@@ -380,6 +380,9 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 		    // print screen
 		    SCREEN_GRAB = true;
 		    return true;
+		case Keys.NUMPAD_0:
+		    loadLocation("ShippingAndReceiving", location.getPlayer().serialize());
+		    return true;
 		default:
 			return false;
 		}

@@ -50,7 +50,11 @@ public class Combat extends Sequence<Npc> {
     private static class CanPursue extends BooleanTask {
         @Override
         protected boolean check(Npc npc) {
-            return npc.getPosition().dst2(npc.getLastSeen().getPosition()) > 5;
+            if (npc.getInventory().hasRangedWeapon()) {
+                return npc.getPosition().dst2(npc.getLastSeen().getPosition()) > 5;
+            } else {
+                return true;
+            }
         }
     }
     
