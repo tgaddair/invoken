@@ -36,11 +36,14 @@ public class Player extends SteeringAgent {
         
         // equip items
         Set<String> equipped = new HashSet<String>(data.getEquippedItemIdList());
-        for (ItemState item : getInfo().getInventory().getItems()) {
+        for (ItemState item : info.getInventory().getItems()) {
             if (equipped.contains(item.getItem().getId())) {
-                getInfo().getInventory().equip(item.getItem());
+                info.getInventory().equip(item.getItem());
             }
         }
+        
+        // set health
+        info.setHealth(data.getHealth());
     }
 
     public void toggleLastAugmentation() {
@@ -218,6 +221,9 @@ public class Player extends SteeringAgent {
         if (inventory.hasRangedWeapon()) {
             builder.addEquippedItemId(inventory.getRangedWeapon().getId());
         }
+        
+        // health
+        builder.setHealth(info.getHealth());
         
         return builder.build();
     }
