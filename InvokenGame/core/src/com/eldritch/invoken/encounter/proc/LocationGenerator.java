@@ -51,6 +51,7 @@ import com.eldritch.invoken.proto.Locations.Biome;
 import com.eldritch.invoken.proto.Locations.Encounter;
 import com.eldritch.invoken.proto.Locations.Encounter.ActorParams.ActorScenario;
 import com.eldritch.invoken.screens.GameScreen;
+import com.eldritch.invoken.screens.GameScreen.GameState;
 import com.eldritch.invoken.util.Settings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
@@ -78,6 +79,7 @@ public class LocationGenerator {
     private final long seed;
     private final Random rand;
 
+    private final GameState state;
     private final String biome;
     private final TextureAtlas atlas;
     private final TextureAtlas normalAtlas;
@@ -93,7 +95,8 @@ public class LocationGenerator {
     private final TiledMapTile narrowTop;
     private final TiledMapTile collider;
 
-    public LocationGenerator(Biome biomeType, long seed) {
+    public LocationGenerator(GameState state, Biome biomeType, long seed) {
+        this.state = state;
         this.seed = seed;
         this.rand = new Random(seed);
         this.biome = biomeType.name().toLowerCase();
@@ -220,7 +223,7 @@ public class LocationGenerator {
         // add cover points now that all collidable furniture has been placed
         map.addAllCover(getCover(base, collision));
 
-        Location location = new Location(proto, map, seed);
+        Location location = new Location(proto, map, state, seed);
         location.addLights(lights);
         // location.addActivators(activators);
         location.addActivators(map.getActivators());

@@ -1,9 +1,7 @@
 package com.eldritch.invoken.activators;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
@@ -33,7 +31,7 @@ public class DoorActivator extends ClickActivator implements ProximityActivator 
     private static final TextureRegion[] sideRegionsLocked = GameScreen.getMergedRegion(
             "sprite/activators/blast-door-side-locked.png", 64, 64);
 
-    private final Map<Agent, LastProximity> proximityCache = new HashMap<Agent, LastProximity>();
+    private final ProximityCache proximityCache = new ProximityCache(3);
 
     // for bounding area
     private static final int SIZE = 2;
@@ -80,13 +78,7 @@ public class DoorActivator extends ClickActivator implements ProximityActivator 
 
     @Override
     public boolean inProximity(Agent agent) {
-        NaturalVector2 position = agent.getNaturalPosition();
-        if (!proximityCache.containsKey(agent)
-                || position != proximityCache.get(agent).lastPosition) {
-            proximityCache.put(agent,
-                    new LastProximity(position, agent.getPosition().dst2(center) < 3));
-        }
-        return proximityCache.get(agent).inProximity;
+        return proximityCache.inProximity(center, agent);
     }
     
     @Override
@@ -243,16 +235,6 @@ public class DoorActivator extends ClickActivator implements ProximityActivator 
 
         public static LockInfo from(Encounter encounter) {
             return new LockInfo(encounter.getRequiredKey(), encounter.getLockStrength());
-        }
-    }
-
-    private static class LastProximity {
-        private final NaturalVector2 lastPosition;
-        private final boolean inProximity;
-
-        public LastProximity(NaturalVector2 position, boolean proxmity) {
-            this.lastPosition = position;
-            this.inProximity = proxmity;
         }
     }
 }

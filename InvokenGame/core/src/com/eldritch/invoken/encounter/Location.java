@@ -64,6 +64,7 @@ import com.eldritch.invoken.gfx.OverlayLightMasker;
 import com.eldritch.invoken.proto.Actors.PlayerActor;
 import com.eldritch.invoken.proto.Locations.Encounter;
 import com.eldritch.invoken.proto.Locations.Encounter.ActorParams.ActorScenario;
+import com.eldritch.invoken.screens.GameScreen.GameState;
 import com.eldritch.invoken.ui.AgentStatusRenderer;
 import com.eldritch.invoken.ui.DebugEntityRenderer;
 import com.eldritch.invoken.util.Settings;
@@ -83,6 +84,7 @@ public class Location {
     private Player player;
     private final com.eldritch.invoken.proto.Locations.Location data;
     private final LocationMap map;
+    private final GameState state;
     private final long seed;
 
     private final List<Agent> entities = new ArrayList<Agent>();
@@ -125,13 +127,14 @@ public class Location {
     DebugEntityRenderer debugEntityRenderer = DebugEntityRenderer.getInstance();
     Box2DDebugRenderer debugRenderer = new Box2DDebugRenderer();
 
-    public Location(com.eldritch.invoken.proto.Locations.Location data, long seed) {
-        this(data, readMap(data), seed);
+    public Location(com.eldritch.invoken.proto.Locations.Location data, GameState state, long seed) {
+        this(data, readMap(data), state, seed);
     }
 
-    public Location(com.eldritch.invoken.proto.Locations.Location data, LocationMap map, long seed) {
+    public Location(com.eldritch.invoken.proto.Locations.Location data, LocationMap map, GameState state, long seed) {
         this.data = data;
         this.map = map;
+        this.state = state;
         this.seed = seed;
         owningFaction = Optional.fromNullable(data.hasFactionId() ? Faction.of(data.getFactionId())
                 : null);
@@ -176,6 +179,10 @@ public class Location {
         short group = 0;
         short mask = Settings.BIT_WALL; // only collide with walls
         PointLight.setContactFilter(category, group, mask);
+    }
+    
+    public void transition(String locationName) {
+        state.transition(locationName, player.serialize());
     }
 
     public Player getPlayer() {
@@ -299,6 +306,7 @@ public class Location {
         Vector2 position = player.getCamera().getPosition();
         if (player.isAiming()) {
             // get direction to focus
+            // TODO: this scale factor should vary with weapon range
             offset.set(player.getFocusPoint()).sub(position).scl(.5f);
         } else {
             offset.set(Vector2.Zero);
@@ -847,7 +855,16 @@ public class Location {
     }
 
     public Player createPlayer(PlayerActor proto) {
-        this.player = new Player(proto, this, "sprite/characters/light-blue-hair.png");
+        return createPlayer(proto, proto.getX(), proto.getY());
+    }
+    
+    public Player spawnPlayer(PlayerActor proto) {
+        Vector2 spawn = getSpawnLocation();
+        return createPlayer(proto, spawn.x, spawn.y);
+    }
+    
+    public Player createPlayer(PlayerActor proto, float x, float y) {
+        this.player = new Player(proto, x, y, this, "sprite/characters/light-blue-hair.png");
         addActor(player);
 
         PointLight light = new PointLight(rayHandler, LightManager.RAYS_PER_BALL, null,

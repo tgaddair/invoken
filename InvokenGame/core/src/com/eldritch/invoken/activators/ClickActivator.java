@@ -5,8 +5,7 @@ import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.encounter.Location;
 import com.eldritch.invoken.encounter.NaturalVector2;
 
-public abstract class ClickActivator implements Activator {
-	private final Vector2 position = new Vector2();
+public abstract class ClickActivator extends BasicActivator {
 	private final int width;
 	private final int height;
 	
@@ -15,7 +14,7 @@ public abstract class ClickActivator implements Activator {
 	}
 	
 	public ClickActivator(NaturalVector2 position, int width, int height) {
-	    this.position.set(position.x, position.y);
+	    super(position);
 	    this.width = width;
 	    this.height = height;
 	}
@@ -27,6 +26,7 @@ public abstract class ClickActivator implements Activator {
 	
 	@Override
 	public boolean click(Agent agent, Location location, float x, float y) {
+	    Vector2 position = getPosition();
 		boolean clicked = x >= position.x && x <= position.x + width && y >= position.y
                 && y <= position.y + height;
         if (clicked && canActivate(agent, x, y)) {
@@ -35,16 +35,7 @@ public abstract class ClickActivator implements Activator {
         return clicked;
 	}
 	
-	@Override
-	public float getZ() {
-	    return position.y;
-	}
-	
-	public Vector2 getPosition() {
-		return position;
-	}
-	
 	protected boolean canActivate(Agent agent, float x, float y) {
-	    return agent.getPosition().dst2(position) < 6;
+	    return agent.getPosition().dst2(getPosition()) < 6;
 	}
 }

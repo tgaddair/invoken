@@ -22,6 +22,7 @@ public class LocationMap extends TiledMap {
 		Ground, Wall, Object
 	}
 	
+	// TODO: maintain a map of visited connected rooms and use it as a minimap for the player
 	private final Type[][] typeMap;
 	private final int[][] lightWalls;
 	

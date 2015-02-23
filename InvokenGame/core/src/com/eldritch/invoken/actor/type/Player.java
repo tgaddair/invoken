@@ -30,8 +30,8 @@ public class Player extends SteeringAgent {
                 location, Human.getAllAnimations(body));
     }
 
-    public Player(PlayerActor data, Location location, String body) {
-        super(data.getParams(), data.getX(), data.getY(), Human.getWidth(), Human.getHeight(),
+    public Player(PlayerActor data, float x, float y, Location location, String body) {
+        super(data.getParams(), x, y, Human.getWidth(), Human.getHeight(),
                 Human.MAX_VELOCITY, location, Human.getAllAnimations(body));
         
         // equip items

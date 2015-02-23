@@ -51,6 +51,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
     private static Toaster toaster;
     public static boolean SCREEN_GRAB = false;
     
+    private final GameState gameState = new GameState();
 	private final DialogueMenu dialogue;
 	private final LootMenu loot;
 	
@@ -123,7 +124,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 		    
 		    // load the location
 		    Locations.Location data = InvokenGame.LOCATION_READER.readAsset(state.getLocation());
-		    LocationGenerator generator = new LocationGenerator(data.getBiome(), state.getSeed());
+		    LocationGenerator generator = new LocationGenerator(gameState, data.getBiome(), state.getSeed());
             location = generator.generate(data);
 		    
 		    // load from disk
@@ -136,7 +137,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 //	                InvokenGame.LOCATION_READER.readAsset("CentralProcessing");
 //	                InvokenGame.LOCATION_READER.readAsset("ShippingAndReceiving");
 	                InvokenGame.LOCATION_READER.readAsset("CustomsAdministration");
-	        LocationGenerator generator = new LocationGenerator(data.getBiome(), rand.nextLong());
+	        LocationGenerator generator = new LocationGenerator(gameState, data.getBiome(), rand.nextLong());
 	        location = generator.generate(data);
 		    
 		    // create a new player
@@ -560,6 +561,25 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         }
 	}
 	
+    private void loadLocation(String locationName, PlayerActor state) {
+        // load the location
+        Locations.Location data = InvokenGame.LOCATION_READER.readAsset(state.getLocation());
+        LocationGenerator generator = new LocationGenerator(gameState, data.getBiome(), state.getSeed());
+        location = generator.generate(data);
+        player = location.spawnPlayer(state);
+        
+        // init camera position
+        Vector2 position = player.getCamera().getPosition();
+        camera.position.x = location.scale(position.x, camera.zoom);
+        camera.position.y = location.scale(position.y, camera.zoom);
+        location.setCamera(camera);
+        
+        // announce the new location
+        toaster = new Toaster(getSkin());
+        stage.addActor(toaster.getContainer());
+        toast(location.getName());
+    }
+	
     public static void save(Location location) {
         save(location.getPlayer());
     }
@@ -571,6 +591,12 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
             handle.writeBytes(player.serialize().toByteArray(), append);
         } catch (Exception ex) {
             InvokenGame.error("Failed writing " + handle.name(), ex);
+        }
+    }
+    
+    public class GameState {
+        public void transition(String locationName, PlayerActor state) {
+            loadLocation(locationName, state);
         }
     }
 }
