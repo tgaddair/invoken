@@ -204,6 +204,10 @@ public class Location {
     public String getName() {
         return data.getName();
     }
+    
+    public ConnectedRoomManager getConnections() {
+        return map.getRooms();
+    }
 
     public void dispose() {
         rayHandler.dispose();

@@ -76,8 +76,8 @@ public class LocationGenerator {
 
     private static final int PX = Settings.PX;
     private static final int SCALE = 1;
-    private final long seed;
-    private final Random rand;
+    private final long globalSeed;
+    private Random rand;
 
     private final GameState state;
     private final String biome;
@@ -97,8 +97,7 @@ public class LocationGenerator {
 
     public LocationGenerator(GameState state, Biome biomeType, long seed) {
         this.state = state;
-        this.seed = seed;
-        this.rand = new Random(seed);
+        this.globalSeed = seed;
         this.biome = biomeType.name().toLowerCase();
         atlas = GameScreen.ATLAS;
         normalAtlas = GameScreen.NORMAL_ATLAS;
@@ -127,6 +126,13 @@ public class LocationGenerator {
     }
 
     public Location generate(com.eldritch.invoken.proto.Locations.Location proto) {
+        // generate a new random seed that combines the global player seed with the location name
+        long seed = globalSeed ^ proto.getId().hashCode();
+        System.out.println("global seed: " + globalSeed);
+        System.out.println("hash code: " + proto.getId().hashCode());
+        System.out.println("seed: " + seed);
+        this.rand = new Random(seed);
+        
         int roomCount = 1;
         for (Encounter encounter : proto.getEncounterList()) {
             int count = 1;
@@ -223,7 +229,7 @@ public class LocationGenerator {
         // add cover points now that all collidable furniture has been placed
         map.addAllCover(getCover(base, collision));
 
-        Location location = new Location(proto, map, state, seed);
+        Location location = new Location(proto, map, state, globalSeed);
         location.addLights(lights);
         // location.addActivators(activators);
         location.addActivators(map.getActivators());

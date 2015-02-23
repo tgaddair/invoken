@@ -28,7 +28,6 @@ import com.eldritch.invoken.actor.type.Player;
 import com.eldritch.invoken.encounter.Location;
 import com.eldritch.invoken.encounter.proc.LocationGenerator;
 import com.eldritch.invoken.proto.Actors.PlayerActor;
-import com.eldritch.invoken.proto.Locations.Biome;
 import com.eldritch.invoken.proto.Locations;
 import com.eldritch.invoken.ui.ActionBar;
 import com.eldritch.invoken.ui.DialogueMenu;
@@ -41,6 +40,7 @@ import com.eldritch.invoken.ui.StatusBar.HealthCalculator;
 import com.eldritch.invoken.ui.Toaster;
 import com.eldritch.invoken.ui.Toaster.Message;
 import com.eldritch.invoken.util.Settings;
+import com.google.common.base.Strings;
 
 public class GameScreen extends AbstractScreen implements InputProcessor {
     public static final AssetManager textureManager = new AssetManager();
@@ -563,11 +563,17 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 	}
 	
     private void loadLocation(String locationName, PlayerActor state) {
+        // dispose of the current location
+        location.dispose();
+        
         // load the location
-        Locations.Location data = InvokenGame.LOCATION_READER.readAsset(state.getLocation());
+        Locations.Location data = InvokenGame.LOCATION_READER.readAsset(locationName);
         LocationGenerator generator = new LocationGenerator(gameState, data.getBiome(), state.getSeed());
         location = generator.generate(data);
         player = location.spawnPlayer(state);
+        
+        // resize
+        location.resize(getWidth(), getHeight());
         
         // init camera position
         Vector2 position = player.getCamera().getPosition();
