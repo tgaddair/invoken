@@ -63,6 +63,7 @@ public class EncounterEditorPanel extends
 
 	private final JTextField lockField = new JTextField();
 	private final JCheckBox originCheck = new JCheckBox();
+	private final JComboBox<String> successorBox = new JComboBox<String>();
 	private final JComboBox<String> lockBox = new JComboBox<>();
 	private final AssetPointerTable<Item> keyTable = new AssetPointerTable<>(
 			MainPanel.ITEM_TABLE);
@@ -101,6 +102,13 @@ public class EncounterEditorPanel extends
 		builder.nextLine();
 
 		builder.append("Origin:", originCheck);
+		builder.nextLine();
+		
+		List<String> fIds = new ArrayList<>();
+		fIds.add("");
+		fIds.addAll(MainPanel.LOCATION_TABLE.getAssetIds());
+		successorBox.setModel(new DefaultComboBoxModel<String>(fIds.toArray(new String[0])));
+		builder.append("Faction:", successorBox);
 		builder.nextLine();
 		
 		lockField.setText("0");
@@ -155,6 +163,9 @@ public class EncounterEditorPanel extends
 			}
 
 			originCheck.setSelected(asset.getOrigin());
+			if (asset.hasSuccessor()) {
+				successorBox.setSelectedItem(asset.getSuccessor());
+			}
 			if (asset.hasRequiredKey()) {
 				lockBox.setSelectedItem(asset.getRequiredKey());
 			}
@@ -193,6 +204,7 @@ public class EncounterEditorPanel extends
 				.setWeight(Double.parseDouble(weightField.getText()))
 				.setUnique(uniqueCheck.isSelected())
 				.setOrigin(originCheck.isSelected())
+				.setSuccessor((String) successorBox.getSelectedItem())
 				.setLockStrength(Integer.parseInt(lockField.getText()))
 				.setRequiredKey((String) lockBox.getSelectedItem())
 				.addAllAvailableKey(keyTable.getAssetIds())

@@ -154,7 +154,8 @@ message Encounter {
 	optional int32 lock_strength = 14 [default = 0];
 	optional string required_key = 12;
 	repeated string available_key = 15;
-	optional bool origin = 7 [default = false];  // allows you to return to the previous location
+	optional bool origin = 7 [default = false];
+	optional string successor = 16;
 
 	repeated string room_id = 13;
 
