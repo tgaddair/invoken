@@ -5,8 +5,10 @@ import com.eldritch.invoken.proto.Actors.NonPlayerActor;
 
 public class Undead extends HumanNpc {
     public static float MAX_VELOCITY = 15f;
+    public static float MAX_ACCELERATION = 10f;
     
     public Undead(NonPlayerActor data, float x, float y, String asset, Location location) {
         super(data, x, y, MAX_VELOCITY, asset, location);
+        setMaxLinearAcceleration(MAX_ACCELERATION);
     }
 }

@@ -15,13 +15,18 @@ public abstract class ProjectileAugmentation extends Augmentation {
     }
     
     @Override
-    public boolean isValid(Agent owner, Vector2 target) {
+    public boolean isValid(Agent owner) {
         return owner.isAiming();
+    }
+    
+    @Override
+    public boolean isValid(Agent owner, Vector2 target) {
+        return isValid(owner);
     }
 
     @Override
     public boolean isValid(Agent owner, Agent target) {
-        return owner.isAiming() && target != null
+        return isValid(owner) && target != null
                 && target != owner && owner.canTargetProjectile(target);
     }
     
