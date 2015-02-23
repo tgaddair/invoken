@@ -553,7 +553,11 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
                 // the same reason
                 .setLimiter(new LinearAccelerationLimiter(5)).setWanderOffset(2)
                 .setWanderOrientation(0).setWanderRadius(0.5f).setWanderRate(MathUtils.PI / 5);
-
+        Wander<Vector2> combatWander = new Wander<Vector2>(this)
+                .setFaceEnabled(false)
+                .setLimiter(new LinearAccelerationLimiter(10)).setWanderOffset(3)
+                .setWanderOrientation(0).setWanderRadius(2).setWanderRate(MathUtils.PI / 5);
+        
         // initially disable our states
         // hide.setEnabled(false);
         // evade.setEnabled(false);
@@ -575,7 +579,7 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
         
         SteeringBehavior<Vector2> blendedPursuing = new BlendedSteering<Vector2>(this)
                 .add(pursue, .5f)
-                .add(wander, .5f);
+                .add(combatWander, .5f);
         SteeringBehavior<Vector2> pursueSteering = new PrioritySteering<Vector2>(this)
                 .setLimiter(NullLimiter.NEUTRAL_LIMITER) //
                 .add(obstacleAvoidance) //
