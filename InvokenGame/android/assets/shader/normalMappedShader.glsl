@@ -61,7 +61,7 @@ void main() {
      // determine distance (used for attenuation) BEFORE we normalize LightDir
      float D = length(LightDir);
 
-     if (radius > 0) {
+     if (radius > 0.0) {
        // normalize our vector
        vec3 L = normalize(LightDir);
        
@@ -70,7 +70,7 @@ void main() {
        vec3 Diffuse = (LightColor.rgb * LightColor.a) * max(dot(N, L), 0.0);
        
        // calculate attenuation
-       float r = radius / 5;
+       float r = radius / 5.0;
        float Attenuation = r / ( Falloff.x + (Falloff.y*D) + (Falloff.z*D*D) );
 
        // sum the diffuse and attenuation int the diffuse total

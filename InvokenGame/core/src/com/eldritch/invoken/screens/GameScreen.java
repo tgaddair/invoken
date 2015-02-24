@@ -40,7 +40,6 @@ import com.eldritch.invoken.ui.StatusBar.HealthCalculator;
 import com.eldritch.invoken.ui.Toaster;
 import com.eldritch.invoken.ui.Toaster.Message;
 import com.eldritch.invoken.util.Settings;
-import com.google.common.base.Strings;
 
 public class GameScreen extends AbstractScreen implements InputProcessor {
     public static final AssetManager textureManager = new AssetManager();

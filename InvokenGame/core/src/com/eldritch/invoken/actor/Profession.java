@@ -428,7 +428,7 @@ public enum Profession {
 	public List<Texture> getIcons() {
 	    ImmutableList.Builder<Texture> builder = ImmutableList.builder();
 	    for (Discipline d : getMasteries()) {
-	        builder.add(DISCIPLINE_ICONS.get(d));
+	        builder.add(Holder.DISCIPLINE_ICONS.get(d));
 	    }
 	    return builder.build();
 	}
@@ -460,13 +460,15 @@ public enum Profession {
 		}
 	}
 	
-	private static final EnumMap<Discipline, Texture> DISCIPLINE_ICONS = 
-            new EnumMap<Discipline, Texture>(Discipline.class);
-	static {
-	    DISCIPLINE_ICONS.put(Discipline.WARFARE, getTexture("discipline-warfare"));
-	    DISCIPLINE_ICONS.put(Discipline.AUTOMATA, getTexture("discipline-automata"));
-	    DISCIPLINE_ICONS.put(Discipline.SUBTERFUGE, getTexture("discipline-subterfuge"));
-	    DISCIPLINE_ICONS.put(Discipline.CHARISMA, getTexture("discipline-charisma"));
+	private static class Holder {
+		private static final EnumMap<Discipline, Texture> DISCIPLINE_ICONS = 
+	            new EnumMap<Discipline, Texture>(Discipline.class);
+		static {
+		    DISCIPLINE_ICONS.put(Discipline.WARFARE, getTexture("discipline-warfare"));
+		    DISCIPLINE_ICONS.put(Discipline.AUTOMATA, getTexture("discipline-automata"));
+		    DISCIPLINE_ICONS.put(Discipline.SUBTERFUGE, getTexture("discipline-subterfuge"));
+		    DISCIPLINE_ICONS.put(Discipline.CHARISMA, getTexture("discipline-charisma"));
+		}
 	}
 	
 	private static Texture getTexture(String asset) {
