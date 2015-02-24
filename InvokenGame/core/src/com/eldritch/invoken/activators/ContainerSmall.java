@@ -55,7 +55,7 @@ public class ContainerSmall extends ClickActivator {
         TextureRegion frame = animation.getKeyFrame(stateTime);
         Vector2 position = getPosition();
 
-        Batch batch = renderer.getSpriteBatch();
+        Batch batch = renderer.getBatch();
         batch.begin();
         batch.draw(frame, position.x, position.y, frame.getRegionWidth() * Settings.SCALE,
                 frame.getRegionHeight() * Settings.SCALE);

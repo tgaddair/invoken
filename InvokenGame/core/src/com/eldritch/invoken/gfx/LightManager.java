@@ -117,13 +117,13 @@ public class LightManager {
 		return lights;
 	}
 
-	public void addLight(Light light, RayHandler rayHandler) {
+	public void addLight(Light light) {
 		lights.add(light);
 		
-		PointLight pointLight = new PointLight(rayHandler, RAYS_PER_BALL, null,
-                light.getRadius() * 5, light.getPosition().x,
-                light.getPosition().y - 2);
-		pointLights.add(pointLight);
+//		PointLight pointLight = new PointLight(rayHandler, RAYS_PER_BALL, null,
+//                light.getRadius() * 5, light.getPosition().x,
+//                light.getPosition().y - 2);
+//		pointLights.add(pointLight);
 	}
 	
 	public void updateLights(Set<NaturalVector2> tiles) {
@@ -143,7 +143,7 @@ public class LightManager {
 
 	public void render(OrthogonalTiledMapRenderer renderer, boolean paused) {
 		// draw the light to the FBO
-		Batch batch = renderer.getSpriteBatch();
+		Batch batch = renderer.getBatch();
 		fbo.begin();
 		batch.setShader(paused ? pauseShader : defaultShader);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);

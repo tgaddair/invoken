@@ -50,7 +50,7 @@ public class OrthogonalShadedTiledMapRenderer extends OrthogonalTiledMapRenderer
 
     @Override
     public void renderTileLayer(TiledMapTileLayer layer) {
-        final Color batchColor = spriteBatch.getColor();
+        final Color batchColor = batch.getColor();
         final float color = Color.toFloatBits(batchColor.r, batchColor.g, batchColor.b,
                 batchColor.a * layer.getOpacity());
 
@@ -189,11 +189,11 @@ public class OrthogonalShadedTiledMapRenderer extends OrthogonalTiledMapRenderer
 
                     if (normalRender && tile instanceof NormalMappedTile) {
                         NormalMappedTile normalTile = (NormalMappedTile) tile;
-                        spriteBatch.draw(normalTile.getNormal(), vertices, 0, 20);
+                        batch.draw(normalTile.getNormal(), vertices, 0, 20);
                         normalTile.getNormal().bind(0);
                     } else {
                         region.getTexture().bind(0);
-                        spriteBatch.draw(region.getTexture(), vertices, 0, 20);
+                        batch.draw(region.getTexture(), vertices, 0, 20);
                     }
                 }
                 x += layerTileWidth;

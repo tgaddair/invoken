@@ -116,7 +116,7 @@ public class Location {
     private final int groundIndex = 0;
 
     private final World world;
-    private final RayHandler rayHandler;
+//    private final RayHandler rayHandler;
 
     private final Vector2 offset = new Vector2();
     private NaturalVector2 currentCell = null;
@@ -170,10 +170,10 @@ public class Location {
         RayHandler.setGammaCorrection(true);
         RayHandler.useDiffuseLight(true);
 
-        rayHandler = new RayHandler(world);
-        rayHandler.setAmbientLight(0f, 0f, 0f, 0.5f);
-        rayHandler.setBlurNum(3);
-        rayHandler.setShadows(false);
+//        rayHandler = new RayHandler(world);
+//        rayHandler.setAmbientLight(0f, 0f, 0f, 0.5f);
+//        rayHandler.setBlurNum(3);
+//        rayHandler.setShadows(false);
 
         short category = Settings.BIT_DEFAULT;
         short group = 0;
@@ -205,12 +205,16 @@ public class Location {
         return data.getName();
     }
     
+    public LocationMap getMap() {
+        return map;
+    }
+    
     public ConnectedRoomManager getConnections() {
         return map.getRooms();
     }
 
     public void dispose() {
-        rayHandler.dispose();
+//        rayHandler.dispose();
     }
 
     public void alertTo(Agent intruder) {
@@ -260,7 +264,7 @@ public class Location {
 
     public void addLights(List<Light> lights) {
         for (Light light : lights) {
-            this.lightManager.addLight(light, rayHandler);
+            this.lightManager.addLight(light);
         }
     }
 
@@ -382,13 +386,13 @@ public class Location {
         fowMasker.render(delta, camera);
 
         // draw lights
-        renderer.getSpriteBatch().setShader(lightManager.getDefaultShader());
-        overlayRenderer.getSpriteBatch().setShader(lightManager.getDefaultShader());
+        renderer.getBatch().setShader(lightManager.getDefaultShader());
+        overlayRenderer.getBatch().setShader(lightManager.getDefaultShader());
         normalMapShader.render(lightManager, player, delta, camera, renderer, overlayRenderer);
 
         // set the tile map render view based on what the
         // camera sees and render the map
-        renderer.getSpriteBatch().setShader(normalMapShader.getShader());
+        renderer.getBatch().setShader(normalMapShader.getShader());
         normalMapShader.useNormalMap(true);
         renderer.render();
         normalMapShader.useNormalMap(false);
@@ -452,7 +456,7 @@ public class Location {
         }
 
         // render the overlay layers
-        overlayRenderer.getSpriteBatch().setShader(normalMapShader.getShader());
+        overlayRenderer.getBatch().setShader(normalMapShader.getShader());
         normalMapShader.useNormalMap(true);
         overlayRenderer.render();
 
@@ -464,11 +468,11 @@ public class Location {
         // rayHandler.render();
 
         // render status info
-        renderer.getSpriteBatch().begin();
+        renderer.getBatch().begin();
         for (Agent agent : activeEntities) {
             AgentStatusRenderer.render(agent, player, renderer);
         }
-        renderer.getSpriteBatch().end();
+        renderer.getBatch().end();
 
         if (Settings.DEBUG_DRAW) {
             // draw NPC debug rays
@@ -498,7 +502,7 @@ public class Location {
         float w = 1f / Settings.PX * region.getRegionWidth();
         float h = 1f / Settings.PX * region.getRegionHeight();
 
-        Batch batch = renderer.getSpriteBatch();
+        Batch batch = renderer.getBatch();
         batch.setColor(color);
         batch.begin();
         batch.draw(region, position.x - w / 2, position.y - h / 2 - 0.4f, w, h);
@@ -874,9 +878,9 @@ public class Location {
         this.player = new Player(proto, x, y, this, "sprite/characters/light-blue-hair.png");
         addActor(player);
 
-        PointLight light = new PointLight(rayHandler, LightManager.RAYS_PER_BALL, null,
-                LightManager.LIGHT_DISTANCE * 3, 0, 0);
-        light.attachToBody(player.getBody(), 0, 0);
+//        PointLight light = new PointLight(rayHandler, LightManager.RAYS_PER_BALL, null,
+//                LightManager.LIGHT_DISTANCE * 3, 0, 0);
+//        light.attachToBody(player.getBody(), 0, 0);
 
         return player;
     }
@@ -886,10 +890,6 @@ public class Location {
         Vector2 spawn = getSpawnLocation();
         this.player = createPlayer(profession, spawn.x, spawn.y);
         addActor(player);
-
-        PointLight light = new PointLight(rayHandler, LightManager.RAYS_PER_BALL, null,
-                LightManager.LIGHT_DISTANCE * 3, 0, 0);
-        light.attachToBody(player.getBody(), 0, 0);
 
         return player;
     }

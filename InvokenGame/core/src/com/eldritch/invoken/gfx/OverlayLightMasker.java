@@ -31,7 +31,7 @@ public class OverlayLightMasker {
 
     public void render(OrthogonalShadedTiledMapRenderer renderer) {
         fbo.begin();
-        renderer.getSpriteBatch().setShader(shader);
+        renderer.getBatch().setShader(shader);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         renderer.render();
         save();

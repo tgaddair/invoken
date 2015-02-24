@@ -45,7 +45,7 @@ public abstract class AnimatedEffect extends BasicEffect {
 		TextureRegion frame = animation.getKeyFrame(getStateTime());
 		Vector2 position = target.getRenderPosition();
 		
-		Batch batch = renderer.getSpriteBatch();
+		Batch batch = renderer.getBatch();
 		batch.begin();
 		batch.draw(frame, position.x - width / 2 - offset.x, position.y - height / 2 - offset.y, width, height);
 		batch.end();

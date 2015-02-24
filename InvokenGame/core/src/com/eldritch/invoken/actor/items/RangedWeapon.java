@@ -37,7 +37,7 @@ public class RangedWeapon extends Item {
         float width = getWidth();
         float height = getHeight();
         
-        Batch batch = renderer.getSpriteBatch();
+        Batch batch = renderer.getBatch();
         batch.begin();
         batch.draw(texture,
                 position.x - width / 2, position.y - height / 2,  // position

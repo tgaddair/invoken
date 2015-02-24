@@ -112,7 +112,7 @@ public abstract class Projectile extends CollisionEntity implements TemporaryEnt
         float width = getWidth();
         float height = getHeight();
         
-        Batch batch = renderer.getSpriteBatch();
+        Batch batch = renderer.getBatch();
         batch.begin();
         preRender(batch);
         batch.draw(getTexture(stateTime),

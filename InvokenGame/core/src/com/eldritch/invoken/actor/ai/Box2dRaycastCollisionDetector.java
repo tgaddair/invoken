@@ -1,8 +1,8 @@
 package com.eldritch.invoken.actor.ai;
 
-import com.badlogic.gdx.ai.steer.utils.Collision;
-import com.badlogic.gdx.ai.steer.utils.Ray;
-import com.badlogic.gdx.ai.steer.utils.RaycastCollisionDetector;
+import com.badlogic.gdx.ai.utils.Collision;
+import com.badlogic.gdx.ai.utils.Ray;
+import com.badlogic.gdx.ai.utils.RaycastCollisionDetector;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Fixture;
@@ -13,7 +13,6 @@ import com.eldritch.invoken.actor.type.Agent;
 public class Box2dRaycastCollisionDetector implements RaycastCollisionDetector<Vector2> {
 	private final World world;
 	private final Box2dRaycastCallback callback;
-	private final Vector2 end = new Vector2();
 
 	public Box2dRaycastCollisionDetector(World world) {
 		this(world, new Box2dRaycastCallback());
@@ -27,12 +26,16 @@ public class Box2dRaycastCollisionDetector implements RaycastCollisionDetector<V
 	@Override
 	public boolean findCollision(Collision<Vector2> outputCollision, Ray<Vector2> inputRay) {
 		callback.collided = false;
-		end.set(inputRay.origin).add(inputRay.direction);
-		if (!inputRay.origin.epsilonEquals(end, MathUtils.FLOAT_ROUNDING_ERROR)) {
+		if (!inputRay.start.epsilonEquals(inputRay.end, MathUtils.FLOAT_ROUNDING_ERROR)) {
 			callback.outputCollision = outputCollision;
-			world.rayCast(callback, inputRay.origin, end);
+			world.rayCast(callback, inputRay.start, inputRay.end);
 		}
 		return callback.collided;
+	}
+	
+	@Override
+	public boolean collides(Ray<Vector2> inputRay) {
+		return findCollision(null, inputRay);
 	}
 
 	public static class Box2dRaycastCallback implements RayCastCallback {

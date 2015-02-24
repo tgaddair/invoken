@@ -22,7 +22,7 @@ public class AgentStatusRenderer {
         Vector2 position = agent.getRenderPosition();
         int i = 1;
 
-        Batch batch = renderer.getSpriteBatch();
+        Batch batch = renderer.getBatch();
         if (agent.isAlive()) {
             if (player.canInteract(agent) && !agent.inDialogue() && agent.canSpeak()) {
                 draw(batch, DIALOGUE_ICON, position, i);

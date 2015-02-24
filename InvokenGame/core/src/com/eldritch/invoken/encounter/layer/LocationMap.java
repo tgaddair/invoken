@@ -19,7 +19,7 @@ import com.eldritch.invoken.util.Settings;
 
 public class LocationMap extends TiledMap {
 	private enum Type {
-		Ground, Wall, Object
+		Ground, Wall, Object, LowWall, ShortObject
 	}
 	
 	// TODO: maintain a map of visited connected rooms and use it as a minimap for the player

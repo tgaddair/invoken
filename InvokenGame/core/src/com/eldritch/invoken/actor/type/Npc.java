@@ -26,8 +26,8 @@ import com.badlogic.gdx.ai.steer.behaviors.Seek;
 import com.badlogic.gdx.ai.steer.behaviors.Wander;
 import com.badlogic.gdx.ai.steer.limiters.LinearAccelerationLimiter;
 import com.badlogic.gdx.ai.steer.limiters.NullLimiter;
-import com.badlogic.gdx.ai.steer.utils.Ray;
 import com.badlogic.gdx.ai.steer.utils.rays.RayConfigurationBase;
+import com.badlogic.gdx.ai.utils.Ray;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -75,7 +75,7 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
     private final Optional<ActorScenario> scenario;
     private final ConversationHandler dialogue;
     private final Set<Agent> detected = new HashSet<Agent>();
-    private final BasicSteerable lastSeen = new BasicSteerable();
+    private final NavigatedSteerable lastSeen;
     private final Behavior behavior;
 
     // used in AI routine calculations to determine things like the target
@@ -124,6 +124,9 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
         for (ItemState item : info.getInventory().getItems()) {
             info.getInventory().equip(item.getItem());
         }
+        
+        // pathfinding
+        lastSeen = new NavigatedSteerable(location.getMap());
 
         // steering behaviors
         behaviors = getSteeringBehaviors(location);
@@ -297,8 +300,7 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
         shapeRenderer.setProjectionMatrix(camera.combined);
         for (int i = 0; i < rays.length; i++) {
             Ray<Vector2> ray = rays[i];
-            Vector2 end = ray.origin.cpy().add(ray.direction);
-            shapeRenderer.line(ray.origin, end);
+            shapeRenderer.line(ray.start, ray.end);
         }
 
         shapeRenderer.end();
@@ -499,7 +501,7 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
         rayConfiguration = new AdaptiveRayWithWhiskersConfiguration<Vector2>(this, 3, 1,
                 35 * MathUtils.degreesToRadians);
         RaycastObstacleAvoidance<Vector2> obstacleAvoidance = new RaycastObstacleAvoidance<Vector2>(
-                this, rayConfiguration, new Box2dRaycastCollisionDetector(location.getWorld()), 1);
+                this, rayConfiguration, new Box2dRaycastCollisionDetector(location.getWorld()), 1f);
 
         // ally proximity
         // TODO: move this to Location, have a set of "squads" managed at a higher level with a

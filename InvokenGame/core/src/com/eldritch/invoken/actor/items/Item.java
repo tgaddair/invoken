@@ -38,7 +38,7 @@ public abstract class Item {
 		TextureRegion frame = getAnimation(activity, agent.getDirection()).getKeyFrame(stateTime);
 		Vector2 position = agent.getRenderPosition();
 		
-		Batch batch = renderer.getSpriteBatch();
+		Batch batch = renderer.getBatch();
 		batch.begin();
 		batch.draw(frame, position.x - width / 2, position.y - height / 2, width, height);
 		batch.end();

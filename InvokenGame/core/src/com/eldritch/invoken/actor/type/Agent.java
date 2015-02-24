@@ -1167,7 +1167,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         }
 
         // apply color
-        Batch batch = renderer.getSpriteBatch();
+        Batch batch = renderer.getBatch();
         batch.setColor(color);
 
         // render equipment
@@ -1200,7 +1200,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         float width = 1 / 32f * frame.getRegionWidth();
         float height = 1 / 32f * frame.getRegionHeight();
 
-        Batch batch = renderer.getSpriteBatch();
+        Batch batch = renderer.getBatch();
         batch.begin();
         batch.draw(frame, position.x - width / 2, position.y - height / 2, width, height);
         batch.end();

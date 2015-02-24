@@ -61,7 +61,7 @@ public abstract class AoeProjectile extends Projectile {
     		// render the explosion
     		float width = radius * 2;
     		float height = radius * 2;
-    		Batch batch = renderer.getSpriteBatch();
+    		Batch batch = renderer.getBatch();
             batch.begin();
             batch.draw(explosion.getKeyFrame(explosionTime),
             		position.x - width / 2, position.y - height / 2, width, height);

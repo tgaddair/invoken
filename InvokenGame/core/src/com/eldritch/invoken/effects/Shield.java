@@ -54,7 +54,7 @@ public class Shield extends BasicEffect {
         float width = target.getWidth();
         float height = target.getHeight();
         
-        Batch batch = renderer.getSpriteBatch();
+        Batch batch = renderer.getBatch();
         batch.begin();
         batch.draw(region,
                 position.x - width / 2, position.y - height / 2,  // position
