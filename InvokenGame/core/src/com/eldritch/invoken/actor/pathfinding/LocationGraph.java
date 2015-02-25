@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.badlogic.gdx.ai.pfa.indexed.IndexedHierarchicalGraph;
+import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.actor.pathfinding.LocationNode.RoomNode;
 import com.eldritch.invoken.actor.pathfinding.LocationNode.TiledNode;
 import com.eldritch.invoken.encounter.ConnectedRoom;
@@ -15,22 +16,35 @@ public class LocationGraph extends IndexedHierarchicalGraph<LocationNode> {
 
     private final Map<NaturalVector2, TiledNode> tiledNodes = new HashMap<NaturalVector2, TiledNode>();
     private final Map<ConnectedRoom, RoomNode> roomNodes = new HashMap<ConnectedRoom, RoomNode>();
+    private final RoomNode defaultRoomNode;
 
     public LocationGraph(LocationMap map) {
         super(LEVELS);
 
         int index = 0;
+        defaultRoomNode = new RoomNode(NaturalVector2.of(0, 0), NaturalVector2.of(0, 0),
+                index++, this);
+        nodes.add(defaultRoomNode);
+
+        // level 0 -> tiles
+        this.level = 0;
+        for (int x = 0; x < map.getWidth(); x++) {
+            for (int y = 0; y < map.getHeight(); y++) {
+                // add a node
+                ConnectedRoom room = map.getRooms().getRoom(x, y);
+                NaturalVector2 tile = NaturalVector2.of(x, y);
+                TiledNode node = new TiledNode(room, tile, index++, this);
+                tiledNodes.put(tile, node);
+                nodes.add(node);
+            }
+        }
+
+        // level 1 -> rooms
+        this.level = 1;
         for (ConnectedRoom room : map.getRooms().getRooms()) {
-            // level 0 -> tiles
-            this.level = 0;
             NaturalVector2 closest = null;
             for (NaturalVector2 tile : room.getPoints()) {
                 if (map.isClearGround(tile.x, tile.y)) {
-                    // add a node
-                    TiledNode node = new TiledNode(room, tile, index++, this);
-                    tiledNodes.put(tile, node);
-                    nodes.add(node);
-
                     if (closest == null
                             || tile.mdst(room.getCenter()) < closest.mdst(room.getCenter())) {
                         closest = tile;
@@ -38,9 +52,7 @@ public class LocationGraph extends IndexedHierarchicalGraph<LocationNode> {
                 }
             }
 
-            // level 1 -> rooms
-            this.level = 1;
-            RoomNode node = new RoomNode(room, closest, index++, this);
+            RoomNode node = new RoomNode(room.getCenter(), closest, index++, this);
             roomNodes.put(room, node);
             nodes.add(node);
         }
@@ -55,18 +67,18 @@ public class LocationGraph extends IndexedHierarchicalGraph<LocationNode> {
 
                     NaturalVector2 neighbor = NaturalVector2.of(node.position.x + dx,
                             node.position.y + dy);
-                    if (tiledNodes.containsKey(neighbor)) {
+                    if (map.isClearGround(neighbor.x, neighbor.y)) {
                         TiledNode target = tiledNodes.get(neighbor);
                         node.getConnections().add(new LocationConnection(node, target));
                     }
                 }
             }
         }
-        
+
         // add level 1 connections
         for (ConnectedRoom room : map.getRooms().getRooms()) {
             RoomNode node = roomNodes.get(room);
-            
+
             for (ConnectedRoom neighbor : room.getNeighbors()) {
                 RoomNode target = roomNodes.get(neighbor);
                 node.getConnections().add(new LocationConnection(node, target));
@@ -74,6 +86,10 @@ public class LocationGraph extends IndexedHierarchicalGraph<LocationNode> {
         }
     }
     
+    public RoomNode getDefaultRoomNode() {
+        return defaultRoomNode;
+    }
+
     public boolean hasNode(int x, int y) {
         return tiledNodes.containsKey(NaturalVector2.of(x, y));
     }

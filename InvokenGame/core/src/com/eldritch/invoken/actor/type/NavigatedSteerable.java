@@ -1,6 +1,7 @@
 package com.eldritch.invoken.actor.type;
 
 import com.badlogic.gdx.math.Vector2;
+import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.actor.pathfinding.LocationGraphPath;
 import com.eldritch.invoken.actor.pathfinding.PathManager;
 import com.eldritch.invoken.encounter.Location;
@@ -88,6 +89,8 @@ public class NavigatedSteerable extends BasicSteerable {
     }
 
     private void computePath(NaturalVector2 destination) {
+//        InvokenGame.logfmt("begin path: %s -> %s", npc.getNaturalPosition(), destination);
         path = pathManager.getPath(npc.getNaturalPosition(), destination);
+//        InvokenGame.logfmt("found path: %s -> %s", npc.getNaturalPosition(), destination);
     }
 }

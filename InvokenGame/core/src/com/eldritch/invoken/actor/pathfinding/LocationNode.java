@@ -57,6 +57,10 @@ public abstract class LocationNode implements IndexedNode<LocationNode> {
 
         @Override
         public LocationNode getUpperLevelNode() {
+            if (room == null) {
+                return graph.getDefaultRoomNode();
+            }
+            
             // containing room
             return graph.getNode(room);
         }
@@ -66,8 +70,8 @@ public abstract class LocationNode implements IndexedNode<LocationNode> {
 	    private final NaturalVector2 closest;
 	    private final LocationGraph graph;
 	    
-        public RoomNode(ConnectedRoom room, NaturalVector2 closest, int index, LocationGraph graph) {
-            super(room.getCenter(), index);
+        public RoomNode(NaturalVector2 center, NaturalVector2 closest, int index, LocationGraph graph) {
+            super(center, index);
             this.closest = closest;
             this.graph = graph;
         }
