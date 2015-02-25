@@ -11,6 +11,11 @@ public class NaturalVector2 {
         this.y = y;
     }
     
+    // manhattan distance
+    public int mdst(NaturalVector2 other) {
+        return Math.abs(this.x - other.x) + Math.abs(this.y - other.y);
+    }
+    
     public static void init(int width, int height) {
         points = new NaturalVector2[width][height];
     }

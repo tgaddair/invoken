@@ -1,5 +1,6 @@
 package com.eldritch.invoken.encounter;
 
+import java.util.HashSet;
 import java.util.Map.Entry;
 import java.util.Set;
 
@@ -10,6 +11,7 @@ import com.google.common.collect.HashBiMap;
 public class ConnectedRoomManager {
     private final ConnectedRoom[][] rooms;
     private final BiMap<EncounterRoom, ConnectedRoom> roomMap = HashBiMap.create();
+    private final Set<ConnectedRoom> roomSet = new HashSet<ConnectedRoom>();
 
     public ConnectedRoomManager(int width, int height) {
         rooms = new ConnectedRoom[width][height];
@@ -24,10 +26,15 @@ public class ConnectedRoomManager {
         // update bi-directional relation
         rooms[x][y] = room;
         room.addPoint(x, y);
+        roomSet.add(room);
     }
 
     public ConnectedRoom getRoom(int x, int y) {
         return rooms[x][y];
+    }
+    
+    public Set<ConnectedRoom> getRooms() {
+        return roomSet;
     }
 
     public boolean hasRoom(int x, int y) {

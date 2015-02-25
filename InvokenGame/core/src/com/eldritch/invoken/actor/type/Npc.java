@@ -266,6 +266,9 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
     }
 
     public void update(float delta) {
+    	// DEBUG
+    	setTarget(getLocation().getPlayer());
+    	
         alert = Math.max(alert - delta, 0);
         
         // update sighted info

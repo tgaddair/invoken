@@ -10,7 +10,7 @@ import com.eldritch.invoken.actor.type.Npc;
 public class Combat extends Sequence<Npc> {
     public Combat() {
         // first check that we have enemies, and failover to the next task if we don't
-        addChild(new HasEnemies());
+//        addChild(new HasEnemies());
 
         // select the best combat strategy
         Selector<Npc> selector = new Selector<Npc>();
@@ -22,9 +22,9 @@ public class Combat extends Sequence<Npc> {
         // TODO: flips into pursue, then back out as soon as it leaves cover, we should fix this
         // by perhaps letting pursue come first?
         Sequence<Npc> pursueSequence = new Sequence<Npc>();
-        pursueSequence.addChild(new CanPursue());
-        pursueSequence.addChild(new Invert<Npc>(new IsIntimidated()));
-        pursueSequence.addChild(new HasSufficientEnergy());
+//        pursueSequence.addChild(new CanPursue());
+//        pursueSequence.addChild(new Invert<Npc>(new IsIntimidated()));
+//        pursueSequence.addChild(new HasSufficientEnergy());
         pursueSequence.addChild(new Pursue());
         selector.addChild(pursueSequence);
         

@@ -15,6 +15,7 @@ import com.eldritch.invoken.activators.Activator;
 import com.eldritch.invoken.actor.type.CoverPoint;
 import com.eldritch.invoken.encounter.ConnectedRoomManager;
 import com.eldritch.invoken.encounter.NaturalVector2;
+import com.eldritch.invoken.encounter.layer.LocationLayer.CollisionLayer;
 import com.eldritch.invoken.util.Settings;
 
 public class LocationMap extends TiledMap {
@@ -35,6 +36,9 @@ public class LocationMap extends TiledMap {
     private final TiledMap overlayMap = new TiledMap();
 
     private ConnectedRoomManager rooms;
+    
+    // lazy creation
+    private CollisionLayer collision = null;
     
     public LocationMap(TiledMapTile ground, int width, int height) {
         this.ground = ground;
@@ -119,9 +123,20 @@ public class LocationMap extends TiledMap {
         return activeTiles.contains(NaturalVector2.of(x, y));
     }
     
+    public boolean isClearGround(int x, int y) {
+    	return isGround(x, y) && !getCollisionLayer().hasCell(x, y);
+    }
+    
     public boolean isGround(int x, int y) {
     	LocationLayer base = (LocationLayer) getLayers().get(0);
     	return base.isGround(x, y);
+    }
+    
+    public LocationLayer getCollisionLayer() {
+    	if (collision == null) {
+    		collision = (CollisionLayer) getLayers().get("collision");
+    	}
+    	return collision;
     }
     
     public TiledMapTile getGround() {
