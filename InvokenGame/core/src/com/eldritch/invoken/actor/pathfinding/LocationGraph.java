@@ -73,6 +73,10 @@ public class LocationGraph extends IndexedHierarchicalGraph<LocationNode> {
             }
         }
     }
+    
+    public boolean hasNode(int x, int y) {
+        return tiledNodes.containsKey(NaturalVector2.of(x, y));
+    }
 
     public TiledNode getNode(NaturalVector2 position) {
         return tiledNodes.get(position);

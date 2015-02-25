@@ -48,6 +48,7 @@ import com.eldritch.invoken.actor.Profession;
 import com.eldritch.invoken.actor.aug.Action;
 import com.eldritch.invoken.actor.factions.Faction;
 import com.eldritch.invoken.actor.items.Item;
+import com.eldritch.invoken.actor.pathfinding.PathManager;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.CoverPoint;
 import com.eldritch.invoken.actor.type.Npc;
@@ -84,6 +85,7 @@ public class Location {
     private Player player;
     private final com.eldritch.invoken.proto.Locations.Location data;
     private final LocationMap map;
+    private final PathManager pathManager;
     private final GameState state;
     private final long seed;
 
@@ -134,6 +136,7 @@ public class Location {
     public Location(com.eldritch.invoken.proto.Locations.Location data, LocationMap map, GameState state, long seed) {
         this.data = data;
         this.map = map;
+        this.pathManager = new PathManager(map);
         this.state = state;
         this.seed = seed;
         owningFaction = Optional.fromNullable(data.hasFactionId() ? Faction.of(data.getFactionId())
@@ -207,6 +210,10 @@ public class Location {
     
     public LocationMap getMap() {
         return map;
+    }
+    
+    public PathManager getPathManager() {
+        return pathManager;
     }
     
     public ConnectedRoomManager getConnections() {

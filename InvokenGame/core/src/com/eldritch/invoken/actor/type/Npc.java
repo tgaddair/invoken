@@ -126,7 +126,7 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
         }
         
         // pathfinding
-        lastSeen = new NavigatedSteerable(location.getMap());
+        lastSeen = new NavigatedSteerable(this, location);
 
         // steering behaviors
         behaviors = getSteeringBehaviors(location);
@@ -266,12 +266,14 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
     }
 
     public void update(float delta) {
+        
     	// DEBUG
     	setTarget(getLocation().getPlayer());
     	
         alert = Math.max(alert - delta, 0);
         
         // update sighted info
+        lastSeen.update(delta);
         if (hasTarget() && hasLineOfSight(getTarget())) {
             sighted += delta;
             getIntimidation().useUntilLimit(delta);
@@ -339,7 +341,7 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
             setTarget(other);
             alert = ALERT_DURATION;
         } else if (other == getTarget()) {
-            lastSeen.setPosition(other.getPosition());
+            lastSeen.setPosition(other);
             setFocusPoint(other.getPosition());
             alert = ALERT_DURATION;
         }
@@ -355,7 +357,7 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
         super.setTarget(other);
         if (other != null) {
             detected.add(other);
-            lastSeen.setPosition(other.getPosition());
+            lastSeen.setPosition(other);
             setFocusPoint(other.getPosition());
         }
     }
