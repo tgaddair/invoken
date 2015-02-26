@@ -79,7 +79,8 @@ public class Location {
             return new Rectangle();
         }
     };
-
+    
+    private final Pool<Bullet> bulletPool;
     private final LineOfSightHandler losHandler = new LineOfSightHandler();
     private final Color actionsColor = new Color(1, 0, 0, 1);
 
@@ -168,6 +169,13 @@ public class Location {
         // Instantiate a new World with no gravity and tell it to sleep when
         // possible.
         world = new World(new Vector2(0, 0), true);
+        world.setContactListener(new LocationContactListener());
+        bulletPool = new Pool<Bullet>() {
+            @Override
+            protected Bullet newObject() {
+                return new Bullet(world);
+            }
+        };
         addWalls(world);
 
         // add encounters
@@ -186,6 +194,14 @@ public class Location {
         short group = 0;
         short mask = Settings.BIT_WALL; // only collide with walls
         PointLight.setContactFilter(category, group, mask);
+    }
+    
+    public Bullet obtainBullet() {
+        return bulletPool.obtain();
+    }
+    
+    public void freeBullet(Bullet bullet) {
+        bulletPool.free(bullet);
     }
 
     public void transition(String locationName) {
