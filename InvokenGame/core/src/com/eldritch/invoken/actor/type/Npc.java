@@ -370,7 +370,7 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
                 && (hostileTo(other) || inFieldOfView(other));
     }
 
-    public BasicSteerable getLastSeen() {
+    public NavigatedSteerable getLastSeen() {
         return lastSeen;
     }
 

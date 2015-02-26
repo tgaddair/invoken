@@ -132,14 +132,17 @@ public class Player extends SteeringAgent {
     public void setLocation(Location location, float x, float y) {
         super.setLocation(location, x, y);
     }
+    
+    @Override
+    public boolean canKeepTarget(Agent other) {
+        return true;
+    }
 
     public boolean select(Agent other, Location location) {
-        if (other == this || other == null || canTarget(other, location)) {
-            setTarget(other);
-            endInteraction();
-            return true;
-        }
-        return false;
+//        if (other == this || other == null || canTarget(other, location)) {
+        setTarget(other);
+        endInteraction();
+        return true;
     }
 
     public void reselect(Agent other) {

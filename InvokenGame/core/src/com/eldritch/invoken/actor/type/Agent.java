@@ -692,6 +692,10 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         }
         return true;
     }
+    
+    public boolean canKeepTarget(Agent other) {
+        return isNear(other);
+    }
 
     public boolean isVisible(Agent other) {
         return other.getVisibility() >= Math.min(10f / info.getSubterfuge(), 1.0f);
@@ -989,7 +993,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         }
 
         // remove target if we can no longer target them
-        if (hasTarget() && !isNear(target)) {
+        if (hasTarget() && !canKeepTarget(target)) {
             setTarget(null);
         }
 

@@ -1,15 +1,19 @@
 package com.eldritch.invoken.actor.type;
 
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
+import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.actor.pathfinding.LocationGraphPath;
+import com.eldritch.invoken.actor.pathfinding.LocationNode;
 import com.eldritch.invoken.actor.pathfinding.PathManager;
 import com.eldritch.invoken.encounter.Location;
 import com.eldritch.invoken.encounter.NaturalVector2;
 
 public class NavigatedSteerable extends BasicSteerable {
     private static final float MIN_DIST = 1f;
-    private static final float WAIT_SECONDS = 1f;
+    private static final float WAIT_SECONDS = 3f;
 
     private final Npc npc;
     private final PathManager pathManager;
@@ -40,6 +44,19 @@ public class NavigatedSteerable extends BasicSteerable {
                     resetPath();
                 }
             }
+        }
+    }
+
+    public void render(ShapeRenderer sr, Matrix4 projection) {
+        if (path != null) {
+            sr.setProjectionMatrix(projection);
+            sr.begin(ShapeType.Filled);
+            sr.setColor(0f, .3f, 1f, .4f);
+            for (int i = pathIndex; i < path.getCount(); i++) {
+                LocationNode node = path.get(i);
+                sr.rect(node.position.x, node.position.y, 1f, 1f);
+            }
+            sr.end();
         }
     }
 
@@ -89,8 +106,36 @@ public class NavigatedSteerable extends BasicSteerable {
     }
 
     private void computePath(NaturalVector2 destination) {
-//        InvokenGame.logfmt("begin path: %s -> %s", npc.getNaturalPosition(), destination);
-        path = pathManager.getPath(npc.getNaturalPosition(), destination);
-//        InvokenGame.logfmt("found path: %s -> %s", npc.getNaturalPosition(), destination);
+        // InvokenGame.logfmt("begin path: %s -> %s", npc.getNaturalPosition(), destination);
+        path = pathManager.getPath(getNearestGround(npc.getNaturalPosition()), getNearestGround(destination));
+        
+        if (path == null) {
+            InvokenGame.logfmt("Failed to find path: %s -> %s", npc.getNaturalPosition(), destination);
+        }
+        // InvokenGame.logfmt("found path: %s -> %s", npc.getNaturalPosition(), destination);
+    }
+
+    private NaturalVector2 getNearestGround(NaturalVector2 position) {
+        if (pathManager.getGraph().isGround(position.x, position.y)) {
+            // ideally, the nearest ground is the position itself
+            return position;
+        }
+        
+        for (int dx = -1; dx <= 1; dx++) {
+            for (int dy = -1; dy <= 1; dy++) {
+                if (dx == 0 && dy == 0) {
+                    continue;
+                }
+
+                NaturalVector2 neighbor = NaturalVector2.of(position.x + dx, position.y + dy);
+                if (pathManager.getGraph().isGround(neighbor.x, neighbor.y)) {
+                    return position;
+                }
+            }
+        }
+        
+        // still haven't found any ground
+        // for now, throw an error
+        throw new RuntimeException("No ground near " + position);
     }
 }

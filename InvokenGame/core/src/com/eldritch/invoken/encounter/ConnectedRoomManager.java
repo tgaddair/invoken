@@ -38,6 +38,11 @@ public class ConnectedRoomManager {
     }
 
     public boolean hasRoom(int x, int y) {
+        if (x < 0 || y < 0 || x >= rooms.length || y >= rooms[x].length) {
+            // out of bounds
+            return false;
+        }
+        
         return rooms[x][y] != null;
     }
     

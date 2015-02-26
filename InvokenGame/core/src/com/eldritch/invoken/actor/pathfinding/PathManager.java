@@ -23,6 +23,10 @@ public class PathManager {
         pathSmoother = new PathSmoother<LocationNode, Vector2>(new TiledRaycastCollisionDetector(
                 graph));
     }
+    
+    public LocationGraph getGraph() {
+        return graph;
+    }
 
     public LocationGraphPath getPath(NaturalVector2 origin, NaturalVector2 target) {
         LocationNode startNode = graph.getNode(origin);

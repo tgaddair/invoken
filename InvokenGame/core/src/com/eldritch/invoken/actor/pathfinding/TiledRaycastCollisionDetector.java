@@ -57,7 +57,7 @@ public class TiledRaycastCollisionDetector implements RaycastCollisionDetector<V
         int y = y0;
         int ystep = (y0 < y1 ? 1 : -1);
         for (int x = x0; x <= x1; x++) {
-            boolean ground = steep ? graph.hasNode(y, x) : graph.hasNode(x, y);
+            boolean ground = steep ? graph.isGround(y, x) : graph.isGround(x, y);
             if (!ground)
                 return true; // We've hit a wall
             error += deltay;

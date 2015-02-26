@@ -42,11 +42,17 @@ public abstract class LocationNode implements IndexedNode<LocationNode> {
     public static class TiledNode extends LocationNode {
         private final ConnectedRoom room;
         private final LocationGraph graph;
+        private final boolean ground;
         
-        public TiledNode(ConnectedRoom room, NaturalVector2 position, int index, LocationGraph graph) {
+        public TiledNode(ConnectedRoom room, NaturalVector2 position, boolean ground, int index, LocationGraph graph) {
             super(position, index);
             this.room = room;
             this.graph = graph;
+            this.ground = ground;
+        }
+        
+        public boolean isGround() {
+            return ground;
         }
 
         @Override
