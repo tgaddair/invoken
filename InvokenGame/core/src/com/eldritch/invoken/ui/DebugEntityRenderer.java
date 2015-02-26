@@ -138,7 +138,14 @@ public class DebugEntityRenderer {
             return;
         }
         Npc npc = (Npc) target;
-//        renderCircle(npc.getLastSeen().getPosition(), 0.5f, camera.combined);
+        renderCircle(npc.getLastSeen().getPosition(), 0.5f, camera.combined);
+    }
+    
+    public void renderPathfinding(Agent target, OrthographicCamera camera) {
+        if (target == null || !(target instanceof Npc)) {
+            return;
+        }
+        Npc npc = (Npc) target;
         npc.getLastSeen().render(sr, camera.combined);
     }
     

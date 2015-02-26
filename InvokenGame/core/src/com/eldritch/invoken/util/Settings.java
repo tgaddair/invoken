@@ -28,6 +28,7 @@ public class Settings {
 	public static final boolean DEBUG_DRAW = false;
 	public static final boolean DEBUG_LIGHTS = false;
 	public static final boolean DEBUG_COVER = false;
+	public static final boolean DEBUG_PATHFINDING = false;
 	public static final boolean SKIP_MENU = true;
 	public static final int START_LEVEL = 1;  // 25
 	

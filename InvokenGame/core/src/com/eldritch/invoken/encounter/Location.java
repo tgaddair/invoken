@@ -501,6 +501,10 @@ public class Location {
             // draw cover
             debugEntityRenderer.renderCover(player.getTarget(), activeCover, camera);
         }
+        if (Settings.DEBUG_PATHFINDING) {
+            // draw pathfinding nodes
+            debugEntityRenderer.renderPathfinding(player.getTarget(), camera);
+        }
         // draw last seen
         debugEntityRenderer.renderLastSeen(player.getTarget(), camera);
     }
