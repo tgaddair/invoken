@@ -113,7 +113,6 @@ public class NavigatedSteerable extends BasicSteerable {
     }
 
     private void resetPath() {
-        InvokenGame.log("reset path");
         path = null;
         pathAge = 0;
         pathIndex = 0;
@@ -140,7 +139,7 @@ public class NavigatedSteerable extends BasicSteerable {
 
                 NaturalVector2 neighbor = NaturalVector2.of(position.x + dx, position.y + dy);
                 if (pathManager.getGraph().isGround(neighbor.x, neighbor.y)) {
-                    return position;
+                    return neighbor;
                 }
             }
         }

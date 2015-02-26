@@ -75,6 +75,11 @@ public class LocationGraph extends IndexedHierarchicalGraph<LocationNode> {
                     if (dx == 0 && dy == 0) {
                         continue;
                     }
+                    
+                    // disallow diagonal movement
+                    if ((dx != 0) && (dy != 0)) {
+                        continue;
+                    }
 
                     NaturalVector2 neighbor = NaturalVector2.of(node.position.x + dx,
                             node.position.y + dy);

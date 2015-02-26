@@ -40,7 +40,7 @@ public class PathManager {
         }
         
         // smooth the path
-//        pathSmoother.smoothPath(path);
+        pathSmoother.smoothPath(path);
         
         return path;
     }
