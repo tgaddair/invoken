@@ -55,6 +55,7 @@ import com.eldritch.invoken.actor.type.Npc;
 import com.eldritch.invoken.actor.type.Player;
 import com.eldritch.invoken.actor.type.TemporaryEntity;
 import com.eldritch.invoken.encounter.layer.EncounterLayer;
+import com.eldritch.invoken.encounter.layer.LocationLayer.CollisionLayer;
 import com.eldritch.invoken.encounter.layer.LocationMap;
 import com.eldritch.invoken.gfx.FogOfWarMasker;
 import com.eldritch.invoken.gfx.Light;
@@ -114,11 +115,11 @@ public class Location {
     private OrthographicCamera camera;
     private final Vector3 cameraV = new Vector3();
 
-    private int collisionIndex = -1;
+    private final CollisionLayer collision;
     private final int groundIndex = 0;
 
     private final World world;
-//    private final RayHandler rayHandler;
+    // private final RayHandler rayHandler;
 
     private final Vector2 offset = new Vector2();
     private NaturalVector2 currentCell = null;
@@ -133,7 +134,8 @@ public class Location {
         this(data, readMap(data), state, seed);
     }
 
-    public Location(com.eldritch.invoken.proto.Locations.Location data, LocationMap map, GameState state, long seed) {
+    public Location(com.eldritch.invoken.proto.Locations.Location data, LocationMap map,
+            GameState state, long seed) {
         this.data = data;
         this.map = map;
         this.pathManager = new PathManager(map);
@@ -147,13 +149,15 @@ public class Location {
         fowMasker = new FogOfWarMasker();
 
         // find layers we care about
+        CollisionLayer collision = null;
         for (int i = 0; i < map.getLayers().getCount(); i++) {
             TiledMapTileLayer layer = (TiledMapTileLayer) map.getLayers().get(i);
             if (layer.getName().equals("collision")) {
                 layer.setVisible(false);
-                collisionIndex = i;
+                collision = (CollisionLayer) layer;
             }
         }
+        this.collision = collision;
 
         // objects are rendered by y-ordering with other entities
         float unitScale = Settings.SCALE;
@@ -173,17 +177,17 @@ public class Location {
         RayHandler.setGammaCorrection(true);
         RayHandler.useDiffuseLight(true);
 
-//        rayHandler = new RayHandler(world);
-//        rayHandler.setAmbientLight(0f, 0f, 0f, 0.5f);
-//        rayHandler.setBlurNum(3);
-//        rayHandler.setShadows(false);
+        // rayHandler = new RayHandler(world);
+        // rayHandler.setAmbientLight(0f, 0f, 0f, 0.5f);
+        // rayHandler.setBlurNum(3);
+        // rayHandler.setShadows(false);
 
         short category = Settings.BIT_DEFAULT;
         short group = 0;
         short mask = Settings.BIT_WALL; // only collide with walls
         PointLight.setContactFilter(category, group, mask);
     }
-    
+
     public void transition(String locationName) {
         state.transition(locationName, player.serialize());
     }
@@ -195,11 +199,11 @@ public class Location {
     public List<Agent> getActiveEntities() {
         return activeEntities;
     }
-    
+
     public long getSeed() {
         return seed;
     }
-    
+
     public String getId() {
         return data.getId();
     }
@@ -207,21 +211,21 @@ public class Location {
     public String getName() {
         return data.getName();
     }
-    
+
     public LocationMap getMap() {
         return map;
     }
-    
+
     public PathManager getPathManager() {
         return pathManager;
     }
-    
+
     public ConnectedRoomManager getConnections() {
         return map.getRooms();
     }
 
     public void dispose() {
-//        rayHandler.dispose();
+        // rayHandler.dispose();
     }
 
     public void alertTo(Agent intruder) {
@@ -738,7 +742,7 @@ public class Location {
     }
 
     public boolean isObstacle(int x, int y) {
-        return hasCell(x, y, collisionIndex);
+        return collision.hasCell(x, y);
     }
 
     private boolean hasCell(int x, int y, int layerIndex) {
@@ -756,11 +760,10 @@ public class Location {
         tiles.clear();
 
         // check for collision layer
-        if (collisionIndex >= 0) {
-            TiledMapTileLayer layer = (TiledMapTileLayer) map.getLayers().get(collisionIndex);
+        if (collision != null) {
             for (int y = startY; y <= endY; y++) {
                 for (int x = startX; x <= endX; x++) {
-                    Cell cell = layer.getCell(x, y);
+                    Cell cell = collision.getCell(x, y);
                     if (cell != null) {
                         Rectangle rect = rectPool.obtain();
                         rect.set(x, y, 1, 1);
@@ -876,7 +879,7 @@ public class Location {
     public Player createPlayer(PlayerActor proto) {
         return createPlayer(proto, proto.getX(), proto.getY());
     }
-    
+
     public Player spawnPlayer(Player player) {
         Vector2 spawn = getSpawnLocation();
         player.setLocation(this, spawn.x, spawn.y);
@@ -884,14 +887,14 @@ public class Location {
         addActor(player);
         return player;
     }
-    
+
     public Player createPlayer(PlayerActor proto, float x, float y) {
         this.player = new Player(proto, x, y, this, "sprite/characters/light-blue-hair.png");
         addActor(player);
 
-//        PointLight light = new PointLight(rayHandler, LightManager.RAYS_PER_BALL, null,
-//                LightManager.LIGHT_DISTANCE * 3, 0, 0);
-//        light.attachToBody(player.getBody(), 0, 0);
+        // PointLight light = new PointLight(rayHandler, LightManager.RAYS_PER_BALL, null,
+        // LightManager.LIGHT_DISTANCE * 3, 0, 0);
+        // light.attachToBody(player.getBody(), 0, 0);
 
         return player;
     }
@@ -931,7 +934,7 @@ public class Location {
     private interface ObstaclePredicate {
         boolean isObstacle(int x, int y);
 
-        boolean isWall();
+        short categoryBits();
     }
 
     private void addWalls(World world) {
@@ -939,12 +942,25 @@ public class Location {
         addWalls(world, new ObstaclePredicate() {
             @Override
             public boolean isObstacle(int x, int y) {
-                return map.isWall(x, y);
+                return map.isWall(x, y) && !collision.ignoresBullets(x, y);
             }
 
             @Override
-            public boolean isWall() {
-                return true;
+            public short categoryBits() {
+                return Settings.BIT_WALL;
+            }
+        });
+
+        // low obstacles
+        addWalls(world, new ObstaclePredicate() {
+            @Override
+            public boolean isObstacle(int x, int y) {
+                return collision.ignoresBullets(x, y);
+            }
+
+            @Override
+            public short categoryBits() {
+                return Settings.BIT_SHORT_OBSTACLE;
             }
         });
 
@@ -952,12 +968,13 @@ public class Location {
         addWalls(world, new ObstaclePredicate() {
             @Override
             public boolean isObstacle(int x, int y) {
-                return Location.this.isObstacle(x, y) && !map.isWall(x, y);
+                return Location.this.isObstacle(x, y) && !map.isWall(x, y)
+                        && !collision.ignoresBullets(x, y);
             }
 
             @Override
-            public boolean isWall() {
-                return false;
+            public short categoryBits() {
+                return Settings.BIT_OBSTACLE;
             }
         });
     }
@@ -981,7 +998,7 @@ public class Location {
                     // this point is not part of a valid edge
                     if (contiguous) {
                         // this point marks the end of our last edge
-                        addEdge(x0, y, x, y, world, predicate.isWall());
+                        addEdge(x0, y, x, y, world, predicate.categoryBits());
                         contiguous = false;
                     }
                 }
@@ -1004,7 +1021,7 @@ public class Location {
                     // this point is not part of a valid edge
                     if (contiguous) {
                         // this point marks the end of our last edge
-                        addEdge(x0, y, x, y, world, predicate.isWall());
+                        addEdge(x0, y, x, y, world, predicate.categoryBits());
                         contiguous = false;
                     }
                 }
@@ -1029,7 +1046,7 @@ public class Location {
                     // this point is not part of a valid edge
                     if (contiguous) {
                         // this point marks the end of our last edge
-                        addEdge(x, y0, x, y, world, predicate.isWall());
+                        addEdge(x, y0, x, y, world, predicate.categoryBits());
                         contiguous = false;
                     }
                 }
@@ -1052,7 +1069,7 @@ public class Location {
                     // this point is not part of a valid edge
                     if (contiguous) {
                         // this point marks the end of our last edge
-                        addEdge(x, y0, x, y, world, predicate.isWall());
+                        addEdge(x, y0, x, y, world, predicate.categoryBits());
                         contiguous = false;
                     }
                 }
@@ -1074,10 +1091,10 @@ public class Location {
     }
 
     public Body createEdge(float x0, float y0, float x1, float y1) {
-        return addEdge(x0, y0, x1, y1, world, true);
+        return addEdge(x0, y0, x1, y1, world, Settings.BIT_WALL);
     }
 
-    private Body addEdge(float x0, float y0, float x1, float y1, World world, boolean wall) {
+    private Body addEdge(float x0, float y0, float x1, float y1, World world, short category) {
         EdgeShape edge = new EdgeShape();
         Vector2 start = new Vector2(x0, y0);
         Vector2 end = new Vector2(x1, y1);
@@ -1096,7 +1113,7 @@ public class Location {
 
         // collision filters
         Filter filter = fixture.getFilterData();
-        filter.categoryBits = wall ? Settings.BIT_WALL : Settings.BIT_OBSTACLE;
+        filter.categoryBits = category;
         filter.maskBits = Settings.BIT_ANYTHING;
         fixture.setFilterData(filter);
 

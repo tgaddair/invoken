@@ -94,6 +94,7 @@ public class LocationGenerator {
     private final TiledMapTile narrowWall;
     private final TiledMapTile narrowTop;
     private final TiledMapTile collider;
+    private final TiledMapTile shortCollider;
 
     public LocationGenerator(GameState state, Biome biomeType, long seed) {
         this.state = state;
@@ -118,6 +119,8 @@ public class LocationGenerator {
         narrowTop = merge(topLeft, topRight);
 
         collider = new StaticTiledMapTile(atlas.findRegion(COLLISION));
+        shortCollider = new StaticTiledMapTile(atlas.findRegion(COLLISION));
+        shortCollider.getProperties().put("collision", "short");
     }
 
     private NormalMappedTile getTile(String asset) {
@@ -592,8 +595,7 @@ public class LocationGenerator {
     }
 
     private CollisionLayer createCollisionLayer(LocationLayer base, LocationMap map) {
-        CollisionLayer layer = new CollisionLayer(base.getWidth(), base.getHeight(), PX, PX, map,
-                collider);
+        CollisionLayer layer = new CollisionLayer(base.getWidth(), base.getHeight(), PX, PX, map);
         layer.setVisible(false);
         layer.setOpacity(1.0f);
         layer.setName("collision");
@@ -602,8 +604,14 @@ public class LocationGenerator {
             for (int y = 0; y < base.getHeight(); y++) {
                 Cell cell = base.getCell(x, y);
                 if (cell == null || cell.getTile() != ground) {
+                    TiledMapTile tile = collider;
+                    if (y > 0 && base.isGround(x, y - 1)) {
+                        // ground below, so use the low collider
+                        tile = shortCollider;
+                    }
+                    
                     // non-empty, non-ground space
-                    addCell(layer, collider, x, y);
+                    addCell(layer, tile, x, y);
                     map.setWall(x, y);
                 }
             }
