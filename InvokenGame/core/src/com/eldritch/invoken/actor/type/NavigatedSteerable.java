@@ -1,5 +1,6 @@
 package com.eldritch.invoken.actor.type;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Matrix4;
@@ -34,8 +35,8 @@ public class NavigatedSteerable extends BasicSteerable {
             pathAge += delta;
 
             // if we're close to the current node, then move on to the next one
-            if (npc.getPosition().dst2(path.getNodePosition(pathIndex)) < MIN_DIST) {
-                if (path.getCount() < pathIndex + 1) {
+            if (npc.getPosition().dst2(path.getNodePosition(pathIndex)) <= MIN_DIST) {
+                if (pathIndex + 1 < path.getCount()) {
                     // proceed to the next node
                     setPosition(path.getNodePosition(++pathIndex));
                 } else {
@@ -48,16 +49,28 @@ public class NavigatedSteerable extends BasicSteerable {
     }
 
     public void render(ShapeRenderer sr, Matrix4 projection) {
+        sr.setProjectionMatrix(projection);
+        sr.begin(ShapeType.Filled);
+        
+        // draw the path
         if (path != null) {
-            sr.setProjectionMatrix(projection);
-            sr.begin(ShapeType.Filled);
             sr.setColor(0f, .3f, 1f, .4f);
             for (int i = pathIndex; i < path.getCount(); i++) {
                 LocationNode node = path.get(i);
                 sr.rect(node.position.x, node.position.y, 1f, 1f);
             }
-            sr.end();
         }
+        
+        // draw start end end nodes
+        sr.setColor(Color.GREEN);
+        sr.rect(npc.getNaturalPosition().x, npc.getNaturalPosition().y, 1f, 1f);
+        
+        if (target != null) {
+            sr.setColor(Color.RED);
+            sr.rect(target.getNaturalPosition().x, target.getNaturalPosition().y, 1f, 1f);
+        }
+        
+        sr.end();
     }
 
     public void setPosition(Agent target) {
@@ -74,7 +87,7 @@ public class NavigatedSteerable extends BasicSteerable {
             // only update the path if the new position is sufficiently different from the last we
             // computed a path for, and a certain amount of time has elapsed
             if (path == null
-                    || (target.getPosition().dst2(getPosition()) > MIN_DIST && pathAge > WAIT_SECONDS)) {
+                    || (target.getPosition().dst2(path.getNodePosition(pathIndex)) > MIN_DIST && pathAge > WAIT_SECONDS)) {
                 resetPath();
                 computePath(target.getNaturalPosition());
 
@@ -100,19 +113,17 @@ public class NavigatedSteerable extends BasicSteerable {
     }
 
     private void resetPath() {
+        InvokenGame.log("reset path");
         path = null;
         pathAge = 0;
         pathIndex = 0;
     }
 
     private void computePath(NaturalVector2 destination) {
-        // InvokenGame.logfmt("begin path: %s -> %s", npc.getNaturalPosition(), destination);
         path = pathManager.getPath(getNearestGround(npc.getNaturalPosition()), getNearestGround(destination));
-        
         if (path == null) {
             InvokenGame.logfmt("Failed to find path: %s -> %s", npc.getNaturalPosition(), destination);
         }
-        // InvokenGame.logfmt("found path: %s -> %s", npc.getNaturalPosition(), destination);
     }
 
     private NaturalVector2 getNearestGround(NaturalVector2 position) {
@@ -121,8 +132,8 @@ public class NavigatedSteerable extends BasicSteerable {
             return position;
         }
         
-        for (int dx = -1; dx <= 1; dx++) {
-            for (int dy = -1; dy <= 1; dy++) {
+        for (int dx = 0; dx <= 1; dx++) {
+            for (int dy = 0; dy <= 1; dy++) {
                 if (dx == 0 && dy == 0) {
                     continue;
                 }

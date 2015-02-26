@@ -11,7 +11,7 @@ import com.eldritch.invoken.encounter.NaturalVector2;
 import com.eldritch.invoken.encounter.layer.LocationMap;
 
 public class LocationGraph extends IndexedHierarchicalGraph<LocationNode> {
-    private static final int LEVELS = 2;
+    private static final int LEVELS = 1;
 
     private final Map<NaturalVector2, TiledNode> tiledNodes = new HashMap<NaturalVector2, TiledNode>();
     private final Map<ConnectedRoom, RoomNode> roomNodes = new HashMap<ConnectedRoom, RoomNode>();
@@ -40,9 +40,11 @@ public class LocationGraph extends IndexedHierarchicalGraph<LocationNode> {
                 // add a node
                 ConnectedRoom room = map.getRooms().getRoom(x, y);
                 NaturalVector2 tile = NaturalVector2.of(x, y);
-                TiledNode node = new TiledNode(room, tile, map.isClearGround(x, y), index++, this);
-                tiledNodes.put(tile, node);
-                nodes.add(node);
+                if (map.isClearGround(x, y)) {
+                    TiledNode node = new TiledNode(room, tile, map.isClearGround(x, y), index++, this);
+                    tiledNodes.put(tile, node);
+                    nodes.add(node);
+                }
             }
         }
 
