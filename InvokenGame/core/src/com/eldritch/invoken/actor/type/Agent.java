@@ -764,7 +764,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         setTarget(null);
         toggles.clear();
         setRgb(1, 1, 1);
-        setCollisionMask(Settings.BIT_WALL);
+        setCollisionMask(Settings.BIT_SHORT_OBSTACLE);
     }
 
     private void setCollisionMask(short maskBits) {
@@ -1384,6 +1384,10 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         @Override
         public boolean isFinished() {
             return !isToggled(HoldingWeapon.class);
+        }
+
+        @Override
+        public void dispose() {
         }
     }
 

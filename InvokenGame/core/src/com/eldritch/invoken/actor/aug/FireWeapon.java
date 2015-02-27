@@ -24,7 +24,7 @@ import com.eldritch.invoken.screens.GameScreen;
 
 public class FireWeapon extends ProjectileAugmentation {
     private static final float DAMAGE_SCALE = 1;
-    private static final float BULLET_VELOCITY = 40;
+    private static final float BULLET_VELOCITY = 20;
     private static final int BASE_COST = 10;
     private static final float ALERT_RADIUS = 10;
     
@@ -212,9 +212,13 @@ public class FireWeapon extends ProjectileAugmentation {
         protected TextureRegion getTexture(float stateTime) {
             return texture;
         }
+        
+        @Override
+        public void free() {
+        }
 
         @Override
-        protected void free() {
+        public void dispose() {
             location.freeBullet(bullet);
         }
     }

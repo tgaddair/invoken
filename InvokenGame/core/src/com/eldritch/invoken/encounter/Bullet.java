@@ -10,17 +10,19 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.eldritch.invoken.actor.AgentHandler;
+import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.util.Settings;
 
-public class Bullet {
+public class Bullet implements AgentHandler {
     private final Body body;
+    private AgentHandler delegate;
     
     public Bullet(World world) {
         this.body = createBody(world);
     }
     
     public void setup(AgentHandler handler, Vector2 position, Vector2 velocity) {
-        body.setUserData(handler);
+        delegate = handler;
         body.setTransform(position, 0);
         body.setLinearVelocity(velocity);
         body.setActive(true);
@@ -40,7 +42,7 @@ public class Bullet {
 
     private Body createBody(World world) {
         BodyDef bodyDef = new BodyDef();
-        bodyDef.type = BodyType.KinematicBody;
+        bodyDef.type = BodyType.DynamicBody;
         bodyDef.position.set(0, 0);
         Body body = world.createBody(bodyDef);
         body.setUserData(this);
@@ -62,5 +64,15 @@ public class Bullet {
         circle.dispose();
         
         return body;
+    }
+
+    @Override
+    public boolean handle(Agent agent) {
+        return delegate.handle(agent);
+    }
+
+    @Override
+    public boolean handle() {
+        return delegate.handle();
     }
 }

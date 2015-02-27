@@ -56,6 +56,7 @@ public abstract class Projectile extends CollisionEntity implements TemporaryEnt
         position.set(sentry.getPosition());
         owner = source;
         velocity.set(sentry.getDirection());
+        velocity.scl(speed);
     }
     
     public void reset(Agent source, Vector2 target) {
@@ -64,6 +65,7 @@ public abstract class Projectile extends CollisionEntity implements TemporaryEnt
         velocity.set(target);
         velocity.sub(position);
         velocity.nor();
+        velocity.scl(speed);
     }
 
     @Override
@@ -147,6 +149,10 @@ public abstract class Projectile extends CollisionEntity implements TemporaryEnt
     @Override
     public boolean isFinished() {
         return finished;
+    }
+    
+    @Override
+    public void dispose() {
     }
 
     protected abstract TextureRegion getTexture(float delta);

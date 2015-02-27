@@ -404,6 +404,7 @@ public class Location {
                 TemporaryEntity entity = it.next();
                 entity.update(delta, this);
                 if (entity.isFinished()) {
+                    entity.dispose();
                     it.remove();
                     drawables.remove(entity); // TODO: could be more efficient
                 }

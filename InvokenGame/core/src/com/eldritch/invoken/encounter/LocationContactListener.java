@@ -44,14 +44,14 @@ public class LocationContactListener implements ContactListener {
     private void checkHandle(Fixture fa, Fixture fb) {
         Object handler = fa.getUserData();
         Object handled = fb.getUserData();
-        if (handler == null || handled == null) {
+        if (handler == null) {
+            // cannot handle without a handler
             return;
         }
 
         if (handler instanceof AgentHandler) {
-            System.out.println("begin collision");
             AgentHandler agentHandler = (AgentHandler) handler;
-            if (handled instanceof Agent) {
+            if (handled != null && handled instanceof Agent) {
                 Agent agent = (Agent) handled;
                 agentHandler.handle(agent);
             } else {
