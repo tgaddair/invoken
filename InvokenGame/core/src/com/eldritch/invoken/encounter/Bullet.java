@@ -43,6 +43,7 @@ public class Bullet implements AgentHandler {
     private Body createBody(World world) {
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = BodyType.DynamicBody;
+        bodyDef.bullet = true;  // move fast, so prevent speeding through walls
         bodyDef.position.set(0, 0);
         Body body = world.createBody(bodyDef);
         body.setUserData(this);

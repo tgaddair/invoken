@@ -8,8 +8,6 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.Pool;
-import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.actor.items.RangedWeapon;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.HandledProjectile;
