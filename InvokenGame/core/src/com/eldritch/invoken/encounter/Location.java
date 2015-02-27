@@ -43,6 +43,7 @@ import com.badlogic.gdx.utils.Pool;
 import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.activators.Activator;
 import com.eldritch.invoken.activators.SecurityCamera;
+import com.eldritch.invoken.actor.AgentHandler;
 import com.eldritch.invoken.actor.Drawable;
 import com.eldritch.invoken.actor.Profession;
 import com.eldritch.invoken.actor.aug.Action;
@@ -196,11 +197,14 @@ public class Location {
         PointLight.setContactFilter(category, group, mask);
     }
     
-    public Bullet obtainBullet() {
-        return bulletPool.obtain();
+    public Bullet obtainBullet(AgentHandler handler, Vector2 position, Vector2 velocity) {
+        Bullet bullet = bulletPool.obtain();
+        bullet.setup(handler, position, velocity);
+        return bullet;
     }
     
     public void freeBullet(Bullet bullet) {
+        bullet.setActive(false);
         bulletPool.free(bullet);
     }
 

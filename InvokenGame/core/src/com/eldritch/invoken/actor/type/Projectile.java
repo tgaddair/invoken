@@ -68,6 +68,10 @@ public abstract class Projectile extends CollisionEntity implements TemporaryEnt
 
     @Override
     public void update(float delta, Location location) {
+        if (true) {
+            return;
+        }
+        
         stateTime += delta;
         
         if (handleBeforeUpdate(delta, location)) {

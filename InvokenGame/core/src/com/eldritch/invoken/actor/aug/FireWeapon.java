@@ -4,10 +4,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Pool;
+import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.actor.items.RangedWeapon;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.HandledProjectile;
@@ -16,6 +18,7 @@ import com.eldritch.invoken.actor.type.Agent.Direction;
 import com.eldritch.invoken.effects.Bleed;
 import com.eldritch.invoken.effects.HoldingWeapon;
 import com.eldritch.invoken.effects.Stunned;
+import com.eldritch.invoken.encounter.Bullet;
 import com.eldritch.invoken.encounter.Location;
 import com.eldritch.invoken.screens.GameScreen;
 
@@ -128,8 +131,8 @@ public class FireWeapon extends ProjectileAugmentation {
         @Override
         public void apply(Location location) {
             // add bullet to scene
-            Bullet bullet = bulletPool.obtain();
-            bullet.setup(owner);
+            RangedWeaponBullet bullet = new RangedWeaponBullet(location);
+            bullet.setup(owner, target);
             location.addEntity(bullet);
             
             // update agent to fact the direction of their shots
@@ -160,12 +163,41 @@ public class FireWeapon extends ProjectileAugmentation {
         }
     }
 
-    public static class Bullet extends HandledProjectile {
+    public static class RangedWeaponBullet extends HandledProjectile {
         private static final TextureRegion texture = new TextureRegion(
                 GameScreen.getTexture("sprite/effects/bullet1.png"));
+        private final Location location;
+        private Bullet bullet;
 
-        public Bullet() {
+        public RangedWeaponBullet(Location location) {
             super(texture, BULLET_VELOCITY, DAMAGE_SCALE);
+            this.location = location;
+        }
+        
+        @Override
+        public void setup(Agent owner, Vector2 target) {
+            super.setup(owner, target);
+            bullet = location.obtainBullet(this, position, velocity);
+        }
+        
+        @Override
+        public void render(float delta, OrthogonalTiledMapRenderer renderer) {
+            if (bullet != null) {
+                float width = getWidth();
+                float height = getHeight();
+                
+                Batch batch = renderer.getBatch();
+                batch.begin();
+                preRender(batch);
+                batch.draw(getTexture(0),
+                        bullet.getPosition().x - width / 2, bullet.getPosition().y - height / 2,  // position
+                        width / 2, height / 2,  // origin
+                        width, height,  // size
+                        1f, 1f,  // scale
+                        bullet.getVelocity().angle());
+                postRender(batch);
+                batch.end();
+            }
         }
 
         @Override
@@ -183,14 +215,7 @@ public class FireWeapon extends ProjectileAugmentation {
 
         @Override
         protected void free() {
-            bulletPool.free(this);
+            location.freeBullet(bullet);
         }
     }
-    
-    private static Pool<Bullet> bulletPool = new Pool<Bullet>() {
-        @Override
-        protected Bullet newObject() {
-            return new Bullet();
-        }
-    };
 }
