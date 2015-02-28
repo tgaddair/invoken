@@ -779,6 +779,11 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
 
     protected void attemptTakeAction(float delta, Location location) {
         lastAction += delta;
+        if (actionInProgress()) {
+            // cannot act if another action is in progress
+            return;
+        }
+        
         if (isParalyzed()) {
             // can't do anything when paralyzed
             return;
