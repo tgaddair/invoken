@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
@@ -16,13 +15,12 @@ import com.eldritch.invoken.actor.type.Agent.Direction;
 import com.eldritch.invoken.effects.Bleed;
 import com.eldritch.invoken.effects.HoldingWeapon;
 import com.eldritch.invoken.effects.Stunned;
-import com.eldritch.invoken.encounter.Bullet;
 import com.eldritch.invoken.encounter.Location;
 import com.eldritch.invoken.screens.GameScreen;
 
 public class FireWeapon extends ProjectileAugmentation {
     private static final float DAMAGE_SCALE = 1;
-    private static final float BULLET_VELOCITY = 20;
+    private static final float BULLET_VELOCITY = 25;
     private static final int BASE_COST = 10;
     private static final float ALERT_RADIUS = 10;
     

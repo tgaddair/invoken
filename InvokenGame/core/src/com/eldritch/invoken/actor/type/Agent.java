@@ -41,6 +41,7 @@ import com.eldritch.invoken.actor.aug.Action;
 import com.eldritch.invoken.actor.aug.Augmentation;
 import com.eldritch.invoken.actor.aug.Cloak;
 import com.eldritch.invoken.actor.factions.Faction;
+import com.eldritch.invoken.actor.items.Fragment;
 import com.eldritch.invoken.actor.items.Outfit;
 import com.eldritch.invoken.actor.items.RangedWeapon;
 import com.eldritch.invoken.actor.type.HandledProjectile.ProjectileHandler;
@@ -771,6 +772,16 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         toggles.clear();
         setRgb(1, 1, 1);
         setCollisionMask(Settings.BIT_SHORT_OBSTACLE);
+        releaseFragments();
+    }
+    
+    // add fragment temporary entities to the world in a radial pattern around the agent
+    // for players, we must also assign the fragments to the nearest unique neighbor (if possible)
+    // for persistence
+    protected void releaseFragments() {
+        int total = info.getInventory().getItemCount((Fragment.getInstance()));
+        Fragment.release(location, getPosition(), total);
+        info.getInventory().removeItem(Fragment.getInstance(), total);
     }
 
     private void setCollisionMask(short maskBits) {
