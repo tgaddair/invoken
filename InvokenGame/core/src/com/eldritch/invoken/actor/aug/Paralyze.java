@@ -5,7 +5,6 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.Pool;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.HandledProjectile;
 import com.eldritch.invoken.actor.type.Agent.Activity;
@@ -51,8 +50,7 @@ public class Paralyze extends ProjectileAugmentation {
 
         @Override
         public void apply(Location location) {
-            ParalyzeBullet bullet = bulletPool.obtain();
-            bullet.setup(owner, target);
+            ParalyzeBullet bullet = new ParalyzeBullet(owner);
             location.addEntity(bullet);
         }
 
@@ -67,8 +65,8 @@ public class Paralyze extends ProjectileAugmentation {
                 "sprite/effects/drain-attack.png", 32, 32)[0];
         private final Animation animation;
 
-        public ParalyzeBullet() {
-            super(regions[0], 10, 0);
+        public ParalyzeBullet(Agent owner) {
+            super(owner, regions[0], 10, 0);
             animation = new Animation(0.1f, regions);
             animation.setPlayMode(Animation.PlayMode.LOOP_PINGPONG);
         }
@@ -92,17 +90,5 @@ public class Paralyze extends ProjectileAugmentation {
         protected TextureRegion getTexture(float stateTime) {
             return animation.getKeyFrame(stateTime);
         }
-
-        @Override
-        protected void free() {
-            bulletPool.free(this);
-        }
     }
-
-    private static Pool<ParalyzeBullet> bulletPool = new Pool<ParalyzeBullet>() {
-        @Override
-        protected ParalyzeBullet newObject() {
-            return new ParalyzeBullet();
-        }
-    };
 }

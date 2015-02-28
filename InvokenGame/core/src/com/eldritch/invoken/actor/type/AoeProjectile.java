@@ -12,13 +12,14 @@ public abstract class AoeProjectile extends Projectile {
     private final float radius;
     private final Animation explosion;
     
-    private Vector2 target = null;
+    private final Vector2 target;
     private float explosionTime = 0;
     private boolean detonated = false;
 
-    public AoeProjectile(TextureRegion texture, TextureRegion[] explosionRegions,
+    public AoeProjectile(Agent owner, Vector2 target, TextureRegion texture, TextureRegion[] explosionRegions,
     		float speed, float damage, float radius) {
-        super(texture, speed, damage);
+        super(owner, texture, speed, damage);
+        this.target = target;
         this.texture = texture;
         this.radius = radius;
         explosion = new Animation(0.1f, explosionRegions);
@@ -26,14 +27,6 @@ public abstract class AoeProjectile extends Projectile {
     
     public float getRadius() {
     	return radius;
-    }
-    
-    @Override
-    public void setup(Agent source, Vector2 target) {
-    	super.setup(source, target);
-    	this.target = target;
-    	explosionTime = 0;
-    	detonated = false;
     }
     
     @Override

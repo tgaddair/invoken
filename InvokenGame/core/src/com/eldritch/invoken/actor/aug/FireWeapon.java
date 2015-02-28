@@ -129,8 +129,7 @@ public class FireWeapon extends ProjectileAugmentation {
         @Override
         public void apply(Location location) {
             // add bullet to scene
-            RangedWeaponBullet bullet = new RangedWeaponBullet(location);
-            bullet.setup(owner, target);
+            RangedWeaponBullet bullet = new RangedWeaponBullet(owner);
             location.addEntity(bullet);
             
             // update agent to fact the direction of their shots
@@ -164,38 +163,9 @@ public class FireWeapon extends ProjectileAugmentation {
     public static class RangedWeaponBullet extends HandledProjectile {
         private static final TextureRegion texture = new TextureRegion(
                 GameScreen.getTexture("sprite/effects/bullet1.png"));
-        private final Location location;
-        private Bullet bullet;
 
-        public RangedWeaponBullet(Location location) {
-            super(texture, BULLET_VELOCITY, DAMAGE_SCALE);
-            this.location = location;
-        }
-        
-        @Override
-        public void setup(Agent owner, Vector2 target) {
-            super.setup(owner, target);
-            bullet = location.obtainBullet(this, position, velocity);
-        }
-        
-        @Override
-        public void render(float delta, OrthogonalTiledMapRenderer renderer) {
-            if (bullet != null) {
-                float width = getWidth();
-                float height = getHeight();
-                
-                Batch batch = renderer.getBatch();
-                batch.begin();
-                preRender(batch);
-                batch.draw(getTexture(0),
-                        bullet.getPosition().x - width / 2, bullet.getPosition().y - height / 2,  // position
-                        width / 2, height / 2,  // origin
-                        width, height,  // size
-                        1f, 1f,  // scale
-                        bullet.getVelocity().angle());
-                postRender(batch);
-                batch.end();
-            }
+        public RangedWeaponBullet(Agent owner) {
+            super(owner, texture, BULLET_VELOCITY, DAMAGE_SCALE);
         }
 
         @Override
@@ -209,15 +179,6 @@ public class FireWeapon extends ProjectileAugmentation {
         @Override
         protected TextureRegion getTexture(float stateTime) {
             return texture;
-        }
-        
-        @Override
-        public void free() {
-        }
-
-        @Override
-        public void dispose() {
-            location.freeBullet(bullet);
         }
     }
 }

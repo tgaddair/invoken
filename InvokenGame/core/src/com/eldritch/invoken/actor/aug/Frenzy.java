@@ -5,7 +5,6 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.Pool;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.HandledProjectile;
 import com.eldritch.invoken.actor.type.Agent.Activity;
@@ -47,8 +46,7 @@ public class Frenzy extends ProjectileAugmentation {
 
 		@Override
 		public void apply(Location location) {
-		    FrenzyBullet bullet = bulletPool.obtain();
-            bullet.setup(owner, target);
+		    FrenzyBullet bullet = new FrenzyBullet(owner);
             location.addEntity(bullet);
 		}
 		
@@ -63,8 +61,8 @@ public class Frenzy extends ProjectileAugmentation {
                 "sprite/effects/drain-attack.png", 32, 32)[0];
         private final Animation animation;
 
-        public FrenzyBullet() {
-            super(regions[0], 10, 0);
+        public FrenzyBullet(Agent owner) {
+            super(owner, regions[0], 10, 0);
             animation = new Animation(0.1f, regions);
             animation.setPlayMode(Animation.PlayMode.LOOP_PINGPONG);
         }
@@ -90,17 +88,5 @@ public class Frenzy extends ProjectileAugmentation {
         protected TextureRegion getTexture(float stateTime) {
             return animation.getKeyFrame(stateTime);
         }
-
-        @Override
-        protected void free() {
-            bulletPool.free(this);
-        }
     }
-
-    private static Pool<FrenzyBullet> bulletPool = new Pool<FrenzyBullet>() {
-        @Override
-        protected FrenzyBullet newObject() {
-            return new FrenzyBullet();
-        }
-    };
 }

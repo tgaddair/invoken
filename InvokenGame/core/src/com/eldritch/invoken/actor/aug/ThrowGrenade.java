@@ -2,7 +2,6 @@ package com.eldritch.invoken.actor.aug;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.Pool;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.actor.type.AoeProjectile;
@@ -67,8 +66,7 @@ public class ThrowGrenade extends Augmentation {
             // update agent to fact the direction of their strike
             owner.setDirection(owner.getRelativeDirection(target));
             
-            Grenade bullet = bulletPool.obtain();
-            bullet.setup(owner, target);
+            Grenade bullet = new Grenade(owner, target);
             location.addEntity(bullet);
         }
         
@@ -84,8 +82,8 @@ public class ThrowGrenade extends Augmentation {
         private static final TextureRegion[] explosionRegions = GameScreen.getMergedRegion(
         		"sprite/effects/explosion.png", 256, 256);
 
-        public Grenade() {
-            super(texture, explosionRegions, 5, 50, 3);
+        public Grenade(Agent owner, Vector2 target) {
+            super(owner, target, texture, explosionRegions, 5, 50, 3);
         }
 		
         @Override
@@ -110,17 +108,5 @@ public class ThrowGrenade extends Augmentation {
 		@Override
 		protected void doDuringExplosion(float delta, Location location) {
 		}
-
-		@Override
-		protected void free() {
-			bulletPool.free(this);
-		}
     }
-
-    private static Pool<Grenade> bulletPool = new Pool<Grenade>() {
-        @Override
-        protected Grenade newObject() {
-            return new Grenade();
-        }
-    };
 }

@@ -3,7 +3,6 @@ package com.eldritch.invoken.actor.aug;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.Pool;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.HandledProjectile;
 import com.eldritch.invoken.actor.type.Agent.Activity;
@@ -47,8 +46,7 @@ public class Drain extends ProjectileAugmentation {
 
         @Override
         public void apply(Location location) {
-            DrainBullet bullet = bulletPool.obtain();
-            bullet.setup(owner, target);
+            DrainBullet bullet = new DrainBullet(owner);
             location.addEntity(bullet);
         }
 
@@ -63,8 +61,8 @@ public class Drain extends ProjectileAugmentation {
                 "sprite/effects/drain-attack.png", 32, 32)[0];
         private final Animation animation;
 
-        public DrainBullet() {
-            super(regions[0], 10, 0);
+        public DrainBullet(Agent owner) {
+            super(owner, regions[0], 10, 0);
             animation = new Animation(0.1f, regions);
             animation.setPlayMode(Animation.PlayMode.LOOP_PINGPONG);
         }
@@ -78,17 +76,5 @@ public class Drain extends ProjectileAugmentation {
         protected TextureRegion getTexture(float stateTime) {
             return animation.getKeyFrame(stateTime);
         }
-
-        @Override
-        protected void free() {
-            bulletPool.free(this);
-        }
     }
-
-    private static Pool<DrainBullet> bulletPool = new Pool<DrainBullet>() {
-        @Override
-        protected DrainBullet newObject() {
-            return new DrainBullet();
-        }
-    };
 }

@@ -64,7 +64,7 @@ import com.google.common.base.Optional;
 
 public abstract class Npc extends SteeringAgent implements Telegraph {
     public static final float STEP = 0.008f;  // behavior action frequency
-    private static final float ALERT_DURATION = 5f;  // seconds
+    private static final float ALERT_DURATION = 20f;  // seconds
     private static final float SIGHTED_DURATION = 1f;  // time enemy is in sights before firing
     
     public enum SteeringMode {

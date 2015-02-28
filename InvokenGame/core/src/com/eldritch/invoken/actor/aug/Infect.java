@@ -5,7 +5,6 @@ import java.util.Set;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.Pool;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.actor.type.AoeProjectile;
@@ -69,8 +68,7 @@ public class Infect extends Augmentation {
             // update agent to fact the direction of their strike
             owner.setDirection(owner.getRelativeDirection(target));
             
-            Grenade bullet = bulletPool.obtain();
-            bullet.setup(owner, target);
+            Grenade bullet = new Grenade(owner, target);
             location.addEntity(bullet);
         }
         
@@ -86,8 +84,8 @@ public class Infect extends Augmentation {
         private static final TextureRegion[] explosionRegions = GameScreen.getMergedRegion(
         		"sprite/effects/infect_cloud.png", 256, 256);
         
-        public Grenade() {
-            super(texture, explosionRegions, 5, 5, 2);
+        public Grenade(Agent owner, Vector2 target) {
+            super(owner, target, texture, explosionRegions, 5, 5, 2);
         }
 		
         @Override
@@ -115,17 +113,5 @@ public class Infect extends Augmentation {
 				}
         	}
 		}
-
-		@Override
-		protected void free() {
-			bulletPool.free(this);
-		}
     }
-
-    private static Pool<Grenade> bulletPool = new Pool<Grenade>() {
-        @Override
-        protected Grenade newObject() {
-            return new Grenade();
-        }
-    };
 }
