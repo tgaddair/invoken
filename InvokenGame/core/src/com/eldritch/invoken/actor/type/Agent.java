@@ -1282,6 +1282,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     protected abstract void takeAction(float delta, Location screen);
 
     private class LineOfSightHandler implements RayCastCallback {
+        private final short mask = Settings.BIT_SHOOTABLE;
         private boolean lineOfSight = true;
         private Agent target = null;
 
@@ -1306,6 +1307,12 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         }
 
         private boolean isObstruction(Fixture fixture) {
+            short category = fixture.getFilterData().categoryBits;
+            if ((mask & category) == 0) {
+                // no common bits, so these items don't collide
+                return false;
+            }
+            
             for (Fixture f : body.getFixtureList()) {
                 if (fixture == f) {
                     // we cannot obstruct our own view
