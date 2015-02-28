@@ -129,12 +129,12 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
 
     private final Color color = new Color(1, 1, 1, 1);
 
-    public Agent(ActorParams params, float x, float y, float width, float height,
+    public Agent(ActorParams params, boolean unique, float x, float y, float width, float height,
             Location location, Map<Activity, Map<Direction, Animation>> animations) {
         this(x, y, width, height, location, animations);
 
         // health, level, augmentations, etc.
-        this.info = new AgentInfo(this, params);
+        this.info = new AgentInfo(this, params, unique);
     }
 
     public Agent(float x, float y, float width, float height, Profession profession, int level,

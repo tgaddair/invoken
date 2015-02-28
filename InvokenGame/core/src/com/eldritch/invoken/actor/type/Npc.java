@@ -63,10 +63,10 @@ import com.eldritch.invoken.util.PrerequisiteVerifier;
 import com.google.common.base.Optional;
 
 public abstract class Npc extends SteeringAgent implements Telegraph {
-    public static final float STEP = 0.008f;  // behavior action frequency
-    private static final float ALERT_DURATION = 20f;  // seconds
-    private static final float SIGHTED_DURATION = 1f;  // time enemy is in sights before firing
-    
+    public static final float STEP = 0.008f; // behavior action frequency
+    private static final float ALERT_DURATION = 20f; // seconds
+    private static final float SIGHTED_DURATION = 1f; // time enemy is in sights before firing
+
     public enum SteeringMode {
         Default, Wander, Pursue, Evade, Follow
     }
@@ -90,7 +90,7 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
     private float lastStep = 0;
     private float alert = 0;
     private float sighted = 0;
-    
+
     private final NpcStateMachine stateMachine;
     private boolean canAttack = true;
 
@@ -105,18 +105,19 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
     private Seek<Vector2> seek;
     private Arrive<Vector2> arrive;
     private Wander<Vector2> wander;
-    
+
     // debug
     private String lastTask = "";
 
     public Npc(NonPlayerActor data, float x, float y, float width, float height, float maxVelocity,
             Map<Activity, Map<Direction, Animation>> animations, Location location) {
-        super(data.getParams(), x, y, width, height, maxVelocity, location, animations);
+        super(data.getParams(), data.getUnique(), x, y, width, height, maxVelocity, location,
+                animations);
         this.data = data;
         scenario = Optional.absent();
         dialogue = new ConversationHandler(data.getDialogue(), new NpcDialogueVerifier());
         behavior = new Behavior(this, data);
-        
+
         // add random fragments proportional to the current level
         info.getInventory().addItem(Fragment.getInstance(), getFragments(info.getLevel()));
 
@@ -124,52 +125,52 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
         for (ItemState item : info.getInventory().getItems()) {
             info.getInventory().equip(item.getItem());
         }
-        
+
         // pathfinding
         lastSeen = new NavigatedSteerable(this, location);
 
         // steering behaviors
         behaviors = getSteeringBehaviors(location);
         setBehavior(behaviors.get(SteeringMode.Default));
-        
+
         // state machine
         stateMachine = new NpcStateMachine(this, NpcState.PATROL);
         stateMachine.changeState(NpcState.PATROL);
-        
+
         // behavior tree
         behaviorTree = new BehaviorTree<Npc>(createBehavior(), this);
         fatigue = new FatigueMonitor(this);
         intimidation = new IntimidationMonitor(this);
     }
-    
+
     public CoverPoint getCover() {
         return cover;
     }
-    
+
     public void setChosen(Augmentation aug) {
         this.chosenAug = aug;
     }
-    
+
     public Augmentation getChosen() {
         return chosenAug;
     }
-    
+
     public FatigueMonitor getFatigue() {
         return fatigue;
     }
-    
+
     public IntimidationMonitor getIntimidation() {
         return intimidation;
     }
-    
+
     public void setTask(String taskName) {
         lastTask = taskName;
     }
-    
+
     public String getLastTask() {
         return lastTask;
     }
-    
+
     public static Task<Npc> createBehavior() {
         Selector<Npc> selector = new Selector<Npc>();
         selector.addChild(new Combat());
@@ -201,7 +202,7 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
         }
         setBehavior(behaviors.get(mode));
     }
-    
+
     public Hide<Vector2> getHide() {
         return hide;
     }
@@ -267,7 +268,7 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
 
     public void update(float delta) {
         alert = Math.max(alert - delta, 0);
-        
+
         // update sighted info
         lastSeen.update(delta);
         if (hasTarget() && hasLineOfSight(getTarget())) {
@@ -277,13 +278,13 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
             sighted = 0;
             getIntimidation().useUntilLimit(-delta);
         }
-        
+
         lastStep += delta;
         if (lastStep > STEP) {
             behaviorTree.step();
             lastStep = 0;
         }
-        
+
         if (steeringBehavior != null) {
             // Calculate steering acceleration
             steeringBehavior.calculateSteering(steeringOutput);
@@ -322,15 +323,15 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
             behavior.resetAggression();
         }
     }
-    
+
     public boolean hasSights() {
         return sighted > SIGHTED_DURATION;
     }
-    
+
     public boolean isAlerted() {
         return alert > 0;
     }
-    
+
     @Override
     public void alertTo(Agent other) {
         if (!hasTarget()) {
@@ -349,7 +350,7 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
             // changed targets so reset
             sighted = 0;
         }
-        
+
         super.setTarget(other);
         if (other != null) {
             detected.add(other);
@@ -446,10 +447,11 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
                 CoverPoint bestCover = null;
                 boolean bestLos = false;
                 float bestDistance = Float.POSITIVE_INFINITY;
-                
+
                 for (CoverPoint coverPoint : getLocation().getActiveCover()) {
                     Vector2 position = coverPoint.getPosition();
-                    if (!getLocation().hasLineOfSight(getHide().getTarget().getPosition(), position)) {
+                    if (!getLocation()
+                            .hasLineOfSight(getHide().getTarget().getPosition(), position)) {
                         boolean los = hasLineOfSight(position);
                         float distance = position.dst2(getPosition());
                         if (los && !bestLos) {
@@ -466,8 +468,7 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
                         }
                     }
                 }
-                
-                
+
                 // only report the best cover
                 if (bestCover != null) {
                     cover = bestCover;
@@ -494,7 +495,7 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
                 throw new IllegalArgumentException("unrecognized species: " + species);
         }
     }
-    
+
     private Map<SteeringMode, SteeringBehavior<Vector2>> getSteeringBehaviors(Location location) {
         Map<SteeringMode, SteeringBehavior<Vector2>> behaviors = new EnumMap<SteeringMode, SteeringBehavior<Vector2>>(
                 SteeringMode.class);
@@ -537,16 +538,14 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
         // };
         // Cohesion<Vector2> cohesion = new Cohesion<Vector2>(this, proximity);
 
-        hide = new Hide<Vector2>(this, null, new CoverProximity())
-                .setArrivalTolerance(.0001f).setDecelerationRadius(.001f)
-                .setDistanceFromBoundary(0f);
+        hide = new Hide<Vector2>(this, null, new CoverProximity()).setArrivalTolerance(.0001f)
+                .setDecelerationRadius(.001f).setDistanceFromBoundary(0f);
         evade = new Evade<Vector2>(this, location.getPlayer())
                 .setLimiter(new LinearAccelerationLimiter(10));
         pursue = new Pursue<Vector2>(this, location.getPlayer());
         flee = new Flee<Vector2>(this);
         seek = new Seek<Vector2>(this);
-        arrive = new Arrive<Vector2>(this).setArrivalTolerance(3f)
-                .setDecelerationRadius(5f);
+        arrive = new Arrive<Vector2>(this).setArrivalTolerance(3f).setDecelerationRadius(5f);
         wander = new Wander<Vector2>(this)
                 // Don't use Face internally because independent facing is off
                 .setFaceEnabled(false)
@@ -556,11 +555,10 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
                 // the same reason
                 .setLimiter(new LinearAccelerationLimiter(5)).setWanderOffset(2)
                 .setWanderOrientation(0).setWanderRadius(0.5f).setWanderRate(MathUtils.PI / 5);
-        Wander<Vector2> combatWander = new Wander<Vector2>(this)
-                .setFaceEnabled(false)
+        Wander<Vector2> combatWander = new Wander<Vector2>(this).setFaceEnabled(false)
                 .setLimiter(new LinearAccelerationLimiter(10)).setWanderOffset(3)
                 .setWanderOrientation(0).setWanderRadius(2).setWanderRate(MathUtils.PI / 5);
-        
+
         // initially disable our states
         // hide.setEnabled(false);
         // evade.setEnabled(false);
@@ -573,32 +571,31 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
         SteeringBehavior<Vector2> idleSteering = new PrioritySteering<Vector2>(this)
                 .setLimiter(NullLimiter.NEUTRAL_LIMITER);
         behaviors.put(SteeringMode.Default, idleSteering);
-        
+
         SteeringBehavior<Vector2> wanderSteering = new PrioritySteering<Vector2>(this)
                 .setLimiter(NullLimiter.NEUTRAL_LIMITER) //
                 .add(obstacleAvoidance) //
                 .add(wander);
         behaviors.put(SteeringMode.Wander, wanderSteering);
-        
-        SteeringBehavior<Vector2> blendedPursuing = new BlendedSteering<Vector2>(this)
-                .add(pursue, 2f)
-                .add(combatWander, 2f);
-//                .add(wander, 1f);
+
+        SteeringBehavior<Vector2> blendedPursuing = new BlendedSteering<Vector2>(this).add(pursue,
+                2f).add(combatWander, 2f);
+        // .add(wander, 1f);
         SteeringBehavior<Vector2> pursueSteering = new PrioritySteering<Vector2>(this)
                 .setLimiter(NullLimiter.NEUTRAL_LIMITER) //
                 .add(obstacleAvoidance) //
                 .add(blendedPursuing);
         behaviors.put(SteeringMode.Pursue, pursueSteering);
-        
-        SteeringBehavior<Vector2> blendedEvading = new BlendedSteering<Vector2>(this)
-                .add(hide, 0.75f) //
+
+        SteeringBehavior<Vector2> blendedEvading = new BlendedSteering<Vector2>(this).add(hide,
+                0.75f) //
                 .add(evade, 0.25f);
         SteeringBehavior<Vector2> evadeSteering = new PrioritySteering<Vector2>(this)
                 .setLimiter(NullLimiter.NEUTRAL_LIMITER) //
                 .add(obstacleAvoidance) //
                 .add(blendedEvading);
         behaviors.put(SteeringMode.Evade, evadeSteering);
-        
+
         SteeringBehavior<Vector2> followSteering = new PrioritySteering<Vector2>(this)
                 .setLimiter(NullLimiter.NEUTRAL_LIMITER) //
                 .add(obstacleAvoidance) //
@@ -607,7 +604,7 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
 
         return behaviors;
     }
-    
+
     private static int getFragments(int level) {
         int max = AgentInfo.getFragmentRequirement(level) / 5;
         return (int) (Math.random() * max);

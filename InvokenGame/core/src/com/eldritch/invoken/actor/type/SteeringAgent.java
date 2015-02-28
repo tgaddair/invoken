@@ -28,10 +28,10 @@ public abstract class SteeringAgent extends Agent {
     private float maxLinearAcceleration = 10;
     private float maxLinearVelocity;
 
-    public SteeringAgent(ActorParams params, float x, float y, float width, float height,
-            float maxVelocity, Location location,
+    public SteeringAgent(ActorParams params, boolean unique, float x, float y, float width,
+            float height, float maxVelocity, Location location,
             Map<Activity, Map<Direction, Animation>> animations) {
-        super(params, x, y, width, height, location, animations);
+        super(params, unique, x, y, width, height, location, animations);
         this.maxLinearVelocity = maxVelocity;
     }
 

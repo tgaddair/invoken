@@ -28,6 +28,7 @@ public class AgentInfo {
     
     final String name;
     final Species species;
+    final boolean unique;
     
 	final Profession profession;
 	final FactionManager factions;
@@ -73,9 +74,10 @@ public class AgentInfo {
 	    return builder.build();
 	}
 	
-	public AgentInfo(Agent agent, ActorParams params) {
+	public AgentInfo(Agent agent, ActorParams params, boolean unique) {
 	    this.name = params.getName();
 	    this.species = params.getSpecies();
+	    this.unique = unique;
 	    InvokenGame.log("creating: " + name);
 	    
 		augmentations = new PreparedAugmentations(agent);
@@ -115,6 +117,7 @@ public class AgentInfo {
 	public AgentInfo(Agent agent, Profession profession, int level) {
 	    this.name = "Player";
 	    this.species = Species.HUMAN;
+	    this.unique = true;
 		augmentations = new PreparedAugmentations(agent);
 		
 		this.profession = profession;
@@ -147,6 +150,10 @@ public class AgentInfo {
 	
 	public int getLevel() {
 	    return level;
+	}
+	
+	public boolean isUnique() {
+	    return unique;
 	}
 	
 	public Inventory getInventory() {
