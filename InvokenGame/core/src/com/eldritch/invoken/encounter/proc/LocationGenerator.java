@@ -643,7 +643,7 @@ public class LocationGenerator {
                 playerLayer.setName("player");
 
                 List<NaturalVector2> freeSpaces = getFreeSpaces(collision, bounds);
-                Collections.shuffle(freeSpaces);
+                Collections.shuffle(freeSpaces, rand);
                 NaturalVector2 position = Iterables.getFirst(freeSpaces, null);
                 if (position != null) {
                     addCell(playerLayer, collider, position.x, position.y);
@@ -670,6 +670,7 @@ public class LocationGenerator {
         layer.setOpacity(1.0f);
         layer.setName("encounter-" + room.getX() + "-" + room.getY());
 
+        // enemy placement can be non-deterministic between loads
         List<NaturalVector2> freeSpaces = getFreeSpaces(collision, room);
         Collections.shuffle(freeSpaces);
 
