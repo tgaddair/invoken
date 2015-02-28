@@ -1,7 +1,7 @@
 package com.eldritch.invoken.encounter;
 
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 public class ConnectedRoom {
@@ -9,8 +9,8 @@ public class ConnectedRoom {
 		Chamber, Hall
 	}
 	
-	private final Set<ConnectedRoom> neighbors = new HashSet<ConnectedRoom>();
-	private final Set<NaturalVector2> points = new HashSet<NaturalVector2>();
+	private final Set<ConnectedRoom> neighbors = new LinkedHashSet<ConnectedRoom>();
+	private final Set<NaturalVector2> points = new LinkedHashSet<NaturalVector2>();
 	private final Type type;
 	private final NaturalVector2 center;
 	

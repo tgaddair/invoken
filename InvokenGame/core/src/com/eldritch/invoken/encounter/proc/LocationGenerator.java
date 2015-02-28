@@ -53,6 +53,7 @@ import com.eldritch.invoken.proto.Locations.Encounter.ActorParams.ActorScenario;
 import com.eldritch.invoken.screens.GameScreen;
 import com.eldritch.invoken.screens.GameScreen.GameState;
 import com.eldritch.invoken.util.Settings;
+import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 
@@ -135,7 +136,7 @@ public class LocationGenerator {
         System.out.println("hash code: " + proto.getId().hashCode());
         System.out.println("seed: " + seed);
         this.rand = new Random(seed);
-        
+
         int roomCount = 1;
         for (Encounter encounter : proto.getEncounterList()) {
             int count = 1;
@@ -144,7 +145,8 @@ public class LocationGenerator {
             }
             roomCount += count;
         }
-        EncounterGenerator bsp = new EncounterGenerator(roomCount * 2, proto.getEncounterList(), seed);
+        EncounterGenerator bsp = new EncounterGenerator(roomCount * 2, proto.getEncounterList(),
+                seed);
         NaturalVector2.init(bsp.getWidth(), bsp.getHeight());
 
         bsp.generateSegments();
@@ -196,7 +198,7 @@ public class LocationGenerator {
         for (LocationLayer layer : overlayTrims) {
             map.addOverlay(layer);
         }
-        
+
         InvokenGame.log("Connecting Rooms");
         ConnectedRoomManager rooms = createRooms(bsp.getEncounterRooms(), typeMap);
         map.setRooms(rooms);
@@ -212,9 +214,10 @@ public class LocationGenerator {
         }
 
         // add furniture
-//        InvokenGame.log("Adding Furniture");
+        // InvokenGame.log("Adding Furniture");
         // List<Activator> activators = new ArrayList<Activator>();
-        IcarianFurnitureGenerator furnitureGenerator = new IcarianFurnitureGenerator(atlas, ground, seed);
+        IcarianFurnitureGenerator furnitureGenerator = new IcarianFurnitureGenerator(atlas, ground,
+                seed);
 
         // doors
         InvokenGame.log("Adding Doors");
@@ -286,10 +289,12 @@ public class LocationGenerator {
         return layer.isGround(x, y) && collision.getCell(x, y) == null;
     }
 
-    private ConnectedRoomManager createRooms(Collection<EncounterRoom> chambers, CellType[][] typeMap) {
+    private ConnectedRoomManager createRooms(Collection<EncounterRoom> chambers,
+            CellType[][] typeMap) {
         ConnectedRoomManager rooms = new ConnectedRoomManager(typeMap.length, typeMap[0].length);
-        
+
         InvokenGame.log("Create Chambers");
+        ImmutableBiMap.Builder<EncounterRoom, ConnectedRoom> mapping = new ImmutableBiMap.Builder<EncounterRoom, ConnectedRoom>();
         for (EncounterRoom encounter : chambers) {
             List<NaturalVector2> points = new ArrayList<NaturalVector2>();
 
@@ -316,8 +321,9 @@ public class LocationGenerator {
             for (NaturalVector2 point : points) {
                 rooms.setRoom(point.x, point.y, room);
             }
-            rooms.addMapping(encounter, room);
+            mapping.put(encounter, room);
         }
+        rooms.setMapping(mapping.build());
 
         // all chambers are identified, so any remaining floor points belong to
         // hallways
@@ -364,7 +370,8 @@ public class LocationGenerator {
             int x = current.x;
             int y = current.y;
 
-            if (typeMap[x][y] == CellType.Floor && !rooms.hasRoom(x, y) && !points.contains(current)) {
+            if (typeMap[x][y] == CellType.Floor && !rooms.hasRoom(x, y)
+                    && !points.contains(current)) {
                 points.add(current);
 
                 for (int dx = -1; dx <= 1; dx++) {
@@ -390,7 +397,7 @@ public class LocationGenerator {
             NaturalVector2 current = queue.remove();
             int x = current.x;
             int y = current.y;
-            
+
             if (rooms.hasRoom(x, y) && !visited.contains(current)) {
                 visited.add(current);
 
@@ -401,7 +408,8 @@ public class LocationGenerator {
                             continue;
                         }
 
-                        if (inBounds(x + dx, y + dy, rooms.getGrid()) && rooms.hasRoom(x + dx, y + dy)) {
+                        if (inBounds(x + dx, y + dy, rooms.getGrid())
+                                && rooms.hasRoom(x + dx, y + dy)) {
                             queue.add(NaturalVector2.of(x + dx, y + dy));
 
                             ConnectedRoom nextRoom = rooms.getRoom(x + dx, y + dy);
@@ -609,7 +617,7 @@ public class LocationGenerator {
                         // ground below, so use the low collider
                         tile = shortCollider;
                     }
-                    
+
                     // non-empty, non-ground space
                     addCell(layer, tile, x, y);
                     map.setWall(x, y);

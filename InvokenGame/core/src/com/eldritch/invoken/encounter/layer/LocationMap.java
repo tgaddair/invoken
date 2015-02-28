@@ -1,7 +1,7 @@
 package com.eldritch.invoken.encounter.layer;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -152,7 +152,7 @@ public class LocationMap extends TiledMap {
     }
     
     public Map<String, LocationLayer> getLayerMap() {
-        Map<String, LocationLayer> map = new HashMap<String, LocationLayer>();
+        Map<String, LocationLayer> map = new LinkedHashMap<String, LocationLayer>();
         for (MapLayer layer : getLayers()) {
             map.put(layer.getName(), (LocationLayer) layer);
         }

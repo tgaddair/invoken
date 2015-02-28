@@ -189,7 +189,7 @@ public class EncounterGenerator extends BspGenerator {
     }
 
     private boolean place(Encounter encounter) {
-        InvokenGame.log("Place: " + encounter.getId());
+//        InvokenGame.log("Place: " + encounter.getId());
         int count = 0;
         while (count < 1000) {
             if (encounter.getRoomIdList().isEmpty()) {
