@@ -17,6 +17,7 @@ import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.eldritch.invoken.encounter.NaturalVector2;
 import com.eldritch.invoken.screens.GameScreen;
@@ -40,6 +41,8 @@ public class FogOfWarMasker {
     FrameBuffer frameBuffer, pingPongBuffer;
     private boolean[][] mask;
     private float[][] intensities;
+    
+    Rectangle bounds;
 
     float radius = 3f;
     final static float MAX_BLUR = 3f;
@@ -78,6 +81,10 @@ public class FogOfWarMasker {
         mask = new boolean[width][height];
         intensities = new float[width][height];
     }
+    
+    public void setBounds(Rectangle bounds) {
+        this.bounds = bounds;
+    }
 
     public void updateMask(Set<NaturalVector2> tiles) {
         // reset
@@ -98,14 +105,20 @@ public class FogOfWarMasker {
         frameBuffer.begin();
         // Gdx.gl.glClearColor(0.0f, 0.0f, 0.0f, 1f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        
+        int x1 = bounds != null ? (int) bounds.x : 0;
+        int y1 = bounds != null ? (int) bounds.y : 0;
+        
+        int x2 = bounds != null ? (int) (bounds.x + bounds.width) : mask.length;
+        int y2 = bounds != null ? (int) (bounds.y + bounds.height) : mask[0].length;
 
         // draw the mask
         // TODO: iterate over view bounds
         sr.setProjectionMatrix(camera.combined);
         sr.begin(ShapeType.Filled);
         // sr.setColor(1, 1, 1, 0);
-        for (int x = 0; x < mask.length; x++) {
-            for (int y = 0; y < mask[x].length; y++) {
+        for (int x = x1; x < x2; x++) {
+            for (int y = y1; y < y2; y++) {
                 if (mask[x][y]) {
                     if (intensities[x][y] < FADE_SECONDS) {
                         intensities[x][y] += delta;

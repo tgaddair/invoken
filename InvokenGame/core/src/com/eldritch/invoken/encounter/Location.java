@@ -700,7 +700,9 @@ public class Location {
         // }
         // }
 
-        resetFilledTiles(origin, getWorldBounds());
+        Rectangle bounds = getWorldBounds();
+        resetFilledTiles(origin, bounds);
+        fowMasker.setBounds(bounds);
 
         map.update(activeTiles);
     }
