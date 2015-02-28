@@ -1,5 +1,7 @@
 package com.eldritch.invoken.screens;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import com.badlogic.gdx.Gdx;
@@ -31,7 +33,9 @@ import com.eldritch.invoken.proto.Actors.PlayerActor;
 import com.eldritch.invoken.proto.Locations;
 import com.eldritch.invoken.ui.ActionBar;
 import com.eldritch.invoken.ui.DialogueMenu;
+import com.eldritch.invoken.ui.FragmentCounter;
 import com.eldritch.invoken.ui.HealthBar;
+import com.eldritch.invoken.ui.HudElement;
 import com.eldritch.invoken.ui.InventoryMenu;
 import com.eldritch.invoken.ui.LootMenu;
 import com.eldritch.invoken.ui.StatusBar;
@@ -64,6 +68,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
     private Table statusTable;
     private StatusBar playerHealth;
     private StatusBar energyBar;
+    private final List<HudElement> hud = new ArrayList<HudElement>();
 
     private HealthBar selectedHealth;
 
@@ -155,12 +160,13 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         camera.position.y = location.scale(position.y, camera.zoom);
         location.setCamera(camera);
 
-        // create player menus
+        // create HUD elements
         actionBar = new ActionBar(player);
         energyBar = new StatusBar(player, new EnergyCalculator(), getSkin());
         inventoryMenu = new InventoryMenu(player, getSkin());
         playerHealth = new StatusBar(player, new HealthCalculator(), getSkin());
         selectedHealth = new HealthBar(getSkin());
+        hud.add(new FragmentCounter(getSkin()));
 
         statusTable = new Table(getSkin());
         statusTable.setHeight(Settings.MENU_VIEWPORT_HEIGHT / 2);
@@ -176,6 +182,9 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         stage.addActor(dialogue.getTable());
         stage.addActor(inventoryMenu.getTable());
         stage.addActor(loot.getTable());
+        for (HudElement element : hud) {
+            stage.addActor(element.getContainer());
+        }
 
         // announce the new location
         toaster = new Toaster(getSkin());
@@ -210,6 +219,9 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         selectedHealth.update(player, player.getTarget(), camera);
         dialogue.update(player, camera);
         loot.update(player);
+        for (HudElement element : hud) {
+            element.update(delta, location);
+        }
 
         // draw our toast
         toaster.update(delta);
@@ -248,6 +260,9 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         loot.resize(width, height);
         location.resize(width, height);
         toaster.resize(width, height);
+        for (HudElement element : hud) {
+            element.resize(width, height);
+        }
     }
 
     @Override
