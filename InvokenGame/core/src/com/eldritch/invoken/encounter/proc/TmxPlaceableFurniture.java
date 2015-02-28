@@ -2,7 +2,7 @@ package com.eldritch.invoken.encounter.proc;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -153,7 +153,7 @@ public class TmxPlaceableFurniture implements PlaceableFurniture {
         LocationLayer collision = (LocationLayer) map.getLayers().get("collision");
         TiledMapTileLayer collision2 = (TiledMapTileLayer) candidate.getLayers().get("collision");
 
-        Set<NaturalVector2> region = new HashSet<NaturalVector2>();
+        Set<NaturalVector2> region = new LinkedHashSet<NaturalVector2>();
         int x1 = x - 1;
         int x2 = x + collision2.getWidth();
         int y1 = y - 1;
@@ -172,7 +172,7 @@ public class TmxPlaceableFurniture implements PlaceableFurniture {
 
         // try to find as many of the region points in 'steps' moves
         // in the end, all points must be found, or else the area is unreachable
-        Set<NaturalVector2> visited = new HashSet<NaturalVector2>();
+        Set<NaturalVector2> visited = new LinkedHashSet<NaturalVector2>();
         NaturalVector2 point = Iterables.getFirst(region, null);
         if (point != null) {
             explore(point, x, y, 0, steps, base, collision, collision2, visited);

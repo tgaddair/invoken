@@ -2,8 +2,8 @@ package com.eldritch.invoken.encounter.proc;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -21,7 +21,7 @@ import com.google.common.base.Preconditions;
 public class EncounterGenerator extends BspGenerator {
     private final RoomCache roomCache = new RoomCache();
     private final List<Encounter> encounters = new ArrayList<Encounter>();
-    private final Map<Rectangle, EncounterRoom> encounterRooms = new HashMap<Rectangle, EncounterRoom>();
+    private final Map<Rectangle, EncounterRoom> encounterRooms = new LinkedHashMap<Rectangle, EncounterRoom>();
 
     public EncounterGenerator(int roomCount, List<Encounter> encounters, long seed) {
         super(roomCount, seed);
@@ -71,7 +71,7 @@ public class EncounterGenerator extends BspGenerator {
 
         LinkedList<EncounterNode> unlocked = new LinkedList<EncounterNode>(); // can place
         List<EncounterNode> connectedSample = new ArrayList<EncounterNode>(); // can connect to
-        Set<EncounterNode> connected = new HashSet<EncounterNode>();
+        Set<EncounterNode> connected = new LinkedHashSet<EncounterNode>();
 
         // seed the routine so we can connect to the origin, and we connected from a child
         connectedSample.add(origin);
@@ -289,7 +289,7 @@ public class EncounterGenerator extends BspGenerator {
         Preconditions.checkState(origin != null, "Origin must be provided in the encounter list");
 
         // add the origin as a key of all unlocked encounters
-        Map<String, List<EncounterNode>> keys = new HashMap<String, List<EncounterNode>>();
+        Map<String, List<EncounterNode>> keys = new LinkedHashMap<String, List<EncounterNode>>();
         for (EncounterNode node : nodes) {
             if (!node.isOrigin() && !node.isLocked()) {
                 node.addKey(origin);

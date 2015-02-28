@@ -9,8 +9,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -326,7 +326,7 @@ public class LocationGenerator {
             for (int y = 0; y < typeMap[x].length; y++) {
                 if (typeMap[x][y] == CellType.Floor && !rooms.hasRoom(x, y)) {
                     // create a new hall and flood fill the neighbors
-                    Set<NaturalVector2> points = new HashSet<NaturalVector2>();
+                    Set<NaturalVector2> points = new LinkedHashSet<NaturalVector2>();
                     fillHall(points, x, y, typeMap, rooms);
 
                     ConnectedRoom room = new ConnectedRoom(Type.Hall, points);
@@ -339,7 +339,7 @@ public class LocationGenerator {
 
         // finally, connect the rooms together
         InvokenGame.log("Connect Chambers and Hallways");
-        Set<NaturalVector2> visited = new HashSet<NaturalVector2>();
+        Set<NaturalVector2> visited = new LinkedHashSet<NaturalVector2>();
         for (int x = 0; x < typeMap.length; x++) {
             for (int y = 0; y < typeMap[x].length; y++) {
                 NaturalVector2 current = NaturalVector2.of(x, y);
@@ -735,7 +735,7 @@ public class LocationGenerator {
 
     public NaturalVector2 getPoint(Rectangle rect, LocationLayer base, LocationLayer layer,
             NaturalVector2 seed) {
-        Set<NaturalVector2> visited = new HashSet<NaturalVector2>();
+        Set<NaturalVector2> visited = new LinkedHashSet<NaturalVector2>();
         LinkedList<NaturalVector2> queue = new LinkedList<NaturalVector2>();
 
         queue.add(seed);

@@ -1,6 +1,6 @@
 package com.eldritch.invoken.encounter.proc;
 
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Random;
@@ -29,7 +29,7 @@ import com.eldritch.invoken.util.Settings;
 
 public abstract class FurnitureGenerator {
     private final Random rand;
-    private final Set<NaturalVector2> marked = new HashSet<NaturalVector2>();
+    private final Set<NaturalVector2> marked = new LinkedHashSet<NaturalVector2>();
     private final TextureAtlas atlas;
     protected final TiledMapTile ground;
 
