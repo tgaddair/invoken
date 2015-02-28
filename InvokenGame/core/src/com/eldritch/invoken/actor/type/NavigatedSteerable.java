@@ -39,6 +39,7 @@ public class NavigatedSteerable extends BasicSteerable {
                 if (pathIndex + 1 < path.getCount()) {
                     // proceed to the next node
                     setPosition(path.getNodePosition(++pathIndex));
+                    pathAge = 0;
                 } else {
                     // fallback to moving in a straight line
                     setPosition(target.getPosition());
@@ -46,12 +47,15 @@ public class NavigatedSteerable extends BasicSteerable {
                 }
             }
         }
+
+        // consider updating the path if it has gone stale
+        updatePath();
     }
 
     public void render(ShapeRenderer sr, Matrix4 projection) {
         sr.setProjectionMatrix(projection);
         sr.begin(ShapeType.Filled);
-        
+
         // draw the path
         if (path != null) {
             sr.setColor(0f, .3f, 1f, .4f);
@@ -60,16 +64,16 @@ public class NavigatedSteerable extends BasicSteerable {
                 sr.rect(node.position.x, node.position.y, 1f, 1f);
             }
         }
-        
+
         // draw start end end nodes
         sr.setColor(Color.GREEN);
         sr.rect(npc.getNaturalPosition().x, npc.getNaturalPosition().y, 1f, 1f);
-        
+
         if (target != null) {
             sr.setColor(Color.RED);
             sr.rect(target.getNaturalPosition().x, target.getNaturalPosition().y, 1f, 1f);
         }
-        
+
         sr.end();
     }
 
@@ -80,6 +84,16 @@ public class NavigatedSteerable extends BasicSteerable {
             this.target = target;
         }
 
+        // new last seen point means new path
+        updatePath();
+    }
+
+    private void updatePath() {
+        if (target == null) {
+            // no path possible
+            return;
+        }
+
         if (npc.hasLineOfSight(target)) {
             // we don't need pathfinding if we have line of sight
             setPosition(target.getPosition());
@@ -87,7 +101,8 @@ public class NavigatedSteerable extends BasicSteerable {
             // only update the path if the new position is sufficiently different from the last we
             // computed a path for, and a certain amount of time has elapsed
             if (path == null
-                    || (target.getPosition().dst2(path.getNodePosition(pathIndex)) > MIN_DIST && pathAge > WAIT_SECONDS)) {
+                    || (pathAge > WAIT_SECONDS && target.getPosition().dst2(
+                            path.getNodePosition(pathIndex)) > MIN_DIST)) {
                 resetPath();
                 computePath(target.getNaturalPosition());
 
@@ -119,9 +134,11 @@ public class NavigatedSteerable extends BasicSteerable {
     }
 
     private void computePath(NaturalVector2 destination) {
-        path = pathManager.getPath(getNearestGround(npc.getNaturalPosition()), getNearestGround(destination));
+        path = pathManager.getPath(getNearestGround(npc.getNaturalPosition()),
+                getNearestGround(destination));
         if (path == null) {
-            InvokenGame.logfmt("Failed to find path: %s -> %s", npc.getNaturalPosition(), destination);
+            InvokenGame.logfmt("Failed to find path: %s -> %s", npc.getNaturalPosition(),
+                    destination);
         }
     }
 
@@ -130,7 +147,7 @@ public class NavigatedSteerable extends BasicSteerable {
             // ideally, the nearest ground is the position itself
             return position;
         }
-        
+
         for (int dx = 0; dx <= 1; dx++) {
             for (int dy = 0; dy <= 1; dy++) {
                 if (dx == 0 && dy == 0) {
@@ -143,7 +160,7 @@ public class NavigatedSteerable extends BasicSteerable {
                 }
             }
         }
-        
+
         // still haven't found any ground
         // for now, throw an error
         throw new RuntimeException("No ground near " + position);
