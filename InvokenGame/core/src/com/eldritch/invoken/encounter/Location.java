@@ -1152,6 +1152,7 @@ public class Location {
     }
 
     private class LineOfSightHandler implements RayCastCallback {
+        private final short mask = Settings.BIT_SHOOTABLE;
         private boolean lineOfSight = true;
         private float fraction = 1;
 
@@ -1181,6 +1182,12 @@ public class Location {
         }
 
         private boolean isObstruction(Fixture fixture) {
+            short category = fixture.getFilterData().categoryBits;
+            if ((mask & category) == 0) {
+                // no common bits, so these items don't collide
+                return false;
+            }
+            
             // check that the fixture belongs to another agent
             if (fixture.getUserData() != null && fixture.getUserData() instanceof Agent) {
                 // cannot be obstructed by an agent
