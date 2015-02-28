@@ -345,8 +345,11 @@ public class Location {
         Vector2 position = player.getCamera().getPosition();
         if (player.isAiming()) {
             // get direction to focus
-            // TODO: this scale factor should vary with weapon range
-            offset.set(player.getFocusPoint()).sub(position).scl(.5f);
+            float fraction = 1;
+            if (!hasLineOfSight(player.getCamera().getPosition(), player.getFocusPoint())) {
+                fraction = losHandler.getFraction();
+            }
+            offset.set(player.getFocusPoint()).sub(position).scl(.5f * fraction);
         } else {
             offset.set(Vector2.Zero);
         }
@@ -1150,19 +1153,26 @@ public class Location {
 
     private class LineOfSightHandler implements RayCastCallback {
         private boolean lineOfSight = true;
+        private float fraction = 1;
 
         public boolean hasLineOfSight() {
             return lineOfSight;
         }
+        
+        public float getFraction() {
+            return fraction;
+        }
 
         public void reset() {
             lineOfSight = true;
+            fraction = 1;
         }
 
         @Override
         public float reportRayFixture(Fixture fixture, Vector2 point, Vector2 normal, float fraction) {
             if (isObstruction(fixture)) {
                 lineOfSight = false;
+                this.fraction = fraction;
                 return fraction;
             }
 
