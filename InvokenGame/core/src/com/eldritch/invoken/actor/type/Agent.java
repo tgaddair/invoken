@@ -1381,7 +1381,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
 
         @Override
         public float getZ() {
-            return position.y;
+            return Agent.this.getZ();
         }
 
         @Override
