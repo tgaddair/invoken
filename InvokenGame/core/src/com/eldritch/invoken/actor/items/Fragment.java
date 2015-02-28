@@ -70,7 +70,7 @@ public class Fragment extends Item {
 
     private static class FragmentEntity extends CollisionEntity implements TemporaryEntity {
         private static final float MOVE_RADIUS = 25f;
-        private static final float OBTAIN_RADIUS = 1f;
+        private static final float OBTAIN_RADIUS = 0.1f;
         
         private static final TextureRegion texture = new TextureRegion(
                 GameScreen.getTexture("sprite/effects/orb.png"));
@@ -93,8 +93,8 @@ public class Fragment extends Item {
             Agent closest = null;
             float bestD = Float.POSITIVE_INFINITY;
             for (Agent agent : location.getActiveEntities()) {
-                if (agent.getInfo().isUnique()) {
-                    // move towards closes
+                if (agent.getInfo().isUnique() && agent.isAlive()) {
+                    // move towards closest
                     float d = agent.getPosition().dst2(getPosition());
                     if (d < MOVE_RADIUS && d < bestD) {
                         closest = agent;
@@ -113,7 +113,7 @@ public class Fragment extends Item {
                     // move towards the closest
                     velocity.set(closest.getPosition());
                     velocity.sub(getPosition());
-                    velocity.nor();
+                    velocity.nor().scl(0.05f);
                 }
             } else {
                 // stop moving
@@ -123,6 +123,7 @@ public class Fragment extends Item {
         
         private void grantTo(Agent agent) {
             finished = true;
+            agent.getInventory().addItem(Fragment.getInstance(), quantity);
         }
 
         @Override
@@ -147,7 +148,7 @@ public class Fragment extends Item {
         public static FragmentEntity of(Vector2 origin, int quantity) {
             // shift the origin by a random amount
             Vector2 position = origin.cpy().add((float) Math.random(), (float) Math.random());
-            float r = quantity / 100f;
+            float r = (float) Math.log(quantity) / 5f;
             return new FragmentEntity(position, quantity, r);
         }
     }
