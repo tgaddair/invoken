@@ -8,7 +8,6 @@ import java.util.Map.Entry;
 import java.util.Random;
 
 import com.badlogic.gdx.math.Rectangle;
-import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.encounter.ConnectedRoom;
 import com.eldritch.invoken.encounter.ConnectedRoomManager;
 import com.eldritch.invoken.encounter.NaturalVector2;
@@ -71,7 +70,7 @@ public class RoomGenerator {
     }
     
     private void place(EncounterRoom encounter, ConnectedRoom connected) {
-        InvokenGame.log("placing: " + encounter.getEncounter().getId());
+//        InvokenGame.log("placing: " + encounter.getEncounter().getId());
         Room room = encounter.getRoom();
         
         // decrease bounds by 1 in each direction to prevent placing on border

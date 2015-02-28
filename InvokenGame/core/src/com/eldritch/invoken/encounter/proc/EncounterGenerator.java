@@ -53,7 +53,7 @@ public class EncounterGenerator extends BspGenerator {
             // place encounters randomly
             EncounterSelector selector = new EncounterSelector(repeatedEncounters);
             int remaining = getRoomCount() - count;
-            InvokenGame.log("Remaining: " + remaining);
+//            InvokenGame.log("Remaining: " + remaining);
             while (remaining > 0) {
                 Encounter encounter = selector.select();
                 place(encounter);

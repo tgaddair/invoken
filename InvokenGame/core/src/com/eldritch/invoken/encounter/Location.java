@@ -1147,7 +1147,6 @@ public class Location {
 
         edge.dispose();
 
-        System.out.println("edge: " + start + " " + end);
         return body;
     }
 

@@ -7,7 +7,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.actor.Inventory.ItemState;
 import com.eldritch.invoken.actor.aug.Augmentation;
 import com.eldritch.invoken.actor.factions.Faction;
@@ -78,7 +77,6 @@ public class AgentInfo {
 	    this.name = params.getName();
 	    this.species = params.getSpecies();
 	    this.unique = unique;
-	    InvokenGame.log("creating: " + name);
 	    
 		augmentations = new PreparedAugmentations(agent);
 		profession = Profession.fromProto(params.getProfession());

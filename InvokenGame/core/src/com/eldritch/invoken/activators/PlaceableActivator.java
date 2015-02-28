@@ -40,7 +40,7 @@ public class PlaceableActivator implements PlaceableFurniture {
 		try {
 			String assetId = CaseFormat.LOWER_HYPHEN.to(CaseFormat.UPPER_CAMEL, name);
 			String path = PlaceableActivator.class.getPackage().getName();
-			InvokenGame.log("loading: " + path + "." + assetId);
+//			InvokenGame.log("loading: " + path + "." + assetId);
 			Class<?> clazz = Class.forName(path + "." + assetId);
 			Constructor<?> ctor = clazz.getConstructor(NaturalVector2.class);
 			Activator instance = (Activator) ctor.newInstance(position);
