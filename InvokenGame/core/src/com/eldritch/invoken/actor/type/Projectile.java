@@ -9,6 +9,7 @@ import com.eldritch.invoken.actor.AgentHandler;
 import com.eldritch.invoken.actor.type.Agent.WeaponSentry;
 import com.eldritch.invoken.encounter.Bullet;
 import com.eldritch.invoken.encounter.Location;
+import com.eldritch.invoken.encounter.NaturalVector2;
 import com.eldritch.invoken.util.Settings;
 
 public abstract class Projectile extends CollisionEntity implements AgentHandler, TemporaryEntity {
@@ -87,43 +88,21 @@ public abstract class Projectile extends CollisionEntity implements AgentHandler
     @Override
     public void update(float delta, Location location) {
         stateTime += delta;
+        
+        if (handleBeforeUpdate(delta, location)) {
+            return;
+        }
+        
+        // check that we've passed into the walls, possibly skipping over an edge
+        NaturalVector2 position = NaturalVector2.of(bullet.getPosition());
+        if (location.isBulletWall(position)) {
+            handleObstacleContact();
+        }
 
         // finally, reclaim the projectile if it has been active for more than 10 seconds
         if (stateTime >= 10) {
             finish();
         }
-
-        if (true) {
-            return;
-        }
-
-        if (handleBeforeUpdate(delta, location)) {
-            return;
-        }
-
-        float scale = speed * delta;
-        velocity.scl(scale);
-        position.add(velocity);
-        velocity.scl(1 / scale);
-
-        float x = position.x + velocity.x * 0.25f;
-        float y = position.y + velocity.y * 0.25f;
-        for (Agent agent : getCollisionActors(location)) {
-            if (agent != owner && agent.collidesWith(x, y)) {
-                handleAgentContact(agent);
-                return;
-            }
-        }
-
-        location.getTiles((int) (x - 1), (int) (y - 1), (int) (x + 1), (int) (y + 1),
-                location.getTiles());
-        for (Rectangle tile : location.getTiles()) {
-            if (tile.contains(x, y)) {
-                handleObstacleContact();
-                return;
-            }
-        }
-
     }
 
     public boolean handleBeforeUpdate(float delta, Location location) {

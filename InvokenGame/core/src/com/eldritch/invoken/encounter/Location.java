@@ -765,6 +765,10 @@ public class Location {
     public boolean isObstacle(int x, int y) {
         return collision.hasCell(x, y);
     }
+    
+    public boolean isBulletWall(NaturalVector2 point) {
+        return map.isWall(point.x, point.y) && !collision.ignoresBullets(point.x, point.y);
+    }
 
     private boolean hasCell(int x, int y, int layerIndex) {
         TiledMapTileLayer layer = (TiledMapTileLayer) map.getLayers().get(layerIndex);

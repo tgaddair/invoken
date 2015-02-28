@@ -1,5 +1,7 @@
 package com.eldritch.invoken.encounter;
 
+import com.badlogic.gdx.math.Vector2;
+
 public class NaturalVector2 {
     private static NaturalVector2[][] points;
     
@@ -18,6 +20,10 @@ public class NaturalVector2 {
     
     public static void init(int width, int height) {
         points = new NaturalVector2[width][height];
+    }
+    
+    public static NaturalVector2 of(Vector2 position) {
+        return of((int) position.x, (int) position.y);
     }
     
     public static NaturalVector2 of(int x, int y) {
