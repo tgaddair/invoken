@@ -269,6 +269,12 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         return visibleNeighbors;
     }
 
+    public boolean isCompletelyDead() {
+        // agent is dead and their animation is finished
+        return !isAlive()
+                && animations.get(Activity.Death).get(direction).isAnimationFinished(stateTime);
+    }
+
     public boolean isAlive() {
         return info.isAlive();
     }
@@ -692,7 +698,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         }
         return true;
     }
-    
+
     public boolean canKeepTarget(Agent other) {
         return isNear(other);
     }
@@ -783,7 +789,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
             // cannot act if another action is in progress
             return;
         }
-        
+
         if (isParalyzed()) {
             // can't do anything when paralyzed
             return;
@@ -1270,7 +1276,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     public float getZ() {
         return isAlive() ? super.getZ() : Float.POSITIVE_INFINITY;
     }
-    
+
     protected void setLocation(Location location, float x, float y) {
         this.location = location;
         body = createBody(x, y, location.getWorld());
@@ -1312,7 +1318,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
                 // no common bits, so these items don't collide
                 return false;
             }
-            
+
             for (Fixture f : body.getFixtureList()) {
                 if (fixture == f) {
                     // we cannot obstruct our own view
