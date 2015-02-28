@@ -63,15 +63,6 @@ public abstract class Projectile extends CollisionEntity implements AgentHandler
         return owner;
     }
 
-    public void setup(Agent source, Agent target) {
-        setup(source, target.getPosition());
-    }
-
-    private void setup(Agent source, Vector2 target) {
-        source.setFocusPoint(target);
-        setup(source);
-    }
-
     private void setup(Agent source) {
         finished = false;
         stateTime = 0;
@@ -87,9 +78,10 @@ public abstract class Projectile extends CollisionEntity implements AgentHandler
         owner = source;
 
         velocity.set(target);
-        velocity.sub(position);
+        velocity.sub(bullet.getPosition());
         velocity.nor();
         velocity.scl(speed);
+        bullet.setVelocity(velocity);
     }
 
     @Override

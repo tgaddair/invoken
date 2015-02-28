@@ -39,6 +39,10 @@ public class Bullet implements AgentHandler {
     public Vector2 getVelocity() {
         return body.getLinearVelocity();
     }
+    
+    public void setVelocity(Vector2 velocity) {
+        body.setLinearVelocity(velocity);
+    }
 
     private Body createBody(World world) {
         BodyDef bodyDef = new BodyDef();
