@@ -13,7 +13,7 @@ public class WallTileMap {
     public enum WallTile {
         Roof, LeftWallTop, LeftWallBottom, MidWallTop, MidWallCenter, MidWallBottom, RightWallTop,
         RightWallBottom, LeftTrim, RightTrim, TopLeftTrim, TopRightTrim, LeftCorner, RightCorner,
-        TopLeftCorner, TopRightCorner, OverlayBelowTrim, OverlayLeftTrim, OverlayRightTrim
+        TopLeftCorner, TopRightCorner, TopTrim, OverlayBelowTrim, OverlayLeftTrim, OverlayRightTrim
     }
 
     private final Map<WallTile, NormalMappedTile> tiles;
@@ -44,6 +44,7 @@ public class WallTileMap {
         tiles.put(WallTile.RightCorner, getTile(roof, 32, 0, SIZE / 2));
         tiles.put(WallTile.TopLeftCorner, getTile(roof, 48, 16, SIZE / 2));
         tiles.put(WallTile.TopRightCorner, getTile(roof, 32, 16, SIZE / 2));
+        tiles.put(WallTile.TopTrim, getTile(roof, 16, 64));
         tiles.put(WallTile.OverlayBelowTrim, getTile(roof, 16, 32));
         tiles.put(WallTile.OverlayLeftTrim, getTile(roof, 32, 32));
         tiles.put(WallTile.OverlayRightTrim, getTile(roof, 0, 32));

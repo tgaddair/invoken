@@ -503,6 +503,15 @@ public class LocationGenerator {
                 }
             }
         }
+        
+        // fill in top trim
+        for (int x = 0; x < layer.getWidth(); x++) {
+            for (int y = 0; y < layer.getHeight(); y++) {
+                if (!layer.hasCell(x, y) && !base.isWall(x, y) && base.isWall(x, y - 1)) {
+                    addCell(layer, walls.getTile(WallTile.TopTrim), x, y);
+                }
+            }
+        }
 
         return layer;
     }
