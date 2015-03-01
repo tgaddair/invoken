@@ -161,10 +161,11 @@ public class LocationGenerator {
 
         InvokenGame.log("Creating Roof");
         TiledMapTile roofTile = walls.getTile(WallTile.Roof);
-        for (int i = 0; i < typeMap.length; i++) {
+        roofTile.setOffsetX(Settings.PX / 2);
+        for (int i = 0; i < typeMap.length - 1; i++) {
             for (int j = 0; j < typeMap[i].length; j++) {
-                if (typeMap[i][j] != CellType.Floor) {
-                    // addTile(i, j, roof, roofTile);
+                if (typeMap[i][j] != CellType.Floor && typeMap[i + 1][j] != CellType.Floor ) {
+                     addTile(i, j, roof, roofTile);
                 }
             }
         }
@@ -508,6 +509,7 @@ public class LocationGenerator {
         layer.setName("overlay");
 
         TiledMapTile belowTrim = walls.getTile(WallTile.OverlayBelowTrim);
+//        belowTrim.setOffsetX(Settings.PX / 2);
         for (int x = 0; x < base.getWidth(); x++) {
             for (int y = 0; y < base.getHeight(); y++) {
                 Cell cell = base.getCell(x, y);
@@ -625,16 +627,6 @@ public class LocationGenerator {
                         addCell(front, walls.getTile(WallTile.TopRightCorner), x, y);
                     }
                 }
-
-                // if (!trim.hasCell(x, y) && !overlay.hasCell(x, y)) {
-                // if (matchesTile(trim, x, y - 1, walls.getTile(WallTile.LeftTrim))) {
-                // // top left corner
-                // addCell(front, walls.getTile(WallTile.TopLeftCorner), x, y);
-                // } else if (matchesTile(trim, x, y - 1, walls.getTile(WallTile.RightTrim))) {
-                // // top right corner
-                // addCell(front, walls.getTile(WallTile.TopRightCorner), x, y);
-                // }
-                // }
             }
         }
 
@@ -650,7 +642,8 @@ public class LocationGenerator {
 
         for (int x = 0; x < trim.getWidth(); x++) {
             for (int y = 0; y < trim.getHeight(); y++) {
-                if (!base.isWall(x, y) && base.isWall(x, y - 1) && (trim.hasCell(x, y) || overlay.hasCell(x, y))) {
+                if (!base.isWall(x, y) && base.isWall(x, y - 1)
+                        && (trim.hasCell(x, y) || overlay.hasCell(x, y))) {
                     if (!front.hasCell(x - 1, y) && !trim.hasCell(x - 1, y)) {
                         addCell(left, walls.getTile(WallTile.FrontLeftTrim), x, y);
                     }

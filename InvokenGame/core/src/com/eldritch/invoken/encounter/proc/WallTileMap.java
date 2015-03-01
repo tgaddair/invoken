@@ -48,7 +48,7 @@ public class WallTileMap {
         tiles.put(WallTile.FrontLeftTrim, getTile(roof, 0, 80, SIZE / 2, SIZE / 2));
         tiles.put(WallTile.FrontMiddleTrim, getTile(roof, 16, 80, SIZE, SIZE / 2));
         tiles.put(WallTile.FrontRightTrim, getTile(roof, 48, 80, SIZE / 2, SIZE / 2, SIZE / 2, 0));
-        tiles.put(WallTile.OverlayBelowTrim, getTile(roof, 16, 32));
+        tiles.put(WallTile.OverlayBelowTrim, getTile(roof, 16, 32, SIZE, SIZE / 4, 0, 3 * SIZE / 4));
         tiles.put(WallTile.OverlayLeftTrim, getTile(roof, 32, 32));
         tiles.put(WallTile.OverlayRightTrim, getTile(roof, 0, 32));
         return new WallTileMap(tiles);

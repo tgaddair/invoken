@@ -8,10 +8,12 @@ import com.eldritch.invoken.util.Settings;
 
 public class LocationLayer extends TiledMapTileLayer {
     private final LocationMap map;
+    private final int scale;
 
     public LocationLayer(int width, int height, int tileWidth, int tileHeight, LocationMap map) {
         super(width, height, tileWidth, tileHeight);
         this.map = map;
+        scale = Settings.PX / tileWidth;
     }
 
     public Cell addCell(TiledMapTile tile, int x, int y) {
@@ -19,6 +21,10 @@ public class LocationLayer extends TiledMapTileLayer {
         cell.setTile(tile);
         setCell(x, y, cell);
         return cell;
+    }
+    
+    public int getScale() {
+        return scale;
     }
 
     public boolean isVisible(int x, int y) {
