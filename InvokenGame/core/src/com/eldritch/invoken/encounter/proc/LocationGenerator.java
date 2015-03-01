@@ -161,7 +161,6 @@ public class LocationGenerator {
 
         InvokenGame.log("Creating Roof");
         TiledMapTile roofTile = walls.getTile(WallTile.Roof);
-        roofTile.setOffsetX(Settings.PX / 2);
         for (int i = 0; i < typeMap.length - 1; i++) {
             for (int j = 0; j < typeMap[i].length; j++) {
                 if (typeMap[i][j] != CellType.Floor && typeMap[i + 1][j] != CellType.Floor ) {
