@@ -45,6 +45,7 @@ import com.eldritch.invoken.encounter.layer.LocationLayer.CollisionLayer;
 import com.eldritch.invoken.encounter.layer.LocationMap;
 import com.eldritch.invoken.encounter.proc.BspGenerator.CellType;
 import com.eldritch.invoken.encounter.proc.EncounterGenerator.EncounterRoom;
+import com.eldritch.invoken.encounter.proc.WallTileMap.WallTile;
 import com.eldritch.invoken.gfx.Light;
 import com.eldritch.invoken.gfx.NormalMappedTile;
 import com.eldritch.invoken.proto.Locations.Biome;
@@ -61,18 +62,7 @@ public class LocationGenerator {
     // string constants required for all biome types
     private static final String FLOOR = "/floor";
     private static final String ROOF = "/roof";
-    private static final String MID_WALL_TOP = "/mid-wall-top";
-    // private static final String MID_WALL_CENTER = "/mid-wall-center";
-    private static final String MID_WALL_BOTTOM = "/mid-wall-bottom";
-    private static final String LEFT_TRIM = "/left-trim";
-    private static final String RIGHT_TRIM = "/right-trim";
-    private static final String TOP_LEFT_TRIM = "/top-left-trim";
-    private static final String TOP_RIGHT_TRIM = "/top-right-trim";
-    private static final String LEFT_CORNER = "/left-corner";
-    private static final String RIGHT_CORNER = "/right-corner";
-    private static final String OVERLAY_BELOW_TRIM = "/overlay-below-trim";
-    private static final String OVERLAY_LEFT_TRIM = "/overlay-left-trim";
-    private static final String OVERLAY_RIGHT_TRIM = "/overlay-right-trim";
+    private static final String WALL = "/wall";
     private static final String COLLISION = "markers/collision";
 
     private static final int PX = Settings.PX;
@@ -85,13 +75,9 @@ public class LocationGenerator {
     private final TextureAtlas atlas;
     private final TextureAtlas normalAtlas;
 
+    private final WallTileMap walls;
     private final TiledMapTile ground;
-    private final TiledMapTile midWallTop;
-    // private final TiledMapTile midWallCenter;
-    private final TiledMapTile midWallBottom;
 
-    private final NormalMappedTile leftTrim;
-    private final NormalMappedTile rightTrim;
     private final TiledMapTile narrowWall;
     private final TiledMapTile narrowTop;
     private final TiledMapTile collider;
@@ -104,19 +90,13 @@ public class LocationGenerator {
         atlas = GameScreen.ATLAS;
         normalAtlas = GameScreen.NORMAL_ATLAS;
 
+        walls = WallTileMap.from(atlas.findRegion(biome + WALL), atlas.findRegion(biome + ROOF));
         ground = getTile(FLOOR);
 
-        midWallTop = getTile(MID_WALL_TOP);
-        // midWallCenter = new StaticTiledMapTile(atlas.findRegion(biome +
-        // MID_WALL_CENTER));
-        midWallBottom = getTile(MID_WALL_BOTTOM);
+        narrowWall = merge(walls.getTile(WallTile.RightTrim), walls.getTile(WallTile.LeftTrim));
 
-        leftTrim = getTile(LEFT_TRIM);
-        rightTrim = getTile(RIGHT_TRIM);
-        narrowWall = merge(rightTrim, leftTrim);
-
-        NormalMappedTile topLeft = getTile(TOP_LEFT_TRIM);
-        NormalMappedTile topRight = getTile(TOP_RIGHT_TRIM);
+        NormalMappedTile topLeft = walls.getTile(WallTile.TopLeftTrim);
+        NormalMappedTile topRight = walls.getTile(WallTile.TopRightTrim);
         narrowTop = merge(topLeft, topRight);
 
         collider = new StaticTiledMapTile(atlas.findRegion(COLLISION));
@@ -176,7 +156,7 @@ public class LocationGenerator {
         map.getLayers().add(collision);
 
         InvokenGame.log("Creating Roof");
-        TiledMapTile roofTile = getTile(ROOF);
+        TiledMapTile roofTile = walls.getTile(WallTile.Roof);
         for (int i = 0; i < typeMap.length; i++) {
             for (int j = 0; j < typeMap[i].length; j++) {
                 if (typeMap[i][j] != CellType.Floor) {
@@ -226,7 +206,7 @@ public class LocationGenerator {
         // lights
         InvokenGame.log("Adding Lights");
         List<Light> lights = new ArrayList<Light>();
-        furnitureGenerator.addLights(trim, base, lights, midWallTop);
+        furnitureGenerator.addLights(trim, base, lights, walls.getTile(WallTile.MidWallTop));
 
         // clutter
         InvokenGame.log("Adding Clutter");
@@ -489,11 +469,11 @@ public class LocationGenerator {
                             addCell(layer, narrowWall, x, y);
                         } else {
                             // right trim
-                            addCell(layer, rightTrim, x, y);
+                            addCell(layer, walls.getTile(WallTile.RightTrim), x, y);
                         }
                     } else if (rightGround) {
                         // left trim
-                        addCell(layer, leftTrim, x, y);
+                        addCell(layer, walls.getTile(WallTile.LeftTrim), x, y);
                     }
                 }
             }
@@ -508,7 +488,7 @@ public class LocationGenerator {
         layer.setOpacity(1.0f);
         layer.setName("overlay");
 
-        TiledMapTile belowTrim = getTile(OVERLAY_BELOW_TRIM);
+        TiledMapTile belowTrim = walls.getTile(WallTile.OverlayBelowTrim);
         for (int x = 0; x < base.getWidth(); x++) {
             for (int y = 0; y < base.getHeight(); y++) {
                 Cell cell = base.getCell(x, y);
@@ -532,8 +512,8 @@ public class LocationGenerator {
         layer1.setOpacity(1.0f);
         layer1.setName("overlay-trim-2");
 
-        TiledMapTile overlayLeftTrim = getTile(OVERLAY_LEFT_TRIM);
-        TiledMapTile overlayRightTrim = getTile(OVERLAY_RIGHT_TRIM);
+        TiledMapTile overlayLeftTrim = walls.getTile(WallTile.OverlayLeftTrim);
+        TiledMapTile overlayRightTrim = walls.getTile(WallTile.OverlayRightTrim);
 
         // fill in sides
         for (int x = 0; x < overlay.getWidth(); x++) {
@@ -559,10 +539,10 @@ public class LocationGenerator {
         }
 
         // bottom left
-        TiledMapTile leftCorner = getTile(LEFT_CORNER);
+        TiledMapTile leftCorner = walls.getTile(WallTile.LeftCorner);
 
         // bottom right
-        TiledMapTile rightCorner = getTile(RIGHT_CORNER);
+        TiledMapTile rightCorner = walls.getTile(WallTile.RightCorner);
 
         // required offsets
         leftCorner.setOffsetX(Settings.PX / 2);
@@ -723,9 +703,9 @@ public class LocationGenerator {
                 if (cell != null && cell.getTile() == ground) {
                     // check for empty space above
                     if (y + 2 < layer.getHeight() && layer.getCell(x, y + 2) == null) {
-                        addCell(layer, midWallBottom, x, y + 0);
+                        addCell(layer, walls.getTile(WallTile.MidWallBottom), x, y + 0);
                         // addCell(layer, midWallCenter, x, y + 1);
-                        addCell(layer, midWallTop, x, y + 1);
+                        addCell(layer, walls.getTile(WallTile.MidWallTop), x, y + 1);
                     }
                 }
             }
@@ -818,7 +798,8 @@ public class LocationGenerator {
 
     private static NormalMappedTile merge(NormalMappedTile left, NormalMappedTile right) {
         TextureRegion diffuse = merge(left.getTextureRegion(), right.getTextureRegion());
-        TextureRegion normal = merge(left.getNormalRegion(), right.getNormalRegion());
+        TextureRegion normal = left.hasNormal() && right.hasNormal() ? merge(
+                left.getNormalRegion(), right.getNormalRegion()) : null;
         return new NormalMappedTile(diffuse, normal);
     }
 

@@ -32,16 +32,16 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 public class OrthogonalShadedTiledMapRenderer extends OrthogonalTiledMapRenderer {
     private final NormalMapShader shader;
     private boolean normalRender = false;
-    
+
     public OrthogonalShadedTiledMapRenderer(TiledMap map, float unitScale, NormalMapShader shader) {
         super(map, unitScale);
         this.shader = shader;
     }
-    
+
     public void setNormalRender(boolean normalRender) {
         this.normalRender = normalRender;
     }
-    
+
     @Override
     protected void beginRender() {
         super.beginRender();
@@ -187,7 +187,8 @@ public class OrthogonalShadedTiledMapRenderer extends OrthogonalTiledMapRenderer
                         }
                     }
 
-                    if (normalRender && tile instanceof NormalMappedTile) {
+                    if (normalRender && tile instanceof NormalMappedTile
+                            && ((NormalMappedTile) tile).hasNormal()) {
                         NormalMappedTile normalTile = (NormalMappedTile) tile;
                         batch.draw(normalTile.getNormal(), vertices, 0, 20);
                         normalTile.getNormal().bind(0);

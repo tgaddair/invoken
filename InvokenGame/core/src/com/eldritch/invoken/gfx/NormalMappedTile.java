@@ -12,6 +12,10 @@ public class NormalMappedTile extends StaticTiledMapTile {
         this.normalRegion = normalRegion;
     }
     
+    public boolean hasNormal() {
+        return normalRegion != null;
+    }
+    
     public Texture getNormal() {
         return normalRegion.getTexture();
     }

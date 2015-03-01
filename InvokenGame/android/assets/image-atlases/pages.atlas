@@ -500,9 +500,16 @@ filter: Nearest,Nearest
 repeat: none
 industry/roof
   rotate: false
-  xy: 208, 368
-  size: 32, 32
-  orig: 32, 32
+  xy: 192, 320
+  size: 64, 160
+  orig: 64, 160
+  offset: 0, 0
+  index: -1
+industry/wall
+  rotate: false
+  xy: 256, 0
+  size: 64, 160
+  orig: 64, 160
   offset: 0, 0
   index: -1
 industry/left-wall-top
