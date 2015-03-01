@@ -30,13 +30,13 @@ public class WallTileMap {
     public static WallTileMap from(TextureRegion wall, TextureRegion roof) {
         Map<WallTile, NormalMappedTile> tiles = Maps.newEnumMap(WallTile.class);
         tiles.put(WallTile.Roof, getTile(roof, 16, 48));
-        tiles.put(WallTile.LeftWallTop, getTile(wall, 0, 96, SIZE / 2, SIZE));
-        tiles.put(WallTile.LeftWallBottom, getTile(wall, 0, 128, SIZE / 2, SIZE));
-        tiles.put(WallTile.MidWallTop, getTile(wall, 16, 96));
-        tiles.put(WallTile.MidWallCenter, getTile(wall, 16, 112));
-        tiles.put(WallTile.MidWallBottom, getTile(wall, 16, 128));
-        tiles.put(WallTile.RightWallTop, getTile(wall, 48, 96, SIZE / 2, SIZE, SIZE / 2, 0));
-        tiles.put(WallTile.RightWallBottom, getTile(wall, 48, 128, SIZE / 2, SIZE, SIZE / 2, 0));
+        tiles.put(WallTile.LeftWallTop, getTile(wall, 0, 0, SIZE / 2, SIZE));
+        tiles.put(WallTile.LeftWallBottom, getTile(wall, 0, 32, SIZE / 2, SIZE));
+        tiles.put(WallTile.MidWallTop, getTile(wall, 16, 0));
+        tiles.put(WallTile.MidWallCenter, getTile(wall, 16, 16));
+        tiles.put(WallTile.MidWallBottom, getTile(wall, 16, 32));
+        tiles.put(WallTile.RightWallTop, getTile(wall, 48, 0, SIZE / 2, SIZE, SIZE / 2, 0));
+        tiles.put(WallTile.RightWallBottom, getTile(wall, 48, 32, SIZE / 2, SIZE, SIZE / 2, 0));
         tiles.put(WallTile.LeftTrim, getTile(roof, 32, 48));
         tiles.put(WallTile.RightTrim, getTile(roof, 0, 48));
         tiles.put(WallTile.TopLeftTrim, getTile(roof, 0, 32));

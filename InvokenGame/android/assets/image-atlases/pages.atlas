@@ -620,15 +620,15 @@ repeat: none
 industry/roof
   rotate: false
   xy: 192, 320
-  size: 64, 160
-  orig: 64, 160
+  size: 64, 96
+  orig: 64, 96
   offset: 0, 0
   index: -1
 industry/wall
   rotate: false
-  xy: 256, 0
-  size: 64, 160
-  orig: 64, 160
+  xy: 256, 96
+  size: 64, 64
+  orig: 64, 64
   offset: 0, 0
   index: -1
 
@@ -639,15 +639,15 @@ repeat: none
 grime/roof
   rotate: false
   xy: 384, 320
-  size: 64, 160
-  orig: 64, 160
+  size: 64, 96
+  orig: 64, 96
   offset: 0, 0
   index: -1
 grime/wall
   rotate: false
-  xy: 448, 320
-  size: 64, 160
-  orig: 64, 160
+  xy: 448, 416
+  size: 64, 64
+  orig: 64, 64
   offset: 0, 0
   index: -1
 
@@ -658,28 +658,28 @@ repeat: none
 future/roof
   rotate: false
   xy: 256, 320
-  size: 64, 160
-  orig: 64, 160
+  size: 64, 96
+  orig: 64, 96
   offset: 0, 0
   index: -1
 future/wall
   rotate: false
-  xy: 192, 320
-  size: 64, 160
-  orig: 64, 160
+  xy: 192, 410
+  size: 64, 64
+  orig: 64, 64
   offset: 0, 0
   index: -1
 artoran/roof
   rotate: false
   xy: 256, 160
-  size: 64, 160
-  orig: 64, 160
+  size: 64, 96
+  orig: 64, 96
   offset: 0, 0
   index: -1
 artoran/wall
   rotate: false
-  xy: 256, 160
-  size: 64, 160
-  orig: 64, 160
+  xy: 256, 256
+  size: 64, 64
+  orig: 64, 64
   offset: 0, 0
   index: -1

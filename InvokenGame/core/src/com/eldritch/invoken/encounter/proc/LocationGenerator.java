@@ -90,8 +90,8 @@ public class LocationGenerator {
         atlas = GameScreen.ATLAS;
         normalAtlas = GameScreen.NORMAL_ATLAS;
 
-        walls = WallTileMap.from(atlas.findRegion("artoran" + WALL),
-                atlas.findRegion("artoran" + ROOF));
+        walls = WallTileMap.from(atlas.findRegion("future" + WALL),
+                atlas.findRegion("future" + ROOF));
         ground = getTile(FLOOR);
 
         narrowWall = merge(walls.getTile(WallTile.RightTrim), walls.getTile(WallTile.LeftTrim));
@@ -163,8 +163,8 @@ public class LocationGenerator {
         TiledMapTile roofTile = walls.getTile(WallTile.Roof);
         for (int i = 0; i < typeMap.length - 1; i++) {
             for (int j = 0; j < typeMap[i].length; j++) {
-                if (typeMap[i][j] != CellType.Floor && typeMap[i + 1][j] != CellType.Floor ) {
-                     addTile(i, j, roof, roofTile);
+                if (typeMap[i][j] != CellType.Floor && typeMap[i + 1][j] != CellType.Floor) {
+                    addTile(i, j, roof, roofTile);
                 }
             }
         }
@@ -508,7 +508,7 @@ public class LocationGenerator {
         layer.setName("overlay");
 
         TiledMapTile belowTrim = walls.getTile(WallTile.OverlayBelowTrim);
-//        belowTrim.setOffsetX(Settings.PX / 2);
+        // belowTrim.setOffsetX(Settings.PX / 2);
         for (int x = 0; x < base.getWidth(); x++) {
             for (int y = 0; y < base.getHeight(); y++) {
                 Cell cell = base.getCell(x, y);
