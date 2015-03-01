@@ -558,47 +558,6 @@ public class LocationGenerator {
             }
         }
 
-        // bottom left
-        TiledMapTile leftCorner = walls.getTile(WallTile.LeftCorner);
-
-        // bottom right
-        TiledMapTile rightCorner = walls.getTile(WallTile.RightCorner);
-
-        // required offsets
-        leftCorner.setOffsetX(Settings.PX / 2);
-        leftCorner.setOffsetY(Settings.PX / 2);
-        rightCorner.setOffsetY(Settings.PX / 2);
-
-        // fill in corners
-        for (int x = 0; x < roof.getWidth(); x++) {
-            for (int y = 0; y < roof.getHeight(); y++) {
-                if (roof.isFilled(x, y) && !layer1.isFilled(x, y) && !overlay.isFilled(x, y)) {
-                    if (overlay.isFilled(x + 1, y)) {
-                        // case I: overlay to the right, wall at current position
-                        // add a left corner here
-                        addCell(layer1, leftCorner, x, y);
-                    }
-                }
-            }
-        }
-
-        LocationLayer layer2 = new LocationLayer(base.getWidth(), base.getHeight(), PX, PX, map);
-        layer2.setVisible(true);
-        layer2.setOpacity(1.0f);
-        layer2.setName("overlay-trim-3");
-
-        for (int x = 0; x < roof.getWidth(); x++) {
-            for (int y = 0; y < roof.getHeight(); y++) {
-                if (roof.isFilled(x, y) && !layer2.isFilled(x, y) && !overlay.isFilled(x, y)) {
-                    if (overlay.isFilled(x - 1, y)) {
-                        // case II: overlay to the left, wall at current position
-                        // add a right corner here
-                        addCell(layer2, rightCorner, x, y);
-                    }
-                }
-            }
-        }
-
         LocationLayer front = new LocationLayer(base.getWidth(), base.getHeight(), PX, PX, map);
         front.setVisible(true);
         front.setOpacity(1.0f);
@@ -652,8 +611,55 @@ public class LocationGenerator {
                 }
             }
         }
+        
+        LocationLayer lcorner = new LocationLayer(base.getWidth(), base.getHeight(), PX, PX, map);
+        lcorner.setVisible(true);
+        lcorner.setOpacity(1.0f);
+        lcorner.setName("overlay-trim-left");
 
-        return ImmutableList.of(layer1, layer2, front, left, right);
+        LocationLayer rcorner = new LocationLayer(base.getWidth(), base.getHeight(), PX, PX, map);
+        rcorner.setVisible(true);
+        rcorner.setOpacity(1.0f);
+        rcorner.setName("overlay-trim-right");
+
+
+        // bottom left
+        TiledMapTile leftCorner = walls.getTile(WallTile.LeftCorner);
+
+        // bottom right
+        TiledMapTile rightCorner = walls.getTile(WallTile.RightCorner);
+
+        // required offsets
+        leftCorner.setOffsetX(Settings.PX / 2);
+        leftCorner.setOffsetY(Settings.PX / 2);
+        rightCorner.setOffsetY(Settings.PX / 2);
+
+        // fill in corners
+        for (int x = 0; x < roof.getWidth(); x++) {
+            for (int y = 0; y < roof.getHeight(); y++) {
+                if (roof.isFilled(x, y) && !overlay.isFilled(x, y)) {
+                    if (overlay.isFilled(x + 1, y)) {
+                        // case I: overlay to the right, wall at current position
+                        // add a left corner here
+                        addCell(lcorner, leftCorner, x, y);
+                    }
+                }
+            }
+        }
+
+        for (int x = 0; x < roof.getWidth(); x++) {
+            for (int y = 0; y < roof.getHeight(); y++) {
+                if (roof.isFilled(x, y) && !overlay.isFilled(x, y)) {
+                    if (overlay.isFilled(x - 1, y)) {
+                        // case II: overlay to the left, wall at current position
+                        // add a right corner here
+                        addCell(rcorner, rightCorner, x, y);
+                    }
+                }
+            }
+        }
+
+        return ImmutableList.of(layer1, front, left, right, lcorner, rcorner);
     }
 
     private CollisionLayer createCollisionLayer(LocationLayer base, LocationMap map) {
