@@ -494,247 +494,6 @@ activators/container-small
   offset: 0, 0
   index: -1
 
-industry-walls.png
-format: RGBA8888
-filter: Nearest,Nearest
-repeat: none
-industry/roof
-  rotate: false
-  xy: 192, 320
-  size: 64, 160
-  orig: 64, 160
-  offset: 0, 0
-  index: -1
-industry/wall
-  rotate: false
-  xy: 256, 0
-  size: 64, 160
-  orig: 64, 160
-  offset: 0, 0
-  index: -1
-industry/left-wall-top
-  rotate: false
-  xy: 256, 96
-  size: 32, 32
-  orig: 32, 32
-  offset: 0, 0
-  index: -1
-industry/right-wall-top
-  rotate: false
-  xy: 288, 96
-  size: 32, 32
-  orig: 32, 32
-  offset: 0, 0
-  index: -1
-industry/left-wall-bottom
-  rotate: false
-  xy: 256, 128
-  size: 32, 32
-  orig: 32, 32
-  offset: 0, 0
-  index: -1
-industry/right-wall-bottom
-  rotate: false
-  xy: 288, 128
-  size: 32, 32
-  orig: 32, 32
-  offset: 0, 0
-  index: -1
-industry/mid-wall-top
-  rotate: false
-  xy: 272, 96
-  size: 32, 32
-  orig: 32, 32
-  offset: 0, 0
-  index: -1
-industry/mid-wall-center
-  rotate: false
-  xy: 272, 112
-  size: 32, 32
-  orig: 32, 32
-  offset: 0, 0
-  index: -1
-industry/mid-wall-bottom
-  rotate: false
-  xy: 272, 128
-  size: 32, 32
-  orig: 32, 32
-  offset: 0, 0
-  index: -1
-industry/left-trim
-  rotate: false
-  xy: 224, 368
-  size: 32, 32
-  orig: 32, 32
-  offset: 0, 0
-  index: -1
-industry/right-trim
-  rotate: false
-  xy: 192, 368
-  size: 32, 32
-  orig: 32, 32
-  offset: 0, 0
-  index: -1
-industry/overlay-left-trim
-  rotate: false
-  xy: 224, 352
-  size: 32, 32
-  orig: 32, 32
-  offset: 0, 0
-  index: -1
-industry/overlay-right-trim
-  rotate: false
-  xy: 192, 352
-  size: 32, 32
-  orig: 32, 32
-  offset: 0, 0
-  index: -1
-industry/left-corner
-  rotate: false
-  xy: 240, 320
-  size: 16, 16
-  orig: 16, 16
-  offset: 0, 0
-  index: -1
-industry/right-corner
-  rotate: false
-  xy: 224, 320
-  size: 16, 16
-  orig: 16, 16
-  offset: 0, 0
-  index: -1
-industry/below-trim
-  rotate: false
-  xy: 208, 352
-  size: 32, 32
-  orig: 32, 32
-  offset: 0, 0
-  index: -1
-industry/overlay-below-trim
-  rotate: false
-  xy: 208, 352
-  size: 32, 32
-  orig: 32, 32
-  offset: 0, 0
-  index: -1
-industry/overlay-above-trim
-  rotate: false
-  xy: 208, 416
-  size: 32, 32
-  orig: 32, 32
-  offset: 0, 0
-  index: -1
-industry/top-left-trim
-  rotate: false
-  xy: 192, 352
-  size: 32, 32
-  orig: 32, 32
-  offset: 0, 0
-  index: -1
-industry/top-right-trim
-  rotate: false
-  xy: 224, 352
-  size: 32, 32
-  orig: 32, 32
-  offset: 0, 0
-  index: -1
-
-misc-walls.png
-format: RGBA8888
-filter: Nearest,Nearest
-repeat: none
-grime/roof
-  rotate: false
-  xy: 400, 368
-  size: 32, 32
-  orig: 32, 32
-  offset: 0, 0
-  index: -1
-grime/mid-wall-top
-  rotate: false
-  xy: 464, 416
-  size: 32, 32
-  orig: 32, 32
-  offset: 0, 0
-  index: -1
-grime/mid-wall-center
-  rotate: false
-  xy: 464, 432
-  size: 32, 32
-  orig: 32, 32
-  offset: 0, 0
-  index: -1
-grime/mid-wall-bottom
-  rotate: false
-  xy: 464, 448
-  size: 32, 32
-  orig: 32, 32
-  offset: 0, 0
-  index: -1
-grime/left-trim
-  rotate: false
-  xy: 416, 368
-  size: 32, 32
-  orig: 32, 32
-  offset: 0, 0
-  index: -1
-grime/right-trim
-  rotate: false
-  xy: 384, 368
-  size: 32, 32
-  orig: 32, 32
-  offset: 0, 0
-  index: -1
-grime/top-left-trim
-  rotate: false
-  xy: 384, 352
-  size: 32, 32
-  orig: 32, 32
-  offset: 0, 0
-  index: -1
-grime/top-right-trim
-  rotate: false
-  xy: 416, 352
-  size: 32, 32
-  orig: 32, 32
-  offset: 0, 0
-  index: -1
-grime/left-corner
-  rotate: false
-  xy: 432, 320
-  size: 16, 16
-  orig: 16, 16
-  offset: 0, 0
-  index: -1
-grime/right-corner
-  rotate: false
-  xy: 416, 320
-  size: 16, 16
-  orig: 16, 16
-  offset: 0, 0
-  index: -1
-grime/overlay-below-trim
-  rotate: false
-  xy: 400, 352
-  size: 32, 32
-  orig: 32, 32
-  offset: 0, 0
-  index: -1
-grime/overlay-left-trim
-  rotate: false
-  xy: 416, 352
-  size: 32, 32
-  orig: 32, 32
-  offset: 0, 0
-  index: -1
-grime/overlay-right-trim
-  rotate: false
-  xy: 384, 352
-  size: 32, 32
-  orig: 32, 32
-  offset: 0, 0
-  index: -1
-
 gates.png
 format: RGBA8888
 filter: Nearest,Nearest
@@ -854,98 +613,73 @@ future/light1
   offset: 0, 0
   index: -1
 
+industry-walls.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+industry/roof
+  rotate: false
+  xy: 192, 320
+  size: 64, 160
+  orig: 64, 160
+  offset: 0, 0
+  index: -1
+industry/wall
+  rotate: false
+  xy: 256, 0
+  size: 64, 160
+  orig: 64, 160
+  offset: 0, 0
+  index: -1
+
+misc-walls.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+grime/roof
+  rotate: false
+  xy: 384, 320
+  size: 64, 160
+  orig: 64, 160
+  offset: 0, 0
+  index: -1
+grime/wall
+  rotate: false
+  xy: 448, 320
+  size: 64, 160
+  orig: 64, 160
+  offset: 0, 0
+  index: -1
+
 future-walls.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
 future/roof
   rotate: false
-  xy: 272, 368
-  size: 32, 32
-  orig: 32, 32
+  xy: 256, 320
+  size: 64, 160
+  orig: 64, 160
   offset: 0, 0
   index: -1
-future/mid-wall-top
+future/wall
   rotate: false
-  xy: 208, 416
-  size: 32, 32
-  orig: 32, 32
+  xy: 192, 320
+  size: 64, 160
+  orig: 64, 160
   offset: 0, 0
   index: -1
-future/mid-wall-center
+artoran/roof
   rotate: false
-  xy: 208, 432
-  size: 32, 32
-  orig: 32, 32
+  xy: 256, 160
+  size: 64, 160
+  orig: 64, 160
   offset: 0, 0
   index: -1
-future/mid-wall-bottom
+artoran/wall
   rotate: false
-  xy: 208, 448
-  size: 32, 32
-  orig: 32, 32
-  offset: 0, 0
-  index: -1
-future/left-trim
-  rotate: false
-  xy: 288, 368
-  size: 32, 32
-  orig: 32, 32
-  offset: 0, 0
-  index: -1
-future/right-trim
-  rotate: false
-  xy: 256, 368
-  size: 32, 32
-  orig: 32, 32
-  offset: 0, 0
-  index: -1
-future/top-left-trim
-  rotate: false
-  xy: 256, 352
-  size: 32, 32
-  orig: 32, 32
-  offset: 0, 0
-  index: -1
-future/top-right-trim
-  rotate: false
-  xy: 288, 352
-  size: 32, 32
-  orig: 32, 32
-  offset: 0, 0
-  index: -1
-future/left-corner
-  rotate: false
-  xy: 304, 320
-  size: 16, 16
-  orig: 16, 16
-  offset: 0, 0
-  index: -1
-future/right-corner
-  rotate: false
-  xy: 288, 320
-  size: 16, 16
-  orig: 16, 16
-  offset: 0, 0
-  index: -1
-future/overlay-below-trim
-  rotate: false
-  xy: 272, 352
-  size: 32, 32
-  orig: 32, 32
-  offset: 0, 0
-  index: -1
-future/overlay-left-trim
-  rotate: false
-  xy: 288, 352
-  size: 32, 32
-  orig: 32, 32
-  offset: 0, 0
-  index: -1
-future/overlay-right-trim
-  rotate: false
-  xy: 256, 352
-  size: 32, 32
-  orig: 32, 32
+  xy: 256, 160
+  size: 64, 160
+  orig: 64, 160
   offset: 0, 0
   index: -1

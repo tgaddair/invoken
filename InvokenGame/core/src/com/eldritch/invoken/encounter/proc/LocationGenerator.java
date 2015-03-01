@@ -90,7 +90,8 @@ public class LocationGenerator {
         atlas = GameScreen.ATLAS;
         normalAtlas = GameScreen.NORMAL_ATLAS;
 
-        walls = WallTileMap.from(atlas.findRegion(biome + WALL), atlas.findRegion(biome + ROOF));
+        walls = WallTileMap.from(atlas.findRegion("artoran" + WALL),
+                atlas.findRegion("artoran" + ROOF));
         ground = getTile(FLOOR);
 
         narrowWall = merge(walls.getTile(WallTile.RightTrim), walls.getTile(WallTile.LeftTrim));
@@ -140,8 +141,11 @@ public class LocationGenerator {
 
         // create layers
         InvokenGame.log("Creating Base");
-        LocationLayer base = createBaseLayer(typeMap, width, height, map);
-        map.getLayers().add(base);
+        List<LocationLayer> baseLayers = createBaseLayers(typeMap, width, height, map);
+        LocationLayer base = Iterables.getFirst(baseLayers, null);
+        for (LocationLayer layer : baseLayers) {
+            map.getLayers().add(layer);
+        }
 
         InvokenGame.log("Creating Trim");
         LocationLayer trim = createEmptyLayer(base, map, "trim");
@@ -419,12 +423,17 @@ public class LocationGenerator {
         return map;
     }
 
-    private LocationLayer createBaseLayer(CellType[][] typeMap, int width, int height,
+    private List<LocationLayer> createBaseLayers(CellType[][] typeMap, int width, int height,
             LocationMap map) {
         LocationLayer layer = new LocationLayer(width, height, PX, PX, map);
         layer.setVisible(true);
         layer.setOpacity(1.0f);
         layer.setName("base");
+
+        LocationLayer trim = new LocationLayer(width, height, PX, PX, map);
+        trim.setVisible(true);
+        trim.setOpacity(1.0f);
+        trim.setName("base-trim");
 
         for (int i = 0; i < typeMap.length; i++) {
             for (int j = 0; j < typeMap[i].length; j++) {
@@ -435,10 +444,10 @@ public class LocationGenerator {
         }
 
         // add walls
-        addWalls(layer);
+        addWalls(layer, trim);
         InvokenGame.log("done");
 
-        return layer;
+        return ImmutableList.of(layer, trim);
     }
 
     private LocationLayer createEmptyLayer(LocationLayer base, LocationMap map, String name) {
@@ -696,7 +705,7 @@ public class LocationGenerator {
         });
     }
 
-    private void addWalls(LocationLayer layer) {
+    private void addWalls(LocationLayer layer, LocationLayer trim) {
         for (int x = 0; x < layer.getWidth(); x++) {
             for (int y = 0; y < layer.getHeight(); y++) {
                 Cell cell = layer.getCell(x, y);
@@ -704,8 +713,26 @@ public class LocationGenerator {
                     // check for empty space above
                     if (y + 2 < layer.getHeight() && layer.getCell(x, y + 2) == null) {
                         addCell(layer, walls.getTile(WallTile.MidWallBottom), x, y + 0);
-                        // addCell(layer, midWallCenter, x, y + 1);
                         addCell(layer, walls.getTile(WallTile.MidWallTop), x, y + 1);
+                    }
+                }
+            }
+        }
+
+        // add bookend walls
+        for (int x = 0; x < layer.getWidth(); x++) {
+            for (int y = 0; y < layer.getHeight(); y++) {
+                // check ground below, wall here
+                if (layer.isGround(x, y - 1) && layer.isWall(x, y)) {
+                    // check for ground left or right
+                    if (!layer.isWall(x - 1, y)) {
+                        // no wall to the left
+                        addCell(trim, walls.getTile(WallTile.LeftWallBottom), x, y + 0);
+                        addCell(trim, walls.getTile(WallTile.LeftWallTop), x, y + 1);
+                    } else if (!layer.isWall(x + 1, y)) {
+                        // no wall to the right
+                        addCell(trim, walls.getTile(WallTile.RightWallBottom), x, y + 0);
+                        addCell(trim, walls.getTile(WallTile.RightWallTop), x, y + 1);
                     }
                 }
             }

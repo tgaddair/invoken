@@ -1,0 +1,212 @@
+
+uiskin_rpg.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+default-window
+  rotate: false
+  xy: 0, 376
+  size: 100, 100
+  split: 20, 55, 20, 20
+  pads: 10, 10, 10, 10
+  orig: 100, 100
+  offset: 0, 0
+  index: -1
+default-select
+  rotate: false
+  xy: 1, 75
+  size: 27, 20
+  split: 4, 14, 4, 4
+  orig: 27, 20
+  offset: 0, 0
+  index: -1
+default-round-large
+  rotate: false
+  xy: 1, 53
+  size: 20, 20
+  split: 5, 5, 5, 4
+  orig: 20, 20
+  offset: 0, 0
+  index: -1
+default-round-down
+  rotate: false
+  xy: 1, 31
+  size: 12, 20
+  split: 5, 5, 5, 4
+  orig: 12, 20
+  offset: 0, 0
+  index: -1
+default-round
+  rotate: false
+  xy: 1, 9
+  size: 12, 20
+  split: 5, 5, 5, 4
+  orig: 12, 20
+  offset: 0, 0
+  index: -1
+default-slider-knob
+  rotate: false
+  xy: 15, 33
+  size: 9, 18
+  orig: 9, 18
+  offset: 0, 0
+  index: -1
+check-off
+  rotate: false
+  xy: 15, 17
+  size: 14, 14
+  orig: 14, 14
+  offset: 0, 0
+  index: -1
+textfield
+  rotate: false
+  xy: 15, 17
+  size: 14, 14
+  split: 3, 3, 3, 3
+  orig: 14, 14
+  offset: 0, 0
+  index: -1
+default-slider
+  rotate: false
+  xy: 23, 65
+  size: 8, 8
+  split: 2, 2, 2, 2
+  orig: 8, 8
+  offset: 0, 0
+  index: -1
+check-on
+  rotate: false
+  xy: 15, 1
+  size: 14, 14
+  orig: 14, 14
+  offset: 0, 0
+  index: -1
+default-pane
+  rotate: false
+  xy: 23, 60
+  size: 5, 3
+  split: 1, 1, 1, 1
+  orig: 5, 3
+  offset: 0, 0
+  index: -1
+default-rect-pad
+  rotate: false
+  xy: 23, 60
+  size: 5, 3
+  split: 1, 1, 1, 1
+  orig: 5, 3
+  offset: 0, 0
+  index: -1
+default-splitpane-vertical
+  rotate: false
+  xy: 23, 53
+  size: 3, 5
+  split: 0, 0, 0, 5
+  orig: 3, 5
+  offset: 0, 0
+  index: -1
+cursor
+  rotate: false
+  xy: 28, 55
+  size: 3, 3
+  split: 1, 1, 1, 1
+  orig: 3, 3
+  offset: 0, 0
+  index: -1
+default-splitpane
+  rotate: false
+  xy: 26, 45
+  size: 5, 3
+  split: 0, 5, 0, 0
+  orig: 5, 3
+  offset: 0, 0
+  index: -1
+default-select-selection
+  rotate: false
+  xy: 26, 40
+  size: 3, 3
+  split: 1, 1, 1, 1
+  orig: 3, 3
+  offset: 0, 0
+  index: -1
+default-pane-noborder
+  rotate: false
+  xy: 30, 125
+  size: 1, 1
+  split: 0, 0, 0, 0
+  orig: 1, 1
+  offset: 0, 0
+  index: -1
+selection
+  rotate: false
+  xy: 30, 62
+  size: 1, 1
+  orig: 1, 1
+  offset: 0, 0
+  index: -1
+default-button-up
+  rotate: false
+  xy: 293, 294
+  size: 45, 49
+  split: 10, 10, 10, 10
+  orig: 45, 49
+  offset: 0, 0
+  index: -1
+default-button-down
+  rotate: false
+  xy: 290, 94
+  size: 45, 45
+  split: 10, 10, 10, 10
+  orig: 45, 45
+  offset: 0, 0
+  index: -1
+default-rect
+  rotate: false
+  xy: 0, 376
+  size: 100, 100
+  split: 20, 55, 20, 20
+  pads: 10, 10, 10, 10
+  orig: 100, 100
+  offset: 0, 0
+  index: -1
+default-panel-inset
+  rotate: false
+  xy: 200, 294
+  size: 93, 94
+  split: 20, 55, 20, 20
+  pads: 10, 10, 10, 10
+  orig: 93, 94
+  offset: 0, 0
+  index: -1
+default-progress-bg
+  rotate: false
+  xy: 338, 386
+  size: 18, 18
+  split: 0, 0, 0, 0
+  orig: 18, 18
+  offset: 0, 0
+  index: -1
+default-progress-bgh
+  rotate: false
+  xy: 338, 386
+  size: 6, 6
+  split: 0, 0, 0, 0
+  orig: 6, 6
+  offset: 0, 0
+  index: -1
+default-progress-vertical
+  rotate: false
+  xy: 356, 386
+  size: 18, 18
+  split: 0, 0, 0, 0
+  orig: 18, 18
+  offset: 0, 0
+  index: -1
+default-progress-horizontal
+  rotate: false
+  xy: 356, 376
+  size: 6, 6
+  split: 0, 0, 0, 0
+  orig: 6, 6
+  offset: 0, 0
+  index: -1
