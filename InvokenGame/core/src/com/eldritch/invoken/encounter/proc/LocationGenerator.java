@@ -517,18 +517,19 @@ public class LocationGenerator {
         front.setOpacity(1.0f);
         front.setName("overlay-trim-front");
 
-        // fill in top trim
+        // fill in front trim
         for (int x = 0; x < layer.getWidth(); x++) {
             for (int y = 0; y < layer.getHeight(); y++) {
                 if (!base.isWall(x, y) && base.isWall(x, y - 1)) {
-                    if (!layer.hasCell(x - 1, y)) {
-                        addCell(front, walls.getTile(WallTile.FrontLeftTrim), x, y);
-                    } else {
-                        addCell(front, walls.getTile(WallTile.FrontMiddleTrim), x, y);
-                    }
+                    addCell(front, walls.getTile(WallTile.FrontMiddleTrim), x, y);
                 }
             }
         }
+        
+        LocationLayer left = new LocationLayer(base.getWidth(), base.getHeight(), PX, PX, map);
+        left.setVisible(true);
+        left.setOpacity(1.0f);
+        left.setName("overlay-trim-left");
 
         LocationLayer right = new LocationLayer(base.getWidth(), base.getHeight(), PX, PX, map);
         right.setVisible(true);
@@ -537,15 +538,18 @@ public class LocationGenerator {
 
         for (int x = 0; x < layer.getWidth(); x++) {
             for (int y = 0; y < layer.getHeight(); y++) {
-                if (!base.isWall(x, y) && base.isWall(x, y - 1)) {
-                    if (!layer.hasCell(x + 1, y)) {
+                if (!base.isWall(x, y) && base.isWall(x, y - 1) && layer.hasCell(x, y)) {
+                    if (!front.hasCell(x - 1, y)) {
+                        addCell(left, walls.getTile(WallTile.FrontLeftTrim), x, y);
+                    }
+                    if (!front.hasCell(x + 1, y)) {
                         addCell(right, walls.getTile(WallTile.FrontRightTrim), x, y);
                     }
                 }
             }
         }
 
-        return ImmutableList.of(layer, front, right);
+        return ImmutableList.of(layer, front, left, right);
     }
 
     private boolean matchesTile(LocationLayer layer, int x, int y, TiledMapTile tile) {

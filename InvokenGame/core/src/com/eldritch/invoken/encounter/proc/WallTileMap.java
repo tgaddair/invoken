@@ -11,7 +11,10 @@ public class WallTileMap {
     private static final int SIZE = Settings.PX;
 
     public enum WallTile {
-        Roof, LeftWallTop, LeftWallBottom, MidWallTop, MidWallCenter, MidWallBottom, RightWallTop, RightWallBottom, LeftTrim, RightTrim, TopLeftTrim, TopRightTrim, LeftCorner, RightCorner, TopLeftCorner, TopRightCorner, FrontLeftTrim, FrontMiddleTrim, FrontRightTrim, OverlayBelowTrim, OverlayLeftTrim, OverlayRightTrim
+        Roof, LeftWallTop, LeftWallBottom, MidWallTop, MidWallCenter, MidWallBottom, RightWallTop, //
+        RightWallBottom, LeftTrim, RightTrim, TopLeftTrim, TopRightTrim, LeftCorner, RightCorner, //
+        TopLeftCorner, TopRightCorner, FrontLeftTrim, FrontMiddleTrim, FrontRightTrim, //
+        OverlayBelowTrim, OverlayLeftTrim, OverlayRightTrim
     }
 
     private final Map<WallTile, NormalMappedTile> tiles;
@@ -42,9 +45,9 @@ public class WallTileMap {
         tiles.put(WallTile.RightCorner, getTile(roof, 32, 0, SIZE / 2));
         tiles.put(WallTile.TopLeftCorner, getTile(roof, 48, 16, SIZE / 2));
         tiles.put(WallTile.TopRightCorner, getTile(roof, 32, 16, SIZE / 2));
-        tiles.put(WallTile.FrontLeftTrim, getTile(roof, 0, 64));
+        tiles.put(WallTile.FrontLeftTrim, getTile(roof, 0, 64, SIZE / 2, SIZE));
         tiles.put(WallTile.FrontMiddleTrim, getTile(roof, 16, 64));
-        tiles.put(WallTile.FrontRightTrim, getTile(roof, 32, 64));
+        tiles.put(WallTile.FrontRightTrim, getTile(roof, 48, 64, SIZE / 2, SIZE, SIZE / 2, 0));
         tiles.put(WallTile.OverlayBelowTrim, getTile(roof, 16, 32));
         tiles.put(WallTile.OverlayLeftTrim, getTile(roof, 32, 32));
         tiles.put(WallTile.OverlayRightTrim, getTile(roof, 0, 32));
