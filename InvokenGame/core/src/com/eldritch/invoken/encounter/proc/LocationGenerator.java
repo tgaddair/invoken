@@ -164,19 +164,21 @@ public class LocationGenerator {
         for (int i = 0; i < typeMap.length; i++) {
             for (int j = 0; j < typeMap[i].length; j++) {
                 if (typeMap[i][j] != CellType.Floor) {
-                    addTile(i, j, roof, roofTile);
+                    // addTile(i, j, roof, roofTile);
                 }
             }
         }
 
         InvokenGame.log("Creating Overlays");
-        LocationLayer overlayTrim1 = createTrimLayer(base, overlay, map);
+        List<LocationLayer> trimLayers = createTrimLayers(base, overlay, map);
         LocationLayer doorLayer = createEmptyLayer(base, map, "doors");
         List<LocationLayer> overlayTrims = createOverlayTrimLayer(base, roof, overlay, map);
 
         // add all the overlays
         map.addOverlay(roof);
-        map.addOverlay(overlayTrim1);
+        for (LocationLayer layer : trimLayers) {
+            map.addOverlay(layer);
+        }
         map.addOverlay(overlay);
         map.addOverlay(doorLayer);
         for (LocationLayer layer : overlayTrims) {
@@ -430,11 +432,6 @@ public class LocationGenerator {
         layer.setOpacity(1.0f);
         layer.setName("base");
 
-        LocationLayer trim = new LocationLayer(width, height, PX, PX, map);
-        trim.setVisible(true);
-        trim.setOpacity(1.0f);
-        trim.setName("base-trim");
-
         for (int i = 0; i < typeMap.length; i++) {
             for (int j = 0; j < typeMap[i].length; j++) {
                 if (typeMap[i][j] == CellType.Floor) {
@@ -442,12 +439,22 @@ public class LocationGenerator {
                 }
             }
         }
+        
+        LocationLayer left = new LocationLayer(width, height, PX, PX, map);
+        left.setVisible(true);
+        left.setOpacity(1.0f);
+        left.setName("base-left");
+        
+        LocationLayer right = new LocationLayer(width, height, PX, PX, map);
+        right.setVisible(true);
+        right.setOpacity(1.0f);
+        right.setName("base-right");
 
         // add walls
-        addWalls(layer, trim);
+        addWalls(layer, left, right, typeMap);
         InvokenGame.log("done");
 
-        return ImmutableList.of(layer, trim);
+        return ImmutableList.of(layer, left, right);
     }
 
     private LocationLayer createEmptyLayer(LocationLayer base, LocationMap map, String name) {
@@ -458,7 +465,8 @@ public class LocationGenerator {
         return layer;
     }
 
-    private LocationLayer createTrimLayer(LocationLayer base, LocationLayer overlay, LocationMap map) {
+    private List<LocationLayer> createTrimLayers(LocationLayer base, LocationLayer overlay,
+            LocationMap map) {
         LocationLayer layer = new LocationLayer(base.getWidth(), base.getHeight(), PX, PX, map);
         layer.setVisible(true);
         layer.setOpacity(1.0f);
@@ -503,17 +511,41 @@ public class LocationGenerator {
                 }
             }
         }
-        
+
+        LocationLayer front = new LocationLayer(base.getWidth(), base.getHeight(), PX, PX, map);
+        front.setVisible(true);
+        front.setOpacity(1.0f);
+        front.setName("overlay-trim-front");
+
         // fill in top trim
         for (int x = 0; x < layer.getWidth(); x++) {
             for (int y = 0; y < layer.getHeight(); y++) {
-                if (!layer.hasCell(x, y) && !base.isWall(x, y) && base.isWall(x, y - 1)) {
-                    addCell(layer, walls.getTile(WallTile.TopTrim), x, y);
+                if (!base.isWall(x, y) && base.isWall(x, y - 1)) {
+                    if (!layer.hasCell(x - 1, y)) {
+                        addCell(front, walls.getTile(WallTile.FrontLeftTrim), x, y);
+                    } else {
+                        addCell(front, walls.getTile(WallTile.FrontMiddleTrim), x, y);
+                    }
                 }
             }
         }
 
-        return layer;
+        LocationLayer right = new LocationLayer(base.getWidth(), base.getHeight(), PX, PX, map);
+        right.setVisible(true);
+        right.setOpacity(1.0f);
+        right.setName("overlay-trim-right");
+
+        for (int x = 0; x < layer.getWidth(); x++) {
+            for (int y = 0; y < layer.getHeight(); y++) {
+                if (!base.isWall(x, y) && base.isWall(x, y - 1)) {
+                    if (!layer.hasCell(x + 1, y)) {
+                        addCell(right, walls.getTile(WallTile.FrontRightTrim), x, y);
+                    }
+                }
+            }
+        }
+
+        return ImmutableList.of(layer, front, right);
     }
 
     private boolean matchesTile(LocationLayer layer, int x, int y, TiledMapTile tile) {
@@ -734,7 +766,7 @@ public class LocationGenerator {
         });
     }
 
-    private void addWalls(LocationLayer layer, LocationLayer trim) {
+    private void addWalls(LocationLayer layer, LocationLayer left, LocationLayer right, CellType[][] typeMap) {
         for (int x = 0; x < layer.getWidth(); x++) {
             for (int y = 0; y < layer.getHeight(); y++) {
                 Cell cell = layer.getCell(x, y);
@@ -752,16 +784,17 @@ public class LocationGenerator {
         for (int x = 0; x < layer.getWidth(); x++) {
             for (int y = 0; y < layer.getHeight(); y++) {
                 // check ground below, wall here
-                if (layer.isGround(x, y - 1) && layer.isWall(x, y)) {
+                if (typeMap[x][y] == CellType.Floor && layer.isWall(x, y) && layer.isWall(x, y + 1)) {
                     // check for ground left or right
                     if (!layer.isWall(x - 1, y)) {
                         // no wall to the left
-                        addCell(trim, walls.getTile(WallTile.LeftWallBottom), x, y + 0);
-                        addCell(trim, walls.getTile(WallTile.LeftWallTop), x, y + 1);
-                    } else if (!layer.isWall(x + 1, y)) {
+                        addCell(left, walls.getTile(WallTile.LeftWallBottom), x, y + 0);
+                        addCell(left, walls.getTile(WallTile.LeftWallTop), x, y + 1);
+                    } 
+                    if (!layer.isWall(x + 1, y)) {
                         // no wall to the right
-                        addCell(trim, walls.getTile(WallTile.RightWallBottom), x, y + 0);
-                        addCell(trim, walls.getTile(WallTile.RightWallTop), x, y + 1);
+                        addCell(right, walls.getTile(WallTile.RightWallBottom), x, y + 0);
+                        addCell(right, walls.getTile(WallTile.RightWallTop), x, y + 1);
                     }
                 }
             }

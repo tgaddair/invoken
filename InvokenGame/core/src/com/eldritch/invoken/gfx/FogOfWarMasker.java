@@ -90,7 +90,8 @@ public class FogOfWarMasker {
         // reset
         for (int i = 0; i < mask.length; i++) {
             for (int j = 0; j < mask[i].length; j++) {
-                mask[i][j] = false;
+//                mask[i][j] = false;
+                mask[i][j] = true;
             }
         }
 
