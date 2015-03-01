@@ -170,15 +170,14 @@ public class LocationGenerator {
         }
 
         InvokenGame.log("Creating Overlays");
-        List<LocationLayer> trimLayers = createTrimLayers(base, overlay, map);
+        LocationLayer trimLayer = createTrimLayer(base, overlay, map);
         LocationLayer doorLayer = createEmptyLayer(base, map, "doors");
-        List<LocationLayer> overlayTrims = createOverlayTrimLayer(base, roof, overlay, map);
+        List<LocationLayer> overlayTrims = createOverlayTrimLayer(base, roof, trimLayer, overlay,
+                map);
 
         // add all the overlays
         map.addOverlay(roof);
-        for (LocationLayer layer : trimLayers) {
-            map.addOverlay(layer);
-        }
+        map.addOverlay(trimLayer);
         map.addOverlay(overlay);
         map.addOverlay(doorLayer);
         for (LocationLayer layer : overlayTrims) {
@@ -439,12 +438,12 @@ public class LocationGenerator {
                 }
             }
         }
-        
+
         LocationLayer left = new LocationLayer(width, height, PX, PX, map);
         left.setVisible(true);
         left.setOpacity(1.0f);
         left.setName("base-left");
-        
+
         LocationLayer right = new LocationLayer(width, height, PX, PX, map);
         right.setVisible(true);
         right.setOpacity(1.0f);
@@ -465,8 +464,7 @@ public class LocationGenerator {
         return layer;
     }
 
-    private List<LocationLayer> createTrimLayers(LocationLayer base, LocationLayer overlay,
-            LocationMap map) {
+    private LocationLayer createTrimLayer(LocationLayer base, LocationLayer overlay, LocationMap map) {
         LocationLayer layer = new LocationLayer(base.getWidth(), base.getHeight(), PX, PX, map);
         layer.setVisible(true);
         layer.setOpacity(1.0f);
@@ -496,60 +494,7 @@ public class LocationGenerator {
             }
         }
 
-        // fill in corners
-        walls.getTile(WallTile.TopLeftCorner).setOffsetX(Settings.PX / 2);
-        for (int x = 0; x < layer.getWidth(); x++) {
-            for (int y = 0; y < layer.getHeight(); y++) {
-                if (!layer.hasCell(x, y)) {
-                    if (matchesTile(layer, x, y - 1, walls.getTile(WallTile.LeftTrim))) {
-                        // top left corner
-                        addCell(layer, walls.getTile(WallTile.TopLeftCorner), x, y);
-                    } else if (matchesTile(layer, x, y - 1, walls.getTile(WallTile.RightTrim))) {
-                        // top right corner
-                        addCell(layer, walls.getTile(WallTile.TopRightCorner), x, y);
-                    }
-                }
-            }
-        }
-
-        LocationLayer front = new LocationLayer(base.getWidth(), base.getHeight(), PX, PX, map);
-        front.setVisible(true);
-        front.setOpacity(1.0f);
-        front.setName("overlay-trim-front");
-
-        // fill in front trim
-        for (int x = 0; x < layer.getWidth(); x++) {
-            for (int y = 0; y < layer.getHeight(); y++) {
-                if (!base.isWall(x, y) && base.isWall(x, y - 1)) {
-                    addCell(front, walls.getTile(WallTile.FrontMiddleTrim), x, y);
-                }
-            }
-        }
-        
-        LocationLayer left = new LocationLayer(base.getWidth(), base.getHeight(), PX, PX, map);
-        left.setVisible(true);
-        left.setOpacity(1.0f);
-        left.setName("overlay-trim-left");
-
-        LocationLayer right = new LocationLayer(base.getWidth(), base.getHeight(), PX, PX, map);
-        right.setVisible(true);
-        right.setOpacity(1.0f);
-        right.setName("overlay-trim-right");
-
-        for (int x = 0; x < layer.getWidth(); x++) {
-            for (int y = 0; y < layer.getHeight(); y++) {
-                if (!base.isWall(x, y) && base.isWall(x, y - 1) && layer.hasCell(x, y)) {
-                    if (!front.hasCell(x - 1, y)) {
-                        addCell(left, walls.getTile(WallTile.FrontLeftTrim), x, y);
-                    }
-                    if (!front.hasCell(x + 1, y)) {
-                        addCell(right, walls.getTile(WallTile.FrontRightTrim), x, y);
-                    }
-                }
-            }
-        }
-
-        return ImmutableList.of(layer, front, left, right);
+        return layer;
     }
 
     private boolean matchesTile(LocationLayer layer, int x, int y, TiledMapTile tile) {
@@ -580,7 +525,7 @@ public class LocationGenerator {
     }
 
     private List<LocationLayer> createOverlayTrimLayer(LocationLayer base, LocationLayer roof,
-            LocationLayer overlay, LocationMap map) {
+            LocationLayer trim, LocationLayer overlay, LocationMap map) {
         LocationLayer layer1 = new LocationLayer(base.getWidth(), base.getHeight(), PX, PX, map);
         layer1.setVisible(true);
         layer1.setOpacity(1.0f);
@@ -653,7 +598,70 @@ public class LocationGenerator {
             }
         }
 
-        return ImmutableList.of(layer1, layer2);
+        LocationLayer front = new LocationLayer(base.getWidth(), base.getHeight(), PX, PX, map);
+        front.setVisible(true);
+        front.setOpacity(1.0f);
+        front.setName("overlay-trim-front");
+
+        // fill in front trim
+        for (int x = 0; x < trim.getWidth(); x++) {
+            for (int y = 0; y < trim.getHeight(); y++) {
+                if (!base.isWall(x, y) && base.isWall(x, y - 1)) {
+                    addCell(front, walls.getTile(WallTile.FrontMiddleTrim), x, y);
+                }
+            }
+        }
+
+        // fill in corners
+        walls.getTile(WallTile.TopLeftCorner).setOffsetX(Settings.PX / 2);
+        for (int x = 0; x < trim.getWidth(); x++) {
+            for (int y = 0; y < trim.getHeight(); y++) {
+                if (!front.hasCell(x, y) && trim.hasCell(x, y - 1)) {
+                    if (matchesTile(front, x + 1, y, walls.getTile(WallTile.FrontMiddleTrim))) {
+                        // top left corner
+                        addCell(front, walls.getTile(WallTile.TopLeftCorner), x, y);
+                    } else if (matchesTile(front, x - 1, y, walls.getTile(WallTile.FrontMiddleTrim))) {
+                        // top right corner
+                        addCell(front, walls.getTile(WallTile.TopRightCorner), x, y);
+                    }
+                }
+
+                // if (!trim.hasCell(x, y) && !overlay.hasCell(x, y)) {
+                // if (matchesTile(trim, x, y - 1, walls.getTile(WallTile.LeftTrim))) {
+                // // top left corner
+                // addCell(front, walls.getTile(WallTile.TopLeftCorner), x, y);
+                // } else if (matchesTile(trim, x, y - 1, walls.getTile(WallTile.RightTrim))) {
+                // // top right corner
+                // addCell(front, walls.getTile(WallTile.TopRightCorner), x, y);
+                // }
+                // }
+            }
+        }
+
+        LocationLayer left = new LocationLayer(base.getWidth(), base.getHeight(), PX, PX, map);
+        left.setVisible(true);
+        left.setOpacity(1.0f);
+        left.setName("overlay-trim-left");
+
+        LocationLayer right = new LocationLayer(base.getWidth(), base.getHeight(), PX, PX, map);
+        right.setVisible(true);
+        right.setOpacity(1.0f);
+        right.setName("overlay-trim-right");
+
+        for (int x = 0; x < trim.getWidth(); x++) {
+            for (int y = 0; y < trim.getHeight(); y++) {
+                if (!base.isWall(x, y) && base.isWall(x, y - 1) && (trim.hasCell(x, y) || overlay.hasCell(x, y))) {
+                    if (!front.hasCell(x - 1, y) && !trim.hasCell(x - 1, y)) {
+                        addCell(left, walls.getTile(WallTile.FrontLeftTrim), x, y);
+                    }
+                    if (!front.hasCell(x + 1, y) && !trim.hasCell(x + 1, y)) {
+                        addCell(right, walls.getTile(WallTile.FrontRightTrim), x, y);
+                    }
+                }
+            }
+        }
+
+        return ImmutableList.of(layer1, layer2, front, left, right);
     }
 
     private CollisionLayer createCollisionLayer(LocationLayer base, LocationMap map) {
@@ -770,7 +778,8 @@ public class LocationGenerator {
         });
     }
 
-    private void addWalls(LocationLayer layer, LocationLayer left, LocationLayer right, CellType[][] typeMap) {
+    private void addWalls(LocationLayer layer, LocationLayer left, LocationLayer right,
+            CellType[][] typeMap) {
         for (int x = 0; x < layer.getWidth(); x++) {
             for (int y = 0; y < layer.getHeight(); y++) {
                 Cell cell = layer.getCell(x, y);
@@ -794,7 +803,7 @@ public class LocationGenerator {
                         // no wall to the left
                         addCell(left, walls.getTile(WallTile.LeftWallBottom), x, y + 0);
                         addCell(left, walls.getTile(WallTile.LeftWallTop), x, y + 1);
-                    } 
+                    }
                     if (!layer.isWall(x + 1, y)) {
                         // no wall to the right
                         addCell(right, walls.getTile(WallTile.RightWallBottom), x, y + 0);
