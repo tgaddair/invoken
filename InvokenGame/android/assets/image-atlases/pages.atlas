@@ -835,6 +835,18 @@ future/floor
   offset: 0, 0
   index: -1
 
+future-obj2.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+future/light1
+  rotate: false
+  xy: 256, 128
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+
 future-walls.png
 format: RGBA8888
 filter: Nearest,Nearest

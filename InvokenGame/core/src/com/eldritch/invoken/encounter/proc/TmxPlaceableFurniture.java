@@ -53,6 +53,11 @@ public class TmxPlaceableFurniture implements PlaceableFurniture {
         for (NaturalVector2 origin : origins) {
             int x = origin.x;
             int y = origin.y;
+            if (!fits(tiles, origin, room)) {
+                // the full extents of furniture must fit within the room
+                continue;
+            }
+
             if (isContiguous(tiles, x, y, map) && compatible(presentLayers, tiles, x, y)) {
                 return NaturalVector2.of(x, y);
             }
@@ -65,6 +70,14 @@ public class TmxPlaceableFurniture implements PlaceableFurniture {
     public void place(NaturalVector2 position, LocationMap map) {
         map.merge(tiles, position);
 
+    }
+
+    private boolean fits(TiledMap furniture, NaturalVector2 origin, ConnectedRoom room) {
+        TiledMapTileLayer collision = (TiledMapTileLayer) furniture.getLayers().get("collision");
+        Set<NaturalVector2> points = room.getPoints();
+        NaturalVector2 offset = NaturalVector2.of(origin.x + collision.getWidth(), origin.y
+                + collision.getHeight());
+        return points.contains(origin) && points.contains(offset);
     }
 
     private boolean compatible(Map<String, LocationLayer> presentLayers, TiledMap furniture, int x,
@@ -147,8 +160,7 @@ public class TmxPlaceableFurniture implements PlaceableFurniture {
         }
     }
 
-    private boolean isContiguous(TiledMap candidate, int x, int y,
-            LocationMap map) {
+    private boolean isContiguous(TiledMap candidate, int x, int y, LocationMap map) {
         LocationLayer base = (LocationLayer) map.getLayers().get("base");
         LocationLayer collision = (LocationLayer) map.getLayers().get("collision");
         TiledMapTileLayer collision2 = (TiledMapTileLayer) candidate.getLayers().get("collision");

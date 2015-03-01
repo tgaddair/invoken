@@ -41,8 +41,7 @@ public abstract class FurnitureGenerator {
 
     public void addLights(LocationLayer layer, LocationLayer base, List<Light> lights,
             TiledMapTile placer) {
-        TiledMapTile light = new StaticTiledMapTile(atlas.findRegion("test-biome/light1"));
-        light.setOffsetY(-Settings.PX / 2);
+        TiledMapTile light = new StaticTiledMapTile(atlas.findRegion("future/light1"));
         for (int y = 0; y < base.getHeight(); y++) {
             // scan by row so we can properly distribute lights
             int lastLight = 0;
