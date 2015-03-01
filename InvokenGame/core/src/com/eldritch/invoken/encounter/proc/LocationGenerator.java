@@ -488,7 +488,27 @@ public class LocationGenerator {
             }
         }
 
+        // fill in corners
+        walls.getTile(WallTile.TopLeftCorner).setOffsetX(Settings.PX / 2);
+        for (int x = 0; x < layer.getWidth(); x++) {
+            for (int y = 0; y < layer.getHeight(); y++) {
+                if (!layer.hasCell(x, y)) {
+                    if (matchesTile(layer, x, y - 1, walls.getTile(WallTile.LeftTrim))) {
+                        // top left corner
+                        addCell(layer, walls.getTile(WallTile.TopLeftCorner), x, y);
+                    } else if (matchesTile(layer, x, y - 1, walls.getTile(WallTile.RightTrim))) {
+                        // top right corner
+                        addCell(layer, walls.getTile(WallTile.TopRightCorner), x, y);
+                    }
+                }
+            }
+        }
+
         return layer;
+    }
+
+    private boolean matchesTile(LocationLayer layer, int x, int y, TiledMapTile tile) {
+        return layer.hasCell(x, y) && layer.getCell(x, y).getTile() == tile;
     }
 
     private LocationLayer createOverlayLayer(LocationLayer base, LocationMap map) {
