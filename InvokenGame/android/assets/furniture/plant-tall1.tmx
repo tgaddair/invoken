@@ -58,7 +58,7 @@
    eJxjYEAAFkYGBmZGBgwAAADqAAo=
   </data>
  </layer>
- <layer name="collision" width="3" height="3" visible="0">
+ <layer name="collision" width="3" height="3">
   <data encoding="base64" compression="zlib">
    eJxjYCAMAAAkAAE=
   </data>

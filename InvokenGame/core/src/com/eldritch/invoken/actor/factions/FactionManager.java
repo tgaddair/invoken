@@ -128,7 +128,7 @@ public class FactionManager {
         }
         
         // add 1 point of positive reaction for every 5 points in charisma
-        reaction += agent.getInfo().getCharisma() / 4;
+        reaction += agent.getInfo().getCharisma() / 5;
         
         return reaction;
     }
