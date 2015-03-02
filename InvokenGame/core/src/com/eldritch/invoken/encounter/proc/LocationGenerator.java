@@ -225,7 +225,7 @@ public class LocationGenerator {
         Location location = new Location(proto, map, state, globalSeed);
         location.addLights(lights);
         // location.addActivators(activators);
-        location.addActivators(map.getActivators());
+        location.addEntities(map);
 
         // debug
         // saveLayer(base);

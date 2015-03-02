@@ -52,6 +52,7 @@ import com.eldritch.invoken.actor.items.Item;
 import com.eldritch.invoken.actor.pathfinding.PathManager;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.CoverPoint;
+import com.eldritch.invoken.actor.type.DynamicEntity;
 import com.eldritch.invoken.actor.type.Npc;
 import com.eldritch.invoken.actor.type.Player;
 import com.eldritch.invoken.actor.type.TemporaryEntity;
@@ -72,6 +73,7 @@ import com.eldritch.invoken.ui.AgentStatusRenderer;
 import com.eldritch.invoken.ui.DebugEntityRenderer;
 import com.eldritch.invoken.util.Settings;
 import com.google.common.base.Optional;
+import com.google.common.collect.Lists;
 
 public class Location {
     private static Pool<Rectangle> rectPool = new Pool<Rectangle>() {
@@ -80,7 +82,7 @@ public class Location {
             return new Rectangle();
         }
     };
-    
+
     private final Pool<Bullet> bulletPool;
     private final LineOfSightHandler losHandler = new LineOfSightHandler();
     private final Color actionsColor = new Color(1, 0, 0, 1);
@@ -100,6 +102,7 @@ public class Location {
     private final List<Drawable> drawables = new ArrayList<Drawable>();
     private final List<TemporaryEntity> tempEntities = new ArrayList<TemporaryEntity>();
     private final List<Activator> activators = new ArrayList<Activator>();
+    private final List<DynamicEntity> objects = Lists.newArrayList();
     private final List<SecurityCamera> securityCameras = new ArrayList<SecurityCamera>();
     private final Set<NaturalVector2> activeTiles = new HashSet<NaturalVector2>();
     private final Set<NaturalVector2> filledTiles = new HashSet<NaturalVector2>();
@@ -196,13 +199,13 @@ public class Location {
         short mask = Settings.BIT_WALL; // only collide with walls
         PointLight.setContactFilter(category, group, mask);
     }
-    
+
     public Bullet obtainBullet(AgentHandler handler, Vector2 position, Vector2 velocity) {
         Bullet bullet = bulletPool.obtain();
         bullet.setup(handler, position, velocity);
         return bullet;
     }
-    
+
     public void freeBullet(Bullet bullet) {
         bullet.setActive(false);
         bulletPool.free(bullet);
@@ -264,10 +267,15 @@ public class Location {
         this.entities.addAll(entities);
     }
 
-    public void addActivators(List<Activator> activators) {
+    public void addEntities(LocationMap map) {
+        List<Activator> activators = map.getActivators();
         this.activators.addAll(activators);
         for (Activator activator : activators) {
             activator.register(this);
+        }
+        for (DynamicEntity entity : map.getEntities()) {
+            objects.add(entity);
+            entity.register(this);
         }
     }
 
@@ -604,6 +612,13 @@ public class Location {
                 drawables.add(activator);
             }
         }
+        
+        // add objects
+        for (DynamicEntity entity : objects) {
+            if (activeTiles.contains(getCellPosition(entity.getPosition()))) {
+                drawables.add(entity);
+            }
+        }
 
         // add temporary entities
         drawables.addAll(tempEntities);
@@ -770,7 +785,7 @@ public class Location {
     public boolean isObstacle(int x, int y) {
         return collision.hasCell(x, y);
     }
-    
+
     public boolean isBulletWall(NaturalVector2 point) {
         return map.isWall(point.x, point.y) && !collision.ignoresBullets(point.x, point.y);
     }
@@ -1160,7 +1175,7 @@ public class Location {
         public boolean hasLineOfSight() {
             return lineOfSight;
         }
-        
+
         public float getFraction() {
             return fraction;
         }
@@ -1188,7 +1203,7 @@ public class Location {
                 // no common bits, so these items don't collide
                 return false;
             }
-            
+
             // check that the fixture belongs to another agent
             if (fixture.getUserData() != null && fixture.getUserData() instanceof Agent) {
                 // cannot be obstructed by an agent

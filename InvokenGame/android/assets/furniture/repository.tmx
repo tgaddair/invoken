@@ -22,6 +22,15 @@
  <tileset firstgid="263" name="furniture-lab" tilewidth="32" tileheight="32">
   <image source="../maps/graphics/tiles/furniture-lab.png" width="512" height="512"/>
  </tileset>
+ <tileset firstgid="519" name="future-obj2" tilewidth="32" tileheight="32">
+  <image source="../image-atlases/future-obj2.png" width="512" height="512"/>
+ </tileset>
+ <tileset firstgid="775" name="future-obj3" tilewidth="32" tileheight="32">
+  <image source="../image-atlases/future-obj3.png" width="512" height="512"/>
+ </tileset>
+ <tileset firstgid="1031" name="future-obj4" tilewidth="32" tileheight="32">
+  <image source="../image-atlases/future-obj4.png" width="512" height="512"/>
+ </tileset>
  <layer name="objects" width="1" height="2">
   <data encoding="base64" compression="zlib">
    eJzzYmRgiAJiAAPKAKc=
@@ -29,7 +38,7 @@
  </layer>
  <layer name="objects2" width="1" height="2">
   <data encoding="base64" compression="zlib">
-   eJzjZGQAAwAAVwAL
+   eJzLZmEAAwADfABw
   </data>
  </layer>
  <layer name="constraints" width="1" height="2" visible="0">

@@ -13,10 +13,12 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
 import com.eldritch.invoken.activators.Activator;
 import com.eldritch.invoken.actor.type.CoverPoint;
+import com.eldritch.invoken.actor.type.DynamicEntity;
 import com.eldritch.invoken.encounter.ConnectedRoomManager;
 import com.eldritch.invoken.encounter.NaturalVector2;
 import com.eldritch.invoken.encounter.layer.LocationLayer.CollisionLayer;
 import com.eldritch.invoken.util.Settings;
+import com.google.common.collect.Lists;
 
 public class LocationMap extends TiledMap {
 	private enum Type {
@@ -32,6 +34,7 @@ public class LocationMap extends TiledMap {
     private final int height;
     private Set<NaturalVector2> activeTiles = null;
     private final List<Activator> activators = new ArrayList<Activator>();
+    private final List<DynamicEntity> entities = Lists.newArrayList();
     private final List<CoverPoint> coverPoints = new ArrayList<CoverPoint>();
     private final TiledMap overlayMap = new TiledMap();
 
@@ -107,8 +110,16 @@ public class LocationMap extends TiledMap {
     	activators.add(activator);
     }
     
+    public void addEntity(DynamicEntity entity) {
+        entities.add(entity);
+    }
+    
     public List<Activator> getActivators() {
     	return activators;
+    }
+    
+    public List<DynamicEntity> getEntities() {
+        return entities;
     }
     
     public void update(Set<NaturalVector2> activeTiles) {
@@ -168,6 +179,12 @@ public class LocationMap extends TiledMap {
             TiledMapTileLayer layer = (TiledMapTileLayer) mapLayer;
             if (layer.getName().equals("constraints")) {
                 // don't add the constraints
+                continue;
+            }
+            
+            if (layer.getName().startsWith("dynamics")) {
+                // add dynamic entities separately
+                addEntity(new DynamicEntity(layer, offset));
                 continue;
             }
             
