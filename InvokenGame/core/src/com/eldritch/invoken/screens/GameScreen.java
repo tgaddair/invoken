@@ -22,6 +22,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.activators.Activator;
+import com.eldritch.invoken.actor.AgentInfo;
 import com.eldritch.invoken.actor.PreparedAugmentations;
 import com.eldritch.invoken.actor.Profession;
 import com.eldritch.invoken.actor.type.Agent;
@@ -141,7 +142,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
             // InvokenGame.LOCATION_READER.readAsset("IcarianEmbassy");
             // InvokenGame.LOCATION_READER.readAsset("DebugPlayground");
             // InvokenGame.LOCATION_READER.readAsset("CentralProcessing");
-//             InvokenGame.LOCATION_READER.readAsset("ShippingAndReceiving");
+            // InvokenGame.LOCATION_READER.readAsset("ShippingAndReceiving");
             InvokenGame.LOCATION_READER.readAsset("CustomsAdministration");
             LocationGenerator generator = new LocationGenerator(gameState, data.getBiome(),
                     rand.nextLong());
@@ -301,6 +302,16 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
             font.draw(batch, String.format("Enemies: %d", enemies), 10, getHeight()
                     - (30 + 20 * i++));
 
+            AgentInfo info = target.getInfo();
+            font.draw(batch, String.format("Warfare: %d", info.getWarfare()), 10, getHeight()
+                    - (30 + 20 * i++));
+            font.draw(batch, String.format("Automata: %d", info.getAutomata()), 10, getHeight()
+                    - (30 + 20 * i++));
+            font.draw(batch, String.format("Subterfuge: %d", info.getSubterfuge()), 10,
+                    getHeight() - (30 + 20 * i++));
+            font.draw(batch, String.format("Charisma: %d", info.getCharisma()), 10, getHeight()
+                    - (30 + 20 * i++));
+
             if (target instanceof Npc) {
                 Npc npc = (Npc) target;
                 String task = npc.getLastTask();
@@ -445,7 +456,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         // handle entity selection
         boolean selection = false;
         for (Agent entity : location.getActors()) {
-            if (entity.contains(world.x, world.y)) { //&& player.canTarget(entity, location)) {
+            if (entity.contains(world.x, world.y)) { // && player.canTarget(entity, location)) {
                 selection = true;
                 if (player.getInfo().getAugmentations().hasActiveAugmentation(button)
                         && player.getInfo().getAugmentations().getActiveAugmentation(button)

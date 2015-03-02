@@ -137,7 +137,7 @@ public class TmxPlaceableFurniture implements PlaceableFurniture {
                             // tile in base is required to be ground, but isn't
                             return false;
                         }
-                        if (constraint.equals("wall") && !existing.isWall(x + i, y + j)) {
+                        if (constraint.equals("wall") && existing.isGround(x + i, y + j)) {
                             // tile in base is required to be wall, but isn't
                             return false;
                         }
