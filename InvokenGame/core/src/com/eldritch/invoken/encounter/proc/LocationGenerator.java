@@ -90,8 +90,9 @@ public class LocationGenerator {
         atlas = GameScreen.ATLAS;
         normalAtlas = GameScreen.NORMAL_ATLAS;
 
-        walls = WallTileMap.from(atlas.findRegion("future" + WALL),
-                atlas.findRegion("future" + ROOF));
+        String biomeName = "future";
+        walls = WallTileMap.from(atlas.findRegion(biomeName + WALL),
+                atlas.findRegion(biomeName + ROOF));
         ground = getTile(FLOOR);
 
         narrowWall = merge(walls.getTile(WallTile.RightTrim), walls.getTile(WallTile.LeftTrim));
@@ -611,7 +612,7 @@ public class LocationGenerator {
                 }
             }
         }
-        
+
         LocationLayer lcorner = new LocationLayer(base.getWidth(), base.getHeight(), PX, PX, map);
         lcorner.setVisible(true);
         lcorner.setOpacity(1.0f);
@@ -621,7 +622,6 @@ public class LocationGenerator {
         rcorner.setVisible(true);
         rcorner.setOpacity(1.0f);
         rcorner.setName("overlay-trim-right");
-
 
         // bottom left
         TiledMapTile leftCorner = walls.getTile(WallTile.LeftCorner);
@@ -637,24 +637,22 @@ public class LocationGenerator {
         // fill in corners
         for (int x = 0; x < roof.getWidth(); x++) {
             for (int y = 0; y < roof.getHeight(); y++) {
-                if (roof.isFilled(x, y) && !overlay.isFilled(x, y)) {
-                    if (overlay.isFilled(x + 1, y)) {
-                        // case I: overlay to the right, wall at current position
-                        // add a left corner here
-                        addCell(lcorner, leftCorner, x, y);
-                    }
+                if (overlay.isFilled(x + 1, y)
+                        && (trim.isFilled(x, y + 1) || overlay.isFilled(x, y + 1))) {
+                    // case I: overlay to the right, wall at current position
+                    // add a left corner here
+                    addCell(lcorner, leftCorner, x, y);
                 }
             }
         }
 
         for (int x = 0; x < roof.getWidth(); x++) {
             for (int y = 0; y < roof.getHeight(); y++) {
-                if (roof.isFilled(x, y) && !overlay.isFilled(x, y)) {
-                    if (overlay.isFilled(x - 1, y)) {
-                        // case II: overlay to the left, wall at current position
-                        // add a right corner here
-                        addCell(rcorner, rightCorner, x, y);
-                    }
+                if (overlay.isFilled(x - 1, y)
+                        && (trim.isFilled(x, y + 1) || overlay.isFilled(x, y + 1))) {
+                    // case II: overlay to the left, wall at current position
+                    // add a right corner here
+                    addCell(rcorner, rightCorner, x, y);
                 }
             }
         }
