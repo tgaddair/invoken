@@ -91,9 +91,10 @@ public class LocationGenerator {
         normalAtlas = GameScreen.NORMAL_ATLAS;
 
         String biomeName = "future";
-        walls = WallTileMap.from(atlas.findRegion(biomeName + WALL),
-                atlas.findRegion(biomeName + ROOF));
-        ground = getTile(FLOOR);
+        NormalMappedTile wall = getTile(WALL, biomeName);
+        NormalMappedTile roof = getTile(ROOF, biomeName);
+        walls = WallTileMap.from(wall, roof);
+        ground = getTile(FLOOR, biome);
 
         narrowWall = merge(walls.getTile(WallTile.RightTrim), walls.getTile(WallTile.LeftTrim));
 
@@ -106,7 +107,7 @@ public class LocationGenerator {
         shortCollider.getProperties().put("collision", "short");
     }
 
-    private NormalMappedTile getTile(String asset) {
+    private NormalMappedTile getTile(String asset, String biome) {
         return new NormalMappedTile(atlas.findRegion(biome + asset), normalAtlas.findRegion(biome
                 + asset));
     }

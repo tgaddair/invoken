@@ -664,7 +664,7 @@ future/roof
   index: -1
 future/wall
   rotate: false
-  xy: 192, 410
+  xy: 192, 416
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
@@ -679,6 +679,53 @@ artoran/roof
 artoran/wall
   rotate: false
   xy: 256, 256
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+shipping/roof
+  rotate: false
+  xy: 448, 320
+  size: 64, 96
+  orig: 64, 96
+  offset: 0, 0
+  index: -1
+shipping/wall
+  rotate: false
+  xy: 64, 96
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+heavy/roof
+  rotate: false
+  xy: 448, 320
+  size: 64, 96
+  orig: 64, 96
+  offset: 0, 0
+  index: -1
+office/roof
+  rotate: false
+  xy: 384, 320
+  size: 64, 96
+  orig: 64, 96
+  offset: 0, 0
+  index: -1
+office/wall
+  rotate: false
+  xy: 0, 256
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+
+future-walls2.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+heavy/wall
+  rotate: false
+  xy: 192, 192
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
