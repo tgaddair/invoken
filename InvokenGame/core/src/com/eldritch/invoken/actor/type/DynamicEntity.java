@@ -21,13 +21,14 @@ import com.eldritch.invoken.util.Settings;
 
 public class DynamicEntity extends CollisionEntity implements Drawable, Locatable {
     private final TiledMapTileLayer layer;
+    private final Vector2 offset;
     private Body body;
 
     public DynamicEntity(TiledMapTileLayer layer, NaturalVector2 position) {
         super(getWidth(layer), getHeight(layer));
         this.layer = layer;
-        Vector2 offset = getOffset(layer);
-        this.position.set((position.x + offset.x) / getWidth(), position.y + offset.y);
+        this.offset = getOffset(layer);
+        this.position.set(position.x, position.y);
     }
 
     @Override
@@ -47,8 +48,8 @@ public class DynamicEntity extends CollisionEntity implements Drawable, Locatabl
             for (int j = 0; j < layer.getHeight(); j++) {
                 Cell cell = layer.getCell(i, j);
                 if (cell != null && cell.getTile() != null) {
-                    batch.draw(cell.getTile().getTextureRegion(), body.getPosition().x + i
-                            - getWidth() / 2, body.getPosition().y + j - getWidth() / 3, 1, 1);
+                    batch.draw(cell.getTile().getTextureRegion(), body.getPosition().x + i - offset.x - 0.5f,
+                            body.getPosition().y + j - offset.y - 0.5f, 1, 1);
                 }
             }
         }
@@ -58,10 +59,11 @@ public class DynamicEntity extends CollisionEntity implements Drawable, Locatabl
     private Body createBody(World world) {
         CircleShape circleShape = new CircleShape();
         circleShape.setPosition(new Vector2());
-        circleShape.setRadius(getWidth() / 3);
+        circleShape.setRadius(getRadius());
 
         BodyDef characterBodyDef = new BodyDef();
-        characterBodyDef.position.set(getPosition());
+        characterBodyDef.position.set(getPosition().x + offset.x + getRadius(), getPosition().y
+                + offset.y + getRadius());
         characterBodyDef.type = BodyType.DynamicBody;
         Body body = world.createBody(characterBodyDef);
 
@@ -85,6 +87,10 @@ public class DynamicEntity extends CollisionEntity implements Drawable, Locatabl
         return body;
     }
 
+    private float getRadius() {
+        return getWidth() / 3;
+    }
+
     private static float getWidth(TiledMapTileLayer layer) {
         float maxWidth = 0;
         for (int j = 0; j < layer.getHeight(); j++) {
@@ -96,6 +102,7 @@ public class DynamicEntity extends CollisionEntity implements Drawable, Locatabl
             }
             maxWidth = Math.max(maxWidth, width);
         }
+        System.out.println("width = " + maxWidth);
         return maxWidth;
     }
 
@@ -110,6 +117,7 @@ public class DynamicEntity extends CollisionEntity implements Drawable, Locatabl
             }
             maxHeight = Math.max(maxHeight, height);
         }
+        System.out.println("height = " + maxHeight);
         return maxHeight;
     }
 
@@ -117,6 +125,7 @@ public class DynamicEntity extends CollisionEntity implements Drawable, Locatabl
         for (int i = 0; i < layer.getWidth(); i++) {
             for (int j = 0; j < layer.getHeight(); j++) {
                 if (layer.getCell(i, j) != null) {
+                    System.out.println("offset = " + i + " " + j);
                     return new Vector2(i, j);
                 }
             }

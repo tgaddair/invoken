@@ -82,34 +82,18 @@ public class TmxPlaceableFurniture implements PlaceableFurniture {
 
     private boolean compatible(Map<String, LocationLayer> presentLayers, TiledMap furniture, int x,
             int y) {
+        boolean satisfied = false;
         for (MapLayer mapLayer : furniture.getLayers()) {
             TiledMapTileLayer layer = (TiledMapTileLayer) mapLayer;
-            if (layer.getName().equals("constraints")) {
+            if (layer.getName().startsWith("constraints")) {
                 LocationLayer existing = presentLayers.get("base");
-                if (existing == null) {
+                if (existing == null || satisfied) {
                     // no base layer to be in conflict with
                     continue;
                 }
 
-                // check that constraints are satisfied in the base layer
-                for (int i = 0; i < layer.getWidth(); i++) {
-                    for (int j = 0; j < layer.getHeight(); j++) {
-                        Cell cell = layer.getCell(i, j);
-                        if (cell != null) {
-                            String constraint = cell.getTile().getProperties()
-                                    .get("constraint", String.class);
-                            if (constraint != null) {
-                                if (constraint.equals("ground") && !existing.isGround(x + i, y + j)) {
-                                    // tile in base is required to be ground, but isn't
-                                    return false;
-                                }
-                                if (constraint.equals("wall") && !existing.isWall(x + i, y + j)) {
-                                    // tile in base is required to be wall, but isn't
-                                    return false;
-                                }
-                            }
-                        }
-                    }
+                if (compatible(layer, existing, furniture, x, y)) {
+                    satisfied = true;
                 }
             } else {
                 LocationLayer existing = presentLayers.get(mapLayer.getName());
@@ -136,6 +120,31 @@ public class TmxPlaceableFurniture implements PlaceableFurniture {
             }
         }
 
+        return satisfied;
+    }
+
+    private boolean compatible(TiledMapTileLayer layer, LocationLayer existing, TiledMap furniture,
+            int x, int y) {
+        // check that constraints are satisfied in the base layer
+        for (int i = 0; i < layer.getWidth(); i++) {
+            for (int j = 0; j < layer.getHeight(); j++) {
+                Cell cell = layer.getCell(i, j);
+                if (cell != null) {
+                    String constraint = cell.getTile().getProperties()
+                            .get("constraint", String.class);
+                    if (constraint != null) {
+                        if (constraint.equals("ground") && !existing.isGround(x + i, y + j)) {
+                            // tile in base is required to be ground, but isn't
+                            return false;
+                        }
+                        if (constraint.equals("wall") && !existing.isWall(x + i, y + j)) {
+                            // tile in base is required to be wall, but isn't
+                            return false;
+                        }
+                    }
+                }
+            }
+        }
         return true;
     }
 

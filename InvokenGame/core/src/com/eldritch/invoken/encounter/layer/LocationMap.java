@@ -177,7 +177,7 @@ public class LocationMap extends TiledMap {
         Map<String, LocationLayer> presentLayers = getLayerMap();
         for (MapLayer mapLayer : map.getLayers()) {
             TiledMapTileLayer layer = (TiledMapTileLayer) mapLayer;
-            if (layer.getName().equals("constraints")) {
+            if (layer.getName().startsWith("constraints")) {
                 // don't add the constraints
                 continue;
             }
