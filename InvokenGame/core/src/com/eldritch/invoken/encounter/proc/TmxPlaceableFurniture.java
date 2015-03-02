@@ -53,12 +53,12 @@ public class TmxPlaceableFurniture implements PlaceableFurniture {
         for (NaturalVector2 origin : origins) {
             int x = origin.x;
             int y = origin.y;
-            if (!fits(tiles, origin, room)) {
-                // the full extents of furniture must fit within the room
-                continue;
-            }
+            // if (!fits(tiles, origin, room)) {
+            // the full extents of furniture must fit within the room
+            // continue;
+            // }
 
-            if (isContiguous(tiles, x, y, map) && compatible(presentLayers, tiles, x, y)) {
+            if (isContiguous(tiles, x, y, map) && compatible(presentLayers, tiles, x, y, room)) {
                 return NaturalVector2.of(x, y);
             }
         }
@@ -72,16 +72,8 @@ public class TmxPlaceableFurniture implements PlaceableFurniture {
 
     }
 
-    private boolean fits(TiledMap furniture, NaturalVector2 origin, ConnectedRoom room) {
-        TiledMapTileLayer collision = (TiledMapTileLayer) furniture.getLayers().get("collision");
-        Set<NaturalVector2> points = room.getPoints();
-        NaturalVector2 offset = NaturalVector2.of(origin.x + collision.getWidth(), origin.y
-                + collision.getHeight());
-        return points.contains(origin) && points.contains(offset);
-    }
-
     private boolean compatible(Map<String, LocationLayer> presentLayers, TiledMap furniture, int x,
-            int y) {
+            int y, ConnectedRoom room) {
         boolean satisfied = false;
         for (MapLayer mapLayer : furniture.getLayers()) {
             TiledMapTileLayer layer = (TiledMapTileLayer) mapLayer;
@@ -92,7 +84,7 @@ public class TmxPlaceableFurniture implements PlaceableFurniture {
                     continue;
                 }
 
-                if (compatible(layer, existing, furniture, x, y)) {
+                if (compatible(layer, existing, furniture, x, y, room)) {
                     satisfied = true;
                 }
             } else {
@@ -124,8 +116,9 @@ public class TmxPlaceableFurniture implements PlaceableFurniture {
     }
 
     private boolean compatible(TiledMapTileLayer layer, LocationLayer existing, TiledMap furniture,
-            int x, int y) {
+            int x, int y, ConnectedRoom room) {
         // check that constraints are satisfied in the base layer
+        Set<NaturalVector2> points = room.getPoints();
         for (int i = 0; i < layer.getWidth(); i++) {
             for (int j = 0; j < layer.getHeight(); j++) {
                 Cell cell = layer.getCell(i, j);
@@ -133,7 +126,8 @@ public class TmxPlaceableFurniture implements PlaceableFurniture {
                     String constraint = cell.getTile().getProperties()
                             .get("constraint", String.class);
                     if (constraint != null) {
-                        if (constraint.equals("ground") && !existing.isGround(x + i, y + j)) {
+                        if (constraint.equals("ground") && (!existing.isGround(x + i, y + j)
+                                || !points.contains(NaturalVector2.of(x + i, y + j)))) {
                             // tile in base is required to be ground, but isn't
                             return false;
                         }

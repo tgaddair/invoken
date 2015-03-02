@@ -967,6 +967,9 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
                 lastSeen.put(neighbor, 0f);
             }
         }
+        
+        // TODO: if we changed our natural position, then alert all neighbors to our presence
+        // if they pass a detection check
 
         // restore energy in proportion to elapsed time
         if (!isStunted()) {
