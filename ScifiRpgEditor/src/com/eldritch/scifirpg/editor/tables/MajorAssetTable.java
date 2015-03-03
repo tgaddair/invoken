@@ -93,7 +93,7 @@ public abstract class MajorAssetTable<T extends Message> extends IdentifiedAsset
 		return String.format("%s/%s/%s.dat", getTopAssetDirectory(), directory, id);
 	}
 	
-	protected String getTopAssetDirectory() {
+	public static String getTopAssetDirectory() {
 		return "../InvokenGame/android/assets/data";
 	}
 }
