@@ -90,7 +90,7 @@ public class LocationGenerator {
         atlas = GameScreen.ATLAS;
         normalAtlas = GameScreen.NORMAL_ATLAS;
 
-        String biomeName = "future";
+        String biomeName = "office";
         NormalMappedTile wall = getTile(WALL, biomeName);
         NormalMappedTile roof = getTile(ROOF, biomeName);
         walls = WallTileMap.from(wall, roof);

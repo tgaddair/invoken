@@ -53,11 +53,6 @@ public class TmxPlaceableFurniture implements PlaceableFurniture {
         for (NaturalVector2 origin : origins) {
             int x = origin.x;
             int y = origin.y;
-            // if (!fits(tiles, origin, room)) {
-            // the full extents of furniture must fit within the room
-            // continue;
-            // }
-
             if (isContiguous(tiles, x, y, map) && compatible(presentLayers, tiles, x, y, room)) {
                 return NaturalVector2.of(x, y);
             }

@@ -636,14 +636,14 @@ misc-walls.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
-grime/roof
+horro/roof
   rotate: false
   xy: 384, 320
   size: 64, 96
   orig: 64, 96
   offset: 0, 0
   index: -1
-grime/wall
+horro/wall
   rotate: false
   xy: 448, 416
   size: 64, 64
@@ -706,14 +706,35 @@ heavy/roof
   index: -1
 office/roof
   rotate: false
-  xy: 384, 320
+  xy: 320, 320
   size: 64, 96
   orig: 64, 96
   offset: 0, 0
   index: -1
 office/wall
   rotate: false
-  xy: 0, 256
+  xy: 448, 96
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+grime/roof
+  rotate: false
+  xy: 448, 320
+  size: 64, 96
+  orig: 64, 96
+  offset: 0, 0
+  index: -1
+grime/wall
+  rotate: false
+  xy: 448, 416
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+solid/wall
+  rotate: false
+  xy: 448, 96
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
