@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" width="2" height="2" tilewidth="32" tileheight="32">
+ <tileset firstgid="1" name="furniture-modern" tilewidth="32" tileheight="32">
+  <image source="../maps/graphics/tiles/furniture-modern.png" width="512" height="512"/>
+ </tileset>
+ <tileset firstgid="257" name="furniture-placement" tilewidth="32" tileheight="32">
+  <image source="../maps/graphics/tiles/furniture-placement.png" width="64" height="64"/>
+  <tile id="2">
+   <properties>
+    <property name="constraint" value="ground"/>
+   </properties>
+  </tile>
+  <tile id="3">
+   <properties>
+    <property name="constraint" value="wall"/>
+   </properties>
+  </tile>
+ </tileset>
+ <tileset firstgid="261" name="collision" tilewidth="32" tileheight="32">
+  <image source="../maps/graphics/tiles/collision.png" width="64" height="32"/>
+  <tile id="0">
+   <properties>
+    <property name="collision" value="short"/>
+   </properties>
+  </tile>
+ </tileset>
+ <tileset firstgid="263" name="furniture-lab" tilewidth="32" tileheight="32">
+  <image source="../maps/graphics/tiles/furniture-lab.png" width="512" height="512"/>
+ </tileset>
+ <tileset firstgid="519" name="future-obj3" tilewidth="32" tileheight="32">
+  <image source="../image-atlases/future-obj3.png" width="512" height="512"/>
+ </tileset>
+ <tileset firstgid="775" name="future-obj4" tilewidth="32" tileheight="32">
+  <image source="../image-atlases/future-obj4.png" width="512" height="512"/>
+ </tileset>
+ <layer name="objects" width="2" height="2">
+  <data encoding="base64" compression="zlib">
+   eJxrYWJgaAXiKUA8FYgBFcgCOw==
+  </data>
+ </layer>
+ <layer name="constraints" width="2" height="2" visible="0">
+  <data encoding="base64" compression="zlib">
+   eJxjYWRgYAFiZigGAADIABM=
+  </data>
+ </layer>
+ <layer name="collision" width="2" height="2">
+  <data encoding="base64" compression="zlib">
+   eJxjYIAAVkYIBgAAVgAN
+  </data>
+ </layer>
+</map>
