@@ -160,6 +160,9 @@ public class Location {
             if (layer.getName().equals("collision")) {
                 layer.setVisible(false);
                 collision = (CollisionLayer) layer;
+                
+                // remove collision points used during procedural generation
+                collision.removeTransient();
             }
         }
         this.collision = collision;

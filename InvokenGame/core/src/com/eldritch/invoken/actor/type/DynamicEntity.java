@@ -1,6 +1,7 @@
 package com.eldritch.invoken.actor.type;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
@@ -83,6 +84,15 @@ public class DynamicEntity extends CollisionEntity implements Drawable, Locatabl
         Filter filter = fixture.getFilterData();
         filter.categoryBits = Settings.BIT_AGENT;
         filter.maskBits = Settings.BIT_ANYTHING;
+        
+        // optional collision filter
+        MapProperties props = layer.getProperties();
+        if (props.containsKey("category")) {
+            if (props.get("category").equals("low")) {
+                filter.categoryBits = Settings.BIT_SHORT_OBSTACLE;
+            }
+        }
+        
         fixture.setFilterData(filter);
 
         body.setAngularDamping(10);

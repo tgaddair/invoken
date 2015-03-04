@@ -17,9 +17,17 @@
   </tile>
  </tileset>
  <tileset firstgid="261" name="collision" tilewidth="32" tileheight="32">
-  <image source="../maps/graphics/tiles/collision.png" width="64" height="32"/>
+  <image source="../maps/graphics/tiles/collision.png" width="64" height="64"/>
+  <tile id="2">
+   <properties>
+    <property name="transient" value=""/>
+   </properties>
+  </tile>
  </tileset>
  <layer name="dynamics" width="1" height="1">
+  <properties>
+   <property name="category" value="low"/>
+  </properties>
   <data encoding="base64" compression="zlib">
    eJzLYmBgAAABrABr
   </data>
@@ -29,9 +37,9 @@
    eJxjZmRgAAAAEwAF
   </data>
  </layer>
- <layer name="collision" width="1" height="1" visible="0">
+ <layer name="collision" width="1" height="1">
   <data encoding="base64" compression="zlib">
-   eJxjYGBgAAAABAAB
+   eJxjZ2RgAAAAIwAJ
   </data>
  </layer>
 </map>

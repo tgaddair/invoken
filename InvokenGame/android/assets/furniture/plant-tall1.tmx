@@ -17,25 +17,30 @@
   </tile>
  </tileset>
  <tileset firstgid="261" name="collision" tilewidth="32" tileheight="32">
-  <image source="../maps/graphics/tiles/collision.png" width="64" height="32"/>
+  <image source="../maps/graphics/tiles/collision.png" width="64" height="64"/>
   <tile id="0">
    <properties>
     <property name="collision" value="short"/>
    </properties>
   </tile>
+  <tile id="2">
+   <properties>
+    <property name="transient" value=""/>
+   </properties>
+  </tile>
  </tileset>
- <tileset firstgid="263" name="modern-activators" tilewidth="32" tileheight="32">
+ <tileset firstgid="265" name="modern-activators" tilewidth="32" tileheight="32">
   <image source="../image-atlases/modern-activators.png" width="64" height="64"/>
  </tileset>
- <tileset firstgid="267" name="lab-tiles" tilewidth="32" tileheight="32">
+ <tileset firstgid="269" name="lab-tiles" tilewidth="32" tileheight="32">
   <image source="../image-atlases/lab-tiles.png" width="512" height="512"/>
  </tileset>
- <tileset firstgid="523" name="future-obj4" tilewidth="32" tileheight="32">
+ <tileset firstgid="525" name="future-obj4" tilewidth="32" tileheight="32">
   <image source="../image-atlases/future-obj4.png" width="512" height="512"/>
  </tileset>
  <layer name="dynamics" width="3" height="3">
   <data encoding="base64" compression="zlib">
-   eJxjYGBg4GdigAN5JDYMAAAE1AAz
+   eJxjYGBgEGRigANFJDYMAAAFPAA3
   </data>
  </layer>
  <layer name="constraints" width="3" height="3" visible="0">
@@ -60,7 +65,7 @@
  </layer>
  <layer name="collision" width="3" height="3">
   <data encoding="base64" compression="zlib">
-   eJxjYCAMAAAkAAE=
+   eJxjYEAF7IwMGAAAAMMACQ==
   </data>
  </layer>
 </map>

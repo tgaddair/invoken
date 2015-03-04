@@ -600,6 +600,62 @@ future/floor
   orig: 32, 32
   offset: 0, 0
   index: -1
+office/floor
+  rotate: false
+  xy: 224, 256
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+office-blue/floor
+  rotate: false
+  xy: 32, 224
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+office-carpet/floor
+  rotate: false
+  xy: 224, 192
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+hex/floor
+  rotate: false
+  xy: 192, 0
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+office-dark/floor
+  rotate: false
+  xy: 224, 32
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+office-grey/floor
+  rotate: false
+  xy: 224, 224
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+office-white/floor
+  rotate: false
+  xy: 224, 64
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+fourtile/floor
+  rotate: false
+  xy: 96, 96
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
 
 future-obj2.png
 format: RGBA8888
@@ -636,14 +692,14 @@ misc-walls.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
-horro/roof
+horror/roof
   rotate: false
   xy: 384, 320
   size: 64, 96
   orig: 64, 96
   offset: 0, 0
   index: -1
-horro/wall
+horror/wall
   rotate: false
   xy: 448, 416
   size: 64, 64

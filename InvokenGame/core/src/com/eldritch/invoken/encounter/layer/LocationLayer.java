@@ -1,10 +1,13 @@
 package com.eldritch.invoken.encounter.layer;
 
+import java.util.Set;
+
 import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.eldritch.invoken.encounter.NaturalVector2;
 import com.eldritch.invoken.util.Settings;
+import com.google.common.collect.Sets;
 
 public class LocationLayer extends TiledMapTileLayer {
     private final LocationMap map;
@@ -81,8 +84,31 @@ public class LocationLayer extends TiledMapTileLayer {
     }
 
     public static class CollisionLayer extends LocationLayer {
+        private final Set<NaturalVector2> temporary = Sets.newHashSet();
+        
         public CollisionLayer(int width, int height, int tileWidth, int tileHeight, LocationMap map) {
             super(width, height, tileWidth, tileHeight, map);
+        }
+        
+        @Override
+        public Cell addCell(TiledMapTile tile, int x, int y) {
+            if (tile != null) {
+                MapProperties props = tile.getProperties();
+                if (props.containsKey("transient")) {
+                    setTransient(x, y);
+                }
+            }
+            return super.addCell(tile, x, y);
+        }
+        
+        public void removeTransient() {
+            for (NaturalVector2 point : temporary) {
+                setCell(point.x, point.y, null);
+            }
+        }
+        
+        public void setTransient(int x, int y) {
+            temporary.add(NaturalVector2.of(x, y));
         }
 
         public boolean ignoresBullets(int x, int y) {
