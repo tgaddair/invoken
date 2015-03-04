@@ -117,7 +117,7 @@ public class DynamicEntity extends CollisionEntity implements Drawable, Locatabl
             }
             maxWidth = Math.max(maxWidth, width);
         }
-        System.out.println("width = " + maxWidth);
+//        System.out.println("width = " + maxWidth);
         return maxWidth;
     }
 
@@ -132,7 +132,7 @@ public class DynamicEntity extends CollisionEntity implements Drawable, Locatabl
             }
             maxHeight = Math.max(maxHeight, height);
         }
-        System.out.println("height = " + maxHeight);
+//        System.out.println("height = " + maxHeight);
         return maxHeight;
     }
 
@@ -140,7 +140,7 @@ public class DynamicEntity extends CollisionEntity implements Drawable, Locatabl
         for (int i = 0; i < layer.getWidth(); i++) {
             for (int j = 0; j < layer.getHeight(); j++) {
                 if (layer.getCell(i, j) != null) {
-                    System.out.println("offset = " + i + " " + j);
+//                    System.out.println("offset = " + i + " " + j);
                     return new Vector2(i, j);
                 }
             }

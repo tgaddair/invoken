@@ -134,8 +134,14 @@ public class NavigatedSteerable extends BasicSteerable {
     }
 
     private void computePath(NaturalVector2 destination) {
-        path = pathManager.getPath(getNearestGround(npc.getNaturalPosition()),
-                getNearestGround(destination));
+        NaturalVector2 a = getNearestGround(npc.getNaturalPosition());
+        NaturalVector2 b = getNearestGround(destination);
+        if (a == null || b == null) {
+            // no path possible
+            return;
+        }
+
+        path = pathManager.getPath(a, b);
         if (path == null) {
             InvokenGame.logfmt("Failed to find path: %s -> %s", npc.getNaturalPosition(),
                     destination);
@@ -162,7 +168,7 @@ public class NavigatedSteerable extends BasicSteerable {
         }
 
         // still haven't found any ground
-        // for now, throw an error
-        throw new RuntimeException("No ground near " + position);
+        // for now, an error
+        return null;
     }
 }
