@@ -127,6 +127,8 @@ public class Location {
     // private final RayHandler rayHandler;
 
     private final Vector2 offset = new Vector2();
+    private final Vector2 losFocus = new Vector2();
+    
     private NaturalVector2 currentCell = null;
     private float currentZoom = 0;
     private Rectangle viewBounds = new Rectangle();
@@ -357,7 +359,8 @@ public class Location {
             if (!hasLineOfSight(player.getCamera().getPosition(), player.getFocusPoint())) {
                 fraction = losHandler.getFraction();
             }
-            offset.set(player.getFocusPoint()).sub(position).scl(.5f * fraction);
+            losFocus.set(player.getFocusPoint()).sub(position).scl(fraction);
+            offset.set(losFocus).scl(.5f);
         } else {
             offset.set(Vector2.Zero);
         }
@@ -490,9 +493,6 @@ public class Location {
             }
         }
 
-        // draw targeting reticle
-        // lineRenderer.drawBetween(player.getPosition(), focusPoint, camera);
-
         // render the drawables
         for (Drawable drawable : drawables) {
             drawable.render(delta, renderer);
@@ -541,8 +541,17 @@ public class Location {
             // draw pathfinding nodes
             debugEntityRenderer.renderPathfinding(player.getTarget(), camera);
         }
+
         // draw last seen
         debugEntityRenderer.renderLastSeen(player.getTarget(), camera);
+
+        // draw targeting reticle
+        if (player.isAiming()) {
+            debugEntityRenderer.drawBetween(
+                    player.getWeaponSentry().getPosition(),
+                    losFocus.add(player.getWeaponSentry().getPosition()).sub(
+                            player.getWeaponSentry().getDirection()), camera);
+        }
     }
 
     private void drawCentered(TextureRegion region, Vector2 position, Color color) {
@@ -612,7 +621,7 @@ public class Location {
                 drawables.add(activator);
             }
         }
-        
+
         // add objects
         for (DynamicEntity entity : objects) {
             if (activeTiles.contains(getCellPosition(entity.getPosition()))) {
