@@ -127,6 +127,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     private final Set<Class<?>> toggles = new HashSet<Class<?>>();
     private final Set<ProjectileHandler> projectileHandlers = new HashSet<ProjectileHandler>();
     private final LineOfSightHandler losHandler = new LineOfSightHandler();
+    private final TargetingHandler targetingHandler = new TargetingHandler();
 
     private final Color color = new Color(1, 1, 1, 1);
 
@@ -201,6 +202,24 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
 
     public boolean isAiming() {
         return aiming;
+    }
+    
+    public boolean isAimingAt(Agent other) {
+        if (!isAiming()) {
+            return false;
+        }
+        
+        Vector2 source = weaponSentry.getPosition();
+        Vector2 target = weaponSentry.getTargetingVector();
+        if (source.equals(target)) {
+            // if we don't do this check explicitly, we can get the following error:
+            // Expression: r.LengthSquared() > 0.0f
+            return true;
+        }
+        
+        location.getWorld().rayCast(targetingHandler, source, target);
+        targetingHandler.reset(other);
+        return targetingHandler.isTargeting();
     }
 
     public void addVelocityPenalty(float delta) {
@@ -1300,6 +1319,67 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     public abstract boolean canSpeak();
 
     protected abstract void takeAction(float delta, Location screen);
+    
+    private class TargetingHandler implements RayCastCallback {
+        private final short mask = Settings.BIT_SHOOTABLE;
+        private boolean targeting = false;
+        private Agent target = null;
+
+        public boolean isTargeting() {
+            return targeting;
+        }
+
+        public void reset(Agent agent) {
+            targeting = false;
+            target = agent;
+        }
+
+        @Override
+        public float reportRayFixture(Fixture fixture, Vector2 point, Vector2 normal, float fraction) {
+            int result = isTargeting(fixture);
+            if (result > 0) {
+                targeting = true;
+                return fraction;
+            }
+            return result;
+        }
+
+        private int isTargeting(Fixture fixture) {
+            short category = fixture.getFilterData().categoryBits;
+            if ((mask & category) == 0) {
+                // no common bits, so these items don't collide -> continue
+                return -1;
+            }
+
+            for (Fixture f : body.getFixtureList()) {
+                if (fixture == f) {
+                    // we cannot obstruct our own view -> continue
+                    return -1;
+                }
+            }
+
+            if (target != null) {
+                for (Fixture f : target.body.getFixtureList()) {
+                    if (fixture == f) {
+                        // this is the thing we're aiming at
+                        return 1;
+                    }
+                }
+            }
+
+            // check that the fixture belongs to another agent
+            if (fixture.getUserData() != null && fixture.getUserData() instanceof Agent) {
+                Agent agent = (Agent) fixture.getUserData();
+                if (!agent.isAlive()) {
+                    // cannot be obstructed by the body of a dead agent -> continue
+                    return -1;
+                }
+            }
+
+            // whatever it is, it's not our target and it's in the way -> terminate
+            return 0;
+        }
+    };
 
     private class LineOfSightHandler implements RayCastCallback {
         private final short mask = Settings.BIT_SHOOTABLE;
@@ -1411,6 +1491,11 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
 
         public Vector2 getDirection() {
             return direction;
+        }
+        
+        public Vector2 getTargetingVector() {
+            tmp.set(direction).scl(10);
+            return tmp;
         }
 
         @Override

@@ -19,6 +19,6 @@ public class IsIntimidated extends BooleanTask {
 
     private boolean isTooClose(Npc npc) {
         return npc.hasTarget() && npc.hasLineOfSight(npc.getTarget())
-                && npc.dst2(npc.getTarget()) < 10;
+                && npc.getTarget().isAimingAt(npc) && npc.dst2(npc.getTarget()) < 10;
     }
 }
