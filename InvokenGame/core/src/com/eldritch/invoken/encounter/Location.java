@@ -128,7 +128,7 @@ public class Location {
 
     private final Vector2 offset = new Vector2();
     private final Vector2 losFocus = new Vector2();
-    
+
     private NaturalVector2 currentCell = null;
     private float currentZoom = 0;
     private Rectangle viewBounds = new Rectangle();
@@ -498,6 +498,14 @@ public class Location {
             drawable.render(delta, renderer);
         }
 
+        // draw targeting reticle
+        if (player.isAiming()) {
+            debugEntityRenderer.drawBetween(
+                    player.getWeaponSentry().getPosition(),
+                    losFocus.add(player.getWeaponSentry().getPosition()).sub(
+                            player.getWeaponSentry().getDirection()), camera);
+        }
+
         // render the overlay layers
         overlayRenderer.getBatch().setShader(normalMapShader.getShader());
         normalMapShader.useNormalMap(true);
@@ -544,14 +552,6 @@ public class Location {
 
         // draw last seen
         debugEntityRenderer.renderLastSeen(player.getTarget(), camera);
-
-        // draw targeting reticle
-        if (player.isAiming()) {
-            debugEntityRenderer.drawBetween(
-                    player.getWeaponSentry().getPosition(),
-                    losFocus.add(player.getWeaponSentry().getPosition()).sub(
-                            player.getWeaponSentry().getDirection()), camera);
-        }
     }
 
     private void drawCentered(TextureRegion region, Vector2 position, Color color) {

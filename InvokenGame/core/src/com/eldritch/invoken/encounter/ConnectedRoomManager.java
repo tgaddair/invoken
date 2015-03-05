@@ -1,6 +1,6 @@
 package com.eldritch.invoken.encounter;
 
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Map.Entry;
 import java.util.Set;
 
@@ -9,7 +9,7 @@ import com.google.common.collect.ImmutableBiMap;
 
 public class ConnectedRoomManager {
     private final ConnectedRoom[][] rooms;
-    private final Set<ConnectedRoom> roomSet = new HashSet<ConnectedRoom>();
+    private final Set<ConnectedRoom> roomSet = new LinkedHashSet<ConnectedRoom>();
     private ImmutableBiMap<EncounterRoom, ConnectedRoom> roomMap = ImmutableBiMap.of();
 
     public ConnectedRoomManager(int width, int height) {

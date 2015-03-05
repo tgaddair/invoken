@@ -39,6 +39,7 @@ import com.eldritch.invoken.ui.HealthBar;
 import com.eldritch.invoken.ui.HudElement;
 import com.eldritch.invoken.ui.InventoryMenu;
 import com.eldritch.invoken.ui.LootMenu;
+import com.eldritch.invoken.ui.Minimap;
 import com.eldritch.invoken.ui.StatusBar;
 import com.eldritch.invoken.ui.StatusBar.EnergyCalculator;
 import com.eldritch.invoken.ui.StatusBar.HealthCalculator;
@@ -81,6 +82,8 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
     private BitmapFont font;
     private SpriteBatch batch;
 
+    private Minimap minimap;
+    private boolean showMinimap = false;
     private boolean tacticalPause = false;
 
     // for clicks and drags
@@ -133,6 +136,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
             LocationGenerator generator = new LocationGenerator(gameState, data.getBiome(),
                     state.getSeed());
             location = generator.generate(data);
+            minimap = new Minimap(location.getMap(), location.getSeed());
 
             // load from disk
             player = location.createPlayer(state);
@@ -147,6 +151,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
             LocationGenerator generator = new LocationGenerator(gameState, data.getBiome(),
                     rand.nextLong());
             location = generator.generate(data);
+            minimap = new Minimap(location.getMap(), location.getSeed());
 
             // create a new player
             player = location.createPlayer(profession);
@@ -238,11 +243,15 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         batch.begin();
         selectedHealth.draw(batch);
         dialogue.draw(batch);
+        // draw minimap
+        if (showMinimap) {
+            minimap.render(location.getPlayer(), batch, getWidth(), getHeight());
+        }
         batch.end();
 
         // draw stats
         drawStats();
-
+        
         // render the HUD
         stage.act(delta);
         stage.draw();
@@ -363,6 +372,10 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
             case Keys.SHIFT_LEFT:
                 player.holdPosition(true);
                 return true;
+            case Keys.TAB:
+                // show minimap
+                showMinimap = true;
+                return true;
         }
         return false;
     }
@@ -388,6 +401,11 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
             case Keys.F:
                 player.toggleLastAugmentation();
                 return true;
+            case Keys.TAB:
+                showMinimap = false;
+                return true;
+                
+            // debug
             case Keys.P:
                 printPlayerStatus();
                 return true;
@@ -611,6 +629,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
                 state.getSeed());
         location = generator.generate(data);
         location.spawnPlayer(player);
+        minimap = new Minimap(location.getMap(), location.getSeed());
 
         // resize
         location.resize(getWidth(), getHeight());
