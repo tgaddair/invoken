@@ -217,8 +217,8 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
             return true;
         }
         
-        location.getWorld().rayCast(targetingHandler, source, target);
         targetingHandler.reset(other);
+        location.getWorld().rayCast(targetingHandler, source, target);
         return targetingHandler.isTargeting();
     }
 
@@ -1494,7 +1494,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         }
         
         public Vector2 getTargetingVector() {
-            tmp.set(direction).scl(10);
+            tmp.set(direction).scl(15).add(position);
             return tmp;
         }
 
