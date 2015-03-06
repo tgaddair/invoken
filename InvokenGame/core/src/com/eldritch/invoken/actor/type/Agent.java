@@ -947,14 +947,32 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
 
         if (!enemies.contains(agent) && isEnemy(agent)) {
             // unfriendly, so mark them as an enemy
-            enemies.add(agent);
+            addEnemy(agent);
 
             if (assaultedBy(agent)) {
                 // they attacked us, mark them as an assaulter
                 // assault carriers a severe penalty for ranking factions
                 changeFactionRelations(agent, ASSAULT_PENALTY);
             }
+            
+            // request help from allies
+            requestAssistance(agent);
         }
+    }
+    
+    protected void addEnemy(Agent enemy) {
+        enemies.add(enemy);
+    }
+    
+    private void requestAssistance(Agent enemy) {
+        for (Agent agent : neighbors) {
+            // broadcast a message that we're now in combat with this agent
+            agent.notifyOfHostility(this, enemy);
+        }
+    }
+    
+    protected void notifyOfHostility(Agent source, Agent enemy) {
+        // does nothing
     }
     
     protected boolean isEnemy(Agent other) {

@@ -193,24 +193,35 @@ public class Behavior {
         float targetReaction = npc.getRelation(target);
         for (Agent agent : actors) {
             if (agent.hostileTo(target)) {
-                float reaction = npc.getRelation(agent);
-                if (isAllyGiven(reaction) && !isAllyGiven(targetReaction)) {
-                    // support allies against non-allies
+                if (shouldAssist(agent, target, targetReaction)) {
                     return true;
-                } else if (agent.assaultedBy(target)) {
-                    // assist allies when attacked
-                    if (isAllyGiven(reaction)) {
-                        return true;
-                    }
-                    
-                    // chivalric agents assist non-enemies when they're attacked
-                    if (assistance == Assistance.CHIVALRIC || !isEnemyGiven(reaction)) {
-                        return true;
-                    }
                 }
             }
         }
         
+        return false;
+    }
+    
+    public boolean shouldAssist(Agent agent, Agent target) {
+        return shouldAssist(agent, target, npc.getRelation(target));
+    }
+    
+    private boolean shouldAssist(Agent agent, Agent target, float targetReaction) {
+        float reaction = npc.getRelation(agent);
+        if (isAllyGiven(reaction) && !isAllyGiven(targetReaction)) {
+            // support allies against non-allies
+            return true;
+        } else if (agent.assaultedBy(target)) {
+            // assist allies when attacked
+            if (isAllyGiven(reaction)) {
+                return true;
+            }
+            
+            // chivalric agents assist non-enemies when they're attacked
+            if (assistance == Assistance.CHIVALRIC || !isEnemyGiven(reaction)) {
+                return true;
+            }
+        }
         return false;
     }
     

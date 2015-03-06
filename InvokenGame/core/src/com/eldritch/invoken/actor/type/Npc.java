@@ -333,6 +333,13 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
     }
     
     @Override
+    protected void notifyOfHostility(Agent source, Agent target) {
+        if (behavior.shouldAssist(source, target)) {
+            addEnemy(target);
+        }
+    }
+    
+    @Override
     protected boolean isEnemy(Agent other) {
         return behavior.wantsToAttack(other);
     }
