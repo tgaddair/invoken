@@ -484,7 +484,7 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
         Species species = data.getParams().getSpecies();
         switch (species) {
             case HUMAN:
-                return new HumanNpc(data, x, y, "sprite/characters/male-fair.png", location);
+                return new HumanNpc(data, x, y, location);
             case UNDEAD:
                 return new Undead(data, x, y, "sprite/characters/hollow-zombie.png", location);
             case AUTOMATON:

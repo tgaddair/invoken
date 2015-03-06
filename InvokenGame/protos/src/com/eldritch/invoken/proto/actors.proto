@@ -95,6 +95,7 @@ message ActorParams {
 	required Species species = 3;
 	optional Gender gender = 4;
 	optional Profession profession = 5;
+	optional string body_type = 12 [default = "male-fair"];
 
 	// Dynamic info
 	required int32 level = 6;

@@ -49,6 +49,7 @@ public class ActorEditorPanel extends AssetEditorPanel<NonPlayerActor, ActorTabl
 	private final JComboBox<Profession> professionBox = new JComboBox<Profession>(Profession.values());
 	private final JComboBox<Species> speciesBox = new JComboBox<Species>(Species.values());
 	private final JComboBox<Gender> genderBox = new JComboBox<Gender>(Gender.values());
+	private final JTextField bodyField = new JTextField();
 	private final JTextField levelField = new JTextField();
 	private final AugmentationTable augmentationTable = new AugmentationTable();
 	private final InventoryTable itemTable = new InventoryTable();
@@ -96,8 +97,12 @@ public class ActorEditorPanel extends AssetEditorPanel<NonPlayerActor, ActorTabl
 		builder.add(new AssetTablePanel(itemTable), cc.xy(c + 2, r));
 		r += 2;
 		
-		builder.addLabel("Traits", cc.xy(c, r));
-		builder.add(new AssetTablePanel(traitTable), cc.xy(c + 2, r));
+//		builder.addLabel("Traits", cc.xy(c, r));
+//		builder.add(new AssetTablePanel(traitTable), cc.xy(c + 2, r));
+//		r += 2;
+		
+		builder.addLabel("Body", cc.xy(c, r));
+		builder.add(bodyField, cc.xy(c + 2, r));
 		r += 2;
 		
 		aggressionBox.setSelectedItem(Aggression.AGGRESSIVE);
@@ -175,6 +180,9 @@ public class ActorEditorPanel extends AssetEditorPanel<NonPlayerActor, ActorTabl
 			if (params.hasGender()) {
 				genderBox.setSelectedItem(params.getGender());
 			}
+			if (params.hasBodyType()) {
+				bodyField.setText(params.getBodyType());
+			}
 			if (params.hasProfession()) {
 				professionBox.setSelectedItem(params.getProfession());
 			}
@@ -221,6 +229,9 @@ public class ActorEditorPanel extends AssetEditorPanel<NonPlayerActor, ActorTabl
 				.addAllKnownAugId(augmentationTable.getAssets());
 		if (genderBox.isEnabled()) {
 			params.setGender((Gender) genderBox.getSelectedItem());
+		}
+		if (!bodyField.getText().isEmpty()) {
+			params.setBodyType(bodyField.getText());
 		}
 		if (professionBox.isEnabled()) {
 			params.setProfession((Profession) professionBox.getSelectedItem());
