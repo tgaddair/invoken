@@ -945,7 +945,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
             return;
         }
 
-        if (!enemies.contains(agent) && Behavior.isEnemyGiven(relation)) {
+        if (!enemies.contains(agent) && isEnemy(agent)) {
             // unfriendly, so mark them as an enemy
             enemies.add(agent);
 
@@ -955,6 +955,10 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
                 changeFactionRelations(agent, ASSAULT_PENALTY);
             }
         }
+    }
+    
+    protected boolean isEnemy(Agent other) {
+        return Behavior.isEnemyGiven(getRelation(other));
     }
 
     @Override

@@ -157,7 +157,7 @@ public class Behavior {
     /**
      * Returns true if our aggression dictates we should attack given our reaction.
      */
-    private boolean wantsToAttack(Agent other) {
+    public boolean wantsToAttack(Agent other) {
         if (aggression == Aggression.FRENZIED) {
             // frenzied actors attack anyone on sight
             return true;
@@ -165,8 +165,9 @@ public class Behavior {
         
         float reaction = npc.getRelation(other);
         if (isEnemyGiven(reaction)) {
-            if (aggression.ordinal() >= Aggression.AGGRESSIVE_VALUE) {
+            if (aggression.ordinal() >= Aggression.AGGRESSIVE_VALUE || npc.assaultedBy(other)) {
                 // aggressive actors attack enemies on sight
+                // we also want to attack if we've been assaulted by an enemy
                 return true;
             }
         }
