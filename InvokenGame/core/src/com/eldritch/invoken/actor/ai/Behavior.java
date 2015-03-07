@@ -158,6 +158,10 @@ public class Behavior {
      * Returns true if our aggression dictates we should attack given our reaction.
      */
     public boolean wantsToAttack(Agent other) {
+        return wantsToAttack(other, false);
+    }
+    
+    public boolean wantsToAttack(Agent other, boolean alerted) {
         if (aggression == Aggression.FRENZIED) {
             // frenzied actors attack anyone on sight
             return true;
@@ -168,6 +172,10 @@ public class Behavior {
             if (aggression.ordinal() >= Aggression.AGGRESSIVE_VALUE || npc.assaultedBy(other)) {
                 // aggressive actors attack enemies on sight
                 // we also want to attack if we've been assaulted by an enemy
+                return true;
+            } else if (aggression.ordinal() >= Aggression.UNAGGRESSIVE_VALUE && alerted) {
+                // we're alerted to this enemy, so even though we're unaggressive, we see this as
+                // an opportunity to strike; note that passive NPCs will still sit this one out
                 return true;
             }
         }

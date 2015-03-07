@@ -354,6 +354,11 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
             setFocusPoint(other.getPosition());
             alert = ALERT_DURATION;
         }
+        
+        // when we're alerted to an enemy, we should treat this like assisting ourselves
+        if (behavior.wantsToAttack(other, true)) {
+            addEnemy(other);
+        }
     }
 
     @Override
