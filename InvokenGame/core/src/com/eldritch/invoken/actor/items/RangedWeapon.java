@@ -37,14 +37,24 @@ public class RangedWeapon extends Item {
         float width = getWidth();
         float height = getHeight();
         
+        // offset along the x-axis; we use this because longer guns require more support to hold
+        // properly
+        float dx = width / 5;
+        
+        float theta = direction.angle();
+        boolean flipY = theta > 90 && theta < 270;
+        
         Batch batch = renderer.getBatch();
         batch.begin();
-        batch.draw(texture,
-                position.x - width / 2, position.y - height / 2,  // position
-                width / 2, height / 2,  // origin
+        batch.draw(texture.getTexture(),
+                position.x - width / 2 - dx, position.y - height / 2,  // position
+                width / 2 + dx, height / 2,  // origin
                 width, height,  // size
                 1f, 1f,  // scale
-                direction.angle());
+                theta,  // rotation
+                0, 0,  // srcX, srcY
+                texture.getRegionWidth(), texture.getRegionHeight(),  // srcWidth, srcHeight
+                false, flipY);  // flipX, flipY
         batch.end();    
 	}
 	

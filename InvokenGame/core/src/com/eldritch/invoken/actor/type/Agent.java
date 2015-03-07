@@ -1470,6 +1470,10 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         private final Vector2 position = new Vector2();
         private final Vector2 direction = new Vector2();
         private final Vector2 tmp = new Vector2();
+        
+        // offset relative to the center of the agent so the gun appears at roughly hip level,
+        // not at the face
+        private final Vector2 offset = new Vector2(0, 0.25f);
 
         public boolean hasLineOfSight(Agent target) {
             if (!lineOfSightCache.containsKey(target)) {
@@ -1486,7 +1490,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         public void update() {
             Vector2 origin = getRenderPosition();
             direction.set(getFocusPoint()).sub(origin).nor();
-            position.set(origin.x + direction.x, origin.y + direction.y);
+            position.set(origin.x + direction.x, origin.y + direction.y).sub(offset);
             lineOfSightCache.clear();
         }
 
