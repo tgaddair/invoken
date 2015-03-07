@@ -2,7 +2,7 @@ package com.eldritch.invoken.actor.type;
 
 import com.badlogic.gdx.math.Vector2;
 
-public interface HandledProjectile {
+public interface HandledProjectile extends TemporaryEntity {
     Agent getOwner();
     
     void apply(Agent target);
