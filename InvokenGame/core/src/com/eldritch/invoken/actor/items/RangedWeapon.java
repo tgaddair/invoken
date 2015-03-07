@@ -171,7 +171,7 @@ public class RangedWeapon extends Item {
     }
 
     public static class RangedWeaponRay implements HandledProjectile {
-        private static final float FLASH_SECS = 0.1f;
+        private static final float FLASH_SECS = 0.075f;
         private static final TextureRegion texture = new TextureRegion(
                 GameScreen.getTexture("sprite/effects/bullet2.png"));
 
@@ -216,10 +216,9 @@ public class RangedWeapon extends Item {
         }
 
         private void apply() {
-            target = owner.getTargeting();
-
-            float fraction = target.getFraction();
-            width = owner.getWeaponSentry().getRange() * fraction;
+            float range = owner.getWeaponSentry().getRange(); 
+            target = owner.getTargeting(position, direction.cpy().scl(range).add(position));
+            width = range * target.getFraction();
 
             if (target.getTarget() != null) {
                 // hit something

@@ -209,22 +209,20 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
             return false;
         }
         
-        if (targetCast()) {
+        if (targetCast(weaponSentry.getPosition(), weaponSentry.getTargetingVector())) {
             return targetingHandler.isTargeting(other);
         }
         return true;
     }
     
-    public RayTarget getTargeting() {
-        targetCast();
+    public RayTarget getTargeting(Vector2 source, Vector2 target) {
+        targetCast(source, target);
         return new RayTarget(targetingHandler.getTargeting(), targetingHandler.getFraction());
     }
     
-    private boolean targetCast() {
+    private boolean targetCast(Vector2 source, Vector2 target) {
         targetingHandler.reset();
         
-        Vector2 source = weaponSentry.getPosition();
-        Vector2 target = weaponSentry.getTargetingVector();
         if (source.equals(target)) {
             // if we don't do this check explicitly, we can get the following error:
             // Expression: r.LengthSquared() > 0.0f
