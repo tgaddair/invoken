@@ -209,17 +209,30 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
             return false;
         }
         
+        if (targetCast()) {
+            return targetingHandler.isTargeting(other);
+        }
+        return true;
+    }
+    
+    public RayTarget getTargeting() {
+        targetCast();
+        return new RayTarget(targetingHandler.getTargeting(), targetingHandler.getFraction());
+    }
+    
+    private boolean targetCast() {
+        targetingHandler.reset();
+        
         Vector2 source = weaponSentry.getPosition();
         Vector2 target = weaponSentry.getTargetingVector();
         if (source.equals(target)) {
             // if we don't do this check explicitly, we can get the following error:
             // Expression: r.LengthSquared() > 0.0f
-            return true;
+            return false;
         }
         
-        targetingHandler.reset(other);
         location.getWorld().rayCast(targetingHandler, source, target);
-        return targetingHandler.isTargeting();
+        return true;
     }
 
     public void addVelocityPenalty(float delta) {
@@ -1344,24 +1357,34 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     
     private class TargetingHandler implements RayCastCallback {
         private final short mask = Settings.BIT_SHOOTABLE;
-        private boolean targeting = false;
-        private Agent target = null;
+        private Agent targeting = null;
+        private float fraction = 1;
 
-        public boolean isTargeting() {
+        public boolean isTargeting(Agent other) {
+            return targeting == other;
+        }
+        
+        public Agent getTargeting() {
             return targeting;
         }
+        
+        public float getFraction() {
+            return fraction;
+        }
 
-        public void reset(Agent agent) {
-            targeting = false;
-            target = agent;
+        public void reset() {
+            targeting = null;
+            fraction = 1;
         }
 
         @Override
         public float reportRayFixture(Fixture fixture, Vector2 point, Vector2 normal, float fraction) {
             int result = isTargeting(fixture);
             if (result > 0) {
-                targeting = true;
+                this.fraction = fraction;
                 return fraction;
+            } else if (result == 0) {
+                this.fraction = fraction;
             }
             return result;
         }
@@ -1380,28 +1403,40 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
                 }
             }
 
-            if (target != null) {
-                for (Fixture f : target.body.getFixtureList()) {
-                    if (fixture == f) {
-                        // this is the thing we're aiming at
-                        return 1;
-                    }
-                }
-            }
-
             // check that the fixture belongs to another agent
             if (fixture.getUserData() != null && fixture.getUserData() instanceof Agent) {
                 Agent agent = (Agent) fixture.getUserData();
-                if (!agent.isAlive()) {
+                if (agent.isAlive()) {
+                    targeting = agent;
+                    return 1;
+                } else {
                     // cannot be obstructed by the body of a dead agent -> continue
                     return -1;
                 }
             }
 
-            // whatever it is, it's not our target and it's in the way -> terminate
+            // whatever it is, it's not a target and it's in the way -> terminate
             return 0;
         }
     };
+    
+    public static class RayTarget {
+        private final Agent target;
+        private final float fraction;
+        
+        public RayTarget(Agent target, float fraction) {
+            this.target = target;
+            this.fraction = fraction;
+        }
+
+        public Agent getTarget() {
+            return target;
+        }
+
+        public float getFraction() {
+            return fraction;
+        }
+    }
 
     private class LineOfSightHandler implements RayCastCallback {
         private final short mask = Settings.BIT_SHOOTABLE;

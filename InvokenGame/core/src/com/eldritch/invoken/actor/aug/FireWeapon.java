@@ -4,12 +4,16 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
+import com.eldritch.invoken.actor.AgentHandler;
 import com.eldritch.invoken.actor.items.RangedWeapon;
 import com.eldritch.invoken.actor.type.Agent;
+import com.eldritch.invoken.actor.type.Agent.RayTarget;
 import com.eldritch.invoken.actor.type.HandledProjectile;
+import com.eldritch.invoken.actor.type.TemporaryEntity;
 import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.actor.type.Agent.Direction;
 import com.eldritch.invoken.effects.Bleed;
@@ -17,6 +21,7 @@ import com.eldritch.invoken.effects.HoldingWeapon;
 import com.eldritch.invoken.effects.Stunned;
 import com.eldritch.invoken.encounter.Location;
 import com.eldritch.invoken.screens.GameScreen;
+import com.eldritch.invoken.util.Settings;
 
 public class FireWeapon extends ProjectileAugmentation {
     private static final float DAMAGE_SCALE = 1;
@@ -127,7 +132,8 @@ public class FireWeapon extends ProjectileAugmentation {
         @Override
         public void apply(Location location) {
             // add bullet to scene
-            RangedWeaponBullet bullet = new RangedWeaponBullet(owner);
+//            RangedWeaponBullet bullet = new RangedWeaponBullet(owner);
+            RangedWeaponRay bullet = new RangedWeaponRay(owner);
             location.addEntity(bullet);
             
             // update agent to fact the direction of their shots
@@ -177,6 +183,80 @@ public class FireWeapon extends ProjectileAugmentation {
         @Override
         protected TextureRegion getTexture(float stateTime) {
             return texture;
+        }
+    }
+    
+    public static class RangedWeaponRay implements TemporaryEntity {
+        private static final float FLASH_SECS = 1f;
+        private static final TextureRegion texture = new TextureRegion(
+                GameScreen.getTexture("sprite/effects/bullet2.png"));
+        
+        private final Vector2 position = new Vector2();
+        private final Vector2 direction = new Vector2();
+        private final Agent owner;
+        
+        private RayTarget target = null;
+        private float elapsed = 0;
+        
+        private final float height = 0.1f;
+        private float width = 0;
+        
+        public RangedWeaponRay(Agent owner) {
+            this.owner = owner;
+            
+            // the owner may move after firing, but this vapor trail should not
+            this.position.set(owner.getWeaponSentry().getPosition());
+            this.direction.set(owner.getWeaponSentry().getDirection());
+        }
+
+        @Override
+        public void update(float delta, Location location) {
+            if (target == null) {
+                apply();
+            } else {
+                elapsed += delta;
+            }
+        }
+        
+        private void apply() {
+            target = owner.getTargeting();
+            
+            float fraction = target.getFraction();
+            width = owner.getWeaponSentry().getTargetingVector().sub(position).scl(fraction).len();
+        }
+
+        @Override
+        public void render(float delta, OrthogonalTiledMapRenderer renderer) {
+            if (target != null) {
+                Batch batch = renderer.getBatch();
+                batch.begin();
+                batch.draw(texture,
+                        position.x, position.y,  // position
+                        0, 0,  // origin
+                        width, height,  // size
+                        1f, 1f,  // scale
+                        direction.angle());  // rotation
+                batch.end(); 
+            }
+        }
+
+        @Override
+        public float getZ() {
+            return owner.getWeaponSentry().getZ() + Settings.EPSILON;
+        }
+
+        @Override
+        public Vector2 getPosition() {
+            return position;
+        }
+
+        @Override
+        public boolean isFinished() {
+            return elapsed >= FLASH_SECS;
+        }
+
+        @Override
+        public void dispose() {
         }
     }
 }
