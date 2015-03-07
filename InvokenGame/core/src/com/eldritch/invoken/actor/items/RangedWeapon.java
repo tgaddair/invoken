@@ -21,13 +21,13 @@ public class RangedWeapon extends Item {
 	private final TextureRegion texture;
 	
 	public RangedWeapon(com.eldritch.invoken.proto.Items.Item item) {
-		super(item, 18);
-		if (!Strings.isNullOrEmpty(item.getAsset())) {
-		    texture = new TextureRegion(GameScreen.getTexture(item.getAsset()));
-		} else {
-		    texture = null;
-		}
+		this(item, getRegion(item.getAsset()));
 	}
+	
+	public RangedWeapon(com.eldritch.invoken.proto.Items.Item item, TextureRegion texture) {
+        super(item, texture);
+        this.texture = texture;
+    }
 	
 	public void render(Vector2 position, Vector2 direction, OrthogonalTiledMapRenderer renderer) {
 	    if (texture == null) {
@@ -92,5 +92,13 @@ public class RangedWeapon extends Item {
             result.append(String.format("\n  %s: %d", mod.getDamage(), mod.getMagnitude()));
         }
         return result.toString();
+    }
+	   
+    private static TextureRegion getRegion(String asset) {
+        if (!Strings.isNullOrEmpty(asset)) {
+            return new TextureRegion(GameScreen.getTexture(asset));
+        } else {
+            return null;
+        }
     }
 }
