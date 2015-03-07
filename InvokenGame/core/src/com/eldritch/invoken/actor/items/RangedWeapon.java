@@ -39,7 +39,7 @@ public class RangedWeapon extends Item {
         
         // offset along the x-axis; we use this because longer guns require more support to hold
         // properly
-        float dx = width / 5;
+        float dx = width / 4;
         
         float theta = direction.angle();
         boolean flipY = theta > 90 && theta < 270;
@@ -106,9 +106,13 @@ public class RangedWeapon extends Item {
 	   
     private static TextureRegion getRegion(String asset) {
         if (!Strings.isNullOrEmpty(asset)) {
-            return new TextureRegion(GameScreen.getTexture(asset));
+            return new TextureRegion(GameScreen.getTexture(getAssetPath(asset)));
         } else {
             return null;
         }
+    }
+    
+    private static String getAssetPath(String asset) {
+        return String.format("sprite/items/weapons/%s.png", asset);
     }
 }
