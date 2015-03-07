@@ -1,30 +1,19 @@
 package com.eldritch.invoken.actor.type;
 
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector2;
 
-public abstract class HandledProjectile extends Projectile {
-    public HandledProjectile(Agent owner, TextureRegion region, float speed, float damage) {
-        super(owner, region, speed, damage);
-    }
-
-    @Override
-    protected void handleAgentContact(Agent agent) {
-        agent.handleProjectile(this);
-    }
-
-    @Override
-    protected void handleObstacleContact() {
-        cancel();
-    }
-
+public interface HandledProjectile {
+    Agent getOwner();
+    
+    void apply(Agent target);
+    
+    void reset(Agent owner, Vector2 target);
+    
+    float getDamage(Agent target);
+    
+    void cancel();
+    
     public static interface ProjectileHandler {
-        boolean handle(HandledProjectile handledProjectile);
+        boolean handle(HandledProjectile projectile);
     }
-
-    public void apply(Agent target) {
-        apply(getOwner(), target);
-        cancel();
-    }
-
-    protected abstract void apply(Agent owner, Agent target);
 }

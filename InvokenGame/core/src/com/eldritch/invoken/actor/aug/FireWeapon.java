@@ -12,6 +12,7 @@ import com.eldritch.invoken.actor.AgentHandler;
 import com.eldritch.invoken.actor.items.RangedWeapon;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Agent.RayTarget;
+import com.eldritch.invoken.actor.type.HandledBullet;
 import com.eldritch.invoken.actor.type.HandledProjectile;
 import com.eldritch.invoken.actor.type.TemporaryEntity;
 import com.eldritch.invoken.actor.type.Agent.Activity;
@@ -28,26 +29,26 @@ public class FireWeapon extends ProjectileAugmentation {
     private static final float BULLET_VELOCITY = 25;
     private static final int BASE_COST = 10;
     private static final float ALERT_RADIUS = 10;
-    
+
     private static class Holder {
         private static final FireWeapon INSTANCE = new FireWeapon();
-	}
-	
-	public static FireWeapon getInstance() {
-		return Holder.INSTANCE;
-	}
+    }
+
+    public static FireWeapon getInstance() {
+        return Holder.INSTANCE;
+    }
 
     private FireWeapon() {
         super("fire");
     }
-    
+
     @Override
     public void prepare(Agent owner) {
         // add an effect that shows a rotating weapon
         owner.toggleOn(HoldingWeapon.class);
         owner.addEffect(new HoldingWeapon(owner));
     }
-    
+
     @Override
     public void unprepare(Agent owner) {
         owner.toggleOff(HoldingWeapon.class);
@@ -57,12 +58,12 @@ public class FireWeapon extends ProjectileAugmentation {
     public Action getAction(Agent owner, Vector2 target) {
         return new FireAction(owner, target);
     }
-    
+
     @Override
     public boolean isValid(Agent owner) {
-		return super.isValid(owner) && owner.getInventory().canUseRangedWeapon();
-	}
-    
+        return super.isValid(owner) && owner.getInventory().canUseRangedWeapon();
+    }
+
     @Override
     public boolean isValid(Agent owner, Vector2 target) {
         return super.isValid(owner, target) && isValid(owner);
@@ -72,7 +73,7 @@ public class FireWeapon extends ProjectileAugmentation {
     public boolean isValid(Agent owner, Agent target) {
         return super.isValid(owner, target) && isValid(owner);
     }
-    
+
     @Override
     public int getCost(Agent owner) {
         return BASE_COST;
@@ -104,18 +105,18 @@ public class FireWeapon extends ProjectileAugmentation {
         public void render(OrthogonalTiledMapRenderer renderer) {
             super.render(renderer);
 
-//            // draw the muzzle flash
-//            TextureRegion frame = getAnimation().getKeyFrame(stateTime);
-//            Vector2 position = owner.getRenderPosition();
-//
-//            Batch batch = renderer.getSpriteBatch();
-//            batch.begin();
-//            batch.draw(frame, position.x - width / 2, position.y - height / 2, width, height);
-//            batch.end();
-//
-//            // render weapon
-//            owner.getInventory().getRangedWeapon()
-//                    .render(owner, Activity.Combat, getStateTime(), renderer);
+            // // draw the muzzle flash
+            // TextureRegion frame = getAnimation().getKeyFrame(stateTime);
+            // Vector2 position = owner.getRenderPosition();
+            //
+            // Batch batch = renderer.getSpriteBatch();
+            // batch.begin();
+            // batch.draw(frame, position.x - width / 2, position.y - height / 2, width, height);
+            // batch.end();
+            //
+            // // render weapon
+            // owner.getInventory().getRangedWeapon()
+            // .render(owner, Activity.Combat, getStateTime(), renderer);
         }
 
         @Override
@@ -132,20 +133,20 @@ public class FireWeapon extends ProjectileAugmentation {
         @Override
         public void apply(Location location) {
             // add bullet to scene
-//            RangedWeaponBullet bullet = new RangedWeaponBullet(owner);
+            // RangedWeaponBullet bullet = new RangedWeaponBullet(owner);
             RangedWeaponRay bullet = new RangedWeaponRay(owner);
             location.addEntity(bullet);
-            
+
             // update agent to fact the direction of their shots
             owner.setDirection(owner.getRelativeDirection(target));
-            
+
             // add camera shake
             owner.recoil();
-            
+
             // add cooldown to weapon
             RangedWeapon weapon = owner.getInventory().getRangedWeapon();
             owner.getInventory().setCooldown(weapon, weapon.getCooldown());
-            
+
             // alert all enemies in range if the weapon is not silenced
             for (Agent neighbor : owner.getNeighbors()) {
                 if (owner.dst2(neighbor) < ALERT_RADIUS * ALERT_RADIUS) {
@@ -153,18 +154,18 @@ public class FireWeapon extends ProjectileAugmentation {
                 }
             }
         }
-        
+
         @Override
         public Vector2 getPosition() {
             return target;
         }
-        
+
         private Animation getAnimation() {
             return animations.get(owner.getDirection());
         }
     }
 
-    public static class RangedWeaponBullet extends HandledProjectile {
+    public static class RangedWeaponBullet extends HandledBullet {
         private static final TextureRegion texture = new TextureRegion(
                 GameScreen.getTexture("sprite/effects/bullet1.png"));
 
@@ -174,7 +175,8 @@ public class FireWeapon extends ProjectileAugmentation {
 
         @Override
         protected void apply(Agent owner, Agent target) {
-        	float magnitude = getDamage(target) * owner.getInventory().getRangedWeapon().getDamage();
+            float magnitude = getDamage(target)
+                    * owner.getInventory().getRangedWeapon().getDamage();
             target.applyForce(velocity.cpy().nor().scl(100));
             target.addEffect(new Stunned(owner, target, 0.2f));
             target.addEffect(new Bleed(owner, target, magnitude));
@@ -185,28 +187,37 @@ public class FireWeapon extends ProjectileAugmentation {
             return texture;
         }
     }
-    
-    public static class RangedWeaponRay implements TemporaryEntity {
-        private static final float FLASH_SECS = 1f;
+
+    public static class RangedWeaponRay implements HandledProjectile, TemporaryEntity {
+        private static final float FLASH_SECS = 0.2f;
         private static final TextureRegion texture = new TextureRegion(
                 GameScreen.getTexture("sprite/effects/bullet2.png"));
-        
+
         private final Vector2 position = new Vector2();
         private final Vector2 direction = new Vector2();
+
         private final Agent owner;
-        
+        private final boolean reflected;
         private RayTarget target = null;
         private float elapsed = 0;
-        
+
         private final float height = 0.1f;
         private float width = 0;
         
+        private RangedWeaponRay successor = null;
+
         public RangedWeaponRay(Agent owner) {
+            this(owner, owner.getWeaponSentry().getPosition(), owner.getWeaponSentry()
+                    .getDirection(), false);
+        }
+
+        public RangedWeaponRay(Agent owner, Vector2 position, Vector2 direction, boolean reflected) {
             this.owner = owner;
-            
+            this.reflected = reflected;
+
             // the owner may move after firing, but this vapor trail should not
-            this.position.set(owner.getWeaponSentry().getPosition());
-            this.direction.set(owner.getWeaponSentry().getDirection());
+            this.position.set(position);
+            this.direction.set(direction);
         }
 
         @Override
@@ -216,13 +227,30 @@ public class FireWeapon extends ProjectileAugmentation {
             } else {
                 elapsed += delta;
             }
+            
+            if (successor != null) {
+                successor.update(delta, location);
+            }
         }
-        
+
         private void apply() {
             target = owner.getTargeting();
-            
+
             float fraction = target.getFraction();
             width = owner.getWeaponSentry().getTargetingVector().sub(position).scl(fraction).len();
+
+            if (target.getTarget() != null) {
+                // hit something
+                target.getTarget().handleProjectile(this);
+            }
+        }
+        
+        @Override
+        public void apply(Agent target) {
+            float magnitude = getDamage(target)
+                    * owner.getInventory().getRangedWeapon().getDamage();
+            target.addEffect(new Stunned(owner, target, 0.2f));
+            target.addEffect(new Bleed(owner, target, magnitude));
         }
 
         @Override
@@ -230,13 +258,16 @@ public class FireWeapon extends ProjectileAugmentation {
             if (target != null) {
                 Batch batch = renderer.getBatch();
                 batch.begin();
-                batch.draw(texture,
-                        position.x, position.y,  // position
-                        0, 0,  // origin
-                        width, height,  // size
-                        1f, 1f,  // scale
-                        direction.angle());  // rotation
-                batch.end(); 
+                batch.draw(texture, position.x, position.y, // position
+                        0, 0, // origin
+                        width, height, // size
+                        1f, 1f, // scale
+                        direction.angle()); // rotation
+                batch.end();
+            }
+            
+            if (successor != null) {
+                successor.render(delta, renderer);
             }
         }
 
@@ -257,6 +288,40 @@ public class FireWeapon extends ProjectileAugmentation {
 
         @Override
         public void dispose() {
+            // does nothing
+        }
+
+        @Override
+        public Agent getOwner() {
+            return owner;
+        }
+
+        @Override
+        public void reset(Agent owner, Vector2 target) {
+            if (reflected) {
+                // cannot reflect again, to avoid an infinite loop
+                return;
+            }
+            
+            // we need to reflect the ray from the point of contact
+            Vector2 contact = direction.cpy().scl(width).add(position);
+            
+            // perturb the bullet by a random amount
+            float rotation = (float) (Math.random() * 90) - 45;
+            Vector2 reflection = new Vector2(-direction.x, -direction.y).rotate(rotation);
+            
+            RangedWeaponRay ray = new RangedWeaponRay(owner, contact, reflection, true);
+            successor = ray;
+        }
+
+        @Override
+        public float getDamage(Agent target) {
+            return DAMAGE_SCALE * owner.getAttackScale(target);
+        }
+
+        @Override
+        public void cancel() {
+            // does nothing
         }
     }
 }

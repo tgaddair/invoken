@@ -6,6 +6,7 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.actor.aug.Augmentation;
 import com.eldritch.invoken.actor.type.Agent;
+import com.eldritch.invoken.actor.type.HandledBullet;
 import com.eldritch.invoken.actor.type.HandledProjectile;
 import com.eldritch.invoken.actor.type.HandledProjectile.ProjectileHandler;
 import com.eldritch.invoken.screens.GameScreen;
@@ -67,15 +68,15 @@ public class Shield extends BasicEffect {
 	
 	private class ShieldProjectileHandler implements ProjectileHandler {
         @Override
-        public boolean handle(HandledProjectile handledProjectile) {
-            float damage = handledProjectile.getDamage(target);
+        public boolean handle(HandledProjectile projectile) {
+            float damage = projectile.getDamage(target);
             if (damage > 0) {
                 target.getInfo().expend(damage);
                 if (target.getInfo().getEnergy() < damage) {
                     target.toggleOff(Shield.class);
                 }
                 
-                handledProjectile.cancel();
+                projectile.cancel();
                 return true;
             }
             return false;

@@ -355,10 +355,10 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         projectileHandlers.remove(handler);
     }
 
-    public void handleProjectile(HandledProjectile handledProjectile) {
+    public void handleProjectile(HandledProjectile projectile) {
         boolean handled = false;
         for (ProjectileHandler handler : projectileHandlers) {
-            boolean result = handler.handle(handledProjectile);
+            boolean result = handler.handle(projectile);
             if (result) {
                 handled = true;
                 break;
@@ -366,7 +366,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         }
 
         if (!handled) {
-            handledProjectile.apply(this);
+            projectile.apply(this);
         }
     }
 

@@ -6,7 +6,7 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.actor.type.Agent;
-import com.eldritch.invoken.actor.type.HandledProjectile;
+import com.eldritch.invoken.actor.type.HandledBullet;
 import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.effects.Paralyzed;
 import com.eldritch.invoken.encounter.Location;
@@ -60,7 +60,7 @@ public class Paralyze extends ProjectileAugmentation {
         }
     }
 
-    public static class ParalyzeBullet extends HandledProjectile {
+    public static class ParalyzeBullet extends HandledBullet {
         private static final TextureRegion[] regions = GameScreen.getRegions(
                 "sprite/effects/drain-attack.png", 32, 32)[0];
         private final Animation animation;
