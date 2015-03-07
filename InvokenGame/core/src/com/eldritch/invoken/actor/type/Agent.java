@@ -1501,6 +1501,8 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     };
 
     public class WeaponSentry implements TemporaryEntity {
+        private static final float RANGE = 15f;
+        
         private final Map<Agent, Boolean> lineOfSightCache = new HashMap<Agent, Boolean>();
         private final Vector2 position = new Vector2();
         private final Vector2 direction = new Vector2();
@@ -1558,8 +1560,12 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
             return direction;
         }
         
+        public float getRange() {
+            return RANGE;
+        }
+        
         public Vector2 getTargetingVector() {
-            tmp.set(direction).scl(15).add(position);
+            tmp.set(direction).scl(RANGE).add(position);
             return tmp;
         }
 

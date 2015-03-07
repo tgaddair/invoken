@@ -77,7 +77,7 @@ public class RangedWeapon extends Item {
                 0, 0,  // srcX, srcY
                 texture.getRegionWidth(), texture.getRegionHeight(),  // srcWidth, srcHeight
                 false, flipY);  // flipX, flipY
-        batch.end();    
+        batch.end();
 	}
 	
 	public HandledProjectile getProjectile(Agent owner) {
@@ -219,7 +219,7 @@ public class RangedWeapon extends Item {
             target = owner.getTargeting();
 
             float fraction = target.getFraction();
-            width = owner.getWeaponSentry().getTargetingVector().sub(position).scl(fraction).len();
+            width = owner.getWeaponSentry().getRange() * fraction;
 
             if (target.getTarget() != null) {
                 // hit something
