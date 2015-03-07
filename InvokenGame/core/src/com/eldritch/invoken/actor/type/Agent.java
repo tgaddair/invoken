@@ -1507,6 +1507,10 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
 
         @Override
         public float getZ() {
+            if (Agent.this.getDirection() == Direction.Up) {
+                // draw the weapon just behind the agent
+                return Agent.this.getZ() + Settings.EPSILON;
+            }
             return Agent.this.getZ();
         }
 

@@ -6,6 +6,10 @@ public class Settings {
 	public static final float MIN_ZOOM = 1.0f;
 	public static final float MAX_ZOOM = 10.0f; // for debug purposes; 2 or 1.5 is more reasonable
 	
+	// a number just greater than the previous for the purpose of approximating a total ordering
+	// real numbers
+	public static final float EPSILON = 1e-5f;
+	
     // the fixed viewport dimensions (ratio: 1.6)
     public static final int GAME_VIEWPORT_WIDTH = 400;
     public static final int GAME_VIEWPORT_HEIGHT = 240;
