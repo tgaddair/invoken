@@ -126,6 +126,14 @@ public class Inventory {
     public void removeItem(Item item, int count) {
         removeItem(item.getId(), count);
     }
+    
+    public boolean hasItem(String id) {
+        return items.containsKey(id);
+    }
+    
+    public Item getItem(String id) {
+        return items.get(id).item;
+    }
 
     /**
      * Remove the requested number of instances of the given item from the actor's inventory. If the

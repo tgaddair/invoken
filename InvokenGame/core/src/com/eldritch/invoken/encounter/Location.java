@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import box2dLight.PointLight;
@@ -74,6 +75,7 @@ import com.eldritch.invoken.ui.DebugEntityRenderer;
 import com.eldritch.invoken.util.Settings;
 import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 public class Location {
     private static Pool<Rectangle> rectPool = new Pool<Rectangle>() {
@@ -94,6 +96,7 @@ public class Location {
     private final GameState state;
     private final long seed;
 
+    private final Map<String, Agent> ids = Maps.newHashMap();
     private final List<Agent> entities = new ArrayList<Agent>();
     private final List<Agent> inactiveEntities = new ArrayList<Agent>();
     private final List<Agent> activeEntities = new ArrayList<Agent>();
@@ -265,10 +268,6 @@ public class Location {
         drawables.add(entity);
     }
 
-    public void addEntities(List<Agent> entities) {
-        this.entities.addAll(entities);
-    }
-
     public void addEntities(LocationMap map) {
         List<Activator> activators = map.getActivators();
         this.activators.addAll(activators);
@@ -316,9 +315,24 @@ public class Location {
     public Array<Rectangle> getTiles() {
         return tiles;
     }
+    
+    public void addEntities(List<Agent> entities) {
+        for (Agent agent : entities) {
+            addActor(agent);
+        }
+    }
+    
+    public boolean hasAgentWithId(String id) {
+        return ids.containsKey(id);
+    }
+    
+    public Agent getAgentById(String id) {
+        return ids.get(id);
+    }
 
     private void addActor(Agent actor) {
         entities.add(actor);
+        ids.put(actor.getInfo().getId(), actor);
     }
 
     public World getWorld() {

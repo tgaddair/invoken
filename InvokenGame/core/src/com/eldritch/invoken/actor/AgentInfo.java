@@ -176,6 +176,10 @@ public class AgentInfo {
 	public boolean hasRank(Faction faction) {
 	    return factions.getRank(faction) > 0;
 	}
+	
+	public int getRank(Faction faction) {
+        return factions.getRank(faction);
+    }
 
     public void addFaction(Faction faction, int rank, int reputation) {
         factions.addFaction(faction, rank, reputation);
