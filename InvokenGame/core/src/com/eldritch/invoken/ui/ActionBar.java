@@ -1,9 +1,7 @@
 package com.eldritch.invoken.ui;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -43,7 +41,7 @@ public class ActionBar {
     
     public void update() {
         for (Augmentation aug : augmentations.getAugmentations()) {
-            float a = aug.hasEnergy(player) && aug.isValid(player) ? 1 : 0.25f;
+            float a = aug.isValid(player) && aug.hasEnergy(player) ? 1 : 0.25f;
             if (augmentations.isActive(aug)) {
                 images.get(aug).setColor(1, 0, 0, a);
             } else {

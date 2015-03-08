@@ -1568,8 +1568,10 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
 
         @Override
         public void render(float delta, OrthogonalTiledMapRenderer renderer) {
-            RangedWeapon weapon = getInventory().getRangedWeapon();
-            weapon.render(position, direction, renderer);
+            if (getInventory().hasRangedWeapon()) {
+                RangedWeapon weapon = getInventory().getRangedWeapon();
+                weapon.render(position, direction, renderer);
+            }
         }
 
         @Override
