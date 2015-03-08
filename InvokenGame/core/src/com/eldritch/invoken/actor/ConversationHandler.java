@@ -13,20 +13,22 @@ public class ConversationHandler {
     private final Map<String, Response> responses = new HashMap<String, Response>();
     private final Map<String, Choice> choices = new HashMap<String, Choice>();
     
-	private final DialogueTree tree;
+	private final List<DialogueTree> trees;
 	private final DialogueVerifier verifier;
 	private final boolean canSpeak;
 	
-	public ConversationHandler(DialogueTree tree, DialogueVerifier verifier) {
-		this.tree = tree;
+	public ConversationHandler(List<DialogueTree> trees, DialogueVerifier verifier) {
+		this.trees = trees;
 		this.verifier = verifier;
-		canSpeak = !tree.getDialogueList().isEmpty();
+		canSpeak = !trees.isEmpty();
 		
-		for (Response response : tree.getDialogueList()) {
-		    responses.put(response.getId(), response);
-		}
-		for (Choice choice : tree.getChoiceList()) {
-		    choices.put(choice.getId(), choice);
+		for (DialogueTree tree : trees) {
+    		for (Response response : tree.getDialogueList()) {
+    		    responses.put(response.getId(), response);
+    		}
+    		for (Choice choice : tree.getChoiceList()) {
+    		    choices.put(choice.getId(), choice);
+    		}
 		}
 	}
 	
@@ -67,7 +69,11 @@ public class ConversationHandler {
 //                return greeting;
 //            }
 //        }
-        return getGreetingFor(tree);
+        
+        for (DialogueTree tree : trees) {
+            return getGreetingFor(tree);
+        }
+        return null;
     }
     
     private Response getGreetingFor(DialogueTree tree) {

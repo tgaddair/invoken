@@ -158,7 +158,7 @@ message NonPlayerActor {
 	required ActorParams params = 1;
 	required bool unique = 2 [default = false];
 	required bool can_speak = 3 [default = true];
-	optional DialogueTree dialogue = 4;
+	repeated DialogueTree dialogue = 4;
 
 	optional Aggression aggression = 5 [default = AGGRESSIVE];
 	optional Assistance assistance = 6 [default = LOYAL];

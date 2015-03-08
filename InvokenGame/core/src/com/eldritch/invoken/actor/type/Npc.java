@@ -115,7 +115,7 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
                 animations);
         this.data = data;
         scenario = Optional.absent();
-        dialogue = new ConversationHandler(data.getDialogue(), new NpcDialogueVerifier());
+        dialogue = new ConversationHandler(data.getDialogueList(), new NpcDialogueVerifier());
         behavior = new Behavior(this, data);
 
         // add random fragments proportional to the current level

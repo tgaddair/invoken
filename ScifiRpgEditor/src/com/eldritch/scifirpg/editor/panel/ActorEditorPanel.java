@@ -27,6 +27,7 @@ import com.eldritch.invoken.proto.Actors.ActorParams.FactionStatus;
 import com.eldritch.invoken.proto.Actors.ActorParams.Gender;
 import com.eldritch.invoken.proto.Actors.ActorParams.Skill;
 import com.eldritch.invoken.proto.Actors.ActorParams.Species;
+import com.eldritch.invoken.proto.Actors.DialogueTree;
 import com.eldritch.invoken.proto.Actors.NonPlayerActor;
 import com.eldritch.invoken.proto.Actors.NonPlayerActor.Aggression;
 import com.eldritch.invoken.proto.Actors.NonPlayerActor.Assistance;
@@ -203,7 +204,9 @@ public class ActorEditorPanel extends AssetEditorPanel<NonPlayerActor, ActorTabl
 			// NPC params
 			uniqueCheck.setSelected(asset.getUnique());
 			speakCheck.setSelected(asset.getCanSpeak());
-			dialogueTable.addAsset(asset.getDialogue());
+			for (DialogueTree tree : asset.getDialogueList()) {
+				dialogueTable.addAsset(tree);
+			}
 			aggressionBox.setSelectedItem(asset.getAggression());
 			assistanceBox.setSelectedItem(asset.getAssistance());
 			confidenceBox.setSelectedItem(asset.getConfidence());
@@ -244,7 +247,7 @@ public class ActorEditorPanel extends AssetEditorPanel<NonPlayerActor, ActorTabl
 				.setAggression((Aggression) aggressionBox.getSelectedItem())
 				.setAssistance((Assistance) assistanceBox.getSelectedItem())
 				.setConfidence((Confidence) confidenceBox.getSelectedItem())
-				.setDialogue(dialogueTable.getAsset())
+				.addAllDialogue(dialogueTable.getAssets())
 				.addAllTrait(traitTable.getAssets())
 				.build();
 	}

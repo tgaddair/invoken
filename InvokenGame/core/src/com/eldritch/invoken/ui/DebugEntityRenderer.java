@@ -112,7 +112,7 @@ public class DebugEntityRenderer {
     public void drawBetween(Vector2 source, Vector2 target, OrthographicCamera camera) {
         sr.setProjectionMatrix(camera.combined);
         sr.begin(ShapeType.Line);
-        Color c = Color.WHITE;
+        Color c = Color.RED;
         sr.setColor(c);
         sr.line(target.x, target.y, source.x, source.y);
         sr.end();
