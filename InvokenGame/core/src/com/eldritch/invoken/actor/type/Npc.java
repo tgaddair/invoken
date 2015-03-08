@@ -434,12 +434,14 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
             return verifyHas(prereq, has);
         }
 
-        public boolean isValid(Response r) {
+        @Override
+        public boolean isValid(Response r, Agent interactor) {
             // return verify(r.getPrereqList(), model);
             return true;
         }
 
-        public boolean isValid(Choice c) {
+        @Override
+        public boolean isValid(Choice c, Agent interactor) {
             // return verify(c.getPrereqList(), model);
             return true;
         }

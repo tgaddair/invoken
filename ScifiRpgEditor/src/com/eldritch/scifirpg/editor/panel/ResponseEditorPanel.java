@@ -31,6 +31,7 @@ public class ResponseEditorPanel extends AssetEditorPanel<Response, ResponseTabl
 	private final JTextField idField = new JTextField();
 	private final JTextArea textField = createArea(true, 30, new Dimension(100, 100));
 	private final JCheckBox greetingCheck = new JCheckBox();
+	private final JCheckBox forcedCheck = new JCheckBox();
 	private final JTextField weightField = new JTextField("0");
 	private final PrerequisiteTable prereqTable = new PrerequisiteTable();
 	private final OutcomeTable outcomeTable = new OutcomeTable();
@@ -53,6 +54,9 @@ public class ResponseEditorPanel extends AssetEditorPanel<Response, ResponseTabl
 		builder.nextLine();
 
 		builder.append("Greeting:", greetingCheck);
+		builder.nextLine();
+		
+		builder.append("Forced:", forcedCheck);
 		builder.nextLine();
 
 		builder.append("Weight:", weightField);
@@ -100,6 +104,7 @@ public class ResponseEditorPanel extends AssetEditorPanel<Response, ResponseTabl
 		idField.setText(resp.getId());
 		textField.setText(resp.getText());
 		greetingCheck.setSelected(resp.getGreeting());
+		forcedCheck.setSelected(resp.getForced());
 		weightField.setText(resp.getWeight() + "");
 		for (Prerequisite asset : resp.getPrereqList()) {
 			prereqTable.addAsset(asset);
@@ -134,6 +139,7 @@ public class ResponseEditorPanel extends AssetEditorPanel<Response, ResponseTabl
 				.setId(id)
 				.setText(text)
 				.setGreeting(greeting)
+				.setForced(forcedCheck.isSelected())
 				.setWeight(Integer.parseInt(weightField.getText()))
 				.addAllPrereq(prereqTable.getAssets())
 				.addAllOutcome(outcomeTable.getAssets())

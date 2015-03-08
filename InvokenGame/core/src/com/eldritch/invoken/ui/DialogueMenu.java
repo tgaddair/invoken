@@ -57,7 +57,7 @@ public class DialogueMenu {
 			if (!active) {
 			    container.setVisible(true);
 				active = true;
-				setup(player.getInteractor());
+				setup(player.getInteractor(), player);
 			}
 			setPosition(player.getInteractor(), camera);
 		} else {
@@ -71,17 +71,17 @@ public class DialogueMenu {
 	    }
 	}
 	
-	private void setup(Agent npc) {
-		setup(npc, npc.getDialogueHandler().getGreeting());
+	private void setup(Agent npc, Agent interactor) {
+		setup(npc, interactor, npc.getDialogueHandler().getGreeting(interactor));
 	}
 	
-	private void setup(Agent npc, Response response) {
+	private void setup(Agent npc, Agent interactor, Response response) {
 		if (response != null) {
 			// remove old content
 		    choiceBar.clear();
 		    bubble.clear();
 		    
-		    List<Choice> choices = npc.getDialogueHandler().getChoicesFor(response);
+		    List<Choice> choices = npc.getDialogueHandler().getChoicesFor(response, interactor);
 		    if (choices.isEmpty()) {
 		    	// display a text bubble, as there is no choice for the player to make
 		    	addLabel(response.getText());
@@ -103,7 +103,7 @@ public class DialogueMenu {
 				
 				// add the choices below
 				for (final Choice c : choices) {
-					addChoiceButton(c, npc);
+					addChoiceButton(c, npc, interactor);
 				}
 		    }
 		} else {
@@ -129,13 +129,13 @@ public class DialogueMenu {
 		cell.height(label.getPrefHeight());
 	}
 	
-	private void addChoiceButton(final Choice c, final Agent npc) {
+	private void addChoiceButton(final Choice c, final Agent npc, final Agent interactor) {
 		TextButtonStyle buttonStyle = skin.get("choice", TextButtonStyle.class);
 		final TextButton choice = new TextButton(c.getText(), buttonStyle);
 		choice.addListener(new DefaultInputListener() {
 			@Override
 			public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-				setup(npc, npc.getDialogueHandler().getResponseFor(c));
+				setup(npc, interactor, npc.getDialogueHandler().getResponseFor(c, interactor));
 			}
 		});
 		choiceBar.add(choice).left().padLeft(50).padRight(25).padBottom(10);

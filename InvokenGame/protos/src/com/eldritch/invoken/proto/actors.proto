@@ -24,6 +24,9 @@ message DialogueTree {
 		// Higher weights drop down, lower weights bubble up.
 		optional int32 weight = 7 [default = 0];
 
+		// The Agent owning the Response actively seeks out someone to interact with.
+		optional bool forced = 9 [default = false];
+
 		// DEPRECATED
 		repeated Choice choice_DEPRECATED = 4 [deprecated = true];
 	}

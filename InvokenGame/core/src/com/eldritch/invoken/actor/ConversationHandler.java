@@ -3,16 +3,20 @@ package com.eldritch.invoken.actor;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.proto.Actors.DialogueTree;
 import com.eldritch.invoken.proto.Actors.DialogueTree.Choice;
 import com.eldritch.invoken.proto.Actors.DialogueTree.Response;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 public class ConversationHandler {
     private final Map<String, Response> responses = Maps.newHashMap();
     private final Map<String, Choice> choices = Maps.newHashMap();
     private final Map<DialogueTree, List<Response>> greetings = Maps.newHashMap();
+    private final Set<Response> forced = Sets.newHashSet();
     
 	private final List<DialogueTree> trees;
 	private final DialogueVerifier verifier;
@@ -30,6 +34,9 @@ public class ConversationHandler {
     		    if (response.getGreeting()) {
     		        greetings.get(tree).add(response);
     		    }
+    		    if (response.getForced()) {
+    		        forced.add(response);
+    		    }
     		}
     		for (Choice choice : tree.getChoiceList()) {
     		    choices.put(choice.getId(), choice);
@@ -41,22 +48,31 @@ public class ConversationHandler {
 	    return canSpeak;
 	}
 	
-	public List<Choice> getChoicesFor(Response response) {
+	public List<Choice> getChoicesFor(Response response, Agent interactor) {
         List<Choice> validChoices = new ArrayList<Choice>();
         for (String id : response.getChoiceIdList()) {
             Choice choice = choices.get(id);
-            if (verifier.isValid(choice)) {
+            if (verifier.isValid(choice, interactor)) {
                 validChoices.add(choice);
             }
         }
         return validChoices;
     }
     
-    public Response getResponseFor(Choice choice) {
+    public Response getResponseFor(Choice choice, Agent interactor) {
         for (String id : choice.getSuccessorIdList()) {
             Response response = responses.get(id);
-            if (verifier.isValid(response)) {
+            if (verifier.isValid(response, interactor)) {
                 return response;
+            }
+        }
+        return null;
+    }
+    
+    public Response getForcedGreeting(Agent interactor) {
+        for (Response r : forced) {
+            if (verifier.isValid(r, interactor)) {
+                return r;
             }
         }
         return null;
@@ -66,7 +82,7 @@ public class ConversationHandler {
         return !greetings.isEmpty();
     }
     
-    public Response getGreeting() {
+    public Response getGreeting(Agent interactor) {
 //        if (scenario.hasDialogue()) {
 //            Response greeting = getGreetingFor(scenario.getDialogue());
 //            if (greeting != null) {
@@ -75,15 +91,15 @@ public class ConversationHandler {
 //        }
         
         for (DialogueTree tree : trees) {
-            return getGreetingFor(tree);
+            return getGreetingFor(tree, interactor);
         }
         return null;
     }
     
-    private Response getGreetingFor(DialogueTree tree) {
+    private Response getGreetingFor(DialogueTree tree, Agent interactor) {
         if (greetings.containsKey(tree)) {
             for (Response r : greetings.get(tree)) {
-                if (r.getGreeting() && verifier.isValid(r)) {
+                if (r.getGreeting() && verifier.isValid(r, interactor)) {
                     return r;
                 }
             }
@@ -92,8 +108,8 @@ public class ConversationHandler {
     }
     
     public static interface DialogueVerifier {
-    	boolean isValid(Response r);
+    	boolean isValid(Response r, Agent interactor);
     	
-    	boolean isValid(Choice c);
+    	boolean isValid(Choice c, Agent interactor);
     }
 }

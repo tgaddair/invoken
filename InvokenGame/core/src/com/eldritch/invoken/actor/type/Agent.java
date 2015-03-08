@@ -972,7 +972,9 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     }
     
     protected void addEnemy(Agent enemy) {
-        enemies.add(enemy);
+        if (isAlive()) {
+            enemies.add(enemy);
+        }
     }
     
     private void requestAssistance(Agent enemy) {
