@@ -275,6 +275,75 @@ public class LocationGenerator {
     private boolean openGround(int x, int y, LocationLayer layer, LocationLayer collision) {
         return layer.isGround(x, y) && collision.getCell(x, y) == null;
     }
+    
+    private boolean isChokePoint(NaturalVector2 point, CellType[][] typeMap) {
+        // we already know this point is floor
+        return isVerticalChokePoint(point, typeMap) || isHorizontalChokePoint(point, typeMap);
+    }
+    
+    private boolean isVerticalChokePoint(NaturalVector2 point, CellType[][] typeMap) {
+        // vertical -> the length of continuous floor points up and down is at most two
+        int verticalSum = 1;
+        for (int dy = 1; point.y + dy < typeMap[point.x].length; dy++) {
+            if (typeMap[point.x][point.y + dy] == CellType.Floor) {
+                verticalSum++;
+                if (verticalSum > 2) {
+                    // too many vertical points
+                    return false;
+                }
+            } else {
+                // end of downward run
+                break;
+            }
+        }
+        
+        for (int dy = -1; point.y + dy >= 0; dy--) {
+            if (typeMap[point.x][point.y + dy] == CellType.Floor) {
+                verticalSum++;
+                if (verticalSum > 2) {
+                    // too many vertical points
+                    return false;
+                }
+            } else {
+                // end of upward run
+                break;
+            }
+        }
+        
+        return verticalSum <= 2;
+    }
+    
+    private boolean isHorizontalChokePoint(NaturalVector2 point, CellType[][] typeMap) {
+        // horizontal -> the length of continuous floor points left and right is at most two
+        int horizontalSum = 1;
+        for (int dx = 1; point.x + dx < typeMap.length; dx++) {
+            if (typeMap[point.x + dx][point.y] == CellType.Floor) {
+                horizontalSum++;
+                if (horizontalSum > 2) {
+                    // too many horizontal points
+                    return false;
+                }
+            } else {
+                // end of rightward run
+                break;
+            }
+        }
+        
+        for (int dx = -1; point.x + dx >= 0; dx--) {
+            if (typeMap[point.x + dx][point.y] == CellType.Floor) {
+                horizontalSum++;
+                if (horizontalSum > 2) {
+                    // too many horizontal points
+                    return false;
+                }
+            } else {
+                // end of leftward run
+                break;
+            }
+        }
+        
+        return horizontalSum <= 2;
+    }
 
     private ConnectedRoomManager createRooms(Collection<EncounterRoom> chambers,
             CellType[][] typeMap) {
@@ -297,8 +366,9 @@ public class LocationGenerator {
             // only rooms[0][0], not rooms[1][1]
             for (int x = startX; x < endX; x++) {
                 for (int y = startY; y < endY; y++) {
-                    if (typeMap[x][y] == CellType.Floor) {
-                        points.add(NaturalVector2.of(x, y));
+                    NaturalVector2 point = NaturalVector2.of(x, y);
+                    if (typeMap[x][y] == CellType.Floor && !isChokePoint(point, typeMap)) {
+                        points.add(point);
                     }
                 }
             }
