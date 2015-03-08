@@ -14,15 +14,13 @@ import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JTextField;
 
+import com.eldritch.invoken.proto.Augmentations.AugmentationProto;
+import com.eldritch.invoken.proto.Disciplines.Discipline;
+import com.eldritch.invoken.proto.Prerequisites.Prerequisite;
+import com.eldritch.invoken.proto.Prerequisites.Prerequisite.Type;
 import com.eldritch.scifirpg.editor.MainPanel;
 import com.eldritch.scifirpg.editor.tables.PrerequisiteTable;
 import com.eldritch.scifirpg.editor.util.StateMarkers;
-import com.eldritch.invoken.proto.Augmentations.AugmentationProto;
-import com.eldritch.invoken.proto.Disciplines.Discipline;
-import com.eldritch.invoken.proto.Disciplines.Influence;
-import com.eldritch.invoken.proto.Prerequisites.Prerequisite;
-import com.eldritch.invoken.proto.Prerequisites.Prerequisite.Type;
-import com.eldritch.invoken.proto.Prerequisites.Standing;
 import com.google.common.base.Optional;
 import com.jgoodies.forms.builder.DefaultFormBuilder;
 import com.jgoodies.forms.layout.FormLayout;
@@ -122,18 +120,12 @@ public class PrerequisiteEditorPanel extends AssetEditorPanel<Prerequisite, Prer
 				values.addAll(MainPanel.MISSION_TABLE.getAssetIds());
 				break;
 			case LVL_BETWEEN:
-			case INFLUENCE_BETWEEN:
+			case RELATION_BETWEEN:
 				targetEnabled = false;
 				break;
-			case AUG_AVAILABLE:
+			case ACTIVE_AUG:
 				for (AugmentationProto aug : AugmentationProto.values()) {
 					values.add(aug.name());
-				}
-				maxEnabled = false;
-				break;
-			case INFLUENCE_AUG:
-				for (Influence i : Influence.values()) {
-					values.add(i.name());
 				}
 				minEnabled = false;
 				maxEnabled = false;
@@ -141,22 +133,11 @@ public class PrerequisiteEditorPanel extends AssetEditorPanel<Prerequisite, Prer
 			case STATE_MARKER:
 				values.addAll(StateMarkers.getMarkers());
 				break;
-			case DIALOGUE_SEEN:
-				//values.addAll(getCurrentActor().getDialogueTable());
-				targetEnabled = false;
-				break;
 			case ITEM_EQUIPPED:
 				minEnabled = false;
 			case ITEM_HAS:
 				maxEnabled = false;
 				values.addAll(MainPanel.ITEM_TABLE.getAssetIds());
-				break;
-			case STANDING_IS:
-				for (Standing s : Standing.values()) {
-					values.add(s.name());
-				}
-				minEnabled = false;
-				maxEnabled = false;
 				break;
 			case ALIVE:
 			case FOLLOWER:

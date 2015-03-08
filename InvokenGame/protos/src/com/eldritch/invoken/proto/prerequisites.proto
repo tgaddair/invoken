@@ -1,8 +1,8 @@
 syntax = "proto2";
 
 package scifirpg;
-option java_package = "com.eldritch.invoken.proto";
 
+option java_package = "com.eldritch.invoken.proto";
 enum Standing {
 	ALLY = 0;
 	NEUTRAL = 1;
@@ -17,20 +17,19 @@ message Prerequisite {
 		LVL_BETWEEN = 2; // player level between MIN and MAX
 		STATE_MARKER = 3; // TARGET state marker in list
 		ITEM_HAS = 4; // MIN or more of TARGET item in inventory
-
-		// When AUG_REMAINING is a prereq, the game automatically expends the aug
-		AUG_AVAILABLE = 5; // MIN magnitude TARGET augmentation effect on target in cache
-		INFLUENCE_AUG = 11; // Has an influence aug of TARGET type in cache
+		ACTIVE_AUG = 5; // TARGET augmentation is prepared
 
 		// Only has meaning within a specific DialogueTree.
-		DIALOGUE_SEEN = 6; // TARGET dialogue previously observed
-		INFLUENCE_BETWEEN = 7; // Dialogue disposition variable between MIN and MAX
-		STANDING_IS = 12; // TARGET standing
-
+		RELATION_BETWEEN = 7; // TARGET relation to agent between MIN and MAX
 		ITEM_EQUIPPED = 8; // TARGET item is currently equipped
 		MISSION_STAGE = 10; // TARGET mission between MIN and MAX
 		ALIVE = 13; // TARGET actor is alive
 		FOLLOWER = 14; // TARGET actor is following player
+
+		// DEPRECATED:
+		// DIALOGUE_SEEN = 6; // TARGET dialogue previously observed
+		// INFLUENCE_AUG = 11; // Has an influence aug of TARGET type in cache
+		// STANDING_IS = 12; // TARGET standing
 	}
 
 	required Type type = 1;

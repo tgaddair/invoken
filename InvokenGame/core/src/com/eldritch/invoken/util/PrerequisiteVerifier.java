@@ -48,30 +48,22 @@ public class PrerequisiteVerifier {
                 int value = info.getInventory().getItemCount(prereq.getTarget());
                 return verifyMin(prereq, value);
             }
-            // Only has meaning within a specific DialogueTree.
-            case DIALOGUE_SEEN: // TARGET dialogue previously observed
-                // TODO: remove, handled elsewhere
-                return true;
-            case INFLUENCE_BETWEEN: // Dialogue disposition variable between MIN and MAX
-                return verifyInfluence(prereq, agent);
-            case STANDING_IS: // TARGET standing
-                return verifyStanding(prereq, agent);
-
+            case RELATION_BETWEEN: // TARGET relation to agent
+                return verifyRelation(prereq, agent);
             case ITEM_EQUIPPED: { // TARGET item is currently equipped
                 Inventory inv = info.getInventory();
                 boolean equipped = inv.hasItem(prereq.getTarget())
                         && inv.getItem(prereq.getTarget()).isEquipped(inv);
                 return verifyHas(prereq, equipped);
             }
-
-            case FOLLOWER: { // TARGET actor is following agent
+            case FOLLOWER: { // TARGET following agent
                 Location location = agent.getLocation();
                 String id = prereq.getTarget();
                 boolean follower = location.hasAgentWithId(id)
                         && location.getAgentById(id).isFollowing(agent);
                 return verifyHas(prereq, follower);
             }
-            // case AUG_AVAILABLE: {
+            // case ACTIVE_AUG: {
             // boolean has = false;
             // for (Augmentation aug : info.getAugmentations().getAugmentations()) {
             // if (aug.getId().equals(prereq.getTarget())) {
@@ -98,12 +90,7 @@ public class PrerequisiteVerifier {
         }
     }
 
-    protected boolean verifyInfluence(Prerequisite prereq, Agent agent) {
-        // now synonymous
-        return verifyStanding(prereq, agent);
-    }
-
-    protected boolean verifyStanding(Prerequisite prereq, Agent agent) {
+    protected boolean verifyRelation(Prerequisite prereq, Agent agent) {
         Location location = agent.getLocation();
         String id = prereq.getTarget();
         if (!location.hasAgentWithId(id)) {
@@ -113,7 +100,7 @@ public class PrerequisiteVerifier {
         
         // round down
         int value = (int) location.getAgentById(id).getRelation(agent);
-        return verifyMin(prereq, value);
+        return verifyBetween(prereq, value);
     }
 
     protected final boolean verifyBetween(Prerequisite prereq, int value) {

@@ -414,30 +414,7 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
         return dialogue;
     }
 
-    public int getInfluence(Agent other) {
-        // TODO
-        return 0;
-    }
-
-    public Standing getStanding(Agent other) {
-        // TODO
-        return Standing.NEUTRAL;
-    }
-
     public class NpcDialogueVerifier extends PrerequisiteVerifier implements DialogueVerifier {
-        @Override
-        protected boolean verifyInfluence(Prerequisite prereq, Agent actor) {
-            int value = getInfluence(actor);
-            return verifyBetween(prereq, value);
-        }
-
-        @Override
-        protected boolean verifyStanding(Prerequisite prereq, Agent actor) {
-            Standing value = getStanding(actor);
-            boolean has = value == Standing.valueOf(prereq.getTarget());
-            return verifyHas(prereq, has);
-        }
-
         @Override
         public boolean isValid(Response r, Agent interactor) {
             if (r.getForced() || r.getUnique()) {
