@@ -60,6 +60,7 @@ import com.eldritch.invoken.proto.Actors.NonPlayerActor.Aggression;
 import com.eldritch.invoken.proto.Locations.Encounter.ActorParams.ActorScenario;
 import com.eldritch.invoken.proto.Prerequisites.Prerequisite;
 import com.eldritch.invoken.proto.Prerequisites.Standing;
+import com.eldritch.invoken.util.OutcomeHandler;
 import com.eldritch.invoken.util.PrerequisiteVerifier;
 import com.google.common.base.Optional;
 
@@ -116,7 +117,8 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
                 animations);
         this.data = data;
         scenario = Optional.absent();
-        dialogue = new ConversationHandler(data.getDialogueList(), new NpcDialogueVerifier());
+        dialogue = new ConversationHandler(data.getDialogueList(), new NpcDialogueVerifier(),
+                new NpcOutcomeHandler());
         behavior = new Behavior(this, data);
 
         // add random fragments proportional to the current level
@@ -333,14 +335,14 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
     public boolean isAlerted() {
         return alert > 0;
     }
-    
+
     @Override
     protected void notifyOfHostility(Agent source, Agent target) {
         if (isAlive() && behavior.shouldAssist(source, target)) {
             addEnemy(target);
         }
     }
-    
+
     @Override
     protected boolean isEnemy(Agent other) {
         return behavior.wantsToAttack(other);
@@ -356,7 +358,7 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
             setFocusPoint(other.getPosition());
             alert = ALERT_DURATION;
         }
-        
+
         // when we're alerted to an enemy, we should treat this like assisting ourselves
         if (behavior.wantsToAttack(other, true)) {
             addEnemy(other);
@@ -438,6 +440,13 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
 
         @Override
         public boolean isValid(Response r, Agent interactor) {
+            if (r.getForced() || r.getUnique()) {
+                if (interactor.hasHeardDialogue(getId(r))) {
+                    // already heard this dialogue
+                    return false;
+                }
+            }
+
             // return verify(r.getPrereqList(), model);
             return true;
         }
@@ -447,6 +456,17 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
             // return verify(c.getPrereqList(), model);
             return true;
         }
+    }
+
+    public class NpcOutcomeHandler extends OutcomeHandler {
+        @Override
+        protected String getId(Response response) {
+            return Npc.this.getId(response);
+        }
+    }
+
+    private String getId(Response r) {
+        return String.format("%s:%s", info.getId(), r.getId());
     }
 
     public class CoverProximity implements Proximity<Vector2> {

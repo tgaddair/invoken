@@ -63,6 +63,13 @@ public class DialogueMenu {
 		} else {
 			endDialogue();
 		}
+		
+		// handle all other NPCs
+		for (Agent agent : player.getNeighbors()) {
+		    if (agent.inDialogue() && agent.getInteractor() != player) {
+		        // NPC conversation
+		    }
+		}
 	}
 	
 	public void draw(Batch batch) {
@@ -80,6 +87,9 @@ public class DialogueMenu {
 			// remove old content
 		    choiceBar.clear();
 		    bubble.clear();
+		    
+		    // handle the response outcomes
+		    npc.getDialogueHandler().handle(response, interactor);
 		    
 		    List<Choice> choices = npc.getDialogueHandler().getChoicesFor(response, interactor);
 		    if (choices.isEmpty()) {

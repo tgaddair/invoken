@@ -9,6 +9,7 @@ import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.proto.Actors.DialogueTree;
 import com.eldritch.invoken.proto.Actors.DialogueTree.Choice;
 import com.eldritch.invoken.proto.Actors.DialogueTree.Response;
+import com.eldritch.invoken.util.OutcomeHandler;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
@@ -20,11 +21,13 @@ public class ConversationHandler {
     
 	private final List<DialogueTree> trees;
 	private final DialogueVerifier verifier;
+	private final OutcomeHandler outcomes;
 	private final boolean canSpeak;
 	
-	public ConversationHandler(List<DialogueTree> trees, DialogueVerifier verifier) {
+	public ConversationHandler(List<DialogueTree> trees, DialogueVerifier verifier, OutcomeHandler outcomes) {
 		this.trees = trees;
 		this.verifier = verifier;
+		this.outcomes = outcomes;
 		canSpeak = !trees.isEmpty();
 		
 		for (DialogueTree tree : trees) {
@@ -46,6 +49,10 @@ public class ConversationHandler {
 	
 	public boolean canSpeak() {
 	    return canSpeak;
+	}
+	
+	public void handle(Response response, Agent interactor) {
+	    outcomes.handle(response, interactor);
 	}
 	
 	public List<Choice> getChoicesFor(Response response, Agent interactor) {
@@ -83,13 +90,6 @@ public class ConversationHandler {
     }
     
     public Response getGreeting(Agent interactor) {
-//        if (scenario.hasDialogue()) {
-//            Response greeting = getGreetingFor(scenario.getDialogue());
-//            if (greeting != null) {
-//                return greeting;
-//            }
-//        }
-        
         for (DialogueTree tree : trees) {
             return getGreetingFor(tree, interactor);
         }

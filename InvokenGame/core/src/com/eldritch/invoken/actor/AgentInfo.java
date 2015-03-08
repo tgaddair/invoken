@@ -25,6 +25,7 @@ import com.google.common.base.Functions;
 public class AgentInfo {
     private static final float BASE_ENERGY_RATE = 3f;
     
+    final String id;
     final String name;
     final Species species;
     final boolean unique;
@@ -74,6 +75,7 @@ public class AgentInfo {
 	}
 	
 	public AgentInfo(Agent agent, ActorParams params, boolean unique) {
+	    this.id = params.getId();
 	    this.name = params.getName();
 	    this.species = params.getSpecies();
 	    this.unique = unique;
@@ -113,6 +115,7 @@ public class AgentInfo {
 	}
 	
 	public AgentInfo(Agent agent, Profession profession, int level) {
+	    this.id = "player";
 	    this.name = "Player";
 	    this.species = Species.HUMAN;
 	    this.unique = true;
@@ -132,6 +135,10 @@ public class AgentInfo {
 		this.level = level;
 		
 		factions = new FactionManager(agent);
+	}
+	
+	public String getId() {
+	    return id;
 	}
 	
 	public String getName() {

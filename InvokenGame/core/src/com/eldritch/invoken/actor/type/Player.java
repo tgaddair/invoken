@@ -15,6 +15,7 @@ import com.eldritch.invoken.actor.aug.Augmentation;
 import com.eldritch.invoken.encounter.Location;
 import com.eldritch.invoken.proto.Actors.PlayerActor;
 import com.eldritch.invoken.util.Settings;
+import com.google.common.collect.Sets;
 
 /** The player character, has state and state time, */
 public class Player extends SteeringAgent {

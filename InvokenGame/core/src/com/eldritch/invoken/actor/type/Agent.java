@@ -52,6 +52,7 @@ import com.eldritch.invoken.encounter.NaturalVector2;
 import com.eldritch.invoken.proto.Actors.ActorParams;
 import com.eldritch.invoken.ui.MultiTextureRegionDrawable;
 import com.eldritch.invoken.util.Settings;
+import com.google.common.collect.Sets;
 
 public abstract class Agent extends CollisionEntity implements Steerable<Vector2>, Conversable {
     public static final int MAX_DST2 = 150;
@@ -124,6 +125,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
 
     private Agent target;
     private Agent interactor;
+    private final Set<String> uniqueDialogue = Sets.newHashSet();
     private final Set<Class<?>> toggles = new HashSet<Class<?>>();
     private final Set<ProjectileHandler> projectileHandlers = new HashSet<ProjectileHandler>();
     private final LineOfSightHandler losHandler = new LineOfSightHandler();
@@ -659,6 +661,14 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
             getInteractor().interact(null);
             interact(null);
         }
+    }
+    
+    public void addDialogue(String id) {
+        uniqueDialogue.add(id);
+    }
+    
+    public boolean hasHeardDialogue(String id) {
+        return uniqueDialogue.contains(id);
     }
 
     public void endInteraction() {
