@@ -123,8 +123,8 @@ public class Inventory {
         removeItem(item.getId(), 1);
     }
     
-    public void removeItem(Item item, int count) {
-        removeItem(item.getId(), count);
+    public int removeItem(Item item, int count) {
+        return removeItem(item.getId(), count);
     }
     
     public boolean hasItem(String id) {
@@ -139,12 +139,14 @@ public class Inventory {
      * Remove the requested number of instances of the given item from the actor's inventory. If the
      * number requested is greater than or equal to the number available, or if count == -1, then we
      * remove all and unequip.
+     * 
+     * Returns the number of items actually removed.
      */
-    public void removeItem(String itemId, int count) {
+    public int removeItem(String itemId, int count) {
         int available = getItemCount(itemId);
         if (available == 0) {
             // nothing to remove
-            return;
+            return 0;
         }
 
         if (count >= available || count == -1) {
@@ -152,9 +154,11 @@ public class Inventory {
             Item item = items.get(itemId).getItem();
             item.unequipFrom(this);
             items.remove(itemId);
+            return available;
         } else {
             // decrement counters
             items.get(itemId).remove(count);
+            return count;
         }
     }
 

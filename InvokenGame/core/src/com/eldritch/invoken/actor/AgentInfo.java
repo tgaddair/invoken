@@ -46,34 +46,6 @@ public class AgentInfo {
 	
 	int activeDefense = 0;
 	
-	public ActorParams serialize() {
-	    ActorParams.Builder builder = ActorParams.newBuilder();
-	    builder.setName(name);
-	    builder.setSpecies(species);
-	    builder.setProfession(profession.toProto());
-	    builder.setLevel(level);
-	    
-	    // add factions
-	    for (Faction faction : factions.getFactions()) {
-	        builder.addFactionStatus(factions.toProto(faction));
-	    }
-	    
-	    // add inventory
-	    for (ItemState item : inventory.getItems()) {
-	        builder.addInventoryItem(item.toProto());
-	    }
-	    
-	    // add skills
-	    for (Entry<Discipline, SkillState> skill : skills.entrySet()) {
-	        builder.addSkill(skill.getValue().toProto(skill.getKey()));
-	    }
-	    
-	    // add known augs
-	    builder.addAllKnownAugId(knownAugmentations);
-	    
-	    return builder.build();
-	}
-	
 	public AgentInfo(Agent agent, ActorParams params, boolean unique) {
 	    this.id = params.getId();
 	    this.name = params.getName();
@@ -367,6 +339,34 @@ public class AgentInfo {
 	public float getMaxTargetDistance() {
 		return 250 * getPerception();
 	}
+	
+    public ActorParams serialize() {
+        ActorParams.Builder builder = ActorParams.newBuilder();
+        builder.setName(name);
+        builder.setSpecies(species);
+        builder.setProfession(profession.toProto());
+        builder.setLevel(level);
+        
+        // add factions
+        for (Faction faction : factions.getFactions()) {
+            builder.addFactionStatus(factions.toProto(faction));
+        }
+        
+        // add inventory
+        for (ItemState item : inventory.getItems()) {
+            builder.addInventoryItem(item.toProto());
+        }
+        
+        // add skills
+        for (Entry<Discipline, SkillState> skill : skills.entrySet()) {
+            builder.addSkill(skill.getValue().toProto(skill.getKey()));
+        }
+        
+        // add known augs
+        builder.addAllKnownAugId(knownAugmentations);
+        
+        return builder.build();
+    }
 	
 	/**
 	 * Fragments required to ascend to the given level.

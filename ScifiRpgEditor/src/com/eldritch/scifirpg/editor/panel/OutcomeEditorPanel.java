@@ -103,6 +103,7 @@ public class OutcomeEditorPanel extends AssetEditorPanel<Outcome, OutcomeTable> 
 				values.addAll(StateMarkers.getMarkers());
 				break;
 			case ITEM_CHANGE:
+			case ITEM_TRANSFER:
 				values.addAll(MainPanel.ITEM_TABLE.getAssetIds());
 				break;
 			case MISSION_SET:
