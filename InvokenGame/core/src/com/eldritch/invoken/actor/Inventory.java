@@ -112,7 +112,9 @@ public class Inventory {
     public Map<Item, Integer> getItemCounts(Type type) {
         Map<Item, Integer> map = Maps.newHashMap();
         for (ItemState item : items.values()) {
-            map.put(item.item, item.count);
+            if (item.item.getData().getType() == type) {
+                map.put(item.item, item.count);
+            }
         }
         return map;
     }

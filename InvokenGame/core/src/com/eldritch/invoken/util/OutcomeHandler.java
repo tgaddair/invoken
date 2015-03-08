@@ -51,8 +51,10 @@ public abstract class OutcomeHandler {
                 break;
             }
             case ITEM_TRANSFER_ALL: {
-                Agent from = outcome.getValue() >= 0 ? source : target;
-                Agent to = outcome.getValue() >= 0 ? target : source;
+                // default is to transfer from the target to the source
+                // a positive value indicates source to target
+                Agent from = outcome.hasValue() && outcome.getValue() > 0 ? source : target;
+                Agent to = outcome.hasValue() && outcome.getValue() > 0 ? target : source;
                 
                 Type itemType = Type.valueOf(outcome.getTarget());
                 Map<Item, Integer> items = from.getInventory().getItemCounts(itemType);
