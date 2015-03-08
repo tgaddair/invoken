@@ -690,49 +690,46 @@ public class LocationGenerator {
     private List<LocationLayer> createSpawnLayers(LocationLayer base, LocationLayer collision,
             EncounterGenerator generator, LocationMap map) {
         List<LocationLayer> layers = new ArrayList<LocationLayer>();
-        LocationLayer playerLayer = null;
         for (EncounterRoom encounterRoom : generator.getEncounterRooms()) {
             Encounter encounter = encounterRoom.getEncounter();
             Rectangle bounds = encounterRoom.getRestrictedBounds();
-
-            if (encounter.getOrigin()) {
-                playerLayer = new LocationLayer(base.getWidth(), base.getHeight(), PX, PX, map);
-                playerLayer.setVisible(false);
-                playerLayer.setOpacity(1.0f);
-                playerLayer.setName("player");
-
-                List<NaturalVector2> freeSpaces = getFreeSpaces(collision, bounds);
-                Collections.shuffle(freeSpaces, rand);
-                NaturalVector2 position = Iterables.getFirst(freeSpaces, null);
-                if (position != null) {
-                    addCell(playerLayer, collider, position.x, position.y);
-                } else {
-                    // TODO: this should never happen, but just in case we should regenerate the
-                    // whole map
-                }
-
-                layers.add(playerLayer);
-            } else {
-                LocationLayer layer = createLayer(encounter, bounds, base, collision, map);
-                layers.add(layer);
-            }
+            createLayer(encounter, bounds, base, collision, map, layers);
         }
 
         return layers;
     }
 
-    private LocationLayer createLayer(Encounter encounter, Rectangle room, LocationLayer base,
-            LocationLayer collision, LocationMap map) {
+    private void createLayer(Encounter encounter, Rectangle room, LocationLayer base,
+            LocationLayer collision, LocationMap map, List<LocationLayer> layers) {
         LocationLayer layer = new EncounterLayer(encounter, base.getWidth(), base.getHeight(), PX,
                 PX, map);
         layer.setVisible(false);
         layer.setOpacity(1.0f);
         layer.setName("encounter-" + room.getX() + "-" + room.getY());
 
-        // enemy placement can be non-deterministic between loads
         List<NaturalVector2> freeSpaces = getFreeSpaces(collision, room);
-        Collections.shuffle(freeSpaces);
+        if (encounter.getOrigin()) {
+            LocationLayer playerLayer = new LocationLayer(base.getWidth(), base.getHeight(), PX,
+                    PX, map);
+            playerLayer.setVisible(false);
+            playerLayer.setOpacity(1.0f);
+            playerLayer.setName("player");
 
+            Collections.shuffle(freeSpaces, rand);
+            Iterator<NaturalVector2> it = freeSpaces.iterator();
+            if (!it.hasNext()) {
+                // TODO: this should never happen, but just in case we should regenerate the
+                // whole map
+            }
+
+            NaturalVector2 position = it.next();
+            addCell(playerLayer, collider, position.x, position.y);
+            it.remove();
+            layers.add(playerLayer);
+        }
+
+        // enemy placement can be non-deterministic between loads
+        Collections.shuffle(freeSpaces);
         Iterator<NaturalVector2> it = freeSpaces.iterator();
         for (ActorScenario scenario : encounter.getActorParams().getActorScenarioList()) {
             for (int i = 0; i < scenario.getMax(); i++) {
@@ -740,8 +737,7 @@ public class LocationGenerator {
                 addCell(layer, collider, position.x, position.y);
             }
         }
-
-        return layer;
+        layers.add(layer);
     }
 
     public static List<NaturalVector2> getFreeSpaces(LocationLayer layer, Rectangle bounds) {
