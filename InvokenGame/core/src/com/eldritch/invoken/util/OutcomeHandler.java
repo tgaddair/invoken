@@ -1,6 +1,5 @@
 package com.eldritch.invoken.util;
 
-import com.eldritch.invoken.actor.AgentInfo;
 import com.eldritch.invoken.actor.factions.Faction;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.proto.Actors.DialogueTree.Choice;
@@ -23,11 +22,10 @@ public abstract class OutcomeHandler {
     
     private void handle(Outcome outcome, Agent target) {
         Agent source = getSource();
-        AgentInfo info = source.getInfo();
         switch (outcome.getType()) {
-            case REP_CHANGE:
+            case REP_CHANGE:  // change TARGET reputation by VALUE
                 Faction faction = Faction.of(outcome.getTarget());
-                info.getFactionManager().modifyReputationFor(faction, outcome.getValue());
+                target.getInfo().getFactionManager().modifyReputationFor(faction, outcome.getValue());
                 break;
             case RELATION_CHANGE:
                 source.changeRelation(target, outcome.getValue());

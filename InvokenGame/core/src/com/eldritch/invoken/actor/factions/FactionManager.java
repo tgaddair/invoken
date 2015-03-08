@@ -49,11 +49,10 @@ public class FactionManager {
         status.reputation += modifier;
 
         // notify all faction members
-        Set<Agent> members = new HashSet<Agent>();
-        members.addAll(faction.getMembers());
-        members.remove(agent);
-        for (Agent member : members) {
-            member.updateDisposition(agent);
+        for (Agent member : faction.getMembers()) {
+            if (member != agent) {
+                member.updateDisposition(agent);
+            }
         }
     }
 
