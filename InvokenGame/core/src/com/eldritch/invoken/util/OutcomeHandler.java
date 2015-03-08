@@ -1,11 +1,15 @@
 package com.eldritch.invoken.util;
 
+import java.util.Map;
+import java.util.Map.Entry;
+
 import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.actor.factions.Faction;
 import com.eldritch.invoken.actor.items.Item;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.proto.Actors.DialogueTree.Choice;
 import com.eldritch.invoken.proto.Actors.DialogueTree.Response;
+import com.eldritch.invoken.proto.Items.Item.Type;
 import com.eldritch.invoken.proto.Outcomes.Outcome;
 
 public abstract class OutcomeHandler {
@@ -37,22 +41,27 @@ public abstract class OutcomeHandler {
                             .removeItem(outcome.getTarget(), outcome.getValue());
                 }
                 break;
-            case ITEM_TRANSFER:
-                Agent from;
-                Agent to;
-                if (outcome.getValue() > 0) {
-                    // transfer the items from source to target
-                    from = source;
-                    to = target;
-                } else {
-                    // transfer the items from target to source
-                    from = target;
-                    to = source;
-                }
+            case ITEM_TRANSFER: {
+                Agent from = outcome.getValue() >= 0 ? source : target;
+                Agent to = outcome.getValue() >= 0 ? target : source;
 
                 Item item = from.getInventory().getItem(outcome.getTarget());
                 int count = from.getInventory().removeItem(item, outcome.getValue());
                 to.getInventory().addItem(item, count);
+                break;
+            }
+            case ITEM_TRANSFER_ALL: {
+                Agent from = outcome.getValue() >= 0 ? source : target;
+                Agent to = outcome.getValue() >= 0 ? target : source;
+                
+                Type itemType = Type.valueOf(outcome.getTarget());
+                Map<Item, Integer> items = from.getInventory().getItemCounts(itemType);
+                for (Entry<Item, Integer> entry : items.entrySet()) {
+                    int count = from.getInventory().removeItem(entry.getKey(), entry.getValue());
+                    to.getInventory().addItem(entry.getKey(), count);
+                }
+                break;
+            }
             case REP_CHANGE: // change TARGET reputation by VALUE
                 Faction faction = Faction.of(outcome.getTarget());
                 target.getInfo().getFactionManager()

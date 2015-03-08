@@ -18,6 +18,7 @@ import com.eldritch.scifirpg.editor.tables.OutcomeTable;
 import com.eldritch.scifirpg.editor.util.StateMarkers;
 import com.eldritch.invoken.proto.Augmentations.AugmentationProto;
 import com.eldritch.invoken.proto.Disciplines.Discipline;
+import com.eldritch.invoken.proto.Items.Item;
 import com.eldritch.invoken.proto.Outcomes.Outcome;
 import com.eldritch.invoken.proto.Outcomes.Outcome.Type;
 import com.google.common.base.Optional;
@@ -105,6 +106,11 @@ public class OutcomeEditorPanel extends AssetEditorPanel<Outcome, OutcomeTable> 
 			case ITEM_CHANGE:
 			case ITEM_TRANSFER:
 				values.addAll(MainPanel.ITEM_TABLE.getAssetIds());
+				break;
+			case ITEM_TRANSFER_ALL:
+				for (Item.Type itemType : Item.Type.values()) {
+					values.add(itemType.name());
+				}
 				break;
 			case MISSION_SET:
 				values.addAll(MainPanel.MISSION_TABLE.getAssetIds());

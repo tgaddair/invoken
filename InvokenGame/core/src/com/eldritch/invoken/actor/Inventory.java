@@ -10,6 +10,8 @@ import com.eldritch.invoken.actor.items.MeleeWeapon;
 import com.eldritch.invoken.actor.items.Outfit;
 import com.eldritch.invoken.actor.items.RangedWeapon;
 import com.eldritch.invoken.proto.Actors.ActorParams.InventoryItem;
+import com.eldritch.invoken.proto.Items.Item.Type;
+import com.google.common.collect.Maps;
 
 public class Inventory {
     private final Map<String, ItemState> items = new HashMap<String, Inventory.ItemState>();
@@ -105,6 +107,14 @@ public class Inventory {
 
     public void unequip(Item item) {
         item.unequipFrom(this);
+    }
+    
+    public Map<Item, Integer> getItemCounts(Type type) {
+        Map<Item, Integer> map = Maps.newHashMap();
+        for (ItemState item : items.values()) {
+            map.put(item.item, item.count);
+        }
+        return map;
     }
 
     public void addItem(Item item) {

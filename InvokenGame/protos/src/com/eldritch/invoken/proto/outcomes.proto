@@ -8,6 +8,7 @@ message Outcome {
 		// NOTE: if removing an equipped item would drop the count to 0, it will also be unequipped
 		ITEM_CHANGE = 0; // COUNT of TARGET item
 		ITEM_TRANSFER = 17;
+		ITEM_TRANSFER_ALL = 18;
 		REP_CHANGE = 1; // COUNT reputation with TARGET faction
 		RELATION_CHANGE = 7; // VALUE change in relation
 		XP_GAIN = 2; // COUNT experience points for TARGET discipline
