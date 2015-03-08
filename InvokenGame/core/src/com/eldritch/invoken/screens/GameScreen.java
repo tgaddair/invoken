@@ -249,8 +249,8 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         location.render(delta, camera, selector, tacticalPause);
 
         // draw health bars
+        selectedHealth.draw();
         batch.begin();
-        selectedHealth.draw(batch);
         dialogue.draw(batch);
         // draw minimap
         if (showMinimap) {
@@ -466,6 +466,11 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
             player.setAiming(true);
             return true;
         }
+        
+        if (player.inForcedDialogue()) {
+            // can't do anything
+            return false;
+        }
 
         Vector3 world = camera.unproject(new Vector3(screenX, screenY, 0));
 
@@ -477,11 +482,6 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
                         .useActiveAugmentation(new Vector2(world.x, world.y), button, tacticalPause);
                 return true;
             }
-            return false;
-        }
-        
-        if (player.inForcedDialogue()) {
-            // can't do anything
             return false;
         }
 
