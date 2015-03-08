@@ -437,6 +437,11 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
 
     public class NpcOutcomeHandler extends OutcomeHandler {
         @Override
+        protected Agent getSource() {
+            return Npc.this;
+        }
+        
+        @Override
         protected String getId(Response response) {
             return Npc.this.getId(response);
         }

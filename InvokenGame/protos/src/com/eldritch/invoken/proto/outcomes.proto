@@ -8,6 +8,7 @@ message Outcome {
 		// NOTE: if removing an equipped item would drop the count to 0, it will also be unequipped
 		ITEM_CHANGE = 0; // COUNT of TARGET item
 		REP_CHANGE = 1; // COUNT reputation with TARGET faction
+		RELATION_CHANGE = 7; // VALUE change in relation
 		XP_GAIN = 2; // COUNT experience points for TARGET discipline
 		AUG_USE = 3; // COUNT uses of TARGET augmentation
 		AUG_GAIN = 4; // TARGET augmentation added to inventory
@@ -17,8 +18,6 @@ message Outcome {
 		MISSION_SET = 9; // Set mission stage to TARGET
 
 		// Dialogue
-		INFLUENCE_MOD = 7; // COUNT change in current dialogue disposition
-		INFLUENCE_RESET = 8; // Reset dialogue disposition variable to its initial state
 		START_COMBAT = 10; // Only applies to dialogue in actor encounter
 
 		// Add and remove state markers for tracking the state of specific events.
@@ -28,6 +27,9 @@ message Outcome {
 		KILL = 13; // Kill the TARGET actor
 		GAIN_FOLLOWER = 14;
 		LOSE_FOLLOWER = 15;
+
+		// DEPRECATED:
+//		INFLUENCE_RESET = 8; // Reset dialogue disposition variable to its initial state
 	}
 
 	required double weight = 1 [default = 1.0]; // 0.0 -> 1.0

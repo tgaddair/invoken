@@ -115,7 +115,7 @@ public class AgentInfo {
 	}
 	
 	public AgentInfo(Agent agent, Profession profession, int level) {
-	    this.id = "player";
+	    this.id = "Player";
 	    this.name = "Player";
 	    this.species = Species.HUMAN;
 	    this.unique = true;

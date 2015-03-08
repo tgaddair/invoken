@@ -145,7 +145,13 @@ public class DialogueMenu {
 		choice.addListener(new DefaultInputListener() {
 			@Override
 			public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-				setup(npc, interactor, npc.getDialogueHandler().getResponseFor(c, interactor));
+			    Response response = npc.getDialogueHandler().getResponseFor(c, interactor);
+				setup(npc, interactor, response);
+				
+				// this will remove the text bubble for choices without successors
+				if (response == null) {
+				    npc.endDialogue();
+				}
 			}
 		});
 		choiceBar.add(choice).left().padLeft(50).padRight(25).padBottom(10);
