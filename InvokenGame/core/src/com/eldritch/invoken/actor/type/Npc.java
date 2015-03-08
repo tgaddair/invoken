@@ -48,6 +48,7 @@ import com.eldritch.invoken.actor.ai.NpcStateMachine;
 import com.eldritch.invoken.actor.ai.btree.Combat;
 import com.eldritch.invoken.actor.ai.btree.Investigate;
 import com.eldritch.invoken.actor.ai.btree.Patrol;
+import com.eldritch.invoken.actor.ai.btree.Speak;
 import com.eldritch.invoken.actor.aug.Augmentation;
 import com.eldritch.invoken.actor.items.Fragment;
 import com.eldritch.invoken.encounter.Location;
@@ -175,6 +176,7 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
         Selector<Npc> selector = new Selector<Npc>();
         selector.addChild(new Combat());
         selector.addChild(new Investigate());
+        selector.addChild(new Speak());
         selector.addChild(new Patrol());
         return selector;
     }

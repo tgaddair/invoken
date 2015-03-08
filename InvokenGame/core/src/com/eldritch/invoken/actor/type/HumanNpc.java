@@ -15,7 +15,7 @@ public class HumanNpc extends Npc {
     public HumanNpc(NonPlayerActor data, float x, float y, float maxVelocity, String asset,
             Location location) {
         super(data, x, y, Human.getWidth(), Human.getHeight(), maxVelocity, Human
-                .getAllAnimations(getBody(data)), location);
+                .getAllAnimations(asset), location);
     }
 
     private static String getBody(NonPlayerActor data) {
