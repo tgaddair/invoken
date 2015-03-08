@@ -424,14 +424,12 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
                 }
             }
 
-            // return verify(r.getPrereqList(), model);
-            return true;
+            return verify(r.getPrereqList(), interactor);
         }
 
         @Override
         public boolean isValid(Choice c, Agent interactor) {
-            // return verify(c.getPrereqList(), model);
-            return true;
+            return verify(c.getPrereqList(), interactor);
         }
     }
 
@@ -440,7 +438,7 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
         protected Agent getSource() {
             return Npc.this;
         }
-        
+
         @Override
         protected String getId(Response response) {
             return Npc.this.getId(response);
