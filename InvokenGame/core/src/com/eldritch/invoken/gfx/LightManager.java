@@ -155,7 +155,7 @@ public class LightManager {
 		batch.end();
 		fbo.end();
 
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+//		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		batch.setShader(paused ? pauseShader : finalShader);
 		fbo.getColorBufferTexture().bind(2); // this is important! bind the FBO
 												// to the 3rd texture

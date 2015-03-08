@@ -36,7 +36,7 @@ public class OverlayLightMasker {
         renderer.render();
         save();
         fbo.end();
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+//        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         
         // this is important! bind the FBO to the 4th texture unit
         fbo.getColorBufferTexture().bind(3);

@@ -101,9 +101,8 @@ public class FogOfWarMasker {
     }
 
     public void render(float delta, OrthographicCamera camera) {
-        // clear FBO A with an opaque colour to minimize blending issues
+        // clear FBO A with an opaque color to minimize blending issues
         frameBuffer.begin();
-        // Gdx.gl.glClearColor(0.0f, 0.0f, 0.0f, 1f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         
         int x1 = bounds != null ? (int) bounds.x : 0;

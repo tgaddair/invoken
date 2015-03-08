@@ -182,7 +182,7 @@ public class NormalMapShader {
             renderer.setNormalRender(false);
         }
         fbo.end();
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+//        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         
         // this is important! bind the FBO to the 2nd texture unit
         fbo.getColorBufferTexture().bind(1);
