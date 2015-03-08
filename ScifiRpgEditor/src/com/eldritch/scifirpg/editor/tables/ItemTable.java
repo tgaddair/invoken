@@ -75,7 +75,7 @@ public class ItemTable extends MajorAssetTable<Item> {
 		
 		private final JTextField idField = new JTextField();
 		private final JTextField nameField = new JTextField();
-		private final JComboBox<Type> typeBox = new JComboBox<Type>(Type.values());
+		private final JComboBox<Type> typeBox = new JComboBox<>(Type.values());
 		private final JTextArea descriptionField = createArea(true, 30, new Dimension(100, 100));
 		private final JTextField valueField = new JTextField();
 		private final EffectTable effectTable = new EffectTable();
@@ -85,6 +85,7 @@ public class ItemTable extends MajorAssetTable<Item> {
 		private final JCheckBox hiddenCheck = new JCheckBox();
 		private final JCheckBox coversCheck = new JCheckBox();
 		private final JTextField rangeField = new JTextField();
+		private final JTextField cooldownField = new JTextField();
 		private final JTextField assetField = new JTextField();
 
 		public ItemEditorPanel(ItemTable owner, JFrame frame, Optional<Item> prev) {
@@ -136,6 +137,9 @@ public class ItemTable extends MajorAssetTable<Item> {
 			builder.append("Range:", rangeField);
 			builder.nextLine();
 			
+			builder.append("Cooldown:", cooldownField);
+			builder.nextLine();
+			
 			builder.append("Asset:", assetField);
 			builder.nextLine();
 
@@ -166,6 +170,9 @@ public class ItemTable extends MajorAssetTable<Item> {
 				if (item.hasRange()) {
 					rangeField.setText(item.getRange() + "");
 				}
+				if (item.hasCooldown()) {
+					cooldownField.setText(item.getCooldown() + "");
+				}
 				if (item.hasAsset()) {
 					assetField.setText(item.getAsset());
 				}
@@ -191,6 +198,9 @@ public class ItemTable extends MajorAssetTable<Item> {
 					.setAsset(assetField.getText());
 			if (!rangeField.getText().isEmpty()) {
 				item.setRange(Double.parseDouble(rangeField.getText()));
+			}
+			if (!cooldownField.getText().isEmpty()) {
+				item.setCooldown(Double.parseDouble(cooldownField.getText()));
 			}
 			return item.build();
 		}

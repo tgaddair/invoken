@@ -46,4 +46,5 @@ message Item {
 	optional string asset = 11;
 
 	optional double range = 13; // scales ranged weapon damage and acts as cutoff for melee
+	optional double cooldown = 14;
 }
