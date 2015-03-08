@@ -968,7 +968,10 @@ public class Location {
                 "sprite/characters/light-blue-hair.png");
 
         Faction playerFaction = Faction.of("_PlayerFaction");
-        player.getInfo().addFaction(playerFaction, 9, 0);
+        
+        // 3 is the "standard" rank at which members of the same faction should become allies
+        // i.e. 30 rep
+        player.getInfo().addFaction(playerFaction, 3, 0);
 
         Item outfit = profession.getDefaultOutfit();
         player.getInfo().getInventory().addItem(outfit);

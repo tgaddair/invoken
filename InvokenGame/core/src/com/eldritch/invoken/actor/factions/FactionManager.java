@@ -98,9 +98,11 @@ public class FactionManager {
         for (Faction faction : getFactions()) {
             // only react to someone based on a faction we actually hold rank within
             if (agent.getInfo().hasRank(faction)) {
-                // the better our reputation in this faction, the more strongly we feel
-                // about others in relation to it
-                float a = getReputation(faction) / 10f;
+                // we only care about the sign of our reputation with this faction, whether it's
+                // positive, negative, or ambivalent
+                // in other words, being higher ranked in a faction should not give you a better
+                // or worse opinion of others
+                float a = Math.signum(getReputation(faction));
 
                 // only consider factions we're currently on good terms with
                 if (a > 0) {
@@ -108,7 +110,13 @@ public class FactionManager {
                     for (Faction otherFaction : other.getInfo().getFactions()) {
                         if (faction.hasRelation(otherFaction)) {
                             // we care more about how our target is perceived by the related faction
-                            float b = other.getInfo().getReputation(otherFaction) / 5f;
+                            float b = other.getInfo().getReputation(otherFaction) / 3f;
+                            
+                            // this is the modifier from this faction to the other
+                            // this value is typically between [-3, 3]
+                            // however, we want to rely more on individual reputation and
+                            // regress reactions towards the mean to prevent treating everyone
+                            // as either an extreme ally or enemy
                             float f = faction.getRelation(otherFaction);
 
                             // r: [-100, 100]
