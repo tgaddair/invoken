@@ -125,6 +125,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
 
     private Agent target;
     private Agent interactor;
+    private boolean forcedDialogue;
     private final Set<String> uniqueDialogue = Sets.newHashSet();
     private final Set<Class<?>> toggles = new HashSet<Class<?>>();
     private final Set<ProjectileHandler> projectileHandlers = new HashSet<ProjectileHandler>();
@@ -651,9 +652,18 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         interactor = other;
     }
     
-    public void beginDialogue(Agent other) {
+    public boolean inForcedDialogue() {
+        return interactor != null && forcedDialogue;
+    }
+    
+    public void beginDialogue(Agent other, boolean forced) {
+        this.forcedDialogue = forced;
         interact(other);
         other.interact(this);
+    }
+    
+    public void unforceDialogue() {
+        forcedDialogue = false;
     }
 
     public void endDialogue() {
@@ -843,6 +853,11 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         lastAction += delta;
         if (actionInProgress()) {
             // cannot act if another action is in progress
+            return;
+        }
+        
+        if (inForcedDialogue()) {
+            // cannot act while in a forced dialogue situation
             return;
         }
 

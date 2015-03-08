@@ -148,7 +148,7 @@ public class Player extends SteeringAgent {
 
     public void reselect(Agent other) {
         if (canInteract(other)) {
-            beginDialogue(other);
+            beginDialogue(other, false);
         }
     }
 

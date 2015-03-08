@@ -96,6 +96,9 @@ public class DialogueMenu {
 		    	// display a text bubble, as there is no choice for the player to make
 		    	addLabel(response.getText());
 		    	container.setVisible(false);
+		    	
+		    	// continue to show the dialogue, but it's no longer forced
+		    	interactor.unforceDialogue();
 		    } else {
 		    	// use the bubble to indicate that the full conversation appears elsewhere
 		    	addLabel("...");

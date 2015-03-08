@@ -56,7 +56,7 @@ public class Speak extends Sequence<Npc> {
     private static class Greet extends LeafTask<Npc> {
         @Override
         public void run(Npc npc) {
-            npc.beginDialogue(npc.getTarget());
+            npc.getTarget().beginDialogue(npc, true);
             npc.setTask(getClass().getSimpleName());
             success();
         }

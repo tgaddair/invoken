@@ -479,6 +479,11 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
             }
             return false;
         }
+        
+        if (player.inForcedDialogue()) {
+            // can't do anything
+            return false;
+        }
 
         // handle entity selection
         boolean selection = false;
