@@ -27,11 +27,11 @@ import com.google.common.base.Strings;
 public class RangedWeapon extends Item {
     private static final float DAMAGE_SCALE = 1;
     private static final float BULLET_VELOCITY = 25;
-    private static final float COOLDOWN = 0.5f;
     
 	private final Map<Direction, Animation> animations = new HashMap<Direction, Animation>();
 	private final TextureRegion texture;
 	private final DamageType primary;
+	private final int baseCost;
 	
 	public RangedWeapon(com.eldritch.invoken.proto.Items.Item item) {
 		this(item, getRegion(item.getAsset()));
@@ -42,13 +42,16 @@ public class RangedWeapon extends Item {
         this.texture = texture;
         
         // get primary damage type
+        float damageSum = 0;
         DamageMod greatest = null;
         for (DamageMod mod : getData().getDamageModifierList()) {
+            damageSum += mod.getMagnitude();
             if (greatest == null || mod.getMagnitude() > greatest.getMagnitude()) {
                 greatest = mod;
             }
         }
         primary = greatest != null ? greatest.getDamage() : DamageType.PHYSICAL;
+        baseCost = (int) (damageSum / 3);
     }
 	
 	public void render(Vector2 position, Vector2 direction, OrthogonalTiledMapRenderer renderer) {
@@ -97,8 +100,12 @@ public class RangedWeapon extends Item {
 	    return damage;
 	}
 	
+	public int getBaseCost() {
+	    return baseCost;
+	}
+	
 	public float getCooldown() {
-	    return COOLDOWN;
+	    return (float) getData().getCooldown();
 	}
 	
 	@Override

@@ -4,28 +4,19 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
-import com.eldritch.invoken.actor.AgentHandler;
 import com.eldritch.invoken.actor.items.RangedWeapon;
 import com.eldritch.invoken.actor.type.Agent;
-import com.eldritch.invoken.actor.type.Agent.RayTarget;
-import com.eldritch.invoken.actor.type.HandledBullet;
-import com.eldritch.invoken.actor.type.HandledProjectile;
-import com.eldritch.invoken.actor.type.TemporaryEntity;
 import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.actor.type.Agent.Direction;
-import com.eldritch.invoken.effects.Bleed;
+import com.eldritch.invoken.actor.type.HandledProjectile;
 import com.eldritch.invoken.effects.HoldingWeapon;
-import com.eldritch.invoken.effects.Stunned;
 import com.eldritch.invoken.encounter.Location;
 import com.eldritch.invoken.screens.GameScreen;
-import com.eldritch.invoken.util.Settings;
 
 public class FireWeapon extends ProjectileAugmentation {
-    private static final int BASE_COST = 10;
     private static final float ALERT_RADIUS = 10;
 
     private static class Holder {
@@ -74,7 +65,7 @@ public class FireWeapon extends ProjectileAugmentation {
 
     @Override
     public int getCost(Agent owner) {
-        return BASE_COST;
+        return owner.getInventory().getRangedWeapon().getBaseCost();
     }
 
     public class FireAction extends AnimatedAction {
