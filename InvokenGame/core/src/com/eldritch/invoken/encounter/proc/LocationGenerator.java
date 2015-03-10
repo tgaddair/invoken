@@ -9,6 +9,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -196,7 +197,7 @@ public class LocationGenerator {
         roomGenerator.generate(rooms);
 
         InvokenGame.log("Creating Spawn Layers");
-        for (LocationLayer layer : createSpawnLayers(base, collision, bsp, map)) {
+        for (LocationLayer layer : createSpawnLayers(base, collision, bsp, map, rooms)) {
             map.getLayers().add(layer);
         }
 
@@ -275,75 +276,6 @@ public class LocationGenerator {
     private boolean openGround(int x, int y, LocationLayer layer, LocationLayer collision) {
         return layer.isGround(x, y) && collision.getCell(x, y) == null;
     }
-    
-    private boolean isChokePoint(NaturalVector2 point, CellType[][] typeMap) {
-        // we already know this point is floor
-        return isVerticalChokePoint(point, typeMap) || isHorizontalChokePoint(point, typeMap);
-    }
-    
-    private boolean isVerticalChokePoint(NaturalVector2 point, CellType[][] typeMap) {
-        // vertical -> the length of continuous floor points up and down is at most two
-        int verticalSum = 1;
-        for (int dy = 1; point.y + dy < typeMap[point.x].length; dy++) {
-            if (typeMap[point.x][point.y + dy] == CellType.Floor) {
-                verticalSum++;
-                if (verticalSum > 2) {
-                    // too many vertical points
-                    return false;
-                }
-            } else {
-                // end of downward run
-                break;
-            }
-        }
-        
-        for (int dy = -1; point.y + dy >= 0; dy--) {
-            if (typeMap[point.x][point.y + dy] == CellType.Floor) {
-                verticalSum++;
-                if (verticalSum > 2) {
-                    // too many vertical points
-                    return false;
-                }
-            } else {
-                // end of upward run
-                break;
-            }
-        }
-        
-        return verticalSum <= 2;
-    }
-    
-    private boolean isHorizontalChokePoint(NaturalVector2 point, CellType[][] typeMap) {
-        // horizontal -> the length of continuous floor points left and right is at most two
-        int horizontalSum = 1;
-        for (int dx = 1; point.x + dx < typeMap.length; dx++) {
-            if (typeMap[point.x + dx][point.y] == CellType.Floor) {
-                horizontalSum++;
-                if (horizontalSum > 2) {
-                    // too many horizontal points
-                    return false;
-                }
-            } else {
-                // end of rightward run
-                break;
-            }
-        }
-        
-        for (int dx = -1; point.x + dx >= 0; dx--) {
-            if (typeMap[point.x + dx][point.y] == CellType.Floor) {
-                horizontalSum++;
-                if (horizontalSum > 2) {
-                    // too many horizontal points
-                    return false;
-                }
-            } else {
-                // end of leftward run
-                break;
-            }
-        }
-        
-        return horizontalSum <= 2;
-    }
 
     private ConnectedRoomManager createRooms(Collection<EncounterRoom> chambers,
             CellType[][] typeMap) {
@@ -353,6 +285,7 @@ public class LocationGenerator {
         ImmutableBiMap.Builder<EncounterRoom, ConnectedRoom> mapping = new ImmutableBiMap.Builder<EncounterRoom, ConnectedRoom>();
         for (EncounterRoom encounter : chambers) {
             List<NaturalVector2> points = new ArrayList<NaturalVector2>();
+            Set<NaturalVector2> chokePoints = new HashSet<NaturalVector2>();
 
             // boundary of the chamber
             Rectangle rect = encounter.getBounds();
@@ -367,8 +300,14 @@ public class LocationGenerator {
             for (int x = startX; x < endX; x++) {
                 for (int y = startY; y < endY; y++) {
                     NaturalVector2 point = NaturalVector2.of(x, y);
-                    if (typeMap[x][y] == CellType.Floor && !isChokePoint(point, typeMap)) {
-                        points.add(point);
+                    if (typeMap[x][y] == CellType.Floor) {
+                        if (isChokePoint(point, typeMap, chokePoints)) {
+                            // mark this point as a choke point so we don't place furniture
+                            chokePoints.add(point);
+                            chokePoints.add(NaturalVector2.of(point.x, point.y + 1));
+                        } else {
+                            points.add(point);
+                        }
                     }
                 }
             }
@@ -378,6 +317,7 @@ public class LocationGenerator {
             for (NaturalVector2 point : points) {
                 rooms.setRoom(point.x, point.y, room);
             }
+            room.addChokePoints(chokePoints);
             mapping.put(encounter, room);
         }
         rooms.setMapping(mapping.build());
@@ -480,6 +420,78 @@ public class LocationGenerator {
                 }
             }
         }
+    }
+
+    private boolean isChokePoint(NaturalVector2 point, CellType[][] typeMap,
+            Set<NaturalVector2> chokePoints) {
+        // we already know this point is floor
+        // return isVerticalChokePoint(point, typeMap)
+        return chokePoints.contains(point)
+                || isHorizontalChokePoint(NaturalVector2.of(point.x, point.y + 1), typeMap);
+    }
+
+    private boolean isVerticalChokePoint(NaturalVector2 point, CellType[][] typeMap) {
+        // vertical -> the length of continuous floor points up and down is at most two
+        int verticalSum = 1;
+        for (int dy = 1; point.y + dy < typeMap[point.x].length; dy++) {
+            if (typeMap[point.x][point.y + dy] == CellType.Floor) {
+                verticalSum++;
+                if (verticalSum > 2) {
+                    // too many vertical points
+                    return false;
+                }
+            } else {
+                // end of downward run
+                break;
+            }
+        }
+
+        for (int dy = -1; point.y + dy >= 0; dy--) {
+            if (typeMap[point.x][point.y + dy] == CellType.Floor) {
+                verticalSum++;
+                if (verticalSum > 2) {
+                    // too many vertical points
+                    return false;
+                }
+            } else {
+                // end of upward run
+                break;
+            }
+        }
+
+        return verticalSum <= 2;
+    }
+
+    private boolean isHorizontalChokePoint(NaturalVector2 point, CellType[][] typeMap) {
+        // horizontal -> the length of continuous floor points left and right is at most two
+        int horizontalSum = 1;
+        for (int dx = 1; point.x + dx < typeMap.length; dx++) {
+            if (typeMap[point.x + dx][point.y] == CellType.Floor) {
+                horizontalSum++;
+                if (horizontalSum > 2) {
+                    // too many horizontal points
+                    return false;
+                }
+            } else {
+                // end of rightward run
+                break;
+            }
+        }
+
+        for (int dx = -1; point.x + dx >= 0; dx--) {
+            if (typeMap[point.x + dx][point.y] == CellType.Floor) {
+                horizontalSum++;
+                if (horizontalSum > 2) {
+                    // too many horizontal points
+                    return false;
+                }
+            } else {
+                // end of leftward run
+                break;
+            }
+        }
+
+        return horizontalSum <= 2;
     }
 
     private <T> boolean inBounds(int x, int y, T[][] grid) {
@@ -758,26 +770,28 @@ public class LocationGenerator {
     }
 
     private List<LocationLayer> createSpawnLayers(LocationLayer base, LocationLayer collision,
-            EncounterGenerator generator, LocationMap map) {
+            EncounterGenerator generator, LocationMap map, ConnectedRoomManager rooms) {
         List<LocationLayer> layers = new ArrayList<LocationLayer>();
         for (EncounterRoom encounterRoom : generator.getEncounterRooms()) {
-            Encounter encounter = encounterRoom.getEncounter();
-            Rectangle bounds = encounterRoom.getRestrictedBounds();
-            createLayer(encounter, bounds, base, collision, map, layers);
+            createLayer(encounterRoom, rooms, base, collision, map, layers);
         }
 
         return layers;
     }
 
-    private void createLayer(Encounter encounter, Rectangle room, LocationLayer base,
+    private void createLayer(EncounterRoom encounterRoom, ConnectedRoomManager rooms, LocationLayer base,
             LocationLayer collision, LocationMap map, List<LocationLayer> layers) {
+        Encounter encounter = encounterRoom.getEncounter();
+        Rectangle bounds = encounterRoom.getRestrictedBounds();
         LocationLayer layer = new EncounterLayer(encounter, base.getWidth(), base.getHeight(), PX,
                 PX, map);
         layer.setVisible(false);
         layer.setOpacity(1.0f);
-        layer.setName("encounter-" + room.getX() + "-" + room.getY());
+        layer.setName("encounter-" + bounds.getX() + "-" + bounds.getY());
 
-        List<NaturalVector2> freeSpaces = getFreeSpaces(collision, room);
+        ConnectedRoom connected = rooms.getConnected(encounterRoom);
+        List<NaturalVector2> freeSpaces = getFreeSpaces(collision, bounds);
+        freeSpaces.retainAll(connected.getPoints());
         if (encounter.getOrigin()) {
             LocationLayer playerLayer = new LocationLayer(base.getWidth(), base.getHeight(), PX,
                     PX, map);
@@ -803,7 +817,7 @@ public class LocationGenerator {
         Iterator<NaturalVector2> it = freeSpaces.iterator();
         for (ActorScenario scenario : encounter.getActorParams().getActorScenarioList()) {
             for (int i = 0; i < scenario.getMax(); i++) {
-                NaturalVector2 position = it.hasNext() ? it.next() : getPoint(room, base, layer);
+                NaturalVector2 position = it.hasNext() ? it.next() : getPoint(bounds, base, layer);
                 addCell(layer, collider, position.x, position.y);
             }
         }

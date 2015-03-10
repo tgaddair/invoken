@@ -11,6 +11,7 @@ public class ConnectedRoom {
 	
 	private final Set<ConnectedRoom> neighbors = new LinkedHashSet<ConnectedRoom>();
 	private final Set<NaturalVector2> points = new LinkedHashSet<NaturalVector2>();
+	private final Set<NaturalVector2> chokePoints = new LinkedHashSet<NaturalVector2>();
 	private final Type type;
 	private final NaturalVector2 center;
 	
@@ -26,6 +27,14 @@ public class ConnectedRoom {
 	
 	public Set<NaturalVector2> getPoints() {
 	    return points;
+	}
+	
+	public Set<NaturalVector2> getChokePoints() {
+        return chokePoints;
+    }
+	
+	public void addChokePoints(Collection<NaturalVector2> points) {
+	    this.chokePoints.addAll(points);
 	}
 	
 	public void addPoint(int x, int y) {
