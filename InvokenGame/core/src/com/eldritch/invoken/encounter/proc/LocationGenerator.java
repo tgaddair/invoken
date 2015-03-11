@@ -782,7 +782,11 @@ public class LocationGenerator {
     private void createLayer(EncounterRoom encounterRoom, ConnectedRoomManager rooms, LocationLayer base,
             LocationLayer collision, LocationMap map, List<LocationLayer> layers) {
         Encounter encounter = encounterRoom.getEncounter();
-        Rectangle bounds = encounterRoom.getRestrictedBounds();
+        
+        // further restrict bounds to prevent spawning at wall level
+        Rectangle bounds = new Rectangle(encounterRoom.getRestrictedBounds());
+        bounds.height -= 1;
+        
         LocationLayer layer = new EncounterLayer(encounter, base.getWidth(), base.getHeight(), PX,
                 PX, map);
         layer.setVisible(false);
