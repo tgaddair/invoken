@@ -21,8 +21,8 @@ public class BspGenerator {
     // 4 -> lots of corridors
     private static final float ROOM_SPARSITY = 4.5f;
     
-    public static final int MinRoomSize = 6;
-    public static final int MaxRoomSize = 12;
+    public static final int MinRoomSize = 7;
+    public static final int MaxRoomSize = 15;
 
     private final Random rand;
     private CellType[][] map;

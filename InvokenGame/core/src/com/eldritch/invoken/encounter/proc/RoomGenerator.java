@@ -24,7 +24,7 @@ public class RoomGenerator {
     public static final double MAX_FURNITURE = 0.2;
 
     enum RoomType {
-        SMALL(5, 7), MEDIUM(8, 11), LARGE(12, Integer.MAX_VALUE);
+        SMALL(0, 9), MEDIUM(10, 12), LARGE(12, Integer.MAX_VALUE);
 
         private final int min;
         private final int max;
@@ -40,11 +40,6 @@ public class RoomGenerator {
 
         public int getMax() {
             return max;
-        }
-
-        public boolean fitsBounds(Rectangle bounds) {
-            float area = bounds.area();
-            return area >= (min * min) && area <= (max * max);
         }
     }
 
