@@ -24,7 +24,7 @@ public class RoomGenerator {
     public static final double MAX_FURNITURE = 0.2;
 
     enum RoomType {
-        SMALL(0, 7), MEDIUM(6, 10), LARGE(9, Integer.MAX_VALUE);
+        SMALL(5, 7), MEDIUM(8, 11), LARGE(12, Integer.MAX_VALUE);
 
         private final int min;
         private final int max;

@@ -45,6 +45,7 @@ import com.eldritch.invoken.actor.ai.FatigueMonitor;
 import com.eldritch.invoken.actor.ai.IntimidationMonitor;
 import com.eldritch.invoken.actor.ai.NpcState;
 import com.eldritch.invoken.actor.ai.NpcStateMachine;
+import com.eldritch.invoken.actor.ai.ThreatMonitor;
 import com.eldritch.invoken.actor.ai.btree.Combat;
 import com.eldritch.invoken.actor.ai.btree.Investigate;
 import com.eldritch.invoken.actor.ai.btree.Patrol;
@@ -58,8 +59,6 @@ import com.eldritch.invoken.proto.Actors.DialogueTree.Response;
 import com.eldritch.invoken.proto.Actors.NonPlayerActor;
 import com.eldritch.invoken.proto.Actors.NonPlayerActor.Aggression;
 import com.eldritch.invoken.proto.Locations.Encounter.ActorParams.ActorScenario;
-import com.eldritch.invoken.proto.Prerequisites.Prerequisite;
-import com.eldritch.invoken.proto.Prerequisites.Standing;
 import com.eldritch.invoken.util.OutcomeHandler;
 import com.eldritch.invoken.util.PrerequisiteVerifier;
 import com.google.common.base.Optional;
@@ -88,6 +87,7 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
     private CoverPoint cover = null;
     private final FatigueMonitor fatigue;
     private final IntimidationMonitor intimidation;
+    private final ThreatMonitor threat;
     private Augmentation chosenAug;
     private float lastStep = 0;
     private float alert = 0;
@@ -144,6 +144,7 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
         behaviorTree = new BehaviorTree<Npc>(createBehavior(), this);
         fatigue = new FatigueMonitor(this);
         intimidation = new IntimidationMonitor(this);
+        threat = new ThreatMonitor(this);
     }
 
     public CoverPoint getCover() {
@@ -164,6 +165,10 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
 
     public IntimidationMonitor getIntimidation() {
         return intimidation;
+    }
+    
+    public ThreatMonitor getThreat() {
+        return threat;
     }
 
     public void setTask(String taskName) {
@@ -271,6 +276,8 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
     }
 
     public void update(float delta) {
+        // monitors
+        threat.update(delta);
         alert = Math.max(alert - delta, 0);
 
         // update sighted info
@@ -283,12 +290,14 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
             getIntimidation().useUntilLimit(-delta);
         }
 
+        // action planning
         lastStep += delta;
         if (lastStep > STEP) {
             behaviorTree.step();
             lastStep = 0;
         }
 
+        // steering and movement
         if (steeringBehavior != null) {
             // Calculate steering acceleration
             steeringBehavior.calculateSteering(steeringOutput);

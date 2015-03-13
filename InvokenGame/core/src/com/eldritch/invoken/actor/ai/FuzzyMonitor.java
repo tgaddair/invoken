@@ -9,6 +9,10 @@ public abstract class FuzzyMonitor {
     private float limit;
     private boolean ready = true; // below the threshold
     private float value = 0;
+    
+    public FuzzyMonitor() {
+        this(DEFAULT_PENALTY);
+    }
 
     public FuzzyMonitor(PenaltyFunction pentalty) {
         this.penalty = pentalty;
@@ -53,4 +57,11 @@ public abstract class FuzzyMonitor {
     public interface PenaltyFunction {
         float getPenalty();
     }
+    
+    public static final PenaltyFunction DEFAULT_PENALTY = new PenaltyFunction() {
+        @Override
+        public float getPenalty() {
+            return 0;
+        }
+    };
 }

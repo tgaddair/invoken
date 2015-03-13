@@ -91,7 +91,7 @@ public enum Profession {
 		
 		@Override
         public Outfit getDefaultOutfit() {
-            return new Outfit(InvokenGame.ITEM_READER.readAsset("EruInfantryArmor"));
+            return new Outfit(InvokenGame.ITEM_READER.readAsset("ExecutorArmor"));
         }
 		
 		@Override
