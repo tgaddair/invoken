@@ -18,6 +18,7 @@ public class NavigatedSteerable extends BasicSteerable {
 
     private final Npc npc;
     private final PathManager pathManager;
+    private final Vector2 lastSeen = new Vector2();
     private Agent target = null;
 
     // path state
@@ -42,7 +43,7 @@ public class NavigatedSteerable extends BasicSteerable {
                     pathAge = 0;
                 } else {
                     // fallback to moving in a straight line
-                    setPosition(target.getPosition());
+                    setPosition(lastSeen);
                     resetPath();
                 }
             }
@@ -82,6 +83,9 @@ public class NavigatedSteerable extends BasicSteerable {
             // invalidate the path
             resetPath();
             this.target = target;
+            if (target != null) {
+                this.lastSeen.set(target.getPosition());
+            }
         }
 
         // new last seen point means new path
@@ -94,24 +98,24 @@ public class NavigatedSteerable extends BasicSteerable {
             return;
         }
 
-        if (npc.hasLineOfSight(target)) {
+        if (npc.hasVisibilityTo(target)) {
             // we don't need pathfinding if we have line of sight
             setPosition(target.getPosition());
         } else {
             // only update the path if the new position is sufficiently different from the last we
             // computed a path for, and a certain amount of time has elapsed
             if (path == null
-                    || (pathAge > WAIT_SECONDS && target.getPosition().dst2(
+                    || (pathAge > WAIT_SECONDS && lastSeen.dst2(
                             path.getNodePosition(pathIndex)) > MIN_DIST)) {
                 resetPath();
-                computePath(target.getNaturalPosition());
+                computePath(NaturalVector2.of(lastSeen));
 
                 if (path != null && path.getCount() > 0) {
                     // begin at the first node in the path
                     setPosition(path.getNodePosition(0));
                 } else {
                     // pathfinding failed, so fallback to the default behavior
-                    setPosition(target.getPosition());
+                    setPosition(lastSeen);
                     resetPath();
                 }
             }

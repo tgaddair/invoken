@@ -38,12 +38,18 @@ public class NpcThreatMonitor extends ThreatMonitor<Npc> {
         }
     }
 
-    protected void notice(Agent enemy) {
+    public void notifyOf(Agent enemy) {
         threatLevel.handleMessage(Notice.of(enemy));
     }
 
     public void setCalm() {
         threatLevel.changeState(ThreatLevel.Calm);
+    }
+    
+    public void maybeSetSuspicious() {
+        if (!isAlerted()) {
+            setSuspicious();
+        }
     }
 
     public void setSuspicious() {
@@ -51,6 +57,7 @@ public class NpcThreatMonitor extends ThreatMonitor<Npc> {
     }
     
     public void setSuspicious(Agent other) {
+        setSuspicious();
         getAgent().alertTo(other);
     }
 

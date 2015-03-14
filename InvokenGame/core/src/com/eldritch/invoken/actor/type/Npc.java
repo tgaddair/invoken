@@ -357,11 +357,11 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
     public void alertTo(Agent other) {
         if (!hasTarget()) {
             setTarget(other);
-            threat.setSuspicious();
+            threat.maybeSetSuspicious();
         } else if (other == getTarget()) {
             lastSeen.setPosition(other);
             setFocusPoint(other.getPosition());
-            threat.setSuspicious();
+            threat.maybeSetSuspicious();
         }
 
         // when we're alerted to an enemy, we should treat this like assisting ourselves

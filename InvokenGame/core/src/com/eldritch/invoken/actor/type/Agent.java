@@ -758,7 +758,11 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     public boolean canKeepTarget(Agent other) {
         return isNear(other);
     }
-
+    
+    public boolean hasVisibilityTo(Agent other) {
+        return hasLineOfSight(other) && visibleNeighbors.contains(other);
+    }
+    
     public boolean isVisible(Agent other) {
         return other.getVisibility() >= Math.min(10f / info.getSubterfuge(), 1.0f);
     }
