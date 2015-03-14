@@ -12,6 +12,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.eldritch.invoken.actor.ai.NpcThreatMonitor;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.CoverPoint;
 import com.eldritch.invoken.actor.type.Npc;
@@ -133,6 +134,15 @@ public class DebugEntityRenderer {
         sr.end();
     }
     
+    public void renderThreat(Agent target, OrthographicCamera camera) {
+        if (target == null || !(target instanceof Npc)) {
+            return;
+        }
+        Npc npc = (Npc) target;
+        renderCircle(npc.getPosition(), NpcThreatMonitor.ALERT_RADIUS, camera.combined, Color.RED);
+        renderCircle(npc.getPosition(), NpcThreatMonitor.SUSPICION_RADIUS, camera.combined, Color.ORANGE);
+    }
+    
     public void renderLastSeen(Agent target, OrthographicCamera camera) {
         if (target == null || !(target instanceof Npc)) {
             return;
@@ -150,10 +160,14 @@ public class DebugEntityRenderer {
     }
     
     public void renderCircle(Vector2 position, float radius, Matrix4 projection) {
+        renderCircle(position, radius, projection, Color.BLUE);
+    }
+    
+    private void renderCircle(Vector2 position, float radius, Matrix4 projection, Color color) {
         sr.setProjectionMatrix(projection);
         sr.begin(ShapeType.Line);
-        sr.setColor(Color.BLUE);
-        sr.circle(position.x, position.y, 0.5f);
+        sr.setColor(color);
+        sr.circle(position.x, position.y, radius);
         sr.end();
     }
     

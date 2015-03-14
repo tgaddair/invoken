@@ -40,8 +40,15 @@ public class ThreatMonitor<T extends Agent> {
         Iterator<Agent> enemyIterator = enemies.iterator();
         while (enemyIterator.hasNext()) {
             Agent enemy = enemyIterator.next();
-            if (!enemy.isAlive() || !lastSeen.containsKey(enemy)) {
+            if (!enemy.isAlive() || !lastSeen.containsKey(enemy) || !agent.isEnemy(enemy)) {
                 enemyIterator.remove();
+            }
+        }
+        
+        // add new enemies
+        for (Agent neighbor : agent.getVisibleNeighbors()) {
+            if (!enemies.contains(neighbor) && agent.isEnemy(neighbor)) {
+                enemies.add(neighbor);
             }
         }
     }

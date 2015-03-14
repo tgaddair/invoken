@@ -5,14 +5,14 @@ import com.eldritch.invoken.actor.type.Npc;
 
 public class Investigate extends Sequence<Npc> {
     public Investigate() {
-        addChild(new IsAlerted());
+        addChild(new IsSuspicious());
         addChild(new Pursue());
     }
     
-    private static class IsAlerted extends BooleanTask {
+    private static class IsSuspicious extends BooleanTask {
         @Override
         protected boolean check(Npc npc) {
-            return npc.isAlerted();
+            return npc.isSuspicious();
         }
     }
 }

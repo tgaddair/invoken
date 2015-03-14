@@ -5,7 +5,8 @@ import com.eldritch.invoken.actor.type.Npc;
 public class IsTired extends BooleanTask {
     @Override
     protected boolean check(Npc npc) {
-        return npc.getFatigue().isTired();
+        // alerted NPCs are not tired
+        return !npc.getThreat().isAlerted() && npc.getFatigue().isTired();
     }
 
 }

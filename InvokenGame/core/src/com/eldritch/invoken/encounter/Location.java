@@ -563,6 +563,10 @@ public class Location {
             // draw pathfinding nodes
             debugEntityRenderer.renderPathfinding(player.getTarget(), camera);
         }
+        if (Settings.DEBUG_STEALTH) {
+            // draw threat radii
+            debugEntityRenderer.renderThreat(player.getTarget(), camera);
+        }
 
         // draw last seen
         debugEntityRenderer.renderLastSeen(player.getTarget(), camera);

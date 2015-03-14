@@ -65,7 +65,6 @@ import com.google.common.base.Optional;
 
 public abstract class Npc extends SteeringAgent implements Telegraph {
     public static final float STEP = 0.008f; // behavior action frequency
-    private static final float ALERT_DURATION = 20f; // seconds
     private static final float SIGHTED_DURATION = 1f; // time enemy is in sights before firing
 
     public enum SteeringMode {
@@ -90,7 +89,6 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
     private final NpcThreatMonitor threat;
     private Augmentation chosenAug;
     private float lastStep = 0;
-    private float alert = 0;
     private float sighted = 0;
 
     private final NpcStateMachine stateMachine;
@@ -277,9 +275,6 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
     }
 
     public void update(float delta) {
-        // monitors
-        alert = Math.max(alert - delta, 0);
-
         // update sighted info
         lastSeen.update(delta);
         if (hasTarget() && hasLineOfSight(getTarget())) {
@@ -342,8 +337,8 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
         return sighted > SIGHTED_DURATION;
     }
 
-    public boolean isAlerted() {
-        return alert > 0;
+    public boolean isSuspicious() {
+        return threat.isSuspicious();
     }
 
     @Override
@@ -354,7 +349,7 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
     }
 
     @Override
-    protected boolean isEnemy(Agent other) {
+    public boolean isEnemy(Agent other) {
         return behavior.wantsToAttack(other);
     }
 
@@ -362,11 +357,11 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
     public void alertTo(Agent other) {
         if (!hasTarget()) {
             setTarget(other);
-            alert = ALERT_DURATION;
+            threat.setSuspicious();
         } else if (other == getTarget()) {
             lastSeen.setPosition(other);
             setFocusPoint(other.getPosition());
-            alert = ALERT_DURATION;
+            threat.setSuspicious();
         }
 
         // when we're alerted to an enemy, we should treat this like assisting ourselves
