@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Set;
 
 import box2dLight.PointLight;
-import box2dLight.RayHandler;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;

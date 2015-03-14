@@ -40,6 +40,7 @@ import com.eldritch.invoken.proto.Disciplines;
 import com.eldritch.invoken.proto.Disciplines.Discipline;
 import com.eldritch.invoken.screens.GameScreen;
 import com.eldritch.invoken.ui.MultiTextureRegionDrawable;
+import com.eldritch.invoken.util.Settings;
 import com.google.common.collect.ImmutableList;
 
 public enum Profession {
@@ -348,7 +349,7 @@ public enum Profession {
 	public abstract Disciplines.Profession toProto();
 	
 	public static Profession getDefault() {
-        return Executor;
+        return Settings.DEFAULT_PROFESSION;
     }
 	
 	public static List<Skill> getSorted(List<Skill> skills, final Collection<Discipline> masteries) {

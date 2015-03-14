@@ -1,5 +1,7 @@
 package com.eldritch.invoken.util;
 
+import com.eldritch.invoken.actor.Profession;
+
 public class Settings {
 	public static final int PX = 32;
 	public static final float SCALE = 1.0f / PX;
@@ -34,6 +36,7 @@ public class Settings {
 	public static final boolean DEBUG_PATHFINDING = false;
 	public static final boolean SKIP_MENU = true;
 	public static final int START_LEVEL = 1;  // 25
+	public static final Profession DEFAULT_PROFESSION = Profession.Ghost;
 	
 	public static DebugGraph DRAW_GRAPH = DebugGraph.Disposition;
 	public enum DebugGraph {
