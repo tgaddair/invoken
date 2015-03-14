@@ -57,10 +57,6 @@ public class ThreatMonitor<T extends Agent> {
         return enemies.contains(other);
     }
     
-    public void notice(Agent enemy) {
-        addEnemy(enemy);
-    }
-    
     public void addEnemy(Agent enemy) {
         if (agent.isAlive()) {
             enemies.add(enemy);

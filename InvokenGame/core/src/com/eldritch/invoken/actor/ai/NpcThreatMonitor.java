@@ -38,8 +38,7 @@ public class NpcThreatMonitor extends ThreatMonitor<Npc> {
         }
     }
 
-    @Override
-    public void notice(Agent enemy) {
+    protected void notice(Agent enemy) {
         threatLevel.handleMessage(Notice.of(enemy));
     }
 
@@ -61,24 +60,31 @@ public class NpcThreatMonitor extends ThreatMonitor<Npc> {
     }
 
     public void setAlerted() {
-        threatLevel.changeState(ThreatLevel.Suspicious);
+        threatLevel.changeState(ThreatLevel.Alerted);
     }
 
     public void setAlerted(Agent other) {
         setAlerted();
-        addEnemy(other);
     }
 
     public boolean isAlerted() {
         return threatLevel.getCurrentState() == ThreatLevel.Alerted;
+    }
+    
+    public boolean isCombatReady() {
+        return isAlerted() && hasEnemies();
     }
 
     public boolean isAlertedTo(Agent other) {
         float r = ALERT_RADIUS;
         return getAgent().dst2(other) < r * r;
     }
+    
+    public ThreatLevel getLevel() {
+        return (ThreatLevel) threatLevel.getCurrentState();
+    }
 
-    private enum ThreatLevel implements State<Npc> {
+    public enum ThreatLevel implements State<Npc> {
         /**
          * Calm NPCs do not attack and are much easier to slip past.  They idle often.
          */
@@ -88,7 +94,7 @@ public class NpcThreatMonitor extends ThreatMonitor<Npc> {
             }
 
             @Override
-            public void update(Npc entity) {
+            public void afterUpdate(Npc entity) {
             }
 
             @Override
@@ -116,7 +122,7 @@ public class NpcThreatMonitor extends ThreatMonitor<Npc> {
             }
 
             @Override
-            public void update(Npc entity) {
+            public void afterUpdate(Npc entity) {
                 NpcThreatMonitor monitor = entity.getThreat();
                 monitor.suspicion.update(DELTA);
 
@@ -158,7 +164,7 @@ public class NpcThreatMonitor extends ThreatMonitor<Npc> {
             }
 
             @Override
-            public void update(Npc entity) {
+            public void afterUpdate(Npc entity) {
                 NpcThreatMonitor monitor = entity.getThreat();
                 monitor.alert.update(DELTA);
 
@@ -183,6 +189,16 @@ public class NpcThreatMonitor extends ThreatMonitor<Npc> {
                 entity.getThreat().alert.reset(ALERT_SECS);
             }
         };
+        
+        @Override
+        public void update(Npc entity) {
+            for (Agent neighbor : entity.getVisibleNeighbors()) {
+                if (entity.getThreat().hasEnemy(neighbor)) {
+                    notice(entity, neighbor);
+                }
+            }
+            afterUpdate(entity);
+        }
 
         @Override
         public void exit(Npc entity) {
@@ -197,6 +213,8 @@ public class NpcThreatMonitor extends ThreatMonitor<Npc> {
             }
             return false;
         }
+        
+        protected abstract void afterUpdate(Npc npc);
 
         protected abstract void notice(Npc npc, Agent noticed);
     }

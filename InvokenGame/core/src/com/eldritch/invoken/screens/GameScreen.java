@@ -25,6 +25,7 @@ import com.eldritch.invoken.activators.Activator;
 import com.eldritch.invoken.actor.AgentInfo;
 import com.eldritch.invoken.actor.PreparedAugmentations;
 import com.eldritch.invoken.actor.Profession;
+import com.eldritch.invoken.actor.ai.NpcThreatMonitor.ThreatLevel;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Npc;
 import com.eldritch.invoken.actor.type.Player;
@@ -148,8 +149,8 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
             // InvokenGame.LOCATION_READER.readAsset("IcarianEmbassy");
             // InvokenGame.LOCATION_READER.readAsset("DebugPlayground");
             // InvokenGame.LOCATION_READER.readAsset("CentralProcessing");
-            // InvokenGame.LOCATION_READER.readAsset("ShippingAndReceiving");
-            InvokenGame.LOCATION_READER.readAsset("CustomsAdministration");
+             InvokenGame.LOCATION_READER.readAsset("ShippingAndReceiving");
+//            InvokenGame.LOCATION_READER.readAsset("CustomsAdministration");
 //            InvokenGame.LOCATION_READER.readAsset("TestWorld1");
             LocationGenerator generator = new LocationGenerator(gameState, data.getBiome(),
                     rand.nextLong());
@@ -333,6 +334,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
             if (target instanceof Npc) {
                 Npc npc = (Npc) target;
                 String task = npc.getLastTask();
+                ThreatLevel threat = npc.getThreat().getLevel();
                 boolean agitated = npc.isAgitated();
                 boolean fatigued = npc.getFatigue().isExpended();
                 float fatigue = npc.getFatigue().getValue();
@@ -342,6 +344,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 
                 font.draw(batch, "Graph: " + Settings.DRAW_GRAPH, 10, getHeight() - (30 + 20 * i++));
                 font.draw(batch, "Task: " + task, 10, getHeight() - (30 + 20 * i++));
+                font.draw(batch, "Threat: " + threat, 10, getHeight() - (30 + 20 * i++));
                 font.draw(batch, String.format("Agitated: %s", agitated), 10, getHeight()
                         - (30 + 20 * i++));
                 font.draw(batch, String.format("Fatigued: %s (%.2f)", fatigued, fatigue), 10,
