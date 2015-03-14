@@ -10,7 +10,7 @@ import com.eldritch.invoken.actor.util.ThreatMonitor;
 import com.eldritch.invoken.util.StepTimer;
 
 public class NpcThreatMonitor extends ThreatMonitor<Npc> {
-    private static final float DELTA = 0.01f;  // state machine update frequency, 10 times a second
+    private static final float DELTA = 0.01f; // state machine update frequency, 10 times a second
     private static final float SUSPICION_SECS = 60;
     private static final float ALERT_SECS = 60;
 
@@ -29,6 +29,8 @@ public class NpcThreatMonitor extends ThreatMonitor<Npc> {
     }
 
     public void update(float delta) {
+        super.update(delta);
+        
         lastStep += delta;
         if (lastStep > DELTA) {
             threatLevel.update();
@@ -39,6 +41,10 @@ public class NpcThreatMonitor extends ThreatMonitor<Npc> {
     @Override
     public void notice(Agent enemy) {
         threatLevel.handleMessage(Notice.of(enemy));
+    }
+
+    public void setCalm() {
+        threatLevel.changeState(ThreatLevel.Calm);
     }
 
     public void setSuspicious() {
@@ -58,6 +64,11 @@ public class NpcThreatMonitor extends ThreatMonitor<Npc> {
         threatLevel.changeState(ThreatLevel.Suspicious);
     }
 
+    public void setAlerted(Agent other) {
+        setAlerted();
+        addEnemy(other);
+    }
+
     public boolean isAlerted() {
         return threatLevel.getCurrentState() == ThreatLevel.Alerted;
     }
@@ -68,64 +79,108 @@ public class NpcThreatMonitor extends ThreatMonitor<Npc> {
     }
 
     private enum ThreatLevel implements State<Npc> {
+        /**
+         * Calm NPCs do not attack and are much easier to slip past.  They idle often.
+         */
         Calm() {
             @Override
             public void enter(Npc entity) {
             }
-            
+
             @Override
             public void update(Npc entity) {
             }
-            
+
             @Override
             protected void notice(Npc npc, Agent noticed) {
                 NpcThreatMonitor monitor = npc.getThreat();
-                if (monitor.isSuspiciousOf(noticed)) {
+                if (monitor.isAlertedTo(noticed)) {
+                    // calm -> alerted
+                    monitor.setAlerted(noticed);
+                } else if (monitor.isSuspiciousOf(noticed)) {
                     // calm -> suspicious
                     monitor.setSuspicious();
                 }
             }
         },
-        
+
+        /**
+         * Suspicious NPCs will pursue any potential enemies they encounter, and attack once they
+         * get close enough to confirm their suspicions.  Suspicious NPCs will also wander more and
+         * idle less.
+         */
         Suspicious() {
             @Override
             public void enter(Npc entity) {
-                entity.getThreat().suspicion.reset(SUSPICION_SECS);
+                reset(entity);
             }
-            
+
             @Override
             public void update(Npc entity) {
                 NpcThreatMonitor monitor = entity.getThreat();
                 monitor.suspicion.update(DELTA);
+
+                // in order to go from suspicious to calm, we must meet the following criteria:
+                // 1. suspicion timer is finished
+                // 2. all assaulters are dead
+                // 3. the location is not actively under alert
+                if (monitor.suspicion.isFinished()) {
+                    // suspicious -> calm
+                    monitor.setCalm();
+                }
             }
-            
+
             @Override
             protected void notice(Npc npc, Agent noticed) {
                 NpcThreatMonitor monitor = npc.getThreat();
                 if (monitor.isAlertedTo(noticed)) {
                     // suspicious -> alerted
-                    monitor.setAlerted();
-                    monitor.addEnemy(noticed);
+                    monitor.setAlerted(noticed);
+                } else {
+                    // continue being suspicious
+                    reset(npc);
                 }
             }
+
+            private void reset(Npc entity) {
+                entity.getThreat().suspicion.reset(SUSPICION_SECS);
+            }
         },
-        
+
+        /**
+         * Where the NPC is alerted, they will shoot any enemy they see on sight.  Alerted NPCs do
+         * not idle.
+         */
         Alerted() {
             @Override
             public void enter(Npc entity) {
-                entity.getThreat().alert.reset(ALERT_SECS);
+                reset(entity);
             }
-            
+
             @Override
             public void update(Npc entity) {
                 NpcThreatMonitor monitor = entity.getThreat();
                 monitor.alert.update(DELTA);
+
+                // in order to go from alerted to suspicious, we must meet the following criteria:
+                // 1. alert timer is finished
+                // 2. has no enemies
+                if (monitor.alert.isFinished() && !monitor.hasEnemies()) {
+                    // alerted -> suspicious
+                    monitor.setSuspicious();
+                }
             }
-            
+
             @Override
             protected void notice(Npc npc, Agent noticed) {
+                // alerted NPCs shoot on sight
                 NpcThreatMonitor monitor = npc.getThreat();
                 monitor.addEnemy(noticed);
+                reset(npc);
+            }
+
+            private void reset(Npc entity) {
+                entity.getThreat().alert.reset(ALERT_SECS);
             }
         };
 
@@ -142,17 +197,17 @@ public class NpcThreatMonitor extends ThreatMonitor<Npc> {
             }
             return false;
         }
-        
+
         protected abstract void notice(Npc npc, Agent noticed);
     }
-    
+
     private static class Notice extends Telegram {
         private final Agent noticed;
-        
+
         public Notice(Agent noticed) {
             this.noticed = noticed;
         }
-        
+
         public static Notice of(Agent noticed) {
             return new Notice(noticed);
         }
