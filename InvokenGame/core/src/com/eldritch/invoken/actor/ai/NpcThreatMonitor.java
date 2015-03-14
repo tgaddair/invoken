@@ -1,22 +1,25 @@
 package com.eldritch.invoken.actor.ai;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Npc;
+import com.eldritch.invoken.actor.util.ThreatMonitor;
 import com.eldritch.invoken.util.StepTimer;
 
-public class ThreatMonitor {
+public class NpcThreatMonitor extends ThreatMonitor<Npc> {
     private static final float SUSPICION_SECS = 60;
     private static final float ALERT_SECS = 60;
     
     private static final float SUSPICION_RADIUS = 10;
     private static final float ALERT_RADIUS = 3;
     
-    private final Npc npc;
     private final StepTimer suspicion = new StepTimer();
     private final StepTimer alert = new StepTimer();
     
-    public ThreatMonitor(Npc npc) {
-        this.npc = npc;
+    public NpcThreatMonitor(Npc npc) {
+        super(npc);
     }
     
     public void update(float delta) {
@@ -34,7 +37,7 @@ public class ThreatMonitor {
     
     public boolean isSuspiciousOf(Agent other) {
         float r = SUSPICION_RADIUS;
-        return npc.dst2(other) < r * r;
+        return getAgent().dst2(other) < r * r;
     }
     
     public void setAlerted() {
@@ -47,6 +50,6 @@ public class ThreatMonitor {
     
     public boolean isAlertedTo(Agent other) {
         float r = ALERT_RADIUS;
-        return npc.dst2(other) < r * r;
+        return getAgent().dst2(other) < r * r;
     }
 }

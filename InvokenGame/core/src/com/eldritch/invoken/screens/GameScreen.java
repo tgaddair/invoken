@@ -308,7 +308,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
             float energy = target.getInfo().getEnergy();
             int level = target.getInfo().getLevel();
             float freezing = target.getFreezing();
-            int enemies = target.getEnemyCount();
+            int enemies = target.getThreat().getEnemyCount();
 
             int i = 0;
             batch.begin();

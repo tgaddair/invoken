@@ -48,12 +48,12 @@ public class Behavior {
             // frenzied NPCs never flee
             return false;
         }
-        if (npc.hasEnemies() && confidence == Confidence.COWARDLY) {
+        if (npc.getThreat().hasEnemies() && confidence == Confidence.COWARDLY) {
             // cowardly NPCs that are not frenzied flee before enemies
             return true;
         }
         // TODO: others flee when their health gets too low
-        for (Agent enemy : npc.getEnemies()) {
+        for (Agent enemy : npc.getThreat().getEnemies()) {
             if (!willingToAttack(enemy)) {
                 // if someone's hostile, and we're not willing to attack, then flee
                 return true;
@@ -73,7 +73,7 @@ public class Behavior {
     }
     
     public void getFleeTargets(Collection<Agent> actors, Collection<Agent> targets) {
-        for (Agent enemy : npc.getEnemies()) {
+        for (Agent enemy : npc.getThreat().getEnemies()) {
             if (!willingToAttack(enemy)) {
                 targets.add(enemy);
             }
@@ -95,7 +95,7 @@ public class Behavior {
         }
         for (Agent agent : actors) {
             if (agent.isAlive()) {
-                if (npc.hostileTo(agent) || wantsToAttack(agent)) {
+                if (npc.getThreat().hostileTo(agent) || wantsToAttack(agent)) {
                     // we have reason to attack this actor, so we should assault
                     if (willingToAttack(agent)) {
                         return true;
@@ -110,7 +110,7 @@ public class Behavior {
         for (Agent agent : actors) {
         	if (npc.hasLineOfSight(agent)) {
         		// only target if we have line of sight
-        		if (npc.hostileTo(agent) || wantsToAttack(agent)) {
+        		if (npc.getThreat().hostileTo(agent) || wantsToAttack(agent)) {
                     if (willingToAttack(agent)) {
                         targets.add(agent);
                     }
@@ -147,7 +147,7 @@ public class Behavior {
     }
     
     private boolean shouldAssistAgainst(Agent enemy, Collection<Agent> actors) {
-        if (!enemy.hasEnemies()) {
+        if (!enemy.getThreat().hasEnemies()) {
             // not in combat, so no need to assist someone attacking them
             return false;
         }
@@ -200,7 +200,7 @@ public class Behavior {
         // we're at least loyal to our allies, so consider the situation
         float targetReaction = npc.getRelation(target);
         for (Agent agent : actors) {
-            if (agent.hostileTo(target)) {
+            if (agent.getThreat().hostileTo(target)) {
                 if (shouldAssist(agent, target, targetReaction)) {
                     return true;
                 }

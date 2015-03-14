@@ -45,6 +45,7 @@ import com.eldritch.invoken.actor.items.Fragment;
 import com.eldritch.invoken.actor.items.Outfit;
 import com.eldritch.invoken.actor.items.RangedWeapon;
 import com.eldritch.invoken.actor.type.HandledProjectile.ProjectileHandler;
+import com.eldritch.invoken.actor.util.ThreatMonitor;
 import com.eldritch.invoken.effects.Effect;
 import com.eldritch.invoken.effects.HoldingWeapon;
 import com.eldritch.invoken.encounter.Location;
@@ -63,7 +64,6 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     static AssetManager assetManager = new AssetManager();
     static float MAX_FREEZE = 25f;
     static float DAMPING = 5f;
-    static float FORGET_THRESHOLD = 10;
 
     private final Vector2 focusPoint = new Vector2();
     private final GameCamera defaultCamera = new AgentCamera();
@@ -98,7 +98,6 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     private final Set<Agent> visibleNeighbors = new HashSet<Agent>();
     private final Map<Agent, Boolean> lineOfSightCache = new HashMap<Agent, Boolean>();
     private final Map<Agent, Float> distanceCache = new HashMap<Agent, Float>();
-    private final Map<Agent, Float> lastSeen = new HashMap<Agent, Float>();
     private final LinkedList<Action> actions = new LinkedList<Action>();
     private final List<Effect> effects = new LinkedList<Effect>();
     private Action action = null;
@@ -108,8 +107,6 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     // hostilities: agents with negative reaction who have attacked us
     private final Set<Agent> assaulters = new HashSet<Agent>(); // assaulters attack those who have
                                                                 // no enemies
-    private final Set<Agent> enemies = new HashSet<Agent>(); // convenience collection for fast
-                                                             // lookups
     private final Map<Agent, Float> relations = new HashMap<Agent, Float>();
 
     private int confused = 0;
@@ -206,32 +203,32 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     public boolean isAiming() {
         return aiming;
     }
-    
+
     public boolean isAimingAt(Agent other) {
         if (!isAiming()) {
             return false;
         }
-        
+
         if (targetCast(weaponSentry.getPosition(), weaponSentry.getTargetingVector())) {
             return targetingHandler.isTargeting(other);
         }
         return true;
     }
-    
+
     public RayTarget getTargeting(Vector2 source, Vector2 target) {
         targetCast(source, target);
         return new RayTarget(targetingHandler.getTargeting(), targetingHandler.getFraction());
     }
-    
+
     private boolean targetCast(Vector2 source, Vector2 target) {
         targetingHandler.reset();
-        
+
         if (source.equals(target)) {
             // if we don't do this check explicitly, we can get the following error:
             // Expression: r.LengthSquared() > 0.0f
             return false;
         }
-        
+
         location.getWorld().rayCast(targetingHandler, source, target);
         return true;
     }
@@ -651,17 +648,17 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     public void interact(Agent other) {
         interactor = other;
     }
-    
+
     public boolean inForcedDialogue() {
         return interactor != null && forcedDialogue;
     }
-    
+
     public void beginDialogue(Agent other, boolean forced) {
         this.forcedDialogue = forced;
         interact(other);
         other.interact(this);
     }
-    
+
     public void unforceDialogue() {
         forcedDialogue = false;
     }
@@ -672,11 +669,11 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
             interact(null);
         }
     }
-    
+
     public void addDialogue(String id) {
         uniqueDialogue.add(id);
     }
-    
+
     public boolean hasHeardDialogue(String id) {
         return uniqueDialogue.contains(id);
     }
@@ -697,7 +694,8 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     }
 
     public boolean canInteract(Agent other) {
-        return isAlive() && other != this && dst2(other) < INTERACT_RANGE && !other.hasEnemies();
+        return isAlive() && other != this && dst2(other) < INTERACT_RANGE
+                && !other.getThreat().hasEnemies();
     }
 
     public boolean inDialogue() {
@@ -722,6 +720,8 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     }
 
     public abstract void alertTo(Agent target);
+
+    public abstract ThreatMonitor<?> getThreat();
 
     public void setTarget(Agent target) {
         this.target = target;
@@ -820,7 +820,6 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     }
 
     protected void onDeath() {
-        enemies.clear();
         actions.clear();
         action = null;
         setTarget(null);
@@ -829,7 +828,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         setCollisionMask(Settings.BIT_SHORT_OBSTACLE);
         releaseFragments();
     }
-    
+
     // add fragment temporary entities to the world in a radial pattern around the agent
     // for players, we must also assign the fragments to the nearest unique neighbor (if possible)
     // for persistence
@@ -855,7 +854,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
             // cannot act if another action is in progress
             return;
         }
-        
+
         if (inForcedDialogue()) {
             // cannot act while in a forced dialogue situation
             return;
@@ -885,39 +884,12 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         return assaulters.contains(other);
     }
 
-    public boolean hostileTo(Agent other) {
-        if (isFollowing()) {
-            // do not call hostileTo directly to avoid an infinite loop
-            if (followed.enemies.contains(other)) {
-                // always hostile to those our leader is hostile to
-                return true;
-            }
-        }
-        return enemies.contains(other);
-    }
-
-    public int getEnemyCount() {
-        return enemies.size();
-    }
-
-    public Iterable<Agent> getEnemies() {
-        return enemies;
-    }
-
-    public boolean hasEnemies() {
-        if (isFollowing() && !followed.enemies.isEmpty()) {
-            // share enemies with leader
-            return true;
-        }
-        return !enemies.isEmpty();
-    }
-
     public void addHostility(Agent source, float magnitude) {
         if (!isAlive()) {
             return;
         }
 
-        if (!hasEnemies()) {
+        if (!getThreat().hasEnemies()) {
             // we're not in combat with anyone, so this is considered assault
             assaulters.add(source);
         }
@@ -986,38 +958,32 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
             return;
         }
 
-        if (!enemies.contains(agent) && isEnemy(agent)) {
+        if (!getThreat().hasEnemy(agent) && isEnemy(agent)) {
             // unfriendly, so mark them as an enemy
-            addEnemy(agent);
+            getThreat().addEnemy(agent);
 
             if (assaultedBy(agent)) {
                 // they attacked us, mark them as an assaulter
                 // assault carriers a severe penalty for ranking factions
                 changeFactionRelations(agent, ASSAULT_PENALTY);
             }
-            
+
             // request help from allies
             requestAssistance(agent);
         }
     }
-    
-    public void addEnemy(Agent enemy) {
-        if (isAlive()) {
-            enemies.add(enemy);
-        }
-    }
-    
+
     private void requestAssistance(Agent enemy) {
         for (Agent agent : neighbors) {
             // broadcast a message that we're now in combat with this agent
             agent.notifyOfHostility(this, enemy);
         }
     }
-    
+
     protected void notifyOfHostility(Agent source, Agent enemy) {
         // does nothing
     }
-    
+
     protected boolean isEnemy(Agent other) {
         return Behavior.isEnemyGiven(getRelation(other));
     }
@@ -1032,26 +998,15 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         lineOfSightCache.clear();
         distanceCache.clear();
 
-        // update last seen
-        Iterator<Entry<Agent, Float>> observations = lastSeen.entrySet().iterator();
-        while (observations.hasNext()) {
-            Entry<Agent, Float> observation = observations.next();
-            observation.setValue(observation.getValue() + delta);
-            if (observation.getValue() > FORGET_THRESHOLD) {
-                observations.remove();
-            }
-        }
-
         // update neighbors
         location.getNeighbors(this);
         visibleNeighbors.clear();
         for (Agent neighbor : neighbors) {
             if (isVisible(neighbor)) {
                 visibleNeighbors.add(neighbor);
-                lastSeen.put(neighbor, 0f);
             }
         }
-        
+
         // TODO: if we changed our natural position, then alert all neighbors to our presence
         // if they pass a detection check
 
@@ -1106,14 +1061,8 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
             setTarget(null);
         }
 
-        // update enemies
-        Iterator<Agent> enemyIterator = enemies.iterator();
-        while (enemyIterator.hasNext()) {
-            Agent enemy = enemyIterator.next();
-            if (!enemy.isAlive() || !lastSeen.containsKey(enemy)) {
-                enemyIterator.remove();
-            }
-        }
+        // update threat
+        getThreat().update(delta);
 
         // set activity
         Activity last = activity;
@@ -1384,7 +1333,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     public abstract boolean canSpeak();
 
     protected abstract void takeAction(float delta, Location screen);
-    
+
     private class TargetingHandler implements RayCastCallback {
         private final short mask = Settings.BIT_SHOOTABLE;
         private Agent targeting = null;
@@ -1393,11 +1342,11 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         public boolean isTargeting(Agent other) {
             return targeting == other;
         }
-        
+
         public Agent getTargeting() {
             return targeting;
         }
-        
+
         public float getFraction() {
             return fraction;
         }
@@ -1449,11 +1398,11 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
             return 0;
         }
     };
-    
+
     public static class RayTarget {
         private final Agent target;
         private final float fraction;
-        
+
         public RayTarget(Agent target, float fraction) {
             this.target = target;
             this.fraction = fraction;
@@ -1532,12 +1481,12 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
 
     public class WeaponSentry implements TemporaryEntity {
         private static final float RANGE = 15f;
-        
+
         private final Map<Agent, Boolean> lineOfSightCache = new HashMap<Agent, Boolean>();
         private final Vector2 position = new Vector2();
         private final Vector2 direction = new Vector2();
         private final Vector2 tmp = new Vector2();
-        
+
         // offset relative to the center of the agent so the gun appears at roughly hip level,
         // not at the face
         private final Vector2 offset = new Vector2(0, 0.25f);
@@ -1591,11 +1540,11 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         public Vector2 getDirection() {
             return direction;
         }
-        
+
         public float getRange() {
             return RANGE;
         }
-        
+
         public Vector2 getTargetingVector() {
             tmp.set(direction).scl(RANGE).add(position);
             return tmp;

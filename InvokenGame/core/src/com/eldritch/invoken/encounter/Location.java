@@ -619,7 +619,7 @@ public class Location {
             if (activeTiles.contains(other.getCellPosition())) {
                 activeEntities.add(other);
                 drawables.add(other);
-            } else if (other.hasEnemies() && player.isNear(other)) {
+            } else if (other.getThreat().hasEnemies() && player.isNear(other)) {
                 activeEntities.add(other);
             } else if (other == player) {
                 activeEntities.add(other);

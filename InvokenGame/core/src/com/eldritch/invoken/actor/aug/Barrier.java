@@ -57,7 +57,7 @@ public class Barrier extends Augmentation {
                 // it's only worth using the shield if we have enough reserve energy to follow it
                 // up with an attack
                 // TODO: it would also help if we wished to do a flee or hide routine
-                for (Agent enemy : owner.getEnemies()) {
+                for (Agent enemy : owner.getThreat().getEnemies()) {
                     if (enemy.getInventory().hasRangedWeapon()) {
                         return 2;
                     }
@@ -65,7 +65,7 @@ public class Barrier extends Augmentation {
             }
             return 0;
         } else {
-            for (Agent enemy : owner.getEnemies()) {
+            for (Agent enemy : owner.getThreat().getEnemies()) {
                 if (enemy.getInventory().hasRangedWeapon()) {
                     // don't turn off the shield if we still have enemies shooting at us
                     return 0;

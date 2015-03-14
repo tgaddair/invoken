@@ -82,7 +82,7 @@ public class DebugEntityRenderer {
                 continue;
             }
 
-            if (target.hostileTo(other)) {
+            if (target.getThreat().hostileTo(other)) {
                 Color c = other == target.getTarget() ? Color.BLUE : Color.RED;
                 sr.setColor(c);
                 sr.line(target.getPosition().x, target.getPosition().y, other.getPosition().x,

@@ -73,7 +73,7 @@ public abstract class OutcomeHandler {
                 source.changeRelation(target, outcome.getValue());
                 break;
             case START_COMBAT:
-                source.addEnemy(target);
+                source.getThreat().addEnemy(target);
                 break;
             default:
                 throw new IllegalArgumentException("Unrecognized Outcome type: "

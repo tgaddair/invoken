@@ -45,7 +45,7 @@ import com.eldritch.invoken.actor.ai.FatigueMonitor;
 import com.eldritch.invoken.actor.ai.IntimidationMonitor;
 import com.eldritch.invoken.actor.ai.NpcState;
 import com.eldritch.invoken.actor.ai.NpcStateMachine;
-import com.eldritch.invoken.actor.ai.ThreatMonitor;
+import com.eldritch.invoken.actor.ai.NpcThreatMonitor;
 import com.eldritch.invoken.actor.ai.btree.Combat;
 import com.eldritch.invoken.actor.ai.btree.Investigate;
 import com.eldritch.invoken.actor.ai.btree.Patrol;
@@ -87,7 +87,7 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
     private CoverPoint cover = null;
     private final FatigueMonitor fatigue;
     private final IntimidationMonitor intimidation;
-    private final ThreatMonitor threat;
+    private final NpcThreatMonitor threat;
     private Augmentation chosenAug;
     private float lastStep = 0;
     private float alert = 0;
@@ -144,7 +144,7 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
         behaviorTree = new BehaviorTree<Npc>(createBehavior(), this);
         fatigue = new FatigueMonitor(this);
         intimidation = new IntimidationMonitor(this);
-        threat = new ThreatMonitor(this);
+        threat = new NpcThreatMonitor(this);
     }
 
     public CoverPoint getCover() {
@@ -167,7 +167,8 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
         return intimidation;
     }
     
-    public ThreatMonitor getThreat() {
+    @Override
+    public NpcThreatMonitor getThreat() {
         return threat;
     }
 
@@ -241,7 +242,7 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
     }
 
     public boolean isThreatened() {
-        return hasEnemies();
+        return threat.hasEnemies();
     }
 
     public boolean isAgitated() {
@@ -277,7 +278,6 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
 
     public void update(float delta) {
         // monitors
-        threat.update(delta);
         alert = Math.max(alert - delta, 0);
 
         // update sighted info
@@ -324,6 +324,7 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
     @Override
     protected void onDeath() {
         super.onDeath();
+        threat.clear();
         detected.clear();
         stateMachine.changeState(NpcState.PATROL);
     }
@@ -348,7 +349,7 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
     @Override
     protected void notifyOfHostility(Agent source, Agent target) {
         if (isAlive() && behavior.shouldAssist(source, target)) {
-            addEnemy(target);
+            threat.addEnemy(target);
         }
     }
 
@@ -370,7 +371,7 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
 
         // when we're alerted to an enemy, we should treat this like assisting ourselves
         if (behavior.wantsToAttack(other, true)) {
-            addEnemy(other);
+            threat.addEnemy(other);
         }
     }
 
@@ -394,7 +395,7 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
         // ignore FOV check if we're already in combat with the agent, as it's primarily for
         // handling stealth
         return super.isVisible(other) && hasLineOfSight(other)
-                && (hostileTo(other) || inFieldOfView(other));
+                && (threat.hostileTo(other) || inFieldOfView(other));
     }
 
     public NavigatedSteerable getLastSeen() {

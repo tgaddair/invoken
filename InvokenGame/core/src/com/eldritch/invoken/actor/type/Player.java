@@ -12,14 +12,15 @@ import com.eldritch.invoken.actor.Inventory.ItemState;
 import com.eldritch.invoken.actor.PreparedAugmentations;
 import com.eldritch.invoken.actor.Profession;
 import com.eldritch.invoken.actor.aug.Augmentation;
+import com.eldritch.invoken.actor.util.ThreatMonitor;
 import com.eldritch.invoken.encounter.Location;
 import com.eldritch.invoken.proto.Actors.PlayerActor;
 import com.eldritch.invoken.util.Settings;
-import com.google.common.collect.Sets;
 
 /** The player character, has state and state time, */
 public class Player extends SteeringAgent {
     private final Vector2 targetCoord = new Vector2();
+    private final ThreatMonitor<Player> threat;
     private boolean holding = false;
     private boolean moving = false;
     private boolean fixedTarget = false;
@@ -29,6 +30,7 @@ public class Player extends SteeringAgent {
     public Player(Profession profession, int level, float x, float y, Location location, String body) {
         super(x, y, Human.getWidth(), Human.getHeight(), Human.MAX_VELOCITY, profession, level,
                 location, Human.getAllAnimations(body));
+        this.threat = new ThreatMonitor<Player>(this);
     }
 
     public Player(PlayerActor data, float x, float y, Location location, String body) {
@@ -45,6 +47,7 @@ public class Player extends SteeringAgent {
         
         // set health
         info.setHealth(data.getHealth());
+        this.threat = new ThreatMonitor<Player>(this);
     }
 
     public void toggleLastAugmentation() {
@@ -168,6 +171,12 @@ public class Player extends SteeringAgent {
     @Override
     public void alertTo(Agent other) {
         // does nothing
+    }
+    
+
+    @Override
+    public ThreatMonitor<?> getThreat() {
+        return threat;
     }
 
     @Override
