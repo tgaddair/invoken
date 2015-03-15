@@ -57,14 +57,11 @@ public class Cracking extends ActivatedEffect<Crack> {
             }
 
             // cost is a function of the lock strength
-            float cost = getBaseCost() * activator.getStrength();
+            float invDeception = 1.0f - target.getInfo().getDeception();
+            float cost = getBaseCost() * activator.getStrength() * invDeception;
 
             // duration is a function of our inverse deception
-            float duration = DURATION * (1.0f - target.getInfo().getDeception());
-            
-            System.out.println("cracking door...");
-            System.out.println(String.format("  cost: %.2f", cost));
-            System.out.println(String.format("  duration: %.2f", duration));
+            float duration = DURATION * invDeception;
 
             addDrain(new CrackingDrain(activator, cost, duration));
             return true;
@@ -83,7 +80,6 @@ public class Cracking extends ActivatedEffect<Crack> {
         protected void onElapsed() {
             activator.crack(target);
             active = false;
-            System.out.println("done!");
         }
 
         @Override

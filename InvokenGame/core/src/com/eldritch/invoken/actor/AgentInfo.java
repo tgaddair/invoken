@@ -283,11 +283,11 @@ public class AgentInfo {
     }
     
     public float getWillpower() {
-    	return 0.5f + getAutomata() / 100f;
+    	return Math.min(getAutomata() / 100f, 1.0f);
     }
     
     public float getDeception() {
-    	return 0.5f + getSubterfuge() / 100f;
+    	return Math.min(getSubterfuge() / 100f, 1.0f);
     }
     
     public float getDefense() {

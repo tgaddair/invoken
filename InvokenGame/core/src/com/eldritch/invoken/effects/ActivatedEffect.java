@@ -23,21 +23,23 @@ public abstract class ActivatedEffect<T extends Augmentation> extends BasicEffec
     }
 
     @Override
-    public boolean isFinished() {
-        return finished || (isApplied() && !target.isToggled(toggle));
+    protected void doApply() {
+        target.toggleOn(toggle);
+        target.setStunted(true); // cannot regain energy
+        afterApply();
     }
-
+    
     @Override
     public void dispel() {
         target.toggleOff(toggle);
+        target.setStunted(false);
         target.getInfo().getAugmentations().removeSelfAugmentation(aug);
         afterDispel();
     }
 
     @Override
-    protected void doApply() {
-        target.toggleOn(toggle);
-        afterApply();
+    public boolean isFinished() {
+        return finished || (isApplied() && !target.isToggled(toggle));
     }
 
     @Override
