@@ -6,6 +6,7 @@ import com.eldritch.invoken.actor.aug.Crack;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.util.ActivationHandler;
 import com.eldritch.invoken.actor.util.EnergyDrain.TimedEnergyDrain;
+import com.eldritch.invoken.screens.GameScreen;
 
 public class Cracking extends ActivatedEffect<Crack> {
     private static final float MAX_STRENGTH = 9; // cannot crack greater than this
@@ -43,6 +44,7 @@ public class Cracking extends ActivatedEffect<Crack> {
             if (activator instanceof Crackable) {
                 if (active) {
                     // only one activator allowed at a time
+                    GameScreen.toast("... in progress ...");
                     return true;
                 }
                 
@@ -73,6 +75,7 @@ public class Cracking extends ActivatedEffect<Crack> {
 
             addDrain(new CrackingDrain(activator, cost, duration));
             setActive(true);
+            GameScreen.toast("Cracking ...");
             return true;
         }
     }
@@ -89,6 +92,7 @@ public class Cracking extends ActivatedEffect<Crack> {
         protected void onElapsed() {
             activator.crack(target);
             setActive(false);
+            GameScreen.toast("... done");
         }
 
         @Override
