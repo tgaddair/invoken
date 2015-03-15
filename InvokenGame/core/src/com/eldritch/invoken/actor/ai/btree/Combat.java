@@ -26,10 +26,7 @@ public class Combat extends Sequence<Npc> {
         pursueSequence.addChild(new Invert<Npc>(new IsIntimidated()));
         pursueSequence.addChild(new HasSufficientEnergy());
         pursueSequence.addChild(new Pursue());
-        selector.addChild(pursueSequence);
-        
-        // when we can no longer pursue our target, fall back to wandering
-        selector.addChild(new Idle());
+        selector.addChild(new PursueOrExplore(pursueSequence));
 
         // whatever strategy we pick, we will not failover to the next task at this point
         addChild(new AlwaysSucceed<Npc>(selector));
@@ -53,7 +50,7 @@ public class Combat extends Sequence<Npc> {
             if (npc.getInventory().hasRangedWeapon()) {
                 return npc.getPosition().dst2(npc.getLastSeen().getPosition()) > 5;
             } else {
-                return true;
+                return npc.getPosition().dst2(npc.getLastSeen().getPosition()) > 1;
             }
         }
     }
