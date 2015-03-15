@@ -42,7 +42,6 @@ public class Patrol extends Selector<Npc> {
         }
     }
     
-    
     private static class IsGuard extends BooleanTask {
         @Override
         protected boolean check(Npc npc) {
