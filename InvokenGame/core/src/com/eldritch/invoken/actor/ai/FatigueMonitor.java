@@ -11,15 +11,15 @@ public class FatigueMonitor extends FuzzyMonitor {
             public float getPenalty() {
                 return .001f * (1f - npc.getInfo().getEndurance());
             }
+            
+            @Override
+            public float getLimit() {
+                return (float) Math.random() * TIRED * npc.getThreat().getAwareness();
+            }
         });
     }
 
     public boolean isTired() {
         return isExpended();
-    }
-
-    @Override
-    protected float getLimit() {
-        return (float) Math.random() * TIRED;
     }
 }

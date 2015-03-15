@@ -9,14 +9,10 @@ public abstract class FuzzyMonitor {
     private float limit;
     private boolean ready = true; // below the threshold
     private float value = 0;
-    
-    public FuzzyMonitor() {
-        this(DEFAULT_PENALTY);
-    }
 
     public FuzzyMonitor(PenaltyFunction pentalty) {
         this.penalty = pentalty;
-        limit = getLimit();
+        limit = penalty.getLimit();
     }
     
     public void useUntilLimit(float delta) {
@@ -39,7 +35,7 @@ public abstract class FuzzyMonitor {
             ready = false;
         } else if (value <= 0) {
             ready = true;
-            limit = getLimit();
+            limit = penalty.getLimit();
         }
     }
     
@@ -61,16 +57,20 @@ public abstract class FuzzyMonitor {
         ready = true;
     }
 
-    // randomize for more organic effect
-    protected abstract float getLimit();
-
     public interface PenaltyFunction {
         float getPenalty();
+        
+        float getLimit();
     }
     
-    public static final PenaltyFunction DEFAULT_PENALTY = new PenaltyFunction() {
+    public static class DefaultPenaltyFunction implements PenaltyFunction {
         @Override
         public float getPenalty() {
+            return 0;
+        }
+
+        @Override
+        public float getLimit() {
             return 0;
         }
     };

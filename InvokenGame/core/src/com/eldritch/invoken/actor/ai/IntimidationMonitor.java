@@ -13,11 +13,11 @@ public class IntimidationMonitor extends FuzzyMonitor {
                 // TODO: incorporate health, energy, and relative levels
                 return 0;
             }
+            
+            @Override
+            public float getLimit() {
+                return ((float) Math.random() * INTIMIDATED) + 1;
+            }
         });
-    }
-
-    @Override
-    protected float getLimit() {
-        return ((float) Math.random() * INTIMIDATED) + 1;
     }
 }

@@ -14,7 +14,7 @@ public class NpcThreatMonitor extends ThreatMonitor<Npc> {
     private static final float SUSPICION_SECS = 20;
     private static final float ALERT_SECS = 20;
 
-    public static final float SUSPICION_RADIUS = 10;
+    public static final float SUSPICION_RADIUS = 7;
     public static final float ALERT_RADIUS = 3;
 
     private final StepTimer suspicion = new StepTimer();
@@ -91,6 +91,10 @@ public class NpcThreatMonitor extends ThreatMonitor<Npc> {
         return getAgent().dst2(other) < r * r;
     }
     
+    public float getAwareness() {
+        return getLevel().getAwareness();
+    }
+    
     public ThreatLevel getLevel() {
         return (ThreatLevel) threatLevel.getCurrentState();
     }
@@ -118,6 +122,12 @@ public class NpcThreatMonitor extends ThreatMonitor<Npc> {
                     // calm -> suspicious
                     monitor.setSuspicious(noticed);
                 }
+            }
+
+            @Override
+            protected float getAwareness() {
+                // low amount of wandering
+                return 0.25f;
             }
         },
 
@@ -162,6 +172,12 @@ public class NpcThreatMonitor extends ThreatMonitor<Npc> {
             private void reset(Npc entity) {
                 entity.getThreat().suspicion.reset(SUSPICION_SECS);
             }
+            
+            @Override
+            protected float getAwareness() {
+                // standard amount of wandering
+                return 1f;
+            }
         },
 
         /**
@@ -199,6 +215,12 @@ public class NpcThreatMonitor extends ThreatMonitor<Npc> {
             private void reset(Npc entity) {
                 entity.getThreat().alert.reset(ALERT_SECS);
             }
+            
+            @Override
+            protected float getAwareness() {
+                // no idling
+                return 1f;
+            }
         };
         
         @Override
@@ -228,6 +250,8 @@ public class NpcThreatMonitor extends ThreatMonitor<Npc> {
         protected abstract void afterUpdate(Npc npc);
 
         protected abstract void notice(Npc npc, Agent noticed);
+        
+        protected abstract float getAwareness();
     }
 
     private static class Notice extends Telegram {

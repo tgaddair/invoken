@@ -84,9 +84,9 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
     // AI controllers
     private final BehaviorTree<Npc> behaviorTree;
     private CoverPoint cover = null;
+    private final NpcThreatMonitor threat;
     private final FatigueMonitor fatigue;
     private final IntimidationMonitor intimidation;
-    private final NpcThreatMonitor threat;
     private Augmentation chosenAug;
     private float lastStep = 0;
     private float sighted = 0;
@@ -140,9 +140,9 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
 
         // behavior tree
         behaviorTree = new BehaviorTree<Npc>(createBehavior(), this);
+        threat = new NpcThreatMonitor(this);
         fatigue = new FatigueMonitor(this);
         intimidation = new IntimidationMonitor(this);
-        threat = new NpcThreatMonitor(this);
     }
 
     public CoverPoint getCover() {
@@ -402,7 +402,14 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
         Vector2 a = getForwardVector();
         Vector2 b = other.position.cpy().sub(position).nor();
         double theta = Math.atan2(a.x * b.y - a.y * b.x, a.x * b.x + a.y * b.y);
-        return Math.abs(theta) <= Math.PI / 2;
+        return Math.abs(theta) <= getFieldOfView();
+    }
+    
+    public double getFieldOfView() {
+        // default FOV is 90 degrees to each side, giving 180 degrees of total peripheral vision
+        // scale this down when calm
+        float scale = threat.getAwareness();
+        return (Math.PI / 2f) * scale;
     }
 
     public Behavior getBehavior() {
