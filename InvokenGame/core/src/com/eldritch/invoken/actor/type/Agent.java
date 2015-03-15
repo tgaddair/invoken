@@ -57,7 +57,7 @@ import com.google.common.collect.Sets;
 public abstract class Agent extends CollisionEntity implements Steerable<Vector2>, Conversable {
     public static final int MAX_DST2 = 150;
     public static final int INTERACT_RANGE = 5;
-    public static final float UNMASK_RANGE = 5;
+    public static final float UNMASK_RANGE = 10;
     public static final int ASSAULT_PENALTY = -10;
     public static final float AIMING_V_PENALTY = 5;
 
@@ -770,6 +770,14 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
             // perception is [0, 1], scaling how far we can be from an invisible target for us to
             // detect it
             float visibility = getVisibility();
+            
+            // confer a penalty to visibility based on the target's deception, but not too great
+            // so that given two equal deception skills, it's easier to perceive than deceive
+            visibility *= 1.0f - (other.info.getDeception() * 0.1f);
+            
+            // at worst, you should be able to detect someone right in front of you
+            visibility = Math.max(visibility, 1.0f);
+            
             return dst2(other) < visibility * visibility;
         }
     }
