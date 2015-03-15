@@ -74,6 +74,7 @@ import com.eldritch.invoken.ui.AgentStatusRenderer;
 import com.eldritch.invoken.ui.DebugEntityRenderer;
 import com.eldritch.invoken.util.Settings;
 import com.google.common.base.Optional;
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -117,6 +118,7 @@ public class Location {
 
     private final Optional<Faction> owningFaction;
     private final int minRank;
+    private final Optional<String> credential;
 
     private OrthogonalShadedTiledMapRenderer renderer;
     private OrthogonalShadedTiledMapRenderer overlayRenderer;
@@ -155,6 +157,8 @@ public class Location {
         owningFaction = Optional.fromNullable(data.hasFactionId() ? Faction.of(data.getFactionId())
                 : null);
         minRank = owningFaction.isPresent() ? data.getMinRank() : 0;
+        credential = !Strings.isNullOrEmpty(data.getCredential()) 
+                ? Optional.of(data.getCredential()) : Optional.<String>absent();
         lightManager = new LightManager(data);
         normalMapShader = new NormalMapShader();
         lightMasker = new OverlayLightMasker(lightManager.getVertexShaderDef());
@@ -269,6 +273,14 @@ public class Location {
         if (!owningFaction.isPresent()) {
             // no owning faction
             return true;
+        }
+        
+        if (credential.isPresent()) {
+            boolean hasCredential = agent.getInventory().hasItem(credential.get());
+            if (hasCredential) {
+                // let them through
+                return false;
+            }
         }
         
         Faction faction = owningFaction.get();

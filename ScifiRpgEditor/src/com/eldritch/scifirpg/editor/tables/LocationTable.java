@@ -21,7 +21,6 @@ import com.eldritch.invoken.proto.Locations.Biome;
 import com.eldritch.invoken.proto.Locations.Encounter;
 import com.eldritch.invoken.proto.Locations.Light;
 import com.eldritch.invoken.proto.Locations.Location;
-import com.eldritch.invoken.proto.Locations.Room;
 import com.google.common.base.Optional;
 import com.jgoodies.forms.builder.DefaultFormBuilder;
 import com.jgoodies.forms.layout.FormLayout;
@@ -76,9 +75,10 @@ public class LocationTable extends MajorAssetTable<Location> {
 
 		private final JTextField idField = new JTextField();
 		private final JTextField nameField = new JTextField();
-		private final JComboBox<String> factionBox = new JComboBox<String>();
+		private final JComboBox<String> factionBox = new JComboBox<>();
 		private final JTextField minRankField = new JTextField();
-		private final JComboBox<Biome> biomeBox = new JComboBox<Biome>(Biome.values());
+		private final JComboBox<String> credentialBox = new JComboBox<>();
+		private final JComboBox<Biome> biomeBox = new JComboBox<>(Biome.values());
 		private final JTextField intensityField = new JTextField("1.0f");
 		private final JTextField colorField = new JTextField("255 255 255");
 		private final EncounterTable encounterTable = new EncounterTable();
@@ -109,6 +109,13 @@ public class LocationTable extends MajorAssetTable<Location> {
 			builder.append("Min Rank:", minRankField);
 			builder.nextLine();
 			
+			List<String> items = new ArrayList<>();
+			items.add("");
+			items.addAll(MainPanel.ITEM_TABLE.getAssetIds());
+			credentialBox.setModel(new DefaultComboBoxModel<String>(items.toArray(new String[0])));
+			builder.append("Credential:", credentialBox);
+			builder.nextLine();
+			
 			builder.append("Biome:", biomeBox);
 			builder.nextLine();
 			
@@ -136,6 +143,9 @@ public class LocationTable extends MajorAssetTable<Location> {
 				}
 				if (loc.hasMinRank()) {
 					minRankField.setText(loc.getMinRank() + "");
+				}
+				if (loc.hasCredential()) {
+					credentialBox.setSelectedItem(loc.getCredential());
 				}
 				biomeBox.setSelectedItem(loc.getBiome());
 				if (loc.hasLight()) {
@@ -172,6 +182,7 @@ public class LocationTable extends MajorAssetTable<Location> {
 				if (!minRankField.getText().isEmpty()) {
 					location.setMinRank(Integer.parseInt(minRankField.getText()));
 				}
+				location.setCredential((String) credentialBox.getSelectedItem());
 			}
 			return location.build();
 		}

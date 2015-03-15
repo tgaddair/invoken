@@ -56,6 +56,7 @@ public class Patrol extends Selector<Npc> {
             Location location = npc.getLocation();
             for (Agent neighbor : npc.getVisibleNeighbors()) {
                 if (location.isTrespasser(neighbor)) {
+                    System.out.println("trespasser: " + neighbor);
                     npc.changeRelation(neighbor, -10);
                     npc.announce(GenericDialogue.forCrime());
                 }

@@ -13,6 +13,7 @@ message Location {
 	repeated Encounter encounter = 3;
 	optional string faction_id = 5;  // access restricted to this faction
 	optional int32 min_rank = 6;  // min rank allowed in area
+	optional string credential = 10;  // allows wandering the premises
 	optional Light light = 7;
 	optional Biome biome = 8 [default = INDUSTRY];
 
