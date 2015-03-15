@@ -32,17 +32,23 @@ public class Attack extends Sequence<Npc> {
         hideSequence.addChild(new IsIntimidated());
         hideSequence.addChild(new Invert<Npc>(new HasCover()));
         hideSequence.addChild(new SeekCover());
-        
+
+        // we don't want cover, so perhaps we should try charging
+        Sequence<Npc> chargeSequence = new Sequence<Npc>();
+        chargeSequence.addChild(new CanCharge());
+        chargeSequence.addChild(new Charge());
+
         // we can't attack and we don't want cover, so try suppressing fire
         Sequence<Npc> suppressSequence = new Sequence<Npc>();
         suppressSequence.addChild(new Invert<Npc>(new HasLineOfSight()));
         useAugSequence.addChild(new HasLastSeen());
-//        useAugSequence.addChild(new ChooseUntargetedAugmentation());
+        // useAugSequence.addChild(new ChooseUntargetedAugmentation());
 
         Selector<Npc> selector = new Selector<Npc>();
         selector.addChild(useAugSequence);
         selector.addChild(hideSequence);
-//        selector.addChild(suppressSequence);
+        selector.addChild(chargeSequence);
+        // selector.addChild(suppressSequence);
 
         addChild(selector);
     }
@@ -101,16 +107,10 @@ public class Attack extends Sequence<Npc> {
         }
     }
 
-    private static class TakeAim extends LeafTask<Npc> {
+    private static class TakeAim extends SuccessTask {
         @Override
-        public void run(Npc entity) {
+        public void doFor(Npc entity) {
             entity.setAiming(true);
-            success();
-        }
-
-        @Override
-        protected Task<Npc> copyTo(Task<Npc> task) {
-            return task;
         }
     }
 
@@ -201,7 +201,7 @@ public class Attack extends Sequence<Npc> {
             return npc.getInventory().hasRangedWeapon() && npc.hasTarget();
         }
     }
-    
+
     private static class HasCover extends BooleanTask {
         @Override
         protected boolean check(Npc npc) {
@@ -211,18 +211,33 @@ public class Attack extends Sequence<Npc> {
                     && npc.getCover().getPosition().dst2(npc.getPosition()) < 1;
         }
     }
-    
+
     private static class HasLineOfSight extends BooleanTask {
         @Override
         protected boolean check(Npc npc) {
             return npc.hasTarget() && npc.hasLineOfSight(npc.getTarget());
         }
     }
-    
+
     private static class HasLastSeen extends BooleanTask {
         @Override
         protected boolean check(Npc npc) {
             return npc.hasTarget() && npc.hasLineOfSight(npc.getLastSeen().getPosition());
+        }
+    }
+
+    private static class CanCharge extends BooleanTask {
+        @Override
+        protected boolean check(Npc npc) {
+            return npc.getInventory().hasMeleeWeapon() && !npc.getTactics().isCharging()
+                    && npc.getTactics().canCharge();
+        }
+    }
+
+    private static class Charge extends SuccessTask {
+        @Override
+        protected void doFor(Npc npc) {
+            npc.getTactics().setCharging(true);
         }
     }
 }

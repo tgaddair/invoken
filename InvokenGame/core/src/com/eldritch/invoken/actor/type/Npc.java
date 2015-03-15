@@ -46,6 +46,7 @@ import com.eldritch.invoken.actor.ai.IntimidationMonitor;
 import com.eldritch.invoken.actor.ai.NpcState;
 import com.eldritch.invoken.actor.ai.NpcStateMachine;
 import com.eldritch.invoken.actor.ai.NpcThreatMonitor;
+import com.eldritch.invoken.actor.ai.TacticsManager;
 import com.eldritch.invoken.actor.ai.btree.Combat;
 import com.eldritch.invoken.actor.ai.btree.Investigate;
 import com.eldritch.invoken.actor.ai.btree.Patrol;
@@ -87,6 +88,7 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
     private final NpcThreatMonitor threat;
     private final FatigueMonitor fatigue;
     private final IntimidationMonitor intimidation;
+    private final TacticsManager tactics;
     private Augmentation chosenAug;
     private float lastStep = 0;
     private float sighted = 0;
@@ -105,7 +107,7 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
     private Seek<Vector2> seek;
     private Arrive<Vector2> arrive;
     private Wander<Vector2> wander;
-
+    
     // debug
     private String lastTask = "";
 
@@ -143,6 +145,7 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
         threat = new NpcThreatMonitor(this);
         fatigue = new FatigueMonitor(this);
         intimidation = new IntimidationMonitor(this);
+        tactics = new TacticsManager(this);
     }
 
     public CoverPoint getCover() {
@@ -163,6 +166,10 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
 
     public IntimidationMonitor getIntimidation() {
         return intimidation;
+    }
+    
+    public TacticsManager getTactics() {
+        return tactics;
     }
     
     @Override
@@ -275,6 +282,9 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
     }
 
     public void update(float delta) {
+        // update tactics
+        tactics.update(delta);
+        
         // update sighted info
         lastSeen.update(delta);
         if (hasTarget() && hasLineOfSight(getTarget())) {
