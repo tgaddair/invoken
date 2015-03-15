@@ -3,6 +3,7 @@ package com.eldritch.invoken.actor.ai.btree;
 import com.badlogic.gdx.ai.btree.branch.Selector;
 import com.badlogic.gdx.ai.btree.branch.Sequence;
 import com.badlogic.gdx.ai.btree.decorator.Invert;
+import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Npc;
 
 public class Patrol extends Selector<Npc> {
@@ -10,6 +11,7 @@ public class Patrol extends Selector<Npc> {
 //        addChild(new Follow());
         
         Sequence<Npc> wanderSequence = new Sequence<Npc>();
+        wanderSequence.addChild(new WatchForCrime());  // while wandering, check for crime
         wanderSequence.addChild(new CanWander());
         wanderSequence.addChild(new Invert<Npc>(new IsTired()));
         wanderSequence.addChild(new LowerWeapon());
@@ -17,6 +19,20 @@ public class Patrol extends Selector<Npc> {
         
         addChild(wanderSequence);
         addChild(new Idle());
+    }
+    
+    private static class WatchForCrime extends SuccessTask {
+        @Override
+        protected void doFor(Npc npc) {
+            for (Agent neighbor : npc.getVisibleNeighbors()) {
+                if (neighbor.isCommittingCrime()) {
+                    // TODO: count this as a faction offense and confront them
+                    // for now, just attack
+                    // TODO: this should only accrue once for each crime
+                    npc.changeRelation(neighbor, -10);
+                }
+            }
+        }
     }
     
     private static class CanWander extends BooleanTask {

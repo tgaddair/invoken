@@ -25,8 +25,16 @@ public class Cracking extends ActivatedEffect<Crack> {
 
     @Override
     protected void afterDispel() {
+        setActive(false);
         target.removeActivationHandler(handler);
         target.resetCamera();
+    }
+    
+    private void setActive(boolean active) {
+        if (active != this.active) {
+            this.active = active;
+            target.setCrime(active);  // cracking is a crime
+        }
     }
 
     private class CrackableHandler implements ActivationHandler {
@@ -64,6 +72,7 @@ public class Cracking extends ActivatedEffect<Crack> {
             float duration = DURATION * invDeception;
 
             addDrain(new CrackingDrain(activator, cost, duration));
+            setActive(true);
             return true;
         }
     }
@@ -79,7 +88,7 @@ public class Cracking extends ActivatedEffect<Crack> {
         @Override
         protected void onElapsed() {
             activator.crack(target);
-            active = false;
+            setActive(false);
         }
 
         @Override

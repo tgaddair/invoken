@@ -116,6 +116,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     private int paralyzed = 0;
     private int imploding = 0;
     private int stunted = 0;
+    private int crimes = 0;
 
     private float freezing = 0;
     private float lastAction = 0;
@@ -451,6 +452,14 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
 
     public boolean isStunted() {
         return stunted > 0;
+    }
+    
+    public void setCrime(boolean crime) {
+        this.crimes += crime ? 1 : -1;
+    }
+
+    public boolean isCommittingCrime() {
+        return crimes > 0;
     }
 
     public void addFollower(Agent follower) {
