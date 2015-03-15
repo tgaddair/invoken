@@ -1260,7 +1260,9 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
 
         // apply color
         Batch batch = renderer.getBatch();
-        batch.setColor(color);
+        if (isCloaked()) {
+            batch.setColor(color);
+        }
 
         // render equipment
         if (info.getInventory().hasOutfit()) {
@@ -1271,13 +1273,20 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
                 // or left
                 render(activity, direction, stateTime, renderer);
             }
+            
+            if (isCloaked()) {
+                // blending results in invisible outfits unless we increase the alpha
+                batch.setColor(color.r, color.g, color.b, Math.min(color.a * 5, 1));
+            }
             outfit.render(this, activity, stateTime, renderer);
         } else {
             render(activity, direction, stateTime, renderer);
         }
 
         // restore original color
-        batch.setColor(Color.WHITE);
+        if (isCloaked()) {
+            batch.setColor(Color.WHITE);
+        }
 
         // render action effects
         if (actionInProgress() && isAlive()) {

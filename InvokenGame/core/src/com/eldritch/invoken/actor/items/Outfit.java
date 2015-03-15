@@ -4,9 +4,9 @@ import java.util.Map;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.eldritch.invoken.actor.Inventory;
-import com.eldritch.invoken.actor.type.Human;
 import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.actor.type.Agent.Direction;
+import com.eldritch.invoken.actor.type.Human;
 import com.eldritch.invoken.proto.Items.Item.DamageMod;
 
 public class Outfit extends Item {
