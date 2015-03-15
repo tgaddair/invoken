@@ -2,6 +2,7 @@ package com.eldritch.invoken.ui;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.g2d.Batch;
@@ -23,11 +24,13 @@ import com.eldritch.invoken.proto.Actors.DialogueTree.Response;
 import com.eldritch.invoken.util.DefaultInputListener;
 import com.eldritch.invoken.util.Settings;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 public class DialogueMenu {
     private final Table container;
     private final Table choiceBar;
     private final Table bubble;
+    private final Set<Agent> speaking = Sets.newHashSet(); // one bubble per agent at a time
     private final List<TextBubble> timedBubbles = Lists.newArrayList();
     private final Skin skin;
     private boolean active = false;
@@ -67,19 +70,6 @@ public class DialogueMenu {
             endDialogue();
         }
 
-        // handle all other NPCs
-        for (Agent agent : player.getNeighbors()) {
-            if (agent.inDialogue() && agent.getInteractor() != player) {
-                // NPC conversation
-            }
-
-            if (agent.hasAnnouncements()) {
-                // add a timed blurb
-                String text = agent.getNextAnnouncement();
-                addAnnouncement(agent, text);
-            }
-        }
-
         // update temporary bubbles
         Iterator<TextBubble> it = timedBubbles.iterator();
         while (it.hasNext()) {
@@ -87,6 +77,20 @@ public class DialogueMenu {
             bubble.update(delta, camera);
             if (bubble.isFinished()) {
                 it.remove();
+                speaking.remove(bubble.owner);
+            }
+        }
+
+        // handle all other NPCs
+        for (Agent agent : player.getNeighbors()) {
+            if (agent.inDialogue() && agent.getInteractor() != player) {
+                // NPC conversation
+            }
+
+            if (agent.hasAnnouncements() && !speaking.contains(agent)) {
+                // add a timed blurb
+                String text = agent.getNextAnnouncement();
+                addAnnouncement(agent, text);
             }
         }
     }
@@ -98,7 +102,9 @@ public class DialogueMenu {
 
         // draw temporary bubbles
         for (TextBubble bubble : timedBubbles) {
-            bubble.table.draw(batch, 1.0f);
+            if (bubble.isStarted()) {
+                bubble.table.draw(batch, 1.0f);
+            }
         }
     }
 
@@ -157,6 +163,7 @@ public class DialogueMenu {
     private void addAnnouncement(Agent agent, String text) {
         TextBubble bubble = new TextBubble(agent, text);
         timedBubbles.add(bubble);
+        speaking.add(bubble.owner);
     }
 
     private void addLabel(String text) {
@@ -197,7 +204,7 @@ public class DialogueMenu {
     private void setPosition(Agent agent, Camera camera) {
         setPosition(bubble, agent, camera);
     }
-    
+
     private void setPosition(Table bubble, Agent agent, Camera camera) {
         Vector2 position = agent.getRenderPosition();
         float h = agent.getHeight() / 2;
@@ -224,6 +231,11 @@ public class DialogueMenu {
         public void update(float delta, Camera camera) {
             elapsed += delta;
             setPosition(table, owner, camera);
+        }
+
+        public boolean isStarted() {
+            // wait to set awake to prevent drawing in odd locations
+            return elapsed > 0;
         }
 
         public boolean isFinished() {

@@ -127,8 +127,8 @@ public class NpcThreatMonitor extends ThreatMonitor<Npc> {
 
             @Override
             protected float getAwareness() {
-                // low amount of wandering
-                return 0.25f;
+                // low amount of wandering and reduced field of view
+                return 0.75f;
             }
         },
 
