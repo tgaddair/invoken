@@ -22,7 +22,7 @@ public class NormalMapShader {
     // our constants...
     public static final float DEFAULT_LIGHT_Z = 0.075f;
     public static final float AMBIENT_INTENSITY = 0.5f;
-    public static final float DEFAULT_LIGHT_INTENSITY = .1f;
+    public static final float DEFAULT_LIGHT_INTENSITY = .15f;
     
     // TODO: future biome has:
     //  ambient intensity = 0.9f
@@ -44,7 +44,7 @@ public class NormalMapShader {
 
     // Attenuation coefficients for light falloff
     // the greater the falloff, the lower the dispersion of light
-    public static final Vector3 FALLOFF = new Vector3(.005f, .005f, 2f);
+    public static final Vector3 FALLOFF = new Vector3(.005f, .005f, 3f);
 
     final String VERT = "attribute vec4 " + ShaderProgram.POSITION_ATTRIBUTE + ";\n"
             + "attribute vec4 " + ShaderProgram.COLOR_ATTRIBUTE + ";\n" + "attribute vec2 "
