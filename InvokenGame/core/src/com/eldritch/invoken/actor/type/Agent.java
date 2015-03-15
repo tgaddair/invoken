@@ -1006,6 +1006,10 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     protected void notifyOfHostility(Agent source, Agent enemy) {
         // does nothing
     }
+    
+    public boolean isAlly(Agent other) {
+        return Behavior.isAllyGiven(getRelation(other));
+    }
 
     public boolean isEnemy(Agent other) {
         return Behavior.isEnemyGiven(getRelation(other));

@@ -76,6 +76,7 @@ public class NpcThreatMonitor extends ThreatMonitor<Npc> {
 
     public void setAlerted(Agent other) {
         setAlerted();
+        getAgent().alertAllies(other);
     }
 
     public boolean isAlerted() {
