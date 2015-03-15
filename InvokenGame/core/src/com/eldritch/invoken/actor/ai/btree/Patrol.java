@@ -5,6 +5,7 @@ import com.badlogic.gdx.ai.btree.branch.Sequence;
 import com.badlogic.gdx.ai.btree.decorator.Invert;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Npc;
+import com.eldritch.invoken.util.GenericDialogue;
 
 public class Patrol extends Selector<Npc> {
     public Patrol() {
@@ -30,6 +31,7 @@ public class Patrol extends Selector<Npc> {
                     // for now, just attack
                     // TODO: this should only accrue once for each crime
                     npc.changeRelation(neighbor, -10);
+                    npc.announce(GenericDialogue.forCrime());
                 }
             }
         }

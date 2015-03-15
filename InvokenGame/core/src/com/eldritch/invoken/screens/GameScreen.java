@@ -227,7 +227,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         energyBar.update();
         playerHealth.update();
         selectedHealth.update(player, player.getTarget(), camera);
-        dialogue.update(player, camera);
+        dialogue.update(delta, player, camera);
         loot.update(player);
         for (HudElement element : hud) {
             element.update(delta, location);

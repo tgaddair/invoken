@@ -54,6 +54,7 @@ import com.eldritch.invoken.encounter.NaturalVector2;
 import com.eldritch.invoken.proto.Actors.ActorParams;
 import com.eldritch.invoken.ui.MultiTextureRegionDrawable;
 import com.eldritch.invoken.util.Settings;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 public abstract class Agent extends CollisionEntity implements Steerable<Vector2>, Conversable {
@@ -127,6 +128,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     private Agent target;
     private Agent interactor;
     private boolean forcedDialogue;
+    private final LinkedList<String> announcements = Lists.newLinkedList();
     private final Set<String> uniqueDialogue = Sets.newHashSet();
     private final Set<Class<?>> toggles = new HashSet<Class<?>>();
     private final Set<ProjectileHandler> projectileHandlers = new HashSet<ProjectileHandler>();
@@ -675,6 +677,21 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
 
     public Animation getAnimation(Activity activity) {
         return animations.get(activity).get(direction);
+    }
+    
+    /**
+     * Begin dialogue with oneself.
+     */
+    public void announce(String banter) {
+        announcements.add(banter);
+    }
+    
+    public String getNextAnnouncement() {
+        return announcements.remove();
+    }
+    
+    public boolean hasAnnouncements() {
+        return !announcements.isEmpty();
     }
 
     public void interact(Agent other) {
