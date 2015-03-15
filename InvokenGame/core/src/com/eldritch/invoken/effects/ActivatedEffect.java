@@ -1,5 +1,6 @@
 package com.eldritch.invoken.effects;
 
+import java.util.Iterator;
 import java.util.List;
 
 import com.eldritch.invoken.actor.aug.Augmentation;
@@ -44,6 +45,15 @@ public abstract class ActivatedEffect<T extends Augmentation> extends BasicEffec
         // drains continuously while active
         for (EnergyDrain drain : drains) {
             drain.update(delta);
+        }
+        
+        // remove finished drains
+        Iterator<EnergyDrain> it = drains.iterator();
+        while (it.hasNext()) {
+            EnergyDrain drain = it.next();
+            if (drain.isFinished()) {
+                it.remove();
+            }
         }
     }
     
