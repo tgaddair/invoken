@@ -6,7 +6,7 @@ import com.eldritch.invoken.actor.type.Npc;
 public class Investigate extends Sequence<Npc> {
     public Investigate() {
         addChild(new IsSuspicious());
-        addChild(new CanPursue());
+//        addChild(new CanPursue());
         addChild(new Pursue());
     }
 

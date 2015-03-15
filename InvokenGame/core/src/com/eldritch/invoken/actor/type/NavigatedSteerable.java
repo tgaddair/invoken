@@ -100,6 +100,7 @@ public class NavigatedSteerable extends BasicSteerable {
 
         if (npc.hasVisibilityTo(target)) {
             // we don't need pathfinding if we have line of sight
+            lastSeen.set(target.getPosition());
             setPosition(target.getPosition());
         } else if (npc.hasLineOfSight(lastSeen)) {
             setPosition(lastSeen);
