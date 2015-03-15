@@ -35,7 +35,7 @@ public abstract class FuzzyMonitor {
         value += delta;
 
         // check to see if we're rested or not
-        if (value > limit) {
+        if (value >= limit) {
             ready = false;
         } else if (value <= 0) {
             ready = true;
@@ -48,7 +48,17 @@ public abstract class FuzzyMonitor {
     }
 
     public boolean isExpended() {
-        return ready ? value > limit : value >= 0;
+        return ready ? value >= limit : value >= 0;
+    }
+    
+    public void setToLimit() {
+        value = limit;
+        ready = false;
+    }
+    
+    public void setReady() {
+        value = 0;
+        ready = true;
     }
 
     // randomize for more organic effect

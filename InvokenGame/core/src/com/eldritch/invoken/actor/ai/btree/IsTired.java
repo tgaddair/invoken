@@ -8,5 +8,4 @@ public class IsTired extends BooleanTask {
         // alerted NPCs are not tired
         return !npc.getThreat().isAlerted() && npc.getFatigue().isTired();
     }
-
 }
