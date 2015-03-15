@@ -45,6 +45,11 @@ public class Cracking extends ActivatedEffect<Crack> {
         }
 
         private boolean handle(Crackable activator) {
+            if (activator.isCracked()) {
+                // don't bother attempting to crack something that is already cracked
+                return false;
+            }
+            
             // every 10 points of subterfuge increases our max lock strength
             int crackStrength = target.getInfo().getSubterfuge() / 10;
             if (activator.getStrength() > crackStrength || activator.getStrength() > MAX_STRENGTH) {
@@ -56,6 +61,10 @@ public class Cracking extends ActivatedEffect<Crack> {
 
             // duration is a function of our inverse deception
             float duration = DURATION * (1.0f - target.getInfo().getDeception());
+            
+            System.out.println("cracking door...");
+            System.out.println(String.format("  cost: %.2f", cost));
+            System.out.println(String.format("  duration: %.2f", duration));
 
             addDrain(new CrackingDrain(activator, cost, duration));
             return true;
@@ -74,6 +83,7 @@ public class Cracking extends ActivatedEffect<Crack> {
         protected void onElapsed() {
             activator.crack(target);
             active = false;
+            System.out.println("done!");
         }
 
         @Override

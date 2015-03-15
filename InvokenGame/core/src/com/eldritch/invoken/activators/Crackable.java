@@ -6,4 +6,6 @@ public interface Crackable {
     void crack(Agent source);
     
     float getStrength();
+    
+    boolean isCracked();
 }

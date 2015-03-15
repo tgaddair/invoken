@@ -200,6 +200,11 @@ public class DoorActivator extends ClickActivator implements ProximityActivator,
     public float getStrength() {
         return lock.isLocked() ? lock.getStrength() : 0;
     }
+    
+    @Override
+    public boolean isCracked() {
+        return !lock.isLocked();
+    }
 
     public static class LockInfo {
         private final Item key;
