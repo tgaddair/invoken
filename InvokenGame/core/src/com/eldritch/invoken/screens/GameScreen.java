@@ -310,6 +310,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
             int level = target.getInfo().getLevel();
             float freezing = target.getFreezing();
             int enemies = target.getThreat().getEnemyCount();
+            float visibility = target.getVisibility();
 
             int i = 0;
             batch.begin();
@@ -319,6 +320,8 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
             font.draw(batch, String.format("Freezing: %.2f", freezing), 10, getHeight()
                     - (30 + 20 * i++));
             font.draw(batch, String.format("Enemies: %d", enemies), 10, getHeight()
+                    - (30 + 20 * i++));
+            font.draw(batch, String.format("Visibility: %.2f", visibility), 10, getHeight()
                     - (30 + 20 * i++));
 
             AgentInfo info = target.getInfo();

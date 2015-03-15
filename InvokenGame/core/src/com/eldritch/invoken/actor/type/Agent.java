@@ -8,7 +8,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import com.badlogic.gdx.ai.steer.Steerable;
@@ -58,6 +57,7 @@ import com.google.common.collect.Sets;
 public abstract class Agent extends CollisionEntity implements Steerable<Vector2>, Conversable {
     public static final int MAX_DST2 = 150;
     public static final int INTERACT_RANGE = 5;
+    public static final float UNMASK_RANGE = 5;
     public static final int ASSAULT_PENALTY = -10;
     public static final float AIMING_V_PENALTY = 5;
 
@@ -337,8 +337,8 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         setCollisionMask(Settings.BIT_ANYTHING);
     }
 
-    public float getVisibility() {
-        return color.a;
+    public boolean isVisible() {
+        return color.a > 0;
     }
 
     public boolean isConfused() {
@@ -764,7 +764,18 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     }
     
     public boolean isVisible(Agent other) {
-        return other.getVisibility() >= Math.min(10f / info.getSubterfuge(), 1.0f);
+        if (other.isVisible()) {
+            return true;
+        } else {
+            // perception is [0, 1], scaling how far we can be from an invisible target for us to
+            // detect it
+            float visibility = getVisibility();
+            return dst2(other) < visibility * visibility;
+        }
+    }
+    
+    public float getVisibility() {
+        return info.getPerception() * UNMASK_RANGE;
     }
 
     public boolean isNear(Agent other) {
