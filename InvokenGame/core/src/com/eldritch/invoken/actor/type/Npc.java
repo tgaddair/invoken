@@ -359,6 +359,11 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
             }
         }
     }
+    
+    @Override
+    protected void onHostility(Agent enemy) {
+        threat.setAlerted(enemy);
+    }
 
     @Override
     protected void notifyOfHostility(Agent source, Agent target) {

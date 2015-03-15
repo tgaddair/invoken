@@ -1041,6 +1041,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
             }
 
             // request help from allies
+            onHostility(agent);
             requestAssistance(agent);
         }
     }
@@ -1050,6 +1051,10 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
             // broadcast a message that we're now in combat with this agent
             agent.notifyOfHostility(this, enemy);
         }
+    }
+    
+    protected void onHostility(Agent enemy) {
+        // does nothing
     }
 
     protected void notifyOfHostility(Agent source, Agent enemy) {
