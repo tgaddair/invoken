@@ -7,6 +7,8 @@ import com.eldritch.invoken.effects.Cracking;
 import com.eldritch.invoken.encounter.Location;
 
 public class Crack extends Augmentation {
+    private static final int BASE_COST = 5;
+    
 	private static class Holder {
         private static final Crack INSTANCE = new Crack();
 	}
@@ -41,7 +43,7 @@ public class Crack extends Augmentation {
     
     @Override
     public int getCost(Agent owner) {
-        return owner.isToggled(Crack.class) ? 0 : 5;
+        return owner.isToggled(Crack.class) ? 0 : BASE_COST;
     }
     
     @Override

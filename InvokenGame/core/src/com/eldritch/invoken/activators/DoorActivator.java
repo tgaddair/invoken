@@ -21,7 +21,7 @@ import com.eldritch.invoken.screens.GameScreen;
 import com.eldritch.invoken.util.Settings;
 import com.google.common.base.Strings;
 
-public class DoorActivator extends ClickActivator implements ProximityActivator {
+public class DoorActivator extends ClickActivator implements ProximityActivator, Crackable {
     private static final TextureRegion[] frontRegions = GameScreen.getMergedRegion(
             "sprite/activators/blast-door-short.png", 64, 64);
     private static final TextureRegion[] frontRegionsLocked = GameScreen.getMergedRegion(
@@ -80,7 +80,7 @@ public class DoorActivator extends ClickActivator implements ProximityActivator 
     public boolean inProximity(Agent agent) {
         return proximityCache.inProximity(center, agent);
     }
-    
+
     @Override
     public void update(float delta, Location location) {
         // if a single agent is in the proximity, then open the door, otherwise close it
@@ -91,7 +91,7 @@ public class DoorActivator extends ClickActivator implements ProximityActivator 
                 break;
             }
         }
-        
+
         // only change the state of the door if it differs from the current state
         // must click to unlock
         if (shouldOpen != open && !lock.isLocked()) {
@@ -103,9 +103,7 @@ public class DoorActivator extends ClickActivator implements ProximityActivator 
     public void activate(Agent agent, Location location) {
         if (lock.isLocked()) {
             if (lock.canUnlock(agent)) {
-                // unlock
-                lock.setLocked(false);
-                location.alertTo(agent);
+                crack(agent);
             } else {
                 GameScreen.toast("Requires: " + lock.getKey().getName());
             }
@@ -114,13 +112,13 @@ public class DoorActivator extends ClickActivator implements ProximityActivator 
 
         setOpened(!open, location);
     }
-    
+
     private synchronized void setOpened(boolean opened, Location location) {
         if (activating) {
             // cannot interrupt
             return;
         }
-        
+
         activating = true;
         open = opened;
         for (Body body : bodies) {
@@ -191,6 +189,18 @@ public class DoorActivator extends ClickActivator implements ProximityActivator 
         return getPosition().y;
     }
 
+    @Override
+    public void crack(Agent source) {
+        // unlock
+        lock.setLocked(false);
+        // location.alertTo(agent);
+    }
+
+    @Override
+    public float getStrength() {
+        return lock.isLocked() ? lock.getStrength() : 0;
+    }
+
     public static class LockInfo {
         private final Item key;
         private final int strength;
@@ -199,12 +209,12 @@ public class DoorActivator extends ClickActivator implements ProximityActivator 
         public LockInfo(String keyId, int strength) {
             this.key = !Strings.isNullOrEmpty(keyId) ? Item.fromProto(InvokenGame.ITEM_READER
                     .readAsset(keyId)) : null;
-            
+
             // strength key:
-            //   0  -> open
-            //   1  -> closed
-            //   2+ -> locked
-            //   10 -> requires key
+            // 0 -> open
+            // 1 -> closed
+            // 2+ -> locked
+            // 10 -> requires key
             this.strength = strength;
             locked = key != null || strength > 1;
         }

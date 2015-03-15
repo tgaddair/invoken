@@ -7,7 +7,7 @@ import com.eldritch.invoken.effects.Cloaked;
 import com.eldritch.invoken.encounter.Location;
 
 public class Cloak extends Augmentation {
-    private static final int BASE_COST = 2;
+    private static final int BASE_COST = 3;
     
 	private static class Holder {
         private static final Cloak INSTANCE = new Cloak();

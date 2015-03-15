@@ -3,7 +3,7 @@ package com.eldritch.invoken.effects;
 import com.eldritch.invoken.actor.aug.Observe;
 import com.eldritch.invoken.actor.type.Agent;
 
-public class Observing extends ToggledEffect<Observe> {
+public class Observing extends ActivatedEffect<Observe> {
     private final Agent observed;
     
 	public Observing(Agent target, Agent observed, Observe aug, int cost) {

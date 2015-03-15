@@ -3,7 +3,7 @@ package com.eldritch.invoken.effects;
 import com.eldritch.invoken.actor.aug.Scramble;
 import com.eldritch.invoken.actor.type.Agent;
 
-public class Scrambled extends ToggledEffect<Scramble> {
+public class Scrambled extends ActivatedEffect<Scramble> {
 	private final Agent target;
 	
 	public Scrambled(Agent owner, Agent target, Scramble aug, int cost) {
