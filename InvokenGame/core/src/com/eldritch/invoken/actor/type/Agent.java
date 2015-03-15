@@ -30,6 +30,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Array;
+import com.eldritch.invoken.activators.Activator;
 import com.eldritch.invoken.actor.AgentInfo;
 import com.eldritch.invoken.actor.Conversable;
 import com.eldritch.invoken.actor.GameCamera;
@@ -44,6 +45,7 @@ import com.eldritch.invoken.actor.items.Fragment;
 import com.eldritch.invoken.actor.items.Outfit;
 import com.eldritch.invoken.actor.items.RangedWeapon;
 import com.eldritch.invoken.actor.type.HandledProjectile.ProjectileHandler;
+import com.eldritch.invoken.actor.util.ActivationHandler;
 import com.eldritch.invoken.actor.util.ThreatMonitor;
 import com.eldritch.invoken.effects.Effect;
 import com.eldritch.invoken.effects.HoldingWeapon;
@@ -100,6 +102,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     private final Map<Agent, Float> distanceCache = new HashMap<Agent, Float>();
     private final LinkedList<Action> actions = new LinkedList<Action>();
     private final List<Effect> effects = new LinkedList<Effect>();
+    private final Set<ActivationHandler> activationHandlers = Sets.newHashSet();
     private Action action = null;
 
     private Agent followed = null;
@@ -579,6 +582,23 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
 
     public List<Effect> getEffects() {
         return effects;
+    }
+    
+    public void addActivationHandler(ActivationHandler handler) {
+        activationHandlers.add(handler);
+    }
+    
+    public void removeActivationHandler(ActivationHandler handler) {
+        activationHandlers.remove(handler);
+    }
+    
+    public boolean handle(Activator activator) {
+        for (ActivationHandler handler : activationHandlers) {
+            if (handler.handle(activator)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public void setPosition(float x, float y) {

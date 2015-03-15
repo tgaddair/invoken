@@ -30,7 +30,11 @@ public abstract class ClickActivator extends BasicActivator {
 		boolean clicked = x >= position.x && x <= position.x + width && y >= position.y
                 && y <= position.y + height;
         if (clicked && canActivate(agent, x, y)) {
-            activate(agent, location);
+            // first, attempt to handle the click event with a handler
+            if (!agent.handle(this)) {
+                // could not handle, so delegate to the activation mechanism
+                activate(agent, location);
+            }
         }
         return clicked;
 	}

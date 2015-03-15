@@ -10,6 +10,9 @@ import com.eldritch.invoken.actor.util.EnergyDrain.TimedEnergyDrain;
 public class Cracking extends ActivatedEffect<Crack> {
     private static final float MAX_STRENGTH = 9; // cannot crack greater than this
     private static final float DURATION = 5; // no longer than this time to crack
+    
+    private final ActivationHandler handler = new CrackableHandler();
+    private boolean active = false;
 
     public Cracking(Agent target, Crack aug, int cost) {
         super(target, aug, Crack.class, cost);
@@ -17,10 +20,12 @@ public class Cracking extends ActivatedEffect<Crack> {
 
     @Override
     protected void afterApply() {
+        target.addActivationHandler(handler);
     }
 
     @Override
     protected void afterDispel() {
+        target.removeActivationHandler(handler);
         target.resetCamera();
     }
 
@@ -28,6 +33,11 @@ public class Cracking extends ActivatedEffect<Crack> {
         @Override
         public boolean handle(Activator activator) {
             if (activator instanceof Crackable) {
+                if (active) {
+                    // only one activator allowed at a time
+                    return true;
+                }
+                
                 // only handle crackable activators
                 return handle((Crackable) activator);
             }
@@ -63,6 +73,7 @@ public class Cracking extends ActivatedEffect<Crack> {
         @Override
         protected void onElapsed() {
             activator.crack(target);
+            active = false;
         }
 
         @Override
