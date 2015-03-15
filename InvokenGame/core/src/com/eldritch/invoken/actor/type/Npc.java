@@ -41,7 +41,6 @@ import com.eldritch.invoken.actor.Inventory.ItemState;
 import com.eldritch.invoken.actor.ai.AdaptiveRayWithWhiskersConfiguration;
 import com.eldritch.invoken.actor.ai.Behavior;
 import com.eldritch.invoken.actor.ai.Box2dRaycastCollisionDetector;
-import com.eldritch.invoken.actor.ai.ExplorationMonitor;
 import com.eldritch.invoken.actor.ai.FatigueMonitor;
 import com.eldritch.invoken.actor.ai.IntimidationMonitor;
 import com.eldritch.invoken.actor.ai.NpcState;
@@ -87,7 +86,6 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
     private CoverPoint cover = null;
     private final FatigueMonitor fatigue;
     private final IntimidationMonitor intimidation;
-    private final ExplorationMonitor exploration = new ExplorationMonitor();
     private final NpcThreatMonitor threat;
     private Augmentation chosenAug;
     private float lastStep = 0;
@@ -165,10 +163,6 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
 
     public IntimidationMonitor getIntimidation() {
         return intimidation;
-    }
-    
-    public ExplorationMonitor getExploration() {
-        return exploration;
     }
     
     @Override

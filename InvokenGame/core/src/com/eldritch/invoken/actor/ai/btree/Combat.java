@@ -50,7 +50,7 @@ public class Combat extends Sequence<Npc> {
             if (npc.getInventory().hasRangedWeapon()) {
                 return npc.getPosition().dst2(npc.getLastSeen().getPosition()) > 5;
             } else {
-                return npc.getPosition().dst2(npc.getLastSeen().getPosition()) > 1;
+                return !npc.getLastSeen().hasArrived();
             }
         }
     }

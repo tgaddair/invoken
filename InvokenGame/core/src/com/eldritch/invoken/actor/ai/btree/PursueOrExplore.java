@@ -1,55 +1,34 @@
 package com.eldritch.invoken.actor.ai.btree;
 
-import com.badlogic.gdx.ai.btree.LeafTask;
-import com.badlogic.gdx.ai.btree.Task;
 import com.badlogic.gdx.ai.btree.branch.Selector;
 import com.badlogic.gdx.ai.btree.branch.Sequence;
 import com.eldritch.invoken.actor.type.Npc;
 
 public class PursueOrExplore extends Selector<Npc> {
+    private static final float EXPLORATION_RANGE = 10f;
+
     public PursueOrExplore(Sequence<Npc> pursueSequence) {
         Sequence<Npc> explorationSequence = new Sequence<Npc>();
         explorationSequence.addChild(new CanExplore());
         explorationSequence.addChild(new Wander());
-        explorationSequence.addChild(new Explore());
-        
-        addChild(explorationSequence);
+
         addChild(pursueSequence);
-        addChild(new ResetExploration());
+        addChild(explorationSequence);
+        addChild(new ResetArrived());
     }
-    
+
     private static class CanExplore extends BooleanTask {
         @Override
         protected boolean check(Npc npc) {
-            return !npc.getExploration().isExpended();
+            float r = EXPLORATION_RANGE;
+            return npc.getPosition().dst2(npc.getLastSeen().getPosition()) < r * r;
         }
     }
-    
-    private static class Explore extends LeafTask<Npc> {
-        @Override
-        public void run(Npc npc) {
-            npc.getExploration().use(Npc.STEP);
-            npc.setTask(getClass().getSimpleName());
-            success();
-        }
 
+    private static class ResetArrived extends SuccessTask {
         @Override
-        protected Task<Npc> copyTo(Task<Npc> task) {
-            return task;
-        }
-    }
-    
-    private static class ResetExploration extends LeafTask<Npc> {
-        @Override
-        public void run(Npc npc) {
-            System.out.println("reset exploration");
-            npc.getExploration().setReady();
-            success();
-        }
-
-        @Override
-        protected Task<Npc> copyTo(Task<Npc> task) {
-            return task;
+        protected void doFor(Npc npc) {
+            npc.getLastSeen().setArrived(false);
         }
     }
 }

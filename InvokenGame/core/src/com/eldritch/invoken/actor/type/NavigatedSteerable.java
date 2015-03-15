@@ -20,6 +20,7 @@ public class NavigatedSteerable extends BasicSteerable {
     private final PathManager pathManager;
     private final Vector2 lastSeen = new Vector2();
     private Agent target = null;
+    private boolean arrived = false;  // done navigating
 
     // path state
     private LocationGraphPath path = null;
@@ -32,6 +33,11 @@ public class NavigatedSteerable extends BasicSteerable {
     }
 
     public void update(float delta) {
+        if (arrived) {
+            // don't update
+            return;
+        }
+        
         if (path != null) {
             pathAge += delta;
 
@@ -48,9 +54,22 @@ public class NavigatedSteerable extends BasicSteerable {
                 }
             }
         }
-
+        
         // consider updating the path if it has gone stale
         updatePath();
+        
+        // make note of when we reach our navigation target
+        if (target != null && npc.getPosition().dst2(lastSeen) < MIN_DIST) {
+            arrived = true;
+        }
+    }
+    
+    public void setArrived(boolean arrived) {
+        this.arrived = arrived;
+    }
+    
+    public boolean hasArrived() {
+        return arrived;
     }
 
     public void render(ShapeRenderer sr, Matrix4 projection) {
@@ -89,6 +108,7 @@ public class NavigatedSteerable extends BasicSteerable {
         }
 
         // new last seen point means new path
+        arrived = false;
         updatePath();
     }
 
