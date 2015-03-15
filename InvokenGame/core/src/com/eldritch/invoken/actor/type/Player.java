@@ -184,6 +184,12 @@ public class Player extends SteeringAgent {
         // let the player make seemingly bad shots
         return true;
     }
+    
+    @Override
+    public float getCloakAlpha() {
+        // player should be able to see themself on screen even when invisible
+        return 0.1f;
+    }
 
     private boolean isTouched(float startX, float endX) {
         // check if any finger is touch the area between startX and endX

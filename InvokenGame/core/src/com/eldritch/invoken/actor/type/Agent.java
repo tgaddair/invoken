@@ -338,7 +338,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     }
 
     public boolean isVisible() {
-        return color.a > 0;
+        return !isCloaked();
     }
 
     public boolean isConfused() {
@@ -494,12 +494,15 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     public void setCloaked(boolean cloaked) {
         if (cloaked) {
             toggles.add(Cloak.class);
-            // setAlpha(0.1f);
-            setAlpha(0);
+            setAlpha(getCloakAlpha());
         } else {
             toggles.remove(Cloak.class);
             setAlpha(1);
         }
+    }
+    
+    public float getCloakAlpha() {
+        return 0;
     }
 
     /** returns true if the toggle is on after invoking this method */

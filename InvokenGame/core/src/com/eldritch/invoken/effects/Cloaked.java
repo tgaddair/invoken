@@ -6,29 +6,30 @@ import com.eldritch.invoken.actor.type.Agent;
 public class Cloaked extends BasicEffect {
     private final Augmentation aug;
     private final int cost;
-    private float elapsed = 0;
     private boolean finished = false;
-	
-	public Cloaked(Agent target, Augmentation aug, int cost) {
-	    super(target);
-	    this.aug = aug;
-	    this.cost = cost;
-	}
 
-	@Override
-	public boolean isFinished() {
-		return finished || (isApplied() && !target.isCloaked());
-	}
+    public Cloaked(Agent target, Augmentation aug, int cost) {
+        super(target);
+        this.aug = aug;
+        this.cost = cost;
+    }
 
-	@Override
-	public void dispel() {
-	    target.setCloaked(false);
-	    target.getInfo().getAugmentations().removeSelfAugmentation(aug);
-	}
-	
-	@Override
+    @Override
     protected void doApply() {
-	    target.setCloaked(true);
+        target.setCloaked(true);
+        target.setStunted(true); // cannot regain energy
+    }
+
+    @Override
+    public void dispel() {
+        target.setCloaked(false);
+        target.setStunted(false);
+        target.getInfo().getAugmentations().removeSelfAugmentation(aug);
+    }
+
+    @Override
+    public boolean isFinished() {
+        return finished || (isApplied() && !target.isCloaked());
     }
 
     @Override
@@ -37,16 +38,13 @@ public class Cloaked extends BasicEffect {
             // don't bother draining energy while not moving
             return;
         }
-        
-        elapsed += delta;
-        if (elapsed > 1) {
-            // drains continuously while moving
-            if (cost <= target.getInfo().getEnergy()) {
-                target.getInfo().expend(cost);
-            } else {
-                finished = true;
-            }
-            elapsed = 0;
+
+        // drains continuously while moving
+        float c = cost * delta;
+        if (c <= target.getInfo().getEnergy()) {
+            target.getInfo().expend(c);
+        } else {
+            finished = true;
         }
     }
 }

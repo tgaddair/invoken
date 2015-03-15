@@ -7,6 +7,8 @@ import com.eldritch.invoken.effects.Cloaked;
 import com.eldritch.invoken.encounter.Location;
 
 public class Cloak extends Augmentation {
+    private static final int BASE_COST = 2;
+    
 	private static class Holder {
         private static final Cloak INSTANCE = new Cloak();
 	}
@@ -41,7 +43,7 @@ public class Cloak extends Augmentation {
     
     @Override
     public int getCost(Agent owner) {
-        return owner.isCloaked() ? 0 : 5;
+        return owner.isCloaked() ? 0 : BASE_COST;
     }
     
     @Override
