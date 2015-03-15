@@ -116,6 +116,7 @@ public class Location {
     private final FogOfWarMasker fowMasker;
 
     private final Optional<Faction> owningFaction;
+    private final int minRank;
 
     private OrthogonalShadedTiledMapRenderer renderer;
     private OrthogonalShadedTiledMapRenderer overlayRenderer;
@@ -153,6 +154,7 @@ public class Location {
         this.seed = seed;
         owningFaction = Optional.fromNullable(data.hasFactionId() ? Faction.of(data.getFactionId())
                 : null);
+        minRank = owningFaction.isPresent() ? data.getMinRank() : 0;
         lightManager = new LightManager(data);
         normalMapShader = new NormalMapShader();
         lightMasker = new OverlayLightMasker(lightManager.getVertexShaderDef());
@@ -261,6 +263,17 @@ public class Location {
             Faction faction = owningFaction.get();
             intruder.changeFactionStatus(faction, -50);
         }
+    }
+    
+    public boolean isTrespasser(Agent agent) {
+        if (!owningFaction.isPresent()) {
+            // no owning faction
+            return true;
+        }
+        
+        Faction faction = owningFaction.get();
+        int rank = agent.getInfo().getFactionManager().getRank(faction);
+        return rank < minRank;
     }
 
     public void addEntity(TemporaryEntity entity) {

@@ -351,6 +351,10 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
         return threat.isSuspicious();
     }
     
+    public boolean isGuard() {
+        return data.getGuard();
+    }
+    
     public void alertAllies(Agent target) {
         for (Agent neighbor : getNeighbors()) {
             if (isAlly(neighbor)) {

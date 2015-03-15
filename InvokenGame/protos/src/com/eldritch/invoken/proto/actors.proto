@@ -163,13 +163,18 @@ message NonPlayerActor {
 
 	required ActorParams params = 1;
 	required bool unique = 2 [default = false];
-	required bool can_speak = 3 [default = true];
 	repeated DialogueTree dialogue = 4;
+
+	// Guards check credentials in faction controlled locations.
+	optional bool guard = 9 [default = false];
 
 	optional Aggression aggression = 5 [default = AGGRESSIVE];
 	optional Assistance assistance = 6 [default = LOYAL];
 	optional Confidence confidence = 7 [default = CAPABLE];
 	repeated Trait trait = 8;
+
+	// deprecated
+	optional bool can_speak = 3 [default = true];  // inferred from dialogue
 }
 
 message PlayerActor {

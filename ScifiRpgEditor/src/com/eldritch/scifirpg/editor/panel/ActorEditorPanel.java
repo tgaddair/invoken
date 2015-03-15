@@ -59,7 +59,7 @@ public class ActorEditorPanel extends AssetEditorPanel<NonPlayerActor, ActorTabl
 	private final DialogueTable dialogueTable = new DialogueTable();
 	private final TraitTable traitTable = new TraitTable();
 	private final JCheckBox uniqueCheck = new JCheckBox("", false);
-	private final JCheckBox speakCheck = new JCheckBox("", true);
+	private final JCheckBox guardCheck = new JCheckBox("", false);
 	private final JComboBox<Aggression> aggressionBox = new JComboBox<Aggression>(Aggression.values());
 	private final JComboBox<Assistance> assistanceBox = new JComboBox<Assistance>(Assistance.values());
 	private final JComboBox<Confidence> confidenceBox = new JComboBox<Confidence>(Confidence.values());
@@ -111,8 +111,8 @@ public class ActorEditorPanel extends AssetEditorPanel<NonPlayerActor, ActorTabl
 		builder.add(aggressionBox, cc.xy(c + 2, r));
 		r += 2;
 		
-		builder.addLabel("Can Speak", cc.xy(c, r));
-		builder.add(speakCheck, cc.xy(c + 2, r));
+		builder.addLabel("Guard", cc.xy(c, r));
+		builder.add(guardCheck, cc.xy(c + 2, r));
 		r += 2;
 		
 		builder.addLabel("Augmentations", cc.xy(c, r));
@@ -203,7 +203,7 @@ public class ActorEditorPanel extends AssetEditorPanel<NonPlayerActor, ActorTabl
 			
 			// NPC params
 			uniqueCheck.setSelected(asset.getUnique());
-			speakCheck.setSelected(asset.getCanSpeak());
+			guardCheck.setSelected(asset.getGuard());
 			for (DialogueTree tree : asset.getDialogueList()) {
 				dialogueTable.addAsset(tree);
 			}
@@ -243,7 +243,7 @@ public class ActorEditorPanel extends AssetEditorPanel<NonPlayerActor, ActorTabl
 		return NonPlayerActor.newBuilder()
 				.setParams(params.build())
 				.setUnique(uniqueCheck.isSelected())
-				.setCanSpeak(speakCheck.isSelected())
+				.setGuard(guardCheck.isSelected())
 				.setAggression((Aggression) aggressionBox.getSelectedItem())
 				.setAssistance((Assistance) assistanceBox.getSelectedItem())
 				.setConfidence((Confidence) confidenceBox.getSelectedItem())

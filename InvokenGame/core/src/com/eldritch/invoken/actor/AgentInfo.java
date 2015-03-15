@@ -18,6 +18,7 @@ import com.eldritch.invoken.proto.Actors.ActorParams.FactionStatus;
 import com.eldritch.invoken.proto.Actors.ActorParams.InventoryItem;
 import com.eldritch.invoken.proto.Actors.ActorParams.Skill;
 import com.eldritch.invoken.proto.Actors.ActorParams.Species;
+import com.eldritch.invoken.proto.Actors.NonPlayerActor;
 import com.eldritch.invoken.proto.Augmentations.AugmentationProto;
 import com.eldritch.invoken.proto.Disciplines.Discipline;
 import com.google.common.base.Functions;
@@ -45,6 +46,10 @@ public class AgentInfo {
 	float energyOffset = 0;
 	
 	int activeDefense = 0;
+	
+	public AgentInfo(Agent agent, NonPlayerActor params) {
+	    this(agent, params.getParams(), params.getUnique());
+	}
 	
 	public AgentInfo(Agent agent, ActorParams params, boolean unique) {
 	    this.id = params.getId();
