@@ -166,6 +166,7 @@ public class RangedWeapon extends Item {
         protected void apply(Agent owner, Agent target) {
             float magnitude = getDamage(target)
                     * owner.getInventory().getRangedWeapon().getDamage();
+            target.stop();
             target.applyForce(velocity.cpy().nor().scl(100));
             target.addEffect(new Stunned(owner, target, 0.2f));
             target.addEffect(new Bleed(owner, target, magnitude));

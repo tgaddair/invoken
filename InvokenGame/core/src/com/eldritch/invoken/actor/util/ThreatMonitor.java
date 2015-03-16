@@ -21,6 +21,12 @@ public class ThreatMonitor<T extends Agent> {
     }
     
     public void update(float delta) {
+        if (!agent.isAlive()) {
+            enemies.clear();
+            lastSeen.clear();
+            return;
+        }
+        
         // remove agents we haven't seen in a while
         Iterator<Entry<Agent, Float>> observations = lastSeen.entrySet().iterator();
         while (observations.hasNext()) {

@@ -29,12 +29,12 @@ public class Settings {
 	public static final short BIT_ANYTHING = BIT_DEFAULT | BIT_PHYSICAL;  // everything
 	
 	// debug settings
-	public static final boolean GOD_MODE = false;
+	public static final boolean GOD_MODE = true;
 	public static final boolean DEBUG_DRAW = false;
 	public static final boolean DEBUG_LIGHTS = false;
 	public static final boolean DEBUG_COVER = false;
 	public static final boolean DEBUG_PATHFINDING = false;
-	public static final boolean DEBUG_STEALTH = true;
+	public static final boolean DEBUG_STEALTH = false;
 	public static final boolean SKIP_MENU = true;
 	public static final int START_LEVEL = 1;  // 25
 	public static final Profession DEFAULT_PROFESSION = Profession.Ghost;

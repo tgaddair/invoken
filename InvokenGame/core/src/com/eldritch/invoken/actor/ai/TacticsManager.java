@@ -5,7 +5,7 @@ import com.eldritch.invoken.actor.type.Npc;
 
 public class TacticsManager {
     private static final float CHARGE_RANGE = 5;
-    private static final float CHARGE_SCALE = 2;
+    private static final float CHARGE_SCALE = 1.5f;
     
     private final Npc npc;
     private final float baseAcceleration;
