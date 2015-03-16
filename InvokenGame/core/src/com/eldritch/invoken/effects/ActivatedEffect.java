@@ -14,7 +14,6 @@ public abstract class ActivatedEffect<T extends Augmentation> extends BasicEffec
     private final int cost;
     private final List<EnergyDrain> drains = Lists.newArrayList();
     private boolean finished = false;
-    private boolean active = false;  // make sure we only apply and dispel once
 
     public ActivatedEffect(Agent target, T aug, Class<T> toggle, int cost) {
         super(target);
@@ -25,23 +24,17 @@ public abstract class ActivatedEffect<T extends Augmentation> extends BasicEffec
 
     @Override
     protected void doApply() {
-        if (!active) {
-            target.toggleOn(toggle);
-            target.setStunted(true); // cannot regain energy
-            afterApply();
-            active = true;
-        }
+        target.toggleOn(toggle);
+        target.setStunted(true); // cannot regain energy
+        afterApply();
     }
-    
+
     @Override
     public void dispel() {
-        if (active) {
-            target.toggleOff(toggle);
-            target.setStunted(false);
-            target.getInfo().getAugmentations().removeSelfAugmentation(aug);
-            afterDispel();
-            active = false;
-        }
+        target.toggleOff(toggle);
+        target.setStunted(false);
+        target.getInfo().getAugmentations().removeSelfAugmentation(aug);
+        afterDispel();
     }
 
     @Override
@@ -55,7 +48,7 @@ public abstract class ActivatedEffect<T extends Augmentation> extends BasicEffec
         for (EnergyDrain drain : drains) {
             drain.update(delta);
         }
-        
+
         // remove finished drains
         Iterator<EnergyDrain> it = drains.iterator();
         while (it.hasNext()) {
@@ -65,15 +58,15 @@ public abstract class ActivatedEffect<T extends Augmentation> extends BasicEffec
             }
         }
     }
-    
+
     protected final void addDrain(EnergyDrain drain) {
         drains.add(drain);
     }
-    
+
     protected final void cancel() {
         finished = true;
     }
-    
+
     public int getBaseCost() {
         return cost;
     }
