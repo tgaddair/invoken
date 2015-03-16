@@ -25,6 +25,7 @@ import com.eldritch.invoken.util.Settings;
 import com.google.common.base.Strings;
 
 public class RangedWeapon extends Item {
+    private static final float BASE_COST = 5f;
     private static final float DAMAGE_SCALE = 1;
     private static final float BULLET_VELOCITY = 25;
     
@@ -51,7 +52,7 @@ public class RangedWeapon extends Item {
             }
         }
         primary = greatest != null ? greatest.getDamage() : DamageType.PHYSICAL;
-        baseCost = (int) (damageSum / 3);
+        baseCost = (int) (BASE_COST + damageSum / 5);
     }
 	
 	public void render(Vector2 position, Vector2 direction, OrthogonalTiledMapRenderer renderer) {
