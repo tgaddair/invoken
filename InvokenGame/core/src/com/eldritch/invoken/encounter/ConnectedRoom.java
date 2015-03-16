@@ -4,6 +4,8 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import com.google.common.collect.Sets;
+
 public class ConnectedRoom {
 	public enum Type {
 		Chamber, Hall
@@ -32,6 +34,13 @@ public class ConnectedRoom {
 	public Set<NaturalVector2> getChokePoints() {
         return chokePoints;
     }
+	
+	public Set<NaturalVector2> getAllPoints() {
+	    Set<NaturalVector2> all = Sets.newHashSet();
+	    all.addAll(points);
+	    all.addAll(chokePoints);
+	    return all;
+	}
 	
 	public void addChokePoints(Collection<NaturalVector2> points) {
 	    this.chokePoints.addAll(points);

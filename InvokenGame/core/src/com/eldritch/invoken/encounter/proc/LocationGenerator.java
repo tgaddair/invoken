@@ -284,7 +284,7 @@ public class LocationGenerator {
         InvokenGame.log("Create Chambers");
         ImmutableBiMap.Builder<EncounterRoom, ConnectedRoom> mapping = new ImmutableBiMap.Builder<EncounterRoom, ConnectedRoom>();
         for (EncounterRoom encounter : chambers) {
-            List<NaturalVector2> points = new ArrayList<NaturalVector2>();
+            Set<NaturalVector2> points = new LinkedHashSet<NaturalVector2>();
             Set<NaturalVector2> chokePoints = new HashSet<NaturalVector2>();
 
             // boundary of the chamber
@@ -305,6 +305,8 @@ public class LocationGenerator {
                             // mark this point as a choke point so we don't place furniture
                             chokePoints.add(point);
                             chokePoints.add(NaturalVector2.of(point.x, point.y + 1));
+                            chokePoints.add(NaturalVector2.of(point.x, point.y - 1));
+                            points.remove(NaturalVector2.of(point.x, point.y - 1));
                         } else {
                             points.add(point);
                         }

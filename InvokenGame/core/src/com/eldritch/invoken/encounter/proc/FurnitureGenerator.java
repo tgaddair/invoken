@@ -25,7 +25,6 @@ import com.eldritch.invoken.encounter.proc.EncounterGenerator.EncounterRoom;
 import com.eldritch.invoken.gfx.Light;
 import com.eldritch.invoken.gfx.Light.StaticLight;
 import com.eldritch.invoken.proto.Locations.Encounter;
-import com.eldritch.invoken.util.Settings;
 
 public abstract class FurnitureGenerator {
     private final Random rand;
@@ -66,7 +65,7 @@ public abstract class FurnitureGenerator {
             List<Activator> activators) {
         for (Entry<EncounterRoom, ConnectedRoom> room : rooms.getChambers()) {
             Encounter metadata = room.getKey().getEncounter();
-            for (NaturalVector2 point : room.getValue().getPoints()) {
+            for (NaturalVector2 point : room.getValue().getAllPoints()) {
                 int x = point.x;
                 int y = point.y;
 
