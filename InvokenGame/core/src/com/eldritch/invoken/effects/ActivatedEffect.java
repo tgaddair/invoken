@@ -14,6 +14,7 @@ public abstract class ActivatedEffect<T extends Augmentation> extends BasicEffec
     private final int cost;
     private final List<EnergyDrain> drains = Lists.newArrayList();
     private boolean finished = false;
+    private boolean active = false;  // make sure we only apply and dispel once
 
     public ActivatedEffect(Agent target, T aug, Class<T> toggle, int cost) {
         super(target);
@@ -24,17 +25,23 @@ public abstract class ActivatedEffect<T extends Augmentation> extends BasicEffec
 
     @Override
     protected void doApply() {
-        target.toggleOn(toggle);
-        target.setStunted(true); // cannot regain energy
-        afterApply();
+        if (!active) {
+            target.toggleOn(toggle);
+            target.setStunted(true); // cannot regain energy
+            afterApply();
+            active = true;
+        }
     }
     
     @Override
     public void dispel() {
-        target.toggleOff(toggle);
-        target.setStunted(false);
-        target.getInfo().getAugmentations().removeSelfAugmentation(aug);
-        afterDispel();
+        if (active) {
+            target.toggleOff(toggle);
+            target.setStunted(false);
+            target.getInfo().getAugmentations().removeSelfAugmentation(aug);
+            afterDispel();
+            active = false;
+        }
     }
 
     @Override
