@@ -65,6 +65,9 @@ public class FireWeapon extends ProjectileAugmentation {
 
     @Override
     public int getCost(Agent owner) {
+        if (!owner.getInventory().hasRangedWeapon()) {
+            return 0;
+        }
         return owner.getInventory().getRangedWeapon().getBaseCost();
     }
 
