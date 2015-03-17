@@ -36,7 +36,7 @@ public class Patrol extends Selector<Npc> {
                     // for now, just attack
                     // TODO: this should only accrue once for each crime
                     npc.changeRelation(neighbor, -10);
-                    npc.announce(GenericDialogue.forCrime());
+                    npc.announce(GenericDialogue.forCrime(npc));
                 }
             }
         }
@@ -56,7 +56,7 @@ public class Patrol extends Selector<Npc> {
             for (Agent neighbor : npc.getVisibleNeighbors()) {
                 if (location.isTrespasser(neighbor)) {
                     npc.changeRelation(neighbor, -10);
-                    npc.announce(GenericDialogue.forCrime());
+                    npc.announce(GenericDialogue.forCrime(npc));
                 }
             }
         }

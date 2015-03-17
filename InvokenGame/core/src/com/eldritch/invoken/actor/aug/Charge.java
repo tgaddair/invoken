@@ -5,6 +5,7 @@ import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.effects.BasicEffect;
 import com.eldritch.invoken.encounter.Location;
+import com.eldritch.invoken.util.GenericDialogue;
 
 public class Charge extends Augmentation {
     private static final float CHARGE_RANGE = 5;
@@ -72,7 +73,7 @@ public class Charge extends Augmentation {
         @Override
         public void apply(Location location) {
             owner.addEffect(new ChargeEffect(owner));
-            owner.announce("Get over here!");
+            owner.announce(GenericDialogue.onCharge(owner));
         }
 
         @Override
