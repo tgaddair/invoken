@@ -61,7 +61,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     public static final int MAX_DST2 = 150;
     public static final int INTERACT_RANGE = 5;
     public static final float UNMASK_RANGE = 10;
-    public static final int ASSAULT_PENALTY = -10;
+    public static final int ASSAULT_PENALTY = -25;
     public static final float AIMING_V_PENALTY = 5;
 
     static AssetManager assetManager = new AssetManager();
