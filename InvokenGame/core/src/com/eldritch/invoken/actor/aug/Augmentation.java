@@ -20,6 +20,11 @@ public abstract class Augmentation {
 	    this(asset, false);
 	}
 	
+	public Augmentation(boolean self) {
+	    this.icon = null;
+	    this.self = self;
+	}
+	
 	public Augmentation(String asset, boolean self) {
 	    this.icon = GameScreen.getTexture("icon/" + asset + ".png");
 	    this.self = self;

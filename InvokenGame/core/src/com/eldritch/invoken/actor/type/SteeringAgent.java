@@ -65,7 +65,7 @@ public abstract class SteeringAgent extends Agent {
     public float getMaxLinearSpeed() {
         return Math.max(maxLinearVelocity - getVelocityPenalty(), 0);
     }
-
+    
     @Override
     public void setMaxAngularAcceleration(float acceleration) {
         this.maxAngularAcceleration = acceleration;
@@ -84,6 +84,14 @@ public abstract class SteeringAgent extends Agent {
     @Override
     public void setMaxLinearSpeed(float speed) {
         this.maxLinearVelocity = speed;
+    }
+    
+    public void changeMaxVelocity(float delta) {
+        setMaxLinearSpeed(maxLinearVelocity + delta);
+    }
+    
+    public void changeMaxAcceleration(float delta) {
+        setMaxLinearAcceleration(maxLinearAcceleration + delta);
     }
 
     // Here we assume the y-axis is pointing upwards.

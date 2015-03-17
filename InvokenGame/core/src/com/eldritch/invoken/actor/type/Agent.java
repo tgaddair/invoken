@@ -198,6 +198,10 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         circleShape.dispose();
         return body;
     }
+    
+    public abstract void changeMaxVelocity(float delta);
+    
+    public abstract void changeMaxAcceleration(float delta);
 
     public void setAiming(boolean aiming) {
         if (aiming != this.aiming) {

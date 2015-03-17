@@ -33,11 +33,6 @@ public class Attack extends Sequence<Npc> {
         hideSequence.addChild(new Invert<Npc>(new HasCover()));
         hideSequence.addChild(new SeekCover());
 
-        // we don't want cover, so perhaps we should try charging
-        Sequence<Npc> chargeSequence = new Sequence<Npc>();
-        chargeSequence.addChild(new CanCharge());
-        chargeSequence.addChild(new Charge());
-
         // we can't attack and we don't want cover, so try suppressing fire
         Sequence<Npc> suppressSequence = new Sequence<Npc>();
         suppressSequence.addChild(new Invert<Npc>(new HasLineOfSight()));
@@ -47,7 +42,6 @@ public class Attack extends Sequence<Npc> {
         Selector<Npc> selector = new Selector<Npc>();
         selector.addChild(useAugSequence);
         selector.addChild(hideSequence);
-        selector.addChild(chargeSequence);
         // selector.addChild(suppressSequence);
 
         addChild(selector);
