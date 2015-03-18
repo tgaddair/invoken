@@ -15,14 +15,15 @@ public class Speak extends Sequence<Npc> {
         addChild(new CanStartConversation());
         addChild(new FindInteractor());
         
+        Sequence<Npc> greetSequence = new Sequence<Npc>();
+        greetSequence.addChild(new CanInteract());  // skip pursue if we're within interact range
+        greetSequence.addChild(new Greet());  // speak to the target
+        
         // pursue them until we're within interaction range
         Selector<Npc> selector = new Selector<Npc>();
-        selector.addChild(new CanInteract());  // skip pursue if we're within interact range
-        selector.addChild(new AlwaysFail<Npc>(new Pursue()));  // pursue, but don't greet
+        selector.addChild(greetSequence);  // greet if we can
+        selector.addChild(new Pursue());  // otherwise, we pursue
         addChild(selector);
-        
-        // speak to the target
-        addChild(new Greet());
     }
     
     private static class CanStartConversation extends BooleanTask {
