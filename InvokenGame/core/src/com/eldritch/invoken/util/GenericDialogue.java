@@ -11,6 +11,14 @@ public class GenericDialogue {
         return "Get over here!";
     }
     
+    public static String forSuspiciousActivity(Agent agent) {
+        return "I'm watching you, scum.";
+    }
+    
+    public static String forHostility(Agent agent) {
+        return "You will die!";
+    }
+    
     private GenericDialogue() {
         // singleton
     }
