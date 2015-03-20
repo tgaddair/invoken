@@ -15,6 +15,10 @@ public class Patrol extends Selector<Npc> {
         guardSequence.addChild(new IsGuard());
         guardSequence.addChild(new WatchForTrespassers());
         
+        Sequence<Npc> threatenedSequence = new Sequence<Npc>();
+        threatenedSequence.addChild(new IsThreatened());
+        threatenedSequence.addChild(new RespondToThreat());
+        
         Sequence<Npc> wanderSequence = new Sequence<Npc>();
         wanderSequence.addChild(new WatchForCrime());  // while wandering, check for crime
         wanderSequence.addChild(new AlwaysSucceed<Npc>(guardSequence));
@@ -66,6 +70,26 @@ public class Patrol extends Selector<Npc> {
         @Override
         protected boolean check(Npc npc) {
             return !npc.inDialogue();
+        }
+    }
+    
+    private static class IsThreatened extends BooleanTask {
+        @Override
+        protected boolean check(Npc npc) {
+            return npc.isGuard() && !npc.getLocation().isTrespasser(npc);
+        }
+    }
+    
+    private static class RespondToThreat extends SuccessTask {
+        @Override
+        protected void doFor(Npc npc) {
+            Location location = npc.getLocation();
+            for (Agent neighbor : npc.getVisibleNeighbors()) {
+                if (location.isTrespasser(neighbor)) {
+                    npc.changeRelation(neighbor, -10);
+                    npc.announce(GenericDialogue.forCrime(npc));
+                }
+            }
         }
     }
 }

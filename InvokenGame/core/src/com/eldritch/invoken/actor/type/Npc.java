@@ -48,6 +48,7 @@ import com.eldritch.invoken.actor.ai.NpcStateMachine;
 import com.eldritch.invoken.actor.ai.NpcThreatMonitor;
 import com.eldritch.invoken.actor.ai.TacticsManager;
 import com.eldritch.invoken.actor.ai.btree.Combat;
+import com.eldritch.invoken.actor.ai.btree.HandleThreat;
 import com.eldritch.invoken.actor.ai.btree.Investigate;
 import com.eldritch.invoken.actor.ai.btree.Patrol;
 import com.eldritch.invoken.actor.ai.btree.Speak;
@@ -188,6 +189,7 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
     public static Task<Npc> createBehavior() {
         Selector<Npc> selector = new Selector<Npc>();
         selector.addChild(new Combat());
+        selector.addChild(new HandleThreat());
         selector.addChild(new Investigate());
         selector.addChild(new Speak());
         selector.addChild(new Patrol());

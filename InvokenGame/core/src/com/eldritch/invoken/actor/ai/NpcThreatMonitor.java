@@ -46,6 +46,10 @@ public class NpcThreatMonitor extends ThreatMonitor<Npc> {
         threatLevel.changeState(ThreatLevel.Calm);
     }
     
+    public boolean isCalm() {
+        return threatLevel.getCurrentState() == ThreatLevel.Calm;
+    }
+    
     public void maybeSetSuspicious() {
         if (!isAlerted()) {
             setSuspicious();

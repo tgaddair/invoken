@@ -687,7 +687,10 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
      * Begin dialogue with oneself.
      */
     public void announce(String banter) {
-        announcements.add(banter);
+        // do not enqueue repeat announcements
+        if (announcements.isEmpty() || !banter.equals(announcements.peekLast())) {
+            announcements.add(banter);
+        }
     }
     
     public String getNextAnnouncement() {
@@ -1407,6 +1410,10 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
 
     public WeaponSentry getWeaponSentry() {
         return weaponSentry;
+    }
+    
+    public boolean hasSentryReady() {
+        return !weaponSentry.isFinished();
     }
 
     public void recoil() {
