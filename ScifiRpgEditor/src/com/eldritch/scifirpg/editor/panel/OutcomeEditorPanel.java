@@ -144,6 +144,7 @@ public class OutcomeEditorPanel extends AssetEditorPanel<Outcome, OutcomeTable> 
 				break;
 			// No target
 			case START_COMBAT:
+			case NO_REPEAT:
 			case HP_CHANGE:
 			case RELATION_CHANGE:
 				targetEnabled = false;

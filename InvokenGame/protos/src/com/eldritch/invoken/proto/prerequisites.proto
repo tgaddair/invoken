@@ -25,6 +25,7 @@ message Prerequisite {
 		MISSION_STAGE = 10; // TARGET mission between MIN and MAX
 		ALIVE = 13; // TARGET actor is alive
 		FOLLOWER = 14; // TARGET actor is following player
+		INTERACTOR = 15;  // TARGET agent is interactor
 
 		// DEPRECATED:
 		// DIALOGUE_SEEN = 6; // TARGET dialogue previously observed
