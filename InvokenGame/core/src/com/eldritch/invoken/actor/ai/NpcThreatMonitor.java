@@ -59,7 +59,7 @@ public class NpcThreatMonitor extends ThreatMonitor<Npc> {
     }
     
     public void maybeSetSuspicious() {
-        if (!isAlerted()) {
+        if (getLevel().canTransition()) {
             setSuspicious();
         }
     }
@@ -142,6 +142,11 @@ public class NpcThreatMonitor extends ThreatMonitor<Npc> {
                 // low amount of wandering and reduced field of view
                 return 0.75f;
             }
+
+            @Override
+            protected boolean canTransition() {
+                return true;
+            }
         },
 
         /**
@@ -191,6 +196,11 @@ public class NpcThreatMonitor extends ThreatMonitor<Npc> {
                 // standard amount of wandering
                 return 1f;
             }
+            
+            @Override
+            protected boolean canTransition() {
+                return true;
+            }
         },
 
         /**
@@ -234,6 +244,11 @@ public class NpcThreatMonitor extends ThreatMonitor<Npc> {
                 // no idling
                 return 1f;
             }
+            
+            @Override
+            protected boolean canTransition() {
+                return false;
+            }
         },
         
         Duress() {
@@ -258,6 +273,11 @@ public class NpcThreatMonitor extends ThreatMonitor<Npc> {
             protected float getAwareness() {
                 // standard amount of wandering
                 return 1f;
+            }
+            
+            @Override
+            protected boolean canTransition() {
+                return false;
             }
         };
         
@@ -290,6 +310,8 @@ public class NpcThreatMonitor extends ThreatMonitor<Npc> {
         protected abstract void notice(Npc npc, Agent noticed);
         
         protected abstract float getAwareness();
+        
+        protected abstract boolean canTransition();
     }
 
     private static class Notice extends Telegram {
