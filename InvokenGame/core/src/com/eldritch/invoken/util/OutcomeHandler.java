@@ -19,14 +19,14 @@ public abstract class OutcomeHandler {
         }
 
         for (Outcome outcome : response.getOutcomeList()) {
-            handle(outcome, interactor);
+            handle(outcome, interactor, response);
         }
     }
 
     public void handle(Choice choice, Agent interactor) {
     }
 
-    private void handle(Outcome outcome, Agent target) {
+    private void handle(Outcome outcome, Agent target, Response response) {
         Agent source = getSource();
         switch (outcome.getType()) {
             case ITEM_CHANGE:
@@ -74,6 +74,9 @@ public abstract class OutcomeHandler {
                 break;
             case START_COMBAT:
                 source.getThreat().addEnemy(target);
+                break;
+            case NO_REPEAT:
+                target.addDialogue(getId(response));
                 break;
             default:
                 throw new IllegalArgumentException("Unrecognized Outcome type: "

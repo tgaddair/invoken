@@ -108,7 +108,7 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
     private Seek<Vector2> seek;
     private Arrive<Vector2> arrive;
     private Wander<Vector2> wander;
-    
+
     // debug
     private String lastTask = "";
 
@@ -168,11 +168,11 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
     public IntimidationMonitor getIntimidation() {
         return intimidation;
     }
-    
+
     public TacticsManager getTactics() {
         return tactics;
     }
-    
+
     @Override
     public NpcThreatMonitor getThreat() {
         return threat;
@@ -286,7 +286,7 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
     public void update(float delta) {
         // update tactics
         tactics.update(delta);
-        
+
         // update sighted info
         lastSeen.update(delta);
         if (hasTarget() && hasLineOfSight(getTarget())) {
@@ -352,11 +352,11 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
     public boolean isSuspicious() {
         return threat.isSuspicious();
     }
-    
+
     public boolean isGuard() {
         return data.getGuard();
     }
-    
+
     public void alertAllies(Agent target) {
         for (Agent neighbor : getNeighbors()) {
             if (isAlly(neighbor)) {
@@ -365,7 +365,7 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
             }
         }
     }
-    
+
     @Override
     protected void onHostility(Agent enemy) {
         threat.setAlerted(enemy);
@@ -434,7 +434,7 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
         double theta = Math.atan2(a.x * b.y - a.y * b.x, a.x * b.x + a.y * b.y);
         return Math.abs(theta) <= getFieldOfView();
     }
-    
+
     public double getFieldOfView() {
         // default FOV is 90 degrees to each side, giving 180 degrees of total peripheral vision
         // scale this down when calm
@@ -459,11 +459,9 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
     public class NpcDialogueVerifier extends PrerequisiteVerifier implements DialogueVerifier {
         @Override
         public boolean isValid(Response r, Agent interactor) {
-            if (r.getForced() || r.getUnique()) {
-                if (interactor.hasHeardDialogue(getId(r))) {
-                    // already heard this dialogue
-                    return false;
-                }
+            if (interactor.hasHeardDialogue(getId(r))) {
+                // already heard this dialogue
+                return false;
             }
 
             return verify(r.getPrereqList(), interactor);
@@ -473,7 +471,7 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
         public boolean isValid(Choice c, Agent interactor) {
             return verify(c.getPrereqList(), interactor);
         }
-        
+
         @Override
         protected Agent getSource() {
             return Npc.this;
