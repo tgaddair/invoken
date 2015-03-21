@@ -50,6 +50,14 @@ public class NpcThreatMonitor extends ThreatMonitor<Npc> {
         return threatLevel.getCurrentState() == ThreatLevel.Calm;
     }
     
+    public void setDuress() {
+        threatLevel.changeState(ThreatLevel.Duress);
+    }
+    
+    public boolean isUnderDuress() {
+        return threatLevel.getCurrentState() == ThreatLevel.Duress; 
+    }
+    
     public void maybeSetSuspicious() {
         if (!isAlerted()) {
             setSuspicious();
@@ -224,6 +232,31 @@ public class NpcThreatMonitor extends ThreatMonitor<Npc> {
             @Override
             protected float getAwareness() {
                 // no idling
+                return 1f;
+            }
+        },
+        
+        Duress() {
+            @Override
+            public void enter(Npc entity) {
+                reset(entity);
+            }
+
+            @Override
+            public void afterUpdate(Npc entity) {
+            }
+
+            @Override
+            protected void notice(Npc npc, Agent noticed) {
+                // duress overrides other notifications, once we're in it
+            }
+
+            private void reset(Npc entity) {
+            }
+            
+            @Override
+            protected float getAwareness() {
+                // standard amount of wandering
                 return 1f;
             }
         };
