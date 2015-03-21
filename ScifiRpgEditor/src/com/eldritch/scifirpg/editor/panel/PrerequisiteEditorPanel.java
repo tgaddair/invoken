@@ -142,7 +142,7 @@ public class PrerequisiteEditorPanel extends AssetEditorPanel<Prerequisite, Prer
 			case ALIVE:
 			case FOLLOWER:
 			case INTERACTOR:
-				values.addAll(MainPanel.ACTOR_TABLE.getUniqueAssetIds());
+				values.addAll(MainPanel.ACTOR_TABLE.getAssetIds());
 				minEnabled = false;
 				maxEnabled = false;
 				break;

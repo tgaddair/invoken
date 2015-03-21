@@ -19,7 +19,6 @@ import prefuse.visual.VisualItem;
 import com.eldritch.invoken.proto.Actors.DialogueTree;
 import com.eldritch.invoken.proto.Actors.DialogueTree.Choice;
 import com.eldritch.invoken.proto.Actors.DialogueTree.Response;
-import com.eldritch.scifirpg.editor.tables.AssetTable;
 import com.eldritch.scifirpg.editor.tables.ChoiceTable;
 import com.eldritch.scifirpg.editor.tables.DialogueTable;
 import com.eldritch.scifirpg.editor.tables.ResponseTable;
@@ -35,6 +34,7 @@ import com.jgoodies.forms.layout.FormLayout;
 public class DialogueEditorPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
 	
+	private final Optional<DialogueTree> prev;
 	private final JPanel leftPanel = new JPanel(new BorderLayout());
 	private final JPanel editorPanel = new JPanel(new BorderLayout());
 	private final DialogueTable table;
@@ -44,6 +44,7 @@ public class DialogueEditorPanel extends JPanel {
 
 	public DialogueEditorPanel(DialogueTable table, Optional<DialogueTree> prev) {
 		super(new BorderLayout());
+		this.prev = prev;
 		this.table = table;
 		
 		responses = new ResponseTable(this);
@@ -111,8 +112,7 @@ public class DialogueEditorPanel extends JPanel {
 	
 	public void handleSaveAction() {
 		DialogueTree tree = createDialogue();
-		table.clearAssets();
-		table.addAsset(tree);
+		table.addAsset(prev, tree);
 		
 		editorPanel.removeAll();
 		editor = new DialogueEditor(tree, new InfoClickListener());
