@@ -30,6 +30,9 @@ message Outcome {
 		GAIN_FOLLOWER = 14;
 		LOSE_FOLLOWER = 15;
 
+		// NPC
+		TRAVEL = 19; // navigate to TARGET encounter room
+
 		// DEPRECATED:
 //		INFLUENCE_RESET = 8; // Reset dialogue disposition variable to its initial state
 	}

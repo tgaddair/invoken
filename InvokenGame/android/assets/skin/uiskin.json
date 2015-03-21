@@ -8,6 +8,9 @@ com.badlogic.gdx.graphics.Color: {
 	maroon: { a: 1, b: 0, g: 0, r: 0.35 },
 	buff: { a: 1, b: 0.51, g: 0.86, r: 0.94 },
 	wheat: { a: 1, b: 0.70, g: 0.87, r: 0.96 },
+	atomic-tangerine: { a: 1, b: 0.4, g: 0.6, r: 1 },
+	papaya: { a: 1, b: 0.7, g: 0.9, r: 1 },
+	light-blue: { a: 1, b: 0.9, g: 0.85, r: 0.67 },
 	royal-blue: { a: 1, b: 1, g: 0.73, r: 0.28 },
 	aquamarine: { a: 1, b: 0.57, g: 0.86, r: 0.44 },
 	mint: { a: 1, b: 0.59, g: 0.98, r: 0.59 },
@@ -30,9 +33,9 @@ com.badlogic.gdx.scenes.scene2d.ui.Button$ButtonStyle: {
 	toggle: { down: default-button-down, checked: default-button-down, up: default-button-up }
 },
 com.badlogic.gdx.scenes.scene2d.ui.TextButton$TextButtonStyle: {
-	default: { down: default-button-down, up: default-button-up, font: default-font, fontColor: maroon, overFontColor: white },
-	toggle: { down: default-button-down, up: default-button-up, checked: default-button-down, font: default-font, fontColor: maroon, downFontColor: red, overFontColor: white },
-	choice: { font: default-font, fontColor: wheat, overFontColor: white },
+	default: { down: default-button-down, up: default-button-up, font: default-font, fontColor: white, overFontColor: white },
+	toggle: { down: default-button-down, up: default-button-up, checked: default-button-down, font: default-font, fontColor: white, downFontColor: red, overFontColor: white },
+	choice: { font: default-font, fontColor: light-blue, overFontColor: white },
 	selected: { font: default-font, fontColor: aquamarine, overFontColor: mint },
 },
 com.badlogic.gdx.scenes.scene2d.ui.SelectBox$SelectBoxStyle: {
@@ -56,7 +59,7 @@ com.badlogic.gdx.scenes.scene2d.ui.Slider$SliderStyle: {
 	default: { background: default-slider, knob: default-slider-knob }
 },
 com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle: {
-	default: { background: default-panel-inset, font: default-font, fontColor: maroon },
+	default: { background: default-panel-inset, font: default-font, fontColor: white },
 	response: { font: default-font, fontColor: grey },
 	toast: { font: default-font, fontColor: white },
 },

@@ -6,8 +6,8 @@ import com.eldritch.invoken.actor.type.Agent;
 import com.google.common.collect.ImmutableList;
 
 public class GenericDialogue {
-    private static final List<String> HOSTILITY = ImmutableList.of("You will die!",
-            "You will pay with your blood!");
+    private static final List<String> HOSTILITY = ImmutableList.of(
+            "You will die!", "You will pay with your blood!");
 
     public static String forCrime(Agent agent) {
         return "Stop right there!";

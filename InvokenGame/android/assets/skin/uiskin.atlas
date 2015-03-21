@@ -1,14 +1,15 @@
 
-uiskin.png
+uiskin_rpg.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
 default-window
   rotate: false
-  xy: 1, 97
-  size: 27, 29
-  split: 4, 3, 20, 3
-  orig: 27, 29
+  xy: 0, 376
+  size: 100, 100
+  split: 20, 55, 20, 20
+  pads: 10, 10, 10, 10
+  orig: 100, 100
   offset: 0, 0
   index: -1
 default-select
@@ -112,28 +113,12 @@ cursor
   orig: 3, 3
   offset: 0, 0
   index: -1
-default-rect-down
-  rotate: false
-  xy: 28, 50
-  size: 3, 3
-  split: 1, 1, 1, 1
-  orig: 3, 3
-  offset: 0, 0
-  index: -1
 default-splitpane
   rotate: false
   xy: 26, 45
   size: 5, 3
   split: 0, 5, 0, 0
   orig: 5, 3
-  offset: 0, 0
-  index: -1
-default-rect
-  rotate: false
-  xy: 1, 4
-  size: 3, 3
-  split: 1, 1, 1, 1
-  orig: 3, 3
   offset: 0, 0
   index: -1
 default-select-selection
@@ -159,11 +144,6 @@ selection
   orig: 1, 1
   offset: 0, 0
   index: -1
-
-uiskin_rpg.png
-format: RGBA8888
-filter: Nearest,Nearest
-repeat: none
 default-button-up
   rotate: false
   xy: 293, 294
@@ -178,6 +158,15 @@ default-button-down
   size: 45, 45
   split: 10, 10, 10, 10
   orig: 45, 45
+  offset: 0, 0
+  index: -1
+default-rect
+  rotate: false
+  xy: 0, 376
+  size: 100, 100
+  split: 20, 55, 20, 20
+  pads: 10, 10, 10, 10
+  orig: 100, 100
   offset: 0, 0
   index: -1
 default-panel-inset
