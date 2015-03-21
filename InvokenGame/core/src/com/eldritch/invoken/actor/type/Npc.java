@@ -473,6 +473,11 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
         public boolean isValid(Choice c, Agent interactor) {
             return verify(c.getPrereqList(), interactor);
         }
+        
+        @Override
+        protected Agent getSource() {
+            return Npc.this;
+        }
     }
 
     public class NpcOutcomeHandler extends OutcomeHandler {

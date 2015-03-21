@@ -10,7 +10,7 @@ import com.eldritch.invoken.encounter.Location;
 import com.eldritch.invoken.proto.Disciplines.Discipline;
 import com.eldritch.invoken.proto.Prerequisites.Prerequisite;
 
-public class PrerequisiteVerifier {
+public abstract class PrerequisiteVerifier {
     public boolean verify(List<Prerequisite> prereqs, Agent agent) {
         for (Prerequisite prereq : prereqs) {
             // and-checking
@@ -91,15 +91,22 @@ public class PrerequisiteVerifier {
     }
 
     protected boolean verifyRelation(Prerequisite prereq, Agent agent) {
-        Location location = agent.getLocation();
-        String id = prereq.getTarget();
-        if (!location.hasAgentWithId(id)) {
-            // cannot meet standing requirements, low or high, if the agent is missing
+        Agent source = getSource();
+        if (prereq.hasTarget()) {
+            Location location = agent.getLocation();
+            String id = prereq.getTarget();
+            if (!location.hasAgentWithId(id)) {
+                // cannot meet standing requirements, low or high, if the agent is missing
+                return false;
+            }
+            source = location.getAgentById(id);
+        } else if (source == null) {
+            // missing agent
             return false;
         }
-        
+
         // round down
-        int value = (int) location.getAgentById(id).getRelation(agent);
+        int value = (int) source.getRelation(agent);
         return verifyBetween(prereq, value);
     }
 
@@ -135,4 +142,6 @@ public class PrerequisiteVerifier {
         }
         return verified;
     }
+
+    protected abstract Agent getSource();
 }

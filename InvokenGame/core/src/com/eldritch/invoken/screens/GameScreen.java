@@ -149,8 +149,8 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
             // InvokenGame.LOCATION_READER.readAsset("DebugPlayground");
             // InvokenGame.LOCATION_READER.readAsset("CentralProcessing");
 //             InvokenGame.LOCATION_READER.readAsset("ShippingAndReceiving");
-            InvokenGame.LOCATION_READER.readAsset("CustomsAdministration");
-//            InvokenGame.LOCATION_READER.readAsset("TestWorld1");
+//            InvokenGame.LOCATION_READER.readAsset("CustomsAdministration");
+            InvokenGame.LOCATION_READER.readAsset("TestWorld1");
 //            InvokenGame.LOCATION_READER.readAsset("DebugArena");
             LocationGenerator generator = new LocationGenerator(gameState, data.getBiome(),
                     rand.nextLong());
