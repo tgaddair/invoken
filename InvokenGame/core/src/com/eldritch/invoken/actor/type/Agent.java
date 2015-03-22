@@ -46,6 +46,10 @@ import com.eldritch.invoken.actor.items.Outfit;
 import com.eldritch.invoken.actor.items.RangedWeapon;
 import com.eldritch.invoken.actor.type.HandledProjectile.ProjectileHandler;
 import com.eldritch.invoken.actor.util.ActivationHandler;
+import com.eldritch.invoken.actor.util.Announcement;
+import com.eldritch.invoken.actor.util.Announcement.BanterAnnouncement;
+import com.eldritch.invoken.actor.util.Announcement.BasicAnnouncement;
+import com.eldritch.invoken.actor.util.Announcement.ResponseAnnouncement;
 import com.eldritch.invoken.actor.util.ThreatMonitor;
 import com.eldritch.invoken.effects.Effect;
 import com.eldritch.invoken.effects.HoldingWeapon;
@@ -702,14 +706,14 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     public void banterFor(Agent listener, Response greeting) {
         // greeting is validated
         List<BanterAnnouncement> banter = Lists.newArrayList();
-        banter.add(new BanterAnnouncement(this, greeting.getText()));
+        banter.add(new ResponseAnnouncement(this, listener, greeting));
         addChoiceFor(listener, greeting, banter);
         
         // now update successor pointers
         BanterAnnouncement last = null;
         for (BanterAnnouncement announcement : banter) {
             if (last != null) {
-                last.next = announcement;
+                last.setNext(announcement);
             }
             last = announcement;
         }
@@ -730,7 +734,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     private void addResponseFor(Agent listener, Choice choice, List<BanterAnnouncement> banter) {
         Response response = getDialogueHandler().getResponseFor(choice, listener);
         if (response != null) {
-            banter.add(new BanterAnnouncement(this, response.getText()));
+            banter.add(new ResponseAnnouncement(this, listener, response));
             addChoiceFor(listener, response, banter);
         }
     }
@@ -743,52 +747,6 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         return !announcements.isEmpty();
     }
     
-    public static interface Announcement {
-        String getText();
-        
-        void onFinish();
-    }
-    
-    private static class BasicAnnouncement implements Announcement {
-        private final String text;
-        
-        public BasicAnnouncement(String text) {
-            this.text = text;
-        }
-        
-        @Override
-        public String getText() {
-            return text;
-        }
-
-        @Override
-        public void onFinish() {
-        }
-    }
-    
-    private static class BanterAnnouncement implements Announcement {
-        private final Agent owner;
-        private final String text;
-        private BanterAnnouncement next = null;
-        
-        public BanterAnnouncement(Agent owner, String text) {
-            this.owner = owner;
-            this.text = text;
-        }
-
-        @Override
-        public String getText() {
-            return text;
-        }
-
-        @Override
-        public void onFinish() {
-            if (next != null) {
-                next.owner.announce(next);
-            }
-        }
-    }
-
     public void interact(Agent other) {
         interactor = other;
     }
