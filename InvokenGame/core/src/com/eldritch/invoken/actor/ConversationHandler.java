@@ -124,7 +124,10 @@ public class ConversationHandler {
     
     public Response getGreeting(Agent interactor) {
         for (DialogueTree tree : trees) {
-            return getGreetingFor(tree, interactor);
+            Response greeting = getGreetingFor(tree, interactor);
+            if (greeting != null) {
+                return greeting;
+            }
         }
         return null;
     }
