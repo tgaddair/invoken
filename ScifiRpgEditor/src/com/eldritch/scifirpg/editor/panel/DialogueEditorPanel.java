@@ -34,13 +34,13 @@ import com.jgoodies.forms.layout.FormLayout;
 public class DialogueEditorPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
 	
-	private final Optional<DialogueTree> prev;
 	private final JPanel leftPanel = new JPanel(new BorderLayout());
 	private final JPanel editorPanel = new JPanel(new BorderLayout());
 	private final DialogueTable table;
 	private DialogueEditor editor;
 	private final ResponseTable responses;
 	private final ChoiceTable choices;
+	private Optional<DialogueTree> prev;
 
 	public DialogueEditorPanel(DialogueTable table, Optional<DialogueTree> prev) {
 		super(new BorderLayout());
@@ -113,6 +113,7 @@ public class DialogueEditorPanel extends JPanel {
 	public void handleSaveAction() {
 		DialogueTree tree = createDialogue();
 		table.saveAsset(prev, tree);
+		prev = Optional.of(tree);
 		
 		editorPanel.removeAll();
 		editor = new DialogueEditor(tree, new InfoClickListener());
