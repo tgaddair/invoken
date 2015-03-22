@@ -53,6 +53,7 @@ import com.eldritch.invoken.actor.ai.btree.HandleThreat;
 import com.eldritch.invoken.actor.ai.btree.Investigate;
 import com.eldritch.invoken.actor.ai.btree.Patrol;
 import com.eldritch.invoken.actor.ai.btree.Speak;
+import com.eldritch.invoken.actor.ai.btree.SquadTactics;
 import com.eldritch.invoken.actor.aug.Augmentation;
 import com.eldritch.invoken.actor.items.Fragment;
 import com.eldritch.invoken.encounter.Location;
@@ -154,6 +155,14 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
     public void setSquad(Squad squad) {
         this.squad = Optional.of(squad);
     }
+    
+    public boolean hasSquad() {
+        return squad.isPresent();
+    }
+    
+    public Squad getSquad() {
+        return squad.get();
+    }
 
     public CoverPoint getCover() {
         return cover;
@@ -197,6 +206,7 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
         selector.addChild(new Combat());
         selector.addChild(new HandleThreat());
         selector.addChild(new Investigate());
+        selector.addChild(new SquadTactics());
         selector.addChild(new Speak());
         selector.addChild(new Patrol());
         return selector;
