@@ -3,10 +3,12 @@ package com.eldritch.invoken.actor.factions;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.proto.Actors.ActorParams;
+import com.sun.istack.internal.Nullable;
 
 public class FactionManager {
     private final Map<Faction, FactionStatus> factions = new HashMap<Faction, FactionStatus>();
@@ -67,6 +69,17 @@ public class FactionManager {
 
     public Set<Faction> getFactions() {
         return factions.keySet();
+    }
+    
+    @Nullable
+    public Faction getDominantFaction() {
+        Entry<Faction, FactionStatus> best = null;
+        for (Entry<Faction, FactionStatus> entry : factions.entrySet()) {
+            if (best == null || entry.getValue().rank > best.getValue().rank) {
+                best = entry;
+            }
+        }
+        return best != null ? best.getKey() : null;
     }
 
     public int getRank(Faction faction) {

@@ -46,6 +46,7 @@ import com.eldritch.invoken.actor.ai.IntimidationMonitor;
 import com.eldritch.invoken.actor.ai.NpcState;
 import com.eldritch.invoken.actor.ai.NpcStateMachine;
 import com.eldritch.invoken.actor.ai.NpcThreatMonitor;
+import com.eldritch.invoken.actor.ai.Squad;
 import com.eldritch.invoken.actor.ai.TacticsManager;
 import com.eldritch.invoken.actor.ai.btree.Combat;
 import com.eldritch.invoken.actor.ai.btree.HandleThreat;
@@ -81,7 +82,7 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
     private final Behavior behavior;
 
     // used in AI routine calculations to determine things like the target
-    private final Set<Agent> squad = new HashSet<Agent>();
+    private Optional<Squad> squad = Optional.absent();
 
     // AI controllers
     private final BehaviorTree<Npc> behaviorTree;
@@ -148,6 +149,10 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
         fatigue = new FatigueMonitor(this);
         intimidation = new IntimidationMonitor(this);
         tactics = new TacticsManager(this);
+    }
+    
+    public void setSquad(Squad squad) {
+        this.squad = Optional.of(squad);
     }
 
     public CoverPoint getCover() {

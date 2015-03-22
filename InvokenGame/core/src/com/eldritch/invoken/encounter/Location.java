@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import box2dLight.PointLight;
@@ -47,6 +48,7 @@ import com.eldritch.invoken.activators.SecurityCamera;
 import com.eldritch.invoken.actor.AgentHandler;
 import com.eldritch.invoken.actor.Drawable;
 import com.eldritch.invoken.actor.Profession;
+import com.eldritch.invoken.actor.ai.Squad;
 import com.eldritch.invoken.actor.aug.Action;
 import com.eldritch.invoken.actor.factions.Faction;
 import com.eldritch.invoken.actor.items.Item;
@@ -957,6 +959,7 @@ public class Location {
             if (layer instanceof EncounterLayer) {
                 EncounterLayer encounterLayer = (EncounterLayer) layer;
                 Encounter encounter = encounterLayer.encounter;
+                List<Npc> npcs = Lists.newArrayList();
                 if (encounter.getType() == Encounter.Type.ACTOR) {
                     // create NPCs
                     LinkedList<Vector2> spawnNodes = getSpawnNodes(encounterLayer);
@@ -966,11 +969,38 @@ public class Location {
                         int count = (int) (Math.random() * (max - min + 1) + min);
                         for (int i = 0; i < count; i++) {
                             if (!spawnNodes.isEmpty()) {
-                                addActor(createTestNpc(spawnNodes.poll(), scenario.getActorId()));
+                                Npc npc = createTestNpc(spawnNodes.poll(), scenario.getActorId());
+                                addActor(npc);
+                                npcs.add(npc);
                             }
                         }
                     }
                 }
+                
+                // create squads
+                createSquads(npcs);
+            }
+        }
+    }
+    
+    private void createSquads(List<Npc> npcs) {
+        // build a map of faction to NPCs primarily within that faction
+        Map<Faction, List<Npc>> cliques = Maps.newHashMap();
+        for (Npc npc : npcs) {
+            Faction faction = npc.getInfo().getFactionManager().getDominantFaction();
+            if (faction != null) {
+                if (!cliques.containsKey(faction)) {
+                    cliques.put(faction, new ArrayList<Npc>());
+                }
+                cliques.get(faction).add(npc);
+            }
+        }
+        
+        // for every clique, we need to group the NPCs together into a squad and define a leader
+        for (Entry<Faction, List<Npc>> entry : cliques.entrySet()) {
+            Squad squad = new Squad(entry.getKey(), entry.getValue());
+            for (Npc npc : entry.getValue()) {
+                npc.setSquad(squad);
             }
         }
     }
