@@ -2,6 +2,8 @@ package com.eldritch.scifirpg.editor.panel;
 
 import java.awt.CardLayout;
 import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.ArrayList;
@@ -34,6 +36,7 @@ import com.eldritch.scifirpg.editor.tables.PrerequisiteTable;
 import com.eldritch.invoken.proto.Actors.NonPlayerActor;
 import com.eldritch.invoken.proto.Items.Item;
 import com.eldritch.invoken.proto.Locations.Encounter;
+import com.eldritch.invoken.proto.Locations.Location;
 import com.eldritch.invoken.proto.Locations.Room;
 import com.eldritch.invoken.proto.Locations.Encounter.ActorParams;
 import com.eldritch.invoken.proto.Locations.Encounter.ActorParams.ActorScenario;
@@ -63,7 +66,8 @@ public class EncounterEditorPanel extends
 
 	private final JTextField lockField = new JTextField();
 	private final JCheckBox originCheck = new JCheckBox();
-	private final JComboBox<String> successorBox = new JComboBox<String>();
+	private final JComboBox<String> successorBox = new JComboBox<>();
+	private final JComboBox<String> nextEncounterBox = new JComboBox<>();
 	private final JComboBox<String> lockBox = new JComboBox<>();
 	private final AssetPointerTable<Item> keyTable = new AssetPointerTable<>(
 			MainPanel.ITEM_TABLE);
@@ -108,7 +112,19 @@ public class EncounterEditorPanel extends
 		fIds.add("");
 		fIds.addAll(MainPanel.LOCATION_TABLE.getAssetIds());
 		successorBox.setModel(new DefaultComboBoxModel<String>(fIds.toArray(new String[0])));
+		successorBox.addActionListener (new ActionListener () {
+		    public void actionPerformed(ActionEvent e) {
+		    	// setup the encounter box
+		    	updateEncounterBox((String) successorBox.getSelectedItem());
+		    }
+		});
 		builder.append("Successor:", successorBox);
+		builder.nextLine();
+		
+		List<String> eIds = new ArrayList<>();
+		eIds.add("");
+		nextEncounterBox.setModel(new DefaultComboBoxModel<String>(eIds.toArray(new String[0])));
+		builder.append("Encounter:", nextEncounterBox);
 		builder.nextLine();
 		
 		lockField.setText("0");
@@ -136,14 +152,7 @@ public class EncounterEditorPanel extends
 		builder.nextLine();
 
 		cards = new JPanel(new CardLayout());
-//		cards.add(staticPanel, Type.STATIC.name());
-		// cards.add(decisionPanel, Type.DECISION.name());
 		cards.add(actorPanel, Type.ACTOR.name());
-//		cards.add(regionPanel, Type.REGION.name());
-
-		// builder.appendRow("fill:p:grow");
-		// builder.append("Parameters:", cards);
-		// builder.nextLine();
 
 		JButton saveButton = new JButton("Save");
 		saveButton.addActionListener(this);
@@ -154,7 +163,6 @@ public class EncounterEditorPanel extends
 			Encounter asset = prev.get();
 			idField.setText(asset.getId());
 			titleField.setText(asset.getTitle());
-//			typeBox.setSelectedItem(asset.getType());
 			weightField.setText(asset.getWeight() + "");
 			uniqueCheck.setSelected(asset.getUnique());
 			lockField.setText(asset.getLockStrength() + "");
@@ -165,6 +173,10 @@ public class EncounterEditorPanel extends
 			originCheck.setSelected(asset.getOrigin());
 			if (asset.hasSuccessor()) {
 				successorBox.setSelectedItem(asset.getSuccessor());
+				updateEncounterBox(asset.getSuccessor());
+				if (asset.hasNextEncounter()) {
+					nextEncounterBox.setSelectedItem(asset.getNextEncounter());
+				}
 			}
 			if (asset.hasRequiredKey()) {
 				lockBox.setSelectedItem(asset.getRequiredKey());
@@ -197,7 +209,6 @@ public class EncounterEditorPanel extends
 
 	@Override
 	public Encounter createAsset() {
-//		Type t = (Type) typeBox.getSelectedItem();
 		Encounter.Builder encounter = Encounter.newBuilder()
 				.setId(idField.getText()).setTitle(titleField.getText())
 				.setType(Type.ACTOR)
@@ -205,31 +216,13 @@ public class EncounterEditorPanel extends
 				.setUnique(uniqueCheck.isSelected())
 				.setOrigin(originCheck.isSelected())
 				.setSuccessor((String) successorBox.getSelectedItem())
+				.setNextEncounter((String) nextEncounterBox.getSelectedItem())
 				.setLockStrength(Integer.parseInt(lockField.getText()))
 				.setRequiredKey((String) lockBox.getSelectedItem())
 				.addAllAvailableKey(keyTable.getAssetIds())
 				.addAllRoomId(roomTable.getAssetIds())
 				.addAllPrereq(prereqTable.getAssets())
 				.setActorParams(actorPanel.getParams());
-		// String successorId = (String) successorBox.getSelectedItem();
-		// if (!successorId.isEmpty()) {
-		// encounter.setSuccessorId(successorId);
-		// }
-//		switch (t) {
-//		case STATIC:
-//			encounter.setStaticParams(staticPanel.getParams());
-//			break;
-//		case DECISION:
-//			// encounter.setDecisionParams(decisionPanel.getParams());
-//			break;
-//		case ACTOR:
-//			encounter.setActorParams(actorPanel.getParams());
-//			break;
-//		case REGION:
-//			encounter.setRegionParams(regionPanel.getParams());
-//			break;
-//		default:
-//		}
 		return encounter.build();
 	}
 
@@ -238,6 +231,19 @@ public class EncounterEditorPanel extends
 		CardLayout cl = (CardLayout) cards.getLayout();
 		Type t = (Type) ev.getItem();
 		cl.show(cards, t.name());
+	}
+	
+	private void updateEncounterBox(String locationId) {
+		List<String> eIds = new ArrayList<>();
+		eIds.add("");
+		
+		Location location = MainPanel.LOCATION_TABLE.getAssetFor(locationId);
+		if (location != null) {
+			for (Encounter encounter : location.getEncounterList()) {
+				eIds.add(encounter.getId());
+			}
+		}
+		nextEncounterBox.setModel(new DefaultComboBoxModel<String>(eIds.toArray(new String[0])));
 	}
 
 	private class StaticEncounterPanel extends

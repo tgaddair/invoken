@@ -157,6 +157,7 @@ message Encounter {
 	repeated string available_key = 15;
 	optional bool origin = 7 [default = false];
 	optional string successor = 16;
+	optional string next_encounter = 17;
 
 	repeated string room_id = 13;
 
