@@ -224,7 +224,7 @@ public class DialogueMenu {
             table.bottom();
             addLabel(table, announcement.getText());
 
-            duration = 3f;
+            duration = getDuration(announcement.getText());
         }
 
         public void update(float delta, Camera camera) {
@@ -243,6 +243,10 @@ public class DialogueMenu {
         
         public void onFinish() {
             announcement.onFinish();
+        }
+        
+        private float getDuration(String text) {
+            return 2f + text.length() / 20f;
         }
     }
 }
