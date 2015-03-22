@@ -18,6 +18,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.eldritch.invoken.actor.type.Agent;
+import com.eldritch.invoken.actor.type.Agent.Announcement;
 import com.eldritch.invoken.actor.type.Player;
 import com.eldritch.invoken.proto.Actors.DialogueTree.Choice;
 import com.eldritch.invoken.proto.Actors.DialogueTree.Response;
@@ -76,6 +77,7 @@ public class DialogueMenu {
             TextBubble bubble = it.next();
             bubble.update(delta, camera);
             if (bubble.isFinished()) {
+                bubble.onFinish();
                 it.remove();
                 speaking.remove(bubble.owner);
             }
@@ -83,14 +85,9 @@ public class DialogueMenu {
 
         // handle all other NPCs
         for (Agent agent : player.getNeighbors()) {
-            if (agent.inDialogue() && agent.getInteractor() != player) {
-                // NPC conversation
-            }
-
             if (agent.hasAnnouncements() && !speaking.contains(agent)) {
                 // add a timed blurb
-                String text = agent.getNextAnnouncement();
-                addAnnouncement(agent, text);
+                addAnnouncement(agent, agent.getNextAnnouncement());
             }
         }
     }
@@ -160,8 +157,8 @@ public class DialogueMenu {
         active = false;
     }
 
-    private void addAnnouncement(Agent agent, String text) {
-        TextBubble bubble = new TextBubble(agent, text);
+    private void addAnnouncement(Agent agent, Announcement announcement) {
+        TextBubble bubble = new TextBubble(agent, announcement);
         timedBubbles.add(bubble);
         speaking.add(bubble.owner);
     }
@@ -215,15 +212,17 @@ public class DialogueMenu {
 
     private class TextBubble {
         private final Agent owner;
+        private final Announcement announcement;
         private final Table table;
         private final float duration;
         private float elapsed = 0;
 
-        public TextBubble(Agent owner, String text) {
+        public TextBubble(Agent owner, Announcement announcement) {
             this.owner = owner;
+            this.announcement = announcement;
             table = new Table(null);
             table.bottom();
-            addLabel(table, text);
+            addLabel(table, announcement.getText());
 
             duration = 3f;
         }
@@ -240,6 +239,10 @@ public class DialogueMenu {
 
         public boolean isFinished() {
             return elapsed >= duration;
+        }
+        
+        public void onFinish() {
+            announcement.onFinish();
         }
     }
 }

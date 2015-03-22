@@ -1,7 +1,5 @@
 package com.eldritch.invoken.actor.ai.btree;
 
-import com.badlogic.gdx.ai.btree.LeafTask;
-import com.badlogic.gdx.ai.btree.Task;
 import com.badlogic.gdx.ai.btree.branch.Selector;
 import com.badlogic.gdx.ai.btree.branch.Sequence;
 import com.eldritch.invoken.actor.type.Agent;
@@ -69,7 +67,9 @@ public class Speak extends Sequence<Npc> {
     private static class CanBanter extends BooleanTask {
         @Override
         protected boolean check(Npc npc) {
-            return npc.getLastDialogue() >= DIALOGUE_BREAK_SECS;
+            // take a break between banter, and make sure the player can listen in
+            return npc.getLastDialogue() >= DIALOGUE_BREAK_SECS 
+                    && npc.isNeighbor(npc.getLocation().getPlayer());
         }
     }
     
@@ -87,7 +87,7 @@ public class Speak extends Sequence<Npc> {
                     npc.setTarget(neighbor);
                     neighbor.beginDialogue(npc, true);
                     npc.setTask(getClass().getSimpleName());
-                    npc.announce(greeting.getText());
+                    npc.banterFor(neighbor, greeting);
                     return true;
                 }
             }

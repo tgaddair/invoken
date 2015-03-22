@@ -52,6 +52,8 @@ import com.eldritch.invoken.effects.HoldingWeapon;
 import com.eldritch.invoken.encounter.Location;
 import com.eldritch.invoken.encounter.NaturalVector2;
 import com.eldritch.invoken.proto.Actors.ActorParams;
+import com.eldritch.invoken.proto.Actors.DialogueTree.Choice;
+import com.eldritch.invoken.proto.Actors.DialogueTree.Response;
 import com.eldritch.invoken.ui.MultiTextureRegionDrawable;
 import com.eldritch.invoken.util.Settings;
 import com.google.common.collect.Lists;
@@ -128,7 +130,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     private Agent target;
     private Agent interactor;
     private boolean forcedDialogue;
-    private final LinkedList<String> announcements = Lists.newLinkedList();
+    private final LinkedList<Announcement> announcements = Lists.newLinkedList();
     private final Set<String> uniqueDialogue = Sets.newHashSet();
     private final Set<Class<?>> toggles = new HashSet<Class<?>>();
     private final Set<ProjectileHandler> projectileHandlers = new HashSet<ProjectileHandler>();
@@ -689,16 +691,102 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     public void announce(String banter) {
         // do not enqueue repeat announcements
         if (announcements.isEmpty() || !banter.equals(announcements.peekLast())) {
-            announcements.add(banter);
+            announcements.add(new BasicAnnouncement(banter));
         }
     }
     
-    public String getNextAnnouncement() {
+    public void announce(Announcement announcement) {
+        announcements.add(announcement);
+    }
+    
+    public void banterFor(Agent listener, Response greeting) {
+        // greeting is validated
+        List<BanterAnnouncement> banter = Lists.newArrayList();
+        banter.add(new BanterAnnouncement(this, greeting.getText()));
+        addChoiceFor(listener, greeting, banter);
+        
+        // now update successor pointers
+        BanterAnnouncement last = null;
+        for (BanterAnnouncement announcement : banter) {
+            if (last != null) {
+                last.next = announcement;
+            }
+            last = announcement;
+        }
+        
+        // announce greeting
+        announcements.add(banter.get(0));
+    }
+    
+    private void addChoiceFor(Agent listener, Response response, List<BanterAnnouncement> banter) {
+        Choice choice = getDialogueHandler().getChoiceFor(response, listener);
+        if (choice != null) {
+            // choices made by listener
+            banter.add(new BanterAnnouncement(listener, choice.getText()));
+            addResponseFor(listener, choice, banter);
+        }
+    }
+    
+    private void addResponseFor(Agent listener, Choice choice, List<BanterAnnouncement> banter) {
+        Response response = getDialogueHandler().getResponseFor(choice, listener);
+        if (response != null) {
+            banter.add(new BanterAnnouncement(this, response.getText()));
+            addChoiceFor(listener, response, banter);
+        }
+    }
+    
+    public Announcement getNextAnnouncement() {
         return announcements.remove();
     }
     
     public boolean hasAnnouncements() {
         return !announcements.isEmpty();
+    }
+    
+    public static interface Announcement {
+        String getText();
+        
+        void onFinish();
+    }
+    
+    private static class BasicAnnouncement implements Announcement {
+        private final String text;
+        
+        public BasicAnnouncement(String text) {
+            this.text = text;
+        }
+        
+        @Override
+        public String getText() {
+            return text;
+        }
+
+        @Override
+        public void onFinish() {
+        }
+    }
+    
+    private static class BanterAnnouncement implements Announcement {
+        private final Agent owner;
+        private final String text;
+        private BanterAnnouncement next = null;
+        
+        public BanterAnnouncement(Agent owner, String text) {
+            this.owner = owner;
+            this.text = text;
+        }
+
+        @Override
+        public String getText() {
+            return text;
+        }
+
+        @Override
+        public void onFinish() {
+            if (next != null) {
+                next.owner.announce(next);
+            }
+        }
     }
 
     public void interact(Agent other) {
@@ -809,6 +897,10 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
             return false;
         }
         return true;
+    }
+    
+    public boolean isNeighbor(Agent other) {
+        return neighbors.contains(other);
     }
 
     public boolean canKeepTarget(Agent other) {

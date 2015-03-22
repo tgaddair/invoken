@@ -66,6 +66,7 @@ public class ConversationHandler {
 	    outcomes.handle(response, interactor);
 	}
 	
+	// relative to the owner of the tree
 	public List<Choice> getChoicesFor(Response response, Agent interactor) {
         List<Choice> validChoices = new ArrayList<Choice>();
         for (String id : response.getChoiceIdList()) {
@@ -75,6 +76,16 @@ public class ConversationHandler {
             }
         }
         return validChoices;
+    }
+	
+	public Choice getChoiceFor(Response response, Agent interactor) {
+        for (String id : response.getChoiceIdList()) {
+            Choice choice = choices.get(id);
+            if (verifier.isValid(choice, interactor)) {
+                return choice;
+            }
+        }
+        return null;
     }
     
     public Response getResponseFor(Choice choice, Agent interactor) {
