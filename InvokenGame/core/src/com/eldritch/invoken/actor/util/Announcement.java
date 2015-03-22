@@ -52,6 +52,8 @@ public interface Announcement {
         public void onFinish() {
             if (next != null) {
                 next.owner.announce(next);
+            } else {
+                owner.endDialogue();
             }
         }
     }
