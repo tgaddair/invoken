@@ -112,7 +112,7 @@ public class DialogueEditorPanel extends JPanel {
 	
 	public void handleSaveAction() {
 		DialogueTree tree = createDialogue();
-		table.addAsset(prev, tree);
+		table.saveAsset(prev, tree);
 		
 		editorPanel.removeAll();
 		editor = new DialogueEditor(tree, new InfoClickListener());
