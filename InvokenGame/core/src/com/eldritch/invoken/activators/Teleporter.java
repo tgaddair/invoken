@@ -1,5 +1,6 @@
 package com.eldritch.invoken.activators;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -15,7 +16,7 @@ import com.eldritch.invoken.util.Settings;
 import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 
-public class Teleporter extends BasicActivator implements ProximityActivator {
+public class Teleporter extends ClickActivator implements ProximityActivator {
     private static final TextureRegion[] regions = GameScreen.getMergedRegion(
             "sprite/activators/teleporter.png", 64, 64);
 
@@ -27,23 +28,27 @@ public class Teleporter extends BasicActivator implements ProximityActivator {
     private boolean activating = false;
     private float stateTime = 0;
     private boolean transitioned = false;
+    private boolean canActivate = false;
     
     private Optional<String> destination = Optional.absent();
     private Optional<String> nextEncounter = Optional.absent();
 
     public Teleporter(NaturalVector2 position) {
-        super(NaturalVector2.of(position.x + 1, position.y + 1));
+        super(NaturalVector2.of(position.x, position.y), 2, 2);
         this.origin = position;
-        center = new Vector2(position.x + 2f, position.y + 2f);
+        center = new Vector2(position.x + 1f, position.y + 1f);
         animation = new Animation(0.05f, regions);
         animation.setPlayMode(Animation.PlayMode.NORMAL);
+    }
+    
+    @Override
+    protected boolean canActivate(Agent agent, float x, float y) {
+        return inProximity(agent);
     }
 
     @Override
     public void update(float delta, Location location) {
-        if (inProximity(location.getPlayer())) {
-            activate(location.getPlayer(), location);
-        }
+        canActivate = inProximity(location.getPlayer());
         
         // actually do the teleportation
         if (transitioned) {
@@ -67,10 +72,16 @@ public class Teleporter extends BasicActivator implements ProximityActivator {
         Vector2 position = getPosition();
 
         Batch batch = renderer.getBatch();
+        if (!canActivate) {
+            batch.setColor(Color.GRAY);
+        }
         batch.begin();
         batch.draw(frame, position.x, position.y, frame.getRegionWidth() * Settings.SCALE,
                 frame.getRegionHeight() * Settings.SCALE);
         batch.end();
+        if (!canActivate) {
+            batch.setColor(Color.WHITE);
+        }
     }
 
     @Override
