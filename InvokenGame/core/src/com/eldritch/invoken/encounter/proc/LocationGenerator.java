@@ -125,11 +125,11 @@ public class LocationGenerator {
         for (Encounter encounter : proto.getEncounterList()) {
             int count = 1;
             if (!encounter.getUnique()) {
-                count += (int) (rand.nextDouble() * 3);
+                count = (int) Math.ceil(encounter.getWeight());
             }
             roomCount += count;
         }
-        EncounterGenerator bsp = new EncounterGenerator(roomCount * 2, proto.getEncounterList(),
+        EncounterGenerator bsp = new EncounterGenerator(roomCount, proto.getEncounterList(),
                 seed);
         NaturalVector2.init(bsp.getWidth(), bsp.getHeight());
 
