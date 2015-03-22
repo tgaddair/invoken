@@ -96,6 +96,11 @@ public class HandleThreat extends Selector<Npc> {
         protected void doFor(Npc npc) {
             Agent target = npc.getThreat().getThreatener();
             npc.getThreat().setCalm();
+            if (!target.isAlive() || !npc.hasVisibilityTo(target)) {
+                // nothing else to do
+                return;
+            }
+            
             if (!npc.getThreat().hasEnemy(target)) {
                 npc.announce(GenericDialogue.thank(target));
             }
