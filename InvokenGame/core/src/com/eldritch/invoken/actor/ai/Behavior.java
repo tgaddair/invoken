@@ -226,7 +226,7 @@ public class Behavior {
             }
             
             // chivalric agents assist non-enemies when they're attacked
-            if (assistance == Assistance.CHIVALRIC || !isEnemyGiven(reaction)) {
+            if (assistance == Assistance.CHIVALRIC && !isEnemyGiven(reaction)) {
                 return true;
             }
         }
