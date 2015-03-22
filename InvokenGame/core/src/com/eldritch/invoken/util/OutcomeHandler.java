@@ -78,6 +78,8 @@ public abstract class OutcomeHandler {
             case NO_REPEAT:
                 target.addDialogue(getId(response));
                 break;
+            case ADD_MARKER:
+                target.getLocation().addMarker(outcome.getTarget(), outcome.getValue());
             default:
                 throw new IllegalArgumentException("Unrecognized Outcome type: "
                         + outcome.getType());

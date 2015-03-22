@@ -70,6 +70,11 @@ public abstract class PrerequisiteVerifier {
                         && location.getAgentById(id) == agent;
                 return verifyHas(prereq, interactor);
             }
+            case STATE_MARKER: {
+                Location location = agent.getLocation();
+                int value = location.getMarkerCount(prereq.getTarget());
+                return verifyBetween(prereq, value);
+            }
             // case ACTIVE_AUG: {
             // boolean has = false;
             // for (Augmentation aug : info.getAugmentations().getAugmentations()) {

@@ -101,6 +101,7 @@ public class Location {
     private final List<Agent> entities = new ArrayList<Agent>();
     private final List<Agent> inactiveEntities = new ArrayList<Agent>();
     private final List<Agent> activeEntities = new ArrayList<Agent>();
+    private final Map<String, Integer> markers = Maps.newHashMap();
     private int inactiveIndex = 0;
 
     private final List<Drawable> drawables = new ArrayList<Drawable>();
@@ -228,6 +229,21 @@ public class Location {
 
     public Player getPlayer() {
         return player;
+    }
+    
+    public void addMarker(String marker, int count) {
+        if (!markers.containsKey(marker)) {
+            markers.put(marker, count);
+        } else {
+            markers.put(marker, markers.get(marker) + count);
+        }
+    }
+    
+    public int getMarkerCount(String marker) {
+        if (!markers.containsKey(marker)) {
+            return 0;
+        }
+        return markers.get(marker);
     }
 
     public List<Agent> getActiveEntities() {
