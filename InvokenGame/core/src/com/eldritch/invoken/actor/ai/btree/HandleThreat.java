@@ -92,8 +92,7 @@ public class HandleThreat extends Selector<Npc> {
         @Override
         protected void doFor(Npc npc) {
             npc.getThreat().setCalm();
-
-            if (npc.hasTarget()) {
+            if (npc.hasTarget() && !npc.isEnemy(npc.getTarget())) {
                 npc.announce(GenericDialogue.thank(npc.getTarget()));
             }
         }
