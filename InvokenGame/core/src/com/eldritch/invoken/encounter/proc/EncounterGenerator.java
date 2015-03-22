@@ -53,7 +53,7 @@ public class EncounterGenerator extends BspGenerator {
             // place encounters randomly
             EncounterSelector selector = new EncounterSelector(repeatedEncounters);
             int remaining = getRoomCount() - count;
-//            InvokenGame.log("Remaining: " + remaining);
+            // InvokenGame.log("Remaining: " + remaining);
             while (remaining > 0) {
                 Encounter encounter = selector.select();
                 place(encounter);
@@ -64,7 +64,7 @@ public class EncounterGenerator extends BspGenerator {
 
     @Override
     protected void PlaceTunnels() {
-//        save("no-tunnels");
+        // save("no-tunnels");
 
         // first, generate the dependency graph from all the encounter-room pairs
         EncounterNode origin = generateDependencyGraph(encounterRooms.values());
@@ -88,8 +88,7 @@ public class EncounterGenerator extends BspGenerator {
                 continue;
             }
 
-            EncounterNode connection = connectedSample
-                    .get((int) (random() * connected.size()));
+            EncounterNode connection = connectedSample.get((int) (random() * connected.size()));
             DigTunnel(connection.getBounds(), current.getBounds(), costs);
 
             // add this node to the connected set, and maybe add its children if all its keys
@@ -126,17 +125,17 @@ public class EncounterGenerator extends BspGenerator {
 
         // now that we're done placing tunnels, we need to reconstruct the walls around our
         // encounter rooms, if they're supposed to be locked
-//        rebuildWalls();
+        // rebuildWalls();
     }
-    
+
     private static class EncounterCostMatrix implements CostMatrix {
         private final EncounterRoom[][] rooms;
-        
+
         public EncounterCostMatrix(int width, int height, Collection<EncounterRoom> list) {
             rooms = new EncounterRoom[width][height];
             for (EncounterRoom room : list) {
                 Rectangle bounds = room.getBounds();
-                
+
                 // boundary of the chamber, the stone border goes 1 unit out of the bounds
                 int startX = (int) bounds.x - 1;
                 int endX = (int) (bounds.x + bounds.width);
@@ -156,7 +155,7 @@ public class EncounterGenerator extends BspGenerator {
                 }
             }
         }
-        
+
         public int getCost(int x, int y) {
             EncounterRoom room = rooms[x][y];
             if (room != null) {
@@ -164,32 +163,32 @@ public class EncounterGenerator extends BspGenerator {
             }
             return 0;
         }
-        
+
         private static int getCost(EncounterRoom room) {
             int cost = 0;
-            
+
             // origin should be somewhat costly to pass through to reduce traffic
             if (room.getEncounter().getOrigin()) {
                 cost += 250;
             }
-            
+
             // if the room has a dependency, then the cost should be very high
-            if (room.getEncounter().hasRequiredKey() 
+            if (room.getEncounter().hasRequiredKey()
                     && !room.getEncounter().getRequiredKey().isEmpty()) {
                 cost += 1000;
             }
-            
+
             // if the room is closed, then the cost should be very high
             if (room.getEncounter().getLockStrength() > 0) {
                 cost += 500;
             }
-            
+
             return cost;
         }
     }
 
     private boolean place(Encounter encounter) {
-//        InvokenGame.log("Place: " + encounter.getId());
+        // InvokenGame.log("Place: " + encounter.getId());
         int count = 0;
         while (count < 1000) {
             if (encounter.getRoomIdList().isEmpty()) {
@@ -308,6 +307,11 @@ public class EncounterGenerator extends BspGenerator {
         // finally, add normal dependencies
         for (EncounterNode node : nodes) {
             if (!node.isOrigin() && node.isLocked()) {
+                Preconditions
+                        .checkArgument(keys.containsKey(node.getLock()), String.format(
+                                "No key for lock %s, encounter %s", node.getLock(),
+                                node.encounter.getId()));
+                
                 for (EncounterNode key : keys.get(node.getLock())) {
                     node.addKey(key);
                     key.addLock(node);
@@ -340,7 +344,7 @@ public class EncounterGenerator extends BspGenerator {
         public Rectangle getBounds() {
             return bounds;
         }
-        
+
         public Rectangle getRestrictedBounds() {
             Rectangle restricted = new Rectangle(bounds);
             restricted.x += 1;

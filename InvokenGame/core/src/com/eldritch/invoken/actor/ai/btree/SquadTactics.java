@@ -5,7 +5,7 @@ import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Npc;
 
 public class SquadTactics extends Sequence<Npc> {
-    private static final float SQUAD_COHESION = 2f;
+    private static final float SQUAD_COHESION = 5f;
     
     /**
      * Only applies to NPCs that are part of a squad. First we check that this condition is
