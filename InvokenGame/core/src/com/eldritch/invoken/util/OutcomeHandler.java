@@ -80,6 +80,7 @@ public abstract class OutcomeHandler {
                 break;
             case ADD_MARKER:
                 target.getLocation().addMarker(outcome.getTarget(), outcome.getValue());
+                break;
             default:
                 throw new IllegalArgumentException("Unrecognized Outcome type: "
                         + outcome.getType());
