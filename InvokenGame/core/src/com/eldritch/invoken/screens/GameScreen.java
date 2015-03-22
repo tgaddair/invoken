@@ -47,6 +47,7 @@ import com.eldritch.invoken.ui.StatusBar.HealthCalculator;
 import com.eldritch.invoken.ui.Toaster;
 import com.eldritch.invoken.ui.Toaster.Message;
 import com.eldritch.invoken.util.Settings;
+import com.google.common.base.Optional;
 
 public class GameScreen extends AbstractScreen implements InputProcessor {
     public static final AssetManager textureManager = new AssetManager();
@@ -447,7 +448,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
                 SCREEN_GRAB = true;
                 return true;
             case Keys.NUMPAD_0:
-                loadLocation("WelcomeCenterLevel2", location.getPlayer().serialize());
+                loadLocation("WelcomeCenterLevel2", Optional.<String>absent(), location.getPlayer().serialize());
                 return true;
             default:
                 return false;
@@ -639,7 +640,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         }
     }
 
-    private void loadLocation(String locationName, PlayerActor state) {
+    private void loadLocation(String locationName, Optional<String> encounterName, PlayerActor state) {
         // dispose of the current location
         location.dispose();
 
@@ -647,7 +648,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         Locations.Location data = InvokenGame.LOCATION_READER.readAsset(locationName);
         LocationGenerator generator = new LocationGenerator(gameState, data.getBiome(),
                 state.getSeed());
-        location = generator.generate(data);
+        location = generator.generate(data, encounterName);
         location.spawnPlayer(player);
         minimap = new Minimap(location.getMap(), location.getSeed());
 
@@ -681,8 +682,8 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
     }
 
     public class GameState {
-        public void transition(String locationName, PlayerActor state) {
-            loadLocation(locationName, state);
+        public void transition(String locationName, Optional<String> encounterName, PlayerActor state) {
+            loadLocation(locationName, encounterName, state);
         }
     }
 }

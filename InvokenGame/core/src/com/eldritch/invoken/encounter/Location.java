@@ -223,8 +223,8 @@ public class Location {
         bulletPool.free(bullet);
     }
 
-    public void transition(String locationName) {
-        state.transition(locationName, player.serialize());
+    public void transition(String locationName, Optional<String> encounterName) {
+        state.transition(locationName, encounterName, player.serialize());
     }
 
     public Player getPlayer() {

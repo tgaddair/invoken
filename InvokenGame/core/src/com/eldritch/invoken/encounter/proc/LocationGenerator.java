@@ -55,6 +55,7 @@ import com.eldritch.invoken.proto.Locations.Encounter.ActorParams.ActorScenario;
 import com.eldritch.invoken.screens.GameScreen;
 import com.eldritch.invoken.screens.GameScreen.GameState;
 import com.eldritch.invoken.util.Settings;
+import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
@@ -114,6 +115,11 @@ public class LocationGenerator {
     }
 
     public Location generate(com.eldritch.invoken.proto.Locations.Location proto) {
+        return generate(proto, Optional.<String> absent());
+    }
+
+    public Location generate(com.eldritch.invoken.proto.Locations.Location proto,
+            Optional<String> encounterName) {
         // generate a new random seed that combines the global player seed with the location name
         long seed = globalSeed ^ proto.getId().hashCode();
         System.out.println("global seed: " + globalSeed);
@@ -129,8 +135,7 @@ public class LocationGenerator {
             }
             roomCount += count;
         }
-        EncounterGenerator bsp = new EncounterGenerator(roomCount, proto.getEncounterList(),
-                seed);
+        EncounterGenerator bsp = new EncounterGenerator(roomCount, proto.getEncounterList(), seed);
         NaturalVector2.init(bsp.getWidth(), bsp.getHeight());
 
         bsp.generateSegments();
@@ -197,7 +202,8 @@ public class LocationGenerator {
         roomGenerator.generate(rooms);
 
         InvokenGame.log("Creating Spawn Layers");
-        for (LocationLayer layer : createSpawnLayers(base, collision, bsp, map, rooms)) {
+        for (LocationLayer layer : createSpawnLayers(base, collision, bsp, map, rooms,
+                encounterName)) {
             map.getLayers().add(layer);
         }
 
@@ -772,23 +778,33 @@ public class LocationGenerator {
     }
 
     private List<LocationLayer> createSpawnLayers(LocationLayer base, LocationLayer collision,
-            EncounterGenerator generator, LocationMap map, ConnectedRoomManager rooms) {
+            EncounterGenerator generator, LocationMap map, ConnectedRoomManager rooms,
+            Optional<String> playerSpawnEncounter) {
         List<LocationLayer> layers = new ArrayList<LocationLayer>();
         for (EncounterRoom encounterRoom : generator.getEncounterRooms()) {
-            createLayer(encounterRoom, rooms, base, collision, map, layers);
+            createLayer(encounterRoom, playerSpawnEncounter, rooms, base, collision, map, layers);
         }
 
         return layers;
     }
+    
+    private boolean isSpawnRoom(Encounter encounter, Optional<String> playerSpawnEncounter) {
+        if (playerSpawnEncounter.isPresent()) {
+            return encounter.getId().equals(playerSpawnEncounter.get());
+        } else {
+            return encounter.getOrigin();
+        }
+    }
 
-    private void createLayer(EncounterRoom encounterRoom, ConnectedRoomManager rooms, LocationLayer base,
-            LocationLayer collision, LocationMap map, List<LocationLayer> layers) {
+    private void createLayer(EncounterRoom encounterRoom, Optional<String> playerSpawnEncounter,
+            ConnectedRoomManager rooms, LocationLayer base, LocationLayer collision,
+            LocationMap map, List<LocationLayer> layers) {
         Encounter encounter = encounterRoom.getEncounter();
-        
+
         // further restrict bounds to prevent spawning at wall level
         Rectangle bounds = new Rectangle(encounterRoom.getRestrictedBounds());
         bounds.height -= 1;
-        
+
         LocationLayer layer = new EncounterLayer(encounter, base.getWidth(), base.getHeight(), PX,
                 PX, map);
         layer.setVisible(false);
@@ -798,7 +814,7 @@ public class LocationGenerator {
         ConnectedRoom connected = rooms.getConnected(encounterRoom);
         List<NaturalVector2> freeSpaces = getFreeSpaces(collision, bounds);
         freeSpaces.retainAll(connected.getPoints());
-        if (encounter.getOrigin()) {
+        if (isSpawnRoom(encounter, playerSpawnEncounter)) {
             LocationLayer playerLayer = new LocationLayer(base.getWidth(), base.getHeight(), PX,
                     PX, map);
             playerLayer.setVisible(false);

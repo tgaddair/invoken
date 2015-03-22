@@ -12,6 +12,7 @@ import com.eldritch.invoken.encounter.NaturalVector2;
 import com.eldritch.invoken.encounter.proc.EncounterGenerator.EncounterRoom;
 import com.eldritch.invoken.screens.GameScreen;
 import com.eldritch.invoken.util.Settings;
+import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 
 public class Teleporter extends BasicActivator implements ProximityActivator {
@@ -27,7 +28,8 @@ public class Teleporter extends BasicActivator implements ProximityActivator {
     private float stateTime = 0;
     private boolean transitioned = false;
     
-    private String destination;
+    private Optional<String> destination = Optional.absent();
+    private Optional<String> nextEncounter = Optional.absent();
 
     public Teleporter(NaturalVector2 position) {
         super(NaturalVector2.of(position.x + 1, position.y + 1));
@@ -86,7 +88,10 @@ public class Teleporter extends BasicActivator implements ProximityActivator {
         ConnectedRoomManager rooms = location.getConnections();
         EncounterRoom encounter = rooms.getEncounter(rooms.getRoom(origin.x, origin.y));
         if (encounter != null && encounter.getEncounter().hasSuccessor()) {
-            destination = encounter.getEncounter().getSuccessor();
+            destination = Optional.fromNullable(encounter.getEncounter().getSuccessor());
+            if (encounter.getEncounter().hasNextEncounter()) {
+                nextEncounter = Optional.fromNullable(encounter.getEncounter().getNextEncounter());
+            }
         }
     }
     
@@ -96,8 +101,8 @@ public class Teleporter extends BasicActivator implements ProximityActivator {
     }
     
     private void transition(Location location) {
-        if (!Strings.isNullOrEmpty(destination)) {
-            location.transition(destination);
+        if (destination.isPresent() && !Strings.isNullOrEmpty(destination.get())) {
+            location.transition(destination.get(), nextEncounter);
         }
     }
 }
