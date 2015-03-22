@@ -22,6 +22,7 @@ public class NpcThreatMonitor extends ThreatMonitor<Npc> {
 
     private final StateMachine<Npc> threatLevel;
     private float lastStep = 0;
+    private Agent threatener = null;
 
     public NpcThreatMonitor(Npc npc) {
         super(npc);
@@ -46,16 +47,26 @@ public class NpcThreatMonitor extends ThreatMonitor<Npc> {
         threatLevel.changeState(ThreatLevel.Calm);
     }
     
+    @Override
     public boolean isCalm() {
         return threatLevel.getCurrentState() == ThreatLevel.Calm;
     }
     
-    public void setDuress() {
+    public void setDuress(Agent threatener) {
         threatLevel.changeState(ThreatLevel.Duress);
+        this.threatener = threatener;
     }
     
     public boolean isUnderDuress() {
         return threatLevel.getCurrentState() == ThreatLevel.Duress; 
+    }
+    
+    public boolean hasThreatener() {
+        return threatener != null;
+    }
+    
+    public Agent getThreatener() {
+        return threatener;
     }
     
     public void maybeSetSuspicious() {
@@ -259,6 +270,11 @@ public class NpcThreatMonitor extends ThreatMonitor<Npc> {
 
             @Override
             public void afterUpdate(Npc entity) {
+            }
+            
+            @Override
+            public void exit(Npc npc) {
+                npc.getThreat().threatener = null;
             }
 
             @Override

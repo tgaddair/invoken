@@ -96,6 +96,10 @@ public class ThreatMonitor<T extends Agent> {
         return !enemies.isEmpty();
     }
     
+    public boolean isCalm() {
+        return true;
+    }
+    
     public T getAgent() {
         return agent;
     }

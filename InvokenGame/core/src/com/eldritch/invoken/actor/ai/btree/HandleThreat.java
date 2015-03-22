@@ -18,13 +18,15 @@ public class HandleThreat extends Selector<Npc> {
         calmSequence.addChild(new IsCalm());
         calmSequence.addChild(new RespondToThreat());
 
+        // what to do when actively under duress
         Sequence<Npc> duressSequence = new Sequence<Npc>();
         duressSequence.addChild(new IsUnderDuress());
 
+        // if the threatener is still threatening us then lower our relation to them
         Selector<Npc> duressSelector = new Selector<Npc>();
         duressSelector.addChild(Tasks.sequence(new TargetThreatening(), new LowerRelation(),
                 new Idle()));
-        duressSelector.addChild(new CalmDown());
+        duressSelector.addChild(new CalmDown());  // otherwise, calm down
         duressSequence.addChild(duressSelector);
 
         Selector<Npc> selector = new Selector<Npc>();
@@ -47,7 +49,7 @@ public class HandleThreat extends Selector<Npc> {
                 if (neighbor.getInventory().hasRangedWeapon() && neighbor.hasSentryReady()
                         && neighbor.isAimingAt(npc)) {
                     // we're being threatened
-                    npc.getThreat().setDuress();
+                    npc.getThreat().setDuress(neighbor);
                     npc.setTarget(neighbor);
                     npc.announce(GenericDialogue.forDuress(npc));
                     return true;
@@ -67,12 +69,12 @@ public class HandleThreat extends Selector<Npc> {
     private static class TargetThreatening extends BooleanTask {
         @Override
         protected boolean check(Npc npc) {
-            if (!npc.hasTarget() || !npc.hasVisibilityTo(npc.getTarget())) {
+            Agent target = npc.getThreat().getThreatener();
+            if (!target.isAlive() || !npc.hasVisibilityTo(target)) {
                 return false;
             }
 
             // target must put down weapon before we're calm again
-            Agent target = npc.getTarget();
             return target.getInventory().hasRangedWeapon() && target.hasSentryReady();
         }
     }
@@ -80,8 +82,9 @@ public class HandleThreat extends Selector<Npc> {
     private static class LowerRelation extends SuccessTask {
         @Override
         protected void doFor(Npc npc) {
-            npc.changeRelation(npc.getTarget(), DURESS_PENALTY);
-            if (npc.isEnemy(npc.getTarget())) {
+            Agent target = npc.getThreat().getThreatener();
+            npc.changeRelation(target, DURESS_PENALTY);
+            if (npc.isEnemy(target)) {
                 // begin hostility
                 npc.announce(GenericDialogue.forHostility(npc));
             }
@@ -91,9 +94,10 @@ public class HandleThreat extends Selector<Npc> {
     private static class CalmDown extends SuccessTask {
         @Override
         protected void doFor(Npc npc) {
+            Agent target = npc.getThreat().getThreatener();
             npc.getThreat().setCalm();
-            if (npc.hasTarget() && !npc.isEnemy(npc.getTarget())) {
-                npc.announce(GenericDialogue.thank(npc.getTarget()));
+            if (!npc.getThreat().hasEnemy(target)) {
+                npc.announce(GenericDialogue.thank(target));
             }
         }
     }
