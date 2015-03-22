@@ -93,6 +93,7 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
     private Augmentation chosenAug;
     private float lastStep = 0;
     private float sighted = 0;
+    private float lastDialogue = 0;
 
     private final NpcStateMachine stateMachine;
     private boolean canAttack = true;
@@ -247,7 +248,17 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
     public Wander<Vector2> getWander() {
         return wander;
     }
-
+    
+    public float getLastDialogue() {
+        return lastDialogue;
+    }
+    
+    @Override
+    public void beginDialogue(Agent other, boolean forced) {
+        super.beginDialogue(other, forced);
+        lastDialogue = 0;
+    }
+    
     public boolean isThreatened() {
         return threat.hasEnemies();
     }
@@ -284,6 +295,10 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
     }
 
     public void update(float delta) {
+        if (!inDialogue()) {
+            lastDialogue += delta;
+        }
+        
         // update tactics
         tactics.update(delta);
 

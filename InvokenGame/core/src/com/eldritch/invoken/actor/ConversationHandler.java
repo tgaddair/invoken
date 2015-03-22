@@ -9,6 +9,7 @@ import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.proto.Actors.DialogueTree;
 import com.eldritch.invoken.proto.Actors.DialogueTree.Choice;
 import com.eldritch.invoken.proto.Actors.DialogueTree.Response;
+import com.eldritch.invoken.proto.Prerequisites.Prerequisite;
 import com.eldritch.invoken.util.OutcomeHandler;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -17,6 +18,7 @@ public class ConversationHandler {
     private final Map<String, Response> responses = Maps.newHashMap();
     private final Map<String, Choice> choices = Maps.newHashMap();
     private final Map<DialogueTree, List<Response>> greetings = Maps.newHashMap();
+    private final Map<String, List<Response>> targeted = Maps.newHashMap();
     private final Set<Response> forced = Sets.newHashSet();
     
 	private final List<DialogueTree> trees;
@@ -36,6 +38,15 @@ public class ConversationHandler {
     		    responses.put(response.getId(), response);
     		    if (response.getGreeting()) {
     		        greetings.get(tree).add(response);
+    		        
+    		        // check for targeted
+    		        String target = getTarget(response);
+    		        if (target != null) {
+    		            if (!targeted.containsKey(target)) {
+    		                targeted.put(target, new ArrayList<Response>());
+    		            }
+    		            targeted.get(target).add(response);
+    		        }
     		    }
     		    if (response.getForced()) {
     		        forced.add(response);
@@ -85,6 +96,17 @@ public class ConversationHandler {
         return null;
     }
     
+    public Response getTargetedGreeting(Agent interactor) {
+        if (targeted.containsKey(interactor.getInfo().getId())) {
+            for (Response r : targeted.get(interactor.getInfo().getId())) {
+                if (verifier.isValid(r, interactor)) {
+                    return r;
+                }
+            }
+        }
+        return null;
+    }
+    
     public boolean hasGreeting() {
         return !greetings.isEmpty();
     }
@@ -102,6 +124,15 @@ public class ConversationHandler {
                 if (r.getGreeting() && verifier.isValid(r, interactor)) {
                     return r;
                 }
+            }
+        }
+        return null;
+    }
+    
+    private static String getTarget(Response r) {
+        for (Prerequisite p : r.getPrereqList()) {
+            if (p.getType() == Prerequisite.Type.INTERACTOR) {
+                return p.getTarget();
             }
         }
         return null;

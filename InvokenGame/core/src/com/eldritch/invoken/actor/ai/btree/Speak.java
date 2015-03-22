@@ -4,26 +4,30 @@ import com.badlogic.gdx.ai.btree.LeafTask;
 import com.badlogic.gdx.ai.btree.Task;
 import com.badlogic.gdx.ai.btree.branch.Selector;
 import com.badlogic.gdx.ai.btree.branch.Sequence;
-import com.badlogic.gdx.ai.btree.decorator.AlwaysFail;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Npc;
 import com.eldritch.invoken.proto.Actors.DialogueTree.Response;
 
 public class Speak extends Sequence<Npc> {
+    private static final float DIALOGUE_BREAK_SECS = 10f;
+    
+    @SuppressWarnings("unchecked")
     public Speak() {
         // find a valid dialogue candidate
         addChild(new CanStartConversation());
-        addChild(new FindInteractor());
         
         Sequence<Npc> greetSequence = new Sequence<Npc>();
         greetSequence.addChild(new CanInteract());  // skip pursue if we're within interact range
         greetSequence.addChild(new Greet());  // speak to the target
         
         // pursue them until we're within interaction range
-        Selector<Npc> selector = new Selector<Npc>();
-        selector.addChild(greetSequence);  // greet if we can
-        selector.addChild(new Pursue());  // otherwise, we pursue
-        addChild(selector);
+        Selector<Npc> greetOrPursue = new Selector<Npc>();
+        greetOrPursue.addChild(greetSequence);  // greet if we can
+        greetOrPursue.addChild(new Pursue());  // otherwise, we pursue
+        
+        Sequence<Npc> forcedSequence = Tasks.sequence(new FindInteractor(), greetOrPursue);
+        Sequence<Npc> banterSequence = Tasks.sequence(new CanBanter(), new Banter());
+        addChild(Tasks.selector(forcedSequence, banterSequence));
     }
     
     private static class CanStartConversation extends BooleanTask {
@@ -50,21 +54,48 @@ public class Speak extends Sequence<Npc> {
     private static class CanInteract extends BooleanTask {
         @Override
         protected boolean check(Npc npc) {
-            return npc.hasTarget() && npc.canInteract(npc.getTarget());
+            return npc.hasTarget() && canInteract(npc, npc.getTarget());
         }
     }
     
-    private static class Greet extends LeafTask<Npc> {
+    private static class Greet extends SuccessTask {
         @Override
-        public void run(Npc npc) {
+        public void doFor(Npc npc) {
             npc.getTarget().beginDialogue(npc, true);
             npc.setTask(getClass().getSimpleName());
-            success();
         }
-
+    }
+    
+    private static class CanBanter extends BooleanTask {
         @Override
-        protected Task<Npc> copyTo(Task<Npc> task) {
-            return task;
+        protected boolean check(Npc npc) {
+            return npc.getLastDialogue() >= DIALOGUE_BREAK_SECS;
         }
+    }
+    
+    private static class Banter extends BooleanTask {
+        @Override
+        protected boolean check(Npc npc) {
+            for (Agent neighbor : npc.getVisibleNeighbors()) {
+                if (!canInteract(npc, neighbor)) {
+                    // unable to interact
+                    continue;
+                }
+                
+                Response greeting = npc.getDialogueHandler().getTargetedGreeting(neighbor);
+                if (greeting != null) {
+                    npc.setTarget(neighbor);
+                    neighbor.beginDialogue(npc, true);
+                    npc.setTask(getClass().getSimpleName());
+                    npc.announce(greeting.getText());
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
+    
+    private static boolean canInteract(Npc npc, Agent target) {
+        return npc.canInteract(target);
     }
 }

@@ -63,6 +63,13 @@ public abstract class PrerequisiteVerifier {
                         && location.getAgentById(id).isFollowing(agent);
                 return verifyHas(prereq, follower);
             }
+            case INTERACTOR: { // TARGET interactor
+                Location location = agent.getLocation();
+                String id = prereq.getTarget();
+                boolean interactor = location.hasAgentWithId(id)
+                        && location.getAgentById(id) == agent;
+                return verifyHas(prereq, interactor);
+            }
             // case ACTIVE_AUG: {
             // boolean has = false;
             // for (Augmentation aug : info.getAugmentations().getAugmentations()) {
