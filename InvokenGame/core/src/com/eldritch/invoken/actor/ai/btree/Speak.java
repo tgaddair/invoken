@@ -96,6 +96,6 @@ public class Speak extends Sequence<Npc> {
     }
     
     private static boolean canInteract(Npc npc, Agent target) {
-        return npc.canInteract(target);
+        return target.isAlive() && npc.canInteract(target);
     }
 }

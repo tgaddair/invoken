@@ -148,7 +148,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
             Locations.Location data =
             // InvokenGame.LOCATION_READER.readAsset("DebugPlayground");
             // InvokenGame.LOCATION_READER.readAsset("CentralProcessing");
-//             InvokenGame.LOCATION_READER.readAsset("ShippingAndReceiving");
+//             InvokenGame.LOCATION_READER.readAsset("WelcomeCenterLevel2");
             InvokenGame.LOCATION_READER.readAsset("WelcomeCenter");
 //            InvokenGame.LOCATION_READER.readAsset("TestWorld1");
 //            InvokenGame.LOCATION_READER.readAsset("DebugArena");
@@ -447,7 +447,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
                 SCREEN_GRAB = true;
                 return true;
             case Keys.NUMPAD_0:
-                loadLocation("ShippingAndReceiving", location.getPlayer().serialize());
+                loadLocation("WelcomeCenterLevel2", location.getPlayer().serialize());
                 return true;
             default:
                 return false;
