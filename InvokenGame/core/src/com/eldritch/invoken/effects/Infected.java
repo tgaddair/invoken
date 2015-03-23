@@ -28,7 +28,9 @@ public class Infected extends AnimatedEffect {
 		this.source = agent;
 		this.immune = immune;
 		this.magnitude = magnitude * agent.getExecuteScale(target);
+		System.out.println("magnitude: " + magnitude);
 		this.duration = duration * agent.getExecuteScale(target);
+		System.out.println("duration: " + duration);
 		this.radius = radius;
 	}
 

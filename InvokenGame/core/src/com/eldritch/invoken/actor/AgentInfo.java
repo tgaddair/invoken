@@ -283,7 +283,7 @@ public class AgentInfo {
         return skills.get(Discipline.CHARISMA).getLevel();
     }
     
-    public float getAccuracy() {
+    public float getOffense() {
     	return 0.75f + getWarfare() / 100f;
     }
     

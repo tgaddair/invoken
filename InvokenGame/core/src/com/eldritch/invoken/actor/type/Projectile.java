@@ -3,7 +3,6 @@ package com.eldritch.invoken.actor.type;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.actor.AgentHandler;
 import com.eldritch.invoken.actor.type.Agent.WeaponSentry;
@@ -94,6 +93,7 @@ public abstract class Projectile extends CollisionEntity implements AgentHandler
         }
         
         // check that we've passed into the walls, possibly skipping over an edge
+        position.set(bullet.getPosition());
         NaturalVector2 position = NaturalVector2.of(bullet.getPosition());
         if (location.isBulletWall(position)) {
             handleObstacleContact();

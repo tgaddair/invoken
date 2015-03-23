@@ -7,7 +7,7 @@ import com.eldritch.invoken.effects.Resurrected;
 import com.eldritch.invoken.encounter.Location;
 
 public class Resurrect extends Augmentation {
-	private static final int BASE_COST = 25;
+	private static final int BASE_COST = 30;
 	
 	private static class Holder {
         private static final Resurrect INSTANCE = new Resurrect();
@@ -49,7 +49,7 @@ public class Resurrect extends Augmentation {
 	
 	@Override
     public float quality(Agent owner, Agent target, Location location) {
-        return 1;
+        return 5;
     }
 	
 	public class ResurrectAction extends AnimatedAction {

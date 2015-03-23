@@ -943,7 +943,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     }
 
     public float getAttackScale(Agent other) {
-        return info.getAccuracy() * getWeaponAccuracy() * (1.0f - other.getInfo().getDefense());
+        return info.getOffense() * (1.0f - other.getInfo().getDefense());
     }
 
     public float getExecuteScale(Agent other) {

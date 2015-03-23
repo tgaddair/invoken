@@ -31,6 +31,7 @@ public abstract class AoeProjectile extends Projectile {
     
     @Override
     public boolean handleBeforeUpdate(float delta, Location location) {
+        Vector2 position = getPosition();
     	if (detonated) {
     		// update the explosion
     		explosionTime += delta;
@@ -50,6 +51,7 @@ public abstract class AoeProjectile extends Projectile {
     
     @Override
     public void render(float delta, OrthogonalTiledMapRenderer renderer) {
+        Vector2 position = getPosition();
     	if (detonated) {
     		// render the explosion
     		float width = radius * 2;

@@ -11,7 +11,7 @@ import com.eldritch.invoken.screens.GameScreen;
 import com.google.common.base.Strings;
 
 public class Automaton extends Npc {
-    public static float MAX_VELOCITY = 4f;
+    public static float MAX_VELOCITY = 8f;
     public static int PX = 64;
 
     public Automaton(NonPlayerActor data, float x, float y, Location location) {

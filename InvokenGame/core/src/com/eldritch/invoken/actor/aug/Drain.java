@@ -62,7 +62,7 @@ public class Drain extends ProjectileAugmentation {
         private final Animation animation;
 
         public DrainBullet(Agent owner) {
-            super(owner, regions[0], 10, 0);
+            super(owner, regions[0], 10, DAMAGE_SCALE);
             animation = new Animation(0.1f, regions);
             animation.setPlayMode(Animation.PlayMode.LOOP_PINGPONG);
         }
