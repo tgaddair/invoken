@@ -21,6 +21,12 @@ public class Resurrect extends Augmentation {
         super("resurrect");
     }
     
+    @Override
+    public Action getBestAction(Agent owner, Agent target) {
+        // TODO: look nearby
+        return getAction(owner, target);
+    }
+    
 	@Override
 	public Action getAction(Agent owner, Agent target) {
 		return new ResurrectAction(owner, target);

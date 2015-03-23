@@ -15,16 +15,28 @@ import com.eldritch.invoken.encounter.Location;
 
 public class Attack extends Sequence<Npc> {
     public Attack() {
+        // check if we have a chosen aug, if so we
+
         // if we can't select a target, then attacking fails
         addChild(new SelectBestTarget());
 
-        // next we attempt to use the augmentation, if we cannot use the augmentation then we
-        // fail over to evading the target
+        // if we have a chosen augmentation, then continue to hold aim until we use it
         Sequence<Npc> useAugSequence = new Sequence<Npc>();
-        useAugSequence.addChild(new TakeAim());
+        useAugSequence.addChild(new HasChosen());
         useAugSequence.addChild(new HasSights());
-        useAugSequence.addChild(new ChooseAugmentation());
         useAugSequence.addChild(new UseAugmentation());
+        useAugSequence.addChild(new LowerAim());
+
+        Sequence<Npc> chooseAugSequence = new Sequence<Npc>();
+        chooseAugSequence.addChild(new TakeAim());
+        chooseAugSequence.addChild(new Invert<Npc>(new ChooseAugmentation()));
+        chooseAugSequence.addChild(new LowerAim());  // failing to choose an aug, we lower our aim
+
+        // attempt to use the augmentation, if we cannot use the augmentation then we
+        // fail over to evading the target
+        Selector<Npc> augSelector = new Selector<Npc>();
+        augSelector.addChild(useAugSequence);
+        augSelector.addChild(chooseAugSequence);
 
         // hide if we have line of sight to our last seen, otherwise we idle in defensive posture
         Sequence<Npc> hideSequence = new Sequence<Npc>();
@@ -33,19 +45,12 @@ public class Attack extends Sequence<Npc> {
         hideSequence.addChild(new Invert<Npc>(new HasCover()));
         hideSequence.addChild(new SeekCover());
 
-        // we can't attack and we don't want cover, so try suppressing fire
-        Sequence<Npc> suppressSequence = new Sequence<Npc>();
-        suppressSequence.addChild(new Invert<Npc>(new HasLineOfSight()));
-        useAugSequence.addChild(new HasLastSeen());
-        // useAugSequence.addChild(new ChooseUntargetedAugmentation());
-
         Selector<Npc> selector = new Selector<Npc>();
-        selector.addChild(useAugSequence);
+        selector.addChild(augSelector);
         selector.addChild(hideSequence);
         // selector.addChild(suppressSequence);
 
         addChild(selector);
-        addChild(new LowerAim());
     }
 
     @Override
@@ -99,6 +104,13 @@ public class Attack extends Sequence<Npc> {
         @Override
         protected Task<Npc> copyTo(Task<Npc> task) {
             return task;
+        }
+    }
+
+    private static class HasChosen extends BooleanTask {
+        @Override
+        protected boolean check(Npc npc) {
+            return npc.hasChosen();
         }
     }
 
@@ -181,6 +193,7 @@ public class Attack extends Sequence<Npc> {
             Augmentation chosen = npc.getChosen();
             npc.getInfo().getAugmentations().prepare(chosen);
             npc.getInfo().getAugmentations().useOnBest(chosen);
+            npc.setChosen(null);
             return true;
         }
 
@@ -221,21 +234,6 @@ public class Attack extends Sequence<Npc> {
         }
     }
 
-    private static class CanCharge extends BooleanTask {
-        @Override
-        protected boolean check(Npc npc) {
-            return npc.getInventory().hasMeleeWeapon() && !npc.getTactics().isCharging()
-                    && npc.getTactics().canCharge();
-        }
-    }
-
-    private static class Charge extends SuccessTask {
-        @Override
-        protected void doFor(Npc npc) {
-            npc.getTactics().setCharging(true);
-        }
-    }
-    
     private static class LowerAim extends SuccessTask {
         @Override
         public void doFor(Npc entity) {

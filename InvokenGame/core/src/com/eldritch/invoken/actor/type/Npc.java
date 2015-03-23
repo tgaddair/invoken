@@ -175,6 +175,19 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
     public Augmentation getChosen() {
         return chosenAug;
     }
+    
+    public boolean hasChosen() {
+        return chosenAug != null;
+    }
+    
+    @Override
+    public void setAiming(boolean aiming) {
+        super.setAiming(aiming);
+        if (!aiming) {
+            // lose sights
+            sighted = 0;
+        }
+    }
 
     public FatigueMonitor getFatigue() {
         return fatigue;
@@ -441,6 +454,7 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
         if (other != getTarget()) {
             // changed targets so reset
             sighted = 0;
+            chosenAug = null;
         }
 
         super.setTarget(other);
