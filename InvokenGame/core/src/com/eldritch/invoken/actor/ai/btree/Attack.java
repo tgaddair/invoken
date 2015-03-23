@@ -15,8 +15,6 @@ import com.eldritch.invoken.encounter.Location;
 
 public class Attack extends Sequence<Npc> {
     public Attack() {
-        // check if we have a chosen aug, if so we
-
         // if we can't select a target, then attacking fails
         addChild(new SelectBestTarget());
 
@@ -36,6 +34,7 @@ public class Attack extends Sequence<Npc> {
         Selector<Npc> augSelector = new Selector<Npc>();
         augSelector.addChild(useAugSequence);
         augSelector.addChild(chooseAugSequence);
+        augSelector.addChild(new LowerAim());  // failed to choose aug, so lower our aim
 
         // hide if we have line of sight to our last seen, otherwise we idle in defensive posture
         Sequence<Npc> hideSequence = new Sequence<Npc>();
