@@ -43,6 +43,14 @@ public abstract class Augmentation {
 	public void release(Agent owner) {
     }
 	
+	public boolean invokeOnBest(Agent owner, Agent target) {
+        if (isValid(owner, target)) {
+            Action action = getBestAction(owner, target);
+            return invoke(owner, action);
+        }
+        return false;
+    }
+	
 	public boolean invoke(Agent owner, Agent target) {
 		if (isValid(owner, target)) {
 		    Action action = getAction(owner, target);
@@ -78,6 +86,10 @@ public abstract class Augmentation {
 	public boolean isValid(Agent owner) {
 		return true;
 	}
+	
+    public Action getBestAction(Agent owner, Agent target) {
+        return getAction(owner, target);
+    }
 	
 	public abstract boolean isValid(Agent owner, Agent target);
 	

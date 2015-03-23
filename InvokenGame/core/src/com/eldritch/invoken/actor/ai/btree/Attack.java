@@ -45,6 +45,7 @@ public class Attack extends Sequence<Npc> {
         // selector.addChild(suppressSequence);
 
         addChild(selector);
+        addChild(new LowerAim());
     }
 
     @Override
@@ -179,7 +180,7 @@ public class Attack extends Sequence<Npc> {
         private boolean use(Npc npc) {
             Augmentation chosen = npc.getChosen();
             npc.getInfo().getAugmentations().prepare(chosen);
-            npc.getInfo().getAugmentations().use(chosen);
+            npc.getInfo().getAugmentations().useOnBest(chosen);
             return true;
         }
 
@@ -232,6 +233,13 @@ public class Attack extends Sequence<Npc> {
         @Override
         protected void doFor(Npc npc) {
             npc.getTactics().setCharging(true);
+        }
+    }
+    
+    private static class LowerAim extends SuccessTask {
+        @Override
+        public void doFor(Npc entity) {
+            entity.setAiming(false);
         }
     }
 }

@@ -92,7 +92,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
     boolean playerClicked = false;
     int targetX;
     int targetY;
-    
+
     private final Texture bg = getTexture("sprite/starfield.png");
 
     public GameScreen(InvokenGame game, String playerName) {
@@ -149,10 +149,10 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
             Locations.Location data =
             // InvokenGame.LOCATION_READER.readAsset("DebugPlayground");
             // InvokenGame.LOCATION_READER.readAsset("CentralProcessing");
-//             InvokenGame.LOCATION_READER.readAsset("WelcomeCenterLevel2");
+            // InvokenGame.LOCATION_READER.readAsset("WelcomeCenterLevel2");
             InvokenGame.LOCATION_READER.readAsset("WelcomeCenter");
-//            InvokenGame.LOCATION_READER.readAsset("TestWorld1");
-//            InvokenGame.LOCATION_READER.readAsset("DebugArena");
+            // InvokenGame.LOCATION_READER.readAsset("TestWorld1");
+            // InvokenGame.LOCATION_READER.readAsset("DebugArena");
             LocationGenerator generator = new LocationGenerator(gameState, data.getBiome(),
                     rand.nextLong());
             location = generator.generate(data);
@@ -240,12 +240,12 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         // update mouse position
         Vector3 world = camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
         location.setFocusPoint(world.x, world.y);
-        
+
         // render the background
         // TODO: trim must use the 16x16 pixel patches for this to work
-//        batch.begin();
-//        batch.draw(bg, 0, 0, getWidth(), getHeight());
-//        batch.end();
+        // batch.begin();
+        // batch.draw(bg, 0, 0, getWidth(), getHeight());
+        // batch.end();
 
         // render the location
         location.render(delta, camera, selector, tacticalPause);
@@ -262,7 +262,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 
         // draw stats
         drawStats();
-        
+
         // render the HUD
         stage.act(delta);
         stage.draw();
@@ -330,8 +330,8 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
                     - (30 + 20 * i++));
             font.draw(batch, String.format("Automata: %d", info.getAutomata()), 10, getHeight()
                     - (30 + 20 * i++));
-            font.draw(batch, String.format("Subterfuge: %d", info.getSubterfuge()), 10,
-                    getHeight() - (30 + 20 * i++));
+            font.draw(batch, String.format("Subterfuge: %d", info.getSubterfuge()), 10, getHeight()
+                    - (30 + 20 * i++));
             font.draw(batch, String.format("Charisma: %d", info.getCharisma()), 10, getHeight()
                     - (30 + 20 * i++));
 
@@ -349,10 +349,12 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
                 font.draw(batch, "Graph: " + Settings.DRAW_GRAPH, 10, getHeight() - (30 + 20 * i++));
                 font.draw(batch, "Task: " + task, 10, getHeight() - (30 + 20 * i++));
                 font.draw(batch, "Threat: " + threat, 10, getHeight() - (30 + 20 * i++));
-                font.draw(batch, String.format("Agitated: %s", agitated), 10, getHeight()
+                font.draw(batch, String.format("Aiming: %s", npc.isAiming()), 10, getHeight()
                         - (30 + 20 * i++));
-                font.draw(batch, String.format("Fatigued: %s (%.2f)", fatigued, fatigue), 10,
+                font.draw(batch, String.format("Sighted: %s", npc.hasSights()), 10,
                         getHeight() - (30 + 20 * i++));
+                // font.draw(batch, String.format("Fatigued: %s (%.2f)", fatigued, fatigue), 10,
+                // getHeight() - (30 + 20 * i++));
                 font.draw(batch,
                         String.format("Intimidated: %s (%.2f)", intimidated, intimidation), 10,
                         getHeight() - (30 + 20 * i++));
@@ -420,8 +422,8 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
             case Keys.TAB:
                 showMinimap = false;
                 return true;
-                
-            // debug
+
+                // debug
             case Keys.P:
                 printPlayerStatus();
                 return true;
@@ -448,7 +450,8 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
                 SCREEN_GRAB = true;
                 return true;
             case Keys.NUMPAD_0:
-                loadLocation("WelcomeCenterLevel2", Optional.<String>absent(), location.getPlayer().serialize());
+                loadLocation("WelcomeCenterLevel2", Optional.<String> absent(), location
+                        .getPlayer().serialize());
                 return true;
             default:
                 return false;
@@ -473,7 +476,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
             player.setAiming(true);
             return true;
         }
-        
+
         if (player.inForcedDialogue()) {
             // can't do anything
             return false;
@@ -682,7 +685,8 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
     }
 
     public class GameState {
-        public void transition(String locationName, Optional<String> encounterName, PlayerActor state) {
+        public void transition(String locationName, Optional<String> encounterName,
+                PlayerActor state) {
             loadLocation(locationName, encounterName, state);
         }
     }

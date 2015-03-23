@@ -326,6 +326,11 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
             sighted = 0;
             getIntimidation().useUntilLimit(-delta);
         }
+        if (hasTarget() && !hasVisibilityTo(getTarget())) {
+            // lose sight
+            sighted = 0;
+        }
+        
 
         // action planning
         lastStep += delta;

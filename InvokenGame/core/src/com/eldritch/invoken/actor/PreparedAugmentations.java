@@ -158,6 +158,10 @@ public class PreparedAugmentations {
         return false;
     }
     
+    public boolean useOnBest(Augmentation aug) {
+        return aug.invokeOnBest(owner, owner.getTarget());
+    }
+    
     public boolean use(Augmentation aug) {
         return use(aug, false);
     }
