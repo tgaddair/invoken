@@ -28,9 +28,8 @@ public class Attack extends Sequence<Npc> {
         useAugSequence.addChild(new LowerAim());
 
         Sequence<Npc> chooseAugSequence = new Sequence<Npc>();
+        chooseAugSequence.addChild(new ChooseAugmentation());
         chooseAugSequence.addChild(new TakeAim());
-        chooseAugSequence.addChild(new Invert<Npc>(new ChooseAugmentation()));
-        chooseAugSequence.addChild(new LowerAim());  // failing to choose an aug, we lower our aim
 
         // attempt to use the augmentation, if we cannot use the augmentation then we
         // fail over to evading the target
@@ -114,20 +113,6 @@ public class Attack extends Sequence<Npc> {
         }
     }
 
-    private static class TakeAim extends SuccessTask {
-        @Override
-        public void doFor(Npc entity) {
-            entity.setAiming(true);
-        }
-    }
-
-    private static class HasSights extends BooleanTask {
-        @Override
-        protected boolean check(Npc npc) {
-            return npc.hasSights();
-        }
-    }
-
     private static class ChooseAugmentation extends LeafTask<Npc> {
         @Override
         public void run(Npc entity) {
@@ -156,7 +141,7 @@ public class Attack extends Sequence<Npc> {
                 Augmentation chosen = null;
                 float bestQuality = 0; // never choose an aug with quality <= 0
                 for (Augmentation aug : npc.getInfo().getAugmentations().getAugmentations()) {
-                    if (aug.hasEnergy(npc) && aug.isValid(npc, npc.getTarget())) {
+                    if (aug.hasEnergy(npc) && aug.isValidWithAiming(npc, npc.getTarget())) {
                         float quality = aug.quality(npc, npc.getTarget(), location);
                         if (quality > bestQuality) {
                             chosen = aug;
@@ -175,6 +160,28 @@ public class Attack extends Sequence<Npc> {
         @Override
         protected Task<Npc> copyTo(Task<Npc> task) {
             return task;
+        }
+    }
+    
+    private static class TakeAim extends SuccessTask {
+        @Override
+        public void doFor(Npc entity) {
+            if (!entity.hasChosen() || !entity.getChosen().isAimed()) {
+                // no need to take aim
+                return;
+            }
+            entity.setAiming(true);
+        }
+    }
+    
+    private static class HasSights extends BooleanTask {
+        @Override
+        protected boolean check(Npc npc) {
+            if (npc.hasChosen() && !npc.getChosen().isAimed()) {
+                // don't need to aim this aug, so we have sights
+                return true;
+            }
+            return npc.hasSights();
         }
     }
 

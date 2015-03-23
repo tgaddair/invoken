@@ -83,8 +83,17 @@ public abstract class Augmentation {
 	    return self;
 	}
 	
+	public boolean isAimed() {
+	    return false;
+	}
+	
 	public boolean isValid(Agent owner) {
 		return true;
+	}
+	
+	// true if the aug is valid assuming the owner is aiming (may not be right now)
+	public boolean isValidWithAiming(Agent owner, Agent target) {
+	    return isValid(owner, target);
 	}
 	
     public Action getBestAction(Agent owner, Agent target) {
