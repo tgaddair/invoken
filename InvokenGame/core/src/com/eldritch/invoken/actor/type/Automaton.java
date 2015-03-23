@@ -8,10 +8,15 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.eldritch.invoken.encounter.Location;
 import com.eldritch.invoken.proto.Actors.NonPlayerActor;
 import com.eldritch.invoken.screens.GameScreen;
+import com.google.common.base.Strings;
 
 public class Automaton extends Npc {
     public static float MAX_VELOCITY = 4f;
     public static int PX = 64;
+
+    public Automaton(NonPlayerActor data, float x, float y, Location location) {
+        this(data, x, y, getAsset(data), location);
+    }
 
     public Automaton(NonPlayerActor data, float x, float y, String asset, Location location) {
         super(data, x, y, 1 / 32f * PX, 1 / 32f * PX, MAX_VELOCITY, getAllAnimations(asset),
@@ -65,5 +70,11 @@ public class Automaton extends Npc {
         }
 
         return animations;
+    }
+
+    private static String getAsset(NonPlayerActor data) {
+        String asset = !Strings.isNullOrEmpty(data.getParams().getBodyType()) ? data.getParams()
+                .getBodyType() : "mech1";
+        return "sprite/characters/automaton/" + asset;
     }
 }

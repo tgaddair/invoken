@@ -68,7 +68,7 @@ import com.eldritch.invoken.util.PrerequisiteVerifier;
 import com.google.common.base.Optional;
 
 public abstract class Npc extends SteeringAgent implements Telegraph {
-    public static final float STEP = 0.008f; // behavior action frequency
+    public static final float STEP = 0.01f; // behavior action frequency
     private static final float SIGHTED_DURATION = 1f; // time enemy is in sights before firing
 
     public enum SteeringMode {
@@ -585,7 +585,7 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
             case UNDEAD:
                 return new Undead(data, x, y, "sprite/characters/hollow-zombie.png", location);
             case AUTOMATON:
-                return new Automaton(data, x, y, "sprite/characters/automaton/mech1", location);
+                return new Automaton(data, x, y, location);
             case HOLLOW:
                 return new Hollow(data, x, y, "sprite/characters/hollow/golem", location);
             default:
