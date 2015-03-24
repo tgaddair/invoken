@@ -69,6 +69,7 @@ public class Drain extends ProjectileAugmentation {
 
         @Override
         protected void apply(Agent owner, Agent target) {
+            // TODO: home in on target
             target.addEffect(new Draining(owner, target, DAMAGE_SCALE, 2));
         }
 

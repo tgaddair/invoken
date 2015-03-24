@@ -7,6 +7,7 @@ import com.badlogic.gdx.ai.btree.LeafTask;
 import com.badlogic.gdx.ai.btree.Task;
 import com.badlogic.gdx.ai.btree.branch.Selector;
 import com.badlogic.gdx.ai.btree.branch.Sequence;
+import com.badlogic.gdx.ai.btree.decorator.AlwaysFail;
 import com.badlogic.gdx.ai.btree.decorator.Invert;
 import com.eldritch.invoken.actor.aug.Augmentation;
 import com.eldritch.invoken.actor.type.Agent;
@@ -34,7 +35,7 @@ public class Attack extends Sequence<Npc> {
         Selector<Npc> augSelector = new Selector<Npc>();
         augSelector.addChild(useAugSequence);
         augSelector.addChild(chooseAugSequence);
-        augSelector.addChild(new LowerAim());  // failed to choose aug, so lower our aim
+        augSelector.addChild(new AlwaysFail<Npc>(new LowerAim()));  // failed to choose aug, so lower our aim
 
         // hide if we have line of sight to our last seen, otherwise we idle in defensive posture
         Sequence<Npc> hideSequence = new Sequence<Npc>();
