@@ -92,6 +92,10 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
     boolean playerClicked = false;
     int targetX;
     int targetY;
+    
+    private static final float DODGE_WINDOW = 0.25f;
+    private boolean shiftDown = false;
+    private float shiftTime = 0;
 
     private final Texture bg = getTexture("sprite/starfield.png");
 
@@ -215,6 +219,14 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         if (player.isMoving() && !player.hasFixedTarget()) {
             Vector3 world = camera.unproject(new Vector3(targetX, targetY, 0));
             player.moveTo(world.x, world.y);
+        }
+        
+        // handle UI actions
+        if (shiftDown) {
+            shiftTime += delta;
+            if (shiftTime > DODGE_WINDOW) {
+                player.sprint(true);
+            }
         }
 
         // check that the player is still alive
@@ -383,13 +395,24 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         sb.append(String.format("Level: %d\n", player.getInfo().getLevel()));
         System.out.println(sb.toString());
     }
+    
+    private void shiftDown(boolean down) {
+        this.shiftDown = down;
+        if (!down) {
+            player.sprint(false);
+            if (shiftTime <= DODGE_WINDOW) {
+                player.dodge(player.getLinearVelocity().cpy().nor());
+            }
+        }
+        shiftTime = 0;
+    }
 
     @Override
     public boolean keyDown(int keycode) {
         switch (keycode) {
             case Keys.SHIFT_LEFT:
 //                player.holdPosition(true);
-                player.sprint(true);
+                shiftDown(true);
                 return true;
             case Keys.TAB:
                 // show minimap
@@ -433,7 +456,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
                 return true;
             case Keys.SHIFT_LEFT:
 //                player.holdPosition(false);
-                player.sprint(false);
+                shiftDown(false);
                 return true;
             case Keys.BACKSPACE:
                 if (tacticalPause) {

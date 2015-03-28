@@ -70,6 +70,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     public static final int ASSAULT_PENALTY = -25;
     public static final float AIMING_V_PENALTY = 5;
     public static final float SPRINT_SCALE = 0.75f;
+    public static final float DODGE_SCALE = 150f;
 
     static AssetManager assetManager = new AssetManager();
     static float MAX_FREEZE = 25f;
@@ -249,6 +250,10 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
 
         location.getWorld().rayCast(targetingHandler, source, target);
         return true;
+    }
+    
+    public void dodge(Vector2 direction) {
+        applyForce(direction.cpy().scl(DODGE_SCALE));
     }
     
     public void sprint(boolean sprinting) {
