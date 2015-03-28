@@ -1,6 +1,7 @@
 package com.eldritch.invoken.actor.aug;
 
 import com.badlogic.gdx.math.Vector2;
+import com.eldritch.invoken.actor.aug.Augmentation.Target;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.effects.Resurrected;
@@ -56,6 +57,15 @@ public class Resurrect extends Augmentation {
 	@Override
     public float quality(Agent owner, Agent target, Location location) {
         return 5;
+    }
+	
+	@Override
+	protected void setBestTarget(Agent agent, Target target) {
+	    for (Agent neighbor : agent.getNeighbors()) {
+	        if (!neighbor.isAlive()) {
+	            target.set(neighbor);
+	        }
+	    }
     }
 	
 	public class ResurrectAction extends AnimatedAction {

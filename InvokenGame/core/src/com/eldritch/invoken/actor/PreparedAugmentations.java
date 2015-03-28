@@ -11,6 +11,7 @@ import java.util.Set;
 
 import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.actor.aug.Augmentation;
+import com.eldritch.invoken.actor.aug.Augmentation.Target;
 import com.eldritch.invoken.actor.type.Agent;
 
 public class PreparedAugmentations {
@@ -164,6 +165,13 @@ public class PreparedAugmentations {
     
     public boolean use(Augmentation aug) {
         return use(aug, false);
+    }
+    
+    public boolean use(Augmentation aug, Target target) {
+        if (owner.canAddAction()) {
+            return aug.invoke(owner, target);
+        }
+        return false;
     }
     
     public boolean use(Augmentation aug, boolean queued) {

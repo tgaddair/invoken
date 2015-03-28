@@ -10,6 +10,7 @@ import com.badlogic.gdx.ai.btree.branch.Sequence;
 import com.badlogic.gdx.ai.btree.decorator.AlwaysFail;
 import com.badlogic.gdx.ai.btree.decorator.Invert;
 import com.eldritch.invoken.actor.aug.Augmentation;
+import com.eldritch.invoken.actor.aug.Augmentation.Target;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Npc;
 import com.eldritch.invoken.encounter.Location;
@@ -35,7 +36,8 @@ public class Attack extends Sequence<Npc> {
         Selector<Npc> augSelector = new Selector<Npc>();
         augSelector.addChild(useAugSequence);
         augSelector.addChild(chooseAugSequence);
-        augSelector.addChild(new AlwaysFail<Npc>(new LowerAim()));  // failed to choose aug, so lower our aim
+        augSelector.addChild(new AlwaysFail<Npc>(new LowerAim())); // failed to choose aug, so lower
+                                                                   // our aim
 
         // hide if we have line of sight to our last seen, otherwise we idle in defensive posture
         Sequence<Npc> hideSequence = new Sequence<Npc>();
@@ -141,7 +143,9 @@ public class Attack extends Sequence<Npc> {
                 Augmentation chosen = null;
                 float bestQuality = 0; // never choose an aug with quality <= 0
                 for (Augmentation aug : npc.getInfo().getAugmentations().getAugmentations()) {
-                    if (aug.hasEnergy(npc) && aug.isValidWithAiming(npc, npc.getTarget())) {
+                    if (aug.hasEnergy(npc)
+                            && aug.isValidWithAiming(npc,
+                                    aug.getBestTarget(npc, npc.getTactics().getTarget()))) {
                         float quality = aug.quality(npc, npc.getTarget(), location);
                         if (quality > bestQuality) {
                             chosen = aug;
@@ -162,7 +166,7 @@ public class Attack extends Sequence<Npc> {
             return task;
         }
     }
-    
+
     private static class TakeAim extends SuccessTask {
         @Override
         public void doFor(Npc entity) {
@@ -173,7 +177,7 @@ public class Attack extends Sequence<Npc> {
             entity.setAiming(true);
         }
     }
-    
+
     private static class HasSights extends BooleanTask {
         @Override
         protected boolean check(Npc npc) {
@@ -199,7 +203,7 @@ public class Attack extends Sequence<Npc> {
         private boolean use(Npc npc) {
             Augmentation chosen = npc.getChosen();
             npc.getInfo().getAugmentations().prepare(chosen);
-            npc.getInfo().getAugmentations().useOnBest(chosen);
+            npc.getInfo().getAugmentations().use(chosen, npc.getTactics().getTarget());
             npc.setChosen(null);
             return true;
         }

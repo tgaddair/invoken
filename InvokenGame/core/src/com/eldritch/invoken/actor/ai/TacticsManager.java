@@ -1,9 +1,11 @@
 package com.eldritch.invoken.actor.ai;
 
 import com.eldritch.invoken.actor.aug.Augmentation;
+import com.eldritch.invoken.actor.aug.Augmentation.Target;
 import com.eldritch.invoken.actor.type.Npc;
 
 public class TacticsManager {
+    private final Target target = new Target();
     private final Npc npc;
     private Augmentation chosen = null;
     
@@ -24,5 +26,9 @@ public class TacticsManager {
     
     public Augmentation getChosen() {
         return chosen;
+    }
+    
+    public Target getTarget() {
+        return target;
     }
 }

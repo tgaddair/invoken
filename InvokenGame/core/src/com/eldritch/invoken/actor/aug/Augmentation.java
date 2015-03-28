@@ -43,12 +43,33 @@ public abstract class Augmentation {
 	public void release(Agent owner) {
     }
 	
+	public final Target getBestTarget(Agent agent, Target target) {
+	    target.unset();
+	    setBestTarget(agent, target);
+	    return target;
+	}
+	
+	protected void setBestTarget(Agent agent, Target target) {
+	    target.set(agent);
+	}
+	
 	public boolean invokeOnBest(Agent owner, Agent target) {
         if (isValid(owner, target)) {
             Action action = getBestAction(owner, target);
             return invoke(owner, action);
         }
         return false;
+    }
+	
+	public boolean invoke(Agent owner, Target target) {
+	    if (target.isValid()) {
+	        if (target.isAgent()) {
+	            return invoke(owner, target.getAgent());
+	        } else if (target.isLocation()) {
+	            return invoke(owner, target.getLocation());
+	        }
+	    }
+	    return false;
     }
 	
 	public boolean invoke(Agent owner, Agent target) {
@@ -90,6 +111,17 @@ public abstract class Augmentation {
 	public boolean isValid(Agent owner) {
 		return true;
 	}
+	
+	public final boolean isValidWithAiming(Agent owner, Target target) {
+	    if (target.isValid()) {
+            if (target.isAgent()) {
+                return isValidWithAiming(owner, target.getAgent());
+            } else if (target.isLocation()) {
+                return isValid(owner, target.getLocation());
+            }
+        }
+        return false;
+    }
 	
 	// true if the aug is valid assuming the owner is aiming (may not be right now)
 	public boolean isValidWithAiming(Agent owner, Agent target) {
@@ -149,6 +181,52 @@ public abstract class Augmentation {
 	    @Override
 	    public int getCost() {
 	        return aug.getCost(owner);
+	    }
+	}
+	
+	public static class Target {
+	    private final Vector2 location = new Vector2();
+	    private Agent agent;
+	    private Type type = Type.NONE;
+	    
+	    public void unset() {
+	        type = Type.NONE;
+	    }
+	    
+	    public void set(Vector2 location) {
+	        this.agent = null;
+	        this.location.set(location);
+	        type = Type.LOCATION;
+	    }
+	    
+	    public void set(Agent agent) {
+	        this.agent = agent;
+	        this.location.setZero();
+	        type = Type.AGENT;
+	    }
+	    
+	    public boolean isValid() {
+	        return type != Type.NONE;
+	    }
+	    
+	    public Agent getAgent() {
+	        return agent;
+	    }
+	    
+	    public Vector2 getLocation() {
+	        return location;
+	    }
+	    
+	    public boolean isLocation() {
+	        return type == Type.LOCATION;
+	    }
+	    
+	    public boolean isAgent() {
+            return type == Type.AGENT;
+        }
+	    
+	    private enum Type {
+	        NONE, AGENT, LOCATION
 	    }
 	}
 }
