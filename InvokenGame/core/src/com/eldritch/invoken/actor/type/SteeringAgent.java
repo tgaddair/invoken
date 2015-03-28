@@ -89,7 +89,8 @@ public abstract class SteeringAgent extends Agent {
         this.maxLinearVelocity = speed;
     }
     
-    protected void scaleLinearVelocity(float s) {
+    @Override
+    public void scaleLinearVelocity(float s) {
         // scale by s * baseVelocity
         changeMaxVelocity(s * baseLinearVelocity);
     }

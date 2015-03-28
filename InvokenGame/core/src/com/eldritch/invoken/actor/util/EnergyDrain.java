@@ -13,7 +13,12 @@ public abstract class EnergyDrain {
     }
     
     public void update(float delta) {
-        // drains continuously while active
+        if (finished) {
+            // do nothing
+            return;
+        }
+        
+        // drains continuously while still active
         float c = cost * delta;
         if (c <= target.getInfo().getEnergy()) {
             target.getInfo().expend(c);

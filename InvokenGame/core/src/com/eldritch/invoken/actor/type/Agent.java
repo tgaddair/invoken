@@ -53,6 +53,7 @@ import com.eldritch.invoken.actor.util.Announcement.ResponseAnnouncement;
 import com.eldritch.invoken.actor.util.ThreatMonitor;
 import com.eldritch.invoken.effects.Effect;
 import com.eldritch.invoken.effects.HoldingWeapon;
+import com.eldritch.invoken.effects.Sprinting;
 import com.eldritch.invoken.encounter.Location;
 import com.eldritch.invoken.encounter.NaturalVector2;
 import com.eldritch.invoken.proto.Actors.ActorParams;
@@ -73,7 +74,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     public static final float DODGE_SCALE = 150f;
     public static final float SPRINT_SCALE = 0.75f;
     public static final float DODGE_COST = 5f;
-    public static final float SPRINT_COST = 1f;
+    public static final float SPRINT_COST = 5f;
 
     static AssetManager assetManager = new AssetManager();
     static float MAX_FREEZE = 25f;
@@ -266,24 +267,31 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         }
     }
     
+    public boolean isSprinting() {
+        return sprinting;
+    }
+    
     public boolean canSprint() {
         return info.getEnergy() > SPRINT_COST;
     }
     
     public void sprint(boolean sprinting) {
-        if (sprinting && !canSprint()) {
-            // cannot sprint
+        if (this.sprinting == sprinting) {
+            // must be idempotent
             return;
         }
         
-        if (this.sprinting != sprinting) {
-            int sign = sprinting ? 1 : -1;
-            scaleLinearVelocity(sign * SPRINT_SCALE);
-            this.sprinting = sprinting;
+        if (sprinting) {
+            if (canSprint()) {
+                addEffect(new Sprinting(this, SPRINT_SCALE, SPRINT_COST));
+                this.sprinting = true;
+            }
+        } else {
+            this.sprinting = false;
         }
     }
     
-    protected abstract void scaleLinearVelocity(float s);
+    public abstract void scaleLinearVelocity(float s);
 
     public void addVelocityPenalty(float delta) {
         velocityPenalty += delta;
