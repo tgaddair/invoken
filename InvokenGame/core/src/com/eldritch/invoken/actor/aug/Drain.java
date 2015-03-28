@@ -76,7 +76,6 @@ public class Drain extends ProjectileAugmentation {
 
         @Override
         protected void apply(Agent owner, Agent target) {
-            // TODO: home in on target
             target.addEffect(new Draining(owner, target, DAMAGE_SCALE, 2));
         }
         
@@ -103,7 +102,7 @@ public class Drain extends ProjectileAugmentation {
             float bestDistance = Float.MAX_VALUE;
             Agent nearest = null;
             for (Agent neighbor : getOwner().getNeighbors()) {
-                if (!neighbor.isAlive()) {
+                if (!neighbor.isAlive() || !getOwner().getThreat().hasEnemy(neighbor)) {
                     continue;
                 }
                 
