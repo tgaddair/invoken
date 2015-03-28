@@ -62,6 +62,10 @@ public abstract class Projectile extends CollisionEntity implements AgentHandler
     public Agent getOwner() {
         return owner;
     }
+    
+    public Bullet getBullet() {
+        return bullet;
+    }
 
     private void setup(Agent source) {
         finished = false;

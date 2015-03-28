@@ -7,6 +7,7 @@ import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.HandledBullet;
 import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.effects.Draining;
+import com.eldritch.invoken.encounter.Bullet;
 import com.eldritch.invoken.encounter.Location;
 import com.eldritch.invoken.screens.GameScreen;
 
@@ -57,12 +58,18 @@ public class Drain extends ProjectileAugmentation {
     }
 
     public static class DrainBullet extends HandledBullet {
+        private static final float ADJUSTMENT_STEP = 0.05f;
+        private static final float V_SCALE = 2.5f;
+        private static final float V_MAX = 10f;
+        
         private static final TextureRegion[] regions = GameScreen.getRegions(
                 "sprite/effects/drain-attack.png", 32, 32)[0];
+        private final Vector2 adjustment = new Vector2();
         private final Animation animation;
+        private float lastAdjustment = 0;
 
         public DrainBullet(Agent owner) {
-            super(owner, regions[0], 10, DAMAGE_SCALE);
+            super(owner, regions[0], V_MAX, DAMAGE_SCALE);
             animation = new Animation(0.1f, regions);
             animation.setPlayMode(Animation.PlayMode.LOOP_PINGPONG);
         }
@@ -71,6 +78,42 @@ public class Drain extends ProjectileAugmentation {
         protected void apply(Agent owner, Agent target) {
             // TODO: home in on target
             target.addEffect(new Draining(owner, target, DAMAGE_SCALE, 2));
+        }
+        
+        @Override
+        public boolean handleBeforeUpdate(float delta, Location location) {
+            lastAdjustment += delta;
+            
+            // adjust the trajectory of the bullet at certain intervals
+            if (lastAdjustment > ADJUSTMENT_STEP) {
+                Bullet bullet = getBullet();
+                Agent nearest = getNearestNeighbor(bullet.getPosition());
+                if (nearest != null) {
+                    // adjust the velocity of the bullet to seek the nearest target
+                    adjustment.set(nearest.getPosition()).sub(bullet.getPosition());
+                    bullet.setVelocity(adjustment.add(bullet.getVelocity().scl(V_SCALE).clamp(0, V_MAX)));
+                }
+                lastAdjustment = 0;
+            }
+            
+            return false;
+        }
+        
+        private Agent getNearestNeighbor(Vector2 position) {
+            float bestDistance = Float.MAX_VALUE;
+            Agent nearest = null;
+            for (Agent neighbor : getOwner().getNeighbors()) {
+                if (!neighbor.isAlive()) {
+                    continue;
+                }
+                
+                float distance = neighbor.getPosition().dst2(position);
+                if (distance < bestDistance) {
+                    bestDistance = distance;
+                    nearest = neighbor;
+                }
+            }
+            return nearest;
         }
 
         @Override
