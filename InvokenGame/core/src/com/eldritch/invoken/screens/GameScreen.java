@@ -428,6 +428,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
     @Override
     public boolean keyDown(int keycode) {
         switch (keycode) {
+            case Keys.SPACE:
             case Keys.SHIFT_LEFT:
 //                player.holdPosition(true);
                 shiftDown(true);
@@ -470,8 +471,8 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
                 printPlayerStatus();
                 return true;
             case Keys.SPACE:
-                tacticalPause = !tacticalPause;
-                return true;
+//                tacticalPause = !tacticalPause;
+//                return true;
             case Keys.SHIFT_LEFT:
 //                player.holdPosition(false);
                 shiftDown(false);
