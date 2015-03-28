@@ -43,14 +43,14 @@ public abstract class Augmentation {
 	public void release(Agent owner) {
     }
 	
-	public final Target getBestTarget(Agent agent, Target target) {
+	public final Target getBestTarget(Agent owner, Agent goal, Target target) {
 	    target.unset();
-	    setBestTarget(agent, target);
+	    setBestTarget(owner, goal, target);
 	    return target;
 	}
 	
-	protected void setBestTarget(Agent agent, Target target) {
-	    target.set(agent);
+	protected void setBestTarget(Agent agent, Agent goal, Target target) {
+	    target.set(goal);
 	}
 	
 	public boolean invokeOnBest(Agent owner, Agent target) {

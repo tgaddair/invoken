@@ -60,8 +60,8 @@ public class Resurrect extends Augmentation {
     }
 	
 	@Override
-	protected void setBestTarget(Agent agent, Target target) {
-	    for (Agent neighbor : agent.getNeighbors()) {
+	protected void setBestTarget(Agent agent, Agent goal, Target target) {
+	    for (Agent neighbor : goal.getNeighbors()) {
 	        if (!neighbor.isAlive()) {
 	            target.set(neighbor);
 	        }

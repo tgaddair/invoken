@@ -144,8 +144,8 @@ public class Attack extends Sequence<Npc> {
                 float bestQuality = 0; // never choose an aug with quality <= 0
                 for (Augmentation aug : npc.getInfo().getAugmentations().getAugmentations()) {
                     if (aug.hasEnergy(npc)
-                            && aug.isValidWithAiming(npc,
-                                    aug.getBestTarget(npc, npc.getTactics().getTarget()))) {
+                            && aug.isValidWithAiming(npc, aug.getBestTarget(npc, npc.getTarget(),
+                                    npc.getTactics().getTarget()))) {
                         float quality = aug.quality(npc, npc.getTarget(), location);
                         if (quality > bestQuality) {
                             chosen = aug;
