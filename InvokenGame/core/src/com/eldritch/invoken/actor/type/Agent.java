@@ -71,7 +71,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     public static final int ASSAULT_PENALTY = -25;
     public static final float AIMING_V_PENALTY = 5;
     
-    public static final float DODGE_SCALE = 150f;
+    public static final float DODGE_SCALE = 250f;
     public static final float SPRINT_SCALE = 0.75f;
     public static final float DODGE_COST = 5f;
     public static final float SPRINT_COST = 5f;

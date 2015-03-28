@@ -94,6 +94,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
     int targetY;
     
     private static final float DODGE_WINDOW = 0.25f;
+    private final Vector2 input = new Vector2();
     private boolean shiftDown = false;
     private float shiftTime = 0;
 
@@ -396,12 +397,29 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         System.out.println(sb.toString());
     }
     
+    private Vector2 getInputDirection() {
+        input.set(Vector2.Zero);
+        if (Gdx.input.isKeyPressed(Keys.A)) {
+            input.x += -1;
+        }
+        if (Gdx.input.isKeyPressed(Keys.D)) {
+            input.x += 1;
+        }
+        if (Gdx.input.isKeyPressed(Keys.S)) {
+            input.y += -1;
+        }
+        if (Gdx.input.isKeyPressed(Keys.W)) {
+            input.y += 1;
+        }
+        return input.nor();
+    }
+    
     private void shiftDown(boolean down) {
         this.shiftDown = down;
         if (!down) {
             player.sprint(false);
             if (shiftTime <= DODGE_WINDOW) {
-                player.dodge(player.getLinearVelocity().cpy().nor());
+                player.dodge(getInputDirection());
             }
         }
         shiftTime = 0;
