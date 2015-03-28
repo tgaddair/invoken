@@ -69,8 +69,11 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     public static final float UNMASK_RANGE = 10;
     public static final int ASSAULT_PENALTY = -25;
     public static final float AIMING_V_PENALTY = 5;
-    public static final float SPRINT_SCALE = 0.75f;
+    
     public static final float DODGE_SCALE = 150f;
+    public static final float SPRINT_SCALE = 0.75f;
+    public static final float DODGE_COST = 5f;
+    public static final float SPRINT_COST = 1f;
 
     static AssetManager assetManager = new AssetManager();
     static float MAX_FREEZE = 25f;
@@ -252,11 +255,27 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         return true;
     }
     
+    public boolean canDodge() {
+        return info.getEnergy() > DODGE_COST;
+    }
+    
     public void dodge(Vector2 direction) {
-        applyForce(direction.cpy().scl(DODGE_SCALE));
+        if (canDodge()) {
+            applyForce(direction.cpy().scl(DODGE_SCALE));
+            info.expend(DODGE_COST);
+        }
+    }
+    
+    public boolean canSprint() {
+        return info.getEnergy() > SPRINT_COST;
     }
     
     public void sprint(boolean sprinting) {
+        if (sprinting && !canSprint()) {
+            // cannot sprint
+            return;
+        }
+        
         if (this.sprinting != sprinting) {
             int sign = sprinting ? 1 : -1;
             scaleLinearVelocity(sign * SPRINT_SCALE);
