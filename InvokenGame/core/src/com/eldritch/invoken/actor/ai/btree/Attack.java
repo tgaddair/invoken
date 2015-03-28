@@ -8,6 +8,7 @@ import com.badlogic.gdx.ai.btree.Task;
 import com.badlogic.gdx.ai.btree.branch.Selector;
 import com.badlogic.gdx.ai.btree.branch.Sequence;
 import com.badlogic.gdx.ai.btree.decorator.AlwaysFail;
+import com.badlogic.gdx.ai.btree.decorator.AlwaysSucceed;
 import com.badlogic.gdx.ai.btree.decorator.Invert;
 import com.eldritch.invoken.actor.aug.Augmentation;
 import com.eldritch.invoken.actor.aug.Augmentation.Target;
@@ -23,11 +24,11 @@ public class Attack extends Sequence<Npc> {
         // if we have a chosen augmentation, then continue to hold aim until we use it
         Sequence<Npc> useAugSequence = new Sequence<Npc>();
         useAugSequence.addChild(new HasChosen());
-        useAugSequence.addChild(new HasSights());
-        useAugSequence.addChild(new UseAugmentation());
-        useAugSequence.addChild(new LowerAim());
+        useAugSequence.addChild(new AlwaysSucceed<>(Tasks.sequence(new HasSights(),
+                new UseAugmentation(), new LowerAim())));
 
         Sequence<Npc> chooseAugSequence = new Sequence<Npc>();
+        chooseAugSequence.addChild(new Invert<>(new HasChosen()));
         chooseAugSequence.addChild(new ChooseAugmentation());
         chooseAugSequence.addChild(new TakeAim());
 
@@ -138,6 +139,7 @@ public class Attack extends Sequence<Npc> {
                 return false;
             }
 
+            Target tmpTarget = new Target();
             if (!npc.hasPendingAction() && !npc.actionInProgress()) {
                 // choose the aug with the highest situational quality score
                 Augmentation chosen = null;
@@ -145,11 +147,12 @@ public class Attack extends Sequence<Npc> {
                 for (Augmentation aug : npc.getInfo().getAugmentations().getAugmentations()) {
                     if (aug.hasEnergy(npc)
                             && aug.isValidWithAiming(npc, aug.getBestTarget(npc, npc.getTarget(),
-                                    npc.getTactics().getTarget()))) {
+                                    tmpTarget))) {
                         float quality = aug.quality(npc, npc.getTarget(), location);
                         if (quality > bestQuality) {
                             chosen = aug;
                             bestQuality = quality;
+                            npc.getTactics().setTarget(tmpTarget);
                         }
                     }
                 }

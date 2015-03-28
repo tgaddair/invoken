@@ -6,6 +6,7 @@ import com.badlogic.gdx.ai.btree.branch.Sequence;
 import com.eldritch.invoken.actor.type.Npc;
 
 public class Tasks {
+    @SafeVarargs
     public static Sequence<Npc> sequence(Task<Npc>... tasks) {
         Sequence<Npc> sequence = new Sequence<Npc>();
         for (Task<Npc> task : tasks) {
@@ -14,6 +15,7 @@ public class Tasks {
         return sequence;
     }
     
+    @SafeVarargs
     public static Selector<Npc> selector(Task<Npc>... tasks) {
         Selector<Npc> selector = new Selector<Npc>();
         for (Task<Npc> task : tasks) {

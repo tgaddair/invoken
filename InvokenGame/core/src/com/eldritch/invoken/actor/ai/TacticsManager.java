@@ -31,4 +31,8 @@ public class TacticsManager {
     public Target getTarget() {
         return target;
     }
+    
+    public void setTarget(Target target) {
+        this.target.set(target);
+    }
 }

@@ -193,6 +193,12 @@ public abstract class Augmentation {
 	        type = Type.NONE;
 	    }
 	    
+	    public void set(Target other) {
+	        this.location.set(other.location);
+	        this.agent = other.agent;
+	        this.type = other.type;
+	    }
+	    
 	    public void set(Vector2 location) {
 	        this.agent = null;
 	        this.location.set(location);
