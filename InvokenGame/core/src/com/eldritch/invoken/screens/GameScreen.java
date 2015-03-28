@@ -388,7 +388,8 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
     public boolean keyDown(int keycode) {
         switch (keycode) {
             case Keys.SHIFT_LEFT:
-                player.holdPosition(true);
+//                player.holdPosition(true);
+                player.sprint(true);
                 return true;
             case Keys.TAB:
                 // show minimap
@@ -431,7 +432,8 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
                 tacticalPause = !tacticalPause;
                 return true;
             case Keys.SHIFT_LEFT:
-                player.holdPosition(false);
+//                player.holdPosition(false);
+                player.sprint(false);
                 return true;
             case Keys.BACKSPACE:
                 if (tacticalPause) {

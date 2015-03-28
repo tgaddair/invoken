@@ -69,6 +69,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     public static final float UNMASK_RANGE = 10;
     public static final int ASSAULT_PENALTY = -25;
     public static final float AIMING_V_PENALTY = 5;
+    public static final float SPRINT_SCALE = 1f;
 
     static AssetManager assetManager = new AssetManager();
     static float MAX_FREEZE = 25f;
@@ -124,6 +125,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     private int imploding = 0;
     private int stunted = 0;
     private int crimes = 0;
+    private boolean sprinting = false;
 
     private float freezing = 0;
     private float lastAction = 0;
@@ -248,6 +250,16 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         location.getWorld().rayCast(targetingHandler, source, target);
         return true;
     }
+    
+    public void sprint(boolean sprinting) {
+        if (this.sprinting != sprinting) {
+            int sign = sprinting ? 1 : -1;
+            scaleLinearVelocity(sign * SPRINT_SCALE);
+            this.sprinting = sprinting;
+        }
+    }
+    
+    protected abstract void scaleLinearVelocity(float s);
 
     public void addVelocityPenalty(float delta) {
         velocityPenalty += delta;

@@ -23,6 +23,7 @@ public abstract class SteeringAgent extends Agent {
     boolean tagged;
     SteeringBehavior<Vector2> steeringBehavior;
 
+    private final float baseLinearVelocity;
     private float maxAngularAcceleration = 1;
     private float maxAngularVelocity = 1;
     private float maxLinearAcceleration = 10;
@@ -33,6 +34,7 @@ public abstract class SteeringAgent extends Agent {
             Map<Activity, Map<Direction, Animation>> animations) {
         super(params, unique, x, y, width, height, location, animations);
         this.maxLinearVelocity = maxVelocity;
+        this.baseLinearVelocity = maxVelocity;
     }
 
     public SteeringAgent(float x, float y, float width, float height, float maxVelocity,
@@ -40,6 +42,7 @@ public abstract class SteeringAgent extends Agent {
             Map<Activity, Map<Direction, Animation>> animations) {
         super(x, y, width, height, profession, level, location, animations);
         this.maxLinearVelocity = maxVelocity;
+        this.baseLinearVelocity = maxVelocity;
     }
 
     protected void setBehavior(SteeringBehavior<Vector2> behavior) {
@@ -84,6 +87,11 @@ public abstract class SteeringAgent extends Agent {
     @Override
     public void setMaxLinearSpeed(float speed) {
         this.maxLinearVelocity = speed;
+    }
+    
+    protected void scaleLinearVelocity(float s) {
+        // scale by s * baseVelocity
+        changeMaxVelocity(s * baseLinearVelocity);
     }
     
     public void changeMaxVelocity(float delta) {
