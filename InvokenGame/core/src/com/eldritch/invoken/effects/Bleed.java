@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.screens.GameScreen;
+import com.eldritch.invoken.util.Damage;
 
 public class Bleed extends AnimatedEffect {
 	private static final List<TextureRegion[]> animations = new ArrayList<TextureRegion[]>();
@@ -18,18 +19,16 @@ public class Bleed extends AnimatedEffect {
 		animations.add(GameScreen.getMergedRegion("sprite/effects/bleed5.png", 48, 48));
 	}
 	
-	private final Agent source;
-	private final float magnitude;
+	private final Damage damage;
 	
-	public Bleed(Agent actor, Agent target, float magnitude) {
+	public Bleed(Agent target, Damage damage) {
 		super(target, randomAnimation(), new Vector2(0, 0.5f));
-		this.source = actor;
-		this.magnitude = magnitude;
+		this.damage = damage;
 	}
 	
 	@Override
     protected void doApply() {
-        getTarget().damage(source, magnitude);
+        getTarget().damage(damage);
     }
 	
 	@Override

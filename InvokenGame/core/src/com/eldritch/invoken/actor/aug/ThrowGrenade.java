@@ -104,7 +104,7 @@ public class ThrowGrenade extends Augmentation {
                 Vector2 direction = agent.getPosition().cpy().sub(getPosition()).nor();
                 agent.applyForce(direction.scl(500));
                 agent.addEffect(new Stunned(owner, agent, 0.2f));
-                agent.addEffect(new Bleed(owner, agent, getDamage().get(agent)));
+                agent.addEffect(new Bleed(agent, getDamage()));
             }
         }
 

@@ -93,7 +93,7 @@ public class Infect extends Augmentation {
 
         public Grenade(Agent owner, Vector2 target) {
             super(owner, target, texture, explosionRegions, 5, Damage.from(owner, DamageType.VIRAL,
-                    DAMAGE_SCALE), 2);
+                    getBaseDamage(owner)), 2);
         }
 
         @Override
@@ -115,11 +115,15 @@ public class Infect extends Augmentation {
                     // infection does not stack
                     if (neighbor.inRange(getPosition(), getRadius())) {
                         immune.add(neighbor);
-                        neighbor.addEffect(new Infected(owner, neighbor, immune, getDamage().get(
-                                neighbor), DURATION, getRadius()));
+                        neighbor.addEffect(new Infected(neighbor, immune, getDamage(), DURATION,
+                                getRadius()));
                     }
                 }
             }
+        }
+
+        private static int getBaseDamage(Agent owner) {
+            return (int) (DAMAGE_SCALE * owner.getInfo().getExecuteModifier());
         }
     }
 }

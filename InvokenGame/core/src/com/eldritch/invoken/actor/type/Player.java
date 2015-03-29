@@ -161,7 +161,7 @@ public class Player extends SteeringAgent {
     }
 
     @Override
-    public float damage(float value) {
+    protected float damage(float value) {
         if (Settings.GOD_MODE) {
             return 0;
         }

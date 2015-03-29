@@ -60,6 +60,7 @@ import com.eldritch.invoken.proto.Actors.ActorParams;
 import com.eldritch.invoken.proto.Actors.DialogueTree.Choice;
 import com.eldritch.invoken.proto.Actors.DialogueTree.Response;
 import com.eldritch.invoken.ui.MultiTextureRegionDrawable;
+import com.eldritch.invoken.util.Damage;
 import com.eldritch.invoken.util.Settings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -374,15 +375,21 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         return info.getHealth();
     }
 
-    public float damage(Agent source, float value) {
+    public float damage(Damage damage) {
+        return damage(damage, 1);
+    }
+    
+    public float damage(Damage damage, float delta) {
+        float value = damage.get(this, delta);
         if (isAlive()) {
+            Agent source = damage.getSource();
             addHostility(source, value);
             alertTo(source);
         }
         return damage(value);
     }
 
-    public float damage(float value) {
+    protected float damage(float value) {
         setCloaked(false); // damage breaks cloaking
         return info.damage(value);
     }

@@ -1,6 +1,8 @@
 package com.eldritch.invoken.util;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.eldritch.invoken.actor.items.RangedWeapon;
 import com.eldritch.invoken.actor.type.Agent;
@@ -12,12 +14,17 @@ import com.google.common.collect.ImmutableList;
  * Lazy calculator of damage.
  */
 public class Damage {
+    private final Map<Agent, Float> magnitudes = new HashMap<>();
     private final Agent attacker;
     private final List<DamageMod> components;
 
     public Damage(Agent attacker, List<DamageMod> components) {
         this.attacker = attacker;
         this.components = components;
+    }
+    
+    public Agent getSource() {
+        return attacker;
     }
 
     public float getMagnitude() {
@@ -27,19 +34,28 @@ public class Damage {
         }
         return magnitude;
     }
+    
+    public float get(Agent defender, float delta) {
+        return get(defender) * delta;
+    }
 
     public float get(Agent defender) {
-        float total = 0;
-        float attackMod = attacker.getInfo().getAttackModifier();
-        for (DamageMod mod : components) {
-            // handle each damage type separately
-            float baseDamage = mod.getMagnitude();
-            float armorReduction = defender.getInfo()
-                    .getArmorReduction(mod.getDamage(), baseDamage);
-            total += (baseDamage * attackMod) / armorReduction;
+        if (!magnitudes.containsKey(defender)) {
+            float total = 0;
+            float attackMod = attacker.getInfo().getAttackModifier();
+            for (DamageMod mod : components) {
+                // handle each damage type separately
+                float baseDamage = mod.getMagnitude();
+                float armorReduction = defender.getInfo()
+                        .getArmorReduction(mod.getDamage(), baseDamage);
+                total += (baseDamage * attackMod) / armorReduction;
+            }
+            System.out.println(String.format("%s -> %s = %.2f", attacker, defender, total));
+            magnitudes.put(defender, total);
         }
-        System.out.println(String.format("%s -> %s = %.2f", attacker, defender, total));
-        return total;
+        
+        // lazily resolve the magnitude, but only do so once
+        return magnitudes.get(defender);
     }
 
     public static Damage from(Agent attacker, RangedWeapon weapon) {

@@ -323,6 +323,10 @@ public class AgentInfo {
     public float getAttackModifier() {
         return 0.5f + getWarfare() / 100f;
     }
+    
+    public float getExecuteModifier() {
+        return 0.5f + getAutomata() / 100f;
+    }
 
     public void modActiveDefense(int bonus) {
         activeDefense += bonus;

@@ -3,10 +3,10 @@ package com.eldritch.invoken.effects;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.screens.GameScreen;
+import com.eldritch.invoken.util.Damage;
 
 public class Draining extends AnimatedEffect {
-	private final Agent source;
-	private final float magnitude;
+    private final Damage damage;
 	private final float duration;
 	
 	/**
@@ -15,11 +15,10 @@ public class Draining extends AnimatedEffect {
 	 * @param magnitude damage per second
 	 * @param duration seconds of continuous draining
 	 */
-	public Draining(Agent actor, Agent target, float magnitude, float duration) {
+	public Draining(Agent target, Damage damage, float duration) {
 		super(target, GameScreen.getRegions("sprite/effects/draining.png", 48, 48)[0],
 				Animation.PlayMode.LOOP);
-		this.source = actor;
-		this.magnitude = magnitude * actor.getExecuteScale(target);
+		this.damage = damage;
 		this.duration = duration;
 	}
 
@@ -31,9 +30,8 @@ public class Draining extends AnimatedEffect {
 	@Override
 	public void update(float delta) {
 		// transfer life essence
-		Agent target = getTarget();
-		float damaged = target.damage(source, magnitude * delta);
-		source.heal(damaged);
+		float damaged = getTarget().damage(damage, delta);
+		damage.getSource().heal(damaged);
 	}
 	
 	@Override

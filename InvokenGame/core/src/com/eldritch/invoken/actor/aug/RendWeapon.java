@@ -7,7 +7,8 @@ import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.effects.Bleed;
 import com.eldritch.invoken.encounter.Location;
-import com.eldritch.invoken.ui.DebugEntityRenderer;
+import com.eldritch.invoken.proto.Effects.DamageType;
+import com.eldritch.invoken.util.Damage;
 
 public class RendWeapon extends Augmentation {
     private static class Holder {
@@ -56,10 +57,14 @@ public class RendWeapon extends Augmentation {
     public class RendAction extends AnimatedAction {
     	private final Vector2 strike = new Vector2();
         private final Vector2 target;
+        private final Damage damage;
 
         public RendAction(Agent actor, Vector2 target) {
             super(actor, Activity.Swipe, RendWeapon.this);
-            this.target= target;
+            this.target = target;
+            
+            MeleeWeapon weapon = actor.getInventory().getMeleeWeapon();
+            this.damage = Damage.from(actor, DamageType.PHYSICAL, (int) weapon.getDamage());
         }
 
         @Override
@@ -75,7 +80,7 @@ public class RendWeapon extends Augmentation {
             
         	for (Agent neighbor : owner.getNeighbors()) {
         		if (neighbor.inRange(center, weapon.getRange() / 5)) {
-        			neighbor.addEffect(new Bleed(owner, neighbor, weapon.getDamage()));
+        			neighbor.addEffect(new Bleed(neighbor, damage));
         		}
         	}
         }

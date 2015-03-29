@@ -72,14 +72,14 @@ public class Drain extends ProjectileAugmentation {
         private float lastAdjustment = 0;
 
         public DrainBullet(Agent owner) {
-            super(owner, regions[0], V_MAX, Damage.from(owner, DamageType.VIRAL, DAMAGE_SCALE));
+            super(owner, regions[0], V_MAX, Damage.from(owner, DamageType.VIRAL, getBaseDamage(owner)));
             animation = new Animation(0.1f, regions);
             animation.setPlayMode(Animation.PlayMode.LOOP_PINGPONG);
         }
 
         @Override
         protected void apply(Agent owner, Agent target) {
-            target.addEffect(new Draining(owner, target, getDamage().get(target), 2));
+            target.addEffect(new Draining(target, getDamage(), 2));
         }
 
         @Override
@@ -122,6 +122,10 @@ public class Drain extends ProjectileAugmentation {
         @Override
         protected TextureRegion getTexture(float stateTime) {
             return animation.getKeyFrame(stateTime);
+        }
+        
+        private static int getBaseDamage(Agent owner) {
+            return (int) (DAMAGE_SCALE * owner.getInfo().getExecuteModifier());
         }
     }
 }
