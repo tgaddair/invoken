@@ -34,9 +34,11 @@ public class Damage {
         for (DamageMod mod : components) {
             // handle each damage type separately
             float baseDamage = mod.getMagnitude();
-            float armorReduction = defender.getInfo().getArmorReduction(mod.getDamage());
+            float armorReduction = defender.getInfo()
+                    .getArmorReduction(mod.getDamage(), baseDamage);
             total += (baseDamage * attackMod) / armorReduction;
         }
+        System.out.println(String.format("%s -> %s = %.2f", attacker, defender, total));
         return total;
     }
 
@@ -48,8 +50,8 @@ public class Damage {
         return new Damage(attacker, ImmutableList.of(DamageMod.newBuilder().setDamage(type)
                 .setMagnitude(magnitude).build()));
     }
-    
+
     public static Damage from(Agent attacker) {
-        return new Damage(attacker, ImmutableList.<DamageMod>of());
+        return new Damage(attacker, ImmutableList.<DamageMod> of());
     }
 }

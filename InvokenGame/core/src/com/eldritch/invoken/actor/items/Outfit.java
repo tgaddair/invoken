@@ -33,6 +33,9 @@ public class Outfit extends Item {
     }
     
     public float getDefense(DamageType type) {
+        if (!resistance.containsKey(type)) {
+            return 0;
+        }
         return resistance.get(type);
     }
     

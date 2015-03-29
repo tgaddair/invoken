@@ -325,13 +325,13 @@ public class AgentInfo {
         activeDefense += bonus;
     }
     
-    public float getArmorReduction(DamageType damage) {
-        float reduction = 0;
+    public float getArmorReduction(DamageType damage, float magnitude) {
+        float armorRating = 0;
         if (inventory.hasOutfit()) {
             Outfit outfit = inventory.getOutfit();
-            reduction += outfit.getDefense(damage);
+            armorRating += outfit.getDefense(damage);
         }
-        return reduction;
+        return 1f + armorRating / magnitude;
     }
     
     public float getDefenseBonus() {

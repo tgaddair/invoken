@@ -79,7 +79,7 @@ public class Drain extends ProjectileAugmentation {
 
         @Override
         protected void apply(Agent owner, Agent target) {
-            target.addEffect(new Draining(owner, target, DAMAGE_SCALE, 2));
+            target.addEffect(new Draining(owner, target, getDamage().get(target), 2));
         }
 
         @Override
