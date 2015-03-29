@@ -58,6 +58,7 @@ public class Drain extends ProjectileAugmentation {
     }
 
     public static class DrainBullet extends HandledBullet {
+        private static final float MAX_SEEK_DST2 = 9f;
         private static final float ADJUSTMENT_STEP = 0.05f;
         private static final float V_SCALE = 2.5f;
         private static final float V_MAX = 10f;
@@ -99,7 +100,7 @@ public class Drain extends ProjectileAugmentation {
         }
         
         private Agent getNearestNeighbor(Vector2 position) {
-            float bestDistance = Float.MAX_VALUE;
+            float bestDistance = MAX_SEEK_DST2;
             Agent nearest = null;
             for (Agent neighbor : getOwner().getNeighbors()) {
                 if (!neighbor.isAlive() || !getOwner().getThreat().hasEnemy(neighbor)) {
