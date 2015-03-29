@@ -1,9 +1,10 @@
 package com.eldritch.invoken.actor.type;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.eldritch.invoken.util.Damage;
 
 public abstract class HandledBullet extends Projectile implements HandledProjectile {
-    public HandledBullet(Agent owner, TextureRegion region, float speed, float damage) {
+    public HandledBullet(Agent owner, TextureRegion region, float speed, Damage damage) {
         super(owner, region, speed, damage);
     }
 

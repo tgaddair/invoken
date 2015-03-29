@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.encounter.Location;
+import com.eldritch.invoken.util.Damage;
 
 public abstract class AoeProjectile extends Projectile {
     private final TextureRegion texture;
@@ -17,7 +18,7 @@ public abstract class AoeProjectile extends Projectile {
     private boolean detonated = false;
 
     public AoeProjectile(Agent owner, Vector2 target, TextureRegion texture, TextureRegion[] explosionRegions,
-    		float speed, float damage, float radius) {
+    		float speed, Damage damage, float radius) {
         super(owner, texture, speed, damage);
         this.target = target;
         this.texture = texture;

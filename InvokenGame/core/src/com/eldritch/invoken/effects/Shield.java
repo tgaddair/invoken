@@ -68,7 +68,7 @@ public class Shield extends BasicEffect {
 	private class ShieldProjectileHandler implements ProjectileHandler {
         @Override
         public boolean handle(HandledProjectile projectile) {
-            float damage = projectile.getDamage(target);
+            float damage = projectile.getDamage().get(target);
             if (damage > 0) {
                 target.getInfo().expend(damage);
                 if (target.getInfo().getEnergy() < damage) {

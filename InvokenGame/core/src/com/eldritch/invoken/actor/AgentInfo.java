@@ -21,6 +21,7 @@ import com.eldritch.invoken.proto.Actors.ActorParams.Species;
 import com.eldritch.invoken.proto.Actors.NonPlayerActor;
 import com.eldritch.invoken.proto.Augmentations.AugmentationProto;
 import com.eldritch.invoken.proto.Disciplines.Discipline;
+import com.eldritch.invoken.proto.Effects.DamageType;
 import com.google.common.base.Functions;
 
 public class AgentInfo {
@@ -316,8 +317,21 @@ public class AgentInfo {
     	return Math.min(getSubterfuge() / 100f + getAlertness() + getPerceptionBonus(), 1.0f);
     }
     
+    public float getAttackModifier() {
+        return 0.5f + getWarfare() / 100f;
+    }
+    
     public void modActiveDefense(int bonus) {
         activeDefense += bonus;
+    }
+    
+    public float getArmorReduction(DamageType damage) {
+        float reduction = 0;
+        if (inventory.hasOutfit()) {
+            Outfit outfit = inventory.getOutfit();
+            reduction += outfit.getDefense(damage);
+        }
+        return reduction;
     }
     
     public float getDefenseBonus() {

@@ -9,20 +9,22 @@ import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.effects.Draining;
 import com.eldritch.invoken.encounter.Bullet;
 import com.eldritch.invoken.encounter.Location;
+import com.eldritch.invoken.proto.Effects.DamageType;
 import com.eldritch.invoken.screens.GameScreen;
+import com.eldritch.invoken.util.Damage;
 
 public class Drain extends ProjectileAugmentation {
-    private static final float DAMAGE_SCALE = 25;
+    private static final int DAMAGE_SCALE = 25;
     private static final int BASE_COST = 10;
-    
-	private static class Holder {
+
+    private static class Holder {
         private static final Drain INSTANCE = new Drain();
-	}
-	
-	public static Drain getInstance() {
-		return Holder.INSTANCE;
-	}
-	
+    }
+
+    public static Drain getInstance() {
+        return Holder.INSTANCE;
+    }
+
     private Drain() {
         super("drain");
     }
@@ -62,7 +64,7 @@ public class Drain extends ProjectileAugmentation {
         private static final float ADJUSTMENT_STEP = 0.05f;
         private static final float V_SCALE = 2.5f;
         private static final float V_MAX = 10f;
-        
+
         private static final TextureRegion[] regions = GameScreen.getRegions(
                 "sprite/effects/drain-attack.png", 32, 32)[0];
         private final Vector2 adjustment = new Vector2();
@@ -70,7 +72,7 @@ public class Drain extends ProjectileAugmentation {
         private float lastAdjustment = 0;
 
         public DrainBullet(Agent owner) {
-            super(owner, regions[0], V_MAX, DAMAGE_SCALE);
+            super(owner, regions[0], V_MAX, Damage.from(owner, DamageType.VIRAL, DAMAGE_SCALE));
             animation = new Animation(0.1f, regions);
             animation.setPlayMode(Animation.PlayMode.LOOP_PINGPONG);
         }
@@ -79,11 +81,11 @@ public class Drain extends ProjectileAugmentation {
         protected void apply(Agent owner, Agent target) {
             target.addEffect(new Draining(owner, target, DAMAGE_SCALE, 2));
         }
-        
+
         @Override
         public boolean handleBeforeUpdate(float delta, Location location) {
             lastAdjustment += delta;
-            
+
             // adjust the trajectory of the bullet at certain intervals
             if (lastAdjustment > ADJUSTMENT_STEP) {
                 Bullet bullet = getBullet();
@@ -91,14 +93,15 @@ public class Drain extends ProjectileAugmentation {
                 if (nearest != null) {
                     // adjust the velocity of the bullet to seek the nearest target
                     adjustment.set(nearest.getPosition()).sub(bullet.getPosition());
-                    bullet.setVelocity(adjustment.add(bullet.getVelocity().scl(V_SCALE).clamp(0, V_MAX)));
+                    bullet.setVelocity(adjustment.add(bullet.getVelocity().scl(V_SCALE)
+                            .clamp(0, V_MAX)));
                 }
                 lastAdjustment = 0;
             }
-            
+
             return false;
         }
-        
+
         private Agent getNearestNeighbor(Vector2 position) {
             float bestDistance = MAX_SEEK_DST2;
             Agent nearest = null;
@@ -106,7 +109,7 @@ public class Drain extends ProjectileAugmentation {
                 if (!neighbor.isAlive() || !getOwner().getThreat().hasEnemy(neighbor)) {
                     continue;
                 }
-                
+
                 float distance = neighbor.getPosition().dst2(position);
                 if (distance < bestDistance) {
                     bestDistance = distance;

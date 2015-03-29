@@ -1,6 +1,7 @@
 package com.eldritch.invoken.actor.items;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
@@ -21,13 +22,18 @@ import com.eldritch.invoken.encounter.Location;
 import com.eldritch.invoken.proto.Effects.DamageType;
 import com.eldritch.invoken.proto.Items.Item.DamageMod;
 import com.eldritch.invoken.screens.GameScreen;
+import com.eldritch.invoken.util.Damage;
 import com.eldritch.invoken.util.Settings;
 import com.google.common.base.Strings;
 
 public class RangedWeapon extends Item {
     private static final float BASE_COST = 5f;
-    private static final float DAMAGE_SCALE = 1;
     private static final float BULLET_VELOCITY = 25;
+    
+    private static final TextureRegion BULLET_TEXTURE = new TextureRegion(
+            GameScreen.getTexture("sprite/effects/bullet1.png"));
+    private static final TextureRegion RAY_TEXTURE = new TextureRegion(
+            GameScreen.getTexture("sprite/effects/bullet2.png"));
     
 	private final Map<Direction, Animation> animations = new HashMap<Direction, Animation>();
 	private final TextureRegion texture;
@@ -93,6 +99,10 @@ public class RangedWeapon extends Item {
 	    }
 	}
 	
+	public List<DamageMod> getDamageList() {
+	    return getData().getDamageModifierList();
+	}
+	
 	public float getDamage() {
 	    float damage = 0;
 	    for (DamageMod mod : getData().getDamageModifierList()) {
@@ -155,18 +165,14 @@ public class RangedWeapon extends Item {
         return String.format("sprite/items/weapons/%s.png", asset);
     }
     
-    public static class RangedWeaponBullet extends HandledBullet {
-        private static final TextureRegion texture = new TextureRegion(
-                GameScreen.getTexture("sprite/effects/bullet1.png"));
-
+    public class RangedWeaponBullet extends HandledBullet {
         public RangedWeaponBullet(Agent owner) {
-            super(owner, texture, BULLET_VELOCITY, DAMAGE_SCALE);
+            super(owner, texture, BULLET_VELOCITY, Damage.from(owner, RangedWeapon.this));
         }
 
         @Override
         protected void apply(Agent owner, Agent target) {
-            float magnitude = getDamage(target)
-                    * owner.getInventory().getRangedWeapon().getDamage();
+            float magnitude = getDamage().get(target);
             target.stop();
             target.applyForce(velocity.cpy().nor().scl(100));
             target.addEffect(new Stunned(owner, target, 0.2f));
@@ -175,20 +181,20 @@ public class RangedWeapon extends Item {
 
         @Override
         protected TextureRegion getTexture(float stateTime) {
-            return texture;
+            return BULLET_TEXTURE;
         }
     }
 
-    public static class RangedWeaponRay implements HandledProjectile {
+    public class RangedWeaponRay implements HandledProjectile {
         private static final float FLASH_SECS = 0.075f;
-        private static final TextureRegion texture = new TextureRegion(
-                GameScreen.getTexture("sprite/effects/bullet2.png"));
 
         private final Vector2 position = new Vector2();
         private final Vector2 direction = new Vector2();
 
         private final Agent owner;
         private final boolean reflected;
+        private final Damage damage;
+        
         private RayTarget target = null;
         private float elapsed = 0;
 
@@ -205,6 +211,7 @@ public class RangedWeapon extends Item {
         public RangedWeaponRay(Agent owner, Vector2 position, Vector2 direction, boolean reflected) {
             this.owner = owner;
             this.reflected = reflected;
+            this.damage = Damage.from(owner, RangedWeapon.this);
 
             // the owner may move after firing, but this vapor trail should not
             this.position.set(position);
@@ -237,8 +244,7 @@ public class RangedWeapon extends Item {
         
         @Override
         public void apply(Agent target) {
-            float magnitude = getDamage(target)
-                    * owner.getInventory().getRangedWeapon().getDamage();
+            float magnitude = getDamage().get(target);
             target.addEffect(new Stunned(owner, target, 0.2f));
             target.addEffect(new Bleed(owner, target, magnitude));
         }
@@ -248,7 +254,7 @@ public class RangedWeapon extends Item {
             if (target != null) {
                 Batch batch = renderer.getBatch();
                 batch.begin();
-                batch.draw(texture, position.x, position.y, // position
+                batch.draw(RAY_TEXTURE, position.x, position.y, // position
                         0, 0, // origin
                         width, height, // size
                         1f, 1f, // scale
@@ -304,10 +310,10 @@ public class RangedWeapon extends Item {
             RangedWeaponRay ray = new RangedWeaponRay(owner, contact, reflection, true);
             successor = ray;
         }
-
+        
         @Override
-        public float getDamage(Agent target) {
-            return DAMAGE_SCALE * owner.getAttackScale(target);
+        public Damage getDamage() {
+            return damage;
         }
 
         @Override

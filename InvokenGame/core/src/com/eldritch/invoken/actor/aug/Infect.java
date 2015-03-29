@@ -10,10 +10,12 @@ import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.actor.type.AoeProjectile;
 import com.eldritch.invoken.effects.Infected;
 import com.eldritch.invoken.encounter.Location;
+import com.eldritch.invoken.proto.Effects.DamageType;
 import com.eldritch.invoken.screens.GameScreen;
+import com.eldritch.invoken.util.Damage;
 
 public class Infect extends Augmentation {
-    private static final float DAMAGE_SCALE = 25;
+    private static final int DAMAGE_SCALE = 25;
     private static final float DURATION = 5;
     private static final int BASE_COST = 20;
 
@@ -90,7 +92,8 @@ public class Infect extends Augmentation {
                 "sprite/effects/infect_cloud.png", 256, 256);
 
         public Grenade(Agent owner, Vector2 target) {
-            super(owner, target, texture, explosionRegions, 5, DAMAGE_SCALE, 2);
+            super(owner, target, texture, explosionRegions, 5, Damage.from(owner, DamageType.VIRAL,
+                    DAMAGE_SCALE), 2);
         }
 
         @Override

@@ -9,22 +9,23 @@ import com.eldritch.invoken.actor.type.Agent.WeaponSentry;
 import com.eldritch.invoken.encounter.Bullet;
 import com.eldritch.invoken.encounter.Location;
 import com.eldritch.invoken.encounter.NaturalVector2;
+import com.eldritch.invoken.util.Damage;
 import com.eldritch.invoken.util.Settings;
 
 public abstract class Projectile extends CollisionEntity implements AgentHandler, TemporaryEntity {
     private final Bullet bullet;
     private final float speed;
-    private final float damage;
+    private final Damage damage;
     private Agent owner;
     private boolean finished;
     private float stateTime;
 
-    public Projectile(Agent owner, TextureRegion region, float speed, float damage) {
+    public Projectile(Agent owner, TextureRegion region, float speed, Damage damage) {
         this(owner, region.getRegionWidth() * Settings.SCALE, region.getRegionHeight() * Settings.SCALE,
                 speed, damage);
     }
 
-    public Projectile(Agent owner, float width, float height, float speed, float damage) {
+    public Projectile(Agent owner, float width, float height, float speed, Damage damage) {
         super(width, height);
         this.speed = speed;
         this.damage = damage;
@@ -34,6 +35,10 @@ public abstract class Projectile extends CollisionEntity implements AgentHandler
 
         Location location = owner.getLocation();
         bullet = location.obtainBullet(this, position, velocity);
+    }
+    
+    public Damage getDamage() {
+        return damage;
     }
 
     @Override
@@ -53,10 +58,6 @@ public abstract class Projectile extends CollisionEntity implements AgentHandler
 
     public float getSpeed() {
         return speed;
-    }
-
-    public float getDamage(Agent target) {
-        return damage * owner.getAttackScale(target);
     }
 
     public Agent getOwner() {

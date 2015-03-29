@@ -11,6 +11,7 @@ import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.effects.Paralyzed;
 import com.eldritch.invoken.encounter.Location;
 import com.eldritch.invoken.screens.GameScreen;
+import com.eldritch.invoken.util.Damage;
 
 public class Paralyze extends ProjectileAugmentation {
 	private static class Holder {
@@ -66,7 +67,7 @@ public class Paralyze extends ProjectileAugmentation {
         private final Animation animation;
 
         public ParalyzeBullet(Agent owner) {
-            super(owner, regions[0], 10, 0);
+            super(owner, regions[0], 10, Damage.from(owner));
             animation = new Animation(0.1f, regions);
             animation.setPlayMode(Animation.PlayMode.LOOP_PINGPONG);
         }
