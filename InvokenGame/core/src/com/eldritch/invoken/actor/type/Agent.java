@@ -803,6 +803,8 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         this.forcedDialogue = forced;
         interact(other);
         other.interact(this);
+        setCamera(other.defaultCamera);
+        other.setCamera(defaultCamera);
     }
 
     public void unforceDialogue() {
@@ -811,8 +813,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
 
     public void endDialogue() {
         if (inDialogue()) {
-            getInteractor().interact(null);
-            interact(null);
+            endInteraction();
         }
     }
 
@@ -826,6 +827,8 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
 
     public void endInteraction() {
         if (interactor != null) {
+            resetCamera();
+            interactor.resetCamera();
             interactor.interact(null);
             interact(null);
         }
@@ -1306,7 +1309,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         }
 
         // end interactions if outside range
-        if (inDialogue() && dst2(getInteractor()) > INTERACT_RANGE) {
+        if (inDialogue() && dst2(getInteractor()) > INTERACT_RANGE && !forcedDialogue) {
             endDialogue();
         }
 
