@@ -320,6 +320,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 
         Agent target = player.getTarget();
         if (target != null) {
+            float health = target.getInfo().getHealth();
             float energy = target.getInfo().getEnergy();
             int level = target.getInfo().getLevel();
             float freezing = target.getFreezing();
@@ -328,6 +329,8 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 
             int i = 0;
             batch.begin();
+            font.draw(batch, String.format("Health: %.0f", health), 10, getHeight()
+                    - (30 + 20 * i++));
             font.draw(batch, String.format("Energy: %.0f", energy), 10, getHeight()
                     - (30 + 20 * i++));
             font.draw(batch, String.format("Level: %d", level), 10, getHeight() - (30 + 20 * i++));
