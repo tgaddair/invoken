@@ -8,8 +8,8 @@ import com.badlogic.gdx.ai.btree.Task;
 import com.badlogic.gdx.ai.btree.branch.Selector;
 import com.badlogic.gdx.ai.btree.branch.Sequence;
 import com.badlogic.gdx.ai.btree.decorator.AlwaysFail;
-import com.badlogic.gdx.ai.btree.decorator.AlwaysSucceed;
 import com.badlogic.gdx.ai.btree.decorator.Invert;
+import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.actor.aug.Augmentation;
 import com.eldritch.invoken.actor.aug.Augmentation.Target;
 import com.eldritch.invoken.actor.type.Agent;
@@ -22,37 +22,42 @@ public class Attack extends Sequence<Npc> {
         addChild(new SelectBestTarget());
 
         // if we have a chosen augmentation, then continue to hold aim until we use it
-        Sequence<Npc> useAugSequence = new Sequence<Npc>();
+        Sequence<Npc> useAugSequence = new Sequence<>();
         useAugSequence.addChild(new HasChosen());
         useAugSequence.addChild(new HasSights());
         useAugSequence.addChild(new UseAugmentation());
         useAugSequence.addChild(new LowerAim());
 
-        Sequence<Npc> chooseAugSequence = new Sequence<Npc>();
+        Sequence<Npc> chooseAugSequence = new Sequence<>();
         chooseAugSequence.addChild(new ChooseAugmentation());
         chooseAugSequence.addChild(new TakeAim());
 
         // attempt to use the augmentation, if we cannot use the augmentation then we
         // fail over to evading the target
-        Selector<Npc> augSelector = new Selector<Npc>();
+        Selector<Npc> augSelector = new Selector<>();
         augSelector.addChild(useAugSequence);
         augSelector.addChild(chooseAugSequence);
         augSelector.addChild(new AlwaysFail<Npc>(new LowerAim())); // failed to choose aug, so lower
                                                                    // our aim
+        
+        Sequence<Npc> dodgeSequence = new Sequence<>();
+        dodgeSequence.addChild(new ShouldDodge());
+        dodgeSequence.addChild(new Dodge());
 
         // hide if we have line of sight to our last seen, otherwise we idle in defensive posture
-        Sequence<Npc> hideSequence = new Sequence<Npc>();
+        Sequence<Npc> hideSequence = new Sequence<>();
         hideSequence.addChild(new DesiresCover());
         hideSequence.addChild(new IsIntimidated());
-        hideSequence.addChild(new Invert<Npc>(new HasCover()));
+        hideSequence.addChild(new Invert<>(new HasCover()));
         hideSequence.addChild(new SeekCover());
 
-        Selector<Npc> selector = new Selector<Npc>();
-        selector.addChild(augSelector);
+        Selector<Npc> selector = new Selector<>();
+        selector.addChild(dodgeSequence);
         selector.addChild(hideSequence);
         // selector.addChild(suppressSequence);
 
         addChild(selector);
+        addChild(augSelector);
     }
 
     @Override
@@ -252,6 +257,33 @@ public class Attack extends Sequence<Npc> {
         @Override
         public void doFor(Npc entity) {
             entity.setAiming(false);
+        }
+    }
+    
+    private static class ShouldDodge extends BooleanTask {
+        @Override
+        protected boolean check(Npc npc) {
+            if (npc.getInfo().getEnergyPercent() < 0.7f) {
+                // not enough energy
+                return false;
+            }
+            
+            // when our target is aiming at us, then dodge
+            return npc.hasTarget() && npc.getTarget().isAimingAt(npc);
+        }
+    }
+    
+    private static class Dodge extends SuccessTask {
+        private final Vector2 direction = new Vector2();
+        
+        @Override
+        public void doFor(Npc npc) {
+            Agent target = npc.getTarget();
+            direction.set(target.getPosition()).sub(npc.getPosition()).nor();
+            
+            // randomly dodge left or right
+            direction.rotate90((int) Math.signum(Math.random() - 0.5));
+            npc.dodge(direction);
         }
     }
 }
