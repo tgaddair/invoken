@@ -8,6 +8,7 @@ import com.badlogic.gdx.ai.btree.Task;
 import com.badlogic.gdx.ai.btree.branch.Selector;
 import com.badlogic.gdx.ai.btree.branch.Sequence;
 import com.badlogic.gdx.ai.btree.decorator.AlwaysFail;
+import com.badlogic.gdx.ai.btree.decorator.AlwaysSucceed;
 import com.badlogic.gdx.ai.btree.decorator.Invert;
 import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.actor.aug.Augmentation;
@@ -51,12 +52,12 @@ public class Attack extends Sequence<Npc> {
         hideSequence.addChild(new Invert<>(new HasCover()));
         hideSequence.addChild(new SeekCover());
 
-        Selector<Npc> selector = new Selector<>();
-        selector.addChild(dodgeSequence);
-        selector.addChild(hideSequence);
+        Selector<Npc> evasionSelector = new Selector<>();
+        evasionSelector.addChild(dodgeSequence);
+        evasionSelector.addChild(hideSequence);
         // selector.addChild(suppressSequence);
 
-        addChild(selector);
+        addChild(new AlwaysSucceed<>(evasionSelector));
         addChild(augSelector);
     }
 
