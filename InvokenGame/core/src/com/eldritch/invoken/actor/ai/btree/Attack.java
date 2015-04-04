@@ -269,8 +269,14 @@ public class Attack extends Sequence<Npc> {
                 return false;
             }
             
-            // when our target is aiming at us, then dodge
-            return npc.hasTarget() && npc.getTarget().isAimingAt(npc);
+            // when our target is aiming at us, then dodge with some probability
+            if (npc.hasTarget() && npc.getTarget().isAimingAt(npc)) {
+                // average about a second of waiting before dodging
+                // if this routine is called once every STEP seconds, then we want to act after
+                // 1 / STEP invocations
+                return Math.random() < Npc.STEP;
+            }
+            return false;
         }
     }
     
