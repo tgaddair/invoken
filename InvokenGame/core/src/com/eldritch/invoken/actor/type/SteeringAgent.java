@@ -11,6 +11,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.actor.Profession;
 import com.eldritch.invoken.encounter.Location;
 import com.eldritch.invoken.proto.Actors.ActorParams;
+import com.eldritch.invoken.proto.Effects.DamageType;
 
 public abstract class SteeringAgent extends Agent {
     protected static final SteeringAcceleration<Vector2> steeringOutput = new SteeringAcceleration<Vector2>(
@@ -66,7 +67,9 @@ public abstract class SteeringAgent extends Agent {
 
     @Override
     public float getMaxLinearSpeed() {
-        return Math.max(maxLinearVelocity - getVelocityPenalty(), 0);
+        float v = maxLinearVelocity - getVelocityPenalty();
+        v *= info.getStatusEffect(DamageType.RADIOACTIVE);
+        return Math.max(v, 0);
     }
     
     @Override

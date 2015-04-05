@@ -380,7 +380,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     }
     
     public float damage(Damage damage, float delta) {
-        float value = damage.get(this, delta);
+        float value = damage.apply(this, delta);
         if (isAlive()) {
             Agent source = damage.getSource();
             addHostility(source, value);

@@ -1,6 +1,7 @@
 package com.eldritch.invoken.actor;
 
 import java.util.Collection;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -34,9 +35,10 @@ public class AgentInfo {
     final Profession profession;
     final FactionManager factions;
     private final Inventory inventory = new Inventory();
-    final Map<Discipline, SkillState> skills = new HashMap<Discipline, SkillState>();
-    final Set<AugmentationProto> knownAugmentations = new HashSet<AugmentationProto>();
-    final Map<Agent, Float> personalRelations = new HashMap<Agent, Float>();
+    final Map<Discipline, SkillState> skills = new HashMap<>();
+    final Set<AugmentationProto> knownAugmentations = new HashSet<>();
+    final Map<Agent, Float> personalRelations = new HashMap<>();
+    final Map<DamageType, Float> statusEffects = new EnumMap<>(DamageType.class);
 
     final PreparedAugmentations augmentations;
     float health;
@@ -87,7 +89,7 @@ public class AgentInfo {
 
         // post init basic state
         this.level = params.getLevel();
-        health = getBaseHealth();
+        health = getMaxHealth();
         energy = getBaseEnergy();
     }
 
@@ -108,7 +110,7 @@ public class AgentInfo {
 
         // post init basic state
         this.level = level;
-        health = getBaseHealth();
+        health = getMaxHealth();
         energy = getBaseEnergy();
 
         factions = new FactionManager(agent);
@@ -199,7 +201,7 @@ public class AgentInfo {
     }
 
     public void resetHealth() {
-        setHealth(getBaseHealth());
+        setHealth(getMaxHealth());
     }
 
     public void setHealth(float health) {
@@ -215,6 +217,10 @@ public class AgentInfo {
      */
     public float getBaseHealth() {
         return getWarfare() + getLevel() * 0.1f * getWarfare();
+    }
+    
+    public float getMaxHealth() {
+        return getBaseHealth() * getStatusEffect(DamageType.THERMAL);
     }
 
     public void resetEnergy() {
@@ -248,7 +254,7 @@ public class AgentInfo {
     }
 
     public float restore(float value) {
-        value *= BASE_ENERGY_RATE;
+        value *= BASE_ENERGY_RATE * getStatusEffect(DamageType.VIRAL);
         float delta = Math.max(Math.min(value, getBaseEnergy() - energy), 0);
         energy += delta;
         return delta;
@@ -261,9 +267,26 @@ public class AgentInfo {
     }
 
     public float heal(float value) {
-        float delta = Math.max(Math.min(value, getBaseHealth() - health), 0);
+        float delta = Math.max(Math.min(value, getMaxHealth() - health), 0);
         health += delta;
         return delta;
+    }
+    
+    public void addStatus(DamageType damage, float magnitude) {
+        if (!statusEffects.containsKey(damage)) {
+            statusEffects.put(damage, 0f);
+        }
+        statusEffects.put(damage, statusEffects.get(damage) + magnitude);
+    }
+    
+    public float getStatusEffect(DamageType damage) {
+        if (!statusEffects.containsKey(damage)) {
+            return 1;
+        }
+        
+        // status effect can never more than half something's effectiveness
+        float effect = Math.min(statusEffects.get(damage), 50f);
+        return 1f - effect / 100f;
     }
 
     public int getSkillLevel(Discipline d) {
