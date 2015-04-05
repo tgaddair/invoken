@@ -26,6 +26,7 @@ import com.google.common.base.Functions;
 
 public class AgentInfo {
     private static final float BASE_ENERGY_RATE = 3f;
+    private static final float MASTERY_BONUS = 0.5f;
 
     final String id;
     final String name;
@@ -36,6 +37,7 @@ public class AgentInfo {
     final FactionManager factions;
     private final Inventory inventory = new Inventory();
     final Map<Discipline, SkillState> skills = new HashMap<>();
+    final Map<Discipline, Double> skillBonus = new HashMap<>();
     final Set<AugmentationProto> knownAugmentations = new HashSet<>();
     final Map<Agent, Float> personalRelations = new HashMap<>();
     final Map<DamageType, Float> statusEffects = new EnumMap<>(DamageType.class);
@@ -71,6 +73,10 @@ public class AgentInfo {
         }
         for (Skill skill : params.getSkillList()) {
             skills.put(skill.getDiscipline(), new SkillState(skill));
+            skillBonus.put(skill.getDiscipline(), 1.0);
+        }
+        for (Discipline d : profession.getMasteries()) {
+            skillBonus.put(d, skillBonus.get(d) + MASTERY_BONUS);
         }
         for (AugmentationProto knownAug : params.getKnownAugIdList()) {
             knownAugmentations.add(knownAug);
@@ -106,6 +112,10 @@ public class AgentInfo {
         }
         for (Skill skill : profession.getSkillsFor(level)) {
             skills.put(skill.getDiscipline(), new SkillState(skill));
+            skillBonus.put(skill.getDiscipline(), 1.0);
+        }
+        for (Discipline d : profession.getMasteries()) {
+            skillBonus.put(d, skillBonus.get(d) + MASTERY_BONUS);
         }
 
         // post init basic state
@@ -298,19 +308,23 @@ public class AgentInfo {
     }
 
     public int getWarfare() {
-        return skills.get(Discipline.WARFARE).getLevel();
+        return getSkill(Discipline.WARFARE);
     }
 
     public int getAutomata() {
-        return skills.get(Discipline.AUTOMATA).getLevel();
+        return getSkill(Discipline.AUTOMATA);
     }
 
     public int getSubterfuge() {
-        return skills.get(Discipline.SUBTERFUGE).getLevel();
+        return getSkill(Discipline.SUBTERFUGE);
     }
 
     public int getCharisma() {
-        return skills.get(Discipline.CHARISMA).getLevel();
+        return getSkill(Discipline.CHARISMA);
+    }
+    
+    private int getSkill(Discipline d) {
+        return (int) (skills.get(Discipline.WARFARE).getLevel() * skillBonus.get(d));
     }
 
     public float getOffense() {
@@ -358,39 +372,36 @@ public class AgentInfo {
         activeDefense += bonus;
     }
     
-    public float getDamageReduction(DamageType damage, float magnitude) {
-        // cannot reduce to less than 25% of the total
-        float reduction = getArmorReduction(damage, magnitude) + getResistance(damage, magnitude);
-        return Math.min(reduction, 4);
+    public float getDefense(DamageType damage) {
+        return getResistance(damage) + getArmorRating(damage);
     }
     
-    public float getArmorReduction(DamageType damage, float magnitude) {
+    public float getArmorRating(DamageType damage) {
         float armorRating = 0;
         if (inventory.hasOutfit()) {
             Outfit outfit = inventory.getOutfit();
             armorRating += outfit.getDefense(damage);
         }
-        return 1f + armorRating / magnitude;
+        return armorRating;
     }
     
-    public float getResistance(DamageType damage, float magnitude) {
+    public float getResistance(DamageType damage) {
         float rating = 0;
         switch (damage) {
-            case PHYSICAL:
-                // scale with warfare
-                // at 100 warfare, we have 20 resistance naturally
-                rating += getWarfare() / 5;
+            case RADIOACTIVE:
             case VIRAL:
                 // scale with automata
                 rating += getAutomata() / 5;
             default:
-                // nothing
+                // scale with warfare
+                // at 100 warfare, we have 20 resistance naturally
+                rating += getWarfare() / 5;
         }
         
         // overall level resistance
         // at level 25, we have 25 resistance naturally
         rating += getLevel();
-        return rating / magnitude;
+        return rating;
     }
     
     public float getDamageScale(DamageType damage) {

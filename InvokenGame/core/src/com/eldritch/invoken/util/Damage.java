@@ -55,11 +55,11 @@ public class Damage {
             float attackMod = attacker.getInfo().getAttackModifier();
             for (DamageMod mod : components) {
                 // handle each damage type separately
-                float baseDamage = mod.getMagnitude();
-                float dr = defender.getInfo().getDamageReduction(mod.getDamage(), baseDamage);
+                float atk = mod.getMagnitude() * attackMod;
+                float def = defender.getInfo().getDefense(mod.getDamage());
                 float s = defender.getInfo().getDamageScale(mod.getDamage());
-                float magnitude = s * ((baseDamage * attackMod) / dr);
-                System.out.println(String.format("base %.2f reduction %.2f scale %.2f", baseDamage, dr, s));
+                float magnitude = s * getDamage(atk, def);
+//                System.out.println(String.format("atk %.2f def %.2f scale %.2f", atk, def, s));
                 damage.add(mod.getDamage(), magnitude);
             }
             
@@ -69,6 +69,19 @@ public class Damage {
         
         // lazily resolve the magnitude, but only do so once
         return reified.get(defender);
+    }
+    
+    private float getDamage(float atk, float def) {
+        double damage = 0;
+        if (atk < def) {
+            // Damage = 0.4*(Atk^3/ Def^2) - 0.09*(Atk^2/ Def)+0.1*Atk
+            damage = 0.4f * (Math.pow(atk, 3f) / Math.pow(def, 2f)) 
+                    - 0.09 * (Math.pow(atk, 2f) / def) + 0.1f * atk;
+        } else {
+            // Damage = Atk - 0.79* Def*e^(-0.27* Def/Atk)
+            damage = atk - 0.79f * def * Math.pow(Math.E, -0.27f * def / atk);
+        }
+        return (float) damage;
     }
 
     public static Damage from(Agent attacker, RangedWeapon weapon) {
