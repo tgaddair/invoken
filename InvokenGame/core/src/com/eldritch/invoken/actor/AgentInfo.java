@@ -90,7 +90,7 @@ public class AgentInfo {
         // post init basic state
         this.level = params.getLevel();
         health = getMaxHealth();
-        energy = getBaseEnergy();
+        energy = getMaxEnergy();
     }
 
     public AgentInfo(Agent agent, Profession profession, int level) {
@@ -111,7 +111,7 @@ public class AgentInfo {
         // post init basic state
         this.level = level;
         health = getMaxHealth();
-        energy = getBaseEnergy();
+        energy = getMaxEnergy();
 
         factions = new FactionManager(agent);
     }
@@ -224,7 +224,7 @@ public class AgentInfo {
     }
 
     public void resetEnergy() {
-        setEnergy(getBaseEnergy());
+        setEnergy(getMaxEnergy());
     }
 
     public void setEnergy(float energy) {
@@ -236,15 +236,19 @@ public class AgentInfo {
     }
 
     public float getEnergyPercent() {
-        return energy / getBaseEnergy();
+        return energy / getMaxEnergy();
     }
 
     public void changeBaseEnergy(float delta) {
         energyOffset += delta;
     }
-
+    
     public float getBaseEnergy() {
-        return 10 + getAutomata() / 2 + energyOffset;
+        return 10f + getAutomata() / 2f + getLevel() * 0.01f * getAutomata();
+    }
+
+    public float getMaxEnergy() {
+        return getBaseEnergy() + energyOffset;
     }
 
     public float expend(float value) {
@@ -255,7 +259,7 @@ public class AgentInfo {
 
     public float restore(float value) {
         value *= BASE_ENERGY_RATE * getStatusEffect(DamageType.VIRAL);
-        float delta = Math.max(Math.min(value, getBaseEnergy() - energy), 0);
+        float delta = Math.max(Math.min(value, getMaxEnergy() - energy), 0);
         energy += delta;
         return delta;
     }
@@ -373,16 +377,18 @@ public class AgentInfo {
         switch (damage) {
             case PHYSICAL:
                 // scale with warfare
-                rating += getWarfare() / 2;
+                // at 100 warfare, we have 20 resistance naturally
+                rating += getWarfare() / 5;
             case VIRAL:
                 // scale with automata
-                rating += getAutomata() / 2;
+                rating += getAutomata() / 5;
             default:
                 // nothing
         }
         
         // overall level resistance
-        rating += getLevel() * 5;
+        // at level 25, we have 25 resistance naturally
+        rating += getLevel();
         return rating / magnitude;
     }
     

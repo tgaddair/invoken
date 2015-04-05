@@ -53,7 +53,7 @@ public class StatusBar extends ProgressBar {
 
         @Override
         public float getBaseStatus(Agent agent) {
-            return agent.getInfo().getBaseEnergy();
+            return agent.getInfo().getMaxEnergy();
         }
 
         @Override
