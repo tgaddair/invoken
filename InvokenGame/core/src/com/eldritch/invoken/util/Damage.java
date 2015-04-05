@@ -59,6 +59,7 @@ public class Damage {
                 float dr = defender.getInfo().getDamageReduction(mod.getDamage(), baseDamage);
                 float s = defender.getInfo().getDamageScale(mod.getDamage());
                 float magnitude = s * ((baseDamage * attackMod) / dr);
+                System.out.println(String.format("base %.2f reduction %.2f scale %.2f", baseDamage, dr, s));
                 damage.add(mod.getDamage(), magnitude);
             }
             

@@ -216,7 +216,7 @@ public class AgentInfo {
      * hp = warfare + level * 0.1 * warfare
      */
     public float getBaseHealth() {
-        return getWarfare() + getLevel() * 0.1f * getWarfare();
+        return getWarfare() + getLevel() * 0.05f * getWarfare();
     }
     
     public float getMaxHealth() {
@@ -359,8 +359,9 @@ public class AgentInfo {
     }
     
     public float getDamageReduction(DamageType damage, float magnitude) {
+        // cannot reduce to less than 25% of the total
         float reduction = getArmorReduction(damage, magnitude) + getResistance(damage, magnitude);
-        return reduction;
+        return Math.min(reduction, 4);
     }
     
     public float getArmorReduction(DamageType damage, float magnitude) {

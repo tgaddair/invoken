@@ -271,7 +271,6 @@ public class EncounterGenerator extends BspGenerator {
         public int compareTo(WeightedEncounter other) {
             return Double.compare(this.cumulativeWeight, other.cumulativeWeight);
         }
-
     }
 
     private static EncounterNode generateDependencyGraph(Collection<EncounterRoom> encounters) {

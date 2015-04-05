@@ -5,10 +5,10 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -41,6 +41,7 @@ import com.eldritch.invoken.proto.Disciplines.Discipline;
 import com.eldritch.invoken.screens.GameScreen;
 import com.eldritch.invoken.ui.MultiTextureRegionDrawable;
 import com.eldritch.invoken.util.Settings;
+import com.eldritch.invoken.util.WeightedSample;
 import com.google.common.collect.ImmutableList;
 
 public enum Profession {
@@ -370,41 +371,27 @@ public enum Profession {
 			skills.put(d, Skill.newBuilder().setDiscipline(d).setLevel(10));
 		}
 		
-		// Assign 10 additional skill levels for each mastery
+		// Assign skill points wisely.
+		Map<Discipline, Double> weights = new HashMap<>();
+		for (Discipline d : Discipline.values()) {
+		    weights.put(d, 1.0);
+		}
+		
+		// In general, each master should be 50% more likely than a non-master.
+        // So if we double down on a mastery, it should be twice as represented as other skills.
 		Collection<Discipline> masteries = getMasteries();
 		for (Discipline d : masteries) {
-			Skill.Builder s = skills.get(d);
-			s.setLevel(s.getLevel() + 10);
+		    weights.put(d, weights.get(d) + 0.5);
 		}
+		WeightedSample<Discipline> sample = new WeightedSample<>(weights);
 		
-		// Start leveling from level 2.  5 skill points per level.  Assign skill points
-		// intelligently.
-		// In general, we want to maintain a 2:2:1:1 ratio.
-		// For level n, we have 5(n-1) skill points to distribute
-		int points = 5 * (level - 1);
-		
-		// Divide the first 1/3 of the points into a separate pool for masteries.
-		// Spread them uniformly.
-		int available = points / 3;
-		
-		int used = 0;
-		for (Discipline d : masteries) {
-			int a = available / 2;
-			Skill.Builder s = skills.get(d);
-			s.setLevel(s.getLevel() + a);
-			used += a;
-		}
-		
-		// Now we want to take the remainder and distribute them randomly
-		List<Skill.Builder> list = new ArrayList<Skill.Builder>(skills.values()); 
-		Random rand = new Random();
-		int remaining = points - used;
-		while (remaining > 0) {
-			int i = rand.nextInt(4);
-			Skill.Builder s = list.get(i);
-			s.setLevel(s.getLevel() + 1);
-			remaining--;
-		}
+		// Start leveling from level 2.  1 skill point per level.
+        int points = level - 1;
+        for (int i = 0; i < points; i++) {
+            Discipline d = sample.sample();
+            Skill.Builder s = skills.get(d);
+            s.setLevel(s.getLevel() + 1);
+        }
 		
 		// Construct the skills
 		List<Skill> result = new ArrayList<Skill>();
