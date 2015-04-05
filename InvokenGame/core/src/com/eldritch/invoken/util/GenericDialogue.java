@@ -20,13 +20,17 @@ public class GenericDialogue {
     public static String forDuress(Agent agent) {
         return "Put down your weapon!";
     }
-
+    
     public static String forSuspiciousActivity(Agent agent) {
         return "I'm watching you, scum.";
     }
 
     public static String forHostility(Agent agent) {
         return sample(HOSTILITY);
+    }
+    
+    public static String forDeadAlly(Agent agent) {
+        return "Find whoever did this!";
     }
 
     public static String thank(Agent agent) {

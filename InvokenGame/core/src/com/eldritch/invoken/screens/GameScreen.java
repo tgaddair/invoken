@@ -32,6 +32,7 @@ import com.eldritch.invoken.actor.type.Player;
 import com.eldritch.invoken.encounter.Location;
 import com.eldritch.invoken.encounter.proc.LocationGenerator;
 import com.eldritch.invoken.proto.Actors.PlayerActor;
+import com.eldritch.invoken.proto.Effects.DamageType;
 import com.eldritch.invoken.proto.Locations;
 import com.eldritch.invoken.ui.ActionBar;
 import com.eldritch.invoken.ui.DialogueMenu;
@@ -377,6 +378,13 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
                 font.draw(batch, String.format("Target: %s", targetName), 10, getHeight()
                         - (30 + 20 * i++));
             }
+            
+            font.draw(batch, String.format("Thermal: %.2f", info.getStatusEffect(DamageType.THERMAL)), 10, getHeight()
+                    - (30 + 20 * i++));
+            font.draw(batch, String.format("Viral: %.2f", info.getStatusEffect(DamageType.VIRAL)), 10, getHeight()
+                    - (30 + 20 * i++));
+            font.draw(batch, String.format("Radioactive: %.2f", info.getStatusEffect(DamageType.RADIOACTIVE)), 10, getHeight()
+                    - (30 + 20 * i++));
 
             batch.end();
         }
