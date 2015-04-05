@@ -5,12 +5,12 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
+import com.eldritch.invoken.actor.Species;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.HandledBullet;
 import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.effects.Frenzied;
 import com.eldritch.invoken.encounter.Location;
-import com.eldritch.invoken.proto.Actors.ActorParams.Species;
 import com.eldritch.invoken.screens.GameScreen;
 import com.eldritch.invoken.util.Damage;
 
@@ -80,7 +80,7 @@ public class Frenzy extends ProjectileAugmentation {
 
         @Override
         protected void apply(Agent owner, Agent target) {
-        	if (target.getInfo().getSpecies() != Species.AUTOMATON) {
+        	if (target.getInfo().getSpecies() != Species.Automaton) {
         		target.addEffect(new Frenzied(owner, target, 3));
         	}
         }

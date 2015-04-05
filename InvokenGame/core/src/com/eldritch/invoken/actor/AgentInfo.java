@@ -17,7 +17,6 @@ import com.eldritch.invoken.proto.Actors.ActorParams;
 import com.eldritch.invoken.proto.Actors.ActorParams.FactionStatus;
 import com.eldritch.invoken.proto.Actors.ActorParams.InventoryItem;
 import com.eldritch.invoken.proto.Actors.ActorParams.Skill;
-import com.eldritch.invoken.proto.Actors.ActorParams.Species;
 import com.eldritch.invoken.proto.Actors.NonPlayerActor;
 import com.eldritch.invoken.proto.Augmentations.AugmentationProto;
 import com.eldritch.invoken.proto.Disciplines.Discipline;
@@ -55,7 +54,7 @@ public class AgentInfo {
     public AgentInfo(Agent agent, ActorParams params, boolean unique) {
         this.id = params.getId();
         this.name = params.getName();
-        this.species = params.getSpecies();
+        this.species = Species.from(params.getSpecies());
         this.unique = unique;
 
         augmentations = new PreparedAugmentations(agent);
@@ -95,7 +94,7 @@ public class AgentInfo {
     public AgentInfo(Agent agent, Profession profession, int level) {
         this.id = "Player";
         this.name = "Player";
-        this.species = Species.HUMAN;
+        this.species = Species.from(ActorParams.Species.HUMAN);
         this.unique = true;
         augmentations = new PreparedAugmentations(agent);
 
@@ -331,7 +330,12 @@ public class AgentInfo {
     public void modActiveDefense(int bonus) {
         activeDefense += bonus;
     }
-
+    
+    public float getDamageReduction(DamageType damage, float magnitude) {
+        float reduction = getArmorReduction(damage, magnitude) + getResistance(damage, magnitude);
+        return reduction;
+    }
+    
     public float getArmorReduction(DamageType damage, float magnitude) {
         float armorRating = 0;
         if (inventory.hasOutfit()) {
@@ -339,6 +343,28 @@ public class AgentInfo {
             armorRating += outfit.getDefense(damage);
         }
         return 1f + armorRating / magnitude;
+    }
+    
+    public float getResistance(DamageType damage, float magnitude) {
+        float rating = 0;
+        switch (damage) {
+            case PHYSICAL:
+                // scale with warfare
+                rating += getWarfare() / 2;
+            case VIRAL:
+                // scale with automata
+                rating += getAutomata() / 2;
+            default:
+                // nothing
+        }
+        
+        // overall level resistance
+        rating += getLevel() * 5;
+        return rating / magnitude;
+    }
+    
+    public float getDamageScale(DamageType damage) {
+        return species.getDamageScale(damage);
     }
 
     public float getDefenseBonus() {
@@ -369,7 +395,7 @@ public class AgentInfo {
     public ActorParams serialize() {
         ActorParams.Builder builder = ActorParams.newBuilder();
         builder.setName(name);
-        builder.setSpecies(species);
+        builder.setSpecies(species.toProto());
         builder.setProfession(profession.toProto());
         builder.setLevel(level);
 

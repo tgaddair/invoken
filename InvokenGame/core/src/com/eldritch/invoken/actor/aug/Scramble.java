@@ -1,11 +1,11 @@
 package com.eldritch.invoken.actor.aug;
 
 import com.badlogic.gdx.math.Vector2;
+import com.eldritch.invoken.actor.Species;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.effects.Scrambled;
 import com.eldritch.invoken.encounter.Location;
-import com.eldritch.invoken.proto.Actors.ActorParams.Species;
 
 public class Scramble extends Augmentation {
 	private static class Holder {
@@ -22,7 +22,7 @@ public class Scramble extends Augmentation {
     
 	@Override
 	public boolean isValid(Agent owner, Agent target) {
-		return target.getInfo().getSpecies() == Species.AUTOMATON;
+		return target.getInfo().getSpecies() == Species.Automaton;
 	}
 
 	@Override
@@ -60,7 +60,7 @@ public class Scramble extends Augmentation {
 
 		@Override
 		public void apply(Location location) {
-			if (target.getInfo().getSpecies() == Species.AUTOMATON) {
+			if (target.getInfo().getSpecies() == Species.Automaton) {
 				target.addEffect(new Scrambled(owner, target, Scramble.this, getCost()));
 			}
 		}

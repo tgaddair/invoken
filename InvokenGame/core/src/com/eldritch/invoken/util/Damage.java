@@ -46,9 +46,9 @@ public class Damage {
             for (DamageMod mod : components) {
                 // handle each damage type separately
                 float baseDamage = mod.getMagnitude();
-                float armorReduction = defender.getInfo()
-                        .getArmorReduction(mod.getDamage(), baseDamage);
-                total += (baseDamage * attackMod) / armorReduction;
+                float dr = defender.getInfo().getDamageReduction(mod.getDamage(), baseDamage);
+                float s = defender.getInfo().getDamageScale(mod.getDamage());
+                total += s * ((baseDamage * attackMod) / dr);
             }
             System.out.println(String.format("%s -> %s = %.2f", attacker, defender, total));
             magnitudes.put(defender, total);
