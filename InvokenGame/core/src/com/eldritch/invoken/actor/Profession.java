@@ -31,6 +31,7 @@ import com.eldritch.invoken.actor.aug.RendWeapon;
 import com.eldritch.invoken.actor.aug.Resurrect;
 import com.eldritch.invoken.actor.aug.Scramble;
 import com.eldritch.invoken.actor.aug.ThrowGrenade;
+import com.eldritch.invoken.actor.aug.Trap;
 import com.eldritch.invoken.actor.items.Outfit;
 import com.eldritch.invoken.actor.type.Human;
 import com.eldritch.invoken.actor.type.Agent.Activity;
@@ -264,7 +265,7 @@ public enum Profession {
 		
 		@Override
 		public List<Augmentation> getStartingAugmentations() {
-			return ImmutableList.<Augmentation>of(FireWeapon.getInstance());
+			return ImmutableList.<Augmentation>of(FireWeapon.getInstance(), Trap.getInstance());
 		}
 
         @Override

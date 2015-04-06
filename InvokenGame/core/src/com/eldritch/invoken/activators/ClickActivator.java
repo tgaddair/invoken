@@ -19,6 +19,14 @@ public abstract class ClickActivator extends BasicActivator {
 	    this.height = height;
 	}
 	
+	public int getWidth() {
+	    return width;
+	}
+	
+	public int getHeight() {
+	    return height;
+	}
+	
 	@Override
 	public void update(float delta, Location location) {
 	    // does nothing
