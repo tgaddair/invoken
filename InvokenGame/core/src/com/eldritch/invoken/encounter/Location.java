@@ -365,6 +365,14 @@ public class Location {
         }
     }
     
+    public void addActivator(Activator activator) {
+        activators.add(activator);
+    }
+    
+    public void removeActivator(Activator activator) {
+        activators.remove(activator);
+    }
+    
     public boolean hasAgentWithId(String id) {
         return ids.containsKey(id);
     }

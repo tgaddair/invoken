@@ -10,7 +10,7 @@ import com.eldritch.invoken.proto.Effects.DamageType;
 import com.eldritch.invoken.util.Damage;
 
 public class Trap extends Augmentation {
-    private static final int DAMAGE_SCALE = 25;
+    private static final int DAMAGE_SCALE = 100;
     
 	private static class Holder {
         private static final Trap INSTANCE = new Trap();
@@ -65,7 +65,9 @@ public class Trap extends Augmentation {
 		@Override
 		public void apply(Location location) {
 		    Damage damage = Damage.from(owner, DamageType.PHYSICAL, getBaseDamage(owner));
-		    location.addEntity(new ProximityMine(NaturalVector2.of(target), damage));
+		    ProximityMine entity = new ProximityMine(NaturalVector2.of(target), damage);
+		    location.addEntity(entity);
+		    location.addActivator(entity);
 		}
 		
 		@Override

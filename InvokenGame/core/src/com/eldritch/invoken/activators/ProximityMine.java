@@ -60,7 +60,13 @@ public class ProximityMine extends ClickActivator implements ProximityActivator,
 
     @Override
     public void activate(Agent agent, Location location) {
+        System.out.println("click");
         detonation.detonate();
+    }
+    
+    @Override
+    protected boolean canActivate(Agent agent, float x, float y) {
+        return !detonation.isActive() && agent == detonation.damage.getSource();
     }
 
     @Override
@@ -75,6 +81,7 @@ public class ProximityMine extends ClickActivator implements ProximityActivator,
 
     @Override
     public void dispose() {
+        detonation.damage.getSource().getLocation().removeActivator(this);
     }
 
     private static class Detonation {
