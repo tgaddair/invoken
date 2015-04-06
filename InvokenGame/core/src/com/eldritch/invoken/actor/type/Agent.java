@@ -684,6 +684,10 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     public Vector2 getRenderPosition() {
         return position;
     }
+    
+    public Vector2 getTargetingPosition() {
+        return getRenderPosition();
+    }
 
     @Override
     public Vector2 getPosition() {

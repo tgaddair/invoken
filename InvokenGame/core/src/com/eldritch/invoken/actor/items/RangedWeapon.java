@@ -231,6 +231,13 @@ public class RangedWeapon extends Item {
         }
 
         private void apply() {
+            // TODO: strange bug that occurs under somewhat uncertain circumstances
+            // sometimes a ray will pass right through the center of the target without being
+            // recognized as a valid collision; it appears to be related to being targeted by the
+            // weapon pointing to the left, and when there is an obstruction occluding the shot
+            // that lacks the right category bits to register a collision itself
+            // notice that the targeting reticle will not pass
+            // through it, even though it is marked as a low obstacle
             float range = owner.getWeaponSentry().getRange(); 
             target = owner.getTargeting(position, direction.cpy().scl(range).add(position));
             width = range * target.getFraction();

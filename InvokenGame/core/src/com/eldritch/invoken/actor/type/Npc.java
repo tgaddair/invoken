@@ -439,7 +439,7 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
             threat.maybeSetSuspicious();
         } else if (other == getTarget()) {
             lastSeen.setPosition(other);
-            setFocusPoint(other.getPosition());
+            setFocusPoint(other.getTargetingPosition());
             threat.maybeSetSuspicious();
         }
 
@@ -461,7 +461,7 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
         if (other != null) {
             detected.add(other);
             lastSeen.setPosition(other);
-            setFocusPoint(other.getPosition());
+            setFocusPoint(other.getTargetingPosition());
         }
     }
 
