@@ -14,7 +14,7 @@ import com.eldritch.invoken.util.Damage;
 public class Trap extends Augmentation {
     private static final int DAMAGE_SCALE = 100;
     private static final float MAX_DST2 = 1f;
-    private static final float COST = -10f;
+    private static final int COST = 10;
     
 	private static class Holder {
         private static final Trap INSTANCE = new Trap();
@@ -28,11 +28,6 @@ public class Trap extends Augmentation {
         super("trap", false);
     }
     
-    @Override
-    public boolean isValid(Agent owner) {
-        return owner.getInfo().getEnergy() >= Math.abs(COST);
-    }
-    
 	@Override
 	public boolean isValid(Agent owner, Agent target) {
 	    return false;
@@ -40,8 +35,7 @@ public class Trap extends Augmentation {
 
 	@Override
 	public boolean isValid(Agent owner, Vector2 target) {
-	    return isValid(owner) 
-	            && owner.getLocation().isGround(NaturalVector2.of(target)) 
+	    return owner.getLocation().isGround(NaturalVector2.of(target)) 
 	            && owner.getPosition().dst2(target) < MAX_DST2;
 	}
 
@@ -57,7 +51,7 @@ public class Trap extends Augmentation {
 	
 	@Override
     public int getCost(Agent owner) {
-        return 2;
+        return COST;
     }
 	
     @Override
@@ -76,7 +70,7 @@ public class Trap extends Augmentation {
 		@Override
 		public void apply(Location location) {
 		    Damage damage = Damage.from(owner, DamageType.PHYSICAL, getBaseDamage(owner));
-		    final ProximityMine mine = new ProximityMine(target, damage, COST);
+		    final ProximityMine mine = new ProximityMine(target, damage);
 		    location.addEntity(mine);
 		    location.addActivator(mine);
 		    

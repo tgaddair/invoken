@@ -15,16 +15,12 @@ public class DamagedEnergy extends BasicEffect {
 
     @Override
     public void doApply() {
-        System.out.println("before apply: " + target.getInfo().getMaxEnergy());
-        target.getInfo().changeMaxEnergy(cost);
-        System.out.println("after apply: " + target.getInfo().getMaxEnergy());
+        target.getInfo().changeMaxEnergy(-cost);
     }
 
     @Override
     public void dispel() {
-        System.out.println("before dispel: " + target.getInfo().getMaxEnergy());
-        target.getInfo().changeMaxEnergy(-cost);
-        System.out.println("after dispel: " + target.getInfo().getMaxEnergy());
+        target.getInfo().changeMaxEnergy(cost);
     }
 
     @Override
