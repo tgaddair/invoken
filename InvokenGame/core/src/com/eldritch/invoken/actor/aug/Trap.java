@@ -28,6 +28,11 @@ public class Trap extends Augmentation {
         super("trap", false);
     }
     
+    @Override
+    public boolean isValid(Agent owner) {
+        return owner.getInfo().getEnergy() >= Math.abs(COST);
+    }
+    
 	@Override
 	public boolean isValid(Agent owner, Agent target) {
 	    return false;
@@ -35,7 +40,8 @@ public class Trap extends Augmentation {
 
 	@Override
 	public boolean isValid(Agent owner, Vector2 target) {
-	    return owner.getLocation().isGround(NaturalVector2.of(target)) 
+	    return isValid(owner) 
+	            && owner.getLocation().isGround(NaturalVector2.of(target)) 
 	            && owner.getPosition().dst2(target) < MAX_DST2;
 	}
 
