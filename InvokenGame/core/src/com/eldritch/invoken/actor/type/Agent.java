@@ -1798,7 +1798,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
             
             // move direction towards destination
             float theta = direction.angle(destination);
-            direction.rotate(theta * delta * ROTATION_SCALE);
+            direction.rotate(theta * delta * ROTATION_SCALE * info.getAttackModifier());
             
             position.set(origin.x + direction.x, origin.y + direction.y).sub(offset);
             clear();
