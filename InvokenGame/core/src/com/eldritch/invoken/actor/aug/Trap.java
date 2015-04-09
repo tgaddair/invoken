@@ -13,7 +13,7 @@ import com.eldritch.invoken.util.Damage;
 
 public class Trap extends Augmentation {
     private static final int DAMAGE_SCALE = 100;
-    private static final float MAX_DST2 = 1f;
+    private static final float MAX_DST2 = 1.5f;
     private static final int COST = 10;
     
 	private static class Holder {
