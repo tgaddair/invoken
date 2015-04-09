@@ -4,6 +4,7 @@ import java.awt.Dimension;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,6 +23,7 @@ import com.eldritch.invoken.proto.Locations.Room.Size;
 import com.eldritch.scifirpg.editor.AssetTablePanel;
 import com.eldritch.scifirpg.editor.panel.AssetEditorPanel;
 import com.google.common.base.Optional;
+import com.google.protobuf.TextFormat;
 import com.jgoodies.forms.builder.DefaultFormBuilder;
 import com.jgoodies.forms.layout.FormLayout;
 
@@ -49,8 +51,15 @@ public class RoomTable extends MajorAssetTable<Room> {
 	}
 
 	@Override
-	protected Room readFrom(InputStream is) throws IOException {
+	protected Room readFromBinary(InputStream is) throws IOException {
 		return Room.parseFrom(is);
+	}
+	
+	@Override
+	protected Room readFromText(InputStream is) throws IOException {
+		Room.Builder builder = Room.newBuilder();
+		TextFormat.merge(new InputStreamReader(is), builder);
+		return builder.build();
 	}
 
 	@Override

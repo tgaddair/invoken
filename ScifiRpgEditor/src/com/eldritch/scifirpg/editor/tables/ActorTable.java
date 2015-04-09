@@ -2,6 +2,7 @@ package com.eldritch.scifirpg.editor.tables;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,6 +13,7 @@ import com.eldritch.scifirpg.editor.panel.ActorEditorPanel;
 import com.eldritch.invoken.proto.Actors.ActorParams;
 import com.eldritch.invoken.proto.Actors.NonPlayerActor;
 import com.google.common.base.Optional;
+import com.google.protobuf.TextFormat;
 
 public class ActorTable extends MajorAssetTable<NonPlayerActor> {
 	private static final long serialVersionUID = 1L;
@@ -58,7 +60,14 @@ public class ActorTable extends MajorAssetTable<NonPlayerActor> {
 	}
 
 	@Override
-	protected NonPlayerActor readFrom(InputStream is) throws IOException {
+	protected NonPlayerActor readFromBinary(InputStream is) throws IOException {
 		return NonPlayerActor.parseFrom(is);
+	}
+
+	@Override
+	protected NonPlayerActor readFromText(InputStream is) throws IOException {
+		NonPlayerActor.Builder builder = NonPlayerActor.newBuilder();
+		TextFormat.merge(new InputStreamReader(is), builder);
+		return builder.build();
 	}
 }

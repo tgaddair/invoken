@@ -2,6 +2,7 @@ package com.eldritch.scifirpg.editor.tables;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -9,6 +10,7 @@ import javax.swing.JPanel;
 import com.eldritch.scifirpg.editor.panel.FactionEditorPanel;
 import com.eldritch.invoken.proto.Factions.Faction;
 import com.google.common.base.Optional;
+import com.google.protobuf.TextFormat;
 
 public class FactionTable extends MajorAssetTable<Faction> {
 	private static final long serialVersionUID = 1L;
@@ -41,7 +43,14 @@ public class FactionTable extends MajorAssetTable<Faction> {
 	}
 
 	@Override
-	protected Faction readFrom(InputStream is) throws IOException {
+	protected Faction readFromBinary(InputStream is) throws IOException {
 		return Faction.parseFrom(is);
+	}
+	
+	@Override
+	protected Faction readFromText(InputStream is) throws IOException {
+		Faction.Builder builder = Faction.newBuilder();
+		TextFormat.merge(new InputStreamReader(is), builder);
+		return builder.build();
 	}
 }

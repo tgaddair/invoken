@@ -3,6 +3,7 @@ package com.eldritch.scifirpg.editor.tables;
 import java.awt.Dimension;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,6 +23,7 @@ import com.eldritch.invoken.proto.Locations.Encounter;
 import com.eldritch.invoken.proto.Locations.Light;
 import com.eldritch.invoken.proto.Locations.Location;
 import com.google.common.base.Optional;
+import com.google.protobuf.TextFormat;
 import com.jgoodies.forms.builder.DefaultFormBuilder;
 import com.jgoodies.forms.layout.FormLayout;
 
@@ -61,8 +63,15 @@ public class LocationTable extends MajorAssetTable<Location> {
 	}
 
 	@Override
-	protected Location readFrom(InputStream is) throws IOException {
+	protected Location readFromBinary(InputStream is) throws IOException {
 		return Location.parseFrom(is);
+	}
+	
+	@Override
+	protected Location readFromText(InputStream is) throws IOException {
+		Location.Builder builder = Location.newBuilder();
+		TextFormat.merge(new InputStreamReader(is), builder);
+		return builder.build();
 	}
 
 	@Override

@@ -3,6 +3,7 @@ package com.eldritch.scifirpg.editor.tables;
 import java.awt.Dimension;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,6 +27,7 @@ import com.eldritch.invoken.proto.Items.Item.DamageMod;
 import com.eldritch.invoken.proto.Items.Item.Requirement;
 import com.eldritch.invoken.proto.Items.Item.Type;
 import com.google.common.base.Optional;
+import com.google.protobuf.TextFormat;
 import com.jgoodies.forms.builder.DefaultFormBuilder;
 import com.jgoodies.forms.layout.FormLayout;
 
@@ -61,8 +63,15 @@ public class ItemTable extends MajorAssetTable<Item> {
 	}
 
 	@Override
-	protected Item readFrom(InputStream is) throws IOException {
+	protected Item readFromBinary(InputStream is) throws IOException {
 		return Item.parseFrom(is);
+	}
+	
+	@Override
+	protected Item readFromText(InputStream is) throws IOException {
+		Item.Builder builder = Item.newBuilder();
+		TextFormat.merge(new InputStreamReader(is), builder);
+		return builder.build();
 	}
 
 	@Override
