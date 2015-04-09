@@ -11,7 +11,6 @@ import com.eldritch.invoken.actor.type.TemporaryEntity;
 import com.eldritch.invoken.effects.Bleed;
 import com.eldritch.invoken.effects.Stunned;
 import com.eldritch.invoken.encounter.Location;
-import com.eldritch.invoken.encounter.NaturalVector2;
 import com.eldritch.invoken.screens.GameScreen;
 import com.eldritch.invoken.util.Damage;
 
@@ -25,9 +24,9 @@ public class ProximityMine extends ClickActivator implements ProximityActivator,
     private final Vector2 center;
     private final Detonation detonation;
 
-    public ProximityMine(NaturalVector2 position, Damage damage) {
-        super(position);
-        center = new Vector2(position.x + 0.5f, position.y + 0.5f);
+    public ProximityMine(Vector2 position, Damage damage) {
+        super(position.x - 0.5f, position.y - 0.5f, 1, 1);
+        center = new Vector2(position.x, position.y);
         detonation = new Detonation(damage, center, RADIUS);
     }
     
@@ -36,7 +35,14 @@ public class ProximityMine extends ClickActivator implements ProximityActivator,
         if (detonation.isActive()) {
             detonation.update(delta);
         } else {
+            Agent source = detonation.damage.getSource();
             for (Agent agent : location.getActiveEntities()) {
+                if (agent == source || agent.isFollowing(source)) {
+                    // can't trip our own mine
+                    // also prevent it for followers, otherwise placing them could be cumbersome
+                    continue;
+                }
+                
                 if (inProximity(agent)) {
                     detonation.detonate();
                     break;
@@ -60,8 +66,7 @@ public class ProximityMine extends ClickActivator implements ProximityActivator,
 
     @Override
     public void activate(Agent agent, Location location) {
-        System.out.println("click");
-        detonation.detonate();
+        detonation.cancel();
     }
     
     @Override
@@ -72,6 +77,12 @@ public class ProximityMine extends ClickActivator implements ProximityActivator,
     @Override
     public boolean inProximity(Agent agent) {
         return proximityCache.inProximity(center, agent);
+    }
+    
+    @Override
+    public float getZ() {
+        // always below
+        return Float.POSITIVE_INFINITY;
     }
 
     @Override
@@ -95,6 +106,7 @@ public class ProximityMine extends ClickActivator implements ProximityActivator,
         
         private boolean active = false;
         private float elapsed = 0;
+        private boolean canceled = false;
         
         public Detonation(Damage damage, Vector2 position, float radius) {
             this.damage = damage;
@@ -103,11 +115,20 @@ public class ProximityMine extends ClickActivator implements ProximityActivator,
         }
         
         public void detonate() {
+            if (canceled) {
+                // too late
+                return;
+            }
+            
             Location location = damage.getSource().getLocation();
             for (Agent neighbor : location.getActiveEntities()) {
                 apply(neighbor);
             }
             active = true;
+        }
+        
+        public void cancel() {
+            canceled = true;
         }
 
         private void apply(Agent agent) {
@@ -139,7 +160,7 @@ public class ProximityMine extends ClickActivator implements ProximityActivator,
         }
         
         public boolean isFinished() {
-            return explosion.isAnimationFinished(elapsed);
+            return canceled || explosion.isAnimationFinished(elapsed);
         }
     }
 }

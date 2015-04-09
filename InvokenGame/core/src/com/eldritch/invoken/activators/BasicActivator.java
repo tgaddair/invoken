@@ -10,7 +10,11 @@ public abstract class BasicActivator implements Activator {
     private final Vector2 position = new Vector2();
     
     public BasicActivator(NaturalVector2 position) {
-        this.position.set(position.x, position.y);
+        this(position.x, position.y);
+    }
+    
+    public BasicActivator(float x, float y) {
+        this.position.set(x, y);
     }
     
     @Override

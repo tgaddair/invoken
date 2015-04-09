@@ -19,6 +19,12 @@ public abstract class ClickActivator extends BasicActivator {
 	    this.height = height;
 	}
 	
+	public ClickActivator(float x, float y, int width, int height) {
+        super(x, y);
+        this.width = width;
+        this.height = height;
+    }
+	
 	public int getWidth() {
 	    return width;
 	}

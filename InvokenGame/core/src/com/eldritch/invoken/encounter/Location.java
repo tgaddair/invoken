@@ -371,6 +371,7 @@ public class Location {
     
     public void removeActivator(Activator activator) {
         activators.remove(activator);
+        drawables.remove(activator);
     }
     
     public boolean hasAgentWithId(String id) {
