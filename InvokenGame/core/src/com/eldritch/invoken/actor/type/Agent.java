@@ -89,7 +89,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     protected Body body;
     private final float radius;
 
-    private final WeaponSentry weaponSentry = new WeaponSentry();
+    private WeaponSentry weaponSentry = new WeaponSentry();
 
     public enum Direction {
         Up, Left, Down, Right
@@ -178,6 +178,10 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         body = createBody(x, y, location.getWorld());
     }
 
+    protected void setWeaponSentry(WeaponSentry sentry) {
+        this.weaponSentry = sentry;
+    }
+    
     public Body getBody() {
         return body;
     }
@@ -882,7 +886,6 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
 
     public void setFocusPoint(float x, float y) {
         focusPoint.set(x, y);
-        weaponSentry.update();
     }
 
     public Vector2 getFocusPoint() {
@@ -1702,13 +1705,13 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         private static final float RANGE = 15f;
 
         private final Map<Agent, Boolean> lineOfSightCache = new HashMap<Agent, Boolean>();
-        private final Vector2 position = new Vector2();
-        private final Vector2 direction = new Vector2();
-        private final Vector2 tmp = new Vector2();
+        protected final Vector2 position = new Vector2();
+        protected final Vector2 direction = new Vector2(1, 0);
+        protected final Vector2 tmp = new Vector2();
 
         // offset relative to the center of the agent so the gun appears at roughly hip level,
         // not at the face
-        private final Vector2 offset = new Vector2(0, 0.25f);
+        protected final Vector2 offset = new Vector2(0, 0.25f);
 
         public boolean hasLineOfSight(Agent target) {
             if (!lineOfSightCache.containsKey(target)) {
@@ -1722,16 +1725,16 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
             return lineOfSightCache.get(target);
         }
 
-        public void update() {
+        @Override
+        public void update(float delta, Location location) {
             Vector2 origin = getRenderPosition();
             direction.set(getFocusPoint()).sub(origin).nor();
             position.set(origin.x + direction.x, origin.y + direction.y).sub(offset);
-            lineOfSightCache.clear();
+            clear();
         }
-
-        @Override
-        public void update(float delta, Location location) {
-            update();
+        
+        public void clear() {
+            lineOfSightCache.clear();
         }
 
         @Override
@@ -1776,6 +1779,27 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
 
         @Override
         public void dispose() {
+        }
+    }
+    
+    /**
+     * Rotates towards the focus point, but does not immediately set itself there for a smoother
+     * effect.
+     */
+    public class RotatingWeaponSentry extends WeaponSentry {
+        private final Vector2 destination = new Vector2();
+        
+        @Override
+        public void update(float delta, Location location) {
+            Vector2 origin = getRenderPosition();
+            destination.set(getFocusPoint()).sub(origin).nor();
+            
+            // move direction towards destination
+            float theta = direction.angle(destination);
+            direction.rotate(theta * delta);
+            
+            position.set(origin.x + direction.x, origin.y + direction.y).sub(offset);
+            clear();
         }
     }
 

@@ -150,6 +150,9 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
         fatigue = new FatigueMonitor(this);
         intimidation = new IntimidationMonitor(this);
         tactics = new TacticsManager(this);
+        
+        // post init
+        setWeaponSentry(new RotatingWeaponSentry());
     }
     
     public void setSquad(Squad squad) {

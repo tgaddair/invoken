@@ -164,6 +164,9 @@ public class Attack extends Sequence<Npc> {
                 }
 
                 // if an aug was chosen, then go ahead and use it
+                if (chosen != null) {
+                    npc.getInfo().getAugmentations().prepare(chosen);
+                }
                 npc.setChosen(chosen);
                 return chosen != null;
             }
@@ -194,7 +197,7 @@ public class Attack extends Sequence<Npc> {
                 // don't need to aim this aug, so we have sights
                 return true;
             }
-            return npc.hasSights();
+            return npc.isAimingAt(npc.getTarget());
         }
     }
 
@@ -211,7 +214,6 @@ public class Attack extends Sequence<Npc> {
 
         private boolean use(Npc npc) {
             Augmentation chosen = npc.getChosen();
-            npc.getInfo().getAugmentations().prepare(chosen);
             npc.getInfo().getAugmentations().use(chosen, npc.getTactics().getTarget());
             npc.setChosen(null);
             return true;
