@@ -4,14 +4,17 @@ import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.activators.ProximityMine;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Agent.Activity;
+import com.eldritch.invoken.effects.DamagedEnergy;
 import com.eldritch.invoken.encounter.Location;
 import com.eldritch.invoken.encounter.NaturalVector2;
 import com.eldritch.invoken.proto.Effects.DamageType;
+import com.eldritch.invoken.util.Condition;
 import com.eldritch.invoken.util.Damage;
 
 public class Trap extends Augmentation {
     private static final int DAMAGE_SCALE = 100;
     private static final float MAX_DST2 = 1f;
+    private static final float COST = -10f;
     
 	private static class Holder {
         private static final Trap INSTANCE = new Trap();
@@ -67,9 +70,17 @@ public class Trap extends Augmentation {
 		@Override
 		public void apply(Location location) {
 		    Damage damage = Damage.from(owner, DamageType.PHYSICAL, getBaseDamage(owner));
-		    ProximityMine entity = new ProximityMine(target, damage);
-		    location.addEntity(entity);
-		    location.addActivator(entity);
+		    final ProximityMine mine = new ProximityMine(target, damage, COST);
+		    location.addEntity(mine);
+		    location.addActivator(mine);
+		    
+		    // having a proximity mine imposes an energy cost on the invocator
+		    getOwner().addEffect(new DamagedEnergy(getOwner(), COST, new Condition() {
+                @Override
+                public boolean satisfied() {
+                    return mine.isFinished();
+                }
+		    }));
 		}
 		
 		@Override

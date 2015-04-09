@@ -20,14 +20,14 @@ public class Resurrected extends BasicEffect {
 
 	@Override
 	public void dispel() {
-		owner.getInfo().changeBaseEnergy(cost);
+		owner.getInfo().changeMaxEnergy(cost);
 	}
 	
 	@Override
     protected void doApply() {
 		owner.addFollower(target);
 		target.resurrect();
-		owner.getInfo().changeBaseEnergy(-cost);
+		owner.getInfo().changeMaxEnergy(-cost);
 		applied = true;
     }
 

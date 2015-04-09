@@ -24,7 +24,7 @@ public class ProximityMine extends ClickActivator implements ProximityActivator,
     private final Vector2 center;
     private final Detonation detonation;
 
-    public ProximityMine(Vector2 position, Damage damage) {
+    public ProximityMine(Vector2 position, Damage damage, float cost) {
         super(position.x - 0.5f, position.y - 0.5f, 1, 1);
         center = new Vector2(position.x, position.y);
         detonation = new Detonation(damage, center, RADIUS);
@@ -92,7 +92,8 @@ public class ProximityMine extends ClickActivator implements ProximityActivator,
 
     @Override
     public void dispose() {
-        detonation.damage.getSource().getLocation().removeActivator(this);
+        Agent source = detonation.damage.getSource();
+        source.getLocation().removeActivator(this);
     }
 
     private static class Detonation {

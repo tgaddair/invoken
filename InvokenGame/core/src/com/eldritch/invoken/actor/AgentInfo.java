@@ -249,8 +249,9 @@ public class AgentInfo {
         return energy / getMaxEnergy();
     }
 
-    public void changeBaseEnergy(float delta) {
+    public void changeMaxEnergy(float delta) {
         energyOffset += delta;
+        energy = Math.min(energy, getMaxEnergy());
     }
     
     public float getBaseEnergy() {
