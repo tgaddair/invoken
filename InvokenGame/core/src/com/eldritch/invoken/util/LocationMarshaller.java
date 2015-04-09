@@ -3,6 +3,7 @@ package com.eldritch.invoken.util;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 
 import com.eldritch.invoken.proto.Locations.Location;
 import com.google.common.base.Charsets;
@@ -16,9 +17,16 @@ public class LocationMarshaller extends AssetMarshaller<Location> {
 	}
 
 	@Override
-	protected Location readFrom(InputStream is) throws IOException {
+	protected Location readFromBinary(InputStream is) throws IOException {
 		return Location.parseFrom(is);
 	}
+	
+	@Override
+    protected Location readFromText(InputStream is) throws IOException {
+        Location.Builder builder = Location.newBuilder();
+        TextFormat.merge(new InputStreamReader(is), builder);
+        return builder.build();
+    }
 	
 	public static void writeString(Location location) throws IOException {
 		StringBuilder sb = new StringBuilder();
