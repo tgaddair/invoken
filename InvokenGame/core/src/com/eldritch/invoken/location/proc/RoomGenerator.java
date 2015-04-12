@@ -36,10 +36,6 @@ public class RoomGenerator extends BspGenerator {
         return controlRooms.values();
     }
 
-    public void associate(List<Encounter> encounters) {
-        // TODO
-    }
-
     @Override
     protected void PlaceRooms() {
         InvokenGame.log("Room Count: " + getRoomCount());
@@ -208,7 +204,7 @@ public class RoomGenerator extends BspGenerator {
         }
 
         // TODO: get first available
-        return false;
+        throw new IllegalStateException("Unable to place: " + cp.getId());
     }
 
     private int range(RoomType type) {

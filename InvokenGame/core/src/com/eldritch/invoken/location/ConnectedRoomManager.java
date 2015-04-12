@@ -75,4 +75,12 @@ public class ConnectedRoomManager {
     public ConnectedRoom[][] getGrid() {
         return rooms;
     }
+    
+    public int getWidth() {
+        return rooms.length;
+    }
+    
+    public int getHeight() {
+        return rooms[0].length;
+    }
 }

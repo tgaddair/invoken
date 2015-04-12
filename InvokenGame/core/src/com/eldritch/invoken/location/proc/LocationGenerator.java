@@ -11,10 +11,12 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Random;
 import java.util.Set;
 
@@ -280,8 +282,74 @@ public class LocationGenerator {
         return layer.isGround(x, y) && collision.getCell(x, y) == null;
     }
 
-    private void claimTerritory(ConnectedRoomManager rooms, List<Territory> territory) {
+    private void claimTerritory(ConnectedRoomManager rooms, List<Territory> territories) {
+        // define a number of sectors to roughly divide the territories on opposite ends of the map
+        // in general, we want to avoid placing capitals right next to one another so that one
+        // territory gets immediately surrounded and subsequently swarmed by another
+        int sectors = (int) Math.ceil(Math.sqrt(territories.size()));
+        InvokenGame.logfmt("Sectors: %d", sectors);
+
+        // length of each sector
+        int dxSector = rooms.getWidth() / sectors;
+        int dySector = rooms.getHeight() / sectors;
+
         // randomly assign capitals for every faction with territory
+        int sectorX = 0;
+        int sectorY = 0;
+        Map<ConnectedRoom, Territory> capitals = new LinkedHashMap<>();
+        for (Territory territory : territories) {
+            // choose a random point in the sector, find the nearest unclaimed room to act as
+            // the capital
+            InvokenGame.logfmt("Placing at sector (%d,  %d)", sectorX, sectorY);
+
+            // only assign a capital of the faction has some remaining control in the area
+            int control = territory.getControl();
+            if (control > 0) {
+                // bounds of chosen point
+                int x1 = sectorX * dxSector;
+                int x2 = (sectorX + 1) * dxSector - 1;
+                int y1 = sectorY * dySector;
+                int y2 = (sectorY + 1) * dySector - 1;
+
+                // select our target point
+                NaturalVector2 target = NaturalVector2.of(randomNumber(x1, x2),
+                        randomNumber(y1, y2));
+
+                // find the unclaimed room nearest to the target point
+                ConnectedRoom capital = null;
+                int bestDistance = Integer.MAX_VALUE;
+                for (Entry<ControlRoom, ConnectedRoom> chamber : rooms.getChambers()) {
+                    ControlRoom cr = chamber.getKey();
+                    ConnectedRoom room = chamber.getValue();
+                    if (!capitals.containsKey(room) && cr.getControlPoint().getValue() > 0) {
+                        // unclaimed with value
+                        NaturalVector2 center = room.getCenter();
+                        int distance = target.mdst(center);
+                        if (distance < bestDistance) {
+                            bestDistance = distance;
+                            capital = room;
+                        }
+                    }
+                }
+
+                if (capital == null) {
+                    // something went wrong
+                    throw new IllegalStateException("Failed to find capital nearest: " + target);
+                }
+
+                // claim the capital
+                InvokenGame.logfmt("Claiming %s as capital for %s", capital.getCenter(),
+                        territory.getFactionId());
+                capitals.put(capital, territory);
+                
+                // update sectors
+                sectorX++;
+                if (sectorX >= sectors) {
+                    sectorX = 0;
+                    sectorY++;
+                }
+            }
+        }
 
         // grow territory outwards from each capital until all control is expended
     }
@@ -819,7 +887,7 @@ public class LocationGenerator {
             if (encounter.isPresent()) {
                 createLayer(bounds, encounter.get(), freeSpaces, rooms, base, collision, map,
                         layers);
-                
+
                 if (encounter.get().getUnique()) {
                     // remove the encounter from the list of possibilities
                     encounters.remove(encounter.get());
