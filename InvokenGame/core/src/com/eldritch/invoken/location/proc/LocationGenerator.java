@@ -297,7 +297,7 @@ public class LocationGenerator {
         // randomly assign capitals for every faction with territory
         int sectorX = 0;
         int sectorY = 0;
-        Map<ConnectedRoom, Territory> capitals = new LinkedHashMap<>();
+        Set<ConnectedRoom> claimed = new HashSet<>();
         for (Territory territory : territories) {
             // choose a random point in the sector, find the nearest unclaimed room to act as
             // the capital
@@ -322,7 +322,7 @@ public class LocationGenerator {
                 for (Entry<ControlRoom, ConnectedRoom> chamber : rooms.getChambers()) {
                     ControlRoom cr = chamber.getKey();
                     ConnectedRoom room = chamber.getValue();
-                    if (!capitals.containsKey(room) && cr.getControlPoint().getValue() > 0) {
+                    if (!claimed.contains(room) && cr.getControlPoint().getValue() > 0) {
                         // unclaimed with value
                         NaturalVector2 center = room.getCenter();
                         int distance = target.mdst(center);
@@ -339,10 +339,12 @@ public class LocationGenerator {
                 }
 
                 // claim the capital
+                // grow territory outwards from each capital until all control is expended
                 InvokenGame.logfmt("Claiming %s as capital for %s", capital.getCenter(),
                         territory.getFactionId());
-                capitals.put(capital, territory);
+                claimed.add(capital);
                 capital.setFaction(territory.getFactionId());
+                growTerritory(rooms, capital, territory, claimed);
 
                 // update sectors
                 sectorX++;
@@ -352,48 +354,43 @@ public class LocationGenerator {
                 }
             }
         }
+    }
 
-        // grow territory outwards from each capital until all control is expended
-        for (Entry<ConnectedRoom, Territory> capital : capitals.entrySet()) {
-            ConnectedRoom room = capital.getKey();
-            Territory territory = capital.getValue();
+    private void growTerritory(final ConnectedRoomManager rooms, ConnectedRoom capital,
+            Territory territory, Set<ConnectedRoom> claimed) {
+        // always select the next room with the highest value
+        PriorityQueue<ConnectedRoom> bestRooms = new PriorityQueue<ConnectedRoom>(1,
+                new Comparator<ConnectedRoom>() {
+                    @Override
+                    public int compare(ConnectedRoom r1, ConnectedRoom r2) {
+                        // the priority queue is a min heap, so we need to invert the comparison
+                        return Integer.compare(getValue(r2), getValue(r1));
+                    }
 
-            // always select the next room with the highest value
-            PriorityQueue<ConnectedRoom> bestRooms = new PriorityQueue<ConnectedRoom>(1,
-                    new Comparator<ConnectedRoom>() {
-                        @Override
-                        public int compare(ConnectedRoom r1, ConnectedRoom r2) {
-                            // the priority queue is a min heap, so we need to invert the comparison
-                            return Integer.compare(getValue(r2), getValue(r1));
-                        }
+                    private int getValue(ConnectedRoom room) {
+                        // hallways are free, chambers have an assigned value
+                        return rooms.hasEncounter(room) ? rooms.getEncounter(room)
+                                .getControlPoint().getValue() : 0;
+                    }
+                });
 
-                        private int getValue(ConnectedRoom room) {
-                            // hallways are free, chambers have an assigned value
-                            return rooms.hasEncounter(room) ? rooms.getEncounter(room)
-                                    .getControlPoint().getValue() : 0;
-                        }
-                    });
+        // avoid visiting the same room more than once
+        // diallow visiting any rooms that are already claimed
+        Set<ConnectedRoom> visited = new HashSet<>(claimed);
+        visited.add(capital);
 
-            // avoid visiting the name room more than once
-            Set<ConnectedRoom> visited = new HashSet<>();
-            visited.add(room);
+        // seed the queue with the neighbors of the capital
+        addNeighbors(rooms, capital, bestRooms, visited);
 
-            // seed the queue with the neighbors of the capital
-            addNeighbors(rooms, room, bestRooms, visited);
-
-            // start with one less control, because we already claimed a capital
-            int control = territory.getControl() - 1;
-            while (control > 0 && !bestRooms.isEmpty()) {
-                // claim the next room
-                ConnectedRoom next = bestRooms.remove();
-                next.setFaction(territory.getFactionId());
-                addNeighbors(rooms, next, bestRooms, visited);
-
-                // hallways are free
-                if (next.isChamber()) {
-                    control--;
-                }
-            }
+        // start with one less control, because we already claimed a capital
+        int control = territory.getControl() - 1;
+        while (control > 0 && !bestRooms.isEmpty()) {
+            // claim the next room
+            ConnectedRoom next = bestRooms.remove();
+            claimed.add(next);
+            next.setFaction(territory.getFactionId());
+            addNeighbors(rooms, next, bestRooms, visited);
+            control--;
         }
     }
 
@@ -1190,7 +1187,7 @@ public class LocationGenerator {
         }
     }
 
-    public <T> void save(T[][] grid, String filename) {
+    public static <T> void save(T[][] grid, String filename) {
         int width = grid.length;
         int height = grid[0].length;
         BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);

@@ -69,6 +69,7 @@ import com.eldritch.invoken.gfx.OverlayLightMasker;
 import com.eldritch.invoken.location.layer.EncounterLayer;
 import com.eldritch.invoken.location.layer.LocationMap;
 import com.eldritch.invoken.location.layer.LocationLayer.CollisionLayer;
+import com.eldritch.invoken.location.proc.LocationGenerator;
 import com.eldritch.invoken.proto.Actors.PlayerActor;
 import com.eldritch.invoken.proto.Locations;
 import com.eldritch.invoken.proto.Locations.Encounter;
@@ -78,7 +79,6 @@ import com.eldritch.invoken.ui.AgentStatusRenderer;
 import com.eldritch.invoken.ui.DebugEntityRenderer;
 import com.eldritch.invoken.util.Settings;
 import com.google.common.base.Optional;
-import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -301,6 +301,8 @@ public class Location {
                 }
             }
         }
+        
+        LocationGenerator.save(territory, "territory");
     }
 
     public void alertTo(Agent intruder) {
