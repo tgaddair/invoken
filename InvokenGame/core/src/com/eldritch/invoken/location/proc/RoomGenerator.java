@@ -377,17 +377,22 @@ public class RoomGenerator extends BspGenerator {
                 }
             }
             
+            System.out.println("choosing for " + cp.getId());
+            System.out.println("available: " + available.size());
+            
             // sample an encounter with replacement by its weight
             double target = Math.random() * total;
             double sum = 0;
             for (Encounter encounter : available) {
                 sum += encounter.getWeight();
                 if (sum >= target) {
+                    System.out.println("choosing: " + encounter.getId());
                     return Optional.of(encounter);
                 }
             }
             
             // no encounter found
+            System.out.println("nothing found");
             return Optional.absent();
         }
     }

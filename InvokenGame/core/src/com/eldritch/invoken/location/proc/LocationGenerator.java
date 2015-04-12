@@ -782,72 +782,44 @@ public class LocationGenerator {
             List<Encounter> encounters, Optional<String> playerSpawnEncounter) {
         List<LocationLayer> layers = new ArrayList<LocationLayer>();
         for (ControlRoom controlRoom : generator.getEncounterRooms()) {
+            // further restrict bounds to prevent spawning at wall level
+            Rectangle bounds = new Rectangle(controlRoom.getRestrictedBounds());
+            bounds.height -= 1;
+
+            ConnectedRoom connected = rooms.getConnected(controlRoom);
+            List<NaturalVector2> freeSpaces = getFreeSpaces(collision, bounds);
+            freeSpaces.retainAll(connected.getPoints());
+
+            // generate the player layer
+            if (isSpawnRoom(controlRoom.getControlPoint(), playerSpawnEncounter)) {
+                LocationLayer playerLayer = new LocationLayer(base.getWidth(), base.getHeight(),
+                        PX, PX, map);
+                playerLayer.setVisible(false);
+                playerLayer.setOpacity(1.0f);
+                playerLayer.setName("player");
+
+                Collections.shuffle(freeSpaces, rand);
+                Iterator<NaturalVector2> it = freeSpaces.iterator();
+                if (!it.hasNext()) {
+                    // TODO: this should never happen, but just in case we should regenerate the
+                    // whole map
+                }
+
+                NaturalVector2 position = it.next();
+                addCell(playerLayer, collider, position.x, position.y);
+                it.remove();
+                layers.add(playerLayer);
+            }
+
+            // generate encounter layers
             Optional<Encounter> encounter = controlRoom.chooseEncounter(encounters);
             if (encounter.isPresent()) {
-                createLayer(controlRoom, encounter.get(), playerSpawnEncounter, rooms, base,
-                        collision, map, layers);
+                createLayer(bounds, encounter.get(), freeSpaces, rooms, base, collision, map,
+                        layers);
             }
         }
 
         return layers;
-    }
-
-    private void createLayer(ControlRoom controlRoom, Encounter encounter,
-            Optional<String> playerSpawnEncounter, ConnectedRoomManager rooms, LocationLayer base,
-            LocationLayer collision, LocationMap map, List<LocationLayer> layers) {
-        ControlPoint cp = controlRoom.getControlPoint();
-
-        // further restrict bounds to prevent spawning at wall level
-        Rectangle bounds = new Rectangle(controlRoom.getRestrictedBounds());
-        bounds.height -= 1;
-
-        LocationLayer layer = new EncounterLayer(encounter, base.getWidth(), base.getHeight(), PX,
-                PX, map);
-        layer.setVisible(false);
-        layer.setOpacity(1.0f);
-        layer.setName("encounter-" + bounds.getX() + "-" + bounds.getY());
-
-        ConnectedRoom connected = rooms.getConnected(controlRoom);
-        List<NaturalVector2> freeSpaces = getFreeSpaces(collision, bounds);
-        freeSpaces.retainAll(connected.getPoints());
-        if (isSpawnRoom(cp, playerSpawnEncounter)) {
-            LocationLayer playerLayer = new LocationLayer(base.getWidth(), base.getHeight(), PX,
-                    PX, map);
-            playerLayer.setVisible(false);
-            playerLayer.setOpacity(1.0f);
-            playerLayer.setName("player");
-
-            Collections.shuffle(freeSpaces, rand);
-            Iterator<NaturalVector2> it = freeSpaces.iterator();
-            if (!it.hasNext()) {
-                // TODO: this should never happen, but just in case we should regenerate the
-                // whole map
-            }
-
-            NaturalVector2 position = it.next();
-            addCell(playerLayer, collider, position.x, position.y);
-            it.remove();
-            layers.add(playerLayer);
-        }
-
-        // enemy placement can be non-deterministic between loads
-        Collections.shuffle(freeSpaces);
-        Iterator<NaturalVector2> it = freeSpaces.iterator();
-        for (ActorScenario scenario : encounter.getActorParams().getActorScenarioList()) {
-            for (int i = 0; i < scenario.getMax(); i++) {
-                NaturalVector2 position = it.hasNext() ? it.next() : getPoint(bounds, base, layer);
-                addCell(layer, collider, position.x, position.y);
-            }
-        }
-        layers.add(layer);
-    }
-
-    private boolean isSpawnRoom(ControlPoint cp, Optional<String> playerSpawnEncounter) {
-        if (playerSpawnEncounter.isPresent()) {
-            return cp.getId().equals(playerSpawnEncounter.get());
-        } else {
-            return cp.getOrigin();
-        }
     }
 
     public static List<NaturalVector2> getFreeSpaces(LocationLayer layer, Rectangle bounds) {
@@ -861,6 +833,35 @@ public class LocationGenerator {
             }
         }
         return freeSpaces;
+    }
+
+    private boolean isSpawnRoom(ControlPoint cp, Optional<String> playerSpawnEncounter) {
+        if (playerSpawnEncounter.isPresent()) {
+            return cp.getId().equals(playerSpawnEncounter.get());
+        } else {
+            return cp.getOrigin();
+        }
+    }
+
+    private void createLayer(Rectangle bounds, Encounter encounter,
+            List<NaturalVector2> freeSpaces, ConnectedRoomManager rooms, LocationLayer base,
+            LocationLayer collision, LocationMap map, List<LocationLayer> layers) {
+        LocationLayer layer = new EncounterLayer(encounter, base.getWidth(), base.getHeight(), PX,
+                PX, map);
+        layer.setVisible(false);
+        layer.setOpacity(1.0f);
+        layer.setName("encounter-" + bounds.getX() + "-" + bounds.getY());
+
+        // enemy placement can be non-deterministic between loads
+        Collections.shuffle(freeSpaces);
+        Iterator<NaturalVector2> it = freeSpaces.iterator();
+        for (ActorScenario scenario : encounter.getActorParams().getActorScenarioList()) {
+            for (int i = 0; i < scenario.getMax(); i++) {
+                NaturalVector2 position = it.hasNext() ? it.next() : getPoint(bounds, base, layer);
+                addCell(layer, collider, position.x, position.y);
+            }
+        }
+        layers.add(layer);
     }
 
     public static void sortByWeight(List<Encounter> encounters) {
