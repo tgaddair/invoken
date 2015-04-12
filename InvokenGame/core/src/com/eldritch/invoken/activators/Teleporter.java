@@ -97,7 +97,7 @@ public class Teleporter extends ClickActivator implements ProximityActivator {
     @Override
     public void register(Location location) {
         ConnectedRoomManager rooms = location.getConnections();
-        ControlRoom encounter = rooms.getEncounter(rooms.getRoom(origin.x, origin.y));
+        ControlRoom encounter = rooms.getControlRoom(rooms.getRoom(origin.x, origin.y));
 //        if (encounter != null && encounter.getEncounter().hasSuccessor()) {
 //            destination = Optional.fromNullable(encounter.getEncounter().getSuccessor());
 //            if (encounter.getEncounter().hasNextEncounter()) {

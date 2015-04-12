@@ -180,6 +180,7 @@ message Encounter {
 
 	repeated Prerequisite prereq = 6;
 	repeated string control_point_id = 18;
+	optional string faction_id = 19;
 
 	// Parameters specific to encounter type
 	optional StaticParams static_params = 8;

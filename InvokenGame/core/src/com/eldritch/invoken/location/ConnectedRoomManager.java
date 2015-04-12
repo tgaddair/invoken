@@ -56,7 +56,7 @@ public class ConnectedRoomManager {
         return roomMap.get(encounter);
     }
 
-    public ControlRoom getEncounter(ConnectedRoom connected) {
+    public ControlRoom getControlRoom(ConnectedRoom connected) {
         return roomMap.inverse().get(connected);
     }
 

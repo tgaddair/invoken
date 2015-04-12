@@ -14,6 +14,7 @@ import java.util.TreeSet;
 
 import com.badlogic.gdx.math.Rectangle;
 import com.eldritch.invoken.InvokenGame;
+import com.eldritch.invoken.location.ConnectedRoomManager;
 import com.eldritch.invoken.location.proc.RoomDecorator.RoomType;
 import com.eldritch.invoken.proto.Locations.ControlPoint;
 import com.eldritch.invoken.proto.Locations.Encounter;
@@ -21,6 +22,7 @@ import com.eldritch.invoken.proto.Locations.Room;
 import com.eldritch.invoken.util.Pair;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
 
 public class RoomGenerator extends BspGenerator {
     private final RoomCache roomCache = new RoomCache();
@@ -339,14 +341,16 @@ public class RoomGenerator extends BspGenerator {
             return restricted;
         }
 
-        public Optional<Encounter> chooseEncounter(Collection<Encounter> encounters) {
+        public Optional<Encounter> chooseEncounter(Collection<Encounter> encounters, ConnectedRoomManager rooms) {
             // find all the available encounters for the given control point
             double total = 0;
             List<Encounter> available = new ArrayList<>();
             for (Encounter encounter : encounters) {
-                if (encounter.getControlPointIdList().contains(cp.getId())) {
-                    total += encounter.getWeight();
-                    available.add(encounter);
+                if (matchesFaction(encounter, rooms)) {
+                    if (encounter.getControlPointIdList().contains(cp.getId())) {
+                        total += encounter.getWeight();
+                        available.add(encounter);
+                    }
                 }
             }
 
@@ -365,6 +369,16 @@ public class RoomGenerator extends BspGenerator {
 
             // no encounter found
             return Optional.absent();
+        }
+        
+        public boolean matchesFaction(Encounter encounter, ConnectedRoomManager rooms) {
+            if (Strings.isNullOrEmpty(encounter.getFactionId())) {
+                // no required faction control
+                return true;
+            }
+            
+            // faction match
+            return encounter.getFactionId().equals(rooms.getConnected(this).getFaction());
         }
     }
 
