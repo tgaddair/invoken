@@ -306,28 +306,16 @@ public class LocationGenerator {
             // only assign a capital of the faction has some remaining control in the area
             int control = territory.getControl();
             if (control > 0) {
-                // bounds of chosen point
-                int x1 = sectorX * dxSector;
-                int x2 = (sectorX + 1) * dxSector - 1;
-                int y1 = sectorY * dySector;
-                int y2 = (sectorY + 1) * dySector - 1;
-
-                // select our target point
-                NaturalVector2 target = NaturalVector2.of(randomNumber(x1, x2),
-                        randomNumber(y1, y2));
-
-                // find the unclaimed room nearest to the target point
+                // choose a room with the greatest number of connections
                 ConnectedRoom capital = null;
-                int bestDistance = Integer.MAX_VALUE;
+                int maxConnections = 0;
                 for (Entry<ControlRoom, ConnectedRoom> chamber : rooms.getChambers()) {
                     ControlRoom cr = chamber.getKey();
                     ConnectedRoom room = chamber.getValue();
                     if (!claimed.containsKey(room) && cr.getControlPoint().getValue() > 0) {
-                        // unclaimed with value
-                        NaturalVector2 center = room.getCenter();
-                        int distance = target.mdst(center);
-                        if (distance < bestDistance) {
-                            bestDistance = distance;
+                        int connections = room.getNeighbors().size();
+                        if (connections > maxConnections) {
+                            maxConnections = connections;
                             capital = room;
                         }
                     }
@@ -335,7 +323,7 @@ public class LocationGenerator {
 
                 if (capital == null) {
                     // something went wrong
-                    throw new IllegalStateException("Failed to find capital nearest: " + target);
+                    throw new IllegalStateException("Failed to find capital");
                 }
 
                 // claim the capital
@@ -1209,7 +1197,7 @@ public class LocationGenerator {
             // avoid visiting the same room more than once
             // diallow visiting any rooms that are already claimed
             visited.add(capital);
-            
+
             // seed the queue with the neighbors of the capital
             addNeighbors(capital);
         }
