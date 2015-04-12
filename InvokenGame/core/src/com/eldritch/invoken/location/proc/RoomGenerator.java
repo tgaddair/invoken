@@ -377,8 +377,14 @@ public class RoomGenerator extends BspGenerator {
                 return true;
             }
             
-            // faction match
-            return encounter.getFactionId().equals(rooms.getConnected(this).getFaction());
+            Optional<String> controller = rooms.getConnected(this).getFaction();
+            if (controller.isPresent()) {
+                // compare existing factions
+                return encounter.getFactionId().equals(controller.get());
+            }
+            
+            // no faction claims this room, so we can't match it
+            return false;
         }
     }
 
