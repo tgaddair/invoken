@@ -341,7 +341,8 @@ public class RoomGenerator extends BspGenerator {
             return restricted;
         }
 
-        public Optional<Encounter> chooseEncounter(Collection<Encounter> encounters, ConnectedRoomManager rooms) {
+        public Optional<Encounter> chooseEncounter(Collection<Encounter> encounters,
+                ConnectedRoomManager rooms) {
             // find all the available encounters for the given control point
             double total = 0;
             List<Encounter> available = new ArrayList<>();
@@ -354,8 +355,8 @@ public class RoomGenerator extends BspGenerator {
                 }
             }
 
-//            System.out.println("choosing for " + cp.getId());
-//            System.out.println("available: " + available.size());
+            // System.out.println("choosing for " + cp.getId());
+            // System.out.println("available: " + available.size());
 
             // sample an encounter with replacement by its weight
             double target = Math.random() * total;
@@ -370,19 +371,19 @@ public class RoomGenerator extends BspGenerator {
             // no encounter found
             return Optional.absent();
         }
-        
+
         public boolean matchesFaction(Encounter encounter, ConnectedRoomManager rooms) {
-            if (Strings.isNullOrEmpty(encounter.getFactionId())) {
+            Optional<String> controller = rooms.getConnected(this).getFaction();
+            if (Strings.isNullOrEmpty(encounter.getFactionId()) && !controller.isPresent()) {
                 // no required faction control
                 return true;
             }
-            
-            Optional<String> controller = rooms.getConnected(this).getFaction();
+
             if (controller.isPresent()) {
                 // compare existing factions
                 return encounter.getFactionId().equals(controller.get());
             }
-            
+
             // no faction claims this room, so we can't match it
             return false;
         }
