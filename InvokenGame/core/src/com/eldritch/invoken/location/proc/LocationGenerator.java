@@ -49,6 +49,7 @@ import com.eldritch.invoken.location.layer.LocationLayer.CollisionLayer;
 import com.eldritch.invoken.location.proc.BspGenerator.CellType;
 import com.eldritch.invoken.location.proc.RoomGenerator.ControlRoom;
 import com.eldritch.invoken.location.proc.WallTileMap.WallTile;
+import com.eldritch.invoken.proto.Locations;
 import com.eldritch.invoken.proto.Locations.Biome;
 import com.eldritch.invoken.proto.Locations.ControlPoint;
 import com.eldritch.invoken.proto.Locations.Encounter;
@@ -56,7 +57,6 @@ import com.eldritch.invoken.proto.Locations.Encounter.ActorParams.ActorScenario;
 import com.eldritch.invoken.proto.Locations.Territory;
 import com.eldritch.invoken.screens.GameScreen;
 import com.eldritch.invoken.screens.GameScreen.GameState;
-import com.eldritch.invoken.util.Pair;
 import com.eldritch.invoken.util.Settings;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableBiMap;
@@ -117,12 +117,11 @@ public class LocationGenerator {
                 + asset));
     }
 
-    public Location generate(com.eldritch.invoken.proto.Locations.Location proto) {
+    public Location generate(Locations.Location proto) {
         return generate(proto, Optional.<String> absent());
     }
 
-    public Location generate(com.eldritch.invoken.proto.Locations.Location proto,
-            Optional<String> encounterName) {
+    public Location generate(Locations.Location proto, Optional<String> encounterName) {
         // generate a new random seed that combines the global player seed with the location name
         long seed = globalSeed ^ proto.getId().hashCode();
         System.out.println("global seed: " + globalSeed);
@@ -191,7 +190,7 @@ public class LocationGenerator {
         ConnectedRoomManager rooms = createRooms(bsp.getEncounterRooms(), typeMap);
         map.setRooms(rooms);
         save(rooms.getGrid(), "connected-rooms");
-        
+
         InvokenGame.log("Claiming Territory");
         claimTerritory(rooms, proto.getTerritoryList());
 
@@ -280,10 +279,10 @@ public class LocationGenerator {
     private boolean openGround(int x, int y, LocationLayer layer, LocationLayer collision) {
         return layer.isGround(x, y) && collision.getCell(x, y) == null;
     }
-    
+
     private void claimTerritory(ConnectedRoomManager rooms, List<Territory> territory) {
         // randomly assign capitals for every faction with territory
-        
+
         // grow territory outwards from each capital until all control is expended
     }
 

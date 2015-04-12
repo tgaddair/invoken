@@ -35,7 +35,7 @@ public class RoomGenerator extends BspGenerator {
     public Collection<ControlRoom> getEncounterRooms() {
         return controlRooms.values();
     }
-    
+
     public void associate(List<Encounter> encounters) {
         // TODO
     }
@@ -43,36 +43,11 @@ public class RoomGenerator extends BspGenerator {
     @Override
     protected void PlaceRooms() {
         InvokenGame.log("Room Count: " + getRoomCount());
-
-//        // place all encounters at least once first
-//        List<Encounter> repeated = new ArrayList<Encounter>();
-//        int count = 0;
-//        for (ControlPoint cp : points) {
-//            if (cp.getOrigin()) {
-//                if (place(cp)) {
-//                    count++;
-//                }
-//            } else {
-//                repeatedEncounters.add(cp);
-//            }
-//        }
-//
-//        if (!repeatedEncounters.isEmpty()) {
-//            // place encounters randomly
-//            EncounterSelector selector = new EncounterSelector(repeatedEncounters);
-//            int remaining = getRoomCount() - count;
-//            // InvokenGame.log("Remaining: " + remaining);
-//            while (remaining > 0) {
-//                ControlPoint encounter = selector.select();
-//                place(encounter);
-//                remaining--;
-//            }
-//        }
-        
         for (Pair<ControlPoint, Integer> elem : roomCounts) {
             ControlPoint cp = elem.first;
             int count = elem.second;
             for (int i = 0; i < count; i++) {
+                System.out.println("placing: " + cp.getId());
                 place(cp);
             }
         }
@@ -212,8 +187,7 @@ public class RoomGenerator extends BspGenerator {
                 int height = range(MinRoomSize, MaxRoomSize);
                 Rectangle rect = PlaceRectRoom(width, height);
                 if (rect != null) {
-                    controlRooms.put(rect, new ControlRoom(cp,
-                            Room.getDefaultInstance(), rect));
+                    controlRooms.put(rect, new ControlRoom(cp, Room.getDefaultInstance(), rect));
                     return true;
                 }
             } else {
@@ -322,11 +296,11 @@ public class RoomGenerator extends BspGenerator {
         // finally, add normal dependencies
         for (ControlNode node : nodes) {
             if (!node.isOrigin() && node.isLocked()) {
-                Preconditions
-                        .checkArgument(keys.containsKey(node.getLock()), String.format(
-                                "No key for lock %s, encounter %s", node.getLock(),
+                Preconditions.checkArgument(
+                        keys.containsKey(node.getLock()),
+                        String.format("No key for lock %s, encounter %s", node.getLock(),
                                 node.cp.getId()));
-                
+
                 for (ControlNode key : keys.get(node.getLock())) {
                     node.addKey(key);
                     key.addLock(node);
@@ -368,7 +342,7 @@ public class RoomGenerator extends BspGenerator {
             restricted.height -= 1;
             return restricted;
         }
-        
+
         public Optional<Encounter> chooseEncounter(List<Encounter> encounters) {
             // find all the available encounters for the given control point
             double total = 0;
@@ -379,10 +353,10 @@ public class RoomGenerator extends BspGenerator {
                     available.add(encounter);
                 }
             }
-            
+
             System.out.println("choosing for " + cp.getId());
             System.out.println("available: " + available.size());
-            
+
             // sample an encounter with replacement by its weight
             double target = Math.random() * total;
             double sum = 0;
@@ -393,7 +367,7 @@ public class RoomGenerator extends BspGenerator {
                     return Optional.of(encounter);
                 }
             }
-            
+
             // no encounter found
             System.out.println("nothing found");
             return Optional.absent();
@@ -443,7 +417,7 @@ public class RoomGenerator extends BspGenerator {
             return controlRoom.getBounds();
         }
     }
-    
+
     public static RoomGenerator from(List<ControlPoint> points, long seed) {
         Random rand = new Random(seed);
         int total = 0;
@@ -454,6 +428,8 @@ public class RoomGenerator extends BspGenerator {
                 roomCounts.add(Pair.of(cp, count));
                 total += count;
             }
+            InvokenGame.log(String.format("%s [%d, %d] -> %d", cp.getId(), cp.getMin(),
+                    cp.getMax(), count));
         }
         return new RoomGenerator(total, roomCounts, seed);
     }
