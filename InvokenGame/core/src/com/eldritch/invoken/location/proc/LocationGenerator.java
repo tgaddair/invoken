@@ -296,7 +296,7 @@ public class LocationGenerator {
         // randomly assign capitals for every faction with territory
         int sectorX = 0;
         int sectorY = 0;
-        Set<ConnectedRoom> claimed = new HashSet<>();
+        Map<ConnectedRoom, GrowthRegion> claimed = new HashMap<>();
         List<GrowthRegion> regions = new ArrayList<>();
         for (Territory territory : territories) {
             // choose a random point in the sector, find the nearest unclaimed room to act as
@@ -322,7 +322,7 @@ public class LocationGenerator {
                 for (Entry<ControlRoom, ConnectedRoom> chamber : rooms.getChambers()) {
                     ControlRoom cr = chamber.getKey();
                     ConnectedRoom room = chamber.getValue();
-                    if (!claimed.contains(room) && cr.getControlPoint().getValue() > 0) {
+                    if (!claimed.containsKey(room) && cr.getControlPoint().getValue() > 0) {
                         // unclaimed with value
                         NaturalVector2 center = room.getCenter();
                         int distance = target.mdst(center);
@@ -342,8 +342,6 @@ public class LocationGenerator {
                 // grow territory outwards from each capital until all control is expended
                 InvokenGame.logfmt("Claiming %s as capital for %s", capital.getCenter(),
                         territory.getFactionId());
-                claimed.add(capital);
-                capital.setFaction(territory.getFactionId());
                 regions.add(new GrowthRegion(territory, capital, claimed, rooms));
 
                 // update sectors
@@ -354,7 +352,7 @@ public class LocationGenerator {
                 }
             }
         }
-        
+
         // grow each region in turns to prevent starving out a region
         boolean canGrow = true;
         while (canGrow) {
@@ -1183,35 +1181,27 @@ public class LocationGenerator {
             InvokenGame.error("Failed saving grid image!", e);
         }
     }
-    
+
     private static class GrowthRegion {
         private final Territory territory;
         private final ConnectedRoomManager rooms;
         private final PriorityQueue<ConnectedRoom> bestRooms;
-        private final Set<ConnectedRoom> claimed;
+        private final PriorityQueue<ConnectedRoom> reclaimed;
+        private final Map<ConnectedRoom, GrowthRegion> claimed;
         private final Set<ConnectedRoom> visited = new HashSet<>();
         private int control;
 
-        public GrowthRegion(Territory territory, ConnectedRoom capital, Set<ConnectedRoom> claimed,
-                final ConnectedRoomManager rooms) {
+        public GrowthRegion(Territory territory, ConnectedRoom capital,
+                Map<ConnectedRoom, GrowthRegion> claimed, ConnectedRoomManager rooms) {
             this.territory = territory;
             this.rooms = rooms;
-            this.bestRooms = new PriorityQueue<ConnectedRoom>(1, new Comparator<ConnectedRoom>() {
-                @Override
-                public int compare(ConnectedRoom r1, ConnectedRoom r2) {
-                    // the priority queue is a min heap, so we need to invert the comparison
-                    return Integer.compare(getValue(r2), getValue(r1));
-                }
-
-                private int getValue(ConnectedRoom room) {
-                    // hallways are free, chambers have an assigned value
-                    return rooms.hasEncounter(room) ? rooms.getControlRoom(room).getControlPoint()
-                            .getValue() : 0;
-                }
-            });
+            this.bestRooms = createQueue(rooms);
+            this.reclaimed = createQueue(rooms);
 
             // shared between regions
             this.claimed = claimed;
+            claimed.put(capital, this);
+            capital.setFaction(territory.getFactionId());
 
             // start with one less control, because we already claimed a capital
             this.control = territory.getControl() - 1;
@@ -1219,30 +1209,46 @@ public class LocationGenerator {
             // avoid visiting the same room more than once
             // diallow visiting any rooms that are already claimed
             visited.add(capital);
-
+            
             // seed the queue with the neighbors of the capital
             addNeighbors(capital);
         }
 
         public boolean canGrow() {
-            return !bestRooms.isEmpty() && control > 0;
+            return control > 0 && !(bestRooms.isEmpty() && reclaimed.isEmpty());
         }
 
         public void grow() {
-            // claim the next room
-            ConnectedRoom next = bestRooms.remove();
-            claimed.add(next);
-            next.setFaction(territory.getFactionId());
-            addNeighbors(next);
-            if (next.isChamber()) {
+            if (!bestRooms.isEmpty()) {
+                // claim the next room
+                claim(bestRooms.remove());
+            } else {
+                // we're out of rooms to claim, so we can steal rooms from our rival, and give
+                // them back some control
+                ConnectedRoom room = reclaimed.remove();
+                GrowthRegion other = claimed.get(room);
+                if (room.isChamber()) {
+                    other.control++;
+                }
+                claim(room);
+            }
+        }
+
+        private void claim(ConnectedRoom room) {
+            claimed.put(room, this);
+            room.setFaction(territory.getFactionId());
+            addNeighbors(room);
+            if (room.isChamber()) {
                 control--;
             }
         }
 
         private void addNeighbors(ConnectedRoom room) {
             for (ConnectedRoom neighbor : room.getNeighbors()) {
-                if (!visited.contains(neighbor) && !claimed.contains(neighbor)) {
-                    if (!neighbor.isChamber()
+                if (!visited.contains(neighbor)) {
+                    if (claimed.containsKey(neighbor)) {
+                        reclaimed.add(neighbor);
+                    } else if (!neighbor.isChamber()
                             || rooms.getControlRoom(neighbor).getControlPoint().getValue() > 0) {
                         bestRooms.add(neighbor);
                     }
@@ -1250,5 +1256,21 @@ public class LocationGenerator {
                 }
             }
         }
+    }
+
+    private static PriorityQueue<ConnectedRoom> createQueue(final ConnectedRoomManager rooms) {
+        return new PriorityQueue<ConnectedRoom>(1, new Comparator<ConnectedRoom>() {
+            @Override
+            public int compare(ConnectedRoom r1, ConnectedRoom r2) {
+                // the priority queue is a min heap, so we need to invert the comparison
+                return Integer.compare(getValue(r2), getValue(r1));
+            }
+
+            private int getValue(ConnectedRoom room) {
+                // hallways are free, chambers have an assigned value
+                return rooms.hasEncounter(room) ? rooms.getControlRoom(room).getControlPoint()
+                        .getValue() : 0;
+            }
+        });
     }
 }
