@@ -298,6 +298,7 @@ public class LocationGenerator {
         int sectorX = 0;
         int sectorY = 0;
         Set<ConnectedRoom> claimed = new HashSet<>();
+        List<GrowthRegion> regions = new ArrayList<>();
         for (Territory territory : territories) {
             // choose a random point in the sector, find the nearest unclaimed room to act as
             // the capital
@@ -344,7 +345,7 @@ public class LocationGenerator {
                         territory.getFactionId());
                 claimed.add(capital);
                 capital.setFaction(territory.getFactionId());
-                growTerritory(rooms, capital, territory, claimed);
+                regions.add(new GrowthRegion(territory, capital, claimed, rooms));
 
                 // update sectors
                 sectorX++;
@@ -354,55 +355,82 @@ public class LocationGenerator {
                 }
             }
         }
+        
+        // grow each region in turns to prevent starving out a region
+        boolean canGrow = true;
+        while (canGrow) {
+            canGrow = false;
+            for (GrowthRegion region : regions) {
+                if (region.canGrow()) {
+                    region.grow();
+                    canGrow = true;
+                }
+            }
+        }
     }
 
-    private void growTerritory(final ConnectedRoomManager rooms, ConnectedRoom capital,
-            Territory territory, Set<ConnectedRoom> claimed) {
-        // always select the next room with the highest value
-        PriorityQueue<ConnectedRoom> bestRooms = new PriorityQueue<ConnectedRoom>(1,
-                new Comparator<ConnectedRoom>() {
-                    @Override
-                    public int compare(ConnectedRoom r1, ConnectedRoom r2) {
-                        // the priority queue is a min heap, so we need to invert the comparison
-                        return Integer.compare(getValue(r2), getValue(r1));
-                    }
+    private class GrowthRegion {
+        private final Territory territory;
+        private final ConnectedRoomManager rooms;
+        private final PriorityQueue<ConnectedRoom> bestRooms;
+        private final Set<ConnectedRoom> claimed;
+        private final Set<ConnectedRoom> visited = new HashSet<>();
+        private int control;
 
-                    private int getValue(ConnectedRoom room) {
-                        // hallways are free, chambers have an assigned value
-                        return rooms.hasEncounter(room) ? rooms.getEncounter(room)
-                                .getControlPoint().getValue() : 0;
-                    }
-                });
+        public GrowthRegion(Territory territory, ConnectedRoom capital, Set<ConnectedRoom> claimed,
+                final ConnectedRoomManager rooms) {
+            this.territory = territory;
+            this.rooms = rooms;
+            this.bestRooms = new PriorityQueue<ConnectedRoom>(1, new Comparator<ConnectedRoom>() {
+                @Override
+                public int compare(ConnectedRoom r1, ConnectedRoom r2) {
+                    // the priority queue is a min heap, so we need to invert the comparison
+                    return Integer.compare(getValue(r2), getValue(r1));
+                }
 
-        // avoid visiting the same room more than once
-        // diallow visiting any rooms that are already claimed
-        Set<ConnectedRoom> visited = new HashSet<>(claimed);
-        visited.add(capital);
+                private int getValue(ConnectedRoom room) {
+                    // hallways are free, chambers have an assigned value
+                    return rooms.hasEncounter(room) ? rooms.getEncounter(room).getControlPoint()
+                            .getValue() : 0;
+                }
+            });
 
-        // seed the queue with the neighbors of the capital
-        addNeighbors(rooms, capital, bestRooms, visited);
+            // shared between regions
+            this.claimed = claimed;
 
-        // start with one less control, because we already claimed a capital
-        int control = territory.getControl() - 1;
-        while (control > 0 && !bestRooms.isEmpty()) {
+            // start with one less control, because we already claimed a capital
+            this.control = territory.getControl() - 1;
+
+            // avoid visiting the same room more than once
+            // diallow visiting any rooms that are already claimed
+            visited.add(capital);
+
+            // seed the queue with the neighbors of the capital
+            addNeighbors(capital);
+        }
+
+        public boolean canGrow() {
+            return !bestRooms.isEmpty() && control > 0;
+        }
+
+        public void grow() {
             // claim the next room
             ConnectedRoom next = bestRooms.remove();
             claimed.add(next);
             next.setFaction(territory.getFactionId());
-            addNeighbors(rooms, next, bestRooms, visited);
+            addNeighbors(next);
             control--;
         }
-    }
 
-    private void addNeighbors(ConnectedRoomManager rooms, ConnectedRoom room,
-            PriorityQueue<ConnectedRoom> bestRooms, Set<ConnectedRoom> visited) {
-        for (ConnectedRoom neighbor : room.getNeighbors()) {
-            if (!visited.contains(neighbor)) {
-                if (!neighbor.isChamber()
-                        || rooms.getEncounter(neighbor).getControlPoint().getValue() > 0) {
-                    bestRooms.add(neighbor);
+        private void addNeighbors(ConnectedRoom room) {
+            for (ConnectedRoom neighbor : room.getNeighbors()) {
+                if (!visited.contains(neighbor) && !claimed.contains(neighbor)) {
+                    if (!neighbor.isChamber()
+                            || rooms.getEncounter(neighbor).getControlPoint().getValue() > 0) {
+                        bestRooms.add(neighbor);
+                    }
+                    visited.add(neighbor);
                 }
-                visited.add(neighbor);
             }
         }
     }
