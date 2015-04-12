@@ -25,7 +25,7 @@ import com.jgoodies.forms.layout.FormLayout;
 
 public class ControlPointTable extends IdentifiedAssetTable<ControlPoint> {
     private static final long serialVersionUID = 1L;
-    private static final String[] COLUMN_NAMES = { "ID", "Value", "Rooms", "Follows" };
+    private static final String[] COLUMN_NAMES = { "ID", "Value", "Count", "Rooms", "Follows" };
 
     public ControlPointTable() {
         super(COLUMN_NAMES, "ControlPoint");
@@ -38,9 +38,10 @@ public class ControlPointTable extends IdentifiedAssetTable<ControlPoint> {
 
     @Override
     protected Object[] getDisplayFields(ControlPoint asset) {
+        String count = String.format("[%d, %d]", asset.getMin(), asset.getMax());
         String rooms = Joiner.on(" ").join(asset.getRoomIdList());
         String follows = Joiner.on(" ").join(asset.getFollowsList());
-        return new Object[] { asset.getId(), asset.getValue(), rooms, follows };
+        return new Object[] { asset.getId(), asset.getValue(), count, rooms, follows };
     }
 
     @Override
@@ -53,7 +54,9 @@ public class ControlPointTable extends IdentifiedAssetTable<ControlPoint> {
         private static final long serialVersionUID = 1L;
 
         private final JTextField idField = new JTextField();
-        private final JTextField valueField = new JTextField();
+        private final JTextField valueField = new JTextField("0");
+        private final JTextField minField = new JTextField("1");
+        private final JTextField maxField = new JTextField("1");
 
         private final AssetPointerTable<Room> roomTable = new AssetPointerTable<>(
                 MainPanel.ROOM_TABLE);
@@ -78,6 +81,12 @@ public class ControlPointTable extends IdentifiedAssetTable<ControlPoint> {
             builder.nextLine();
 
             builder.append("Value:", valueField);
+            builder.nextLine();
+            
+            builder.append("Min:", minField);
+            builder.nextLine();
+            
+            builder.append("Max:", maxField);
             builder.nextLine();
 
             builder.appendRow("fill:100dlu");
@@ -111,6 +120,8 @@ public class ControlPointTable extends IdentifiedAssetTable<ControlPoint> {
                 ControlPoint asset = prev.get();
                 idField.setText(asset.getId());
                 valueField.setText(asset.getValue() + "");
+                minField.setText(asset.getMin() + "");
+                maxField.setText(asset.getMax() + "");
                 for (String roomId : asset.getRoomIdList()) {
                     roomTable.addAssetId(roomId);
                 }
@@ -133,6 +144,8 @@ public class ControlPointTable extends IdentifiedAssetTable<ControlPoint> {
             ControlPoint.Builder builder = ControlPoint.newBuilder()
                     .setId(idField.getText())
                     .setValue(Integer.parseInt(valueField.getText()))
+                    .setMin(Integer.parseInt(minField.getText()))
+                    .setMax(Integer.parseInt(maxField.getText()))
                     .setOrigin(originCheck.isSelected())
                     .setLockStrength(Integer.parseInt(lockField.getText()))
                     .setRequiredKey((String) lockBox.getSelectedItem())
