@@ -17,6 +17,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.PriorityQueue;
 import java.util.Random;
 import java.util.Set;
 
@@ -282,7 +283,7 @@ public class LocationGenerator {
         return layer.isGround(x, y) && collision.getCell(x, y) == null;
     }
 
-    private void claimTerritory(ConnectedRoomManager rooms, List<Territory> territories) {
+    private void claimTerritory(final ConnectedRoomManager rooms, List<Territory> territories) {
         // define a number of sectors to roughly divide the territories on opposite ends of the map
         // in general, we want to avoid placing capitals right next to one another so that one
         // territory gets immediately surrounded and subsequently swarmed by another
@@ -341,7 +342,8 @@ public class LocationGenerator {
                 InvokenGame.logfmt("Claiming %s as capital for %s", capital.getCenter(),
                         territory.getFactionId());
                 capitals.put(capital, territory);
-                
+                capital.setFaction(territory.getFactionId());
+
                 // update sectors
                 sectorX++;
                 if (sectorX >= sectors) {
@@ -352,6 +354,60 @@ public class LocationGenerator {
         }
 
         // grow territory outwards from each capital until all control is expended
+        for (Entry<ConnectedRoom, Territory> capital : capitals.entrySet()) {
+            ConnectedRoom room = capital.getKey();
+            Territory territory = capital.getValue();
+
+            // always select the next room with the highest value
+            PriorityQueue<ConnectedRoom> bestRooms = new PriorityQueue<ConnectedRoom>(1,
+                    new Comparator<ConnectedRoom>() {
+                        @Override
+                        public int compare(ConnectedRoom r1, ConnectedRoom r2) {
+                            // the priority queue is a min heap, so we need to invert the comparison
+                            return Integer.compare(getValue(r2), getValue(r1));
+                        }
+
+                        private int getValue(ConnectedRoom room) {
+                            // hallways are free, chambers have an assigned value
+                            return rooms.hasEncounter(room) ? rooms.getEncounter(room)
+                                    .getControlPoint().getValue() : 0;
+                        }
+                    });
+
+            // avoid visiting the name room more than once
+            Set<ConnectedRoom> visited = new HashSet<>();
+            visited.add(room);
+
+            // seed the queue with the neighbors of the capital
+            addNeighbors(rooms, room, bestRooms, visited);
+
+            // start with one less control, because we already claimed a capital
+            int control = territory.getControl() - 1;
+            while (control > 0 && !bestRooms.isEmpty()) {
+                // claim the next room
+                ConnectedRoom next = bestRooms.remove();
+                next.setFaction(territory.getFactionId());
+                addNeighbors(rooms, next, bestRooms, visited);
+
+                // hallways are free
+                if (next.isChamber()) {
+                    control--;
+                }
+            }
+        }
+    }
+
+    private void addNeighbors(ConnectedRoomManager rooms, ConnectedRoom room,
+            PriorityQueue<ConnectedRoom> bestRooms, Set<ConnectedRoom> visited) {
+        for (ConnectedRoom neighbor : room.getNeighbors()) {
+            if (!visited.contains(neighbor)) {
+                if (!neighbor.isChamber()
+                        || rooms.getEncounter(neighbor).getControlPoint().getValue() > 0) {
+                    bestRooms.add(neighbor);
+                }
+                visited.add(neighbor);
+            }
+        }
     }
 
     private ConnectedRoomManager createRooms(Collection<ControlRoom> chambers, CellType[][] typeMap) {

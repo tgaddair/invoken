@@ -26,6 +26,10 @@ public class ConnectedRoom {
 		center = calculateCenter();
 	}
 	
+	public boolean isChamber() {
+	    return type == Type.Chamber;
+	}
+	
 	public void setFaction(String faction) {
 	    this.faction = Optional.of(faction);
 	}
