@@ -64,6 +64,7 @@ public class EncounterEditorPanel extends
 	private final JComboBox<String> successorBox = new JComboBox<>();
 	private final JComboBox<String> nextEncounterBox = new JComboBox<>();
 	private final PrerequisiteTable prereqTable = new PrerequisiteTable();
+	private final JComboBox<String> factionBox = new JComboBox<>();
 
 	// Different cards for different types
 	private final JPanel cards;
@@ -102,7 +103,7 @@ public class EncounterEditorPanel extends
 		List<String> fIds = new ArrayList<>();
 		fIds.add("");
 		fIds.addAll(MainPanel.LOCATION_TABLE.getAssetIds());
-		successorBox.setModel(new DefaultComboBoxModel<String>(fIds.toArray(new String[0])));
+		successorBox.setModel(new DefaultComboBoxModel<>(fIds.toArray(new String[0])));
 		successorBox.addActionListener (new ActionListener () {
 		    public void actionPerformed(ActionEvent e) {
 		    	// setup the encounter box
@@ -114,7 +115,7 @@ public class EncounterEditorPanel extends
 		
 		List<String> eIds = new ArrayList<>();
 		eIds.add("");
-		nextEncounterBox.setModel(new DefaultComboBoxModel<String>(eIds.toArray(new String[0])));
+		nextEncounterBox.setModel(new DefaultComboBoxModel<>(eIds.toArray(new String[0])));
 		builder.append("Encounter:", nextEncounterBox);
 		builder.nextLine();
 		
@@ -124,6 +125,13 @@ public class EncounterEditorPanel extends
 		
 		builder.appendRow("fill:80dlu");
         builder.append("Control Points:", new AssetTablePanel(cpTable));
+        builder.nextLine();
+        
+        List<String> factionIds = new ArrayList<>();
+        factionIds.add("");
+        factionIds.addAll(MainPanel.FACTION_TABLE.getAssetIds());
+        factionBox.setModel(new DefaultComboBoxModel<>(factionIds.toArray(new String[0])));
+        builder.append("Faction:", factionBox);
         builder.nextLine();
 
 		cards = new JPanel(new CardLayout());
@@ -159,6 +167,9 @@ public class EncounterEditorPanel extends
 			for (String cp : asset.getControlPointIdList()) {
                 cpTable.addAssetId(cp);
             }
+			if (asset.hasFactionId()) {
+			    factionBox.setSelectedItem(asset.getFactionId());
+			}
 		}
 
 		add(new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, builder.getPanel(),
@@ -175,6 +186,7 @@ public class EncounterEditorPanel extends
 				.setUnique(uniqueCheck.isSelected())
 				.addAllPrereq(prereqTable.getAssets())
 				.addAllControlPointId(cpTable.getAssetIds())
+				.setFactionId((String) factionBox.getSelectedItem())
 				.setActorParams(actorPanel.getParams());
 		return encounter.build();
 	}
