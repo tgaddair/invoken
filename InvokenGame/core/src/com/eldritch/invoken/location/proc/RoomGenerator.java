@@ -343,7 +343,7 @@ public class RoomGenerator extends BspGenerator {
             return restricted;
         }
 
-        public Optional<Encounter> chooseEncounter(List<Encounter> encounters) {
+        public Optional<Encounter> chooseEncounter(Collection<Encounter> encounters) {
             // find all the available encounters for the given control point
             double total = 0;
             List<Encounter> available = new ArrayList<>();

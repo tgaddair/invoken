@@ -1,0 +1,189 @@
+id: "WelcomeCenter"
+name: "Welcome Center"
+encounter {
+  id: "SecurityStation"
+  title: "Security Station"
+  type: ACTOR
+  weight: 1.0
+  unique: true
+  actor_params {
+    description: ""
+    no_detect: false
+    no_flee: false
+  }
+  control_point_id: "SecurityStation"
+}
+encounter {
+  id: "ThugsGroup"
+  title: "Thugs Group"
+  type: ACTOR
+  weight: 1.0
+  unique: false
+  actor_params {
+    description: ""
+    actor_scenario {
+      actor_id: "StreetThug"
+      essential: false
+      blocking: false
+      min: 2
+      max: 3
+      alive: true
+    }
+    no_detect: false
+    no_flee: false
+  }
+  control_point_id: "GenericHall"
+}
+encounter {
+  id: "Teleporter"
+  title: "Teleporter"
+  type: ACTOR
+  weight: 1.0
+  unique: true
+  actor_params {
+    description: ""
+    no_detect: false
+    no_flee: false
+  }
+  control_point_id: "GenericHall"
+}
+encounter {
+  id: "Cyrus"
+  title: "Cyrus"
+  type: ACTOR
+  weight: 1.0
+  unique: true
+  actor_params {
+    description: ""
+    actor_scenario {
+      actor_id: "Cyrus"
+      essential: true
+      blocking: false
+      alive: true
+    }
+    actor_scenario {
+      actor_id: "StreetThugGuard"
+      essential: false
+      blocking: false
+      min: 2
+      max: 2
+      alive: true
+    }
+    no_detect: false
+    no_flee: false
+  }
+  control_point_id: "GenericHall"
+}
+encounter {
+  id: "Thugs2"
+  title: "Thugs2"
+  type: ACTOR
+  weight: 1.0
+  unique: false
+  actor_params {
+    description: ""
+    actor_scenario {
+      actor_id: "StreetThug"
+      essential: false
+      blocking: false
+      min: 1
+      max: 1
+      alive: true
+    }
+    actor_scenario {
+      actor_id: "StreetThugMelee"
+      essential: false
+      blocking: false
+      min: 2
+      max: 3
+      alive: true
+    }
+    no_detect: false
+    no_flee: false
+  }
+  control_point_id: "GenericHall"
+}
+encounter {
+  id: "MeleeThugs"
+  title: "Melee Thugs"
+  type: ACTOR
+  weight: 1.0
+  unique: false
+  actor_params {
+    description: ""
+    actor_scenario {
+      actor_id: "StreetThugMelee"
+      essential: false
+      blocking: false
+      min: 3
+      max: 4
+      alive: true
+    }
+    no_detect: false
+    no_flee: false
+  }
+  control_point_id: "GenericHall"
+}
+light {
+  r: 179
+  g: 179
+  b: 230
+  intensity: 1.25
+}
+biome: INDUSTRY
+territory {
+  faction_id: "_ThugFaction"
+  min_rank: 3
+  credential: "CustomsCredentialsLevel1"
+  control: 10
+}
+territory {
+  faction_id: "HouseEru"
+  min_rank: 0
+  credential: ""
+  control: 1
+}
+territory {
+  faction_id: "_TheHollow"
+  credential: ""
+  control: 10
+}
+control_point {
+  id: "GenericHall"
+  room_id: "GenericHall"
+  room_id: "ConferenceRoom"
+  room_id: "LabBig"
+  lock_strength: 0
+  required_key: ""
+  origin: false
+  min: 12
+  max: 15
+  value: 1
+}
+control_point {
+  id: "Bedroom"
+  room_id: "Bedroom"
+  lock_strength: 1
+  required_key: ""
+  available_key: "SecurityKey"
+  origin: false
+  min: 1
+  max: 1
+  value: 3
+}
+control_point {
+  id: "SecurityStation"
+  room_id: "SecurityStation"
+  lock_strength: 1
+  required_key: "SecurityKey"
+  origin: false
+  value: 5
+}
+control_point {
+  id: "Entrance"
+  room_id: "GenericHall"
+  lock_strength: 0
+  required_key: ""
+  origin: true
+  value: 0
+}

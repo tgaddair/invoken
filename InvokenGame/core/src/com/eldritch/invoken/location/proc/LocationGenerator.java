@@ -781,7 +781,8 @@ public class LocationGenerator {
 
     private List<LocationLayer> createSpawnLayers(LocationLayer base, LocationLayer collision,
             RoomGenerator generator, LocationMap map, ConnectedRoomManager rooms,
-            List<Encounter> encounters, Optional<String> playerSpawnEncounter) {
+            List<Encounter> encounterList, Optional<String> playerSpawnEncounter) {
+        Set<Encounter> encounters = new LinkedHashSet<>(encounterList);
         List<LocationLayer> layers = new ArrayList<LocationLayer>();
         for (ControlRoom controlRoom : generator.getEncounterRooms()) {
             // further restrict bounds to prevent spawning at wall level
@@ -818,6 +819,11 @@ public class LocationGenerator {
             if (encounter.isPresent()) {
                 createLayer(bounds, encounter.get(), freeSpaces, rooms, base, collision, map,
                         layers);
+                
+                if (encounter.get().getUnique()) {
+                    // remove the encounter from the list of possibilities
+                    encounters.remove(encounter.get());
+                }
             }
         }
 
