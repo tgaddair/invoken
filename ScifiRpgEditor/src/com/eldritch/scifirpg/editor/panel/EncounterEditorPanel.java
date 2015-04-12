@@ -26,13 +26,16 @@ import javax.swing.JTextField;
 
 import com.eldritch.scifirpg.editor.AssetTablePanel;
 import com.eldritch.scifirpg.editor.MainPanel;
+import com.eldritch.scifirpg.editor.tables.AssetPointerTable;
 import com.eldritch.scifirpg.editor.tables.AssetTable;
+import com.eldritch.scifirpg.editor.tables.ControlPointTable;
 import com.eldritch.scifirpg.editor.tables.DialogueTable;
 import com.eldritch.scifirpg.editor.tables.EncounterTable;
 import com.eldritch.scifirpg.editor.tables.OutcomeTable;
 import com.eldritch.scifirpg.editor.tables.OutcomeTable.EncounterOutcomeTable;
 import com.eldritch.scifirpg.editor.tables.PrerequisiteTable;
 import com.eldritch.invoken.proto.Actors.NonPlayerActor;
+import com.eldritch.invoken.proto.Locations.ControlPoint;
 import com.eldritch.invoken.proto.Locations.Encounter;
 import com.eldritch.invoken.proto.Locations.Location;
 import com.eldritch.invoken.proto.Locations.Encounter.ActorParams;
@@ -69,10 +72,13 @@ public class EncounterEditorPanel extends
 	// DecisionEncounterPanel();
 	private final ActorEncounterPanel actorPanel = new ActorEncounterPanel();
 	private final RegionEncounterPanel regionPanel = new RegionEncounterPanel();
+	
+	private final AssetPointerTable<ControlPoint> cpTable;
 
-	public EncounterEditorPanel(EncounterTable owner, JFrame frame,
+	public EncounterEditorPanel(EncounterTable owner, ControlPointTable table, JFrame frame,
 			Optional<Encounter> prev) {
 		super(owner, frame, prev);
+		this.cpTable = new AssetPointerTable<>(table);
 
 		DefaultFormBuilder builder = createFormBuilder();
 		titleField.addActionListener(new NameTypedListener(idField));
@@ -115,6 +121,10 @@ public class EncounterEditorPanel extends
 		builder.appendRow("fill:80dlu");
 		builder.append("Prerequisites:", new AssetTablePanel(prereqTable));
 		builder.nextLine();
+		
+		builder.appendRow("fill:80dlu");
+        builder.append("Control Points:", new AssetTablePanel(cpTable));
+        builder.nextLine();
 
 		cards = new JPanel(new CardLayout());
 		cards.add(actorPanel, Type.ACTOR.name());
@@ -146,6 +156,9 @@ public class EncounterEditorPanel extends
 			if (asset.hasRegionParams()) {
 				regionPanel.setParams(asset.getRegionParams());
 			}
+			for (String cp : asset.getControlPointIdList()) {
+                cpTable.addAssetId(cp);
+            }
 		}
 
 		add(new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, builder.getPanel(),
@@ -161,6 +174,7 @@ public class EncounterEditorPanel extends
 				.setWeight(Double.parseDouble(weightField.getText()))
 				.setUnique(uniqueCheck.isSelected())
 				.addAllPrereq(prereqTable.getAssets())
+				.addAllControlPointId(cpTable.getAssetIds())
 				.setActorParams(actorPanel.getParams());
 		return encounter.build();
 	}

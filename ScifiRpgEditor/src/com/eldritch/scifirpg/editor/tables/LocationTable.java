@@ -4,26 +4,22 @@ import java.awt.Dimension;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.swing.BorderFactory;
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import com.eldritch.scifirpg.editor.AssetTablePanel;
-import com.eldritch.scifirpg.editor.MainPanel;
-import com.eldritch.scifirpg.editor.panel.AssetEditorPanel;
 import com.eldritch.invoken.proto.Locations.Biome;
 import com.eldritch.invoken.proto.Locations.ControlPoint;
 import com.eldritch.invoken.proto.Locations.Encounter;
 import com.eldritch.invoken.proto.Locations.Light;
 import com.eldritch.invoken.proto.Locations.Location;
 import com.eldritch.invoken.proto.Locations.Territory;
+import com.eldritch.scifirpg.editor.AssetTablePanel;
+import com.eldritch.scifirpg.editor.panel.AssetEditorPanel;
 import com.google.common.base.Optional;
 import com.google.protobuf.TextFormat;
 import com.jgoodies.forms.builder.DefaultFormBuilder;
@@ -90,7 +86,7 @@ public class LocationTable extends MajorAssetTable<Location> {
 		private final JTextField colorField = new JTextField("255 255 255");
 		private final TerritoryTable territoryTable = new TerritoryTable();
 		private final ControlPointTable controlPointTable = new ControlPointTable();
-		private final EncounterTable encounterTable = new EncounterTable();
+		private final EncounterTable encounterTable = new EncounterTable(controlPointTable);
 
 		public LocationEditorPanel(LocationTable owner, JFrame frame, Optional<Location> prev) {
 			super(owner, frame, prev);

@@ -12,13 +12,16 @@ public class EncounterTable extends IdentifiedAssetTable<Encounter> {
 	private static final String[] COLUMN_NAMES = { 
 		"ID", "Title", "Type", "Weight", "Unique" };
 	
-	public EncounterTable() {
+	private final ControlPointTable cpTable;
+	
+	public EncounterTable(ControlPointTable cpTable) {
 		super(COLUMN_NAMES, "Encounter");
+		this.cpTable = cpTable;
 	}
 
 	@Override
 	protected JPanel getEditorPanel(Optional<Encounter> prev, JFrame frame) {
-		return new EncounterEditorPanel(this, frame, prev);
+		return new EncounterEditorPanel(this, cpTable, frame, prev);
 	}
 	
 	@Override
