@@ -8,6 +8,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.NavigableSet;
+import java.util.Random;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -17,17 +18,18 @@ import com.eldritch.invoken.location.proc.RoomDecorator.RoomType;
 import com.eldritch.invoken.proto.Locations.ControlPoint;
 import com.eldritch.invoken.proto.Locations.Encounter;
 import com.eldritch.invoken.proto.Locations.Room;
+import com.eldritch.invoken.util.Pair;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 
 public class RoomGenerator extends BspGenerator {
     private final RoomCache roomCache = new RoomCache();
-    private final List<ControlPoint> points = new ArrayList<>();
+    private final List<Pair<ControlPoint, Integer>> roomCounts = new ArrayList<>();
     private final Map<Rectangle, ControlRoom> controlRooms = new LinkedHashMap<>();
 
-    public RoomGenerator(int roomCount, List<ControlPoint> points, long seed) {
+    public RoomGenerator(int roomCount, List<Pair<ControlPoint, Integer>> roomCounts, long seed) {
         super(roomCount, seed);
-        this.points.addAll(points);
+        this.roomCounts.addAll(roomCounts);
     }
 
     public Collection<ControlRoom> getEncounterRooms() {
@@ -67,8 +69,9 @@ public class RoomGenerator extends BspGenerator {
 //            }
 //        }
         
-        for (ControlPoint cp : points) {
-            int count = (int) (random() * (cp.getMax() - cp.getMin())) + cp.getMin();
+        for (Pair<ControlPoint, Integer> elem : roomCounts) {
+            ControlPoint cp = elem.first;
+            int count = elem.second;
             for (int i = 0; i < count; i++) {
                 place(cp);
             }
@@ -439,5 +442,19 @@ public class RoomGenerator extends BspGenerator {
         public Rectangle getBounds() {
             return controlRoom.getBounds();
         }
+    }
+    
+    public static RoomGenerator from(List<ControlPoint> points, long seed) {
+        Random rand = new Random(seed);
+        int total = 0;
+        List<Pair<ControlPoint, Integer>> roomCounts = new ArrayList<>();
+        for (ControlPoint cp : points) {
+            int count = (int) (rand.nextDouble() * (cp.getMax() - cp.getMin())) + cp.getMin();
+            if (count > 0) {
+                roomCounts.add(Pair.of(cp, count));
+                total += count;
+            }
+        }
+        return new RoomGenerator(total, roomCounts, seed);
     }
 }

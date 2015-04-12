@@ -53,8 +53,10 @@ import com.eldritch.invoken.proto.Locations.Biome;
 import com.eldritch.invoken.proto.Locations.ControlPoint;
 import com.eldritch.invoken.proto.Locations.Encounter;
 import com.eldritch.invoken.proto.Locations.Encounter.ActorParams.ActorScenario;
+import com.eldritch.invoken.proto.Locations.Territory;
 import com.eldritch.invoken.screens.GameScreen;
 import com.eldritch.invoken.screens.GameScreen.GameState;
+import com.eldritch.invoken.util.Pair;
 import com.eldritch.invoken.util.Settings;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableBiMap;
@@ -128,15 +130,7 @@ public class LocationGenerator {
         System.out.println("seed: " + seed);
         this.rand = new Random(seed);
 
-        int roomCount = 1;
-        for (Encounter encounter : proto.getEncounterList()) {
-            int count = 1;
-            if (!encounter.getUnique()) {
-                count = (int) Math.ceil(encounter.getWeight());
-            }
-            roomCount += count;
-        }
-        RoomGenerator bsp = new RoomGenerator(roomCount, proto.getControlPointList(), seed);
+        RoomGenerator bsp = RoomGenerator.from(proto.getControlPointList(), seed);
         NaturalVector2.init(bsp.getWidth(), bsp.getHeight());
 
         bsp.generateSegments();
@@ -197,6 +191,9 @@ public class LocationGenerator {
         ConnectedRoomManager rooms = createRooms(bsp.getEncounterRooms(), typeMap);
         map.setRooms(rooms);
         save(rooms.getGrid(), "connected-rooms");
+        
+        InvokenGame.log("Claiming Territory");
+        claimTerritory(rooms, proto.getTerritoryList());
 
         InvokenGame.log("Adding Furniture");
         RoomDecorator roomDecorator = new RoomDecorator(map, seed);
@@ -282,6 +279,12 @@ public class LocationGenerator {
 
     private boolean openGround(int x, int y, LocationLayer layer, LocationLayer collision) {
         return layer.isGround(x, y) && collision.getCell(x, y) == null;
+    }
+    
+    private void claimTerritory(ConnectedRoomManager rooms, List<Territory> territory) {
+        // randomly assign capitals for every faction with territory
+        
+        // grow territory outwards from each capital until all control is expended
     }
 
     private ConnectedRoomManager createRooms(Collection<ControlRoom> chambers, CellType[][] typeMap) {
