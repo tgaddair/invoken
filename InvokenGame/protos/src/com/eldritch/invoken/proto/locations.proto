@@ -10,16 +10,45 @@ import "com/eldritch/invoken/proto/outcomes.proto";
 message Location {
 	required string id = 1;  // unique key
 	required string name = 2;
+
 	repeated Encounter encounter = 3;
-	optional string faction_id = 5;  // access restricted to this faction
-	optional int32 min_rank = 6;  // min rank allowed in area
-	optional string credential = 10;  // allows wandering the premises
+	repeated Territory territory = 11;
+	repeated ControlPoint control_point = 12;
+
 	optional Light light = 7;
 	optional Biome biome = 8 [default = INDUSTRY];
 
 	// DEPRECATED
-	optional int32 parend_id_DEPRECATED = 4;
+	optional int32 parent_id_DEPRECATED = 4;
 	repeated string room_id_DEPRECATED = 9;
+	optional string faction_id_DEPRECATED = 5;  // access restricted to this faction
+	optional int32 min_rank_DEPRECATED = 6;  // min rank allowed in area
+	optional string credential_DEPRECATED = 10;  // allows wandering the premises
+}
+
+message Territory {
+	optional string faction_id = 1;
+	optional int32 min_rank = 2;  // min rank allowed in area
+	optional string credential = 3;  // allows wandering the premises
+
+	optional int32 control = 4;
+}
+
+message ControlPoint {
+	optional string id = 1;
+	optional int32 value = 10 [default = 0];
+
+	repeated string room_id = 2;
+	repeated string follows = 3;
+
+	optional int32 lock_strength = 4 [default = 0];
+	optional string required_key = 5;
+	repeated string available_key = 6;
+
+	optional bool origin = 7 [default = false];
+
+	optional int32 min = 8 [default = 1];
+	optional int32 max = 9 [default = 1];
 }
 
 message Room {
@@ -150,20 +179,20 @@ message Encounter {
 	required bool unique = 5 [default = false];
 
 	repeated Prerequisite prereq = 6;
-
-
-	optional int32 lock_strength = 14 [default = 0];
-	optional string required_key = 12;
-	repeated string available_key = 15;
-	optional bool origin = 7 [default = false];
-	optional string successor = 16;
-	optional string next_encounter = 17;
-
-	repeated string room_id = 13;
+	repeated string control_point_id = 18;
 
 	// Parameters specific to encounter type
 	optional StaticParams static_params = 8;
 	optional DecisionParams decision_params = 9;
 	optional ActorParams actor_params = 10;
 	optional RegionParams region_params = 11;
+
+	// DEPRECATED
+	optional bool origin_DEPRECATED = 7 [default = false];
+	repeated string room_id_DEPRECATED = 13;
+	optional string required_key_DEPRECATED = 12;
+	optional int32 lock_strength_DEPRECATED = 14 [default = 0];
+	repeated string available_key_DEPRECATED = 15;
+	optional string successor_DEPRECATED = 16;
+	optional string next_encounter_DEPRECATED = 17;
 }

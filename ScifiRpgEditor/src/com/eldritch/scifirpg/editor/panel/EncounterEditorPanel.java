@@ -26,7 +26,6 @@ import javax.swing.JTextField;
 
 import com.eldritch.scifirpg.editor.AssetTablePanel;
 import com.eldritch.scifirpg.editor.MainPanel;
-import com.eldritch.scifirpg.editor.tables.AssetPointerTable;
 import com.eldritch.scifirpg.editor.tables.AssetTable;
 import com.eldritch.scifirpg.editor.tables.DialogueTable;
 import com.eldritch.scifirpg.editor.tables.EncounterTable;
@@ -34,10 +33,8 @@ import com.eldritch.scifirpg.editor.tables.OutcomeTable;
 import com.eldritch.scifirpg.editor.tables.OutcomeTable.EncounterOutcomeTable;
 import com.eldritch.scifirpg.editor.tables.PrerequisiteTable;
 import com.eldritch.invoken.proto.Actors.NonPlayerActor;
-import com.eldritch.invoken.proto.Items.Item;
 import com.eldritch.invoken.proto.Locations.Encounter;
 import com.eldritch.invoken.proto.Locations.Location;
-import com.eldritch.invoken.proto.Locations.Room;
 import com.eldritch.invoken.proto.Locations.Encounter.ActorParams;
 import com.eldritch.invoken.proto.Locations.Encounter.ActorParams.ActorScenario;
 import com.eldritch.invoken.proto.Locations.Encounter.RegionParams;
@@ -61,17 +58,8 @@ public class EncounterEditorPanel extends
 	private final JTextField weightField = new JTextField();
 	private final JCheckBox uniqueCheck = new JCheckBox();
 
-	private final AssetPointerTable<Room> roomTable = new AssetPointerTable<>(
-			MainPanel.ROOM_TABLE);
-
-	private final JTextField lockField = new JTextField();
-	private final JCheckBox originCheck = new JCheckBox();
 	private final JComboBox<String> successorBox = new JComboBox<>();
 	private final JComboBox<String> nextEncounterBox = new JComboBox<>();
-	private final JComboBox<String> lockBox = new JComboBox<>();
-	private final AssetPointerTable<Item> keyTable = new AssetPointerTable<>(
-			MainPanel.ITEM_TABLE);
-
 	private final PrerequisiteTable prereqTable = new PrerequisiteTable();
 
 	// Different cards for different types
@@ -105,9 +93,6 @@ public class EncounterEditorPanel extends
 		builder.append("Unique:", uniqueCheck);
 		builder.nextLine();
 
-		builder.append("Origin:", originCheck);
-		builder.nextLine();
-		
 		List<String> fIds = new ArrayList<>();
 		fIds.add("");
 		fIds.addAll(MainPanel.LOCATION_TABLE.getAssetIds());
@@ -127,26 +112,6 @@ public class EncounterEditorPanel extends
 		builder.append("Encounter:", nextEncounterBox);
 		builder.nextLine();
 		
-		lockField.setText("0");
-		builder.append("Lock:", lockField);
-		builder.nextLine();
-
-		List<String> items = new ArrayList<>();
-		items.add("");
-		items.addAll(MainPanel.ITEM_TABLE.getAssetIds());
-		lockBox.setModel(new DefaultComboBoxModel<String>(items
-				.toArray(new String[0])));
-		builder.append("Key:", lockBox);
-		builder.nextLine();
-
-		builder.appendRow("fill:100dlu");
-		builder.append("Unlocks:", new AssetTablePanel(keyTable));
-		builder.nextLine();
-
-		builder.appendRow("fill:100dlu");
-		builder.append("Rooms:", new AssetTablePanel(roomTable));
-		builder.nextLine();
-
 		builder.appendRow("fill:80dlu");
 		builder.append("Prerequisites:", new AssetTablePanel(prereqTable));
 		builder.nextLine();
@@ -165,25 +130,6 @@ public class EncounterEditorPanel extends
 			titleField.setText(asset.getTitle());
 			weightField.setText(asset.getWeight() + "");
 			uniqueCheck.setSelected(asset.getUnique());
-			lockField.setText(asset.getLockStrength() + "");
-			for (String roomId : asset.getRoomIdList()) {
-				roomTable.addAssetId(roomId);
-			}
-
-			originCheck.setSelected(asset.getOrigin());
-			if (asset.hasSuccessor()) {
-				successorBox.setSelectedItem(asset.getSuccessor());
-				updateEncounterBox(asset.getSuccessor());
-				if (asset.hasNextEncounter()) {
-					nextEncounterBox.setSelectedItem(asset.getNextEncounter());
-				}
-			}
-			if (asset.hasRequiredKey()) {
-				lockBox.setSelectedItem(asset.getRequiredKey());
-			}
-			for (String key : asset.getAvailableKeyList()) {
-				keyTable.addAssetId(key);
-			}
 
 			for (Prerequisite p : asset.getPrereqList()) {
 				prereqTable.addAsset(p);
@@ -214,13 +160,6 @@ public class EncounterEditorPanel extends
 				.setType(Type.ACTOR)
 				.setWeight(Double.parseDouble(weightField.getText()))
 				.setUnique(uniqueCheck.isSelected())
-				.setOrigin(originCheck.isSelected())
-				.setSuccessor((String) successorBox.getSelectedItem())
-				.setNextEncounter((String) nextEncounterBox.getSelectedItem())
-				.setLockStrength(Integer.parseInt(lockField.getText()))
-				.setRequiredKey((String) lockBox.getSelectedItem())
-				.addAllAvailableKey(keyTable.getAssetIds())
-				.addAllRoomId(roomTable.getAssetIds())
 				.addAllPrereq(prereqTable.getAssets())
 				.setActorParams(actorPanel.getParams());
 		return encounter.build();

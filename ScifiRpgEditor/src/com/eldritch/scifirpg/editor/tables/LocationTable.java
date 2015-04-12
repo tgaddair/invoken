@@ -19,9 +19,11 @@ import com.eldritch.scifirpg.editor.AssetTablePanel;
 import com.eldritch.scifirpg.editor.MainPanel;
 import com.eldritch.scifirpg.editor.panel.AssetEditorPanel;
 import com.eldritch.invoken.proto.Locations.Biome;
+import com.eldritch.invoken.proto.Locations.ControlPoint;
 import com.eldritch.invoken.proto.Locations.Encounter;
 import com.eldritch.invoken.proto.Locations.Light;
 import com.eldritch.invoken.proto.Locations.Location;
+import com.eldritch.invoken.proto.Locations.Territory;
 import com.google.common.base.Optional;
 import com.google.protobuf.TextFormat;
 import com.jgoodies.forms.builder.DefaultFormBuilder;
@@ -43,18 +45,17 @@ public class LocationTable extends MajorAssetTable<Location> {
 	
 	@Override
 	protected Object[] getDisplayFields(Location asset) {
-		String faction = "";
-		if (asset.hasFactionId()) {
-			faction = asset.getFactionId();
-			if (asset.hasMinRank()) {
-				faction += " (" + asset.getMinRank() + ")";
-			}
+		String factions = "";
+		for (Territory t : asset.getTerritoryList()) {
+			factions += t.getFactionId() + " ";
 		}
+		
 		String encounters = "";
 		for (Encounter e : asset.getEncounterList()) {
 			encounters += e.getId() + " ";
 		}
-		return new Object[]{asset.getId(), asset.getName(), faction, encounters};
+		
+		return new Object[]{asset.getId(), asset.getName(), factions, encounters};
 	}
 
 	@Override
@@ -84,12 +85,11 @@ public class LocationTable extends MajorAssetTable<Location> {
 
 		private final JTextField idField = new JTextField();
 		private final JTextField nameField = new JTextField();
-		private final JComboBox<String> factionBox = new JComboBox<>();
-		private final JTextField minRankField = new JTextField();
-		private final JComboBox<String> credentialBox = new JComboBox<>();
 		private final JComboBox<Biome> biomeBox = new JComboBox<>(Biome.values());
 		private final JTextField intensityField = new JTextField("1.0f");
 		private final JTextField colorField = new JTextField("255 255 255");
+		private final TerritoryTable territoryTable = new TerritoryTable();
+		private final ControlPointTable controlPointTable = new ControlPointTable();
 		private final EncounterTable encounterTable = new EncounterTable();
 
 		public LocationEditorPanel(LocationTable owner, JFrame frame, Optional<Location> prev) {
@@ -108,23 +108,6 @@ public class LocationTable extends MajorAssetTable<Location> {
 			builder.append("ID:", idField);
 			builder.nextLine();
 			
-			List<String> fIds = new ArrayList<>();
-			fIds.add("");
-			fIds.addAll(MainPanel.FACTION_TABLE.getAssetIds());
-			factionBox.setModel(new DefaultComboBoxModel<String>(fIds.toArray(new String[0])));
-			builder.append("Faction:", factionBox);
-			builder.nextLine();
-			
-			builder.append("Min Rank:", minRankField);
-			builder.nextLine();
-			
-			List<String> items = new ArrayList<>();
-			items.add("");
-			items.addAll(MainPanel.ITEM_TABLE.getAssetIds());
-			credentialBox.setModel(new DefaultComboBoxModel<String>(items.toArray(new String[0])));
-			builder.append("Credential:", credentialBox);
-			builder.nextLine();
-			
 			builder.append("Biome:", biomeBox);
 			builder.nextLine();
 			
@@ -135,8 +118,16 @@ public class LocationTable extends MajorAssetTable<Location> {
 			builder.nextLine();
 			
 			builder.appendRow("fill:p:grow");
+            builder.append("Territory:", new AssetTablePanel(territoryTable));
+            builder.nextLine();
+			
+			builder.appendRow("fill:p:grow");
 			builder.append("Encounters:", new AssetTablePanel(encounterTable));
 			builder.nextLine();
+			
+			builder.appendRow("fill:p:grow");
+            builder.append("Control Points:", new AssetTablePanel(controlPointTable));
+            builder.nextLine();
 
 			JButton saveButton = new JButton("Save");
 			saveButton.addActionListener(this);
@@ -147,20 +138,18 @@ public class LocationTable extends MajorAssetTable<Location> {
 				Location loc = prev.get();
 				idField.setText(loc.getId());
 				nameField.setText(loc.getName());
-				if (loc.hasFactionId()) {
-					factionBox.setSelectedItem(loc.getFactionId());
-				}
-				if (loc.hasMinRank()) {
-					minRankField.setText(loc.getMinRank() + "");
-				}
-				if (loc.hasCredential()) {
-					credentialBox.setSelectedItem(loc.getCredential());
-				}
 				biomeBox.setSelectedItem(loc.getBiome());
 				if (loc.hasLight()) {
 					Light light = loc.getLight();
 					intensityField.setText(light.getIntensity() + "");
 					colorField.setText(light.getR() + " " + light.getG() + " " + light.getB());
+				}
+				
+				for (Territory t : loc.getTerritoryList()) {
+					territoryTable.addAsset(t);
+				}
+				for (ControlPoint cp : loc.getControlPointList()) {
+					controlPointTable.addAsset(cp);
 				}
 				for (Encounter e : loc.getEncounterList()) {
 					encounterTable.addAsset(e);
@@ -184,15 +173,9 @@ public class LocationTable extends MajorAssetTable<Location> {
 							.setG(Integer.parseInt(rgb[1]))
 							.setB(Integer.parseInt(rgb[2]))
 							.build())
+					.addAllTerritory(territoryTable.getAssets())
+					.addAllControlPoint(controlPointTable.getAssets())
 					.addAllEncounter(encounterTable.getAssets());
-			String factionId = (String) factionBox.getSelectedItem();
-			if (!factionId.isEmpty()) {
-				location.setFactionId(factionId);
-				if (!minRankField.getText().isEmpty()) {
-					location.setMinRank(Integer.parseInt(minRankField.getText()));
-				}
-				location.setCredential((String) credentialBox.getSelectedItem());
-			}
 			return location.build();
 		}
 	}
