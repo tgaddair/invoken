@@ -6,7 +6,7 @@ import com.eldritch.invoken.actor.AgentInfo;
 import com.eldritch.invoken.actor.Inventory;
 import com.eldritch.invoken.actor.factions.Faction;
 import com.eldritch.invoken.actor.type.Agent;
-import com.eldritch.invoken.encounter.Location;
+import com.eldritch.invoken.location.Location;
 import com.eldritch.invoken.proto.Disciplines.Discipline;
 import com.eldritch.invoken.proto.Prerequisites.Prerequisite;
 

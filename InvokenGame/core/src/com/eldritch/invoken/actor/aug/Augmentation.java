@@ -6,7 +6,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.actor.type.Agent;
-import com.eldritch.invoken.encounter.Location;
+import com.eldritch.invoken.location.Location;
 import com.eldritch.invoken.proto.Augmentations.AugmentationProto;
 import com.eldritch.invoken.screens.GameScreen;
 

@@ -3,8 +3,8 @@ package com.eldritch.invoken.actor.type;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.eldritch.invoken.actor.Entity;
-import com.eldritch.invoken.encounter.Location;
-import com.eldritch.invoken.encounter.NaturalVector2;
+import com.eldritch.invoken.location.Location;
+import com.eldritch.invoken.location.NaturalVector2;
 
 public abstract class CollisionEntity implements Entity {
     protected final Vector2 position = new Vector2();

@@ -1,4 +1,4 @@
-package com.eldritch.invoken.encounter.proc;
+package com.eldritch.invoken.location.proc;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -14,7 +14,7 @@ import javax.imageio.ImageIO;
 
 import com.badlogic.gdx.math.Rectangle;
 import com.eldritch.invoken.InvokenGame;
-import com.eldritch.invoken.encounter.NaturalVector2;
+import com.eldritch.invoken.location.NaturalVector2;
 
 public class BspGenerator {
     // 2 -> lots of big halls

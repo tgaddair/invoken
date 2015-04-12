@@ -56,7 +56,7 @@ import com.eldritch.invoken.actor.ai.btree.Speak;
 import com.eldritch.invoken.actor.ai.btree.SquadTactics;
 import com.eldritch.invoken.actor.aug.Augmentation;
 import com.eldritch.invoken.actor.items.Fragment;
-import com.eldritch.invoken.encounter.Location;
+import com.eldritch.invoken.location.Location;
 import com.eldritch.invoken.proto.Actors.ActorParams.Species;
 import com.eldritch.invoken.proto.Actors.DialogueTree.Choice;
 import com.eldritch.invoken.proto.Actors.DialogueTree.Response;

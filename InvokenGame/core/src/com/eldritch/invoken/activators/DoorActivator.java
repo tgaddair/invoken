@@ -14,9 +14,9 @@ import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.actor.Inventory;
 import com.eldritch.invoken.actor.items.Item;
 import com.eldritch.invoken.actor.type.Agent;
-import com.eldritch.invoken.encounter.Location;
-import com.eldritch.invoken.encounter.NaturalVector2;
-import com.eldritch.invoken.proto.Locations.Encounter;
+import com.eldritch.invoken.location.Location;
+import com.eldritch.invoken.location.NaturalVector2;
+import com.eldritch.invoken.proto.Locations.ControlPoint;
 import com.eldritch.invoken.screens.GameScreen;
 import com.eldritch.invoken.util.Settings;
 import com.google.common.base.Strings;
@@ -248,8 +248,8 @@ public class DoorActivator extends ClickActivator implements ProximityActivator,
             return inventory.hasItem(key);
         }
 
-        public static LockInfo from(Encounter encounter) {
-            return new LockInfo(encounter.getRequiredKey(), encounter.getLockStrength());
+        public static LockInfo from(ControlPoint controlPoint) {
+            return new LockInfo(controlPoint.getRequiredKey(), controlPoint.getLockStrength());
         }
     }
 }

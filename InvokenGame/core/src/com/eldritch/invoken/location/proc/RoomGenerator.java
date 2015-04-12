@@ -1,4 +1,4 @@
-package com.eldritch.invoken.encounter.proc;
+package com.eldritch.invoken.location.proc;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -13,51 +13,64 @@ import java.util.TreeSet;
 
 import com.badlogic.gdx.math.Rectangle;
 import com.eldritch.invoken.InvokenGame;
-import com.eldritch.invoken.encounter.proc.RoomGenerator.RoomType;
+import com.eldritch.invoken.location.proc.RoomDecorator.RoomType;
+import com.eldritch.invoken.proto.Locations.ControlPoint;
 import com.eldritch.invoken.proto.Locations.Encounter;
 import com.eldritch.invoken.proto.Locations.Room;
+import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 
-public class EncounterGenerator extends BspGenerator {
+public class RoomGenerator extends BspGenerator {
     private final RoomCache roomCache = new RoomCache();
-    private final List<Encounter> encounters = new ArrayList<Encounter>();
-    private final Map<Rectangle, EncounterRoom> encounterRooms = new LinkedHashMap<Rectangle, EncounterRoom>();
+    private final List<ControlPoint> points = new ArrayList<>();
+    private final Map<Rectangle, ControlRoom> controlRooms = new LinkedHashMap<>();
 
-    public EncounterGenerator(int roomCount, List<Encounter> encounters, long seed) {
+    public RoomGenerator(int roomCount, List<ControlPoint> points, long seed) {
         super(roomCount, seed);
-        this.encounters.addAll(encounters);
+        this.points.addAll(points);
     }
 
-    public Collection<EncounterRoom> getEncounterRooms() {
-        return encounterRooms.values();
+    public Collection<ControlRoom> getEncounterRooms() {
+        return controlRooms.values();
+    }
+    
+    public void associate(List<Encounter> encounters) {
+        // TODO
     }
 
     @Override
     protected void PlaceRooms() {
         InvokenGame.log("Room Count: " + getRoomCount());
 
-        // place all encounters at least once first
-        List<Encounter> repeatedEncounters = new ArrayList<Encounter>();
-        int count = 0;
-        for (Encounter encounter : encounters) {
-            if (encounter.getOrigin() || encounter.getUnique()) {
-                if (place(encounter)) {
-                    count++;
-                }
-            } else {
-                repeatedEncounters.add(encounter);
-            }
-        }
-
-        if (!repeatedEncounters.isEmpty()) {
-            // place encounters randomly
-            EncounterSelector selector = new EncounterSelector(repeatedEncounters);
-            int remaining = getRoomCount() - count;
-            // InvokenGame.log("Remaining: " + remaining);
-            while (remaining > 0) {
-                Encounter encounter = selector.select();
-                place(encounter);
-                remaining--;
+//        // place all encounters at least once first
+//        List<Encounter> repeated = new ArrayList<Encounter>();
+//        int count = 0;
+//        for (ControlPoint cp : points) {
+//            if (cp.getOrigin()) {
+//                if (place(cp)) {
+//                    count++;
+//                }
+//            } else {
+//                repeatedEncounters.add(cp);
+//            }
+//        }
+//
+//        if (!repeatedEncounters.isEmpty()) {
+//            // place encounters randomly
+//            EncounterSelector selector = new EncounterSelector(repeatedEncounters);
+//            int remaining = getRoomCount() - count;
+//            // InvokenGame.log("Remaining: " + remaining);
+//            while (remaining > 0) {
+//                ControlPoint encounter = selector.select();
+//                place(encounter);
+//                remaining--;
+//            }
+//        }
+        
+        for (ControlPoint cp : points) {
+            int count = (int) (random() * (cp.getMax() - cp.getMin())) + cp.getMin();
+            for (int i = 0; i < count; i++) {
+                place(cp);
             }
         }
     }
@@ -67,35 +80,35 @@ public class EncounterGenerator extends BspGenerator {
         // save("no-tunnels");
 
         // first, generate the dependency graph from all the encounter-room pairs
-        EncounterNode origin = generateDependencyGraph(encounterRooms.values());
+        ControlNode origin = generateDependencyGraph(controlRooms.values());
 
-        LinkedList<EncounterNode> unlocked = new LinkedList<EncounterNode>(); // can place
-        List<EncounterNode> connectedSample = new ArrayList<EncounterNode>(); // can connect to
-        Set<EncounterNode> connected = new LinkedHashSet<EncounterNode>();
+        LinkedList<ControlNode> unlocked = new LinkedList<ControlNode>(); // can place
+        List<ControlNode> connectedSample = new ArrayList<ControlNode>(); // can connect to
+        Set<ControlNode> connected = new LinkedHashSet<ControlNode>();
 
         // seed the routine so we can connect to the origin, and we connected from a child
         connectedSample.add(origin);
         connected.add(origin);
-        for (EncounterNode lock : origin.locks) {
+        for (ControlNode lock : origin.locks) {
             unlocked.add(lock);
         }
 
-        CostMatrix costs = new EncounterCostMatrix(getWidth(), getHeight(), encounterRooms.values());
+        CostMatrix costs = new EncounterCostMatrix(getWidth(), getHeight(), controlRooms.values());
         while (!unlocked.isEmpty()) {
-            EncounterNode current = unlocked.removeFirst();
+            ControlNode current = unlocked.removeFirst();
             if (connected.contains(current)) {
                 // already placed
                 continue;
             }
 
-            EncounterNode connection = connectedSample.get((int) (random() * connected.size()));
+            ControlNode connection = connectedSample.get((int) (random() * connected.size()));
             DigTunnel(connection.getBounds(), current.getBounds(), costs);
 
             // add this node to the connected set, and maybe add its children if all its keys
             // are also in the connected set
             connectedSample.add(current);
             connected.add(current);
-            for (EncounterNode lock : current.locks) {
+            for (ControlNode lock : current.locks) {
                 if (connected.contains(lock)) {
                     // already placed
                     continue;
@@ -103,7 +116,7 @@ public class EncounterGenerator extends BspGenerator {
 
                 // iterate over all dependencies and check that they've already been placed
                 boolean canConnect = true;
-                for (EncounterNode key : lock.keys) {
+                for (ControlNode key : lock.keys) {
                     if (!connected.contains(key)) {
                         canConnect = false;
                         break;
@@ -119,8 +132,8 @@ public class EncounterGenerator extends BspGenerator {
 
         // finally, asset that all the encounters were connected
         Preconditions.checkState(
-                connected.size() == encounterRooms.size(),
-                String.format("expected %d connection, found %d", encounterRooms.size(),
+                connected.size() == controlRooms.size(),
+                String.format("expected %d connection, found %d", controlRooms.size(),
                         connected.size()));
 
         // now that we're done placing tunnels, we need to reconstruct the walls around our
@@ -129,11 +142,11 @@ public class EncounterGenerator extends BspGenerator {
     }
 
     private static class EncounterCostMatrix implements CostMatrix {
-        private final EncounterRoom[][] rooms;
+        private final ControlRoom[][] rooms;
 
-        public EncounterCostMatrix(int width, int height, Collection<EncounterRoom> list) {
-            rooms = new EncounterRoom[width][height];
-            for (EncounterRoom room : list) {
+        public EncounterCostMatrix(int width, int height, Collection<ControlRoom> list) {
+            rooms = new ControlRoom[width][height];
+            for (ControlRoom room : list) {
                 Rectangle bounds = room.getBounds();
 
                 // boundary of the chamber, the stone border goes 1 unit out of the bounds
@@ -157,29 +170,29 @@ public class EncounterGenerator extends BspGenerator {
         }
 
         public int getCost(int x, int y) {
-            EncounterRoom room = rooms[x][y];
+            ControlRoom room = rooms[x][y];
             if (room != null) {
                 return getCost(room);
             }
             return 0;
         }
 
-        private static int getCost(EncounterRoom room) {
+        private static int getCost(ControlRoom room) {
             int cost = 0;
 
             // origin should be somewhat costly to pass through to reduce traffic
-            if (room.getEncounter().getOrigin()) {
+            ControlPoint cp = room.getControlPoint();
+            if (cp.getOrigin()) {
                 cost += 250;
             }
 
             // if the room has a dependency, then the cost should be very high
-            if (room.getEncounter().hasRequiredKey()
-                    && !room.getEncounter().getRequiredKey().isEmpty()) {
+            if (cp.hasRequiredKey() && !cp.getRequiredKey().isEmpty()) {
                 cost += 1000;
             }
 
             // if the room is closed, then the cost should be very high
-            if (room.getEncounter().getLockStrength() > 0) {
+            if (cp.getLockStrength() > 0) {
                 cost += 500;
             }
 
@@ -187,29 +200,29 @@ public class EncounterGenerator extends BspGenerator {
         }
     }
 
-    private boolean place(Encounter encounter) {
+    private boolean place(ControlPoint cp) {
         // InvokenGame.log("Place: " + encounter.getId());
         int count = 0;
         while (count < 1000) {
-            if (encounter.getRoomIdList().isEmpty()) {
+            if (cp.getRoomIdList().isEmpty()) {
                 int width = range(MinRoomSize, MaxRoomSize);
                 int height = range(MinRoomSize, MaxRoomSize);
                 Rectangle rect = PlaceRectRoom(width, height);
                 if (rect != null) {
-                    encounterRooms.put(rect, new EncounterRoom(encounter,
+                    controlRooms.put(rect, new ControlRoom(cp,
                             Room.getDefaultInstance(), rect));
                     return true;
                 }
             } else {
-                for (String roomId : encounter.getRoomIdList()) {
+                for (String roomId : cp.getRoomIdList()) {
                     Room room = roomCache.lookupRoom(roomId);
-                    RoomType type = RoomGenerator.get(room.getSize());
+                    RoomType type = RoomDecorator.get(room.getSize());
 
                     int width = range(type);
                     int height = range(type);
                     Rectangle rect = PlaceRectRoom(width, height);
                     if (rect != null) {
-                        encounterRooms.put(rect, new EncounterRoom(encounter, room, rect));
+                        controlRooms.put(rect, new ControlRoom(cp, room, rect));
                         return true;
                     }
                 }
@@ -273,12 +286,12 @@ public class EncounterGenerator extends BspGenerator {
         }
     }
 
-    private static EncounterNode generateDependencyGraph(Collection<EncounterRoom> encounters) {
+    private static ControlNode generateDependencyGraph(Collection<ControlRoom> encounters) {
         // scan through the list and pick out the origin
-        List<EncounterNode> nodes = new ArrayList<EncounterNode>();
-        EncounterNode origin = null;
-        for (EncounterRoom encounter : encounters) {
-            EncounterNode node = new EncounterNode(encounter);
+        List<ControlNode> nodes = new ArrayList<ControlNode>();
+        ControlNode origin = null;
+        for (ControlRoom encounter : encounters) {
+            ControlNode node = new ControlNode(encounter);
             if (node.isOrigin()) {
                 origin = node;
             }
@@ -287,8 +300,8 @@ public class EncounterGenerator extends BspGenerator {
         Preconditions.checkState(origin != null, "Origin must be provided in the encounter list");
 
         // add the origin as a key of all unlocked encounters
-        Map<String, List<EncounterNode>> keys = new LinkedHashMap<String, List<EncounterNode>>();
-        for (EncounterNode node : nodes) {
+        Map<String, List<ControlNode>> keys = new LinkedHashMap<String, List<ControlNode>>();
+        for (ControlNode node : nodes) {
             if (!node.isOrigin() && !node.isLocked()) {
                 node.addKey(origin);
                 origin.addLock(node);
@@ -297,21 +310,21 @@ public class EncounterGenerator extends BspGenerator {
             // add keys
             for (String key : node.getAvailableKeys()) {
                 if (!keys.containsKey(key)) {
-                    keys.put(key, new ArrayList<EncounterNode>());
+                    keys.put(key, new ArrayList<ControlNode>());
                 }
                 keys.get(key).add(node);
             }
         }
 
         // finally, add normal dependencies
-        for (EncounterNode node : nodes) {
+        for (ControlNode node : nodes) {
             if (!node.isOrigin() && node.isLocked()) {
                 Preconditions
                         .checkArgument(keys.containsKey(node.getLock()), String.format(
                                 "No key for lock %s, encounter %s", node.getLock(),
-                                node.encounter.getId()));
+                                node.cp.getId()));
                 
-                for (EncounterNode key : keys.get(node.getLock())) {
+                for (ControlNode key : keys.get(node.getLock())) {
                     node.addKey(key);
                     key.addLock(node);
                 }
@@ -321,19 +334,19 @@ public class EncounterGenerator extends BspGenerator {
         return origin;
     }
 
-    public static class EncounterRoom {
-        private final Encounter encounter;
+    public static class ControlRoom {
+        private final ControlPoint cp;
         private final Room room;
         private final Rectangle bounds;
 
-        public EncounterRoom(Encounter encounter, Room room, Rectangle bounds) {
-            this.encounter = encounter;
+        public ControlRoom(ControlPoint cp, Room room, Rectangle bounds) {
+            this.cp = cp;
             this.room = room;
             this.bounds = bounds;
         }
 
-        public Encounter getEncounter() {
-            return encounter;
+        public ControlPoint getControlPoint() {
+            return cp;
         }
 
         public Room getRoom() {
@@ -352,49 +365,74 @@ public class EncounterGenerator extends BspGenerator {
             restricted.height -= 1;
             return restricted;
         }
+        
+        public Optional<Encounter> chooseEncounter(List<Encounter> encounters) {
+            // find all the available encounters for the given control point
+            double total = 0;
+            List<Encounter> available = new ArrayList<>();
+            for (Encounter encounter : encounters) {
+                if (encounter.getControlPointIdList().contains(cp.getId())) {
+                    total += encounter.getWeight();
+                    available.add(encounter);
+                }
+            }
+            
+            // sample an encounter with replacement by its weight
+            double target = Math.random() * total;
+            double sum = 0;
+            for (Encounter encounter : available) {
+                sum += encounter.getWeight();
+                if (sum >= target) {
+                    return Optional.of(encounter);
+                }
+            }
+            
+            // no encounter found
+            return Optional.absent();
+        }
     }
 
-    private static class EncounterNode {
+    private static class ControlNode {
         // encounters that unlock this one
-        private final List<EncounterNode> keys = new ArrayList<EncounterNode>();
+        private final List<ControlNode> keys = new ArrayList<ControlNode>();
 
         // encounters that are unlocked by this one
-        private final List<EncounterNode> locks = new ArrayList<EncounterNode>();
+        private final List<ControlNode> locks = new ArrayList<ControlNode>();
 
-        private final EncounterRoom encounterRoom;
-        private final Encounter encounter;
+        private final ControlRoom controlRoom;
+        private final ControlPoint cp;
 
-        public EncounterNode(EncounterRoom encounterRoom) {
-            this.encounterRoom = encounterRoom;
-            this.encounter = encounterRoom.encounter;
+        public ControlNode(ControlRoom controlRoom) {
+            this.controlRoom = controlRoom;
+            this.cp = controlRoom.cp;
         }
 
-        public void addKey(EncounterNode key) {
+        public void addKey(ControlNode key) {
             keys.add(key);
         }
 
-        public void addLock(EncounterNode lock) {
+        public void addLock(ControlNode lock) {
             locks.add(lock);
         }
 
         public boolean isOrigin() {
-            return encounter.getOrigin();
+            return cp.getOrigin();
         }
 
         public boolean isLocked() {
-            return encounter.hasRequiredKey() && !encounter.getRequiredKey().isEmpty();
+            return cp.hasRequiredKey() && !cp.getRequiredKey().isEmpty();
         }
 
         public String getLock() {
-            return encounter.getRequiredKey();
+            return cp.getRequiredKey();
         }
 
         public List<String> getAvailableKeys() {
-            return encounter.getAvailableKeyList();
+            return cp.getAvailableKeyList();
         }
 
         public Rectangle getBounds() {
-            return encounterRoom.getBounds();
+            return controlRoom.getBounds();
         }
     }
 }

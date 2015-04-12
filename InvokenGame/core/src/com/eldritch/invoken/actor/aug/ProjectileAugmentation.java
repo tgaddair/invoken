@@ -2,7 +2,7 @@ package com.eldritch.invoken.actor.aug;
 
 import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.actor.type.Agent;
-import com.eldritch.invoken.encounter.Location;
+import com.eldritch.invoken.location.Location;
 
 public abstract class ProjectileAugmentation extends Augmentation {
     public ProjectileAugmentation(String asset) {

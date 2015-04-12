@@ -4,7 +4,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.effects.Cloaked;
-import com.eldritch.invoken.encounter.Location;
+import com.eldritch.invoken.location.Location;
 
 public class Cloak extends Augmentation {
     private static final int BASE_COST = 3;

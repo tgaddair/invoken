@@ -2,8 +2,8 @@ package com.eldritch.invoken.activators;
 
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.eldritch.invoken.actor.type.Agent;
-import com.eldritch.invoken.encounter.Location;
-import com.eldritch.invoken.encounter.NaturalVector2;
+import com.eldritch.invoken.location.Location;
+import com.eldritch.invoken.location.NaturalVector2;
 import com.eldritch.invoken.screens.GameScreen;
 
 public class Repository extends ClickActivator {

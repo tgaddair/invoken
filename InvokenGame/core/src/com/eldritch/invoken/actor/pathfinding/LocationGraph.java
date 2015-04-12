@@ -6,9 +6,9 @@ import java.util.Map;
 import com.badlogic.gdx.ai.pfa.indexed.IndexedHierarchicalGraph;
 import com.eldritch.invoken.actor.pathfinding.LocationNode.RoomNode;
 import com.eldritch.invoken.actor.pathfinding.LocationNode.TiledNode;
-import com.eldritch.invoken.encounter.ConnectedRoom;
-import com.eldritch.invoken.encounter.NaturalVector2;
-import com.eldritch.invoken.encounter.layer.LocationMap;
+import com.eldritch.invoken.location.ConnectedRoom;
+import com.eldritch.invoken.location.NaturalVector2;
+import com.eldritch.invoken.location.layer.LocationMap;
 
 public class LocationGraph extends IndexedHierarchicalGraph<LocationNode> {
     private static final int LEVELS = 1;

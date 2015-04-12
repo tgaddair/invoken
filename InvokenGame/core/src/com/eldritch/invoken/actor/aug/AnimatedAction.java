@@ -5,7 +5,7 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.eldritch.invoken.actor.aug.Augmentation.AugmentationAction;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Agent.Activity;
-import com.eldritch.invoken.encounter.Location;
+import com.eldritch.invoken.location.Location;
 
 public abstract class AnimatedAction extends AugmentationAction {
 	final Activity activity;

@@ -3,8 +3,8 @@ package com.eldritch.invoken.actor.pathfinding;
 import com.badlogic.gdx.ai.pfa.Connection;
 import com.badlogic.gdx.ai.pfa.indexed.IndexedNode;
 import com.badlogic.gdx.utils.Array;
-import com.eldritch.invoken.encounter.ConnectedRoom;
-import com.eldritch.invoken.encounter.NaturalVector2;
+import com.eldritch.invoken.location.ConnectedRoom;
+import com.eldritch.invoken.location.NaturalVector2;
 
 public abstract class LocationNode implements IndexedNode<LocationNode> {
 	public final NaturalVector2 position;

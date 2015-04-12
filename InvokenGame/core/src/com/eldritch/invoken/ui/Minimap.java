@@ -8,10 +8,10 @@ import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.eldritch.invoken.actor.type.Player;
-import com.eldritch.invoken.encounter.ConnectedRoom;
-import com.eldritch.invoken.encounter.ConnectedRoomManager;
-import com.eldritch.invoken.encounter.NaturalVector2;
-import com.eldritch.invoken.encounter.layer.LocationMap;
+import com.eldritch.invoken.location.ConnectedRoom;
+import com.eldritch.invoken.location.ConnectedRoomManager;
+import com.eldritch.invoken.location.NaturalVector2;
+import com.eldritch.invoken.location.layer.LocationMap;
 
 public class Minimap {
     private final LocationMap map;

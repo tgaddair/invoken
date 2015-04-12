@@ -1,4 +1,4 @@
-package com.eldritch.invoken.encounter.proc;
+package com.eldritch.invoken.location.proc;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -9,9 +9,9 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.activators.PlaceableActivator;
-import com.eldritch.invoken.encounter.ConnectedRoom;
-import com.eldritch.invoken.encounter.NaturalVector2;
-import com.eldritch.invoken.encounter.layer.LocationMap;
+import com.eldritch.invoken.location.ConnectedRoom;
+import com.eldritch.invoken.location.NaturalVector2;
+import com.eldritch.invoken.location.layer.LocationMap;
 import com.eldritch.invoken.proto.Locations.Room.Furniture;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;

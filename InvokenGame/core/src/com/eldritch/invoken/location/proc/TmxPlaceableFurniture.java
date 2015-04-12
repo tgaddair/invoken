@@ -1,4 +1,4 @@
-package com.eldritch.invoken.encounter.proc;
+package com.eldritch.invoken.location.proc;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -12,11 +12,11 @@ import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
-import com.eldritch.invoken.encounter.ConnectedRoom;
-import com.eldritch.invoken.encounter.NaturalVector2;
-import com.eldritch.invoken.encounter.layer.LocationLayer;
-import com.eldritch.invoken.encounter.layer.LocationMap;
-import com.eldritch.invoken.encounter.proc.FurnitureLoader.PlaceableFurniture;
+import com.eldritch.invoken.location.ConnectedRoom;
+import com.eldritch.invoken.location.NaturalVector2;
+import com.eldritch.invoken.location.layer.LocationLayer;
+import com.eldritch.invoken.location.layer.LocationMap;
+import com.eldritch.invoken.location.proc.FurnitureLoader.PlaceableFurniture;
 import com.google.common.collect.Iterables;
 
 public class TmxPlaceableFurniture implements PlaceableFurniture {

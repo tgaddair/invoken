@@ -1,4 +1,4 @@
-package com.eldritch.invoken.encounter.proc;
+package com.eldritch.invoken.location.proc;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
@@ -34,22 +34,23 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.actor.type.CoverPoint;
-import com.eldritch.invoken.encounter.ConnectedRoom;
-import com.eldritch.invoken.encounter.ConnectedRoom.Type;
-import com.eldritch.invoken.encounter.ConnectedRoomManager;
-import com.eldritch.invoken.encounter.Location;
-import com.eldritch.invoken.encounter.NaturalVector2;
-import com.eldritch.invoken.encounter.layer.EncounterLayer;
-import com.eldritch.invoken.encounter.layer.LocationCell;
-import com.eldritch.invoken.encounter.layer.LocationLayer;
-import com.eldritch.invoken.encounter.layer.LocationLayer.CollisionLayer;
-import com.eldritch.invoken.encounter.layer.LocationMap;
-import com.eldritch.invoken.encounter.proc.BspGenerator.CellType;
-import com.eldritch.invoken.encounter.proc.EncounterGenerator.EncounterRoom;
-import com.eldritch.invoken.encounter.proc.WallTileMap.WallTile;
 import com.eldritch.invoken.gfx.Light;
 import com.eldritch.invoken.gfx.NormalMappedTile;
+import com.eldritch.invoken.location.ConnectedRoom;
+import com.eldritch.invoken.location.ConnectedRoomManager;
+import com.eldritch.invoken.location.Location;
+import com.eldritch.invoken.location.NaturalVector2;
+import com.eldritch.invoken.location.ConnectedRoom.Type;
+import com.eldritch.invoken.location.layer.EncounterLayer;
+import com.eldritch.invoken.location.layer.LocationCell;
+import com.eldritch.invoken.location.layer.LocationLayer;
+import com.eldritch.invoken.location.layer.LocationMap;
+import com.eldritch.invoken.location.layer.LocationLayer.CollisionLayer;
+import com.eldritch.invoken.location.proc.BspGenerator.CellType;
+import com.eldritch.invoken.location.proc.RoomGenerator.ControlRoom;
+import com.eldritch.invoken.location.proc.WallTileMap.WallTile;
 import com.eldritch.invoken.proto.Locations.Biome;
+import com.eldritch.invoken.proto.Locations.ControlPoint;
 import com.eldritch.invoken.proto.Locations.Encounter;
 import com.eldritch.invoken.proto.Locations.Encounter.ActorParams.ActorScenario;
 import com.eldritch.invoken.screens.GameScreen;
@@ -135,7 +136,7 @@ public class LocationGenerator {
             }
             roomCount += count;
         }
-        EncounterGenerator bsp = new EncounterGenerator(roomCount, proto.getEncounterList(), seed);
+        RoomGenerator bsp = new RoomGenerator(roomCount, proto.getControlPointList(), seed);
         NaturalVector2.init(bsp.getWidth(), bsp.getHeight());
 
         bsp.generateSegments();
@@ -198,12 +199,12 @@ public class LocationGenerator {
         save(rooms.getGrid(), "connected-rooms");
 
         InvokenGame.log("Adding Furniture");
-        RoomGenerator roomGenerator = new RoomGenerator(map, seed);
-        roomGenerator.generate(rooms);
+        RoomDecorator roomDecorator = new RoomDecorator(map, seed);
+        roomDecorator.generate(rooms);
 
         InvokenGame.log("Creating Spawn Layers");
         for (LocationLayer layer : createSpawnLayers(base, collision, bsp, map, rooms,
-                encounterName)) {
+                proto.getEncounterList(), encounterName)) {
             map.getLayers().add(layer);
         }
 
@@ -283,13 +284,12 @@ public class LocationGenerator {
         return layer.isGround(x, y) && collision.getCell(x, y) == null;
     }
 
-    private ConnectedRoomManager createRooms(Collection<EncounterRoom> chambers,
-            CellType[][] typeMap) {
+    private ConnectedRoomManager createRooms(Collection<ControlRoom> chambers, CellType[][] typeMap) {
         ConnectedRoomManager rooms = new ConnectedRoomManager(typeMap.length, typeMap[0].length);
 
         InvokenGame.log("Create Chambers");
-        ImmutableBiMap.Builder<EncounterRoom, ConnectedRoom> mapping = new ImmutableBiMap.Builder<EncounterRoom, ConnectedRoom>();
-        for (EncounterRoom encounter : chambers) {
+        ImmutableBiMap.Builder<ControlRoom, ConnectedRoom> mapping = new ImmutableBiMap.Builder<ControlRoom, ConnectedRoom>();
+        for (ControlRoom encounter : chambers) {
             Set<NaturalVector2> points = new LinkedHashSet<NaturalVector2>();
             Set<NaturalVector2> chokePoints = new HashSet<NaturalVector2>();
 
@@ -778,31 +778,27 @@ public class LocationGenerator {
     }
 
     private List<LocationLayer> createSpawnLayers(LocationLayer base, LocationLayer collision,
-            EncounterGenerator generator, LocationMap map, ConnectedRoomManager rooms,
-            Optional<String> playerSpawnEncounter) {
+            RoomGenerator generator, LocationMap map, ConnectedRoomManager rooms,
+            List<Encounter> encounters, Optional<String> playerSpawnEncounter) {
         List<LocationLayer> layers = new ArrayList<LocationLayer>();
-        for (EncounterRoom encounterRoom : generator.getEncounterRooms()) {
-            createLayer(encounterRoom, playerSpawnEncounter, rooms, base, collision, map, layers);
+        for (ControlRoom controlRoom : generator.getEncounterRooms()) {
+            Optional<Encounter> encounter = controlRoom.chooseEncounter(encounters);
+            if (encounter.isPresent()) {
+                createLayer(controlRoom, encounter.get(), playerSpawnEncounter, rooms, base,
+                        collision, map, layers);
+            }
         }
 
         return layers;
     }
-    
-    private boolean isSpawnRoom(Encounter encounter, Optional<String> playerSpawnEncounter) {
-        if (playerSpawnEncounter.isPresent()) {
-            return encounter.getId().equals(playerSpawnEncounter.get());
-        } else {
-            return encounter.getOrigin();
-        }
-    }
 
-    private void createLayer(EncounterRoom encounterRoom, Optional<String> playerSpawnEncounter,
-            ConnectedRoomManager rooms, LocationLayer base, LocationLayer collision,
-            LocationMap map, List<LocationLayer> layers) {
-        Encounter encounter = encounterRoom.getEncounter();
+    private void createLayer(ControlRoom controlRoom, Encounter encounter,
+            Optional<String> playerSpawnEncounter, ConnectedRoomManager rooms, LocationLayer base,
+            LocationLayer collision, LocationMap map, List<LocationLayer> layers) {
+        ControlPoint cp = controlRoom.getControlPoint();
 
         // further restrict bounds to prevent spawning at wall level
-        Rectangle bounds = new Rectangle(encounterRoom.getRestrictedBounds());
+        Rectangle bounds = new Rectangle(controlRoom.getRestrictedBounds());
         bounds.height -= 1;
 
         LocationLayer layer = new EncounterLayer(encounter, base.getWidth(), base.getHeight(), PX,
@@ -811,10 +807,10 @@ public class LocationGenerator {
         layer.setOpacity(1.0f);
         layer.setName("encounter-" + bounds.getX() + "-" + bounds.getY());
 
-        ConnectedRoom connected = rooms.getConnected(encounterRoom);
+        ConnectedRoom connected = rooms.getConnected(controlRoom);
         List<NaturalVector2> freeSpaces = getFreeSpaces(collision, bounds);
         freeSpaces.retainAll(connected.getPoints());
-        if (isSpawnRoom(encounter, playerSpawnEncounter)) {
+        if (isSpawnRoom(cp, playerSpawnEncounter)) {
             LocationLayer playerLayer = new LocationLayer(base.getWidth(), base.getHeight(), PX,
                     PX, map);
             playerLayer.setVisible(false);
@@ -844,6 +840,14 @@ public class LocationGenerator {
             }
         }
         layers.add(layer);
+    }
+
+    private boolean isSpawnRoom(ControlPoint cp, Optional<String> playerSpawnEncounter) {
+        if (playerSpawnEncounter.isPresent()) {
+            return cp.getId().equals(playerSpawnEncounter.get());
+        } else {
+            return cp.getOrigin();
+        }
     }
 
     public static List<NaturalVector2> getFreeSpaces(LocationLayer layer, Rectangle bounds) {

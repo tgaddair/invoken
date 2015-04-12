@@ -18,7 +18,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import com.eldritch.invoken.encounter.NaturalVector2;
+import com.eldritch.invoken.location.NaturalVector2;
 import com.eldritch.invoken.proto.Locations.Location;
 import com.eldritch.invoken.util.Settings;
 

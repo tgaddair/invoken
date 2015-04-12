@@ -18,7 +18,7 @@ import com.eldritch.invoken.actor.type.HandledProjectile;
 import com.eldritch.invoken.actor.Inventory;
 import com.eldritch.invoken.effects.Bleed;
 import com.eldritch.invoken.effects.Stunned;
-import com.eldritch.invoken.encounter.Location;
+import com.eldritch.invoken.location.Location;
 import com.eldritch.invoken.proto.Effects.DamageType;
 import com.eldritch.invoken.proto.Items.Item.DamageMod;
 import com.eldritch.invoken.screens.GameScreen;

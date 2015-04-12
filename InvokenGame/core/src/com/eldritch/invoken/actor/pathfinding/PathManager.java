@@ -5,8 +5,8 @@ import com.badlogic.gdx.ai.pfa.HierarchicalPathFinder;
 import com.badlogic.gdx.ai.pfa.PathSmoother;
 import com.badlogic.gdx.ai.pfa.indexed.IndexedAStarPathFinder;
 import com.badlogic.gdx.math.Vector2;
-import com.eldritch.invoken.encounter.NaturalVector2;
-import com.eldritch.invoken.encounter.layer.LocationMap;
+import com.eldritch.invoken.location.NaturalVector2;
+import com.eldritch.invoken.location.layer.LocationMap;
 
 public class PathManager {
     private final LocationGraph graph;

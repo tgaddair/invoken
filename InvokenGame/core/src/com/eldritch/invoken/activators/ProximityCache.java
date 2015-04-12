@@ -5,7 +5,7 @@ import java.util.Map;
 
 import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.actor.type.Agent;
-import com.eldritch.invoken.encounter.NaturalVector2;
+import com.eldritch.invoken.location.NaturalVector2;
 
 public class ProximityCache {
     private final Map<Agent, LastProximity> cache = new HashMap<Agent, LastProximity>();

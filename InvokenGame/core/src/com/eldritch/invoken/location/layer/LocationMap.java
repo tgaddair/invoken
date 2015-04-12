@@ -1,4 +1,4 @@
-package com.eldritch.invoken.encounter.layer;
+package com.eldritch.invoken.location.layer;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -14,9 +14,9 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
 import com.eldritch.invoken.activators.Activator;
 import com.eldritch.invoken.actor.type.CoverPoint;
 import com.eldritch.invoken.actor.type.DynamicEntity;
-import com.eldritch.invoken.encounter.ConnectedRoomManager;
-import com.eldritch.invoken.encounter.NaturalVector2;
-import com.eldritch.invoken.encounter.layer.LocationLayer.CollisionLayer;
+import com.eldritch.invoken.location.ConnectedRoomManager;
+import com.eldritch.invoken.location.NaturalVector2;
+import com.eldritch.invoken.location.layer.LocationLayer.CollisionLayer;
 import com.eldritch.invoken.util.Settings;
 import com.google.common.collect.Lists;
 

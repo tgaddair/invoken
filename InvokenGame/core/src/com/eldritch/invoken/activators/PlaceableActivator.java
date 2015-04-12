@@ -4,10 +4,10 @@ import java.lang.reflect.Constructor;
 import java.util.Random;
 
 import com.eldritch.invoken.InvokenGame;
-import com.eldritch.invoken.encounter.ConnectedRoom;
-import com.eldritch.invoken.encounter.NaturalVector2;
-import com.eldritch.invoken.encounter.layer.LocationMap;
-import com.eldritch.invoken.encounter.proc.FurnitureLoader.PlaceableFurniture;
+import com.eldritch.invoken.location.ConnectedRoom;
+import com.eldritch.invoken.location.NaturalVector2;
+import com.eldritch.invoken.location.layer.LocationMap;
+import com.eldritch.invoken.location.proc.FurnitureLoader.PlaceableFurniture;
 import com.eldritch.invoken.proto.Locations.Room.Furniture;
 import com.google.common.base.CaseFormat;
 

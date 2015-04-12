@@ -13,7 +13,7 @@ import com.eldritch.invoken.actor.PreparedAugmentations;
 import com.eldritch.invoken.actor.Profession;
 import com.eldritch.invoken.actor.aug.Augmentation;
 import com.eldritch.invoken.actor.util.ThreatMonitor;
-import com.eldritch.invoken.encounter.Location;
+import com.eldritch.invoken.location.Location;
 import com.eldritch.invoken.proto.Actors.PlayerActor;
 import com.eldritch.invoken.util.Settings;
 

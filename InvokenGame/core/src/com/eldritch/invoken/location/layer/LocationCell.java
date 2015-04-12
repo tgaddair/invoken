@@ -1,8 +1,8 @@
-package com.eldritch.invoken.encounter.layer;
+package com.eldritch.invoken.location.layer;
 
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
-import com.eldritch.invoken.encounter.NaturalVector2;
+import com.eldritch.invoken.location.NaturalVector2;
 
 public class LocationCell extends Cell {
     private final NaturalVector2 position;

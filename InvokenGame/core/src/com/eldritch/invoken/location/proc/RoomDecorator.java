@@ -1,4 +1,4 @@
-package com.eldritch.invoken.encounter.proc;
+package com.eldritch.invoken.location.proc;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -9,17 +9,17 @@ import java.util.Random;
 
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.math.Rectangle;
-import com.eldritch.invoken.encounter.ConnectedRoom;
-import com.eldritch.invoken.encounter.ConnectedRoomManager;
-import com.eldritch.invoken.encounter.NaturalVector2;
-import com.eldritch.invoken.encounter.layer.LocationLayer.CollisionLayer;
-import com.eldritch.invoken.encounter.layer.LocationMap;
-import com.eldritch.invoken.encounter.proc.EncounterGenerator.EncounterRoom;
-import com.eldritch.invoken.encounter.proc.FurnitureLoader.PlaceableFurniture;
+import com.eldritch.invoken.location.ConnectedRoom;
+import com.eldritch.invoken.location.ConnectedRoomManager;
+import com.eldritch.invoken.location.NaturalVector2;
+import com.eldritch.invoken.location.layer.LocationMap;
+import com.eldritch.invoken.location.layer.LocationLayer.CollisionLayer;
+import com.eldritch.invoken.location.proc.RoomGenerator.ControlRoom;
+import com.eldritch.invoken.location.proc.FurnitureLoader.PlaceableFurniture;
 import com.eldritch.invoken.proto.Locations.Room;
 import com.eldritch.invoken.proto.Locations.Room.Furniture;
 
-public class RoomGenerator {
+public class RoomDecorator {
     // threshold of furniture to open ground in room, past which we need to stop adding furniture
     public static final double MAX_FURNITURE = 0.2;
 
@@ -55,13 +55,13 @@ public class RoomGenerator {
     private final LocationMap map;
     private final Random rand;
 
-    public RoomGenerator(LocationMap map, long seed) {
+    public RoomDecorator(LocationMap map, long seed) {
         this.map = map;
         this.rand = new Random(seed);
     }
 
     public void generate(ConnectedRoomManager rooms) {
-        for (Entry<EncounterRoom, ConnectedRoom> room : rooms.getChambers()) {
+        for (Entry<ControlRoom, ConnectedRoom> room : rooms.getChambers()) {
             place(room.getKey(), room.getValue());
         }
         
@@ -74,7 +74,7 @@ public class RoomGenerator {
         }
     }
 
-    private void place(EncounterRoom encounter, ConnectedRoom connected) {
+    private void place(ControlRoom encounter, ConnectedRoom connected) {
         // InvokenGame.log("placing: " + encounter.getEncounter().getId());
         Room room = encounter.getRoom();
 

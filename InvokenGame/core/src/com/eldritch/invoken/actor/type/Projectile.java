@@ -6,9 +6,9 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.actor.AgentHandler;
 import com.eldritch.invoken.actor.type.Agent.WeaponSentry;
-import com.eldritch.invoken.encounter.Bullet;
-import com.eldritch.invoken.encounter.Location;
-import com.eldritch.invoken.encounter.NaturalVector2;
+import com.eldritch.invoken.location.Bullet;
+import com.eldritch.invoken.location.Location;
+import com.eldritch.invoken.location.NaturalVector2;
 import com.eldritch.invoken.util.Damage;
 import com.eldritch.invoken.util.Settings;
 

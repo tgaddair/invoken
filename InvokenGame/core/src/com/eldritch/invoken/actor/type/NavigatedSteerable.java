@@ -9,8 +9,8 @@ import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.actor.pathfinding.LocationGraphPath;
 import com.eldritch.invoken.actor.pathfinding.LocationNode;
 import com.eldritch.invoken.actor.pathfinding.PathManager;
-import com.eldritch.invoken.encounter.Location;
-import com.eldritch.invoken.encounter.NaturalVector2;
+import com.eldritch.invoken.location.Location;
+import com.eldritch.invoken.location.NaturalVector2;
 
 public class NavigatedSteerable extends BasicSteerable {
     private static final float MIN_DIST = 1f;

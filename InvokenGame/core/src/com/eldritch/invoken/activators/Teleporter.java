@@ -7,10 +7,10 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.actor.type.Agent;
-import com.eldritch.invoken.encounter.ConnectedRoomManager;
-import com.eldritch.invoken.encounter.Location;
-import com.eldritch.invoken.encounter.NaturalVector2;
-import com.eldritch.invoken.encounter.proc.EncounterGenerator.EncounterRoom;
+import com.eldritch.invoken.location.ConnectedRoomManager;
+import com.eldritch.invoken.location.Location;
+import com.eldritch.invoken.location.NaturalVector2;
+import com.eldritch.invoken.location.proc.RoomGenerator.ControlRoom;
 import com.eldritch.invoken.screens.GameScreen;
 import com.eldritch.invoken.util.Settings;
 import com.google.common.base.Optional;
@@ -97,13 +97,13 @@ public class Teleporter extends ClickActivator implements ProximityActivator {
     @Override
     public void register(Location location) {
         ConnectedRoomManager rooms = location.getConnections();
-        EncounterRoom encounter = rooms.getEncounter(rooms.getRoom(origin.x, origin.y));
-        if (encounter != null && encounter.getEncounter().hasSuccessor()) {
-            destination = Optional.fromNullable(encounter.getEncounter().getSuccessor());
-            if (encounter.getEncounter().hasNextEncounter()) {
-                nextEncounter = Optional.fromNullable(encounter.getEncounter().getNextEncounter());
-            }
-        }
+        ControlRoom encounter = rooms.getEncounter(rooms.getRoom(origin.x, origin.y));
+//        if (encounter != null && encounter.getEncounter().hasSuccessor()) {
+//            destination = Optional.fromNullable(encounter.getEncounter().getSuccessor());
+//            if (encounter.getEncounter().hasNextEncounter()) {
+//                nextEncounter = Optional.fromNullable(encounter.getEncounter().getNextEncounter());
+//            }
+//        }
     }
     
     @Override

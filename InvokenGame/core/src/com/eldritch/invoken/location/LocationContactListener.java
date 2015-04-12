@@ -1,4 +1,4 @@
-package com.eldritch.invoken.encounter;
+package com.eldritch.invoken.location;
 
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;

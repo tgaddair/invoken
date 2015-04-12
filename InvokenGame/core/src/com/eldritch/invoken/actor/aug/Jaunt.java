@@ -5,7 +5,7 @@ import com.eldritch.invoken.actor.items.MeleeWeapon;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.effects.Jaunting;
-import com.eldritch.invoken.encounter.Location;
+import com.eldritch.invoken.location.Location;
 
 public class Jaunt extends Augmentation {
 	private static class Holder {

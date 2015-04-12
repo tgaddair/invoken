@@ -1,16 +1,16 @@
-package com.eldritch.invoken.encounter;
+package com.eldritch.invoken.location;
 
 import java.util.LinkedHashSet;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import com.eldritch.invoken.encounter.proc.EncounterGenerator.EncounterRoom;
+import com.eldritch.invoken.location.proc.RoomGenerator.ControlRoom;
 import com.google.common.collect.ImmutableBiMap;
 
 public class ConnectedRoomManager {
     private final ConnectedRoom[][] rooms;
     private final Set<ConnectedRoom> roomSet = new LinkedHashSet<ConnectedRoom>();
-    private ImmutableBiMap<EncounterRoom, ConnectedRoom> roomMap = ImmutableBiMap.of();
+    private ImmutableBiMap<ControlRoom, ConnectedRoom> roomMap = ImmutableBiMap.of();
 
     public ConnectedRoomManager(int width, int height) {
         rooms = new ConnectedRoom[width][height];
@@ -45,18 +45,18 @@ public class ConnectedRoomManager {
         return rooms[x][y] != null;
     }
 
-    public void setMapping(ImmutableBiMap<EncounterRoom, ConnectedRoom> mapping) {
+    public void setMapping(ImmutableBiMap<ControlRoom, ConnectedRoom> mapping) {
         // every encounter will have exactly one connected room
         // every connected room will have at most one encounter (only chambers)
         // immutable so we can maintain deterministic iteration order
         roomMap = mapping;
     }
 
-    public ConnectedRoom getConnected(EncounterRoom encounter) {
+    public ConnectedRoom getConnected(ControlRoom encounter) {
         return roomMap.get(encounter);
     }
 
-    public EncounterRoom getEncounter(ConnectedRoom connected) {
+    public ControlRoom getEncounter(ConnectedRoom connected) {
         return roomMap.inverse().get(connected);
     }
 
@@ -64,11 +64,11 @@ public class ConnectedRoomManager {
         return roomMap.inverse().containsKey(connected);
     }
 
-    public Set<EncounterRoom> getEncounters() {
+    public Set<ControlRoom> getEncounters() {
         return roomMap.keySet();
     }
 
-    public Set<Entry<EncounterRoom, ConnectedRoom>> getChambers() {
+    public Set<Entry<ControlRoom, ConnectedRoom>> getChambers() {
         return roomMap.entrySet();
     }
 

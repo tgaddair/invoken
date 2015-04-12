@@ -1,4 +1,4 @@
-package com.eldritch.invoken.encounter.proc;
+package com.eldritch.invoken.location.proc;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,8 +8,8 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
 import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
-import com.eldritch.invoken.encounter.layer.LocationLayer;
-import com.eldritch.invoken.encounter.layer.LocationMap;
+import com.eldritch.invoken.location.layer.LocationLayer;
+import com.eldritch.invoken.location.layer.LocationMap;
 import com.eldritch.invoken.util.Settings;
 
 public class IcarianFurnitureGenerator extends FurnitureGenerator {

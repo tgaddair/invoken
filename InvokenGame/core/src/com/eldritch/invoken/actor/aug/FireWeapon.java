@@ -12,7 +12,7 @@ import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.actor.type.Agent.Direction;
 import com.eldritch.invoken.actor.type.HandledProjectile;
 import com.eldritch.invoken.effects.HoldingWeapon;
-import com.eldritch.invoken.encounter.Location;
+import com.eldritch.invoken.location.Location;
 import com.eldritch.invoken.screens.GameScreen;
 
 public class FireWeapon extends ProjectileAugmentation {

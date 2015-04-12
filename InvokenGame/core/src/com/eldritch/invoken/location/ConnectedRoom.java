@@ -1,9 +1,10 @@
-package com.eldritch.invoken.encounter;
+package com.eldritch.invoken.location;
 
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import com.google.common.base.Optional;
 import com.google.common.collect.Sets;
 
 public class ConnectedRoom {
@@ -17,10 +18,20 @@ public class ConnectedRoom {
 	private final Type type;
 	private final NaturalVector2 center;
 	
+	private Optional<String> faction = Optional.absent();
+	
 	public ConnectedRoom(Type type, Collection<NaturalVector2> points) {
 		this.type = type;
 		this.points.addAll(points);
 		center = calculateCenter();
+	}
+	
+	public void setFaction(String faction) {
+	    this.faction = Optional.of(faction);
+	}
+	
+	public Optional<String> getFaction() {
+	    return faction;
 	}
 	
 	public NaturalVector2 getCenter() {

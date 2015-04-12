@@ -16,8 +16,8 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.eldritch.invoken.actor.Drawable;
 import com.eldritch.invoken.actor.Locatable;
-import com.eldritch.invoken.encounter.Location;
-import com.eldritch.invoken.encounter.NaturalVector2;
+import com.eldritch.invoken.location.Location;
+import com.eldritch.invoken.location.NaturalVector2;
 import com.eldritch.invoken.util.Settings;
 
 public class DynamicEntity extends CollisionEntity implements Drawable, Locatable {

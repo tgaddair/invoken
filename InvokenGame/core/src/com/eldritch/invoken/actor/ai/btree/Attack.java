@@ -15,7 +15,7 @@ import com.eldritch.invoken.actor.aug.Augmentation;
 import com.eldritch.invoken.actor.aug.Augmentation.Target;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Npc;
-import com.eldritch.invoken.encounter.Location;
+import com.eldritch.invoken.location.Location;
 
 public class Attack extends Sequence<Npc> {
     public Attack() {

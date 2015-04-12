@@ -1,4 +1,4 @@
-package com.eldritch.invoken.encounter;
+package com.eldritch.invoken.location;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;

@@ -1,8 +1,9 @@
-package com.eldritch.invoken.encounter;
+package com.eldritch.invoken.location;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -59,16 +60,17 @@ import com.eldritch.invoken.actor.type.DynamicEntity;
 import com.eldritch.invoken.actor.type.Npc;
 import com.eldritch.invoken.actor.type.Player;
 import com.eldritch.invoken.actor.type.TemporaryEntity;
-import com.eldritch.invoken.encounter.layer.EncounterLayer;
-import com.eldritch.invoken.encounter.layer.LocationLayer.CollisionLayer;
-import com.eldritch.invoken.encounter.layer.LocationMap;
 import com.eldritch.invoken.gfx.FogOfWarMasker;
 import com.eldritch.invoken.gfx.Light;
 import com.eldritch.invoken.gfx.LightManager;
 import com.eldritch.invoken.gfx.NormalMapShader;
 import com.eldritch.invoken.gfx.OrthogonalShadedTiledMapRenderer;
 import com.eldritch.invoken.gfx.OverlayLightMasker;
+import com.eldritch.invoken.location.layer.EncounterLayer;
+import com.eldritch.invoken.location.layer.LocationMap;
+import com.eldritch.invoken.location.layer.LocationLayer.CollisionLayer;
 import com.eldritch.invoken.proto.Actors.PlayerActor;
+import com.eldritch.invoken.proto.Locations;
 import com.eldritch.invoken.proto.Locations.Encounter;
 import com.eldritch.invoken.proto.Locations.Encounter.ActorParams.ActorScenario;
 import com.eldritch.invoken.screens.GameScreen.GameState;
@@ -95,6 +97,7 @@ public class Location {
     private Player player;
     private final com.eldritch.invoken.proto.Locations.Location data;
     private final LocationMap map;
+    private final Territory[][] territory;
     private final PathManager pathManager;
     private final GameState state;
     private final long seed;
@@ -118,10 +121,6 @@ public class Location {
     private final NormalMapShader normalMapShader;
     private final OverlayLightMasker lightMasker;
     private final FogOfWarMasker fowMasker;
-
-    private final Optional<Faction> owningFaction;
-    private final int minRank;
-    private final Optional<String> credential;
 
     private OrthogonalShadedTiledMapRenderer renderer;
     private OrthogonalShadedTiledMapRenderer overlayRenderer;
@@ -154,18 +153,17 @@ public class Location {
             GameState state, long seed) {
         this.data = data;
         this.map = map;
+        this.territory = new Territory[map.getWidth()][map.getHeight()];
         this.pathManager = new PathManager(map);
         this.state = state;
         this.seed = seed;
-        owningFaction = Optional.fromNullable(data.hasFactionId() ? Faction.of(data.getFactionId())
-                : null);
-        minRank = owningFaction.isPresent() ? data.getMinRank() : 0;
-        credential = !Strings.isNullOrEmpty(data.getCredential()) 
-                ? Optional.of(data.getCredential()) : Optional.<String>absent();
         lightManager = new LightManager(data);
         normalMapShader = new NormalMapShader();
         lightMasker = new OverlayLightMasker(lightManager.getVertexShaderDef());
         fowMasker = new FogOfWarMasker();
+        
+        // create territory table
+        assignTerritory(map.getRooms(), data.getTerritoryList());
 
         // find layers we care about
         CollisionLayer collision = null;
@@ -279,31 +277,40 @@ public class Location {
     public void dispose() {
         // rayHandler.dispose();
     }
-
-    public void alertTo(Agent intruder) {
-        if (owningFaction.isPresent()) {
-            Faction faction = owningFaction.get();
-            intruder.changeFactionStatus(faction, -50);
-        }
-    }
     
-    public boolean isTrespasser(Agent agent) {
-        if (!owningFaction.isPresent()) {
-            // no owning faction
-            return true;
+    private void assignTerritory(ConnectedRoomManager rooms, List<Locations.Territory> territories) {
+        // relate the owning faction to the given territory
+        Map<String, Territory> factionMap = new HashMap<>();
+        for (Locations.Territory territory : territories) {
+            factionMap.put(territory.getFactionId(), new Territory(territory));
         }
         
-        if (credential.isPresent()) {
-            boolean hasCredential = agent.getInventory().hasItem(credential.get());
-            if (hasCredential) {
-                // let them through
-                return false;
+        // default the map to the empty territory
+        for (int x = 0; x < territory.length; x++) {
+            for (int y = 0; y < territory[x].length; y++) {
+                territory[x][y] = Territory.DEFAULT;
             }
         }
         
-        Faction faction = owningFaction.get();
-        int rank = agent.getInfo().getFactionManager().getRank(faction);
-        return rank < minRank;
+        // use the owning faction for each room to assign territories
+        for (ConnectedRoom room : rooms.getRooms()) {
+            Optional<String> faction = room.getFaction();
+            if (faction.isPresent()) {
+                for (NaturalVector2 point : room.getPoints()) {
+                    territory[point.x][point.y] = factionMap.get(faction.get());
+                }
+            }
+        }
+    }
+
+    public void alertTo(Agent intruder) {
+        NaturalVector2 position = intruder.getCellPosition();
+        territory[position.x][position.y].alertTo(intruder);
+    }
+    
+    public boolean isTrespasser(Agent agent) {
+        NaturalVector2 position = agent.getCellPosition();
+        return territory[position.x][position.y].isTrespasser(agent);
     }
 
     public void addEntity(TemporaryEntity entity) {

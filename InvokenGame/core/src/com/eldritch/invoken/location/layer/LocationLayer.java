@@ -1,11 +1,11 @@
-package com.eldritch.invoken.encounter.layer;
+package com.eldritch.invoken.location.layer;
 
 import java.util.Set;
 
 import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
-import com.eldritch.invoken.encounter.NaturalVector2;
+import com.eldritch.invoken.location.NaturalVector2;
 import com.eldritch.invoken.util.Settings;
 import com.google.common.collect.Sets;
 

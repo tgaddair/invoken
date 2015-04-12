@@ -1,4 +1,4 @@
-package com.eldritch.invoken.encounter.layer;
+package com.eldritch.invoken.location.layer;
 
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
 

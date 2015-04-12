@@ -1,4 +1,4 @@
-package com.eldritch.invoken.encounter.proc;
+package com.eldritch.invoken.location.proc;
 
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -14,17 +14,17 @@ import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.activators.Activator;
 import com.eldritch.invoken.activators.DoorActivator;
 import com.eldritch.invoken.activators.DoorActivator.LockInfo;
-import com.eldritch.invoken.encounter.ConnectedRoom;
-import com.eldritch.invoken.encounter.ConnectedRoomManager;
-import com.eldritch.invoken.encounter.NaturalVector2;
-import com.eldritch.invoken.encounter.layer.LocationCell;
-import com.eldritch.invoken.encounter.layer.LocationLayer;
-import com.eldritch.invoken.encounter.layer.LocationMap;
-import com.eldritch.invoken.encounter.layer.RemovableCell;
-import com.eldritch.invoken.encounter.proc.EncounterGenerator.EncounterRoom;
 import com.eldritch.invoken.gfx.Light;
 import com.eldritch.invoken.gfx.Light.StaticLight;
-import com.eldritch.invoken.proto.Locations.Encounter;
+import com.eldritch.invoken.location.ConnectedRoom;
+import com.eldritch.invoken.location.ConnectedRoomManager;
+import com.eldritch.invoken.location.NaturalVector2;
+import com.eldritch.invoken.location.layer.LocationCell;
+import com.eldritch.invoken.location.layer.LocationLayer;
+import com.eldritch.invoken.location.layer.LocationMap;
+import com.eldritch.invoken.location.layer.RemovableCell;
+import com.eldritch.invoken.location.proc.RoomGenerator.ControlRoom;
+import com.eldritch.invoken.proto.Locations.ControlPoint;
 
 public abstract class FurnitureGenerator {
     private final Random rand;
@@ -63,8 +63,8 @@ public abstract class FurnitureGenerator {
 
     public void createDoors(ConnectedRoomManager rooms, LocationLayer base,
             List<Activator> activators) {
-        for (Entry<EncounterRoom, ConnectedRoom> room : rooms.getChambers()) {
-            Encounter metadata = room.getKey().getEncounter();
+        for (Entry<ControlRoom, ConnectedRoom> room : rooms.getChambers()) {
+            ControlPoint metadata = room.getKey().getControlPoint();
             for (NaturalVector2 point : room.getValue().getAllPoints()) {
                 int x = point.x;
                 int y = point.y;

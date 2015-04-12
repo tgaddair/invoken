@@ -2,7 +2,7 @@ package com.eldritch.invoken.activators;
 
 import com.eldritch.invoken.actor.Drawable;
 import com.eldritch.invoken.actor.type.Agent;
-import com.eldritch.invoken.encounter.Location;
+import com.eldritch.invoken.location.Location;
 
 public interface Activator extends Drawable {
     void update(float delta, Location location);
