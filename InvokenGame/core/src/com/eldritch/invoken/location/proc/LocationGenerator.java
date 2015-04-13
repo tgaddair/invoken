@@ -1203,13 +1203,17 @@ public class LocationGenerator {
         }
 
         public boolean canGrow() {
-            return control > 0 && !(bestRooms.isEmpty() && reclaimed.isEmpty());
+//            return control > 0 && !(bestRooms.isEmpty() && reclaimed.isEmpty());
+            return control > 0 && !bestRooms.isEmpty();
         }
 
         public void grow() {
             if (!bestRooms.isEmpty()) {
                 // claim the next room
-                claim(bestRooms.remove());
+                ConnectedRoom room = bestRooms.remove();
+                if (!claimed.containsKey(room)) {
+                    claim(room);
+                }
             } else {
                 // we're out of rooms to claim, so we can steal rooms from our rival, and give
                 // them back some control
@@ -1219,6 +1223,7 @@ public class LocationGenerator {
                     other.control++;
                 }
                 claim(room);
+                throw new IllegalStateException("can't happen");
             }
         }
 

@@ -1,6 +1,7 @@
 package com.eldritch.invoken.screens;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
@@ -56,6 +57,9 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
             Gdx.files.internal("image-atlases/pages.atlas"));
     public final static TextureAtlas NORMAL_ATLAS = new TextureAtlas(
             Gdx.files.internal("image-atlases/normal/pages.atlas"));
+    
+    // draw frames
+    public static final LinkedList<Texture> DEBUG_QUEUE = new LinkedList<>();
 
     private static Toaster toaster;
     public static boolean SCREEN_GRAB = false;
