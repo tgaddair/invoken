@@ -1231,9 +1231,7 @@ public class LocationGenerator {
             claimed.put(room, this);
             room.setFaction(territory.getFactionId());
             addNeighbors(room);
-            if (room.isChamber()) {
-                control--;
-            }
+            control--;
         }
 
         private void addNeighbors(ConnectedRoom room) {
