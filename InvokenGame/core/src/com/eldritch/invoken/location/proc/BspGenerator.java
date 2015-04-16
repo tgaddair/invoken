@@ -357,6 +357,18 @@ public class BspGenerator {
     private int choose(int a, int b) {
         return btrial() ? a : b;
     }
+    
+    protected int rangeAround(int target, int targetLength, int length, int maxLength) {
+        int min = Math.max(length + Padding - target, 0);
+        int max = Math.min(maxLength - Padding - target - targetLength, 2 * length);
+        System.out.println(String.format("[%d, %d]", min, max));
+        int point = range(min, max);
+        if (point > length) {
+            return target + targetLength + point;
+        } else {
+            return target - length + point;
+        }
+    }
 
     protected int range(int min, int max) {
         return rand.nextInt(max - min + 1) + min;

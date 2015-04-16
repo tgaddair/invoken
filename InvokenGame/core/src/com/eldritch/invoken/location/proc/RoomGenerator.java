@@ -64,7 +64,8 @@ public class RoomGenerator extends BspGenerator {
                 // following
                 if (follows.containsKey(cp.getId())) {
                     for (ControlPoint follower : follows.get(cp.getId())) {
-                        placeFollower(follower, rect);
+                        Rectangle rect2 = placeFollower(follower, rect);
+                        System.out.println(rect + " -> " + rect2);
                     }
                 }
             }
@@ -229,25 +230,19 @@ public class RoomGenerator extends BspGenerator {
         throw new IllegalStateException("Unable to place: " + cp.getId());
     }
     
-    private boolean placeFollower(ControlPoint cp, Rectangle followed) {
+    private Rectangle placeFollower(ControlPoint cp, Rectangle followed) {
         // InvokenGame.log("Place: " + encounter.getId());
         int count = 0;
         while (count < 1000) {
-            // hold one axis fixed
-            float x = followed.x;
-            float y = followed.y;
             if (cp.getRoomIdList().isEmpty()) {
                 int width = range(MinRoomSize, MaxRoomSize);
                 int height = range(MinRoomSize, MaxRoomSize);
-                if (random() < 0.5) {
-                    x = getRandomX(width);
-                } else {
-                    y = getRandomY(height);
-                }
+                float x = rangeAround((int) followed.x, (int) followed.width, width, getWidth());
+                float y = rangeAround((int) followed.y, (int) followed.height, height, getHeight());
                 Rectangle rect = new Rectangle(x, y, width, height);
                 if (placeRectRoom(rect)) {
                     controlRooms.put(rect, new ControlRoom(cp, Room.getDefaultInstance(), rect));
-                    return true;
+                    return rect;
                 }
             } else {
                 for (String roomId : cp.getRoomIdList()) {
@@ -256,15 +251,12 @@ public class RoomGenerator extends BspGenerator {
 
                     int width = range(type);
                     int height = range(type);
-                    if (random() < 0.5) {
-                        x = getRandomX(width);
-                    } else {
-                        y = getRandomY(height);
-                    }
+                    float x = rangeAround((int) followed.x, (int) followed.width, width, getWidth());
+                    float y = rangeAround((int) followed.y, (int) followed.height, height, getHeight());
                     Rectangle rect = new Rectangle(x, y, width, height);
                     if (placeRectRoom(rect)) {
                         controlRooms.put(rect, new ControlRoom(cp, room, rect));
-                        return true;
+                        return rect;
                     }
                 }
             }
