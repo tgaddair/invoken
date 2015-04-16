@@ -138,18 +138,31 @@ public class BspGenerator {
             InvokenGame.log(String.format("Pathfound %d/%d", count, Rooms.size()));
         }
     }
+    
+    protected float getRandomX(int width) {
+        return range(Padding, Width - width - Padding * 2);
+    }
+    
+    protected float getRandomY(int height) {
+        return range(Padding, Height - height - Padding * 2);
+    }
 
     protected Rectangle PlaceRectRoom(int width, int height) {
-        Rectangle room = new Rectangle(range(Padding, Width - width - Padding * 2), range(Padding,
-                Height - height - Padding * 2), width, height);
-
+        Rectangle room = new Rectangle(getRandomX(width), getRandomY(height), width, height);
+        if (placeRectRoom(room)) {
+            return room;
+        }
+        return null;
+    }
+    
+    protected boolean placeRectRoom(Rectangle room) {
         // check room
         if (Overlaps(room)) {
             Rooms.add(room);
             DigRoom(room);
-            return room;
+            return true;
         }
-        return null;
+        return false;
     }
 
     // / <summary>

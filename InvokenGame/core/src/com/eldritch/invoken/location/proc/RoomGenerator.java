@@ -2,6 +2,7 @@ package com.eldritch.invoken.location.proc;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -28,10 +29,22 @@ public class RoomGenerator extends BspGenerator {
     private final RoomCache roomCache = new RoomCache();
     private final List<Pair<ControlPoint, Integer>> roomCounts = new ArrayList<>();
     private final Map<Rectangle, ControlRoom> controlRooms = new LinkedHashMap<>();
+    private final Map<String, List<ControlPoint>> follows = new HashMap<>();
 
-    public RoomGenerator(int roomCount, List<Pair<ControlPoint, Integer>> roomCounts, long seed) {
+    public RoomGenerator(int roomCount, List<ControlPoint> points,
+            List<Pair<ControlPoint, Integer>> roomCounts, long seed) {
         super(roomCount, seed);
         this.roomCounts.addAll(roomCounts);
+        
+        // create following
+        for (ControlPoint cp : points) {
+            for (String followed : cp.getFollowsList()) {
+                if (!follows.containsKey(followed)) {
+                    follows.put(followed, new ArrayList<ControlPoint>());
+                }
+                follows.get(followed).add(cp);
+            }
+        }
     }
 
     public Collection<ControlRoom> getEncounterRooms() {
@@ -46,7 +59,14 @@ public class RoomGenerator extends BspGenerator {
             int count = elem.second;
             for (int i = 0; i < count; i++) {
                 System.out.println("placing: " + cp.getId());
-                place(cp);
+                Rectangle rect = place(cp);
+                
+                // following
+                if (follows.containsKey(cp.getId())) {
+                    for (ControlPoint follower : follows.get(cp.getId())) {
+                        placeFollower(follower, rect);
+                    }
+                }
             }
         }
     }
@@ -176,7 +196,7 @@ public class RoomGenerator extends BspGenerator {
         }
     }
 
-    private boolean place(ControlPoint cp) {
+    private Rectangle place(ControlPoint cp) {
         // InvokenGame.log("Place: " + encounter.getId());
         int count = 0;
         while (count < 1000) {
@@ -186,7 +206,7 @@ public class RoomGenerator extends BspGenerator {
                 Rectangle rect = PlaceRectRoom(width, height);
                 if (rect != null) {
                     controlRooms.put(rect, new ControlRoom(cp, Room.getDefaultInstance(), rect));
-                    return true;
+                    return rect;
                 }
             } else {
                 for (String roomId : cp.getRoomIdList()) {
@@ -197,6 +217,52 @@ public class RoomGenerator extends BspGenerator {
                     int height = range(type);
                     Rectangle rect = PlaceRectRoom(width, height);
                     if (rect != null) {
+                        controlRooms.put(rect, new ControlRoom(cp, room, rect));
+                        return rect;
+                    }
+                }
+            }
+            count++;
+        }
+
+        // TODO: get first available
+        throw new IllegalStateException("Unable to place: " + cp.getId());
+    }
+    
+    private boolean placeFollower(ControlPoint cp, Rectangle followed) {
+        // InvokenGame.log("Place: " + encounter.getId());
+        int count = 0;
+        while (count < 1000) {
+            // hold one axis fixed
+            float x = followed.x;
+            float y = followed.y;
+            if (cp.getRoomIdList().isEmpty()) {
+                int width = range(MinRoomSize, MaxRoomSize);
+                int height = range(MinRoomSize, MaxRoomSize);
+                if (random() < 0.5) {
+                    x = getRandomX(width);
+                } else {
+                    y = getRandomY(height);
+                }
+                Rectangle rect = new Rectangle(x, y, width, height);
+                if (placeRectRoom(rect)) {
+                    controlRooms.put(rect, new ControlRoom(cp, Room.getDefaultInstance(), rect));
+                    return true;
+                }
+            } else {
+                for (String roomId : cp.getRoomIdList()) {
+                    Room room = roomCache.lookupRoom(roomId);
+                    RoomType type = RoomDecorator.get(room.getSize());
+
+                    int width = range(type);
+                    int height = range(type);
+                    if (random() < 0.5) {
+                        x = getRandomX(width);
+                    } else {
+                        y = getRandomY(height);
+                    }
+                    Rectangle rect = new Rectangle(x, y, width, height);
+                    if (placeRectRoom(rect)) {
                         controlRooms.put(rect, new ControlRoom(cp, room, rect));
                         return true;
                     }
@@ -446,6 +512,6 @@ public class RoomGenerator extends BspGenerator {
             InvokenGame.log(String.format("%s [%d, %d] -> %d", cp.getId(), cp.getMin(),
                     cp.getMax(), count));
         }
-        return new RoomGenerator(total, roomCounts, seed);
+        return new RoomGenerator(total, points, roomCounts, seed);
     }
 }
