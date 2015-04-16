@@ -46,6 +46,7 @@ message ControlPoint {
 	repeated string available_key = 6;
 
 	optional bool origin = 7 [default = false];
+	optional bool closed = 11 [default = false];
 
 	optional int32 min = 8 [default = 1];
 	optional int32 max = 9 [default = 1];

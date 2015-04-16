@@ -63,6 +63,7 @@ public class ControlPointTable extends IdentifiedAssetTable<ControlPoint> {
 
         private final JTextField lockField = new JTextField();
         private final JCheckBox originCheck = new JCheckBox();
+        private final JCheckBox closedCheck = new JCheckBox();
         private final JComboBox<String> lockBox = new JComboBox<>();
         private final AssetPointerTable<Item> keyTable = new AssetPointerTable<>(
                 MainPanel.ITEM_TABLE);
@@ -96,6 +97,9 @@ public class ControlPointTable extends IdentifiedAssetTable<ControlPoint> {
             builder.nextLine();
 
             builder.append("Origin:", originCheck);
+            builder.nextLine();
+            
+            builder.append("Closed:", closedCheck);
             builder.nextLine();
 
             lockField.setText("0");
@@ -133,6 +137,7 @@ public class ControlPointTable extends IdentifiedAssetTable<ControlPoint> {
                 }
 
                 originCheck.setSelected(asset.getOrigin());
+                closedCheck.setSelected(asset.getClosed());
                 lockField.setText(asset.getLockStrength() + "");
                 if (asset.hasRequiredKey()) {
                     lockBox.setSelectedItem(asset.getRequiredKey());
@@ -156,6 +161,7 @@ public class ControlPointTable extends IdentifiedAssetTable<ControlPoint> {
                     .setMin(Integer.parseInt(minField.getText()))
                     .setMax(Integer.parseInt(maxField.getText()))
                     .setOrigin(originCheck.isSelected())
+                    .setClosed(closedCheck.isSelected())
                     .setLockStrength(Integer.parseInt(lockField.getText()))
                     .setRequiredKey((String) lockBox.getSelectedItem())
                     .addAllAvailableKey(keyTable.getAssetIds())
