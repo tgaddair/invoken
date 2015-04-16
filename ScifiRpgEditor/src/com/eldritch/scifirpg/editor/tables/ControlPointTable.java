@@ -66,10 +66,12 @@ public class ControlPointTable extends IdentifiedAssetTable<ControlPoint> {
         private final JComboBox<String> lockBox = new JComboBox<>();
         private final AssetPointerTable<Item> keyTable = new AssetPointerTable<>(
                 MainPanel.ITEM_TABLE);
+        private final AssetPointerTable<ControlPoint> followsTable;
 
         public ControlPointEditorPanel(ControlPointTable owner, JFrame frame,
                 Optional<ControlPoint> prev) {
             super(owner, frame, prev);
+            followsTable = new AssetPointerTable<>(owner);
 
             DefaultFormBuilder builder = new DefaultFormBuilder(new FormLayout(""));
             builder.border(BorderFactory.createEmptyBorder(5, 5, 5, 5));
@@ -110,6 +112,10 @@ public class ControlPointTable extends IdentifiedAssetTable<ControlPoint> {
             builder.appendRow("fill:100dlu");
             builder.append("Unlocks:", new AssetTablePanel(keyTable));
             builder.nextLine();
+            
+            builder.appendRow("fill:100dlu");
+            builder.append("Follows:", new AssetTablePanel(followsTable));
+            builder.nextLine();
 
             JButton saveButton = new JButton("Save");
             saveButton.addActionListener(this);
@@ -134,6 +140,9 @@ public class ControlPointTable extends IdentifiedAssetTable<ControlPoint> {
                 for (String key : asset.getAvailableKeyList()) {
                     keyTable.addAssetId(key);
                 }
+                for (String cp : asset.getFollowsList()) {
+                    followsTable.addAssetId(cp);
+                }
             }
 
             add(builder.getPanel());
@@ -150,7 +159,8 @@ public class ControlPointTable extends IdentifiedAssetTable<ControlPoint> {
                     .setLockStrength(Integer.parseInt(lockField.getText()))
                     .setRequiredKey((String) lockBox.getSelectedItem())
                     .addAllAvailableKey(keyTable.getAssetIds())
-                    .addAllRoomId(roomTable.getAssetIds());
+                    .addAllRoomId(roomTable.getAssetIds())
+                    .addAllFollows(followsTable.getAssetIds());
             return builder.build();
         }
     }

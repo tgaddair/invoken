@@ -235,3 +235,14 @@ control_point {
   origin: true
   value: 0
 }
+control_point {
+  id: "Lobby"
+  room_id: "GenericHall"
+  follows: "Entrance"
+  lock_strength: 0
+  required_key: ""
+  origin: false
+  min: 0
+  max: 0
+  value: 0
+}
