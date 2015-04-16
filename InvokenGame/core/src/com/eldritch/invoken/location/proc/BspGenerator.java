@@ -364,7 +364,7 @@ public class BspGenerator {
         System.out.println(String.format("[%d, %d]", min, max));
         int point = range(min, max);
         if (point > length) {
-            return target + targetLength + point;
+            return target + targetLength + point - length;
         } else {
             return target - length + point;
         }

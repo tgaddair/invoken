@@ -239,6 +239,11 @@ public class RoomGenerator extends BspGenerator {
                 int height = range(MinRoomSize, MaxRoomSize);
                 float x = rangeAround((int) followed.x, (int) followed.width, width, getWidth());
                 float y = rangeAround((int) followed.y, (int) followed.height, height, getHeight());
+                if (random() < 5) {
+                    x = followed.x;
+                } else {
+                    y = followed.y;
+                }
                 Rectangle rect = new Rectangle(x, y, width, height);
                 if (placeRectRoom(rect)) {
                     controlRooms.put(rect, new ControlRoom(cp, Room.getDefaultInstance(), rect));
@@ -253,6 +258,11 @@ public class RoomGenerator extends BspGenerator {
                     int height = range(type);
                     float x = rangeAround((int) followed.x, (int) followed.width, width, getWidth());
                     float y = rangeAround((int) followed.y, (int) followed.height, height, getHeight());
+                    if (random() < 5) {
+                        x = followed.x;
+                    } else {
+                        y = followed.y;
+                    }
                     Rectangle rect = new Rectangle(x, y, width, height);
                     if (placeRectRoom(rect)) {
                         controlRooms.put(rect, new ControlRoom(cp, room, rect));
