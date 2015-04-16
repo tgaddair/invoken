@@ -16,6 +16,8 @@ import java.util.TreeSet;
 import com.badlogic.gdx.math.Rectangle;
 import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.location.ConnectedRoomManager;
+import com.eldritch.invoken.location.proc.BspGenerator.CostMatrix;
+import com.eldritch.invoken.location.proc.BspGenerator.DefaultCostMatrix;
 import com.eldritch.invoken.location.proc.RoomDecorator.RoomType;
 import com.eldritch.invoken.proto.Locations.ControlPoint;
 import com.eldritch.invoken.proto.Locations.Encounter;
@@ -54,6 +56,7 @@ public class RoomGenerator extends BspGenerator {
     @Override
     protected void PlaceRooms() {
         InvokenGame.log("Room Count: " + getRoomCount());
+        CostMatrix cost = new DefaultCostMatrix();
         for (Pair<ControlPoint, Integer> elem : roomCounts) {
             ControlPoint cp = elem.first;
             int count = elem.second;
@@ -66,6 +69,8 @@ public class RoomGenerator extends BspGenerator {
                     for (ControlPoint follower : follows.get(cp.getId())) {
                         Rectangle rect2 = placeFollower(follower, rect);
                         System.out.println(rect + " -> " + rect2);
+                        
+                        DigTunnel(rect, rect2, cost);
                     }
                 }
             }
@@ -127,7 +132,7 @@ public class RoomGenerator extends BspGenerator {
             }
         }
 
-        // finally, asset that all the encounters were connected
+        // finally, assert that all the encounters were connected
         Preconditions.checkState(
                 connected.size() == controlRooms.size(),
                 String.format("expected %d connection, found %d", controlRooms.size(),

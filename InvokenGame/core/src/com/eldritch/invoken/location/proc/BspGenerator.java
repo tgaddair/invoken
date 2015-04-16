@@ -421,7 +421,7 @@ public class BspGenerator {
         }
     }
     
-    private static class DefaultCostMatrix implements CostMatrix {
+    protected static class DefaultCostMatrix implements CostMatrix {
         @Override
         public int getCost(int x, int y) {
             return 0;
