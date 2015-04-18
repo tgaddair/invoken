@@ -56,12 +56,8 @@ public class Patrol extends Selector<Npc> {
     private static class WatchForTrespassers extends SuccessTask {
         @Override
         protected void doFor(Npc npc) {
-            Location location = npc.getLocation();
             for (Agent neighbor : npc.getVisibleNeighbors()) {
-                if (location.isTrespasser(neighbor)) {
-                    npc.changeRelation(neighbor, -10);
-                    npc.announce(GenericDialogue.forCrime(npc));
-                }
+                handleTrespasser(npc, neighbor);
             }
         }
     }
@@ -83,12 +79,20 @@ public class Patrol extends Selector<Npc> {
     private static class RespondToThreat extends SuccessTask {
         @Override
         protected void doFor(Npc npc) {
-            Location location = npc.getLocation();
             for (Agent neighbor : npc.getVisibleNeighbors()) {
-                if (location.isTrespasser(neighbor)) {
-                    npc.changeRelation(neighbor, -10);
-                    npc.announce(GenericDialogue.forCrime(npc));
-                }
+                handleTrespasser(npc, neighbor);
+            }
+        }
+    }
+    
+    private static void handleTrespasser(Npc npc, Agent neighbor) {
+        Location location = npc.getLocation();
+        if (location.isTrespasser(neighbor)) {
+            if (location.isOnFrontier(neighbor)) {
+                npc.announce(GenericDialogue.forFrontier(npc));
+            } else {
+                npc.changeRelation(neighbor, -10);
+                npc.announce(GenericDialogue.forCrime(npc));
             }
         }
     }

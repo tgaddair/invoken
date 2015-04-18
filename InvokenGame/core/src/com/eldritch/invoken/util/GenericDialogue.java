@@ -8,6 +8,10 @@ import com.google.common.collect.ImmutableList;
 public class GenericDialogue {
     private static final List<String> HOSTILITY = ImmutableList.of(
             "You will die!", "You will pay with your blood!");
+    
+    public static String forFrontier(Agent agent) {
+        return "Turn back outsider. You're not welcome here.";
+    }
 
     public static String forCrime(Agent agent) {
         return "Stop right there!";

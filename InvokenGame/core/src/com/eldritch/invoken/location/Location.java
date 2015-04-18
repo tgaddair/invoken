@@ -314,6 +314,12 @@ public class Location {
         NaturalVector2 position = agent.getCellPosition();
         return territory[position.x][position.y].isTrespasser(agent);
     }
+    
+    public boolean isOnFrontier(Agent agent) {
+        NaturalVector2 position = agent.getCellPosition();
+        ConnectedRoom room = getConnections().getRoom(position.x, position.y);
+        return territory[position.x][position.y].isOnFrontier(room);
+    }
 
     public void addEntity(TemporaryEntity entity) {
         tempEntities.add(entity);

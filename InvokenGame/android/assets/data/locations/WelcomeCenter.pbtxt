@@ -249,6 +249,7 @@ control_point {
   max: 0
   value: 0
   closed: true
+  faction_id: "HouseEru"
 }
 control_point {
   id: "LobbyA"
