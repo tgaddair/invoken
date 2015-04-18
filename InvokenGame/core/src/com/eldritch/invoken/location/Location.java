@@ -310,8 +310,16 @@ public class Location {
         territory[position.x][position.y].alertTo(intruder);
     }
     
+    public boolean isCaughtTrespassing(Agent watcher, Agent caught) {
+        NaturalVector2 position = caught.getCellPosition();
+        return !isTrespasser(watcher, position) && isTrespasser(caught, position);
+    }
+    
     public boolean isTrespasser(Agent agent) {
-        NaturalVector2 position = agent.getCellPosition();
+        return isTrespasser(agent, agent.getCellPosition());
+    }
+    
+    private boolean isTrespasser(Agent agent, NaturalVector2 position) {
         return territory[position.x][position.y].isTrespasser(agent);
     }
     

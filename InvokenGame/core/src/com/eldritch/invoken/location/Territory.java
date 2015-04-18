@@ -1,9 +1,7 @@
 package com.eldritch.invoken.location;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 import com.eldritch.invoken.actor.factions.Faction;
 import com.eldritch.invoken.actor.type.Agent;
@@ -13,7 +11,7 @@ import com.google.common.base.Strings;
 
 public class Territory {
     public static final Territory DEFAULT = new Territory(Locations.Territory.getDefaultInstance());
-    
+
     private final Map<ConnectedRoom, Boolean> frontier = new HashMap<>();
     private final Optional<Faction> owningFaction;
     private final int minRank;
@@ -36,8 +34,8 @@ public class Territory {
 
     public boolean isTrespasser(Agent agent) {
         if (!owningFaction.isPresent()) {
-            // no owning faction
-            return true;
+            // no owning faction, so cannot trespass here
+            return false;
         }
 
         if (credential.isPresent()) {
@@ -52,7 +50,7 @@ public class Territory {
         int rank = agent.getInfo().getFactionManager().getRank(faction);
         return rank < minRank;
     }
-    
+
     public boolean isOnFrontier(ConnectedRoom room) {
         // assumes we're trespassing, are we trespassing enough for it to be a problem?
         if (room == null) {
@@ -61,19 +59,21 @@ public class Territory {
         }
         return isFrontier(room);
     }
-    
+
     private boolean isFrontier(ConnectedRoom room) {
-        if (!owningFaction.isPresent() || !owningFaction.get().equals(room.getFaction())) {
+        if (!owningFaction.isPresent() || !room.getFaction().isPresent()
+                || !owningFaction.get().getId().equals(room.getFaction().get())) {
             // we have no frontier, or different faction
-            return false;
+            return true;
         }
-        
+
         if (!frontier.containsKey(room)) {
             // since we need to check all neighbors, store off the result for reuse
-            boolean value = true;
+            boolean value = false;
             for (ConnectedRoom neighbor : room.getNeighbors()) {
-                if (!owningFaction.get().equals(neighbor.getFaction())) {
-                    value = false;
+                if (!neighbor.getFaction().isPresent()
+                        || !owningFaction.get().getId().equals(neighbor.getFaction().get())) {
+                    value = true;
                     break;
                 }
             }

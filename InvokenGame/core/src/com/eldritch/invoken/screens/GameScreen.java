@@ -57,7 +57,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
             Gdx.files.internal("image-atlases/pages.atlas"));
     public final static TextureAtlas NORMAL_ATLAS = new TextureAtlas(
             Gdx.files.internal("image-atlases/normal/pages.atlas"));
-    
+
     // draw frames
     public static final LinkedList<Texture> DEBUG_QUEUE = new LinkedList<>();
 
@@ -97,7 +97,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
     boolean playerClicked = false;
     int targetX;
     int targetY;
-    
+
     private static final float DODGE_WINDOW = 0.25f;
     private final Vector2 input = new Vector2();
     private boolean shiftDown = false;
@@ -226,7 +226,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
             Vector3 world = camera.unproject(new Vector3(targetX, targetY, 0));
             player.moveTo(world.x, world.y);
         }
-        
+
         // handle UI actions
         if (shiftDown) {
             shiftTime += delta;
@@ -331,6 +331,8 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
             float freezing = target.getFreezing();
             int enemies = target.getThreat().getEnemyCount();
             float visibility = target.getVisibility();
+            String trespass = target.getLocation().isTrespasser(target) ? (target.getLocation()
+                    .isOnFrontier(target) ? "Frontier" : "Trespass") : "Clear";
 
             int i = 0;
             batch.begin();
@@ -355,6 +357,8 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
                     - (30 + 20 * i++));
             font.draw(batch, String.format("Charisma: %d", info.getCharisma()), 10, getHeight()
                     - (30 + 20 * i++));
+            font.draw(batch, String.format("Trespass: %s", trespass), 10, getHeight()
+                    - (30 + 20 * i++));
 
             if (target instanceof Npc) {
                 Npc npc = (Npc) target;
@@ -372,8 +376,8 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
                 font.draw(batch, "Threat: " + threat, 10, getHeight() - (30 + 20 * i++));
                 font.draw(batch, String.format("Aiming: %s", npc.isAiming()), 10, getHeight()
                         - (30 + 20 * i++));
-                font.draw(batch, String.format("Sighted: %s", npc.hasSights()), 10,
-                        getHeight() - (30 + 20 * i++));
+                font.draw(batch, String.format("Sighted: %s", npc.hasSights()), 10, getHeight()
+                        - (30 + 20 * i++));
                 // font.draw(batch, String.format("Fatigued: %s (%.2f)", fatigued, fatigue), 10,
                 // getHeight() - (30 + 20 * i++));
                 font.draw(batch,
@@ -382,12 +386,14 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
                 font.draw(batch, String.format("Target: %s", targetName), 10, getHeight()
                         - (30 + 20 * i++));
             }
-            
-            font.draw(batch, String.format("Thermal: %.2f", info.getStatusEffect(DamageType.THERMAL)), 10, getHeight()
-                    - (30 + 20 * i++));
-            font.draw(batch, String.format("Viral: %.2f", info.getStatusEffect(DamageType.VIRAL)), 10, getHeight()
-                    - (30 + 20 * i++));
-            font.draw(batch, String.format("Radioactive: %.2f", info.getStatusEffect(DamageType.RADIOACTIVE)), 10, getHeight()
+
+            font.draw(batch,
+                    String.format("Thermal: %.2f", info.getStatusEffect(DamageType.THERMAL)), 10,
+                    getHeight() - (30 + 20 * i++));
+            font.draw(batch, String.format("Viral: %.2f", info.getStatusEffect(DamageType.VIRAL)),
+                    10, getHeight() - (30 + 20 * i++));
+            font.draw(batch, String.format("Radioactive: %.2f",
+                    info.getStatusEffect(DamageType.RADIOACTIVE)), 10, getHeight()
                     - (30 + 20 * i++));
 
             batch.end();
@@ -411,7 +417,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         sb.append(String.format("Level: %d\n", player.getInfo().getLevel()));
         System.out.println(sb.toString());
     }
-    
+
     private Vector2 getInputDirection() {
         input.set(Vector2.Zero);
         if (Gdx.input.isKeyPressed(Keys.A)) {
@@ -428,7 +434,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         }
         return input.nor();
     }
-    
+
     private void shiftDown(boolean down) {
         this.shiftDown = down;
         if (!down) {
@@ -445,7 +451,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         switch (keycode) {
             case Keys.SPACE:
             case Keys.SHIFT_LEFT:
-//                player.holdPosition(true);
+                // player.holdPosition(true);
                 shiftDown(true);
                 return true;
             case Keys.TAB:
@@ -486,10 +492,10 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
                 printPlayerStatus();
                 return true;
             case Keys.SPACE:
-//                tacticalPause = !tacticalPause;
-//                return true;
+                // tacticalPause = !tacticalPause;
+                // return true;
             case Keys.SHIFT_LEFT:
-//                player.holdPosition(false);
+                // player.holdPosition(false);
                 shiftDown(false);
                 return true;
             case Keys.BACKSPACE:
