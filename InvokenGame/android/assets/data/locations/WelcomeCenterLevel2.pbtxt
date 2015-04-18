@@ -1,0 +1,109 @@
+id: "WelcomeCenterLevel2"
+name: "Welcome Center - Level 2"
+encounter {
+  id: "FacelessHorde"
+  title: "Faceless Horde"
+  type: ACTOR
+  weight: 0.25
+  unique: false
+  origin_DEPRECATED: false
+  actor_params {
+    description: ""
+    actor_scenario {
+      actor_id: "BrokenHollow"
+      essential: false
+      blocking: false
+      min: 1
+      max: 4
+      alive: true
+    }
+    no_detect: false
+    no_flee: false
+  }
+  required_key_DEPRECATED: ""
+  room_id_DEPRECATED: "ConferenceRoom"
+  room_id_DEPRECATED: "LabBig"
+}
+encounter {
+  id: "SecurityStation"
+  title: "Security Station"
+  type: ACTOR
+  weight: 1.0
+  unique: true
+  origin_DEPRECATED: false
+  actor_params {
+    description: ""
+    no_detect: false
+    no_flee: false
+  }
+  required_key_DEPRECATED: "SecurityKey"
+  room_id_DEPRECATED: "SecurityStation"
+}
+encounter {
+  id: "Entrance"
+  title: "Entrance"
+  type: ACTOR
+  weight: 1.0
+  unique: false
+  origin_DEPRECATED: true
+  actor_params {
+    description: ""
+    no_detect: false
+    no_flee: false
+  }
+  required_key_DEPRECATED: ""
+  room_id_DEPRECATED: "Teleporter"
+  lock_strength_DEPRECATED: 0
+  successor_DEPRECATED: "WelcomeCenter"
+  next_encounter_DEPRECATED: "Teleporter"
+}
+encounter {
+  id: "BreakRoom"
+  title: "Break Room"
+  type: ACTOR
+  weight: 1.0
+  unique: true
+  origin_DEPRECATED: false
+  actor_params {
+    description: ""
+    no_detect: false
+    no_flee: false
+  }
+  required_key_DEPRECATED: ""
+  room_id_DEPRECATED: "GenericHall"
+  available_key_DEPRECATED: "SecurityKey"
+}
+encounter {
+  id: "Lich"
+  title: "Lich"
+  type: ACTOR
+  weight: 1.0
+  unique: true
+  origin_DEPRECATED: false
+  actor_params {
+    description: ""
+    actor_scenario {
+      actor_id: "Lich"
+      essential: true
+      blocking: false
+      min: 1
+      max: 1
+      alive: true
+    }
+    no_detect: false
+    no_flee: false
+  }
+  required_key_DEPRECATED: ""
+  room_id_DEPRECATED: "LabBig"
+  lock_strength_DEPRECATED: 0
+  available_key_DEPRECATED: "SecurityKey"
+  successor_DEPRECATED: ""
+  next_encounter_DEPRECATED: ""
+}
+light {
+  r: 179
+  g: 179
+  b: 230
+  intensity: 1.25
+}
+biome: INDUSTRY

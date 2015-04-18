@@ -1,0 +1,270 @@
+params {
+  id: "Cyrus"
+  name: "Cyrus"
+  species: HUMAN
+  gender: MALE
+  profession: AGENT
+  level: 15
+  skill {
+    discipline: SUBTERFUGE
+    level: 18
+  }
+  skill {
+    discipline: CHARISMA
+    level: 14
+  }
+  skill {
+    discipline: WARFARE
+    level: 12
+  }
+  skill {
+    discipline: AUTOMATA
+    level: 10
+  }
+  faction_status {
+    faction_id: "_ThugFaction"
+    rank: 7
+  }
+  inventory_item {
+    item_id: "RailGun"
+    count: 1
+    drop_chance: 1.0
+  }
+  inventory_item {
+    item_id: "BanditLeaderAttire"
+    count: 1
+    drop_chance: 1.0
+  }
+  known_aug_id: FireWeapon
+  body_type: "male-dark2"
+}
+unique: true
+dialogue {
+  dialogue {
+    id: "Greeting1"
+    text: "So this is the punk that\'s been causing me all this trouble.  Well now you\'re here, so what do you want?"
+    outcome {
+      weight: 1.0
+      type: NO_REPEAT
+    }
+    greeting: true
+    weight: 0
+    choice_id: "CalebMissing"
+    choice_id: "I just want to get to Nosterra Tower"
+    choice_id: "DefensiveNonHostile"
+    forced: false
+  }
+  dialogue {
+    id: "Right"
+    text: "Right... Unlucky for you then, that I\'m the only one that can get you to Nosterra Towers.  You see, that path is closed; to you, to me, to anybody.  My friends and I, we don\'t go down there anymore."
+    greeting: false
+    weight: 0
+    choice_id: "WhysThat"
+    forced: false
+  }
+  dialogue {
+    id: "ThingsDownThere"
+    text: "The things down there, in the lower levels, I don\'t know what they are.  Late stages of the plague maybe.  Twisted creatures of flesh and metal.  If that\'s the fate that awaits us all if we don\'t escape this place, then I don\'t feel like facing it just yet."
+    greeting: false
+    weight: 0
+    choice_id: "LetMe"
+    forced: false
+  }
+  dialogue {
+    id: "No"
+    text: "No, outsider. I may not give a damn about your fate, but I sure as hell care about my people. You open that door, and I don\'t know what comes out the other side. That\'s a chance I\'m not going to take."
+    prereq {
+      type: RELATION_BETWEEN
+      min: 50
+      not: true
+    }
+    greeting: false
+    weight: 0
+    forced: false
+  }
+  dialogue {
+    id: "VeryWell"
+    text: "Are you truly ready to face it? I\'m not sure.  I doubt you will survive, but I doubt you will betray us either.  These days I can ask no more.  Here are the credentials.  And outsider?  If you find one of our own down there... Caleb, that is.  He was lost on a scavenge mission.  Send him back to us, if you can.  Or, well, let me know his fate regardless.  I have to know."
+    prereq {
+      type: RELATION_BETWEEN
+      min: 50
+      not: false
+    }
+    outcome {
+      weight: 1.0
+      type: ITEM_CHANGE
+      target: "CustomsCredentialsLevel2"
+      value: 1
+    }
+    greeting: false
+    weight: 0
+    forced: false
+  }
+  dialogue {
+    id: "YouAgain"
+    text: "You again.  What now, outsider?"
+    prereq {
+      type: ITEM_HAS
+      target: "CustomsCredentialsLevel2"
+      min: 1
+      not: true
+    }
+    greeting: true
+    weight: 0
+    choice_id: "CalebMissing"
+    choice_id: "I just want to get to Nosterra Tower"
+    choice_id: "DefensiveNonHostile"
+    forced: false
+  }
+  dialogue {
+    id: "NotYourBusiness"
+    text: "That\'s not your concern, outsider.  But yes, Caleb is one of my best, and now he is missing.  Some weeks ago -- or months, shit, I can\'t even say -- he was sent with a squad of replicants to scavenge for supplies.  Cells for energy, primarily.  Anyway, something went wrong.  We waited and waited, but he never came back."
+    greeting: false
+    weight: 0
+    choice_id: "LetMeHelp"
+    forced: false
+  }
+  dialogue {
+    id: "Convinced1"
+    text: "You\'re right, this has to end.  Send him back to us, if you can.  Or, well, let me know his fate regardless.  I have to know."
+    prereq {
+      type: RELATION_BETWEEN
+      min: -10
+      not: false
+    }
+    outcome {
+      weight: 1.0
+      type: ITEM_CHANGE
+      target: "CustomsCredentialsLevel2"
+      value: 1
+    }
+    greeting: false
+    weight: 0
+    forced: false
+  }
+  dialogue {
+    id: "Unconvinced1"
+    text: "I... no.  It\'s tempting, to do what you say.  But how can I trust you, when you have already acted against me?  No, if I open those doors, what happened to Caleb will only be the beginning.  Now leave."
+    prereq {
+      type: RELATION_BETWEEN
+      min: -10
+      not: true
+    }
+    greeting: false
+    weight: 0
+    forced: false
+  }
+  choice {
+    text: "I just want to get to Nosterra Tower.  Your people shot first."
+    prereq {
+      type: REP_BETWEEN
+      target: "_ThugFaction"
+      max: -30
+      not: false
+    }
+    successor_id: "Right"
+    weight: 0
+    id: "I just want to get to Nosterra Tower"
+  }
+  choice {
+    text: "I just want to get to Nosterra Tower.  I\'m not here to start a fight."
+    prereq {
+      type: REP_BETWEEN
+      target: "_ThugFaction"
+      max: -30
+      not: true
+    }
+    successor_id: "Right"
+    weight: 0
+    id: "DefensiveNonHostile"
+  }
+  choice {
+    text: "And why\'s that?"
+    successor_id: "ThingsDownThere"
+    weight: 0
+    id: "WhysThat"
+  }
+  choice {
+    text: "Let me face it then. Let me have the credentials. One way or another, I\'m getting out of here."
+    successor_id: "VeryWell"
+    successor_id: "No"
+    weight: 0
+    id: "LetMe"
+  }
+  choice {
+    text: "Tell me about Caleb.  I understand he\'s been missing for some time."
+    prereq {
+      type: STATE_MARKER
+      target: "CalebIsMissing"
+      min: 1
+      not: false
+    }
+    successor_id: "NotYourBusiness"
+    weight: 0
+    id: "CalebMissing"
+  }
+  choice {
+    text: "You\'re scared of what\'s out there.  I understand, and I can help.  Send me after Caleb, and I\'ll make sure he gets back."
+    successor_id: "Unconvinced1"
+    successor_id: "Convinced1"
+    weight: 0
+    id: "LetMeHelp"
+  }
+}
+dialogue {
+  dialogue {
+    id: "AnyUpdates"
+    text: "Any updates on Caleb?"
+    prereq {
+      type: INTERACTOR
+      target: "StreetThugGuard"
+      not: false
+    }
+    outcome {
+      weight: 1.0
+      type: NO_REPEAT
+    }
+    outcome {
+      weight: 1.0
+      type: ADD_MARKER
+      target: "CalebIsMissing"
+      value: 1
+    }
+    greeting: true
+    weight: 0
+    choice_id: "NoUpdates"
+    forced: false
+  }
+  dialogue {
+    id: "OfCourseNot"
+    text: "[Sigh]... Of course not, it\'s too soon. Don\'t worry, we\'ll find him."
+    greeting: false
+    weight: 0
+    forced: false
+  }
+  choice {
+    text: "I\'m sorry, Cyrus.  We\'ve heard nothing."
+    successor_id: "OfCourseNot"
+    weight: 0
+    id: "NoUpdates"
+  }
+}
+dialogue {
+  dialogue {
+    id: "AfterCredentials"
+    text: "You have your credentials.  Now leave me."
+    prereq {
+      type: ITEM_HAS
+      target: "CustomsCredentialsLevel2"
+      min: 1
+      not: false
+    }
+    greeting: true
+    weight: 0
+    forced: false
+  }
+}
+aggression: UNAGGRESSIVE
+assistance: LOYAL
+confidence: BRAVE
+guard: false
