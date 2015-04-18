@@ -127,7 +127,7 @@ public class LocationGenerator {
     public Location generate(Locations.Location proto, Optional<String> encounterName) {
         System.out.println("global seed: " + globalSeed);
         System.out.println("hash code: " + proto.getId().hashCode());
-        
+
         final int attempts = 3;
         while (counter < attempts) {
             // generate a new random seed that combines the global player seed with the location
@@ -298,16 +298,50 @@ public class LocationGenerator {
         return layer.isGround(x, y) && collision.getCell(x, y) == null;
     }
 
+    private ConnectedRoom findCapital(String factionId, ConnectedRoomManager rooms,
+            Map<ConnectedRoom, GrowthRegion> claimed) {
+        // first try and choose a high value room that defaults to the current faction
+        int bestValue = Integer.MIN_VALUE;
+        ConnectedRoom capital = null;
+        for (Entry<ControlRoom, ConnectedRoom> chamber : rooms.getChambers()) {
+            ControlRoom cr = chamber.getKey();
+            ConnectedRoom room = chamber.getValue();
+            int value = cr.getControlPoint().getValue();
+            if (!claimed.containsKey(room) && factionId.equals(cr.getControlPoint().getFactionId())
+                    && value > bestValue) {
+                // found default point
+                InvokenGame
+                        .logfmt("Found point %s for %s", cr.getControlPoint().getId(), factionId);
+                bestValue = value;
+                capital = room;
+            }
+        }
+
+        // fallback plan: choose capital based on which unclaimed point has the most out-links
+        if (capital == null) {
+            int maxConnections = 0;
+            for (Entry<ControlRoom, ConnectedRoom> chamber : rooms.getChambers()) {
+                ControlRoom cr = chamber.getKey();
+                ConnectedRoom room = chamber.getValue();
+                if (!claimed.containsKey(room) && cr.getControlPoint().getValue() > 0) {
+                    int connections = room.getNeighbors().size();
+                    if (connections > maxConnections) {
+                        maxConnections = connections;
+                        capital = room;
+                    }
+                }
+            }
+        }
+
+        return capital;
+    }
+
     private void claimTerritory(final ConnectedRoomManager rooms, List<Territory> territories) {
         // define a number of sectors to roughly divide the territories on opposite ends of the map
         // in general, we want to avoid placing capitals right next to one another so that one
         // territory gets immediately surrounded and subsequently swarmed by another
         int sectors = (int) Math.ceil(Math.sqrt(territories.size()));
         InvokenGame.logfmt("Sectors: %d", sectors);
-
-        // length of each sector
-        int dxSector = rooms.getWidth() / sectors;
-        int dySector = rooms.getHeight() / sectors;
 
         // randomly assign capitals for every faction with territory
         int sectorX = 0;
@@ -323,20 +357,7 @@ public class LocationGenerator {
             int control = territory.getControl();
             if (control > 0) {
                 // choose a room with the greatest number of connections
-                ConnectedRoom capital = null;
-                int maxConnections = 0;
-                for (Entry<ControlRoom, ConnectedRoom> chamber : rooms.getChambers()) {
-                    ControlRoom cr = chamber.getKey();
-                    ConnectedRoom room = chamber.getValue();
-                    if (!claimed.containsKey(room) && cr.getControlPoint().getValue() > 0) {
-                        int connections = room.getNeighbors().size();
-                        if (connections > maxConnections) {
-                            maxConnections = connections;
-                            capital = room;
-                        }
-                    }
-                }
-
+                ConnectedRoom capital = findCapital(territory.getFactionId(), rooms, claimed);
                 if (capital == null) {
                     // something went wrong
                     throw new IllegalStateException("Failed to find capital");
