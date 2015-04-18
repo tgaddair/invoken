@@ -76,6 +76,7 @@ public class LocationGenerator {
     private static final int SCALE = 1;
     private final long globalSeed;
     private Random rand;
+    private long counter = 0;
 
     private final GameState state;
     private final String biome;
@@ -124,10 +125,25 @@ public class LocationGenerator {
     }
 
     public Location generate(Locations.Location proto, Optional<String> encounterName) {
-        // generate a new random seed that combines the global player seed with the location name
-        long seed = globalSeed ^ proto.getId().hashCode();
         System.out.println("global seed: " + globalSeed);
         System.out.println("hash code: " + proto.getId().hashCode());
+        
+        final int attempts = 3;
+        while (counter < attempts) {
+            // generate a new random seed that combines the global player seed with the location
+            // name
+            long seed = (globalSeed ^ proto.getId().hashCode()) + counter++;
+            try {
+                return generate(proto, encounterName, seed);
+            } catch (Exception ex) {
+                InvokenGame.error("Failed generating location: " + counter, ex);
+            }
+        }
+        throw new IllegalStateException(String.format(
+                "Failed to generate location %s after %d attempts", proto.getId(), attempts));
+    }
+
+    private Location generate(Locations.Location proto, Optional<String> encounterName, long seed) {
         System.out.println("seed: " + seed);
         this.rand = new Random(seed);
 
@@ -1203,7 +1219,7 @@ public class LocationGenerator {
         }
 
         public boolean canGrow() {
-//            return control > 0 && !(bestRooms.isEmpty() && reclaimed.isEmpty());
+            // return control > 0 && !(bestRooms.isEmpty() && reclaimed.isEmpty());
             return control > 0 && !bestRooms.isEmpty();
         }
 
