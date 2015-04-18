@@ -132,7 +132,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 
         camera = new OrthographicCamera();
         camera.setToOrtho(false, (w / h) * 10, 10);
-        camera.zoom = 1.15f;
+        camera.zoom = 1.35f;
         camera.update();
 
         font = new BitmapFont();
@@ -313,6 +313,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
     private void drawFps() {
         batch.begin();
         font.draw(batch, "FPS: " + Gdx.graphics.getFramesPerSecond(), 10, getHeight() - 10);
+//        font.draw(batch, "Zoom: " + camera.zoom, 10, getHeight() - 10);
         batch.end();
     }
 
@@ -331,8 +332,8 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
             float freezing = target.getFreezing();
             int enemies = target.getThreat().getEnemyCount();
             float visibility = target.getVisibility();
-            String trespass = target.getLocation().isTrespasser(target) ? (target.getLocation()
-                    .isOnFrontier(target) ? "Frontier" : "Trespass") : "Clear";
+//            String trespass = target.getLocation().isTrespasser(target) ? (target.getLocation()
+//                    .isOnFrontier(target) ? "Frontier" : "Trespass") : "Clear";
 
             int i = 0;
             batch.begin();
@@ -357,8 +358,8 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
                     - (30 + 20 * i++));
             font.draw(batch, String.format("Charisma: %d", info.getCharisma()), 10, getHeight()
                     - (30 + 20 * i++));
-            font.draw(batch, String.format("Trespass: %s", trespass), 10, getHeight()
-                    - (30 + 20 * i++));
+//            font.draw(batch, String.format("Trespass: %s", trespass), 10, getHeight()
+//                    - (30 + 20 * i++));
 
             if (target instanceof Npc) {
                 Npc npc = (Npc) target;

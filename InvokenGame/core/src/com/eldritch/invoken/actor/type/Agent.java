@@ -755,7 +755,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
      */
     public void announce(String banter) {
         // do not enqueue repeat announcements
-        if (announcements.isEmpty() || !banter.equals(announcements.peekLast())) {
+        if (announcements.isEmpty()) {
             announcements.add(new BasicAnnouncement(banter));
         }
     }
@@ -1231,6 +1231,9 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         info.getInventory().update(delta);
 
         updateHeading();
+        if (aiming) {
+            weaponSentry.update(delta);
+        }
 
         // apply all active effects, remove any that are finished
         Iterator<Effect> it = effects.iterator();
@@ -1726,13 +1729,19 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
             }
             return lineOfSightCache.get(target);
         }
-
-        @Override
-        public void update(float delta, Location location) {
+        
+        public void update(float delta) {
             Vector2 origin = getRenderPosition();
             direction.set(getFocusPoint()).sub(origin).nor();
             position.set(origin.x + direction.x, origin.y + direction.y).sub(offset);
             clear();
+        }
+
+        @Override
+        public void update(float delta, Location location) {
+            // called outside, does nothing
+            Vector2 origin = getRenderPosition();
+            position.set(origin.x + direction.x, origin.y + direction.y).sub(offset);
         }
         
         public void clear() {
@@ -1794,7 +1803,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         private float theta = 0;
         
         @Override
-        public void update(float delta, Location location) {
+        public void update(float delta) {
             Vector2 origin = getRenderPosition();
             destination.set(getFocusPoint()).sub(origin).nor();
             

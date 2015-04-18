@@ -42,6 +42,6 @@ public abstract class ProjectileAugmentation extends Augmentation {
     
     @Override
     public float quality(Agent owner, Agent target, Location location) {
-        return owner.getWeaponSentry().hasLineOfSight(target) ? 1 : 0;
+        return 1;
     }
 }
