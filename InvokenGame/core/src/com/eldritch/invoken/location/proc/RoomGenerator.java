@@ -37,7 +37,7 @@ public class RoomGenerator extends BspGenerator {
             List<Pair<ControlPoint, Integer>> roomCounts, long seed) {
         super(roomCount, seed);
         this.roomCounts.addAll(roomCounts);
-        
+
         // create following
         for (ControlPoint cp : points) {
             for (String followed : cp.getFollowsList()) {
@@ -63,14 +63,13 @@ public class RoomGenerator extends BspGenerator {
             for (int i = 0; i < count; i++) {
                 System.out.println("placing: " + cp.getId());
                 Rectangle rect = place(cp);
-                
+
                 // following
                 if (follows.containsKey(cp.getId())) {
                     for (ControlPoint follower : follows.get(cp.getId())) {
                         Rectangle rect2 = placeFollower(follower, rect);
-                        System.out.println(rect + " -> " + rect2);
-                        
                         DigTunnel(rect, rect2, cost);
+                        System.out.println(rect + " -> " + rect2);
                     }
                 }
             }
@@ -80,6 +79,7 @@ public class RoomGenerator extends BspGenerator {
     @Override
     protected void PlaceTunnels() {
         // save("no-tunnels");
+        int connections = 0;
 
         // first, generate the dependency graph from all the encounter-room pairs
         ControlNode origin = generateDependencyGraph(controlRooms.values());
@@ -89,8 +89,11 @@ public class RoomGenerator extends BspGenerator {
         Set<ControlNode> connected = new LinkedHashSet<ControlNode>();
 
         // seed the routine so we can connect to the origin, and we connected from a child
-        connectedSample.add(origin);
-        connected.add(origin);
+        connections++;
+        if (!origin.cp.getClosed()) {
+            connectedSample.add(origin);
+            connected.add(origin);
+        }
         for (ControlNode lock : origin.locks) {
             unlocked.add(lock);
         }
@@ -103,13 +106,22 @@ public class RoomGenerator extends BspGenerator {
                 continue;
             }
 
-            ControlNode connection = connectedSample.get((int) (random() * connected.size()));
-            DigTunnel(connection.getBounds(), current.getBounds(), costs);
+            connections++;
+            if (!current.cp.getClosed()) {
+                // can connect implicitly
+                if (!connectedSample.isEmpty()) {
+                    ControlNode connection = connectedSample
+                            .get((int) (random() * connected.size()));
+                    DigTunnel(connection.getBounds(), current.getBounds(), costs);
+                }
 
-            // add this node to the connected set, and maybe add its children if all its keys
-            // are also in the connected set
-            connectedSample.add(current);
-            connected.add(current);
+                // add this node to the connected set, and maybe add its children if all its keys
+                // are also in the connected set
+                connectedSample.add(current);
+                connected.add(current);
+            }
+
+            // unlock dependencies
             for (ControlNode lock : current.locks) {
                 if (connected.contains(lock)) {
                     // already placed
@@ -133,10 +145,9 @@ public class RoomGenerator extends BspGenerator {
         }
 
         // finally, assert that all the encounters were connected
-        Preconditions.checkState(
-                connected.size() == controlRooms.size(),
-                String.format("expected %d connection, found %d", controlRooms.size(),
-                        connected.size()));
+        Preconditions
+                .checkState(connections == controlRooms.size(), String.format(
+                        "expected %d connection, found %d", controlRooms.size(), connections));
 
         // now that we're done placing tunnels, we need to reconstruct the walls around our
         // encounter rooms, if they're supposed to be locked
@@ -234,7 +245,7 @@ public class RoomGenerator extends BspGenerator {
         // TODO: get first available
         throw new IllegalStateException("Unable to place: " + cp.getId());
     }
-    
+
     private Rectangle placeFollower(ControlPoint cp, Rectangle followed) {
         // InvokenGame.log("Place: " + encounter.getId());
         int count = 0;
@@ -262,7 +273,8 @@ public class RoomGenerator extends BspGenerator {
                     int width = range(type);
                     int height = range(type);
                     float x = rangeAround((int) followed.x, (int) followed.width, width, getWidth());
-                    float y = rangeAround((int) followed.y, (int) followed.height, height, getHeight());
+                    float y = rangeAround((int) followed.y, (int) followed.height, height,
+                            getHeight());
                     if (random() < 5) {
                         x = followed.x;
                     } else {
