@@ -1740,10 +1740,16 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         @Override
         public void update(float delta, Location location) {
             if (!Agent.this.aiming) {
+                rotateTowards(delta, getForwardVector());
                 Vector2 origin = getRenderPosition();
-                direction.set(getForwardVector());
                 position.set(origin.x + direction.x, origin.y + direction.y).sub(offset);
             }
+        }
+        
+        private void rotateTowards(float delta, Vector2 destination) {
+            float theta = direction.angle(destination);
+            theta = Math.signum(theta) * Math.max(Math.abs(theta), 15f);
+            direction.rotate(theta * delta * ROTATION_SCALE * info.getAttackModifier());
         }
         
         public void clear() {
