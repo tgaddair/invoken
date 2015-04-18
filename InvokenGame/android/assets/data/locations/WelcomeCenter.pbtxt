@@ -229,7 +229,7 @@ control_point {
 }
 control_point {
   id: "Entrance"
-  room_id: "MediumLobby"
+  room_id: "NeutralChamber"
   lock_strength: 0
   required_key: ""
   origin: true
@@ -237,6 +237,7 @@ control_point {
   max: 1
   value: 0
   closed: true
+  faction_id: ""
 }
 control_point {
   id: "Lobby"

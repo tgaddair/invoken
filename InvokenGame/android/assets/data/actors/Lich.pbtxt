@@ -1,0 +1,34 @@
+params {
+  id: "Lich"
+  name: "Lich"
+  species: AUTOMATON
+  level: 25
+  skill {
+    discipline: WARFARE
+    level: 75
+  }
+  skill {
+    discipline: AUTOMATA
+    level: 100
+  }
+  skill {
+    discipline: SUBTERFUGE
+    level: 10
+  }
+  skill {
+    discipline: CHARISMA
+    level: 10
+  }
+  known_aug_id: Drain
+  known_aug_id: Resurrect
+  known_aug_id: Infect
+  known_aug_id: Jaunt
+  body_type: "lich1"
+}
+unique: false
+dialogue {
+}
+aggression: HOSTILE
+assistance: DETACHED
+confidence: RECKLESS
+guard: false

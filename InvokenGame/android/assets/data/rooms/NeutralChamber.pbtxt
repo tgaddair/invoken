@@ -1,0 +1,30 @@
+id: "NeutralChamber"
+furniture {
+  id: "security-camera"
+  type: ACTIVATOR
+}
+furniture {
+  id: "container-small"
+  type: ACTIVATOR
+}
+furniture {
+  id: "plant-tall1"
+  type: TMX
+}
+furniture {
+  id: "plant-small1"
+  type: TMX
+}
+furniture {
+  id: "plant-small2"
+  type: TMX
+}
+furniture {
+  id: "plant-small3"
+  type: TMX
+}
+furniture {
+  id: "vase1"
+  type: TMX
+}
+size: MEDIUM
