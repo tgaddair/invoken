@@ -16,8 +16,6 @@ import java.util.TreeSet;
 import com.badlogic.gdx.math.Rectangle;
 import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.location.ConnectedRoomManager;
-import com.eldritch.invoken.location.proc.BspGenerator.CostMatrix;
-import com.eldritch.invoken.location.proc.BspGenerator.DefaultCostMatrix;
 import com.eldritch.invoken.location.proc.RoomDecorator.RoomType;
 import com.eldritch.invoken.proto.Locations.ControlPoint;
 import com.eldritch.invoken.proto.Locations.Encounter;
@@ -62,16 +60,7 @@ public class RoomGenerator extends BspGenerator {
             int count = elem.second;
             for (int i = 0; i < count; i++) {
                 System.out.println("placing: " + cp.getId());
-                Rectangle rect = place(cp);
-
-                // following
-                if (follows.containsKey(cp.getId())) {
-                    for (ControlPoint follower : follows.get(cp.getId())) {
-                        Rectangle rect2 = placeFollower(follower, rect);
-                        DigTunnel(rect, rect2, cost);
-                        System.out.println(rect + " -> " + rect2);
-                    }
-                }
+                place(cp, null, cost);
             }
         }
     }
@@ -213,6 +202,22 @@ public class RoomGenerator extends BspGenerator {
         }
     }
 
+    private Rectangle place(ControlPoint cp, Rectangle origin, CostMatrix cost) {
+        Rectangle rect = origin == null ? place(cp) : place(cp, origin);
+
+        // following
+        if (follows.containsKey(cp.getId())) {
+            for (ControlPoint follower : follows.get(cp.getId())) {
+                Rectangle rect2 = place(follower, rect, cost);
+//                Rectangle rect2 = place(follower, rect);
+                DigTunnel(rect, rect2, cost);
+                System.out.println(rect + " -> " + rect2);
+            }
+        }
+
+        return rect;
+    }
+
     private Rectangle place(ControlPoint cp) {
         // InvokenGame.log("Place: " + encounter.getId());
         int count = 0;
@@ -246,16 +251,18 @@ public class RoomGenerator extends BspGenerator {
         throw new IllegalStateException("Unable to place: " + cp.getId());
     }
 
-    private Rectangle placeFollower(ControlPoint cp, Rectangle followed) {
+    private Rectangle place(ControlPoint cp, Rectangle followed) {
         // InvokenGame.log("Place: " + encounter.getId());
+        int dx = 0;
+        int dy = 0;
         int count = 0;
         while (count < 1000) {
             if (cp.getRoomIdList().isEmpty()) {
                 int width = range(MinRoomSize, MaxRoomSize);
                 int height = range(MinRoomSize, MaxRoomSize);
-                float x = rangeAround((int) followed.x, (int) followed.width, width, getWidth());
-                float y = rangeAround((int) followed.y, (int) followed.height, height, getHeight());
-                if (random() < 5) {
+                float x = rangeAround((int) followed.x, (int) followed.width, width + dx, getWidth());
+                float y = rangeAround((int) followed.y, (int) followed.height, height + dy, getHeight());
+                if (random() < 0.5) {
                     x = followed.x;
                 } else {
                     y = followed.y;
@@ -272,10 +279,10 @@ public class RoomGenerator extends BspGenerator {
 
                     int width = range(type);
                     int height = range(type);
-                    float x = rangeAround((int) followed.x, (int) followed.width, width, getWidth());
-                    float y = rangeAround((int) followed.y, (int) followed.height, height,
+                    float x = rangeAround((int) followed.x, (int) followed.width, width + dx, getWidth());
+                    float y = rangeAround((int) followed.y, (int) followed.height, height + dy,
                             getHeight());
-                    if (random() < 5) {
+                    if (random() < 0.5) {
                         x = followed.x;
                     } else {
                         y = followed.y;
@@ -287,11 +294,19 @@ public class RoomGenerator extends BspGenerator {
                     }
                 }
             }
+            
             count++;
+            if (count % 10 == 0) {
+                // widen the placement area to allow for more spacing if we can't find anything
+                // within the desired area
+                dx++;
+                dy++;
+            }
         }
 
         // TODO: get first available
-        throw new IllegalStateException("Unable to place: " + cp.getId());
+//      throw new IllegalStateException("Unable to place: " + cp.getId());
+        return place(cp);
     }
 
     private int range(RoomType type) {
