@@ -59,6 +59,7 @@ public class ControlPointTable extends IdentifiedAssetTable<ControlPoint> {
         private final JTextField valueField = new JTextField("0");
         private final JTextField minField = new JTextField("1");
         private final JTextField maxField = new JTextField("1");
+        private final JComboBox<String> factionBox = new JComboBox<>();
 
         private final AssetPointerTable<Room> roomTable = new AssetPointerTable<>(
                 MainPanel.ROOM_TABLE);
@@ -92,6 +93,13 @@ public class ControlPointTable extends IdentifiedAssetTable<ControlPoint> {
             builder.nextLine();
 
             builder.append("Max:", maxField);
+            builder.nextLine();
+            
+            List<String> factionIds = new ArrayList<>();
+            factionIds.add("");
+            factionIds.addAll(MainPanel.FACTION_TABLE.getAssetIds());
+            factionBox.setModel(new DefaultComboBoxModel<>(factionIds.toArray(new String[0])));
+            builder.append("Faction:", factionBox);
             builder.nextLine();
 
             builder.appendRow("fill:100dlu");
@@ -134,6 +142,9 @@ public class ControlPointTable extends IdentifiedAssetTable<ControlPoint> {
                 valueField.setText(asset.getValue() + "");
                 minField.setText(asset.getMin() + "");
                 maxField.setText(asset.getMax() + "");
+                if (asset.hasFactionId()) {
+                    factionBox.setSelectedItem(asset.getFactionId());
+                }
                 for (String roomId : asset.getRoomIdList()) {
                     roomTable.addAssetId(roomId);
                 }
@@ -161,6 +172,7 @@ public class ControlPointTable extends IdentifiedAssetTable<ControlPoint> {
                     .setValue(Integer.parseInt(valueField.getText()))
                     .setMin(Integer.parseInt(minField.getText()))
                     .setMax(Integer.parseInt(maxField.getText()))
+                    .setFactionId((String) factionBox.getSelectedItem())
                     .setOrigin(originCheck.isSelected()).setClosed(closedCheck.isSelected())
                     .setLockStrength(Integer.parseInt(lockField.getText()))
                     .setRequiredKey((String) lockBox.getSelectedItem())

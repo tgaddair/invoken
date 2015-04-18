@@ -229,7 +229,7 @@ control_point {
 }
 control_point {
   id: "Entrance"
-  room_id: "GenericHall"
+  room_id: "MediumLobby"
   lock_strength: 0
   required_key: ""
   origin: true
@@ -240,7 +240,7 @@ control_point {
 }
 control_point {
   id: "Lobby"
-  room_id: "GenericHall"
+  room_id: "Lobby"
   follows: "Entrance"
   lock_strength: 1
   required_key: ""
@@ -252,7 +252,7 @@ control_point {
 }
 control_point {
   id: "LobbyA"
-  room_id: "GenericHall"
+  room_id: "MediumLobby"
   follows: "Lobby"
   lock_strength: 0
   required_key: ""
@@ -261,10 +261,11 @@ control_point {
   max: 0
   value: 0
   closed: false
+  faction_id: ""
 }
 control_point {
   id: "LobbyB"
-  room_id: "GenericHall"
+  room_id: "MediumLobby"
   follows: "Lobby"
   lock_strength: 0
   required_key: ""
@@ -276,7 +277,7 @@ control_point {
 }
 control_point {
   id: "LobbyC"
-  room_id: "GenericHall"
+  room_id: "MediumLobby"
   follows: "Lobby"
   lock_strength: 0
   required_key: ""
@@ -285,4 +286,16 @@ control_point {
   max: 0
   value: 0
   closed: false
+}
+control_point {
+  id: "ThugCapital"
+  room_id: "GenericHall"
+  lock_strength: 0
+  required_key: ""
+  origin: false
+  min: 1
+  max: 1
+  value: 1
+  closed: false
+  faction_id: "_ThugFaction"
 }

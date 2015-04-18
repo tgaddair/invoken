@@ -50,6 +50,8 @@ message ControlPoint {
 
 	optional int32 min = 8 [default = 1];
 	optional int32 max = 9 [default = 1];
+
+	optional string faction_id = 12;
 }
 
 message Room {
