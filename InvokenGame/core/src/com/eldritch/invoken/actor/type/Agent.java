@@ -68,18 +68,19 @@ import com.eldritch.invoken.util.Settings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
-public abstract class Agent extends CollisionEntity implements Steerable<Vector2>, Conversable, Lootable, Interactable {
+public abstract class Agent extends CollisionEntity implements Steerable<Vector2>, Conversable,
+        Lootable, Interactable {
     public static final int MAX_DST2 = 150;
     public static final int INTERACT_RANGE = 5;
     public static final float UNMASK_RANGE = 10;
     public static final int ASSAULT_PENALTY = -25;
     public static final float AIMING_V_PENALTY = 5;
-    
+
     public static final float DODGE_SCALE = 250f;
     public static final float SPRINT_SCALE = 0.75f;
     public static final float DODGE_COST = 10f;
     public static final float SPRINT_COST = 5f;
-    
+
     private static final float ROTATION_SCALE = 3f;
 
     static AssetManager assetManager = new AssetManager();
@@ -128,7 +129,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
 
     // hostilities: agents with negative reaction who have attacked us
     private final Set<Agent> assaulters = new HashSet<>(); // assaulters attack those who have
-                                                                // no enemies
+                                                           // no enemies
     private final Map<Agent, Float> relations = new HashMap<>();
 
     private int confused = 0;
@@ -149,7 +150,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     private Lootable looting = null;
     private Conversable converser = null;
     private boolean forcedDialogue;
-    
+
     private final LinkedList<Announcement> announcements = Lists.newLinkedList();
     private final Set<String> uniqueDialogue = Sets.newHashSet();
     private final Set<Class<?>> toggles = new HashSet<Class<?>>();
@@ -189,7 +190,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     protected void setWeaponSentry(WeaponSentry sentry) {
         this.weaponSentry = sentry;
     }
-    
+
     public Body getBody() {
         return body;
     }
@@ -224,9 +225,9 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         circleShape.dispose();
         return body;
     }
-    
+
     public abstract void changeMaxVelocity(float delta);
-    
+
     public abstract void changeMaxAcceleration(float delta);
 
     public void setAiming(boolean aiming) {
@@ -268,32 +269,32 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         location.getWorld().rayCast(targetingHandler, source, target);
         return true;
     }
-    
+
     public boolean canDodge() {
         return info.getEnergy() > DODGE_COST;
     }
-    
+
     public void dodge(Vector2 direction) {
         if (canDodge()) {
             applyForce(direction.cpy().scl(DODGE_SCALE));
             info.expend(DODGE_COST);
         }
     }
-    
+
     public boolean isSprinting() {
         return sprinting;
     }
-    
+
     public boolean canSprint() {
         return info.getEnergy() > SPRINT_COST;
     }
-    
+
     public void sprint(boolean sprinting) {
         if (this.sprinting == sprinting) {
             // must be idempotent
             return;
         }
-        
+
         if (sprinting) {
             if (canSprint()) {
                 addEffect(new Sprinting(this, SPRINT_SCALE, SPRINT_COST));
@@ -303,7 +304,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
             this.sprinting = false;
         }
     }
-    
+
     public abstract void scaleLinearVelocity(float s);
 
     public void addVelocityPenalty(float delta) {
@@ -390,7 +391,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     public float damage(Damage damage) {
         return damage(damage, 1);
     }
-    
+
     public float damage(Damage damage, float delta) {
         float value = damage.apply(this, delta);
         if (isAlive()) {
@@ -528,7 +529,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     public boolean isStunted() {
         return stunted > 0;
     }
-    
+
     public void setCrime(boolean crime) {
         this.crimes += crime ? 1 : -1;
     }
@@ -587,7 +588,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
             setAlpha(1);
         }
     }
-    
+
     public float getCloakAlpha() {
         return 0;
     }
@@ -667,15 +668,15 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     public List<Effect> getEffects() {
         return effects;
     }
-    
+
     public void addActivationHandler(ActivationHandler handler) {
         activationHandlers.add(handler);
     }
-    
+
     public void removeActivationHandler(ActivationHandler handler) {
         activationHandlers.remove(handler);
     }
-    
+
     public boolean handle(Activator activator) {
         for (ActivationHandler handler : activationHandlers) {
             if (handler.handle(activator)) {
@@ -696,7 +697,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     public Vector2 getRenderPosition() {
         return position;
     }
-    
+
     public Vector2 getTargetingPosition() {
         return getRenderPosition();
     }
@@ -755,7 +756,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     public Animation getAnimation(Activity activity) {
         return animations.get(activity).get(direction);
     }
-    
+
     /**
      * Begin dialogue with oneself.
      */
@@ -765,17 +766,17 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
             announcements.add(new BasicAnnouncement(banter));
         }
     }
-    
+
     public void announce(Announcement announcement) {
         announcements.add(announcement);
     }
-    
+
     public void banterFor(Agent listener, Response greeting) {
         // greeting is validated
         List<BanterAnnouncement> banter = Lists.newArrayList();
         banter.add(new ResponseAnnouncement(this, listener, greeting));
         addChoiceFor(listener, greeting, banter);
-        
+
         // now update successor pointers
         BanterAnnouncement last = null;
         for (BanterAnnouncement announcement : banter) {
@@ -784,11 +785,11 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
             }
             last = announcement;
         }
-        
+
         // announce greeting
         announcements.add(banter.get(0));
     }
-    
+
     private void addChoiceFor(Agent listener, Response response, List<BanterAnnouncement> banter) {
         Choice choice = getDialogueHandler().getChoiceFor(response, listener);
         if (choice != null) {
@@ -797,7 +798,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
             addResponseFor(listener, choice, banter);
         }
     }
-    
+
     private void addResponseFor(Agent listener, Choice choice, List<BanterAnnouncement> banter) {
         Response response = getDialogueHandler().getResponseFor(choice, listener);
         if (response != null) {
@@ -805,36 +806,36 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
             addChoiceFor(listener, response, banter);
         }
     }
-    
+
     public Announcement getNextAnnouncement() {
         return announcements.remove();
     }
-    
+
     public boolean hasAnnouncements() {
         return !announcements.isEmpty();
     }
-    
+
     public void beginLooting(Lootable lootable) {
         interact(lootable);
         loot(lootable);
     }
-    
+
     public boolean isLooting() {
         return looting != null;
     }
-    
+
     public Lootable getLooting() {
         return looting;
     }
-    
+
     private void interact(Interactable other) {
         interactor = other;
     }
-    
+
     private void loot(Lootable lootable) {
         this.looting = lootable;
     }
-    
+
     private void converse(Conversable converser) {
         this.converser = converser;
     }
@@ -842,19 +843,21 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     public boolean inForcedDialogue() {
         return interactor != null && forcedDialogue;
     }
-    
+
     public void beginInteraction(Agent other, boolean forced) {
         this.forcedDialogue = forced;
         interact(other);
         other.interact(this);
         setCamera(other.defaultCamera);
         other.setCamera(defaultCamera);
-        
+
         // loot or speak
         if (!other.isAlive()) {
             loot(other);
         } else {
+            // bidirectional
             converse(other);
+            other.converse(this);
         }
     }
 
@@ -882,7 +885,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
             endInteraction();
         }
     }
-    
+
     @Override
     public void endInteraction() {
         resetCamera();
@@ -898,7 +901,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     public boolean isInteracting() {
         return interactor != null;
     }
-    
+
     @Override
     public boolean canInteract() {
         if (isAlive()) {
@@ -921,12 +924,12 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     public boolean inDialogue() {
         return converser != null && converser.canConverse();
     }
-    
+
     @Override
     public boolean canConverse() {
         return isAlive();
     }
-    
+
     public Conversable getConverser() {
         return converser;
     }
@@ -978,7 +981,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         }
         return true;
     }
-    
+
     public boolean isNeighbor(Agent other) {
         return neighbors.contains(other);
     }
@@ -986,11 +989,11 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     public boolean canKeepTarget(Agent other) {
         return isNear(other);
     }
-    
+
     public boolean hasVisibilityTo(Agent other) {
         return hasLineOfSight(other) && visibleNeighbors.contains(other);
     }
-    
+
     public boolean isVisible(Agent other) {
         if (other.isVisible()) {
             return true;
@@ -998,18 +1001,18 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
             // perception is [0, 1], scaling how far we can be from an invisible target for us to
             // detect it
             float visibility = getVisibility();
-            
+
             // confer a penalty to visibility based on the target's deception, but not too great
             // so that given two equal deception skills, it's easier to perceive than deceive
             visibility *= 1.0f - (other.info.getDeception() * 0.1f);
-            
+
             // at worst, you should be able to detect someone right in front of you
             visibility = Math.max(visibility, 1.0f);
-            
+
             return dst2(other) < visibility * visibility;
         }
     }
-    
+
     public float getVisibility() {
         return info.getPerception() * UNMASK_RANGE;
     }
@@ -1231,7 +1234,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
             agent.notifyOfHostility(this, enemy);
         }
     }
-    
+
     protected void onHostility(Agent enemy) {
         // does nothing
     }
@@ -1239,7 +1242,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     protected void notifyOfHostility(Agent source, Agent enemy) {
         // does nothing
     }
-    
+
     public boolean isAlly(Agent other) {
         return Behavior.isAllyGiven(getRelation(other));
     }
@@ -1377,8 +1380,8 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         }
 
         // end interactions if outside range
-        if (inDialogue() && dst2(getInteractor()) > INTERACT_RANGE && !forcedDialogue) {
-            endDialogue();
+        if (isInteracting() && dst2(getInteractor()) > INTERACT_RANGE && !forcedDialogue) {
+            endJointInteraction();
         }
 
         position.set(body.getPosition().cpy().add(0, getHeight() / 2 - radius));
@@ -1506,7 +1509,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
                 // or left
                 render(activity, direction, stateTime, renderer);
             }
-            
+
             if (isCloaked()) {
                 // blending results in invisible outfits unless we increase the alpha
                 batch.setColor(color.r, color.g, color.b, Math.min(color.a * 5, 1));
@@ -1587,7 +1590,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     public WeaponSentry getWeaponSentry() {
         return weaponSentry;
     }
-    
+
     public boolean hasSentryReady() {
         return !weaponSentry.isFinished();
     }
@@ -1779,7 +1782,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
             }
             return lineOfSightCache.get(target);
         }
-        
+
         public void update(float delta) {
             Vector2 origin = getRenderPosition();
             direction.set(getFocusPoint()).sub(origin).nor();
@@ -1795,21 +1798,21 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
                 position.set(origin.x + direction.x, origin.y + direction.y).sub(offset);
             }
         }
-        
+
         private void rotateTowards(float delta, Vector2 destination) {
             rotate(delta, getTheta(destination));
         }
-        
+
         protected void rotate(float delta, float theta) {
             direction.rotate(theta * delta * ROTATION_SCALE * info.getAttackModifier());
         }
-        
+
         protected float getTheta(Vector2 destination) {
             float theta = direction.angle(destination);
             theta = Math.signum(theta) * Math.max(Math.abs(theta), 15f);
             return theta;
         }
-        
+
         public void clear() {
             lineOfSightCache.clear();
         }
@@ -1858,7 +1861,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         public void dispose() {
         }
     }
-    
+
     /**
      * Rotates towards the focus point, but does not immediately set itself there for a smoother
      * effect.
@@ -1867,12 +1870,12 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         private final Vector2 destination = new Vector2();
         private float elapsed = 0;
         private float theta = 0;
-        
+
         @Override
         public void update(float delta) {
             Vector2 origin = getRenderPosition();
             destination.set(getFocusPoint()).sub(origin).nor();
-            
+
             // move direction towards destination
             elapsed += delta;
             if (elapsed > 0.5) {
@@ -1880,7 +1883,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
                 elapsed = 0;
             }
             rotate(delta, theta);
-            
+
             position.set(origin.x + direction.x, origin.y + direction.y).sub(offset);
             clear();
         }

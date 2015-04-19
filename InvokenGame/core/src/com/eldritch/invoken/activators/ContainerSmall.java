@@ -45,8 +45,10 @@ public class ContainerSmall extends ClickActivator implements Lootable {
 
     @Override
     public void activate(Agent agent, Location location) {
-        activating = true;
-        this.agent = agent;
+        if (!activating) {
+            activating = true;
+            this.agent = agent;
+        }
     }
 
     @Override
@@ -96,5 +98,8 @@ public class ContainerSmall extends ClickActivator implements Lootable {
 
     @Override
     public void endInteraction() {
+        // close
+        activating = true;
+        agent = null;
     }
 }
