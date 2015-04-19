@@ -95,6 +95,8 @@ public abstract class Item {
             case HEAVY_WEAPON:
             case OUTFIT:
                 return new Outfit(item);
+            case CONSUMABLE:
+                return new Consumable(item);
             case ACCESSORY:
             case CREDENTIAL:
                 return new Credential(item);

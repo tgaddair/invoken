@@ -1,5 +1,7 @@
 package com.eldritch.invoken.activators;
 
+import java.util.ArrayList;
+
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -10,6 +12,7 @@ import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.util.Lootable;
 import com.eldritch.invoken.location.Location;
 import com.eldritch.invoken.location.NaturalVector2;
+import com.eldritch.invoken.proto.Actors.InventoryItem;
 import com.eldritch.invoken.screens.GameScreen;
 import com.eldritch.invoken.state.Inventory;
 import com.eldritch.invoken.util.Settings;
@@ -28,6 +31,10 @@ public class ContainerSmall extends ClickActivator implements Lootable {
     private float stateTime = 0;
     private Agent agent = null;
     private boolean open = false;
+    
+    public ContainerSmall(NaturalVector2 position) {
+        this(position, new Inventory(new ArrayList<InventoryItem>()));
+    }
 
     public ContainerSmall(NaturalVector2 position, Inventory inventory) {
         super(position);

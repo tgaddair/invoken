@@ -852,7 +852,6 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         if (inDialogue()) {
             endInteraction();
         }
-        looting = null;
     }
 
     public void addDialogue(String id) {
@@ -870,6 +869,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
             interactor.interact(null);
             interact(null);
         }
+        looting = null;
     }
 
     public Agent getInteractor() {
