@@ -173,10 +173,8 @@ public class RangedWeapon extends Item {
 
         @Override
         protected void apply(Agent owner, Agent target) {
-            target.stop();
-            target.applyForce(velocity.cpy().nor().scl(100));
             target.addEffect(new Stunned(owner, target, 0.2f));
-            target.addEffect(new Bleed(target, getDamage()));
+            target.addEffect(new Bleed(target, getDamage(), velocity.cpy().nor().scl(250)));
         }
 
         @Override
