@@ -38,10 +38,7 @@ public class PlaceableActivator implements PlaceableFurniture {
 	
 	protected Activator load(String name, NaturalVector2 position, LocationMap map) {
 		try {
-			String assetId = CaseFormat.LOWER_HYPHEN.to(CaseFormat.UPPER_CAMEL, name);
-			String path = PlaceableActivator.class.getPackage().getName();
-//			InvokenGame.log("loading: " + path + "." + assetId);
-			Class<?> clazz = Class.forName(path + "." + assetId);
+			Class<?> clazz = getClassByName(name);
 			Constructor<?> ctor = clazz.getConstructor(NaturalVector2.class);
 			Activator instance = (Activator) ctor.newInstance(position);
 			return instance;
@@ -49,5 +46,18 @@ public class PlaceableActivator implements PlaceableFurniture {
 			InvokenGame.error("Could not load activator: " + name, ex);
 			return null;
 		}
+	}
+	
+	protected static Class<?> getClassByName(String name) {
+	    try {
+    	    String assetId = CaseFormat.LOWER_HYPHEN.to(CaseFormat.UPPER_CAMEL, name);
+            String path = PlaceableActivator.class.getPackage().getName();
+    //      InvokenGame.log("loading: " + path + "." + assetId);
+            Class<?> clazz = Class.forName(path + "." + assetId);
+            return clazz;
+	    } catch (Exception ex) {
+            InvokenGame.error("Could not retrieve concrete class for activator: " + name, ex);
+            return null;
+        }
 	}
 }

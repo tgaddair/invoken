@@ -50,6 +50,7 @@ import com.eldritch.invoken.actor.util.Announcement;
 import com.eldritch.invoken.actor.util.Announcement.BanterAnnouncement;
 import com.eldritch.invoken.actor.util.Announcement.BasicAnnouncement;
 import com.eldritch.invoken.actor.util.Announcement.ResponseAnnouncement;
+import com.eldritch.invoken.actor.util.Lootable;
 import com.eldritch.invoken.actor.util.ThreatMonitor;
 import com.eldritch.invoken.effects.Effect;
 import com.eldritch.invoken.effects.HoldingWeapon;
@@ -65,7 +66,7 @@ import com.eldritch.invoken.util.Settings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
-public abstract class Agent extends CollisionEntity implements Steerable<Vector2>, Conversable {
+public abstract class Agent extends CollisionEntity implements Steerable<Vector2>, Conversable, Lootable {
     public static final int MAX_DST2 = 150;
     public static final int INTERACT_RANGE = 5;
     public static final float UNMASK_RANGE = 10;
@@ -144,6 +145,8 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     private Agent target;
     private Agent interactor;
     private boolean forcedDialogue;
+    private Lootable looting = null;
+    
     private final LinkedList<Announcement> announcements = Lists.newLinkedList();
     private final Set<String> uniqueDialogue = Sets.newHashSet();
     private final Set<Class<?>> toggles = new HashSet<Class<?>>();
@@ -808,6 +811,18 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         return !announcements.isEmpty();
     }
     
+    public void loot(Lootable lootable) {
+        this.looting = lootable;
+    }
+
+    public boolean isLooting() {
+        return looting != null;
+    }
+    
+    public Lootable getLooting() {
+        return looting;
+    }
+    
     public void interact(Agent other) {
         interactor = other;
     }
@@ -822,6 +837,11 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         other.interact(this);
         setCamera(other.defaultCamera);
         other.setCamera(defaultCamera);
+        
+        // loot or speak
+        if (!other.isAlive()) {
+            loot(other);
+        }
     }
 
     public void unforceDialogue() {
@@ -832,6 +852,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         if (inDialogue()) {
             endInteraction();
         }
+        looting = null;
     }
 
     public void addDialogue(String id) {
@@ -876,10 +897,6 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
 
     public boolean inDialogue() {
         return interactor != null && interactor.isAlive();
-    }
-
-    public boolean isLooting() {
-        return interactor != null && !interactor.isAlive();
     }
 
     public void setFocusPoint(Vector2 point) {
@@ -1521,6 +1538,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         return 0.65f;
     }
 
+    @Override
     public AgentInventory getInventory() {
         return info.getInventory();
     }

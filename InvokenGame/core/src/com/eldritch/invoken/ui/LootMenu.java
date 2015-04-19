@@ -8,8 +8,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.eldritch.invoken.actor.items.Item;
-import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Player;
+import com.eldritch.invoken.actor.util.Lootable;
 import com.eldritch.invoken.state.Inventory.ItemState;
 import com.eldritch.invoken.util.DefaultInputListener;
 import com.eldritch.invoken.util.Settings;
@@ -43,7 +43,7 @@ public class LootMenu {
 			if (!active) {
 				container.setVisible(true);
 				active = true;
-				setup(player, player.getInteractor());
+				setup(player, player.getLooting());
 			}
 		} else {
 			exitMenu();
@@ -58,14 +58,14 @@ public class LootMenu {
                 height / 2 - container.getHeight() / 2);
 	}
 	
-	public void setup(Player player, Agent npc) {
+	public void setup(Player player, Lootable looting) {
 		table.clear();
-		for (ItemState item : npc.getInfo().getInventory().getItems()) {
-			addItemButton(item, player, npc);
+		for (ItemState item : looting.getInventory().getItems()) {
+			addItemButton(item, player, looting);
 		}
 	}
 	
-	private void addItemButton(ItemState itemState, final Player player, final Agent npc) {
+	private void addItemButton(ItemState itemState, final Player player, final Lootable looting) {
 		final Item item = itemState.getItem();
 		TextButtonStyle buttonStyle = skin.get("choice", TextButtonStyle.class);
 		final TextButton itemButton = new TextButton(getText(item, itemState.getCount()), buttonStyle);
@@ -73,12 +73,12 @@ public class LootMenu {
 			@Override
 			public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
 			    int count = button == Input.Buttons.RIGHT 
-			            ? 1 : npc.getInfo().getInventory().getItemCount(item);
-				npc.getInfo().getInventory().removeItem(item, count);
+			            ? 1 : looting.getInventory().getItemCount(item);
+				looting.getInventory().removeItem(item, count);
 				player.getInfo().getInventory().addItem(item, count);
 				
 				// update button with new count
-				count = npc.getInfo().getInventory().getItemCount(item);
+				count = looting.getInventory().getItemCount(item);
 				if (count > 0) {
 					itemButton.setText(getText(item, count));
 				} else {
