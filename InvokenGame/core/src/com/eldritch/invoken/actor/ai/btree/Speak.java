@@ -9,7 +9,6 @@ import com.eldritch.invoken.proto.Actors.DialogueTree.Response;
 public class Speak extends Sequence<Npc> {
     private static final float DIALOGUE_BREAK_SECS = 10f;
     
-    @SuppressWarnings("unchecked")
     public Speak() {
         // find a valid dialogue candidate
         addChild(new CanStartConversation());
@@ -59,7 +58,7 @@ public class Speak extends Sequence<Npc> {
     private static class Greet extends SuccessTask {
         @Override
         public void doFor(Npc npc) {
-            npc.getTarget().beginDialogue(npc, true);
+            npc.getTarget().beginInteraction(npc, true);
             npc.setTask(getClass().getSimpleName());
         }
     }
@@ -85,7 +84,7 @@ public class Speak extends Sequence<Npc> {
                 Response greeting = npc.getDialogueHandler().getTargetedGreeting(neighbor);
                 if (greeting != null) {
                     npc.setTarget(neighbor);
-                    neighbor.beginDialogue(npc, true);
+                    neighbor.beginInteraction(npc, true);
                     npc.setTask(getClass().getSimpleName());
                     npc.banterFor(neighbor, greeting);
                     return true;

@@ -1,6 +1,7 @@
 package com.eldritch.invoken.activators;
 
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.actor.Conversable;
 import com.eldritch.invoken.actor.ConversationHandler;
 import com.eldritch.invoken.actor.type.Agent;
@@ -32,5 +33,19 @@ public class InfoTerminal extends ClickActivator implements Conversable {
     @Override
     public void render(float delta, OrthogonalTiledMapRenderer renderer) {
         // delegated to layer
+    }
+
+    @Override
+    public boolean canConverse() {
+        return true;
+    }
+
+    @Override
+    public void endDialogue() {
+    }
+
+    @Override
+    public Vector2 getRenderPosition() {
+        return getPosition();
     }
 }

@@ -66,7 +66,7 @@ public class ContainerSmall extends ClickActivator implements Lootable {
                 open = !open;
                 if (open && agent != null) {
                     // begin looting
-                    agent.loot(this);
+                    agent.beginLooting(this);
                 }
             }
         }
@@ -87,5 +87,14 @@ public class ContainerSmall extends ClickActivator implements Lootable {
     @Override
     public Inventory getInventory() {
         return inventory;
+    }
+
+    @Override
+    public boolean canInteract() {
+        return true;
+    }
+
+    @Override
+    public void endInteraction() {
     }
 }

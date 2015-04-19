@@ -285,8 +285,8 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
     }
     
     @Override
-    public void beginDialogue(Agent other, boolean forced) {
-        super.beginDialogue(other, forced);
+    public void beginInteraction(Agent other, boolean forced) {
+        super.beginInteraction(other, forced);
         lastDialogue = 0;
     }
     

@@ -15,12 +15,12 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.eldritch.invoken.actor.Drawable;
-import com.eldritch.invoken.actor.Locatable;
+import com.eldritch.invoken.actor.Registered;
 import com.eldritch.invoken.location.Location;
 import com.eldritch.invoken.location.NaturalVector2;
 import com.eldritch.invoken.util.Settings;
 
-public class DynamicEntity extends CollisionEntity implements Drawable, Locatable {
+public class DynamicEntity extends CollisionEntity implements Drawable, Registered {
     private final TiledMapTileLayer layer;
     private final Vector2 offset;
     private Body body;

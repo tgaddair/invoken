@@ -17,6 +17,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
+import com.eldritch.invoken.actor.Conversable;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Player;
 import com.eldritch.invoken.actor.util.Announcement;
@@ -64,9 +65,9 @@ public class DialogueMenu {
             if (!active) {
                 container.setVisible(true);
                 active = true;
-                setup(player.getInteractor(), player);
+                setup(player.getConverser(), player);
             }
-            setPosition(player.getInteractor(), camera);
+            setPosition(player.getConverser(), camera);
         } else {
             endDialogue();
         }
@@ -105,27 +106,27 @@ public class DialogueMenu {
         }
     }
 
-    private void setup(Agent npc, Agent interactor) {
-        setup(npc, interactor, npc.getDialogueHandler().getGreeting(interactor));
+    private void setup(Conversable converser, Agent agent) {
+        setup(converser, agent, converser.getDialogueHandler().getGreeting(agent));
     }
 
-    private void setup(Agent npc, Agent interactor, Response response) {
+    private void setup(Conversable converser, Agent agent, Response response) {
         if (response != null) {
             // remove old content
             choiceBar.clear();
             bubble.clear();
 
             // handle the response outcomes
-            npc.getDialogueHandler().handle(response, interactor);
+            converser.getDialogueHandler().handle(response, agent);
 
-            List<Choice> choices = npc.getDialogueHandler().getChoicesFor(response, interactor);
+            List<Choice> choices = converser.getDialogueHandler().getChoicesFor(response, agent);
             if (choices.isEmpty()) {
                 // display a text bubble, as there is no choice for the player to make
                 addLabel(response.getText());
                 container.setVisible(false);
 
                 // continue to show the dialogue, but it's no longer forced
-                interactor.unforceDialogue();
+                agent.unforceDialogue();
             } else {
                 // use the bubble to indicate that the full conversation appears elsewhere
                 addLabel("...");
@@ -143,7 +144,7 @@ public class DialogueMenu {
 
                 // add the choices below
                 for (final Choice c : choices) {
-                    addChoiceButton(c, npc, interactor);
+                    addChoiceButton(c, converser, agent);
                 }
             }
         } else {
@@ -179,18 +180,18 @@ public class DialogueMenu {
         cell.height(label.getPrefHeight());
     }
 
-    private void addChoiceButton(final Choice c, final Agent npc, final Agent interactor) {
+    private void addChoiceButton(final Choice c, final Conversable converser, final Agent agent) {
         TextButtonStyle buttonStyle = skin.get("choice", TextButtonStyle.class);
         final TextButton choice = new TextButton(c.getText(), buttonStyle);
         choice.addListener(new DefaultInputListener() {
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                Response response = npc.getDialogueHandler().getResponseFor(c, interactor);
-                setup(npc, interactor, response);
+                Response response = converser.getDialogueHandler().getResponseFor(c, agent);
+                setup(converser, agent, response);
 
                 // this will remove the text bubble for choices without successors
                 if (response == null) {
-                    npc.endDialogue();
+                    converser.endDialogue();
                 }
             }
         });
@@ -198,14 +199,14 @@ public class DialogueMenu {
         choiceBar.row();
     }
 
-    private void setPosition(Agent agent, Camera camera) {
-        setPosition(bubble, agent, camera);
+    private void setPosition(Conversable converser, Camera camera) {
+        setPosition(bubble, converser, camera);
     }
 
-    private void setPosition(Table bubble, Agent agent, Camera camera) {
-        Vector2 position = agent.getRenderPosition();
-        float h = agent.getHeight() / 2;
-        float w = agent.getWidth() / 2;
+    private void setPosition(Table bubble, Conversable converser, Camera camera) {
+        Vector2 position = converser.getRenderPosition();
+        float h = converser.getHeight() / 2;
+        float w = converser.getWidth() / 2;
         Vector3 screen = camera.project(new Vector3(position.x - w, position.y + h, 0));
         bubble.setPosition(screen.x, screen.y);
     }
