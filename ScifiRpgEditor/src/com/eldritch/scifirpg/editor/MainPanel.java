@@ -14,6 +14,7 @@ import com.eldritch.scifirpg.editor.tables.ItemTable;
 import com.eldritch.scifirpg.editor.tables.LocationTable;
 import com.eldritch.scifirpg.editor.tables.MissionTable;
 import com.eldritch.scifirpg.editor.tables.RoomTable;
+import com.eldritch.scifirpg.editor.tables.TerminalTable;
 
 import java.awt.Dimension;
 import java.awt.GridLayout;
@@ -31,6 +32,8 @@ public class MainPanel extends JPanel {
 	
 	public static final ContainerTable CONTAINER_TABLE = new ContainerTable();
 	
+	public static final TerminalTable TERMINAL_TABLE = new TerminalTable();
+	
 	public static final ItemTable ITEM_TABLE = new ItemTable();
 	
 	public static final AugmentationTable AUGMENTATION_TABLE = new AugmentationTable();
@@ -46,6 +49,7 @@ public class MainPanel extends JPanel {
 		addTable(LOCATION_TABLE, tabbedPane);
 		addTable(ROOM_TABLE, tabbedPane);
 		addTable(CONTAINER_TABLE, tabbedPane);
+		addTable(TERMINAL_TABLE, tabbedPane);
 		addTable(ITEM_TABLE, tabbedPane);
 		addTable(AUGMENTATION_TABLE, tabbedPane);
 		addTable(MISSION_TABLE, tabbedPane);
