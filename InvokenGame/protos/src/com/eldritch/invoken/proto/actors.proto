@@ -61,7 +61,9 @@ message DialogueTree {
 }
 
 message Terminal {
-	repeated DialogueTree dialogue = 1;
+	optional string id = 1;
+
+	repeated DialogueTree dialogue = 2;
 }
 
 message InventoryItem {
@@ -71,7 +73,9 @@ message InventoryItem {
 }
 
 message Container {
-	repeated InventoryItem item = 1;
+	optional string id = 1;
+
+	repeated InventoryItem item = 2;
 }
 
 message ActorParams {
