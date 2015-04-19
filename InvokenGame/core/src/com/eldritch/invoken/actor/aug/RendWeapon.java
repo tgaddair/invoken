@@ -50,6 +50,10 @@ public class RendWeapon extends Augmentation {
     
     @Override
     public float quality(Agent owner, Agent target, Location location) {
+        if (!target.isAlive()) {
+            return 0;
+        }
+        
         MeleeWeapon weapon = owner.getInventory().getMeleeWeapon();
         return owner.dst2(target) <= weapon.getRange() ? 1 : 0;
     }

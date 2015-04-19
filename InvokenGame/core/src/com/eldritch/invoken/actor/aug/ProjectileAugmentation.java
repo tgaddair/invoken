@@ -42,6 +42,6 @@ public abstract class ProjectileAugmentation extends Augmentation {
     
     @Override
     public float quality(Agent owner, Agent target, Location location) {
-        return 1;
+        return target.isAlive() ? 1 : 0;
     }
 }

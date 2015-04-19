@@ -58,6 +58,10 @@ public class Charge extends Augmentation {
 
     @Override
     public float quality(Agent owner, Agent target, Location location) {
+        if (!target.isAlive()) {
+            return 0;
+        }
+        
         if (owner.getInventory().hasMeleeWeapon()) {
             float r = CHARGE_RANGE;
             return owner.dst2(target) < r * r ? 5 : 0;
