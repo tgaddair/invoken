@@ -21,11 +21,16 @@ public class Attack extends Sequence<Npc> {
     public Attack() {
         // if we can't select a target, then attacking fails
         addChild(new SelectBestTarget());
+        
+        Sequence<Npc> thrustSequence = new Sequence<>();
+        thrustSequence.addChild(new ShouldThrust());
+        thrustSequence.addChild(new Thrust());
 
         // if we have a chosen augmentation, then continue to hold aim until we use it
         Sequence<Npc> useAugSequence = new Sequence<>();
         useAugSequence.addChild(new HasChosen());
         useAugSequence.addChild(new HasSights());
+        useAugSequence.addChild(new AlwaysSucceed<>(thrustSequence));
         useAugSequence.addChild(new UseAugmentation());
         useAugSequence.addChild(new LowerAim());
 
@@ -292,6 +297,27 @@ public class Attack extends Sequence<Npc> {
             
             // randomly dodge left or right
             direction.rotate90((int) Math.signum(Math.random() - 0.5));
+            npc.dodge(direction);
+        }
+    }
+    
+    private static class ShouldThrust extends BooleanTask {
+        @Override
+        protected boolean check(Npc npc) {
+            if (!npc.getInventory().hasMeleeWeapon() || !npc.hasTarget()) {
+                return false;
+            }
+            return npc.dst2(npc.getTarget()) < 3;
+        }
+    }
+    
+    private static class Thrust extends SuccessTask {
+        private final Vector2 direction = new Vector2();
+        
+        @Override
+        public void doFor(Npc npc) {
+            Agent target = npc.getTarget();
+            direction.set(target.getPosition()).sub(npc.getPosition()).nor();
             npc.dodge(direction);
         }
     }

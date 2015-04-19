@@ -1,8 +1,8 @@
 syntax = "proto2";
 
 package scifirpg;
-option java_package = "com.eldritch.invoken.proto";
 
+option java_package = "com.eldritch.invoken.proto";
 import "com/eldritch/invoken/proto/augmentations.proto";
 import "com/eldritch/invoken/proto/disciplines.proto";
 import "com/eldritch/invoken/proto/prerequisites.proto";
@@ -10,8 +10,8 @@ import "com/eldritch/invoken/proto/missions.proto";
 import "com/eldritch/invoken/proto/outcomes.proto";
 
 message DialogueTree {
-	// DialogueTree ends when the player reaches a Response with no choices.
-	// When the DialogueTree ends, the player is returned to the first valid greeting.
+// DialogueTree ends when the player reaches a Response with no choices.
+// When the DialogueTree ends, the player is returned to the first valid greeting.
 	message Response {
 		optional string id = 1; // The unique ID for this Response within this tree
 		required string text = 2;
@@ -60,6 +60,20 @@ message DialogueTree {
 	repeated Choice choice = 2;
 }
 
+message Terminal {
+	repeated DialogueTree dialogue = 1;
+}
+
+message InventoryItem {
+	optional string item_id = 1; // OPTIONAL: may change to int32
+	required int32 count = 2 [default = 1];
+	optional double drop_chance = 3 [default = 1.0]; // ignored for player
+}
+
+message Container {
+	repeated InventoryItem item = 1;
+}
+
 message ActorParams {
 	enum Species {
 		HUMAN = 0;
@@ -87,12 +101,6 @@ message ActorParams {
 		optional int32 rank = 3;
 	}
 
-	message InventoryItem {
-		optional string item_id = 1; // OPTIONAL: may change to int32
-		required int32 count = 2 [default = 1];
-		optional double drop_chance = 3 [default = 1.0]; // ignored for player
-	}
-
 	// Names for various dialogue scenarios
 	optional string id = 1; // unique key
 	required string name = 2;
@@ -118,9 +126,7 @@ message NonPlayerActor {
 	message Trait {
 		required Influence influence = 1;
 		required bool effective = 2;
-	}
-
-	/*
+	} /*
 	enum Trait {
 		AFFABLE = 0;
 		SURLY = 1;
@@ -137,9 +143,7 @@ message NonPlayerActor {
 		DOCILE = 12;
 		IMPOSING = 13;
 	}
-	*/
-
-	enum Aggression {
+	*/ enum Aggression {
 		PACIFIST = 0; // Does not attack anyone
 		UNAGGRESSIVE = 1; // Will attack if provoked
 		AGGRESSIVE = 2; // Will attack enemies on sight
@@ -167,21 +171,20 @@ message NonPlayerActor {
 
 	// Guards check credentials in faction controlled locations.
 	optional bool guard = 9 [default = false];
-
 	optional Aggression aggression = 5 [default = AGGRESSIVE];
 	optional Assistance assistance = 6 [default = LOYAL];
 	optional Confidence confidence = 7 [default = CAPABLE];
 	repeated Trait trait = 8;
 
 	// deprecated
-	optional bool can_speak = 3 [default = true];  // inferred from dialogue
+	optional bool can_speak = 3 [default = true]; // inferred from dialogue
 }
 
 message PlayerActor {
 	message StagedAugmentation {
-		// Every aug has a slot requirement R.  By staging an aug, you fill up
-		// R slots in the actor's slot bank.  Augs can be staged multiple times.
-		// For every stage, an aug grants one use.
+	// Every aug has a slot requirement R.  By staging an aug, you fill up
+	// R slots in the actor's slot bank.  Augs can be staged multiple times.
+	// For every stage, an aug grants one use.
 		optional string aug_id = 1; // OPTIONAL: may change to int32
 		required int32 remaining_uses = 2;
 		required int32 stages = 3;
@@ -193,11 +196,9 @@ message PlayerActor {
 	}
 
 	required ActorParams params = 1;
-
 	optional float health = 7; // remaining, max health is calculated
 	repeated string equipped_item_id = 21; // NPC: if not specified, inferred from inventory
 	repeated StagedAugmentation staged_augmentation = 16; // if not specified, inferred from known augs
-
 	repeated StateMarker state_marker = 19;
 	repeated string known_npc = 20;
 	repeated Mission mission = 22;
