@@ -1,6 +1,8 @@
 package com.eldritch.scifirpg.editor.tables;
 
 import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -21,6 +23,7 @@ import com.eldritch.invoken.proto.Locations.Room.Furniture;
 import com.eldritch.invoken.proto.Locations.Room.Furniture.Type;
 import com.eldritch.invoken.proto.Locations.Room.Size;
 import com.eldritch.scifirpg.editor.AssetTablePanel;
+import com.eldritch.scifirpg.editor.MainPanel;
 import com.eldritch.scifirpg.editor.panel.AssetEditorPanel;
 import com.google.common.base.Optional;
 import com.google.protobuf.TextFormat;
@@ -28,184 +31,211 @@ import com.jgoodies.forms.builder.DefaultFormBuilder;
 import com.jgoodies.forms.layout.FormLayout;
 
 public class RoomTable extends MajorAssetTable<Room> {
-	private static final long serialVersionUID = 1L;
-	private static final String[] COLUMN_NAMES = { "ID", "Size" };
+    private static final long serialVersionUID = 1L;
+    private static final String[] COLUMN_NAMES = { "ID", "Size" };
 
-	public RoomTable() {
-		super(COLUMN_NAMES, "Room");
-	}
+    public RoomTable() {
+        super(COLUMN_NAMES, "Room");
+    }
 
-	@Override
-	protected JPanel getEditorPanel(Optional<Room> prev, JFrame frame) {
-		return new RoomEditorPanel(this, frame, prev);
-	}
+    @Override
+    protected JPanel getEditorPanel(Optional<Room> prev, JFrame frame) {
+        return new RoomEditorPanel(this, frame, prev);
+    }
 
-	@Override
-	protected Object[] getDisplayFields(Room asset) {
-		return new Object[] { asset.getId(), asset.getSize().name() };
-	}
+    @Override
+    protected Object[] getDisplayFields(Room asset) {
+        return new Object[] { asset.getId(), asset.getSize().name() };
+    }
 
-	@Override
-	protected String getAssetDirectory() {
-		return "rooms";
-	}
+    @Override
+    protected String getAssetDirectory() {
+        return "rooms";
+    }
 
-	@Override
-	protected Room readFromBinary(InputStream is) throws IOException {
-		return Room.parseFrom(is);
-	}
-	
-	@Override
-	protected Room readFromText(InputStream is) throws IOException {
-		Room.Builder builder = Room.newBuilder();
-		TextFormat.merge(new InputStreamReader(is), builder);
-		return builder.build();
-	}
+    @Override
+    protected Room readFromBinary(InputStream is) throws IOException {
+        return Room.parseFrom(is);
+    }
 
-	@Override
-	protected String getAssetId(Room asset) {
-		return asset.getId();
-	}
+    @Override
+    protected Room readFromText(InputStream is) throws IOException {
+        Room.Builder builder = Room.newBuilder();
+        TextFormat.merge(new InputStreamReader(is), builder);
+        return builder.build();
+    }
 
-	private class RoomEditorPanel extends AssetEditorPanel<Room, RoomTable> {
-		private static final long serialVersionUID = 1L;
+    @Override
+    protected String getAssetId(Room asset) {
+        return asset.getId();
+    }
 
-		private final JTextField idField = new JTextField();
-		private final JComboBox<Size> sizeBox = new JComboBox<Size>(
-				Size.values());
-		private final FurnitureTable furnitureTable = new FurnitureTable();
+    private class RoomEditorPanel extends AssetEditorPanel<Room, RoomTable> {
+        private static final long serialVersionUID = 1L;
 
-		public RoomEditorPanel(RoomTable owner, JFrame frame,
-				Optional<Room> prev) {
-			super(owner, frame, prev);
+        private final JTextField idField = new JTextField();
+        private final JComboBox<Size> sizeBox = new JComboBox<Size>(Size.values());
+        private final FurnitureTable furnitureTable = new FurnitureTable();
 
-			DefaultFormBuilder builder = new DefaultFormBuilder(new FormLayout(
-					""));
-			builder.border(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-			builder.appendColumn("right:pref");
-			builder.appendColumn("3dlu");
-			builder.appendColumn("fill:max(pref; 100px)");
+        public RoomEditorPanel(RoomTable owner, JFrame frame, Optional<Room> prev) {
+            super(owner, frame, prev);
 
-			builder.append("ID:", idField);
-			builder.nextLine();
+            DefaultFormBuilder builder = new DefaultFormBuilder(new FormLayout(""));
+            builder.border(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+            builder.appendColumn("right:pref");
+            builder.appendColumn("3dlu");
+            builder.appendColumn("fill:max(pref; 100px)");
 
-			builder.append("Size:", sizeBox);
-			builder.nextLine();
+            builder.append("ID:", idField);
+            builder.nextLine();
 
-			builder.appendRow("fill:p:grow");
-			builder.append("Furniture:", new AssetTablePanel(furnitureTable));
-			builder.nextLine();
+            builder.append("Size:", sizeBox);
+            builder.nextLine();
 
-			JButton saveButton = new JButton("Save");
-			saveButton.addActionListener(this);
-			builder.append(saveButton);
-			builder.nextLine();
+            builder.appendRow("fill:p:grow");
+            builder.append("Furniture:", new AssetTablePanel(furnitureTable));
+            builder.nextLine();
 
-			if (prev.isPresent()) {
-				Room room = prev.get();
-				idField.setText(room.getId());
-				sizeBox.setSelectedItem(room.getSize());
-				for (Furniture f : room.getFurnitureList()) {
-					furnitureTable.addAsset(f);
-				}
-			}
+            JButton saveButton = new JButton("Save");
+            saveButton.addActionListener(this);
+            builder.append(saveButton);
+            builder.nextLine();
 
-			add(builder.getPanel());
-			setPreferredSize(new Dimension(650, 750));
-		}
+            if (prev.isPresent()) {
+                Room room = prev.get();
+                idField.setText(room.getId());
+                sizeBox.setSelectedItem(room.getSize());
+                for (Furniture f : room.getFurnitureList()) {
+                    furnitureTable.addAsset(f);
+                }
+            }
 
-		@Override
-		public Room createAsset() {
-			return Room.newBuilder().setId(idField.getText())
-					.setSize((Size) sizeBox.getSelectedItem())
-					.addAllFurniture(furnitureTable.getAssets()).build();
-		}
-	}
+            add(builder.getPanel());
+            setPreferredSize(new Dimension(650, 750));
+        }
 
-	public static class FurnitureTable extends IdentifiedAssetTable<Furniture> {
-		private static final long serialVersionUID = 1L;
-		private static final String[] COLUMN_NAMES = { "ID", "Type" };
+        @Override
+        public Room createAsset() {
+            return Room.newBuilder().setId(idField.getText())
+                    .setSize((Size) sizeBox.getSelectedItem())
+                    .addAllFurniture(furnitureTable.getAssets()).build();
+        }
+    }
 
-		public FurnitureTable() {
-			super(COLUMN_NAMES, "Furniture");
-		}
+    public static class FurnitureTable extends IdentifiedAssetTable<Furniture> {
+        private static final long serialVersionUID = 1L;
+        private static final String[] COLUMN_NAMES = { "ID", "Type" };
 
-		@Override
-		protected JPanel getEditorPanel(Optional<Furniture> prev, JFrame frame) {
-			return new FurnitureEditorPanel(this, frame, prev);
-		}
+        public FurnitureTable() {
+            super(COLUMN_NAMES, "Furniture");
+        }
 
-		@Override
-		protected Object[] getDisplayFields(Furniture asset) {
-			return new Object[] { asset.getId(), asset.getType() };
-		}
+        @Override
+        protected JPanel getEditorPanel(Optional<Furniture> prev, JFrame frame) {
+            return new FurnitureEditorPanel(this, frame, prev);
+        }
 
-		@Override
-		protected String getAssetId(Furniture asset) {
-			return asset.getId();
-		}
-	}
+        @Override
+        protected Object[] getDisplayFields(Furniture asset) {
+            return new Object[] { asset.getId(), asset.getType() };
+        }
 
-	public static class FurnitureEditorPanel extends
-			AssetEditorPanel<Furniture, FurnitureTable> {
-		private static final long serialVersionUID = 1L;
+        @Override
+        protected String getAssetId(Furniture asset) {
+            return asset.getId();
+        }
+    }
 
-		private final JComboBox<String> idBox = new JComboBox<>();
-		private final JComboBox<Type> typeBox = new JComboBox<Type>(
-				Type.values());
+    public static class FurnitureEditorPanel extends AssetEditorPanel<Furniture, FurnitureTable> {
+        private static final long serialVersionUID = 1L;
 
-		public FurnitureEditorPanel(FurnitureTable owner, JFrame frame,
-				Optional<Furniture> prev) {
-			super(owner, frame, prev);
+        private final JComboBox<String> idBox = new JComboBox<>();
+        private final JComboBox<Type> typeBox = new JComboBox<>(Type.values());
+        private final JComboBox<String> assetBox = new JComboBox<>();
 
-			DefaultFormBuilder builder = new DefaultFormBuilder(new FormLayout(
-					""));
-			builder.border(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-			builder.appendColumn("right:pref");
-			builder.appendColumn("3dlu");
-			builder.appendColumn("fill:max(pref; 100px)");
+        public FurnitureEditorPanel(FurnitureTable owner, JFrame frame, Optional<Furniture> prev) {
+            super(owner, frame, prev);
 
-			idBox.setModel(new DefaultComboBoxModel<String>(getFurnitureList()
-					.toArray(new String[0])));
-			builder.append("ID:", idBox);
-			builder.nextLine();
+            DefaultFormBuilder builder = new DefaultFormBuilder(new FormLayout(""));
+            builder.border(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+            builder.appendColumn("right:pref");
+            builder.appendColumn("3dlu");
+            builder.appendColumn("fill:max(pref; 100px)");
 
-			typeBox.setSelectedItem(Type.TMX);
-			builder.append("Type:", typeBox);
-			builder.nextLine();
+            idBox.setModel(new DefaultComboBoxModel<String>(getFurnitureList().toArray(
+                    new String[0])));
+            builder.append("ID:", idBox);
+            builder.nextLine();
 
-			JButton saveButton = new JButton("Save");
-			saveButton.addActionListener(this);
-			builder.append(saveButton);
-			builder.nextLine();
+            typeBox.setSelectedItem(Type.TMX);
+            builder.append("Type:", typeBox);
+            builder.nextLine();
 
-			if (prev.isPresent()) {
-				Furniture asset = prev.get();
-				idBox.setSelectedItem(asset.getId());
-				typeBox.setSelectedItem(asset.getType());
-			}
+            assetBox.setModel(new DefaultComboBoxModel<>(
+                    getAssets((Type) typeBox.getSelectedItem()).toArray(new String[0])));
+            assetBox.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    assetBox.setModel(new DefaultComboBoxModel<>(getAssets(
+                            (Type) typeBox.getSelectedItem()).toArray(new String[0])));
+                }
+            });
+            builder.append("Asset:", assetBox);
+            builder.nextLine();
 
-			add(builder.getPanel());
-		}
+            JButton saveButton = new JButton("Save");
+            saveButton.addActionListener(this);
+            builder.append(saveButton);
+            builder.nextLine();
 
-		@Override
-		public Furniture createAsset() {
-			return Furniture.newBuilder().setId((String) idBox.getSelectedItem())
-					.setType((Type) typeBox.getSelectedItem()).build();
-		}
+            if (prev.isPresent()) {
+                Furniture asset = prev.get();
+                idBox.setSelectedItem(asset.getId());
+                typeBox.setSelectedItem(asset.getType());
+                if (asset.hasAssetId()) {
+                    assetBox.setSelectedItem(asset.getAssetId());
+                }
+            }
 
-		private List<String> getFurnitureList() {
-			String dir = MajorAssetTable.getTopAssetDirectory() + "/../furniture";
-			File folder = new File(dir);
-			File[] listOfFiles = folder.listFiles();
+            add(builder.getPanel());
+        }
 
-			List<String> list = new ArrayList<>();
-			for (File file : listOfFiles) {
-				if (file.isFile()) {
-					list.add(file.getName().substring(0, file.getName().indexOf(".")));
-				}
-			}
-			return list;
-		}
-	}
+        @Override
+        public Furniture createAsset() {
+            Furniture.Builder builder = Furniture.newBuilder().setId((String) idBox.getSelectedItem())
+                    .setType((Type) typeBox.getSelectedItem());
+            if (assetBox.getItemCount() > 0) {
+                builder.setAssetId((String) assetBox.getSelectedItem());
+            }
+            return builder.build();
+        }
+
+        private List<String> getFurnitureList() {
+            String dir = MajorAssetTable.getTopAssetDirectory() + "/../furniture";
+            File folder = new File(dir);
+            File[] listOfFiles = folder.listFiles();
+
+            List<String> list = new ArrayList<>();
+            for (File file : listOfFiles) {
+                if (file.isFile()) {
+                    list.add(file.getName().substring(0, file.getName().indexOf(".")));
+                }
+            }
+            return list;
+        }
+
+        private List<String> getAssets(Type type) {
+            List<String> ids = new ArrayList<>();
+            switch (type) {
+                case CONTAINER:
+                    ids.addAll(MainPanel.CONTAINER_TABLE.getAssetIds());
+                    break;
+                case TERMINAL:
+                    ids.addAll(MainPanel.TERMINAL_TABLE.getAssetIds());
+                    break;
+                default:
+            }
+            return ids;
+        }
+    }
 }
