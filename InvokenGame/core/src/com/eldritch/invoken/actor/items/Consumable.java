@@ -1,5 +1,7 @@
 package com.eldritch.invoken.actor.items;
 
+import java.util.List;
+
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.eldritch.invoken.actor.AgentInventory;
 import com.eldritch.invoken.actor.type.Agent;
@@ -7,12 +9,15 @@ import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.actor.type.Agent.Direction;
 import com.eldritch.invoken.effects.Effect;
 import com.eldritch.invoken.effects.EffectFactory;
-import com.eldritch.invoken.proto.Effects;
+import com.eldritch.invoken.effects.EffectFactory.EffectGenerator;
 import com.eldritch.invoken.proto.Items;
 
 public class Consumable extends Item {
+    private final List<EffectGenerator> effects;
+    
     public Consumable(Items.Item data) {
         super(data, 0);
+        effects = EffectFactory.from(data.getEffectList());
     }
 
     @Override
@@ -40,8 +45,8 @@ public class Consumable extends Item {
     }
 
     private void apply(Agent target) {
-        for (Effects.Effect proto : getData().getEffectList()) {
-            Effect effect = EffectFactory.from(proto).generate(target);
+        for (EffectGenerator generator : effects) {
+            Effect effect = generator.generate(target);
             target.addEffect(effect);
         }
     }

@@ -1,11 +1,22 @@
 package com.eldritch.invoken.effects;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.proto.Effects;
 
 public class EffectFactory {
     private EffectFactory() {
         // singleton
+    }
+    
+    public static List<EffectGenerator> from(List<Effects.Effect> protos) {
+        List<EffectGenerator> generators = new ArrayList<>();
+        for (Effects.Effect proto : protos) {
+            generators.add(from(proto));
+        }
+        return generators;
     }
 
     public static EffectGenerator from(final Effects.Effect proto) {
