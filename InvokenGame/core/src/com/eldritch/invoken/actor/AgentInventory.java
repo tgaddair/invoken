@@ -10,13 +10,20 @@ import com.eldritch.invoken.proto.Actors.InventoryItem;
 import com.eldritch.invoken.state.Inventory;
 
 public class AgentInventory extends Inventory {
+    private final AgentInfo info;
+    
     // equipment
     private Outfit outfit;
     private RangedWeapon rangedWeapon;
     private MeleeWeapon meleeWeapon;
     
-    public AgentInventory() {
+    public AgentInventory(AgentInfo info) {
         super(new ArrayList<InventoryItem>());
+        this.info = info;
+    }
+    
+    public AgentInfo getAgentInfo() {
+        return info;
     }
     
     public void update(float delta) {

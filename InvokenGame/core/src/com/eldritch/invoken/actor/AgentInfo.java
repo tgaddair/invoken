@@ -28,6 +28,7 @@ public class AgentInfo {
     private static final float BASE_ENERGY_RATE = 3f;
     private static final float MASTERY_BONUS = 0.5f;
 
+    private final Agent agent;
     final String id;
     final String name;
     final Species species;
@@ -35,7 +36,7 @@ public class AgentInfo {
 
     final Profession profession;
     final FactionManager factions;
-    private final AgentInventory inventory = new AgentInventory();
+    private final AgentInventory inventory = new AgentInventory(this);
     final Map<Discipline, SkillState> skills = new HashMap<>();
     final Map<Discipline, Double> skillBonus = new HashMap<>();
     final Set<AugmentationProto> knownAugmentations = new HashSet<>();
@@ -56,6 +57,7 @@ public class AgentInfo {
     }
 
     public AgentInfo(Agent agent, ActorParams params, boolean unique) {
+        this.agent = agent;
         this.id = params.getId();
         this.name = params.getName();
         this.species = Species.from(params.getSpecies());
@@ -100,6 +102,7 @@ public class AgentInfo {
     }
 
     public AgentInfo(Agent agent, Profession profession, int level) {
+        this.agent = agent;
         this.id = "Player";
         this.name = "Player";
         this.species = Species.from(ActorParams.Species.HUMAN);
@@ -125,7 +128,11 @@ public class AgentInfo {
 
         factions = new FactionManager(agent);
     }
-
+    
+    public Agent getAgent() {
+        return agent;
+    }
+    
     public String getId() {
         return id;
     }
