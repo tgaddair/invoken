@@ -61,6 +61,7 @@ message Room {
 			TMX = 2;  // Tiled TMX file
 			ACTIVATOR = 3;  // hardcoded
 			CONTAINER = 4;  // special activator that references a container type
+			TERMINAL = 5;
 		}
 
 		optional string id = 1;

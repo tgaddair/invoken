@@ -1,8 +1,8 @@
 package com.eldritch.scifirpg.editor.tables;
 
 import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -168,18 +168,21 @@ public class RoomTable extends MajorAssetTable<Room> {
             builder.nextLine();
 
             typeBox.setSelectedItem(Type.TMX);
+            typeBox.addItemListener(new ItemListener() {
+                @Override
+                public void itemStateChanged(ItemEvent event) {
+                    if (event.getStateChange() == ItemEvent.SELECTED) {
+                        Type item = (Type) event.getItem();
+                        assetBox.setModel(new DefaultComboBoxModel<>(getAssets(item).toArray(
+                                new String[0])));
+                    }
+                }
+            });
             builder.append("Type:", typeBox);
             builder.nextLine();
 
             assetBox.setModel(new DefaultComboBoxModel<>(
                     getAssets((Type) typeBox.getSelectedItem()).toArray(new String[0])));
-            assetBox.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    assetBox.setModel(new DefaultComboBoxModel<>(getAssets(
-                            (Type) typeBox.getSelectedItem()).toArray(new String[0])));
-                }
-            });
             builder.append("Asset:", assetBox);
             builder.nextLine();
 
@@ -202,7 +205,8 @@ public class RoomTable extends MajorAssetTable<Room> {
 
         @Override
         public Furniture createAsset() {
-            Furniture.Builder builder = Furniture.newBuilder().setId((String) idBox.getSelectedItem())
+            Furniture.Builder builder = Furniture.newBuilder()
+                    .setId((String) idBox.getSelectedItem())
                     .setType((Type) typeBox.getSelectedItem());
             if (assetBox.getItemCount() > 0) {
                 builder.setAssetId((String) assetBox.getSelectedItem());

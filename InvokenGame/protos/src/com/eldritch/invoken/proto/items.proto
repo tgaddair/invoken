@@ -14,6 +14,7 @@ message Item {
 		HEAVY_WEAPON = 2;
 		OUTFIT = 3;
 		ACCESSORY = 4;
+		CONSUMABLE = 8;
 		CREDENTIAL = 5;
 		FRAGMENT = 7;
 		OTHER = 6;
