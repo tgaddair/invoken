@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import com.eldritch.invoken.actor.Inventory.ItemState;
 import com.eldritch.invoken.actor.aug.Augmentation;
 import com.eldritch.invoken.actor.factions.Faction;
 import com.eldritch.invoken.actor.factions.FactionManager;
@@ -22,6 +21,7 @@ import com.eldritch.invoken.proto.Actors.NonPlayerActor;
 import com.eldritch.invoken.proto.Augmentations.AugmentationProto;
 import com.eldritch.invoken.proto.Disciplines.Discipline;
 import com.eldritch.invoken.proto.Effects.DamageType;
+import com.eldritch.invoken.state.Inventory.ItemState;
 import com.google.common.base.Functions;
 
 public class AgentInfo {
@@ -35,7 +35,7 @@ public class AgentInfo {
 
     final Profession profession;
     final FactionManager factions;
-    private final Inventory inventory = new Inventory();
+    private final AgentInventory inventory = new AgentInventory();
     final Map<Discipline, SkillState> skills = new HashMap<>();
     final Map<Discipline, Double> skillBonus = new HashMap<>();
     final Set<AugmentationProto> knownAugmentations = new HashSet<>();
@@ -150,7 +150,7 @@ public class AgentInfo {
         return unique;
     }
 
-    public Inventory getInventory() {
+    public AgentInventory getInventory() {
         return inventory;
     }
 

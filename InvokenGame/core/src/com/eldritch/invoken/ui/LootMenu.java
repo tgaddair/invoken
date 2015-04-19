@@ -7,10 +7,10 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
-import com.eldritch.invoken.actor.Inventory;
 import com.eldritch.invoken.actor.items.Item;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Player;
+import com.eldritch.invoken.state.Inventory.ItemState;
 import com.eldritch.invoken.util.DefaultInputListener;
 import com.eldritch.invoken.util.Settings;
 
@@ -60,12 +60,12 @@ public class LootMenu {
 	
 	public void setup(Player player, Agent npc) {
 		table.clear();
-		for (Inventory.ItemState item : npc.getInfo().getInventory().getItems()) {
+		for (ItemState item : npc.getInfo().getInventory().getItems()) {
 			addItemButton(item, player, npc);
 		}
 	}
 	
-	private void addItemButton(Inventory.ItemState itemState, final Player player, final Agent npc) {
+	private void addItemButton(ItemState itemState, final Player player, final Agent npc) {
 		final Item item = itemState.getItem();
 		TextButtonStyle buttonStyle = skin.get("choice", TextButtonStyle.class);
 		final TextButton itemButton = new TextButton(getText(item, itemState.getCount()), buttonStyle);

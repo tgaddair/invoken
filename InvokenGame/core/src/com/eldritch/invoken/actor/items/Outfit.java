@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
-import com.eldritch.invoken.actor.Inventory;
+import com.eldritch.invoken.actor.AgentInventory;
 import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.actor.type.Agent.Direction;
 import com.eldritch.invoken.actor.type.Human;
@@ -44,17 +44,17 @@ public class Outfit extends Item {
     }
 
     @Override
-    public boolean isEquipped(Inventory inventory) {
+    public boolean isEquipped(AgentInventory inventory) {
         return inventory.getOutfit() == this;
     }
 
     @Override
-    public void equipFrom(Inventory inventory) {
+    public void equipFrom(AgentInventory inventory) {
         inventory.setOutfit(this);
     }
 
     @Override
-    public void unequipFrom(Inventory inventory) {
+    public void unequipFrom(AgentInventory inventory) {
         if (inventory.getOutfit() == this) {
             inventory.setOutfit(null);
         }

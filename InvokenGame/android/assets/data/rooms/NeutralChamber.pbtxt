@@ -5,7 +5,8 @@ furniture {
 }
 furniture {
   id: "container-small"
-  type: ACTIVATOR
+  type: CONTAINER
+  asset_id: "RandomLevel1"
 }
 furniture {
   id: "plant-tall1"

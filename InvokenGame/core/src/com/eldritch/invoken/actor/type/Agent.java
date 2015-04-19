@@ -32,9 +32,9 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Array;
 import com.eldritch.invoken.activators.Activator;
 import com.eldritch.invoken.actor.AgentInfo;
+import com.eldritch.invoken.actor.AgentInventory;
 import com.eldritch.invoken.actor.Conversable;
 import com.eldritch.invoken.actor.GameCamera;
-import com.eldritch.invoken.actor.Inventory;
 import com.eldritch.invoken.actor.Profession;
 import com.eldritch.invoken.actor.ai.Behavior;
 import com.eldritch.invoken.actor.aug.Action;
@@ -1521,7 +1521,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         return 0.65f;
     }
 
-    public Inventory getInventory() {
+    public AgentInventory getInventory() {
         return info.getInventory();
     }
 

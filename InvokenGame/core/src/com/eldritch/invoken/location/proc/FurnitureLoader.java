@@ -9,6 +9,7 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.activators.PlaceableActivator;
+import com.eldritch.invoken.activators.PlaceableContainer;
 import com.eldritch.invoken.location.ConnectedRoom;
 import com.eldritch.invoken.location.NaturalVector2;
 import com.eldritch.invoken.location.layer.LocationMap;
@@ -24,6 +25,7 @@ public abstract class FurnitureLoader {
     static {
         loaders.put(Furniture.Type.TMX, new TmxFurnitureLoader());
         loaders.put(Furniture.Type.ACTIVATOR, new ActivatorLoader());
+        loaders.put(Furniture.Type.CONTAINER, new ContainerLoader());
     }
     
     public abstract PlaceableFurniture loadFrom(Furniture furniture);
@@ -64,6 +66,15 @@ public abstract class FurnitureLoader {
     		PlaceableFurniture placeable = tmxLoader.loadFrom(furniture);
     		return new PlaceableActivator(furniture, placeable);
     	}
+    }
+    
+    public static class ContainerLoader extends FurnitureLoader {
+        @Override
+        public PlaceableFurniture loadFrom(Furniture furniture) {
+            FurnitureLoader tmxLoader = FurnitureLoader.getLoader(Furniture.Type.TMX);
+            PlaceableFurniture placeable = tmxLoader.loadFrom(furniture);
+            return new PlaceableContainer(furniture, placeable);
+        }
     }
     
     public static PlaceableFurniture load(Furniture furniture) {

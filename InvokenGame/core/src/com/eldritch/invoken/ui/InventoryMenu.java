@@ -10,9 +10,10 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
-import com.eldritch.invoken.actor.Inventory;
+import com.eldritch.invoken.actor.AgentInventory;
 import com.eldritch.invoken.actor.items.Item;
 import com.eldritch.invoken.actor.type.Player;
+import com.eldritch.invoken.state.Inventory.ItemState;
 import com.eldritch.invoken.util.DefaultInputListener;
 import com.eldritch.invoken.util.Settings;
 
@@ -73,7 +74,7 @@ public class InventoryMenu {
 
     public void refresh() {
         table.clear();
-        for (Inventory.ItemState item : player.getInfo().getInventory().getItems()) {
+        for (ItemState item : player.getInfo().getInventory().getItems()) {
             addItemButton(item);
         }
         refreshPortrait();
@@ -88,7 +89,7 @@ public class InventoryMenu {
     }
     
     private void refreshButton(TextButton button, Item item) {
-        Inventory inventory = player.getInfo().getInventory();
+        AgentInventory inventory = player.getInfo().getInventory();
         if (item.isEquipped(inventory)) {
             button.setStyle(skin.get("selected", TextButtonStyle.class));
         } else {
@@ -96,7 +97,7 @@ public class InventoryMenu {
         }
     }
 
-    private void addItemButton(Inventory.ItemState itemState) {
+    private void addItemButton(ItemState itemState) {
         final Item item = itemState.getItem();
         TextButtonStyle buttonStyle = skin.get("choice", TextButtonStyle.class);
         final TextButton itemButton = new TextButton(getText(item, itemState.getCount()), buttonStyle);
@@ -104,7 +105,7 @@ public class InventoryMenu {
         itemButton.addListener(new DefaultInputListener() {
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                Inventory inventory = player.getInfo().getInventory();
+                AgentInventory inventory = player.getInfo().getInventory();
                 if (item.isEquipped(inventory)) {
                     inventory.unequip(item);
                 } else {

@@ -15,11 +15,12 @@ import com.eldritch.invoken.actor.type.Agent.RayTarget;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.HandledBullet;
 import com.eldritch.invoken.actor.type.HandledProjectile;
-import com.eldritch.invoken.actor.Inventory;
+import com.eldritch.invoken.actor.AgentInventory;
 import com.eldritch.invoken.effects.Bleed;
 import com.eldritch.invoken.effects.Stunned;
 import com.eldritch.invoken.location.Location;
 import com.eldritch.invoken.proto.Effects.DamageType;
+import com.eldritch.invoken.proto.Items;
 import com.eldritch.invoken.proto.Items.Item.DamageMod;
 import com.eldritch.invoken.screens.GameScreen;
 import com.eldritch.invoken.util.Damage;
@@ -40,11 +41,11 @@ public class RangedWeapon extends Item {
 	private final DamageType primary;
 	private final int baseCost;
 	
-	public RangedWeapon(com.eldritch.invoken.proto.Items.Item item) {
+	public RangedWeapon(Items.Item item) {
 		this(item, getRegion(item.getAsset()));
 	}
 	
-	public RangedWeapon(com.eldritch.invoken.proto.Items.Item item, TextureRegion texture) {
+	public RangedWeapon(Items.Item item, TextureRegion texture) {
         super(item, texture);
         this.texture = texture;
         
@@ -120,17 +121,17 @@ public class RangedWeapon extends Item {
 	}
 	
 	@Override
-    public boolean isEquipped(Inventory inventory) {
+    public boolean isEquipped(AgentInventory inventory) {
         return inventory.getRangedWeapon() == this;
     }
 	
 	@Override
-	public void equipFrom(Inventory inventory) {
+	public void equipFrom(AgentInventory inventory) {
 		inventory.setRangedWeapon(this);
 	}
 	
 	@Override
-	public void unequipFrom(Inventory inventory) {
+	public void unequipFrom(AgentInventory inventory) {
 		if (inventory.getRangedWeapon() == this) {
 			inventory.setRangedWeapon(null);
 		}

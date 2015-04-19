@@ -11,11 +11,13 @@ import com.eldritch.invoken.screens.GameScreen;
 import com.eldritch.invoken.screens.MenuScreen;
 import com.eldritch.invoken.screens.SplashScreen;
 import com.eldritch.invoken.util.ActorMarshaller;
+import com.eldritch.invoken.util.ContainerMarshaller;
 import com.eldritch.invoken.util.FactionMarshaller;
 import com.eldritch.invoken.util.ItemMarshaller;
 import com.eldritch.invoken.util.LocationMarshaller;
 import com.eldritch.invoken.util.RoomMarshaller;
 import com.eldritch.invoken.util.Settings;
+import com.eldritch.invoken.util.TerminalMarshaller;
 
 public class InvokenGame extends Game {
 	public static final String LOG = InvokenGame.class.getSimpleName();
@@ -25,6 +27,8 @@ public class InvokenGame extends Game {
 	public final static FactionMarshaller FACTION_READER = new FactionMarshaller();
 	public final static LocationMarshaller LOCATION_READER = new LocationMarshaller();
 	public final static RoomMarshaller ROOM_READER = new RoomMarshaller();
+	public final static ContainerMarshaller CONTAINER_READER = new ContainerMarshaller();
+	public final static TerminalMarshaller TERMINAL_READER = new TerminalMarshaller();
 
 	SpriteBatch batch;
 	Texture img;

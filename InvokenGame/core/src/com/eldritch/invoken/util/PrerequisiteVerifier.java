@@ -3,7 +3,7 @@ package com.eldritch.invoken.util;
 import java.util.List;
 
 import com.eldritch.invoken.actor.AgentInfo;
-import com.eldritch.invoken.actor.Inventory;
+import com.eldritch.invoken.actor.AgentInventory;
 import com.eldritch.invoken.actor.factions.Faction;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.location.Location;
@@ -51,7 +51,7 @@ public abstract class PrerequisiteVerifier {
             case RELATION_BETWEEN: // TARGET relation to agent
                 return verifyRelation(prereq, agent);
             case ITEM_EQUIPPED: { // TARGET item is currently equipped
-                Inventory inv = info.getInventory();
+                AgentInventory inv = info.getInventory();
                 boolean equipped = inv.hasItem(prereq.getTarget())
                         && inv.getItem(prereq.getTarget()).isEquipped(inv);
                 return verifyHas(prereq, equipped);

@@ -1,89 +1,40 @@
-package com.eldritch.invoken.actor;
+package com.eldritch.invoken.state;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.actor.items.Item;
-import com.eldritch.invoken.actor.items.MeleeWeapon;
-import com.eldritch.invoken.actor.items.Outfit;
-import com.eldritch.invoken.actor.items.RangedWeapon;
+import com.eldritch.invoken.proto.Actors.Container;
 import com.eldritch.invoken.proto.Actors.InventoryItem;
 import com.eldritch.invoken.proto.Items.Item.Type;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import com.google.common.collect.Maps;
 
 public class Inventory {
-    private final Map<String, ItemState> items = new HashMap<String, Inventory.ItemState>();
-
-    // equipment
-    private Outfit outfit;
-    private RangedWeapon rangedWeapon;
-    private MeleeWeapon meleeWeapon;
+    private static final LoadingCache<String, Inventory> LOADER = CacheBuilder.newBuilder()
+            .build(new CacheLoader<String, Inventory>() {
+                public Inventory load(String id) {
+                    Container proto = InvokenGame.CONTAINER_READER.readAsset(id);
+                    return new Inventory(proto.getItemList());
+                }
+            });
     
-    public void update(float delta) {
-        if (hasRangedWeapon()) {
-            ItemState state = items.get(rangedWeapon.getId());
-            if (state.getCooldown() > 0) {
-                state.cooldown(delta);
-            }
+    private final Map<String, ItemState> items = new HashMap<>();
+    
+    public Inventory(List<InventoryItem> items) {
+        for (InventoryItem item : items) {
+            add(item);
         }
     }
     
-    public boolean canUseRangedWeapon() {
-        return hasRangedWeapon() && !isCooling(rangedWeapon);
-    }
-    
-    public void setCooldown(Item item, float cooldown) {
-        items.get(item.getId()).setCooldown(cooldown);
-    }
-    
-    public boolean isCooling(Item item) {
-        return items.get(item.getId()).getCooldown() > 0;
-    }
-
-    public boolean hasOutfit() {
-        return outfit != null;
-    }
-
-    public Outfit getOutfit() {
-        return outfit;
-    }
-
-    public void setOutfit(Outfit outfit) {
-        this.outfit = outfit;
-    }
-
-    public boolean hasRangedWeapon() {
-        return rangedWeapon != null;
-    }
-
-    public RangedWeapon getRangedWeapon() {
-        return rangedWeapon;
-    }
-
-    public void setRangedWeapon(RangedWeapon weapon) {
-        this.rangedWeapon = weapon;
-    }
-
-    public boolean hasMeleeWeapon() {
-        return meleeWeapon != null;
-    }
-
-    public MeleeWeapon getMeleeWeapon() {
-        return meleeWeapon;
-    }
-
-    public void setMeleeWeapon(MeleeWeapon weapon) {
-        this.meleeWeapon = weapon;
-    }
-
     public void add(InventoryItem item) {
         items.put(item.getItemId(), new Inventory.ItemState(item));
-    }
-
-    public Collection<ItemState> getItems() {
-        return items.values();
     }
     
     public boolean hasItem(Item item) {
@@ -101,12 +52,20 @@ public class Inventory {
         return items.get(itemId).getCount();
     }
     
-    public void equip(Item item) {
-        item.equipFrom(this);
+    public boolean hasItem(String id) {
+        return items.containsKey(id);
+    }
+    
+    public Item getItem(String id) {
+        return items.get(id).item;
+    }
+    
+    protected ItemState getState(String id) {
+        return items.get(id);
     }
 
-    public void unequip(Item item) {
-        item.unequipFrom(this);
+    public Collection<ItemState> getItems() {
+        return items.values();
     }
     
     public Map<Item, Integer> getItemCounts(Type type) {
@@ -139,14 +98,6 @@ public class Inventory {
         return removeItem(item.getId(), count);
     }
     
-    public boolean hasItem(String id) {
-        return items.containsKey(id);
-    }
-    
-    public Item getItem(String id) {
-        return items.get(id).item;
-    }
-
     /**
      * Remove the requested number of instances of the given item from the actor's inventory. If the
      * number requested is greater than or equal to the number available, or if count == -1, then we
@@ -163,9 +114,7 @@ public class Inventory {
 
         if (count >= available || count == -1) {
             // remove all and unequip
-            Item item = items.get(itemId).getItem();
-            item.unequipFrom(this);
-            items.remove(itemId);
+            handleRemove(items.get(itemId).getItem());
             return available;
         } else {
             // decrement counters
@@ -173,7 +122,11 @@ public class Inventory {
             return count;
         }
     }
-
+    
+    protected void handleRemove(Item item) {
+        items.remove(item.getId());
+    }
+    
     public static class ItemState {
         private final Item item;
         private int count;
@@ -220,6 +173,15 @@ public class Inventory {
         
         public InventoryItem toProto() {
             return InventoryItem.newBuilder().setItemId(item.getId()).setCount(count).build();
+        }
+    }
+    
+    public static Inventory from(String id) {
+        try {
+            return LOADER.get(id);
+        } catch (ExecutionException ex) {
+            InvokenGame.error("Failed to load container: " + id, ex);
+            return null;
         }
     }
 }

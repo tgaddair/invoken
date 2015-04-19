@@ -5,10 +5,10 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
+import com.eldritch.invoken.actor.AgentInventory;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.actor.type.Agent.Direction;
-import com.eldritch.invoken.actor.Inventory;
 import com.eldritch.invoken.proto.Items;
 import com.eldritch.invoken.util.Settings;
 
@@ -32,11 +32,11 @@ public abstract class Item {
         this.height = Settings.SCALE * height;
     }
 
-    public abstract boolean isEquipped(Inventory inventory);
+    public abstract boolean isEquipped(AgentInventory inventory);
 
-    public abstract void equipFrom(Inventory inventory);
+    public abstract void equipFrom(AgentInventory inventory);
 
-    public abstract void unequipFrom(Inventory inventory);
+    public abstract void unequipFrom(AgentInventory inventory);
 
     public void render(Agent agent, Activity activity, float stateTime,
             OrthogonalTiledMapRenderer renderer) {

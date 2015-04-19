@@ -6,15 +6,15 @@ import java.util.Set;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.math.Vector2;
+import com.eldritch.invoken.actor.AgentInventory;
 import com.eldritch.invoken.actor.ConversationHandler;
-import com.eldritch.invoken.actor.Inventory;
-import com.eldritch.invoken.actor.Inventory.ItemState;
 import com.eldritch.invoken.actor.PreparedAugmentations;
 import com.eldritch.invoken.actor.Profession;
 import com.eldritch.invoken.actor.aug.Augmentation;
 import com.eldritch.invoken.actor.util.ThreatMonitor;
 import com.eldritch.invoken.location.Location;
 import com.eldritch.invoken.proto.Actors.PlayerActor;
+import com.eldritch.invoken.state.Inventory.ItemState;
 import com.eldritch.invoken.util.Settings;
 
 /** The player character, has state and state time, */
@@ -234,7 +234,7 @@ public class Player extends SteeringAgent {
         builder.setLocation(getLocation().getId());
         
         // equipped items
-        Inventory inventory = info.getInventory();
+        AgentInventory inventory = info.getInventory();
         if (inventory.hasOutfit()) {
             builder.addEquippedItemId(inventory.getOutfit().getId());
         }

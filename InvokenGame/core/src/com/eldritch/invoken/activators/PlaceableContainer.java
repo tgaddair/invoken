@@ -1,46 +1,28 @@
 package com.eldritch.invoken.activators;
 
 import java.lang.reflect.Constructor;
-import java.util.Random;
 
 import com.eldritch.invoken.InvokenGame;
-import com.eldritch.invoken.location.ConnectedRoom;
 import com.eldritch.invoken.location.NaturalVector2;
 import com.eldritch.invoken.location.layer.LocationMap;
 import com.eldritch.invoken.location.proc.FurnitureLoader.PlaceableFurniture;
 import com.eldritch.invoken.proto.Locations.Room.Furniture;
+import com.eldritch.invoken.state.Inventory;
 import com.google.common.base.CaseFormat;
 
-public class PlaceableActivator implements PlaceableFurniture {
-	private final Furniture data;
-	private final PlaceableFurniture tiles;
+public class PlaceableContainer extends PlaceableActivator {
+	private final Inventory container;
 	
-	public PlaceableActivator(Furniture data, PlaceableFurniture tiles) {
-		this.data = data;
-		this.tiles = tiles;
+	public PlaceableContainer(Furniture data, PlaceableFurniture tiles) {
+	    super(data, tiles);
+	    container = Inventory.from(data.getAssetId());
 	}
 	
 	@Override
-	public int getCost() {
-		return tiles.getCost();
-	}
-
-	@Override
-	public NaturalVector2 findPosition(ConnectedRoom room, LocationMap map, Random rand) {
-		return tiles.findPosition(room, map, rand);
-	}
-
-	@Override
-	public void place(NaturalVector2 position, LocationMap map) {
-		tiles.place(position, map);
-		map.add(load(data.getId(), position, map));
-	}
-	
 	protected Activator load(String name, NaturalVector2 position, LocationMap map) {
 		try {
 			String assetId = CaseFormat.LOWER_HYPHEN.to(CaseFormat.UPPER_CAMEL, name);
-			String path = PlaceableActivator.class.getPackage().getName();
-//			InvokenGame.log("loading: " + path + "." + assetId);
+			String path = PlaceableContainer.class.getPackage().getName();
 			Class<?> clazz = Class.forName(path + "." + assetId);
 			Constructor<?> ctor = clazz.getConstructor(NaturalVector2.class);
 			Activator instance = (Activator) ctor.newInstance(position);

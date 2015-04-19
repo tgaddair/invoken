@@ -11,13 +11,13 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.eldritch.invoken.InvokenGame;
-import com.eldritch.invoken.actor.Inventory;
 import com.eldritch.invoken.actor.items.Item;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.location.Location;
 import com.eldritch.invoken.location.NaturalVector2;
 import com.eldritch.invoken.proto.Locations.ControlPoint;
 import com.eldritch.invoken.screens.GameScreen;
+import com.eldritch.invoken.state.Inventory;
 import com.eldritch.invoken.util.Settings;
 import com.google.common.base.Strings;
 

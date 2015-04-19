@@ -37,7 +37,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.actor.AgentInfo;
 import com.eldritch.invoken.actor.ConversationHandler;
 import com.eldritch.invoken.actor.ConversationHandler.DialogueVerifier;
-import com.eldritch.invoken.actor.Inventory.ItemState;
 import com.eldritch.invoken.actor.ai.AdaptiveRayWithWhiskersConfiguration;
 import com.eldritch.invoken.actor.ai.Behavior;
 import com.eldritch.invoken.actor.ai.Box2dRaycastCollisionDetector;
@@ -63,6 +62,7 @@ import com.eldritch.invoken.proto.Actors.DialogueTree.Response;
 import com.eldritch.invoken.proto.Actors.NonPlayerActor;
 import com.eldritch.invoken.proto.Actors.NonPlayerActor.Aggression;
 import com.eldritch.invoken.proto.Locations.Encounter.ActorParams.ActorScenario;
+import com.eldritch.invoken.state.Inventory.ItemState;
 import com.eldritch.invoken.util.OutcomeHandler;
 import com.eldritch.invoken.util.PrerequisiteVerifier;
 import com.google.common.base.Optional;
@@ -438,6 +438,8 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
     @Override
     public void alertTo(Agent other) {
         if (!hasTarget()) {
+            lastSeen.setPosition(other);
+            setFocusPoint(other.getTargetingPosition());
             setTarget(other);
             threat.maybeSetSuspicious();
         } else if (other == getTarget()) {

@@ -6,7 +6,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.InvokenGame;
-import com.eldritch.invoken.actor.Inventory;
+import com.eldritch.invoken.actor.AgentInventory;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.actor.type.Agent.Direction;
@@ -25,17 +25,17 @@ public class Fragment extends Item {
     }
 
     @Override
-    public boolean isEquipped(Inventory inventory) {
+    public boolean isEquipped(AgentInventory inventory) {
         // cannot be equipped
         return false;
     }
 
     @Override
-    public void equipFrom(Inventory inventory) {
+    public void equipFrom(AgentInventory inventory) {
     }
 
     @Override
-    public void unequipFrom(Inventory inventory) {
+    public void unequipFrom(AgentInventory inventory) {
     }
 
     @Override

@@ -4,10 +4,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
-import com.eldritch.invoken.actor.Inventory;
+import com.eldritch.invoken.actor.AgentInventory;
 import com.eldritch.invoken.actor.type.Human;
 import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.actor.type.Agent.Direction;
+import com.eldritch.invoken.proto.Items;
 import com.eldritch.invoken.proto.Items.Item.DamageMod;
 import com.google.common.base.Strings;
 
@@ -17,7 +18,7 @@ public class MeleeWeapon extends Item {
     private final float range;
     private final boolean visible;
     
-    public MeleeWeapon(com.eldritch.invoken.proto.Items.Item item) {
+    public MeleeWeapon(Items.Item item) {
         super(item, 192);
         if (!Strings.isNullOrEmpty(item.getAsset())) {
 		    animations.putAll(Human.getAnimations(item.getAsset(), 192));
@@ -34,17 +35,17 @@ public class MeleeWeapon extends Item {
     }
     
     @Override
-    public boolean isEquipped(Inventory inventory) {
+    public boolean isEquipped(AgentInventory inventory) {
         return inventory.getMeleeWeapon() == this;
     }
     
     @Override
-    public void equipFrom(Inventory inventory) {
+    public void equipFrom(AgentInventory inventory) {
         inventory.setMeleeWeapon(this);
     }
     
     @Override
-    public void unequipFrom(Inventory inventory) {
+    public void unequipFrom(AgentInventory inventory) {
         if (inventory.getMeleeWeapon() == this) {
             inventory.setMeleeWeapon(null);
         }
