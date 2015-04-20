@@ -77,7 +77,7 @@ public class Charge extends Augmentation {
         @Override
         public void apply(Location location) {
             owner.addEffect(new ChargeEffect(owner));
-            owner.announce(GenericDialogue.onCharge(owner));
+            owner.announce(GenericDialogue.onCharge(owner, owner.getTarget()));
         }
 
         @Override

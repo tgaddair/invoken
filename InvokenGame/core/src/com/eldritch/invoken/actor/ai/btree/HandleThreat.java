@@ -9,10 +9,6 @@ import com.eldritch.invoken.util.GenericDialogue;
 public class HandleThreat extends Selector<Npc> {
     public static final float DURESS_PENALTY = -0.1f;
 
-    // a bug in Java 6 requires us to add this annotation for generic arrays
-    // see:
-    // http://stackoverflow.com/questions/1445233/is-it-possible-to-solve-the-a-generic-array-of-t-is-created-for-a-varargs-param
-    @SuppressWarnings("unchecked")
     public HandleThreat() {
         Sequence<Npc> calmSequence = new Sequence<Npc>();
         calmSequence.addChild(new IsCalm());
@@ -51,7 +47,7 @@ public class HandleThreat extends Selector<Npc> {
                     // we're being threatened
                     npc.getThreat().setDuress(neighbor);
                     npc.setTarget(neighbor);
-                    npc.announce(GenericDialogue.forDuress(npc));
+                    npc.announce(GenericDialogue.forDuress(npc, neighbor));
                     return true;
                 }
             }
@@ -86,7 +82,7 @@ public class HandleThreat extends Selector<Npc> {
             npc.changeRelation(target, DURESS_PENALTY);
             if (npc.isEnemy(target)) {
                 // begin hostility
-                npc.announce(GenericDialogue.forHostility(npc));
+                npc.announce(GenericDialogue.forHostility(npc, target));
             }
         }
     }
@@ -102,7 +98,7 @@ public class HandleThreat extends Selector<Npc> {
             }
             
             if (!npc.getThreat().hasEnemy(target)) {
-                npc.announce(GenericDialogue.thank(target));
+                npc.announce(GenericDialogue.thank(npc, target));
             }
         }
     }

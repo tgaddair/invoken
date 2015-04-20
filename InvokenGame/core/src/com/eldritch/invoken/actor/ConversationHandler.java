@@ -30,14 +30,15 @@ public class ConversationHandler {
 		this.trees = trees;
 		this.verifier = verifier;
 		this.outcomes = outcomes;
-		canSpeak = !trees.isEmpty();
 		
+		boolean hasGreeting = false;
 		for (DialogueTree tree : trees) {
 		    greetings.put(tree, new ArrayList<Response>());
     		for (Response response : tree.getDialogueList()) {
     		    responses.put(response.getId(), response);
     		    if (response.getGreeting()) {
     		        greetings.get(tree).add(response);
+    		        hasGreeting = true;
     		        
     		        // check for targeted
     		        String target = getTarget(response);
@@ -56,6 +57,8 @@ public class ConversationHandler {
     		    choices.put(choice.getId(), choice);
     		}
 		}
+		
+		canSpeak = hasGreeting;
 	}
 	
 	public boolean canSpeak() {

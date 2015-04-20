@@ -68,11 +68,11 @@ public class Investigate extends Sequence<Npc> {
             npc.changeRelation(npc.getTarget(), INVESTIGATION_PENALTY);
             if (!npc.isEnemy(npc.getTarget())) {
                 // express our disapproval
-                npc.announce(GenericDialogue.forSuspiciousActivity(npc));
+                npc.announce(GenericDialogue.forSuspiciousActivity(npc, npc.getTarget()));
                 npc.getThreat().setCalm();
             } else {
                 // begin hostility
-                npc.announce(GenericDialogue.forHostility(npc));
+                npc.announce(GenericDialogue.forHostility(npc, npc.getTarget()));
             }
         }
     }

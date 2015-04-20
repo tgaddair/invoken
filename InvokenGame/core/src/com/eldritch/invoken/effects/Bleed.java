@@ -38,7 +38,7 @@ public class Bleed extends AnimatedEffect {
         if (!knockback.isZero()) {
             if (!target.isAlive()) {
                 // extra knockback for effect
-                knockback.scl(2f);
+                knockback.scl(1.5f);
             }
             
             target.stop();
