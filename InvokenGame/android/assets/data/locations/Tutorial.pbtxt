@@ -1,0 +1,34 @@
+id: "Tutorial"
+name: "Tutorial"
+light {
+  r: 255
+  g: 255
+  b: 255
+  intensity: 1.0
+}
+biome: INDUSTRY
+control_point {
+  id: "Entrance"
+  room_id: "Tutorial001"
+  lock_strength: 0
+  required_key: ""
+  available_key: "TutorialCredentials001"
+  origin: true
+  min: 1
+  max: 1
+  value: 0
+  closed: true
+  faction_id: ""
+}
+control_point {
+  id: "Room2"
+  follows: "Entrance"
+  lock_strength: 0
+  required_key: "TutorialCredentials001"
+  origin: false
+  min: 0
+  max: 0
+  value: 0
+  closed: true
+  faction_id: ""
+}

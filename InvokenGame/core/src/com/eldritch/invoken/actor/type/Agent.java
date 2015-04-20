@@ -823,6 +823,11 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         interact(lootable);
         loot(lootable);
     }
+    
+    public void beginDialogue(Conversable converser) {
+        interact(converser);
+        converse(converser);
+    }
 
     public boolean isLooting() {
         return looting != null;

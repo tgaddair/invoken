@@ -1,0 +1,22 @@
+id: "TutorialIntro"
+dialogue {
+  dialogue {
+    id: "Welcome"
+    text: "Welcome to Nosterra Station orientation. These terminals will help ease you into your new life with us.  Take these credentials and proceed to the next room."
+    outcome {
+      weight: 1.0
+      type: ITEM_CHANGE
+      target: "TutorialCredentials001"
+      value: 1
+    }
+    greeting: true
+    weight: 0
+    choice_id: "Exit"
+    forced: false
+  }
+  choice {
+    text: "[Exit]"
+    weight: 0
+    id: "Exit"
+  }
+}

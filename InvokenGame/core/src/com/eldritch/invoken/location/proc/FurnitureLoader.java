@@ -10,6 +10,7 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.activators.PlaceableActivator;
 import com.eldritch.invoken.activators.PlaceableContainer;
+import com.eldritch.invoken.activators.PlaceableTerminal;
 import com.eldritch.invoken.location.ConnectedRoom;
 import com.eldritch.invoken.location.NaturalVector2;
 import com.eldritch.invoken.location.layer.LocationMap;
@@ -26,6 +27,7 @@ public abstract class FurnitureLoader {
         loaders.put(Furniture.Type.TMX, new TmxFurnitureLoader());
         loaders.put(Furniture.Type.ACTIVATOR, new ActivatorLoader());
         loaders.put(Furniture.Type.CONTAINER, new ContainerLoader());
+        loaders.put(Furniture.Type.TERMINAL, new TerminalLoader());
     }
     
     public abstract PlaceableFurniture loadFrom(Furniture furniture);
@@ -77,11 +79,23 @@ public abstract class FurnitureLoader {
         }
     }
     
+    public static class TerminalLoader extends FurnitureLoader {
+        @Override
+        public PlaceableFurniture loadFrom(Furniture furniture) {
+            FurnitureLoader tmxLoader = FurnitureLoader.getLoader(Furniture.Type.TMX);
+            PlaceableFurniture placeable = tmxLoader.loadFrom(furniture);
+            return new PlaceableTerminal(furniture, placeable);
+        }
+    }
+    
     public static PlaceableFurniture load(Furniture furniture) {
         return getLoader(furniture.getType()).loadFrom(furniture);
     }
     
     public static FurnitureLoader getLoader(Furniture.Type type) {
+        if (!loaders.containsKey(type)) {
+            throw new IllegalArgumentException("No loader for type: " + type);
+        }
         return loaders.get(type);
     }
     

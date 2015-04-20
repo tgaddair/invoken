@@ -519,6 +519,10 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
                 loadLocation("WelcomeCenterLevel2", Optional.<String> absent(), location
                         .getPlayer().serialize());
                 return true;
+            case Keys.NUMPAD_1:
+                loadLocation("Tutorial", Optional.<String> absent(), location
+                        .getPlayer().serialize());
+                return true;
             default:
                 return false;
         }
