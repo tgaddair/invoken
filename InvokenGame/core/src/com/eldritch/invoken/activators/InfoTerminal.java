@@ -17,12 +17,14 @@ import com.eldritch.invoken.util.PrerequisiteVerifier;
 public class InfoTerminal extends ClickActivator implements Conversable {
     private final String id;
     private final ConversationHandler dialogue;
+    private final Vector2 focus;
 
     public InfoTerminal(NaturalVector2 position, Terminal proto) {
-        super(position);
+        super(position, 2, 2);
         this.id = proto.getId();
         dialogue = new ConversationHandler(proto.getDialogueList(), new TerminalDialogueVerifier(),
                 new TerminalOutcomeHandler());
+        this.focus = getPosition().cpy().add(1, 1);
     }
 
     @Override
@@ -55,7 +57,7 @@ public class InfoTerminal extends ClickActivator implements Conversable {
 
     @Override
     public Vector2 getRenderPosition() {
-        return getPosition();
+        return focus;
     }
 
     public class TerminalDialogueVerifier extends PrerequisiteVerifier implements DialogueVerifier {
