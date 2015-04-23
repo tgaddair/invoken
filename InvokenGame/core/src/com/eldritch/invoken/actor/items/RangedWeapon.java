@@ -173,6 +173,7 @@ public class RangedWeapon extends Item {
 
         @Override
         protected void apply(Agent owner, Agent target) {
+            // TODO: rail gun should continue on through enemies
             target.addEffect(new Stunned(owner, target, 0.2f));
             target.addEffect(new Bleed(target, getDamage(), velocity.cpy().nor().scl(250)));
         }
