@@ -253,11 +253,11 @@ public abstract class RangedWeapon extends Item {
             if (target.getTarget() != null) {
                 // hit something
                 target.getTarget().handleProjectile(this);
-            }
 
-            // collision sound
-            InvokenGame.SOUND_MANAGER
-                    .playAtPoint(SoundEffect.HIT, target.getTarget().getPosition());
+                // collision sound
+                InvokenGame.SOUND_MANAGER.playAtPoint(SoundEffect.HIT, target.getTarget()
+                        .getPosition());
+            }
         }
 
         @Override

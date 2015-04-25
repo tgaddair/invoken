@@ -30,6 +30,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Array;
+import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.activators.Activator;
 import com.eldritch.invoken.actor.AgentInfo;
 import com.eldritch.invoken.actor.AgentInventory;
@@ -66,6 +67,7 @@ import com.eldritch.invoken.proto.Actors.DialogueTree.Response;
 import com.eldritch.invoken.ui.MultiTextureRegionDrawable;
 import com.eldritch.invoken.util.Damage;
 import com.eldritch.invoken.util.Settings;
+import com.eldritch.invoken.util.SoundManager.SoundEffect;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
@@ -275,6 +277,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         if (canDodge()) {
             applyForce(direction.cpy().scl(DODGE_SCALE));
             info.expend(DODGE_COST);
+            InvokenGame.SOUND_MANAGER.playAtPoint(SoundEffect.SWISH, getPosition());
         }
     }
 

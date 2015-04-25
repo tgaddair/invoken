@@ -19,7 +19,6 @@ import com.google.common.cache.LoadingCache;
 import com.google.common.cache.RemovalListener;
 import com.google.common.cache.RemovalNotification;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
 /**
@@ -40,7 +39,8 @@ public class SoundManager implements Disposable {
         RANGED_WEAPON_SMALL(WAV, "ranged-weapon-small"),
         RANGED_WEAPON_LARGE(WAV, "ranged-weapon-large"),
         RANGED_WEAPON_SHOTGUN(WAV, "ranged-weapon-shotgun"),
-        RANGED_WEAPON_RIFLE(WAV, "ranged-weapon-rifle");
+        RANGED_WEAPON_RIFLE(WAV, "ranged-weapon-rifle"),
+        SWISH(OGG, "swish");
 
         private final ImmutableList<String> filenames;
 
