@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
+import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.actor.type.Agent.Direction;
 import com.eldritch.invoken.actor.type.Agent.RayTarget;
@@ -180,6 +181,9 @@ public abstract class RangedWeapon extends Item {
             // TODO: rail gun should continue on through enemies
             target.addEffect(new Stunned(owner, target, 0.2f));
             target.addEffect(new Bleed(target, getDamage(), velocity.cpy().nor().scl(250)));
+
+            // collision sound
+            InvokenGame.SOUND_MANAGER.playAtPoint(SoundEffect.HIT, target.getPosition());
         }
 
         @Override
@@ -250,6 +254,10 @@ public abstract class RangedWeapon extends Item {
                 // hit something
                 target.getTarget().handleProjectile(this);
             }
+
+            // collision sound
+            InvokenGame.SOUND_MANAGER
+                    .playAtPoint(SoundEffect.HIT, target.getTarget().getPosition());
         }
 
         @Override
@@ -330,25 +338,25 @@ public abstract class RangedWeapon extends Item {
             // does nothing
         }
     }
-    
+
     public abstract SoundEffect getSoundEffect();
-    
+
     public static class Pistol extends RangedWeapon {
         public Pistol(Items.Item item) {
             super(item);
         }
-        
+
         @Override
         public SoundEffect getSoundEffect() {
             return SoundEffect.RANGED_WEAPON_SMALL;
         }
     }
-    
+
     public static class Rifle extends RangedWeapon {
         public Rifle(Items.Item item) {
             super(item);
         }
-        
+
         @Override
         public SoundEffect getSoundEffect() {
             return SoundEffect.RANGED_WEAPON_RIFLE;

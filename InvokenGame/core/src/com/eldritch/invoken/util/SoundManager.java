@@ -35,6 +35,7 @@ public class SoundManager implements Disposable {
     public enum SoundEffect {
         CLICK(WAV, "click"),
         FOOTSTEP(OGG, "footstep00", "footstep01"),
+        HIT(OGG, "hit00"),
         DOOR_OPEN(WAV, "door-open"),
         RANGED_WEAPON_SMALL(WAV, "ranged-weapon-small"),
         RANGED_WEAPON_LARGE(WAV, "ranged-weapon-large"),
@@ -64,7 +65,11 @@ public class SoundManager implements Disposable {
         public String getFilename() {
             // the null result can never happen, by virtue of our constructor that ensures at least
             // one asset is specified
-            return Iterables.getFirst(filenames, null);
+            if (filenames.size() == 1) {
+                return filenames.get(0);
+            } else {
+                return filenames.get((int) (Math.random() * filenames.size()));
+            }
         }
 
         private String format(String asset, CodingFormat coding) {
