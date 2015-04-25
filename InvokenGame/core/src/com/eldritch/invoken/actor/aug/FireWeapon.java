@@ -6,6 +6,7 @@ import java.util.Map;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
+import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.actor.items.RangedWeapon;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Agent.Activity;
@@ -14,6 +15,7 @@ import com.eldritch.invoken.actor.type.HandledProjectile;
 import com.eldritch.invoken.effects.HoldingWeapon;
 import com.eldritch.invoken.location.Location;
 import com.eldritch.invoken.screens.GameScreen;
+import com.eldritch.invoken.util.SoundManager.SoundEffect;
 
 public class FireWeapon extends ProjectileAugmentation {
     private static final float ALERT_RADIUS = 10;
@@ -125,6 +127,10 @@ public class FireWeapon extends ProjectileAugmentation {
                     neighbor.alertTo(owner);
                 }
             }
+
+            // play sound effect
+            InvokenGame.SOUND_MANAGER.playAtPoint(SoundEffect.RANGED_WEAPON_SMALL,
+                    owner.getPosition());
         }
 
         @Override

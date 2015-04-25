@@ -35,7 +35,8 @@ public class SoundManager implements Disposable {
     public enum SoundEffect {
         CLICK(WAV, "click"),
         FOOTSTEP(OGG, "footstep00", "footstep01"),
-        DOOR_OPEN(WAV, "door-open");
+        DOOR_OPEN(WAV, "door-open"),
+        RANGED_WEAPON_SMALL(WAV, "ranged-weapon-small");
 
         private final ImmutableList<String> filenames;
 
@@ -135,7 +136,7 @@ public class SoundManager implements Disposable {
         
         String filename = sound.getFilename(index);
         float dv = s * (MAX_DST2 - dst2) / MAX_DST2;
-        InvokenGame.logfmt("play at point: %.2f", dv);
+//        InvokenGame.logfmt("play at point: %.2f", dv);
         play(filename, dv);
         return sound.nextInSequence(index);
     }

@@ -20,6 +20,13 @@ message Item {
 		OTHER = 6;
 	}
 
+	enum RangedWeaponType {
+		PISTOL = 0;
+		RIFLE = 1;
+		SHOTGUN = 2;
+		AUTO = 3;
+	}
+
 	message Requirement {
 		required Discipline discipline = 1;
 		required int32 value = 2;
@@ -48,4 +55,5 @@ message Item {
 
 	optional double range = 13; // scales ranged weapon damage and acts as cutoff for melee
 	optional double cooldown = 14;
+	optional RangedWeaponType ranged_type = 15;
 }
