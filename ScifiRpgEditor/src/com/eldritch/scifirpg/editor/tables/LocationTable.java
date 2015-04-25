@@ -21,6 +21,7 @@ import com.eldritch.invoken.proto.Locations.Territory;
 import com.eldritch.scifirpg.editor.AssetTablePanel;
 import com.eldritch.scifirpg.editor.panel.AssetEditorPanel;
 import com.google.common.base.Optional;
+import com.google.common.base.Strings;
 import com.google.protobuf.TextFormat;
 import com.jgoodies.forms.builder.DefaultFormBuilder;
 import com.jgoodies.forms.layout.FormLayout;
@@ -84,6 +85,7 @@ public class LocationTable extends MajorAssetTable<Location> {
 		private final JComboBox<Biome> biomeBox = new JComboBox<>(Biome.values());
 		private final JTextField intensityField = new JTextField("1.0f");
 		private final JTextField colorField = new JTextField("255 255 255");
+		private final JTextField musicField = new JTextField("");
 		private final TerritoryTable territoryTable = new TerritoryTable();
 		private final ControlPointTable controlPointTable = new ControlPointTable();
 		private final EncounterTable encounterTable = new EncounterTable(controlPointTable);
@@ -113,6 +115,9 @@ public class LocationTable extends MajorAssetTable<Location> {
 			builder.append("Ambient RGB:", colorField);
 			builder.nextLine();
 			
+			builder.append("Music:", musicField);
+            builder.nextLine();
+			
 			builder.appendRow("fill:p:grow");
             builder.append("Territory:", new AssetTablePanel(territoryTable));
             builder.nextLine();
@@ -139,6 +144,9 @@ public class LocationTable extends MajorAssetTable<Location> {
 					Light light = loc.getLight();
 					intensityField.setText(light.getIntensity() + "");
 					colorField.setText(light.getR() + " " + light.getG() + " " + light.getB());
+				}
+				if (loc.hasMusic()) {
+				    musicField.setText(loc.getMusic());
 				}
 				
 				for (Territory t : loc.getTerritoryList()) {
@@ -172,6 +180,9 @@ public class LocationTable extends MajorAssetTable<Location> {
 					.addAllTerritory(territoryTable.getAssets())
 					.addAllControlPoint(controlPointTable.getAssets())
 					.addAllEncounter(encounterTable.getAssets());
+			if (!Strings.isNullOrEmpty(musicField.getText())) {
+			    location.setMusic(musicField.getText());
+			}
 			return location.build();
 		}
 	}

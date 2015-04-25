@@ -1,17 +1,21 @@
 package com.eldritch.invoken.actor.util;
 
 import com.badlogic.gdx.math.Vector2;
+import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.actor.type.Agent;
-import com.eldritch.invoken.screens.GameScreen;
+import com.eldritch.invoken.util.Settings;
+import com.eldritch.invoken.util.SoundManager;
 import com.eldritch.invoken.util.SoundManager.SoundEffect;
 
 public class MotionTracker {
-    private static final float FOOTSTEP_DELAY_SECS = 0.75f;
+    private static final float FOOTSTEP_DELAY_SECS = Settings.FRAME_DURATION * 4;
     
+    private final SoundManager soundManager = InvokenGame.SOUND_MANAGER;
     private final Agent agent;
 
     private MotionState state = MotionState.Moving;
     private float nextFootstep = 0;
+    private int stepSequence = 0;
 
     public MotionTracker(Agent agent) {
         this.agent = agent;
@@ -44,7 +48,7 @@ public class MotionTracker {
             nextFootstep -= delta;
             if (nextFootstep < 0) {
                 nextFootstep = FOOTSTEP_DELAY_SECS;
-                GameScreen.play(SoundEffect.FOOTSTEP);
+                stepSequence = soundManager.playInSequence(SoundEffect.FOOTSTEP, stepSequence);
             }
         }
     }

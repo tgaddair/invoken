@@ -2,6 +2,7 @@ package com.eldritch.invoken.util;
 
 import static com.eldritch.invoken.util.SoundManager.CodingFormat.*;
 
+import java.util.Arrays;
 import java.util.concurrent.ExecutionException;
 
 import com.badlogic.gdx.Gdx;
@@ -9,39 +10,62 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.Disposable;
 import com.eldritch.invoken.InvokenGame;
+import com.google.common.base.Function;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.cache.RemovalListener;
 import com.google.common.cache.RemovalNotification;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 
 /**
  * A service that manages the sound effects.
  */
 public class SoundManager implements Disposable {
     private static final String BASE_PATH = "sound";
-    
+
     /**
      * The available sound files.
      */
     public enum SoundEffect {
-        CLICK("click", WAV),
-        FOOTSTEP("footstep00", OGG);
+        CLICK(WAV, "click"), FOOTSTEP(OGG, "footstep00", "footstep01");
 
-        private final String fileName;
+        private final ImmutableList<String> filenames;
 
-        private SoundEffect(String asset, CodingFormat coding) {
-            this.fileName = String.format("%s/%s.%s", BASE_PATH, asset, coding.getSuffix());
+        private SoundEffect(final CodingFormat coding, String asset, String... assets) {
+            filenames = ImmutableList.<String> builder().add(format(asset, coding))
+                    .addAll(Lists.transform(Arrays.asList(assets), new Function<String, String>() {
+                        @Override
+                        public String apply(String asset) {
+                            return format(asset, coding);
+                        }
+                    })).build();
         }
         
-        public String getFileName() {
-            return fileName;
+        public int nextInSequence(int index) {
+            return (index + 1) % filenames.size();
+        }
+        
+        public String getFilename(int index) {
+            return filenames.get(index);
+        }
+
+        public String getFilename() {
+            // the null result can never happen, by virtue of our constructor that ensures at least
+            // one asset is specified
+            return Iterables.getFirst(filenames, null);
+        }
+
+        private String format(String asset, CodingFormat coding) {
+            return String.format("%s/%s.%s", BASE_PATH, asset, coding.getSuffix());
         }
     }
-    
+
     enum CodingFormat {
         WAV, OGG;
-        
+
         public String getSuffix() {
             return name().toLowerCase();
         }
@@ -78,16 +102,26 @@ public class SoundManager implements Disposable {
      * Plays the specified sound.
      */
     public void play(SoundEffect sound) {
+        play(sound.getFilename());
+    }
+    
+    public int playInSequence(SoundEffect sound, int index) {
+        String filename = sound.getFilename(index);
+        play(filename);
+        return sound.nextInSequence(index);
+    }
+    
+    private void play(String filename) {
         // check if sound is enabled
         if (!enabled) {
             return;
         }
 
         try {
-            Sound soundToPlay = sounds.get(sound.fileName);
+            Sound soundToPlay = sounds.get(filename);
             soundToPlay.play(volume);
         } catch (ExecutionException e) {
-            InvokenGame.error("Failed to load sound: " + sound.fileName, e);
+            InvokenGame.error("Failed to load sound: " + filename, e);
         }
     }
 

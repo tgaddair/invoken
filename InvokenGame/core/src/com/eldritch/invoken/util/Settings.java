@@ -7,6 +7,12 @@ public class Settings {
 	public static final float SCALE = 1.0f / PX;
 	public static final float MIN_ZOOM = 1.0f;
 	public static final float MAX_ZOOM = 10.0f; // for debug purposes; 2 or 1.5 is more reasonable
+	public static final float FRAME_DURATION = 0.15f;
+	
+	// audio
+	public static final boolean MUTE = false;
+	public static final float MUSIC_VOLUME = 0.25f;
+	public static final float SFX_VOLUME = 0.1f;
 	
 	// a number just greater than the previous for the purpose of approximating a total ordering
 	// real numbers

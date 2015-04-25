@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.actor.type.Agent.Direction;
 import com.eldritch.invoken.screens.GameScreen;
+import com.eldritch.invoken.util.Settings;
 
 public class Human {
     public static float MAX_VELOCITY = 7.5f;
@@ -98,7 +99,7 @@ public class Human {
         Map<Direction, Animation> directions = new HashMap<Direction, Animation>();
         for (Direction d : Direction.values()) {
             TextureRegion[] textures = Arrays.copyOfRange(regions[index], 0, length);
-            Animation anim = new Animation(0.15f, textures);
+            Animation anim = new Animation(Settings.FRAME_DURATION, textures);
             anim.setPlayMode(playMode);
             directions.put(d, anim);
             if (increment) {

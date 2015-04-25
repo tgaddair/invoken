@@ -301,3 +301,4 @@ control_point {
   closed: false
   faction_id: "_ThugFaction"
 }
+music: "factory.ogg"

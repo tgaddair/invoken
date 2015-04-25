@@ -15,6 +15,7 @@ import com.eldritch.invoken.util.ContainerMarshaller;
 import com.eldritch.invoken.util.FactionMarshaller;
 import com.eldritch.invoken.util.ItemMarshaller;
 import com.eldritch.invoken.util.LocationMarshaller;
+import com.eldritch.invoken.util.MusicManager;
 import com.eldritch.invoken.util.RoomMarshaller;
 import com.eldritch.invoken.util.Settings;
 import com.eldritch.invoken.util.SoundManager;
@@ -31,7 +32,8 @@ public class InvokenGame extends Game {
 	public final static ContainerMarshaller CONTAINER_READER = new ContainerMarshaller();
 	public final static TerminalMarshaller TERMINAL_READER = new TerminalMarshaller();
 	
-	public static SoundManager SOUND_MANAGER = new SoundManager();
+	public static MusicManager MUSIC_MANAGER;
+	public static SoundManager SOUND_MANAGER;
 
 	SpriteBatch batch;
 	Texture img;
@@ -48,6 +50,7 @@ public class InvokenGame extends Game {
 	public void create() {
 		Gdx.app.log(InvokenGame.LOG, "Creating game on " + Gdx.app.getType());
 		
+		MUSIC_MANAGER = new MusicManager();
 		SOUND_MANAGER = new SoundManager();
 
 		// // create the preferences manager preferencesManager = new
@@ -98,6 +101,7 @@ public class InvokenGame extends Game {
 	
 	@Override
 	public void dispose() {
+	    MUSIC_MANAGER.dispose();
 	    SOUND_MANAGER.dispose();
 	}
 

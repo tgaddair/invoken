@@ -32,3 +32,4 @@ control_point {
   closed: true
   faction_id: ""
 }
+music: "tutorial.ogg"

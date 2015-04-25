@@ -18,6 +18,8 @@ message Location {
 	optional Light light = 7;
 	optional Biome biome = 8 [default = INDUSTRY];
 
+	optional string music = 13;
+
 	// DEPRECATED
 	optional int32 parent_id_DEPRECATED = 4;
 	repeated string room_id_DEPRECATED = 9;

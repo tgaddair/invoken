@@ -151,7 +151,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
             LocationGenerator generator = new LocationGenerator(gameState, data.getBiome(),
                     state.getSeed());
             location = generator.generate(data);
-            minimap = new Minimap(location.getMap(), location.getSeed());
+            onLoad(location);
 
             // load from disk
             player = location.createPlayer(state);
@@ -167,7 +167,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
             LocationGenerator generator = new LocationGenerator(gameState, data.getBiome(),
                     rand.nextLong());
             location = generator.generate(data);
-            minimap = new Minimap(location.getMap(), location.getSeed());
+            onLoad(location);
 
             // create a new player
             player = location.createPlayer(profession);
@@ -212,6 +212,13 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         toaster = new Toaster(getSkin());
         stage.addActor(toaster.getContainer());
         toast(location.getName());
+        
+        // handle settings
+        InvokenGame.MUSIC_MANAGER.setEnabled(!Settings.MUTE);
+        InvokenGame.MUSIC_MANAGER.setVolume(Settings.MUSIC_VOLUME);
+        
+        InvokenGame.SOUND_MANAGER.setEnabled(!Settings.MUTE);
+        InvokenGame.SOUND_MANAGER.setVolume(Settings.SFX_VOLUME);
 
         Gdx.input.setInputProcessor(this);
         Gdx.app.log(InvokenGame.LOG, "start");
@@ -728,7 +735,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
                 state.getSeed());
         location = generator.generate(data, encounterName);
         location.spawnPlayer(player);
-        minimap = new Minimap(location.getMap(), location.getSeed());
+        onLoad(location);
 
         // resize
         location.resize(getWidth(), getHeight());
@@ -743,6 +750,13 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         toaster = new Toaster(getSkin());
         stage.addActor(toaster.getContainer());
         toast(location.getName());
+    }
+    
+    private void onLoad(Location location) {
+        minimap = new Minimap(location.getMap(), location.getSeed());
+        if (location.hasMusic()) {
+            InvokenGame.MUSIC_MANAGER.play(location.getMusicId());
+        }
     }
 
     public static void save(Location location) {

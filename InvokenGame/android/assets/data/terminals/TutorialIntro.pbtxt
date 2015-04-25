@@ -2,7 +2,7 @@ id: "TutorialIntro"
 dialogue {
   dialogue {
     id: "Welcome"
-    text: "Welcome to Nosterra Station orientation. These terminals will help ease you into your new life with us.  Take these credentials and proceed to the next room."
+    text: "Welcome to Nosterra Station orientation. These terminals will help ease you into your new life with us.  Take these credentials and proceed to the next room.\n\nTo use these credentials on the door ahead, click on the door when you\'re in close proximity. When the door changes tone from red to green, it has been unlocked."
     outcome {
       weight: 1.0
       type: ITEM_CHANGE

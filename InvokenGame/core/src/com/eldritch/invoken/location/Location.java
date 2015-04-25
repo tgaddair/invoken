@@ -253,6 +253,14 @@ public class Location {
     public long getSeed() {
         return seed;
     }
+    
+    public boolean hasMusic() {
+        return data.hasMusic();
+    }
+    
+    public String getMusicId() {
+        return data.getMusic();
+    }
 
     public String getId() {
         return data.getId();
