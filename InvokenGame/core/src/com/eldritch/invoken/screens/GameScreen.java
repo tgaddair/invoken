@@ -49,6 +49,7 @@ import com.eldritch.invoken.ui.StatusBar.HealthCalculator;
 import com.eldritch.invoken.ui.Toaster;
 import com.eldritch.invoken.ui.Toaster.Message;
 import com.eldritch.invoken.util.Settings;
+import com.eldritch.invoken.util.SoundManager.SoundEffect;
 import com.google.common.base.Optional;
 
 public class GameScreen extends AbstractScreen implements InputProcessor {
@@ -671,6 +672,10 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         zoom = Math.min(Math.max(zoom, Settings.MIN_ZOOM), Settings.MAX_ZOOM);
         camera.zoom = zoom;
         return true;
+    }
+    
+    public static void play(SoundEffect sf) {
+        InvokenGame.SOUND_MANAGER.play(sf);
     }
 
     public static void toast(String text) {

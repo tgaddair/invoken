@@ -53,6 +53,7 @@ import com.eldritch.invoken.actor.util.Announcement.ResponseAnnouncement;
 import com.eldritch.invoken.actor.util.Interactable;
 import com.eldritch.invoken.actor.util.Locatable;
 import com.eldritch.invoken.actor.util.Lootable;
+import com.eldritch.invoken.actor.util.MotionTracker;
 import com.eldritch.invoken.actor.util.ThreatMonitor;
 import com.eldritch.invoken.effects.Effect;
 import com.eldritch.invoken.effects.HoldingWeapon;
@@ -101,21 +102,17 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         Up, Left, Down, Right
     }
 
-    enum MotionState {
-        Standing, Moving
-    }
-
     public enum Activity {
         Explore, Combat, Cast, Thrust, Swipe, Death
     }
 
     AgentInfo info;
-    MotionState motionState = MotionState.Moving;
     Activity activity = Activity.Explore;
     Direction direction = Direction.Down;
     private final Map<Activity, Map<Direction, Animation>> animations;
     float stateTime = 0;
 
+    private final MotionTracker motionTracker = new MotionTracker(this);
     private final List<Agent> neighbors = new ArrayList<>();
     private final Set<Agent> visibleNeighbors = new HashSet<>();
     private final Map<Agent, Boolean> lineOfSightCache = new HashMap<>();
@@ -1352,22 +1349,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
             stateTime = 0;
         }
 
-        // clamp the velocity to 0 if it's < 1, and set the state to
-        // standing
-        if ((Math.abs(velocity.x) < .01 && Math.abs(velocity.y) < .01) || isParalyzed()) {
-            motionState = MotionState.Standing;
-        } else if (Math.abs(velocity.x) > .1 || Math.abs(velocity.y) > .1) {
-            // only update direction if we are going pretty fast
-            if (target == null || target == this) {
-                // update the current animation based on the maximal velocity
-                // component
-                if (!actionInProgress()) {
-                    // don't update the direction if we're currently performing an action
-                    direction = getDominantDirection(velocity.x, velocity.y);
-                }
-            }
-            motionState = MotionState.Moving;
-        }
+        motionTracker.update(delta);
 
         // do this separately so we can still get the standing state
         Locatable observed = null;
@@ -1461,7 +1443,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         return getForwardVector().scl(-1);
     }
 
-    private Direction getDominantDirection(float x, float y) {
+    public Direction getDominantDirection(float x, float y) {
         if (Math.abs(x) > Math.abs(y)) {
             if (x < 0) {
                 // left
@@ -1499,7 +1481,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         if (isAlive() && actionInProgress()) {
             stateTime = action.getStateTime();
             activity = action.getActivity();
-        } else if (motionState == MotionState.Standing && activity == Activity.Explore) {
+        } else if (motionTracker.isStanding() && activity == Activity.Explore) {
             stateTime = 0;
         }
 
@@ -1571,10 +1553,6 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     public boolean contains(float x, float y) {
         return x >= position.x - getWidth() / 2 && x <= position.x + getWidth() / 2
                 && y >= position.y - getHeight() / 2 && y <= position.y + getHeight() / 2;
-    }
-
-    protected void setState(MotionState motionState) {
-        this.motionState = motionState;
     }
 
     public float getWeaponAccuracy() {

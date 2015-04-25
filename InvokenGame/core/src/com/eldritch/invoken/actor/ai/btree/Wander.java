@@ -8,6 +8,7 @@ import com.eldritch.invoken.actor.type.Npc.SteeringMode;
 public class Wander extends LeafTask<Npc> {
     @Override
     public void run(Npc entity) {
+        entity.setTarget(null);
         entity.setBehavior(SteeringMode.Wander);
         entity.getFatigue().use(Npc.STEP);
         entity.setTask(getClass().getSimpleName());
