@@ -129,8 +129,7 @@ public class FireWeapon extends ProjectileAugmentation {
             }
 
             // play sound effect
-            InvokenGame.SOUND_MANAGER.playAtPoint(SoundEffect.RANGED_WEAPON_SMALL,
-                    owner.getPosition());
+            InvokenGame.SOUND_MANAGER.playAtPoint(weapon.getSoundEffect(), owner.getPosition());
         }
 
         @Override

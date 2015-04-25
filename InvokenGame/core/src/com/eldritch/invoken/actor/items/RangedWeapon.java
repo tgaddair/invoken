@@ -22,33 +22,35 @@ import com.eldritch.invoken.location.Location;
 import com.eldritch.invoken.proto.Effects.DamageType;
 import com.eldritch.invoken.proto.Items;
 import com.eldritch.invoken.proto.Items.Item.DamageMod;
+import com.eldritch.invoken.proto.Items.Item.RangedWeaponType;
 import com.eldritch.invoken.screens.GameScreen;
 import com.eldritch.invoken.util.Damage;
 import com.eldritch.invoken.util.Settings;
+import com.eldritch.invoken.util.SoundManager.SoundEffect;
 import com.google.common.base.Strings;
 
-public class RangedWeapon extends Item {
+public abstract class RangedWeapon extends Item {
     private static final float BASE_COST = 5f;
     private static final float BULLET_VELOCITY = 25;
-    
+
     private static final TextureRegion BULLET_TEXTURE = new TextureRegion(
             GameScreen.getTexture("sprite/effects/bullet1.png"));
     private static final TextureRegion RAY_TEXTURE = new TextureRegion(
             GameScreen.getTexture("sprite/effects/bullet2.png"));
-    
-	private final Map<Direction, Animation> animations = new HashMap<Direction, Animation>();
-	private final TextureRegion texture;
-	private final DamageType primary;
-	private final int baseCost;
-	
-	public RangedWeapon(Items.Item item) {
-		this(item, getRegion(item.getAsset()));
-	}
-	
-	public RangedWeapon(Items.Item item, TextureRegion texture) {
+
+    private final Map<Direction, Animation> animations = new HashMap<Direction, Animation>();
+    private final TextureRegion texture;
+    private final DamageType primary;
+    private final int baseCost;
+
+    public RangedWeapon(Items.Item item) {
+        this(item, getRegion(item.getAsset()));
+    }
+
+    public RangedWeapon(Items.Item item, TextureRegion texture) {
         super(item, texture);
         this.texture = texture;
-        
+
         // get primary damage type
         float damageSum = 0;
         DamageMod greatest = null;
@@ -61,91 +63,93 @@ public class RangedWeapon extends Item {
         primary = greatest != null ? greatest.getDamage() : DamageType.PHYSICAL;
         baseCost = (int) (BASE_COST + damageSum / 5);
     }
-	
-	public void render(Vector2 position, Vector2 direction, OrthogonalTiledMapRenderer renderer) {
-	    if (texture == null) {
-	        return;
-	    }
-	    
+
+    public void render(Vector2 position, Vector2 direction, OrthogonalTiledMapRenderer renderer) {
+        if (texture == null) {
+            return;
+        }
+
         float width = getWidth();
         float height = getHeight();
-        
+
         // offset along the x-axis; we use this because longer guns require more support to hold
         // properly
         float dx = width / 4;
-        
+
         float theta = direction.angle();
         boolean flipY = theta > 90 && theta < 270;
-        
+
         Batch batch = renderer.getBatch();
         batch.begin();
-        batch.draw(texture.getTexture(),
-                position.x - width / 2 - dx, position.y - height / 2,  // position
-                width / 2 + dx, height / 2,  // origin
-                width, height,  // size
-                1f, 1f,  // scale
-                theta,  // rotation
-                0, 0,  // srcX, srcY
-                texture.getRegionWidth(), texture.getRegionHeight(),  // srcWidth, srcHeight
-                false, flipY);  // flipX, flipY
+        batch.draw(texture.getTexture(), position.x - width / 2 - dx, position.y - height / 2, // position
+                width / 2 + dx, height / 2, // origin
+                width, height, // size
+                1f, 1f, // scale
+                theta, // rotation
+                0, 0, // srcX, srcY
+                texture.getRegionWidth(), texture.getRegionHeight(), // srcWidth, srcHeight
+                false, flipY); // flipX, flipY
         batch.end();
-	}
-	
-	public HandledProjectile getProjectile(Agent owner) {
-	    switch (primary) {
-	        case THERMAL:
+    }
+
+    public HandledProjectile getProjectile(Agent owner) {
+        switch (primary) {
+            case THERMAL:
                 return new RangedWeaponBullet(owner);
             default:
                 return new RangedWeaponRay(owner);
-	    }
-	}
-	
-	public List<DamageMod> getDamageList() {
-	    return getData().getDamageModifierList();
-	}
-	
-	public float getDamage() {
-	    float damage = 0;
-	    for (DamageMod mod : getData().getDamageModifierList()) {
-	        damage += mod.getMagnitude();
-	    }
-	    return damage;
-	}
-	
-	public int getBaseCost() {
-	    return baseCost;
-	}
-	
-	public float getCooldown() {
-	    return (float) getData().getCooldown();
-	}
-	
-	@Override
+        }
+    }
+
+    public List<DamageMod> getDamageList() {
+        return getData().getDamageModifierList();
+    }
+
+    public RangedWeaponType getType() {
+        return data.getRangedType();
+    }
+
+    public float getDamage() {
+        float damage = 0;
+        for (DamageMod mod : getData().getDamageModifierList()) {
+            damage += mod.getMagnitude();
+        }
+        return damage;
+    }
+
+    public int getBaseCost() {
+        return baseCost;
+    }
+
+    public float getCooldown() {
+        return (float) getData().getCooldown();
+    }
+
+    @Override
     public boolean isEquipped(AgentInventory inventory) {
         return inventory.getRangedWeapon() == this;
     }
-	
-	@Override
-	public void equipFrom(AgentInventory inventory) {
-		inventory.setRangedWeapon(this);
-	}
-	
-	@Override
-	public void unequipFrom(AgentInventory inventory) {
-		if (inventory.getRangedWeapon() == this) {
-			inventory.setRangedWeapon(null);
-		}
-	}
-	
-	@Override
-	protected Animation getAnimation(Activity activity, Direction direction) {
-		return animations.get(direction);
-	}
-	
-	@Override
+
+    @Override
+    public void equipFrom(AgentInventory inventory) {
+        inventory.setRangedWeapon(this);
+    }
+
+    @Override
+    public void unequipFrom(AgentInventory inventory) {
+        if (inventory.getRangedWeapon() == this) {
+            inventory.setRangedWeapon(null);
+        }
+    }
+
+    @Override
+    protected Animation getAnimation(Activity activity, Direction direction) {
+        return animations.get(direction);
+    }
+
+    @Override
     public String toString() {
-        StringBuilder result = new StringBuilder(String.format("%s\n"
-                + "Range: %.2f\n",
+        StringBuilder result = new StringBuilder(String.format("%s\n" + "Range: %.2f\n",
                 super.toString(), data.getRange()));
         result.append("Damage:");
         for (DamageMod mod : data.getDamageModifierList()) {
@@ -153,7 +157,7 @@ public class RangedWeapon extends Item {
         }
         return result.toString();
     }
-	   
+
     private static TextureRegion getRegion(String asset) {
         if (!Strings.isNullOrEmpty(asset)) {
             return new TextureRegion(GameScreen.getTexture(getAssetPath(asset)));
@@ -161,11 +165,11 @@ public class RangedWeapon extends Item {
             return null;
         }
     }
-    
+
     private static String getAssetPath(String asset) {
         return String.format("sprite/items/weapons/%s.png", asset);
     }
-    
+
     public class RangedWeaponBullet extends HandledBullet {
         public RangedWeaponBullet(Agent owner) {
             super(owner, texture, BULLET_VELOCITY, Damage.from(owner, RangedWeapon.this));
@@ -193,13 +197,13 @@ public class RangedWeapon extends Item {
         private final Agent owner;
         private final boolean reflected;
         private final Damage damage;
-        
+
         private RayTarget target = null;
         private float elapsed = 0;
 
         private final float height = 0.1f;
         private float width = 0;
-        
+
         private RangedWeaponRay successor = null;
 
         public RangedWeaponRay(Agent owner) {
@@ -224,7 +228,7 @@ public class RangedWeapon extends Item {
             } else {
                 elapsed += delta;
             }
-            
+
             if (successor != null) {
                 successor.update(delta, location);
             }
@@ -238,7 +242,7 @@ public class RangedWeapon extends Item {
             // that lacks the right category bits to register a collision itself
             // notice that the targeting reticle will not pass
             // through it, even though it is marked as a low obstacle
-            float range = owner.getWeaponSentry().getRange(); 
+            float range = owner.getWeaponSentry().getRange();
             target = owner.getTargeting(position, direction.cpy().scl(range).add(position));
             width = range * target.getFraction();
 
@@ -247,7 +251,7 @@ public class RangedWeapon extends Item {
                 target.getTarget().handleProjectile(this);
             }
         }
-        
+
         @Override
         public void apply(Agent target) {
             target.addEffect(new Stunned(owner, target, 0.2f));
@@ -266,7 +270,7 @@ public class RangedWeapon extends Item {
                         direction.angle()); // rotation
                 batch.end();
             }
-            
+
             if (successor != null) {
                 successor.render(delta, renderer);
             }
@@ -303,19 +307,19 @@ public class RangedWeapon extends Item {
                 // cannot reflect again, to avoid an infinite loop
                 return;
             }
-            
+
             // we need to reflect the ray from the point of contact
             Vector2 contact = direction.cpy().scl(width).add(position);
-            
+
             // perturb the bullet by a random amount
             float range = 30f;
             float rotation = (float) (Math.random() * range) - range / 2;
             Vector2 reflection = new Vector2(-direction.x, -direction.y).rotate(rotation);
-            
+
             RangedWeaponRay ray = new RangedWeaponRay(owner, contact, reflection, true);
             successor = ray;
         }
-        
+
         @Override
         public Damage getDamage() {
             return damage;
@@ -324,6 +328,42 @@ public class RangedWeapon extends Item {
         @Override
         public void cancel() {
             // does nothing
+        }
+    }
+    
+    public abstract SoundEffect getSoundEffect();
+    
+    public static class Pistol extends RangedWeapon {
+        public Pistol(Items.Item item) {
+            super(item);
+        }
+        
+        @Override
+        public SoundEffect getSoundEffect() {
+            return SoundEffect.RANGED_WEAPON_SMALL;
+        }
+    }
+    
+    public static class Rifle extends RangedWeapon {
+        public Rifle(Items.Item item) {
+            super(item);
+        }
+        
+        @Override
+        public SoundEffect getSoundEffect() {
+            return SoundEffect.RANGED_WEAPON_RIFLE;
+        }
+    }
+
+    public static RangedWeapon from(Items.Item item) {
+        switch (item.getRangedType()) {
+            case PISTOL:
+                return new Pistol(item);
+            case RIFLE:
+                return new Rifle(item);
+            default:
+                throw new IllegalArgumentException("Unrecognized ranged weapon type: "
+                        + item.getRangedType());
         }
     }
 }

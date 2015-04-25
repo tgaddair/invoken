@@ -36,7 +36,10 @@ public class SoundManager implements Disposable {
         CLICK(WAV, "click"),
         FOOTSTEP(OGG, "footstep00", "footstep01"),
         DOOR_OPEN(WAV, "door-open"),
-        RANGED_WEAPON_SMALL(WAV, "ranged-weapon-small");
+        RANGED_WEAPON_SMALL(WAV, "ranged-weapon-small"),
+        RANGED_WEAPON_LARGE(WAV, "ranged-weapon-large"),
+        RANGED_WEAPON_SHOTGUN(WAV, "ranged-weapon-shotgun"),
+        RANGED_WEAPON_RIFLE(WAV, "ranged-weapon-rifle");
 
         private final ImmutableList<String> filenames;
 

@@ -91,7 +91,7 @@ public abstract class Item {
             case MELEE_WEAPON:
                 return new MeleeWeapon(item);
             case RANGED_WEAPON:
-                return new RangedWeapon(item);
+                return RangedWeapon.from(item);
             case HEAVY_WEAPON:
             case OUTFIT:
                 return new Outfit(item);
