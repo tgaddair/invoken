@@ -1,11 +1,13 @@
 package com.eldritch.invoken.actor.aug;
 
 import com.badlogic.gdx.math.Vector2;
+import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.effects.BasicEffect;
 import com.eldritch.invoken.location.Location;
 import com.eldritch.invoken.util.GenericDialogue;
+import com.eldritch.invoken.util.SoundManager.SoundEffect;
 
 public class Charge extends Augmentation {
     private static final float CHARGE_RANGE = 5;
@@ -78,6 +80,7 @@ public class Charge extends Augmentation {
         public void apply(Location location) {
             owner.addEffect(new ChargeEffect(owner));
             owner.announce(GenericDialogue.onCharge(owner, owner.getTarget()));
+            InvokenGame.SOUND_MANAGER.playAtPoint(SoundEffect.BUFF, owner.getPosition());
         }
 
         @Override

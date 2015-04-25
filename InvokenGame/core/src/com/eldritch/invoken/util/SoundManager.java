@@ -40,7 +40,8 @@ public class SoundManager implements Disposable {
         RANGED_WEAPON_LARGE(WAV, "ranged-weapon-large"),
         RANGED_WEAPON_SHOTGUN(WAV, "ranged-weapon-shotgun"),
         RANGED_WEAPON_RIFLE(WAV, "ranged-weapon-rifle"),
-        SWISH(OGG, "swish");
+        SWISH(OGG, "swish"),
+        BUFF(WAV, "buff");
 
         private final ImmutableList<String> filenames;
 
