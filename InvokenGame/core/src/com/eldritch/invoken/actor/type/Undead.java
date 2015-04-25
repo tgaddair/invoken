@@ -2,6 +2,7 @@ package com.eldritch.invoken.actor.type;
 
 import com.eldritch.invoken.location.Location;
 import com.eldritch.invoken.proto.Actors.NonPlayerActor;
+import com.eldritch.invoken.util.SoundManager.SoundEffect;
 
 public class Undead extends HumanNpc {
     public static float MAX_VELOCITY = 15f;
@@ -11,4 +12,10 @@ public class Undead extends HumanNpc {
         super(data, x, y, MAX_VELOCITY, asset, location);
         setMaxLinearAcceleration(MAX_ACCELERATION);
     }
+    
+    @Override
+    protected SoundEffect getDeathSound() {
+        return SoundEffect.GHOST_DEATH;
+    }
+
 }

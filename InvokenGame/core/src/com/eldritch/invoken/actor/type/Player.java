@@ -16,6 +16,7 @@ import com.eldritch.invoken.location.Location;
 import com.eldritch.invoken.proto.Actors.PlayerActor;
 import com.eldritch.invoken.state.Inventory.ItemState;
 import com.eldritch.invoken.util.Settings;
+import com.eldritch.invoken.util.SoundManager.SoundEffect;
 
 /** The player character, has state and state time, */
 public class Player extends SteeringAgent {
@@ -58,6 +59,11 @@ public class Player extends SteeringAgent {
         } else if (lastAug != null) {
             prepared.toggleActiveAugmentation(lastAug, 0);
         }
+    }
+    
+    @Override
+    protected SoundEffect getDeathSound() {
+        return SoundEffect.HUMAN_DEATH;
     }
 
     @Override

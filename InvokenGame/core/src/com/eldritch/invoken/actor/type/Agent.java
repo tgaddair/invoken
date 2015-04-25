@@ -1081,6 +1081,8 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     public boolean hasPendingAction() {
         return !actions.isEmpty();
     }
+    
+    protected abstract SoundEffect getDeathSound();
 
     protected void onDeath() {
         actions.clear();
@@ -1090,6 +1092,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         setRgb(1, 1, 1);
         setCollisionMask(Settings.BIT_SHORT_OBSTACLE);
         releaseFragments();
+        InvokenGame.SOUND_MANAGER.playAtPoint(getDeathSound(), getPosition(), 3f);
     }
 
     // add fragment temporary entities to the world in a radial pattern around the agent

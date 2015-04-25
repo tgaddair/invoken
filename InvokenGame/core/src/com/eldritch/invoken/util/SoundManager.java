@@ -41,7 +41,9 @@ public class SoundManager implements Disposable {
         RANGED_WEAPON_SHOTGUN(WAV, "ranged-weapon-shotgun"),
         RANGED_WEAPON_RIFLE(WAV, "ranged-weapon-rifle"),
         SWISH(OGG, "swish"),
-        BUFF(WAV, "buff");
+        BUFF(WAV, "buff"),
+        GHOST_DEATH(OGG, "ghost-death"),
+        HUMAN_DEATH(WAV, "human-death-00", "human-death-01", "human-death-02");
 
         private final ImmutableList<String> filenames;
 
@@ -62,6 +64,10 @@ public class SoundManager implements Disposable {
         public String getFilename(int index) {
             return filenames.get(index);
         }
+        
+        public int randomIndex() {
+            return (int) (Math.random() * filenames.size());
+        }
 
         public String getFilename() {
             // the null result can never happen, by virtue of our constructor that ensures at least
@@ -69,7 +75,7 @@ public class SoundManager implements Disposable {
             if (filenames.size() == 1) {
                 return filenames.get(0);
             } else {
-                return filenames.get((int) (Math.random() * filenames.size()));
+                return filenames.get(randomIndex());
             }
         }
 
@@ -130,6 +136,10 @@ public class SoundManager implements Disposable {
     
     public void playAtPoint(SoundEffect sound, Vector2 point) {
         playAtPoint(sound, 0, point);
+    }
+    
+    public int playAtPoint(SoundEffect sound, Vector2 point, float s) {
+        return playAtPoint(sound, sound.randomIndex(), point, s);
     }
     
     public int playAtPoint(SoundEffect sound, int index, Vector2 point) {

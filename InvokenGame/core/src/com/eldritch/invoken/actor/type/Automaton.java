@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.eldritch.invoken.location.Location;
 import com.eldritch.invoken.proto.Actors.NonPlayerActor;
 import com.eldritch.invoken.screens.GameScreen;
+import com.eldritch.invoken.util.SoundManager.SoundEffect;
 import com.google.common.base.Strings;
 
 public class Automaton extends Npc {
@@ -21,6 +22,11 @@ public class Automaton extends Npc {
     public Automaton(NonPlayerActor data, float x, float y, String asset, Location location) {
         super(data, x, y, 1 / 32f * PX, 1 / 32f * PX, MAX_VELOCITY, getAllAnimations(asset),
                 location);
+    }
+    
+    @Override
+    protected SoundEffect getDeathSound() {
+        return SoundEffect.GHOST_DEATH;
     }
 
     @Override

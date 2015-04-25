@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.eldritch.invoken.location.Location;
 import com.eldritch.invoken.proto.Actors.NonPlayerActor;
 import com.eldritch.invoken.screens.GameScreen;
+import com.eldritch.invoken.util.SoundManager.SoundEffect;
 
 public class Hollow extends Npc {
     public static float MAX_VELOCITY = 3f;
@@ -15,6 +16,11 @@ public class Hollow extends Npc {
 
     public Hollow(NonPlayerActor data, float x, float y, String asset, Location location) {
         super(data, x, y, 1 / 32f * PX, 1 / 32f * PX, MAX_VELOCITY, getAllAnimations(asset), location);
+    }
+    
+    @Override
+    protected SoundEffect getDeathSound() {
+        return SoundEffect.GHOST_DEATH;
     }
 
     public static Map<Activity, Map<Direction, Animation>> getAllAnimations(String assetName) {
