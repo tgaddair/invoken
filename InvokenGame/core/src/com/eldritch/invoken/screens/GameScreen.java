@@ -49,6 +49,7 @@ import com.eldritch.invoken.ui.StatusBar.HealthCalculator;
 import com.eldritch.invoken.ui.Toaster;
 import com.eldritch.invoken.ui.Toaster.Message;
 import com.eldritch.invoken.util.Settings;
+import com.eldritch.invoken.util.SoundManager;
 import com.eldritch.invoken.util.SoundManager.SoundEffect;
 import com.google.common.base.Optional;
 
@@ -213,13 +214,17 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         stage.addActor(toaster.getContainer());
         toast(location.getName());
         
-        // handle settings
+        // music settings
         InvokenGame.MUSIC_MANAGER.setEnabled(!Settings.MUTE);
         InvokenGame.MUSIC_MANAGER.setVolume(Settings.MUSIC_VOLUME);
         
-        InvokenGame.SOUND_MANAGER.setEnabled(!Settings.MUTE);
-        InvokenGame.SOUND_MANAGER.setVolume(Settings.SFX_VOLUME);
+        // sound effect settings
+        SoundManager sounds = InvokenGame.SOUND_MANAGER;
+        sounds.setCamera(camera);
+        sounds.setEnabled(!Settings.MUTE);
+        sounds.setVolume(Settings.SFX_VOLUME);
 
+        // start
         Gdx.input.setInputProcessor(this);
         Gdx.app.log(InvokenGame.LOG, "start");
     }

@@ -19,6 +19,7 @@ import com.eldritch.invoken.proto.Locations.ControlPoint;
 import com.eldritch.invoken.screens.GameScreen;
 import com.eldritch.invoken.state.Inventory;
 import com.eldritch.invoken.util.Settings;
+import com.eldritch.invoken.util.SoundManager.SoundEffect;
 import com.google.common.base.Strings;
 
 public class DoorActivator extends ClickActivator implements ProximityActivator, Crackable {
@@ -125,6 +126,7 @@ public class DoorActivator extends ClickActivator implements ProximityActivator,
             body.setActive(!opened);
         }
         setLightWalls(location, !opened);
+        InvokenGame.SOUND_MANAGER.playAtPoint(SoundEffect.DOOR_OPEN, getPosition());
     }
 
     private void setLightWalls(Location location, boolean value) {

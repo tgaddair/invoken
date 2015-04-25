@@ -438,7 +438,7 @@ public class Location {
     public void setCamera(OrthographicCamera camera) {
         this.camera = camera;
     }
-
+    
     public void shiftView(Vector2 offset) {
         cameraV.x += offset.x;
         cameraV.y += offset.y;

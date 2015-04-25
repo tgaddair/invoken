@@ -9,7 +9,7 @@ import com.eldritch.invoken.util.SoundManager.SoundEffect;
 
 public class MotionTracker {
     private static final float FOOTSTEP_DELAY_SECS = Settings.FRAME_DURATION * 4;
-    
+
     private final SoundManager soundManager = InvokenGame.SOUND_MANAGER;
     private final Agent agent;
 
@@ -40,7 +40,7 @@ public class MotionTracker {
             }
             state = MotionState.Moving;
         }
-        
+
         // react to state
         if (isStanding()) {
             nextFootstep = 0;
@@ -48,11 +48,12 @@ public class MotionTracker {
             nextFootstep -= delta;
             if (nextFootstep < 0) {
                 nextFootstep = FOOTSTEP_DELAY_SECS;
-                stepSequence = soundManager.playInSequence(SoundEffect.FOOTSTEP, stepSequence);
+                stepSequence = soundManager.playAtPoint(SoundEffect.FOOTSTEP, stepSequence,
+                        agent.getPosition(), 0.25f);
             }
         }
     }
-    
+
     public boolean isStanding() {
         return state == MotionState.Standing;
     }

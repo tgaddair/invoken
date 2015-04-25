@@ -8,6 +8,8 @@ import java.util.concurrent.ExecutionException;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Disposable;
 import com.eldritch.invoken.InvokenGame;
 import com.google.common.base.Function;
@@ -25,12 +27,15 @@ import com.google.common.collect.Lists;
  */
 public class SoundManager implements Disposable {
     private static final String BASE_PATH = "sound";
+    private static final float MAX_DST2 = 100f;
 
     /**
      * The available sound files.
      */
     public enum SoundEffect {
-        CLICK(WAV, "click"), FOOTSTEP(OGG, "footstep00", "footstep01");
+        CLICK(WAV, "click"),
+        FOOTSTEP(OGG, "footstep00", "footstep01"),
+        DOOR_OPEN(WAV, "door-open");
 
         private final ImmutableList<String> filenames;
 
@@ -70,6 +75,8 @@ public class SoundManager implements Disposable {
             return name().toLowerCase();
         }
     }
+    
+    private OrthographicCamera camera;
 
     /**
      * The volume to be set on the sound.
@@ -111,7 +118,33 @@ public class SoundManager implements Disposable {
         return sound.nextInSequence(index);
     }
     
+    public void playAtPoint(SoundEffect sound, Vector2 point) {
+        playAtPoint(sound, 0, point);
+    }
+    
+    public int playAtPoint(SoundEffect sound, int index, Vector2 point) {
+        return playAtPoint(sound, index, point, 1);
+    }
+    
+    public int playAtPoint(SoundEffect sound, int index, Vector2 point, float s) {
+        float dst2 = point.dst2(camera.position.x, camera.position.y);
+        if (dst2 > MAX_DST2) {
+            // inaudible
+            return index;
+        }
+        
+        String filename = sound.getFilename(index);
+        float dv = s * (MAX_DST2 - dst2) / MAX_DST2;
+        InvokenGame.logfmt("play at point: %.2f", dv);
+        play(filename, dv);
+        return sound.nextInSequence(index);
+    }
+    
     private void play(String filename) {
+        play(filename, 1);
+    }
+    
+    private void play(String filename, float dv) {
         // check if sound is enabled
         if (!enabled) {
             return;
@@ -119,7 +152,7 @@ public class SoundManager implements Disposable {
 
         try {
             Sound soundToPlay = sounds.get(filename);
-            soundToPlay.play(volume);
+            soundToPlay.play(volume * dv);
         } catch (ExecutionException e) {
             InvokenGame.error("Failed to load sound: " + filename, e);
         }
@@ -143,6 +176,10 @@ public class SoundManager implements Disposable {
      */
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
+    }
+    
+    public void setCamera(OrthographicCamera camera) {
+        this.camera = camera;
     }
 
     /**
