@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.utils.async.AsyncExecutor;
@@ -47,7 +48,7 @@ public class MenuScreen extends AbstractScreen {
 
         // retrieve the default table actor
         Table table = super.getTable();
-        table.add("Welcome to Invoken for Android!").spaceBottom(50);
+        table.add(new Image(GameScreen.getTexture("sprite/logo.png"))).spaceBottom(150);
         table.row();
 
         // register the button "start game"
@@ -73,7 +74,7 @@ public class MenuScreen extends AbstractScreen {
                 // game.setScreen(new OptionsScreen(game));
             }
         });
-        table.add(optionsButton).uniform().fill().spaceBottom(10);
+        table.add(optionsButton).size(300, 60).uniform().spaceBottom(10);
         table.row();
 
         // register the button "high scores"
@@ -86,7 +87,7 @@ public class MenuScreen extends AbstractScreen {
                 // game.setScreen(new HighScoresScreen(game));
             }
         });
-        table.add(highScoresButton).uniform().fill();
+        table.add(highScoresButton).size(300, 60).uniform();
 
         // setup background world
         // location = null;
