@@ -172,6 +172,28 @@ encounter {
   control_point_id: "GenericHall"
   faction_id: ""
 }
+encounter {
+  id: "Slime"
+  title: "Slime"
+  type: ACTOR
+  weight: 1.0
+  unique: false
+  actor_params {
+    description: ""
+    actor_scenario {
+      actor_id: "Slime"
+      essential: false
+      blocking: false
+      min: 3
+      max: 7
+      alive: true
+    }
+    no_detect: false
+    no_flee: false
+  }
+  control_point_id: "GenericHall"
+  faction_id: ""
+}
 light {
   r: 179
   g: 179

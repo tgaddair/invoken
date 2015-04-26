@@ -1,0 +1,14 @@
+id: "SlimeClaws"
+name: "Slime Claws"
+description: ""
+value: 0
+droppable: false
+hidden: true
+damage_modifier {
+  damage: PHYSICAL
+  magnitude: 10
+}
+type: MELEE_WEAPON
+asset: ""
+covers: false
+range: 1.75

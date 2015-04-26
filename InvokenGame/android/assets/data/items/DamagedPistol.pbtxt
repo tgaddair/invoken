@@ -1,0 +1,19 @@
+id: "DamagedPistol"
+name: "Damaged Pistol"
+description: "Conventional military-grade semi-automatic sidearm.  Includes auto-reload module."
+value: 10
+droppable: true
+requirement {
+  discipline: WARFARE
+  value: 10
+}
+hidden: false
+damage_modifier {
+  damage: PHYSICAL
+  magnitude: 20
+}
+type: RANGED_WEAPON
+asset: "pistol"
+covers: false
+cooldown: 1.0
+ranged_type: PISTOL

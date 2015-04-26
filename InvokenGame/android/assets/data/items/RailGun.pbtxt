@@ -1,0 +1,19 @@
+id: "RailGun"
+name: "Rail Gun"
+description: "Conventional military-grade fully-automatic rifle.  Include auto-reload module."
+value: 100
+droppable: true
+requirement {
+  discipline: WARFARE
+  value: 20
+}
+hidden: false
+damage_modifier {
+  damage: THERMAL
+  magnitude: 30
+}
+type: RANGED_WEAPON
+asset: "rail-gun"
+covers: false
+cooldown: 0.5
+ranged_type: RIFLE

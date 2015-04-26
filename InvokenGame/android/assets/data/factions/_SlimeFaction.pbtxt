@@ -1,0 +1,7 @@
+id: "_SlimeFaction"
+name: "Slime Faction"
+rank {
+  id: 3
+  title: "Slime"
+}
+visible: false

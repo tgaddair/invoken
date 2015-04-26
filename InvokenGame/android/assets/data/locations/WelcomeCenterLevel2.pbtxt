@@ -93,6 +93,28 @@ encounter {
   control_point_id: "LichRoom"
   faction_id: ""
 }
+encounter {
+  id: "Slime"
+  title: "Slime"
+  type: ACTOR
+  weight: 1.0
+  unique: false
+  actor_params {
+    description: ""
+    actor_scenario {
+      actor_id: "Slime"
+      essential: false
+      blocking: false
+      min: 3
+      max: 7
+      alive: true
+    }
+    no_detect: false
+    no_flee: false
+  }
+  control_point_id: "SlimeRoom"
+  faction_id: ""
+}
 light {
   r: 179
   g: 179
@@ -131,8 +153,20 @@ control_point {
   lock_strength: 0
   required_key: ""
   origin: false
-  min: 1
-  max: 1
+  min: 0
+  max: 0
+  value: 0
+  closed: true
+  faction_id: ""
+}
+control_point {
+  id: "SlimeRoom"
+  follows: "Entrance"
+  lock_strength: 0
+  required_key: ""
+  origin: false
+  min: 0
+  max: 0
   value: 0
   closed: true
   faction_id: ""
