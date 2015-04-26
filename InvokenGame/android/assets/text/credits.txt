@@ -1,0 +1,84 @@
+Created By
+Travis Addair
+
+Music
+
+Please, Answer Me My Friend
+Alexandr Zhelanov, https://soundcloud.com/alexandr-zhelanov
+
+Heart of Machine
+Alexandr Zhelanov
+
+Ambient Menu
+Alexandr Zhelanov
+
+Dark Factory
+bart, http://opengameart.org/users/bart
+
+Observing the Star
+yd, http://opengameart.org/users/yd
+
+Sound Effects
+Kenney, http://opengameart.org/users/kenney
+Iwan Gabovich, http://opengameart.org/users/qubodup
+Socapex, http://opengameart.org/users/socapex
+
+Sprites
+
+Liberated Pixel Cup
+http://lpc.opengameart.org
+
+Universal Sprite Sheet
+Luke Mehl
+Johannes Sjölund
+Marcel van de Steeg
+
+Universal Sprite Sheet
+Manuel Riecke
+Thane Brimhall
+Matthew Krohn
+
+Universal Sprite Sheet
+Lori Angela Nagel
+Lanea Zimmerman (AKA Sharm)
+Stephen Challener (AKA Redshrike)
+
+Universal Sprite Sheet
+Daniel Eddeland
+Shaun Williams
+Joe White
+
+Universal Sprite Sheet
+Mark Weyer
+Barbara Rivera
+JRConway3
+
+Universal Sprite Sheet
+JaidynReiman
+Nila122
+Guarav0, http://gaurav.munjal.us
+
+User Interface
+Kenney, http://opengameart.org/users/kenney
+
+Tiles
+Celina, http://www.rpgmakerweb.com/a/resources/futuristic-tiles
+Skorpio, http://opengameart.org/users/skorpio
+
+Weapons
+Drakojan14
+Kuroi Tsuki
+
+Particles and Effects
+Ram Zorkot, http://opengameart.org/users/tatermand
+pasmateRs, http://opengameart.org/users/para
+
+Tools
+
+LibGDX
+Badlogic Games, http://libgdx.badlogicgames.com
+
+Tiled
+Thorbjørn Lindeijerh, http://www.mapeditor.org
+
+Thanks for Playing!

@@ -13,6 +13,7 @@ import com.eldritch.invoken.InvokenGame;
  */
 public class MusicManager implements Disposable {
     public static final String MAIN = "main.ogg";
+    public static final String CREDITS = "credits.ogg";
     
     /**
      * The available music files.

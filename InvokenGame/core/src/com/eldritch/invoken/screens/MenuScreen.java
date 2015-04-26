@@ -79,13 +79,13 @@ public class MenuScreen extends AbstractScreen {
         table.row();
 
         // register the button "options"
-        TextButton optionsButton = new TextButton("Options", getSkin());
+        TextButton optionsButton = new TextButton("Credits", getSkin());
         optionsButton.addListener(new DefaultInputListener() {
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 super.touchUp(event, x, y, pointer, button);
                 // game.getSoundManager().play(TyrianSound.CLICK);
-                // game.setScreen(new OptionsScreen(game));
+                game.setScreen(new CreditsScreen(game));
             }
         });
         table.add(optionsButton).size(300, 60).uniform().spaceBottom(10);

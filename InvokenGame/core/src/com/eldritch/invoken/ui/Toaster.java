@@ -20,6 +20,7 @@ public class Toaster {
     private final Skin skin;
     private final Table container;
     private boolean active = false;
+    private float displayTime = 1.75f;
     
     public Toaster(Skin skin) {
         this.skin = skin;
@@ -48,6 +49,10 @@ public class Toaster {
         }
     }
     
+    public void setDisplayTime(float time) {
+        displayTime = time;
+    }
+    
     private void showNext() {
         Message message = messages.peek();
         LabelStyle labelStyle = skin.get("toast", LabelStyle.class);
@@ -61,7 +66,7 @@ public class Toaster {
 
         // configure the fade-in/out effect on the splash image
         active = true;
-        label.addAction(sequence(fadeIn(0.75f), delay(1.75f),
+        label.addAction(sequence(fadeIn(0.75f), delay(displayTime),
                 fadeOut(0.75f), new Action() {
                     @Override
                     public boolean act(float delta) {
