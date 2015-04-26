@@ -20,7 +20,9 @@ enum AugmentationProto {
 	Resurrect = 14;
 	Scramble = 15;
 	ThrowGrenade = 16;
+	Blast = 19;
 
 	// NPC only
 	Charge = 17;
+	Mitosis = 18;
 }

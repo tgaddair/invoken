@@ -1,3 +1,31 @@
+uiskin_rpg_translucent.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+default-button-up
+  rotate: false
+  xy: 293, 294
+  size: 45, 49
+  split: 10, 10, 10, 10
+  orig: 45, 49
+  offset: 0, 0
+  index: -1
+default-button-down
+  rotate: false
+  xy: 290, 94
+  size: 45, 45
+  split: 10, 10, 10, 10
+  orig: 45, 45
+  offset: 0, 0
+  index: -1
+textfield
+  rotate: false
+  xy: 15, 17
+  size: 14, 14
+  split: 3, 3, 3, 3
+  orig: 14, 14
+  offset: 0, 0
+  index: -1
 
 uiskin_rpg.png
 format: RGBA8888
@@ -55,14 +83,6 @@ check-off
   rotate: false
   xy: 15, 17
   size: 14, 14
-  orig: 14, 14
-  offset: 0, 0
-  index: -1
-textfield
-  rotate: false
-  xy: 15, 17
-  size: 14, 14
-  split: 3, 3, 3, 3
   orig: 14, 14
   offset: 0, 0
   index: -1
@@ -142,22 +162,6 @@ selection
   xy: 30, 62
   size: 1, 1
   orig: 1, 1
-  offset: 0, 0
-  index: -1
-default-button-up
-  rotate: false
-  xy: 293, 294
-  size: 45, 49
-  split: 10, 10, 10, 10
-  orig: 45, 49
-  offset: 0, 0
-  index: -1
-default-button-down
-  rotate: false
-  xy: 290, 94
-  size: 45, 45
-  split: 10, 10, 10, 10
-  orig: 45, 45
   offset: 0, 0
   index: -1
 default-rect

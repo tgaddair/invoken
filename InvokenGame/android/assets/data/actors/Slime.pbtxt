@@ -29,6 +29,7 @@ params {
     drop_chance: 1.0
   }
   known_aug_id: RendWeapon
+  known_aug_id: Mitosis
   body_type: "slime"
 }
 unique: false

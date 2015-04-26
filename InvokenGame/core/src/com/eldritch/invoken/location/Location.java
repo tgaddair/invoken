@@ -134,6 +134,7 @@ public class Location {
 
     private final World world;
     // private final RayHandler rayHandler;
+    private boolean forceRefresh = false;
 
     private final Vector2 offset = new Vector2();
     private final Vector2 losFocus = new Vector2();
@@ -480,7 +481,7 @@ public class Location {
         // update)
         NaturalVector2 origin = NaturalVector2.of((int) position.x, (int) position.y);
         if (origin != currentCell || camera.zoom != currentZoom || activeTiles.isEmpty()
-                || changedViewBounds(renderer.getViewBounds())) {
+                || changedViewBounds(renderer.getViewBounds()) || forceRefresh) {
             currentCell = origin;
             currentZoom = camera.zoom;
             viewBounds.set(renderer.getViewBounds());
@@ -491,6 +492,7 @@ public class Location {
 
             // reset lights
             normalMapShader.setLightGeometry(lightManager.getLights(), getWorldBounds());
+            forceRefresh = false;
         }
 
         // updates
@@ -985,6 +987,13 @@ public class Location {
             }
         }
         return Vector2.Zero;
+    }
+    
+    public Npc createNpc(String id, Vector2 position) {
+        Npc npc = createTestNpc(position, id);
+        addActor(npc);
+        forceRefresh = true;
+        return npc;
     }
 
     public Npc createTestNpc(Vector2 position, String id) {
