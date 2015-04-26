@@ -1751,9 +1751,10 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
             return true;
         }
     };
-
+    
     public class WeaponSentry implements TemporaryEntity {
         private static final float RANGE = 15f;
+        private static final float X_OFFSET = 0.25f;
 
         private final Map<Agent, Boolean> lineOfSightCache = new HashMap<Agent, Boolean>();
         protected final Vector2 position = new Vector2();
@@ -1779,7 +1780,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         public void update(float delta) {
             Vector2 origin = getRenderPosition();
             direction.set(getFocusPoint()).sub(origin).nor();
-            position.set(origin.x + direction.x, origin.y + direction.y).sub(offset);
+            updatePosition();
             clear();
         }
 
@@ -1787,8 +1788,17 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         public void update(float delta, Location location) {
             if (!Agent.this.aiming) {
                 rotateTowards(delta, getForwardVector());
-                Vector2 origin = getRenderPosition();
-                position.set(origin.x + direction.x, origin.y + direction.y).sub(offset);
+                updatePosition();
+            }
+        }
+        
+        private void updatePosition() {
+            Vector2 origin = getRenderPosition();
+            position.set(origin.x + direction.x, origin.y + direction.y).sub(offset);
+            if (Agent.this.getDirection() == Direction.Up) {
+                position.add(X_OFFSET, 0);
+            } else if (Agent.this.getDirection() == Direction.Down) {
+                position.add(-X_OFFSET, 0);
             }
         }
 

@@ -82,7 +82,7 @@ public abstract class RangedWeapon extends Item {
         float dx = width / 4;
 
         float theta = direction.angle();
-        boolean flipY = theta > 90 + EPS && theta < 270 + EPS;
+        boolean flipY = theta > 90 - EPS && theta < 270 + EPS;
 
         Batch batch = renderer.getBatch();
         batch.begin();
@@ -176,7 +176,7 @@ public abstract class RangedWeapon extends Item {
         @Override
         protected void apply(Agent owner, Agent target) {
             target.addEffect(new Stunned(owner, target, 0.2f));
-            target.addEffect(new Bleed(target, getDamage(), velocity.cpy().nor().scl(150)));
+            target.addEffect(new Bleed(target, getDamage(), velocity.cpy().nor().scl(50)));
             InvokenGame.SOUND_MANAGER.playAtPoint(SoundEffect.HIT, target.getPosition());
         }
 
