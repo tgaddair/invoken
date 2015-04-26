@@ -94,8 +94,8 @@ public class Damage {
         return new Damage(attacker, weapon.getDamageList());
     }
     
-    public static Damage from(Agent attacker, RangedWeapon weapon, Vector2 origin) {
-        return new DistanceScaledDamage(attacker, weapon.getDamageList(), origin);
+    public static Damage from(Agent attacker, RangedWeapon weapon, Vector2 origin, float scale) {
+        return new DistanceScaledDamage(attacker, weapon.getDamageList(), origin, scale);
     }
 
     public static Damage from(Agent attacker, DamageType type, int magnitude) {
@@ -108,22 +108,21 @@ public class Damage {
     }
     
     private static class DistanceScaledDamage extends Damage {
-        private static final float MAX_DST2 = 25f;
+        private static final float MAX_DST2 = 50f;
         
         private final Vector2 origin = new Vector2();
+        private final float scale;
         
-        public DistanceScaledDamage(Agent attacker, List<DamageMod> components, Vector2 origin) {
+        public DistanceScaledDamage(Agent attacker, List<DamageMod> components, Vector2 origin, float scale) {
             super(attacker, components);
             this.origin.set(origin);
+            this.scale = scale;
         }
         
         @Override
         protected float getBaseScale(Agent defender) {
             float dst2 = defender.getPosition().dst2(origin);
-            if (dst2 > MAX_DST2) {
-                return 0.01f;
-            }
-            return Math.max((MAX_DST2 - dst2) / MAX_DST2, 0.01f);
+            return scale * Math.max((MAX_DST2 - dst2) / MAX_DST2, 0.25f);
         }
     }
     

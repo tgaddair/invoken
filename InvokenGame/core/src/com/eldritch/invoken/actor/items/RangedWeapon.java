@@ -40,7 +40,7 @@ public abstract class RangedWeapon extends Item {
     private static final TextureRegion RAY_TEXTURE = new TextureRegion(
             GameScreen.getTexture("sprite/effects/bullet2.png"));
     private static final TextureRegion PELLET_TEXTURE = new TextureRegion(
-            GameScreen.getTexture("sprite/effects/bullet1.png"));
+            GameScreen.getTexture("sprite/effects/pellet.png"));
 
     private final Map<Direction, Animation> animations = new HashMap<Direction, Animation>();
     private final TextureRegion texture;
@@ -166,16 +166,16 @@ public abstract class RangedWeapon extends Item {
     }
 
     public class ShotgunPellet extends HandledBullet {
-        public ShotgunPellet(Agent owner, float theta) {
+        public ShotgunPellet(Agent owner, float theta, float scale) {
             super(owner, texture, BULLET_VELOCITY * 0.5f, Damage.from(owner, RangedWeapon.this, owner
-                    .getWeaponSentry().getPosition()));
+                    .getWeaponSentry().getPosition(), scale));
             rotate(theta);
         }
 
         @Override
         protected void apply(Agent owner, Agent target) {
             target.addEffect(new Stunned(owner, target, 0.2f));
-            target.addEffect(new Bleed(target, getDamage(), velocity.cpy().nor().scl(250)));
+            target.addEffect(new Bleed(target, getDamage(), velocity.cpy().nor().scl(150)));
             InvokenGame.SOUND_MANAGER.playAtPoint(SoundEffect.HIT, target.getPosition());
         }
 
@@ -194,7 +194,7 @@ public abstract class RangedWeapon extends Item {
         protected void apply(Agent owner, Agent target) {
             // TODO: rail gun should continue on through enemies
             target.addEffect(new Stunned(owner, target, 0.2f));
-            target.addEffect(new Bleed(target, getDamage(), velocity.cpy().nor().scl(250)));
+            target.addEffect(new Bleed(target, getDamage(), velocity.cpy().nor().scl(150)));
             InvokenGame.SOUND_MANAGER.playAtPoint(SoundEffect.HIT, target.getPosition());
         }
 
@@ -398,6 +398,7 @@ public abstract class RangedWeapon extends Item {
 
     public static class Shotgun extends RangedWeapon {
         private static final float SPREAD_DEGREES = 10f;
+        private static final float PELLET_SCALE = 0.35f;
         
         public Shotgun(Items.Item item) {
             super(item);
@@ -413,7 +414,7 @@ public abstract class RangedWeapon extends Item {
             ImmutableList.Builder<HandledProjectile> builder = ImmutableList.builder();
             for (int i = -2; i <= 2; i++) {
                 float theta = SPREAD_DEGREES * i;
-                builder.add(new ShotgunPellet(owner, theta));
+                builder.add(new ShotgunPellet(owner, theta, PELLET_SCALE));
             }
             return builder.build();
         }
