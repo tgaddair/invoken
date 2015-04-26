@@ -73,6 +73,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 
     private final String playerName;
     private Profession profession = null; // TODO: this will become a proto containing play info
+    private String locationName;
 
     private ActionBar actionBar;
     private InventoryMenu inventoryMenu;
@@ -109,19 +110,25 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
     private final Texture bg = getTexture("sprite/starfield.png");
 
     public GameScreen(InvokenGame game, String playerName) {
-        this(game, playerName, null);
+        this(game, playerName, null, "WelcomeCenter");
     }
 
     public GameScreen(InvokenGame game, Profession profession) {
-        this(game, "Player", profession);
+        this(game, "Player", profession, "WelcomeCenter");
     }
 
-    private GameScreen(InvokenGame game, String playerName, Profession profession) {
+    public GameScreen(InvokenGame game, Profession profession, String locationName) {
+        this(game, "Player", profession, locationName);
+    }
+
+    private GameScreen(InvokenGame game, String playerName, Profession profession,
+            String locationName) {
         super(game);
         dialogue = new DialogueMenu(getSkin());
         loot = new LootMenu(getSkin());
         this.playerName = playerName;
         this.profession = profession;
+        this.locationName = locationName;
     }
 
     @Override
@@ -159,11 +166,11 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
             player = location.createPlayer(state);
         } else {
             Random rand = new Random();
-            Locations.Location data =
+            Locations.Location data = InvokenGame.LOCATION_READER.readAsset(locationName);
             // InvokenGame.LOCATION_READER.readAsset("DebugPlayground");
             // InvokenGame.LOCATION_READER.readAsset("CentralProcessing");
             // InvokenGame.LOCATION_READER.readAsset("WelcomeCenterLevel2");
-            InvokenGame.LOCATION_READER.readAsset("WelcomeCenter");
+            // InvokenGame.LOCATION_READER.readAsset("WelcomeCenter");
             // InvokenGame.LOCATION_READER.readAsset("TestWorld1");
             // InvokenGame.LOCATION_READER.readAsset("DebugArena");
             LocationGenerator generator = new LocationGenerator(gameState, data.getBiome(),
@@ -214,11 +221,11 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         toaster = new Toaster(getSkin());
         stage.addActor(toaster.getContainer());
         toast(location.getName());
-        
+
         // music settings
         InvokenGame.MUSIC_MANAGER.setEnabled(!Settings.MUTE);
         InvokenGame.MUSIC_MANAGER.setVolume(Settings.MUSIC_VOLUME);
-        
+
         // sound effect settings
         SoundManager sounds = InvokenGame.SOUND_MANAGER;
         sounds.setCamera(camera);
@@ -327,7 +334,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
     private void drawFps() {
         batch.begin();
         font.draw(batch, "FPS: " + Gdx.graphics.getFramesPerSecond(), 10, getHeight() - 10);
-//        font.draw(batch, "Zoom: " + camera.zoom, 10, getHeight() - 10);
+        // font.draw(batch, "Zoom: " + camera.zoom, 10, getHeight() - 10);
         batch.end();
     }
 
@@ -346,8 +353,8 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
             float freezing = target.getFreezing();
             int enemies = target.getThreat().getEnemyCount();
             float visibility = target.getVisibility();
-//            String trespass = target.getLocation().isTrespasser(target) ? (target.getLocation()
-//                    .isOnFrontier(target) ? "Frontier" : "Trespass") : "Clear";
+            // String trespass = target.getLocation().isTrespasser(target) ? (target.getLocation()
+            // .isOnFrontier(target) ? "Frontier" : "Trespass") : "Clear";
 
             int i = 0;
             batch.begin();
@@ -372,8 +379,8 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
                     - (30 + 20 * i++));
             font.draw(batch, String.format("Charisma: %d", info.getCharisma()), 10, getHeight()
                     - (30 + 20 * i++));
-//            font.draw(batch, String.format("Trespass: %s", trespass), 10, getHeight()
-//                    - (30 + 20 * i++));
+            // font.draw(batch, String.format("Trespass: %s", trespass), 10, getHeight()
+            // - (30 + 20 * i++));
 
             if (target instanceof Npc) {
                 Npc npc = (Npc) target;
@@ -534,8 +541,8 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
                         .getPlayer().serialize());
                 return true;
             case Keys.NUMPAD_1:
-                loadLocation("Tutorial", Optional.<String> absent(), location
-                        .getPlayer().serialize());
+                loadLocation("Tutorial", Optional.<String> absent(), location.getPlayer()
+                        .serialize());
                 return true;
             default:
                 return false;
@@ -571,7 +578,8 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         // when the player is aiming, the only option is to use the augmentation
         if (player.isAiming()) {
             if (player.getInfo().getAugmentations().hasActiveAugmentation(button)) {
-                boolean success = player.getInfo()
+                boolean success = player
+                        .getInfo()
                         .getAugmentations()
                         .useActiveAugmentation(new Vector2(world.x, world.y), button, tacticalPause);
                 if (!success) {
@@ -579,7 +587,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
                 }
                 return true;
             }
-            
+
             InvokenGame.SOUND_MANAGER.play(SoundEffect.INVALID, 2);
             return false;
         }
@@ -691,7 +699,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         camera.zoom = zoom;
         return true;
     }
-    
+
     public static void play(SoundEffect sf) {
         InvokenGame.SOUND_MANAGER.play(sf);
     }
@@ -762,7 +770,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         stage.addActor(toaster.getContainer());
         toast(location.getName());
     }
-    
+
     private void onLoad(Location location) {
         minimap = new Minimap(location.getMap(), location.getSeed());
         if (location.hasMusic()) {

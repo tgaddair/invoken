@@ -12,9 +12,11 @@ import com.eldritch.invoken.util.Settings;
 
 public class DummyPlayer extends Player {
     private static final float MIN_DST2 = 9f;
+    private static final float DURATION = 20f;
     
     private final NavigatedSteerable lastSeen;
     private final Pursue<Vector2> pursue;
+    private float elapsed = 0;
     
     public DummyPlayer(Profession profession, int level, float x, float y, Location location,
             String body) {
@@ -29,11 +31,13 @@ public class DummyPlayer extends Player {
 
     @Override
     protected void takeAction(float delta, Location location) {
-        if (pursue.getTarget() == this || dst2(lastSeen.getTarget()) < MIN_DST2) {
+        elapsed += delta;
+        if (pursue.getTarget() == this || dst2(lastSeen.getTarget()) < MIN_DST2 || elapsed > DURATION) {
             List<Agent> agents = location.getAllAgents();
             Agent agent = agents.get((int) (Math.random() * agents.size()));
             lastSeen.setPosition(agent);
             pursue.setTarget(lastSeen);
+            elapsed = 0;
         }
         
         // steering and movement
