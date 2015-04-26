@@ -34,6 +34,7 @@ import com.google.common.collect.ImmutableList;
 public abstract class RangedWeapon extends Item {
     private static final float BASE_COST = 5f;
     private static final float BULLET_VELOCITY = 25;
+    private static final float EPS = 5f;
 
     private static final TextureRegion BULLET_TEXTURE = new TextureRegion(
             GameScreen.getTexture("sprite/effects/bullet1.png"));
@@ -81,7 +82,7 @@ public abstract class RangedWeapon extends Item {
         float dx = width / 4;
 
         float theta = direction.angle();
-        boolean flipY = theta > 90 && theta < 270;
+        boolean flipY = theta > 90 + EPS && theta < 270 + EPS;
 
         Batch batch = renderer.getBatch();
         batch.begin();
