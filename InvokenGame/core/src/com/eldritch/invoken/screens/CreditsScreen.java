@@ -87,7 +87,7 @@ public class CreditsScreen extends AbstractScreen implements InputProcessor {
         }
         
         int messageCount = gaps + 1;
-        float totalSeconds = RUNTIME_SECS - toaster.getFadeTime() * 2 * messageCount;
+        float totalSeconds = RUNTIME_SECS - toaster.getFadeTime() * 2 * messageCount - 5;
         return totalSeconds / messageCount;
     }
 

@@ -65,7 +65,7 @@ public class MenuScreen extends AbstractScreen {
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 super.touchUp(event, x, y, pointer, button);
                 // game.getSoundManager().play(TyrianSound.CLICK);
-                game.setScreen(new CharacterCreationScreen(game));
+                game.setScreen(new CharacterCreationScreen(game, location, camera));
             }
         });
         table.add(startGameButton).size(300, 60).uniform().spaceBottom(10);

@@ -1,5 +1,8 @@
 package com.eldritch.invoken.screens;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -10,17 +13,23 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextArea;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.actor.Profession;
+import com.eldritch.invoken.location.Location;
 import com.eldritch.invoken.util.DefaultInputListener;
 import com.eldritch.invoken.util.Settings;
 
 public class CharacterCreationScreen extends AbstractScreen {
+    private final Location location;
+    private final OrthographicCamera camera;
+    
     private Profession selectedProfession = Profession.Centurion;
     private ScrollPane scroll;
     private SplitPane descriptionPane;
     
-	public CharacterCreationScreen(InvokenGame game) {
-		super(game);
-	}
+	public CharacterCreationScreen(InvokenGame game, Location location, OrthographicCamera camera) {
+        super(game);
+        this.location = location;
+        this.camera = camera;
+    }
 
 	@Override
 	public void show() {
@@ -46,6 +55,16 @@ public class CharacterCreationScreen extends AbstractScreen {
         scroll.setVisible(false);
         container.add(scroll).expandX().fill().bottom().uniform().space(25);
 	}
+	
+	@Override
+    public void render(float delta) {
+        Gdx.gl.glClearColor(0f / 255f, 0f / 255f, 0f / 255f, 1f);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        
+        location.render(delta, camera, null, false);
+        stage.act(delta);
+        stage.draw();
+    }
 	
 	private Table getInfoTable() {
 	    Table rightTable = new Table(getSkin());
