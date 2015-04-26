@@ -570,11 +570,16 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         // when the player is aiming, the only option is to use the augmentation
         if (player.isAiming()) {
             if (player.getInfo().getAugmentations().hasActiveAugmentation(button)) {
-                player.getInfo()
+                boolean success = player.getInfo()
                         .getAugmentations()
                         .useActiveAugmentation(new Vector2(world.x, world.y), button, tacticalPause);
+                if (!success) {
+                    InvokenGame.SOUND_MANAGER.play(SoundEffect.INVALID);
+                }
                 return true;
             }
+            
+            InvokenGame.SOUND_MANAGER.play(SoundEffect.INVALID);
             return false;
         }
 

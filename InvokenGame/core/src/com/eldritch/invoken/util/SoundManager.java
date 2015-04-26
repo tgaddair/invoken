@@ -47,7 +47,8 @@ public class SoundManager implements Disposable {
         GHOST_DEATH(OGG, "ghost-death"),
         HUMAN_DEATH(WAV, "human-death-00", "human-death-01", "human-death-02"),
         INVENTORY_OFF(OGG, "inventory-off"),
-        INVENTORY_ON(OGG, "inventory-on-00", "inventory-on-01");
+        INVENTORY_ON(OGG, "inventory-on-00", "inventory-on-01"),
+        INVALID(WAV, "invalid");
 
         private final ImmutableList<String> filenames;
 

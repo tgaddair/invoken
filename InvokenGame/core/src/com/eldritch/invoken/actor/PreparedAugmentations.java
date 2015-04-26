@@ -132,16 +132,18 @@ public class PreparedAugmentations {
 	    useActiveAugmentation(0, false);
 	}
 	
-	public void useActiveAugmentation(int slot, boolean queued) {
+	public boolean useActiveAugmentation(int slot, boolean queued) {
 		if (activeAugmentations.containsKey(slot)) {
-	        use(activeAugmentations.get(slot), queued);
+	        return use(activeAugmentations.get(slot), queued);
 	    }
+		return false;
 	}
 	
-	public void useActiveAugmentation(Vector2 position, int slot, boolean queued) {
+	public boolean useActiveAugmentation(Vector2 position, int slot, boolean queued) {
 		if (activeAugmentations.containsKey(slot)) {
-            use(activeAugmentations.get(slot), position, queued);
+            return use(activeAugmentations.get(slot), position, queued);
         }
+		return false;
 	}
 	
     public boolean use(int index) {
