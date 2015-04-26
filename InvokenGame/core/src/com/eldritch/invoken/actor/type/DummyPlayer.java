@@ -21,7 +21,7 @@ public class DummyPlayer extends Player {
         super(profession, level, x, y, location, body);
         lastSeen = new NavigatedSteerable(this, location);
 
-        pursue = new Pursue<Vector2>(this, this).setLimiter(new LinearAccelerationLimiter(10));
+        pursue = new Pursue<Vector2>(this, this).setLimiter(new LinearAccelerationLimiter(7));
         setBehavior(pursue);
 
         setCollisionMask(Settings.BIT_PERIMETER);

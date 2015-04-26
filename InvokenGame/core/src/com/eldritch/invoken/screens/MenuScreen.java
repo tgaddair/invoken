@@ -9,14 +9,14 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.utils.async.AsyncExecutor;
+import com.badlogic.gdx.utils.async.AsyncResult;
 import com.eldritch.invoken.InvokenGame;
-import com.eldritch.invoken.actor.Profession;
 import com.eldritch.invoken.actor.type.Player;
 import com.eldritch.invoken.location.Location;
 import com.eldritch.invoken.location.proc.LocationGenerator;
 import com.eldritch.invoken.proto.Actors.PlayerActor;
 import com.eldritch.invoken.proto.Locations;
-import com.eldritch.invoken.ui.HudElement;
 import com.eldritch.invoken.util.DefaultInputListener;
 import com.eldritch.invoken.util.GameTransition;
 import com.eldritch.invoken.util.MusicManager;
@@ -33,6 +33,9 @@ public class MenuScreen extends AbstractScreen {
     };
     private OrthographicCamera camera;
     private Location location;
+
+    private final AsyncExecutor executor = new AsyncExecutor(1);
+    private AsyncResult<Location> locationFuture;
 
     public MenuScreen(InvokenGame game) {
         super(game);
@@ -84,12 +87,23 @@ public class MenuScreen extends AbstractScreen {
             }
         });
         table.add(highScoresButton).uniform().fill();
-        
-        // setup background world
-        bgWorldSetup();
 
+        // setup background world
+        // location = null;
+        // locationFuture = executor.submit(new AsyncTask<Location>() {
+        // @Override
+        // public Location call() throws Exception {
+        // return bgWorldSetup();
+        // }
+        // });
+        location = bgWorldSetup();
+        
         // play title music
         InvokenGame.MUSIC_MANAGER.play(MusicManager.MAIN);
+
+        SoundManager sounds = InvokenGame.SOUND_MANAGER;
+        sounds.setCamera(camera);
+        sounds.setEnabled(false);
     }
 
     @Override
@@ -97,8 +111,20 @@ public class MenuScreen extends AbstractScreen {
         Gdx.gl.glClearColor(0f / 255f, 0f / 255f, 0f / 255f, 1f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
+        // if (location == null) {
+        // if (locationFuture.isDone()) {
+        // try {
+        // location = locationFuture.get();
+        // location.resize(getWidth(), getHeight());
+        // } catch (Exception e) {
+        // throw new RuntimeException("Failed to background load location", e);
+        // }
+        // }
+        // } else {
+        // location.render(delta, camera, null, false);
+        // }
         location.render(delta, camera, null, false);
-        
+
         stage.act(delta);
         stage.draw();
     }
@@ -106,10 +132,12 @@ public class MenuScreen extends AbstractScreen {
     @Override
     public void resize(int width, int height) {
         super.resize(width, height);
-        location.resize(width, height);
+        if (location != null) {
+            location.resize(width, height);
+        }
     }
 
-    private void bgWorldSetup() {
+    private Location bgWorldSetup() {
         // create an orthographic camera, shows us 10(w/h) x 10 units of the
         // world
         float w = Gdx.graphics.getWidth();
@@ -124,7 +152,7 @@ public class MenuScreen extends AbstractScreen {
         Locations.Location data = InvokenGame.LOCATION_READER.readAsset("WelcomeCenter");
         LocationGenerator generator = new LocationGenerator(gameState, data.getBiome(),
                 rand.nextLong());
-        location = generator.generate(data);
+        Location location = generator.generate(data);
         Player player = location.createDummyPlayer();
 
         // init camera position
@@ -132,9 +160,6 @@ public class MenuScreen extends AbstractScreen {
         camera.position.x = location.scale(position.x, camera.zoom);
         camera.position.y = location.scale(position.y, camera.zoom);
         location.setCamera(camera);
-        
-        SoundManager sounds = InvokenGame.SOUND_MANAGER;
-        sounds.setCamera(camera);
-        sounds.setEnabled(false);
+        return location;
     }
 }
