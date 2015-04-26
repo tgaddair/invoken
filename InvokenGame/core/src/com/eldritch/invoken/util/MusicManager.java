@@ -12,6 +12,8 @@ import com.eldritch.invoken.InvokenGame;
  * Only one music may be playing at a given time.
  */
 public class MusicManager implements Disposable {
+    public static final String MAIN = "main.ogg";
+    
     /**
      * The available music files.
      */

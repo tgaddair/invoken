@@ -6,7 +6,6 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.eldritch.invoken.actor.Profession;
-import com.eldritch.invoken.screens.CharacterCreationScreen;
 import com.eldritch.invoken.screens.GameScreen;
 import com.eldritch.invoken.screens.MenuScreen;
 import com.eldritch.invoken.screens.SplashScreen;
@@ -94,7 +93,7 @@ public class InvokenGame extends Game {
 			if (Settings.SKIP_MENU) {
 				setScreen(new GameScreen(this, Profession.getDefault()));
 			} else {
-				setScreen(new CharacterCreationScreen(this));
+				setScreen(new MenuScreen(this));
 			}
 		}
 	}
