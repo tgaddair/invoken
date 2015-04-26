@@ -185,6 +185,23 @@ public abstract class RangedWeapon extends Item {
             return PELLET_TEXTURE;
         }
     }
+    
+    public class RailBullet extends RangedWeaponBullet {
+        private float scale = 1.0f;
+        
+        public RailBullet(Agent owner) {
+            super(owner);
+        }
+        
+        @Override
+        public void apply(Agent target) {
+            apply(getOwner(), target);
+            
+            // rail guns shoot through enemies, but lose half their damage
+            scale /= 2;
+            getDamage().setBaseScale(scale);
+        }
+    }
 
     public class RangedWeaponBullet extends HandledBullet {
         public RangedWeaponBullet(Agent owner) {
@@ -193,7 +210,6 @@ public abstract class RangedWeapon extends Item {
 
         @Override
         protected void apply(Agent owner, Agent target) {
-            // TODO: rail gun should continue on through enemies
             target.addEffect(new Stunned(owner, target, 0.2f));
             target.addEffect(new Bleed(target, getDamage(), velocity.cpy().nor().scl(150)));
             InvokenGame.SOUND_MANAGER.playAtPoint(SoundEffect.HIT, target.getPosition());
@@ -359,7 +375,7 @@ public abstract class RangedWeapon extends Item {
     protected HandledProjectile getPrimaryProjectile(Agent owner) {
         switch (primary) {
             case THERMAL:
-                return new RangedWeaponBullet(owner);
+                return new RailBullet(owner);
             default:
                 return new RangedWeaponRay(owner);
         }

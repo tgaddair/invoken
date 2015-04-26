@@ -20,6 +20,7 @@ public class Damage {
     private final Map<Agent, ReifiedDamage> reified = new HashMap<>();
     private final Agent attacker;
     private final List<DamageMod> components;
+    private float baseScale = 1.0f;
 
     public Damage(Agent attacker, List<DamageMod> components) {
         this.attacker = attacker;
@@ -73,8 +74,12 @@ public class Damage {
         return reified.get(defender);
     }
     
+    public void setBaseScale(float scale) {
+        this.baseScale = scale;
+    }
+    
     protected float getBaseScale(Agent defender) {
-        return 1;
+        return baseScale;
     }
     
     private float getDamage(float atk, float def) {
