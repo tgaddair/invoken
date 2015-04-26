@@ -10,7 +10,7 @@ requirement {
 hidden: false
 damage_modifier {
   damage: THERMAL
-  magnitude: 30
+  magnitude: 50
 }
 type: RANGED_WEAPON
 asset: "rail-gun"

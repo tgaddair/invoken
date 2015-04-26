@@ -1106,8 +1106,9 @@ public class Location {
         player.getInfo().getInventory().addItem(outfit);
         player.getInfo().getInventory().equip(outfit);
 
-        Item weapon = Item.fromProto(InvokenGame.ITEM_READER.readAsset("RailGun"));
+//        Item weapon = Item.fromProto(InvokenGame.ITEM_READER.readAsset("RailGun"));
 //        Item weapon = Item.fromProto(InvokenGame.ITEM_READER.readAsset("Shotgun"));
+        Item weapon = Item.fromProto(InvokenGame.ITEM_READER.readAsset("DamagedPistol"));
         player.getInfo().getInventory().addItem(weapon);
         player.getInfo().getInventory().equip(weapon);
 

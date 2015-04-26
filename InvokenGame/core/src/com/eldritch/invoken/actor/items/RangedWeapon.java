@@ -42,6 +42,8 @@ public abstract class RangedWeapon extends Item {
             GameScreen.getTexture("sprite/effects/bullet2.png"));
     private static final TextureRegion PELLET_TEXTURE = new TextureRegion(
             GameScreen.getTexture("sprite/effects/pellet.png"));
+    private static final TextureRegion BULLET_TRAIL_TEXTURE = new TextureRegion(
+            GameScreen.getTexture("sprite/effects/bullet_trail.png"));
 
     private final Map<Direction, Animation> animations = new HashMap<Direction, Animation>();
     private final TextureRegion texture;
@@ -190,7 +192,7 @@ public abstract class RangedWeapon extends Item {
         private float scale = 1.0f;
         
         public RailBullet(Agent owner) {
-            super(owner);
+            super(owner, BULLET_TEXTURE);
         }
         
         @Override
@@ -202,10 +204,19 @@ public abstract class RangedWeapon extends Item {
             getDamage().setBaseScale(scale);
         }
     }
+    
+    public class PistolBullet extends RangedWeaponBullet {
+        public PistolBullet(Agent owner) {
+            super(owner, BULLET_TRAIL_TEXTURE);
+        }
+    }
 
     public class RangedWeaponBullet extends HandledBullet {
-        public RangedWeaponBullet(Agent owner) {
-            super(owner, texture, BULLET_VELOCITY, Damage.from(owner, RangedWeapon.this));
+        private final TextureRegion texture;
+        
+        public RangedWeaponBullet(Agent owner, TextureRegion texture) {
+            super(owner, texture, BULLET_VELOCITY * 0.75f, Damage.from(owner, RangedWeapon.this));
+            this.texture = texture;
         }
 
         @Override
@@ -217,7 +228,7 @@ public abstract class RangedWeapon extends Item {
 
         @Override
         protected TextureRegion getTexture(float stateTime) {
-            return BULLET_TEXTURE;
+            return texture;
         }
     }
 
@@ -377,7 +388,7 @@ public abstract class RangedWeapon extends Item {
             case THERMAL:
                 return new RailBullet(owner);
             default:
-                return new RangedWeaponRay(owner);
+                return new PistolBullet(owner);
         }
     }
 
