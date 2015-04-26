@@ -304,6 +304,10 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
             this.sprinting = false;
         }
     }
+    
+    public SoundEffect getWalkingSound() {
+        return SoundEffect.FOOTSTEP;
+    }
 
     public abstract void scaleLinearVelocity(float s);
 
@@ -1104,7 +1108,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         info.getInventory().removeItem(Fragment.getInstance(), total);
     }
 
-    private void setCollisionMask(short maskBits) {
+    protected final void setCollisionMask(short maskBits) {
         // update all fixtures
         for (Fixture fixture : body.getFixtureList()) {
             // collision filters

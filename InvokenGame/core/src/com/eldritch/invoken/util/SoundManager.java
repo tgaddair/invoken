@@ -32,6 +32,7 @@ public class SoundManager implements Disposable {
      * The available sound files.
      */
     public enum SoundEffect {
+        NONE(EMPTY, ""),
         CLICK(WAV, "click"),
         FOOTSTEP(OGG, "footstep00", "footstep01"),
         HIT(OGG, "hit00"),
@@ -89,7 +90,7 @@ public class SoundManager implements Disposable {
     }
 
     enum CodingFormat {
-        WAV, OGG;
+        WAV, OGG, EMPTY;
 
         public String getSuffix() {
             return name().toLowerCase();
@@ -125,20 +126,8 @@ public class SoundManager implements Disposable {
                 }
             });
 
-    /**
-     * Plays the specified sound.
-     */
-    public void play(SoundEffect sound) {
-        play(sound, 1);
-    }
-    
-    public void play(SoundEffect sound, float s) {
-        play(sound.getFilename(), s);
-    }
-    
     public int playInSequence(SoundEffect sound, int index) {
-        String filename = sound.getFilename(index);
-        play(filename);
+        play(sound, index, 1);
         return sound.nextInSequence(index);
     }
     
@@ -161,23 +150,31 @@ public class SoundManager implements Disposable {
             return index;
         }
         
-        String filename = sound.getFilename(index);
         float dv = s * (MAX_DST2 - dst2) / MAX_DST2;
 //        InvokenGame.logfmt("play at point: %.2f", dv);
-        play(filename, dv);
+        play(sound, index, dv);
         return sound.nextInSequence(index);
     }
     
-    private void play(String filename) {
-        play(filename, 1);
+    public void play(SoundEffect sound) {
+        play(sound, 1f);
     }
     
-    private void play(String filename, float dv) {
+    public void play(SoundEffect sound, float s) {
+        play(sound, sound.randomIndex(), s);
+    }
+    
+    private void play(SoundEffect sound, int index, float dv) {
         // check if sound is enabled
         if (!enabled) {
             return;
         }
-
+        
+        if (sound == SoundEffect.NONE){
+            return;
+        }
+        
+        String filename = sound.getFilename(index);
         try {
             Sound soundToPlay = sounds.get(filename);
             soundToPlay.play(volume * dv);

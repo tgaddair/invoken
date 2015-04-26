@@ -12,7 +12,7 @@ public class Settings {
 	// audio
 	public static final boolean MUTE = false;
 	public static final float MUSIC_VOLUME = 0.25f;
-	public static final float SFX_VOLUME = 0.15f;
+	public static final float SFX_VOLUME = 0.1f;
 	
 	// a number just greater than the previous for the purpose of approximating a total ordering
 	// real numbers
@@ -25,12 +25,14 @@ public class Settings {
     public static final int MENU_VIEWPORT_HEIGHT = 720;  // 480
 	
 	// collision bit filters
+	public static final short BIT_NOTHING = 0x0000;
 	public static final short BIT_DEFAULT = 0x0001;
 	public static final short BIT_AGENT = 0x0002;
 	public static final short BIT_WALL = 0x0004;
 	public static final short BIT_OBSTACLE = 0x0008;
 	public static final short BIT_SHORT_OBSTACLE = 0x0010;
 	public static final short BIT_BULLET = 0x0100;
+	public static final short BIT_PERIMETER = 0x1000;
 	public static final short BIT_STATIC = BIT_WALL | BIT_OBSTACLE | BIT_SHORT_OBSTACLE;
 	public static final short BIT_SHOOTABLE = BIT_AGENT | BIT_WALL | BIT_OBSTACLE;  // can be shot
 	public static final short BIT_PHYSICAL = BIT_SHOOTABLE | BIT_SHORT_OBSTACLE;  // can walk into
@@ -43,7 +45,7 @@ public class Settings {
 	public static final boolean DEBUG_COVER = false;
 	public static final boolean DEBUG_PATHFINDING = false;
 	public static final boolean DEBUG_STEALTH = false;
-	public static final boolean SKIP_MENU = true;
+	public static final boolean SKIP_MENU = false;
 	public static final int START_LEVEL = 10;  // 25
 	public static final Profession DEFAULT_PROFESSION = Profession.Agent;
 	

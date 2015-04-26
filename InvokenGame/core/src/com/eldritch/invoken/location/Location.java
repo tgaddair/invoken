@@ -56,6 +56,7 @@ import com.eldritch.invoken.actor.items.Item;
 import com.eldritch.invoken.actor.pathfinding.PathManager;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.CoverPoint;
+import com.eldritch.invoken.actor.type.DummyPlayer;
 import com.eldritch.invoken.actor.type.DynamicEntity;
 import com.eldritch.invoken.actor.type.Npc;
 import com.eldritch.invoken.actor.type.Player;
@@ -74,9 +75,9 @@ import com.eldritch.invoken.proto.Actors.PlayerActor;
 import com.eldritch.invoken.proto.Locations;
 import com.eldritch.invoken.proto.Locations.Encounter;
 import com.eldritch.invoken.proto.Locations.Encounter.ActorParams.ActorScenario;
-import com.eldritch.invoken.screens.GameScreen.GameState;
 import com.eldritch.invoken.ui.AgentStatusRenderer;
 import com.eldritch.invoken.ui.DebugEntityRenderer;
+import com.eldritch.invoken.util.GameTransition;
 import com.eldritch.invoken.util.Settings;
 import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
@@ -99,7 +100,7 @@ public class Location {
     private final LocationMap map;
     private final Territory[][] territory;
     private final PathManager pathManager;
-    private final GameState state;
+    private final GameTransition state;
     private final long seed;
 
     private final Map<String, Agent> ids = Maps.newHashMap();
@@ -145,12 +146,13 @@ public class Location {
     DebugEntityRenderer debugEntityRenderer = DebugEntityRenderer.getInstance();
     Box2DDebugRenderer debugRenderer = new Box2DDebugRenderer();
 
-    public Location(com.eldritch.invoken.proto.Locations.Location data, GameState state, long seed) {
+    public Location(com.eldritch.invoken.proto.Locations.Location data, GameTransition state,
+            long seed) {
         this(data, readMap(data), state, seed);
     }
 
     public Location(com.eldritch.invoken.proto.Locations.Location data, LocationMap map,
-            GameState state, long seed) {
+            GameTransition state, long seed) {
         this.data = data;
         this.map = map;
         this.territory = new Territory[map.getWidth()][map.getHeight()];
@@ -161,7 +163,7 @@ public class Location {
         normalMapShader = new NormalMapShader();
         lightMasker = new OverlayLightMasker(lightManager.getVertexShaderDef());
         fowMasker = new FogOfWarMasker();
-        
+
         // create territory table
         assignTerritory(map.getRooms(), data.getTerritoryList());
 
@@ -230,7 +232,7 @@ public class Location {
     public Player getPlayer() {
         return player;
     }
-    
+
     public void addMarker(String marker, int count) {
         if (!markers.containsKey(marker)) {
             markers.put(marker, count);
@@ -238,7 +240,7 @@ public class Location {
             markers.put(marker, markers.get(marker) + count);
         }
     }
-    
+
     public int getMarkerCount(String marker) {
         if (!markers.containsKey(marker)) {
             return 0;
@@ -253,11 +255,11 @@ public class Location {
     public long getSeed() {
         return seed;
     }
-    
+
     public boolean hasMusic() {
         return data.hasMusic();
     }
-    
+
     public String getMusicId() {
         return data.getMusic();
     }
@@ -285,21 +287,21 @@ public class Location {
     public void dispose() {
         // rayHandler.dispose();
     }
-    
+
     private void assignTerritory(ConnectedRoomManager rooms, List<Locations.Territory> territories) {
         // relate the owning faction to the given territory
         Map<String, Territory> factionMap = new HashMap<>();
         for (Locations.Territory territory : territories) {
             factionMap.put(territory.getFactionId(), new Territory(territory));
         }
-        
+
         // default the map to the empty territory
         for (int x = 0; x < territory.length; x++) {
             for (int y = 0; y < territory[x].length; y++) {
                 territory[x][y] = Territory.DEFAULT;
             }
         }
-        
+
         // use the owning faction for each room to assign territories
         for (ConnectedRoom room : rooms.getRooms()) {
             Optional<String> faction = room.getFaction();
@@ -309,7 +311,7 @@ public class Location {
                 }
             }
         }
-        
+
         LocationGenerator.save(territory, "territory");
     }
 
@@ -317,20 +319,20 @@ public class Location {
         NaturalVector2 position = intruder.getCellPosition();
         territory[position.x][position.y].alertTo(intruder);
     }
-    
+
     public boolean isCaughtTrespassing(Agent watcher, Agent caught) {
         NaturalVector2 position = caught.getCellPosition();
         return !isTrespasser(watcher, position) && isTrespasser(caught, position);
     }
-    
+
     public boolean isTrespasser(Agent agent) {
         return isTrespasser(agent, agent.getCellPosition());
     }
-    
+
     private boolean isTrespasser(Agent agent, NaturalVector2 position) {
         return territory[position.x][position.y].isTrespasser(agent);
     }
-    
+
     public boolean isOnFrontier(Agent agent) {
         NaturalVector2 position = agent.getCellPosition();
         ConnectedRoom room = getConnections().getRoom(position.x, position.y);
@@ -389,26 +391,26 @@ public class Location {
     public Array<Rectangle> getTiles() {
         return tiles;
     }
-    
+
     public void addEntities(List<Agent> entities) {
         for (Agent agent : entities) {
             addActor(agent);
         }
     }
-    
+
     public void addActivator(Activator activator) {
         activators.add(activator);
     }
-    
+
     public void removeActivator(Activator activator) {
         activators.remove(activator);
         drawables.remove(activator);
     }
-    
+
     public boolean hasAgentWithId(String id) {
         return ids.containsKey(id);
     }
-    
+
     public Agent getAgentById(String id) {
         return ids.get(id);
     }
@@ -438,7 +440,7 @@ public class Location {
     public void setCamera(OrthographicCamera camera) {
         this.camera = camera;
     }
-    
+
     public void shiftView(Vector2 offset) {
         cameraV.x += offset.x;
         cameraV.y += offset.y;
@@ -1016,13 +1018,13 @@ public class Location {
                         }
                     }
                 }
-                
+
                 // create squads
                 createSquads(npcs);
             }
         }
     }
-    
+
     private void createSquads(List<Npc> npcs) {
         // build a map of faction to NPCs primarily within that faction
         Map<Faction, List<Npc>> cliques = Maps.newHashMap();
@@ -1035,7 +1037,7 @@ public class Location {
                 cliques.get(faction).add(npc);
             }
         }
-        
+
         // for every clique, we need to group the NPCs together into a squad and define a leader
         for (Entry<Faction, List<Npc>> entry : cliques.entrySet()) {
             Squad squad = new Squad(entry.getKey(), entry.getValue());
@@ -1082,6 +1084,14 @@ public class Location {
         return player;
     }
 
+    public Player createDummyPlayer() {
+        Vector2 spawn = getSpawnLocation();
+        this.player = new DummyPlayer(Profession.Centurion, Settings.START_LEVEL, spawn.x, spawn.y,
+                this, "sprite/characters/light-blue-hair.png");
+        addActor(player);
+        return player;
+    }
+
     public Player createPlayer(Profession profession) {
         // spawn and add the player
         Vector2 spawn = getSpawnLocation();
@@ -1097,7 +1107,7 @@ public class Location {
                 "sprite/characters/light-blue-hair.png");
 
         Faction playerFaction = Faction.of("_PlayerFaction");
-        
+
         // 3 is the "standard" rank at which members of the same faction should become allies
         // i.e. 30 rep
         player.getInfo().addFaction(playerFaction, 3, 0);
@@ -1106,9 +1116,9 @@ public class Location {
         player.getInfo().getInventory().addItem(outfit);
         player.getInfo().getInventory().equip(outfit);
 
-//        Item weapon = Item.fromProto(InvokenGame.ITEM_READER.readAsset("RailGun"));
+        // Item weapon = Item.fromProto(InvokenGame.ITEM_READER.readAsset("RailGun"));
         Item weapon = Item.fromProto(InvokenGame.ITEM_READER.readAsset("Shotgun"));
-//        Item weapon = Item.fromProto(InvokenGame.ITEM_READER.readAsset("DamagedPistol"));
+        // Item weapon = Item.fromProto(InvokenGame.ITEM_READER.readAsset("DamagedPistol"));
         player.getInfo().getInventory().addItem(weapon);
         player.getInfo().getInventory().equip(weapon);
 
@@ -1165,6 +1175,16 @@ public class Location {
                 return Settings.BIT_OBSTACLE;
             }
         });
+        
+        // add perimeter
+        addPerimeter(world);
+    }
+    
+    private void addPerimeter(World world) {
+        addEdge(0, 0, map.getWidth(), 0, world, Settings.BIT_PERIMETER);
+        addEdge(0, map.getHeight(), map.getWidth(), map.getHeight(), world, Settings.BIT_PERIMETER);
+        addEdge(0, 0, 0, map.getHeight(), world, Settings.BIT_PERIMETER);
+        addEdge(map.getWidth(), 0, map.getWidth(), map.getHeight(), world, Settings.BIT_PERIMETER);
     }
 
     private void addWalls(World world, ObstaclePredicate predicate) {

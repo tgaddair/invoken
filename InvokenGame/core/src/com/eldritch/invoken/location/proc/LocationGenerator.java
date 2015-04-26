@@ -55,7 +55,7 @@ import com.eldritch.invoken.proto.Locations.ControlPoint;
 import com.eldritch.invoken.proto.Locations.Encounter;
 import com.eldritch.invoken.proto.Locations.Encounter.ActorParams.ActorScenario;
 import com.eldritch.invoken.screens.GameScreen;
-import com.eldritch.invoken.screens.GameScreen.GameState;
+import com.eldritch.invoken.util.GameTransition;
 import com.eldritch.invoken.util.Settings;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableBiMap;
@@ -75,7 +75,7 @@ public class LocationGenerator {
     private Random rand;
     private long counter = 0;
 
-    private final GameState state;
+    private final GameTransition state;
     private final String biome;
     private final TextureAtlas atlas;
     private final TextureAtlas normalAtlas;
@@ -88,7 +88,7 @@ public class LocationGenerator {
     private final TiledMapTile collider;
     private final TiledMapTile shortCollider;
 
-    public LocationGenerator(GameState state, Biome biomeType, long seed) {
+    public LocationGenerator(GameTransition state, Biome biomeType, long seed) {
         this.state = state;
         this.globalSeed = seed;
         this.biome = biomeType.name().toLowerCase();

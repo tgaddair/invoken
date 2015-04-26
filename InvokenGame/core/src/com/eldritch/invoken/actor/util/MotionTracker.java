@@ -48,7 +48,7 @@ public class MotionTracker {
             nextFootstep -= delta;
             if (nextFootstep < 0) {
                 nextFootstep = FOOTSTEP_DELAY_SECS;
-                stepSequence = soundManager.playAtPoint(SoundEffect.FOOTSTEP, stepSequence,
+                stepSequence = soundManager.playAtPoint(agent.getWalkingSound(), stepSequence,
                         agent.getPosition(), 0.25f);
             }
         }

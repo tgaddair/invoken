@@ -48,6 +48,7 @@ import com.eldritch.invoken.ui.StatusBar.EnergyCalculator;
 import com.eldritch.invoken.ui.StatusBar.HealthCalculator;
 import com.eldritch.invoken.ui.Toaster;
 import com.eldritch.invoken.ui.Toaster.Message;
+import com.eldritch.invoken.util.GameTransition;
 import com.eldritch.invoken.util.Settings;
 import com.eldritch.invoken.util.SoundManager;
 import com.eldritch.invoken.util.SoundManager.SoundEffect;
@@ -66,7 +67,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
     private static Toaster toaster;
     public static boolean SCREEN_GRAB = false;
 
-    private final GameState gameState = new GameState();
+    private final GameTransition gameState = new GameState();
     private final DialogueMenu dialogue;
     private final LootMenu loot;
 
@@ -574,12 +575,12 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
                         .getAugmentations()
                         .useActiveAugmentation(new Vector2(world.x, world.y), button, tacticalPause);
                 if (!success) {
-                    InvokenGame.SOUND_MANAGER.play(SoundEffect.INVALID);
+                    InvokenGame.SOUND_MANAGER.play(SoundEffect.INVALID, 2);
                 }
                 return true;
             }
             
-            InvokenGame.SOUND_MANAGER.play(SoundEffect.INVALID);
+            InvokenGame.SOUND_MANAGER.play(SoundEffect.INVALID, 2);
             return false;
         }
 
@@ -783,7 +784,8 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         }
     }
 
-    public class GameState {
+    public class GameState implements GameTransition {
+        @Override
         public void transition(String locationName, Optional<String> encounterName,
                 PlayerActor state) {
             loadLocation(locationName, encounterName, state);
