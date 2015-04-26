@@ -48,6 +48,7 @@ public class AgentInfo {
     float energy;
     int level;
 
+    float maxHealth = 0;
     float energyOffset = 0;
 
     int activeDefense = 0;
@@ -97,6 +98,7 @@ public class AgentInfo {
 
         // post init basic state
         this.level = params.getLevel();
+        maxHealth = getBaseHealth();
         health = getMaxHealth();
         energy = getMaxEnergy();
     }
@@ -123,6 +125,7 @@ public class AgentInfo {
 
         // post init basic state
         this.level = level;
+        maxHealth = getBaseHealth();
         health = getMaxHealth();
         energy = getMaxEnergy();
 
@@ -236,8 +239,12 @@ public class AgentInfo {
         return getWarfare() + getLevel() * 0.05f * getWarfare();
     }
     
+    public void setMaxHealth(float maxHealth) {
+        this.maxHealth = maxHealth;
+    }
+    
     public float getMaxHealth() {
-        return getBaseHealth() * getStatusEffect(DamageType.THERMAL);
+        return Math.min(getBaseHealth() * getStatusEffect(DamageType.THERMAL), maxHealth);
     }
 
     public void resetEnergy() {
