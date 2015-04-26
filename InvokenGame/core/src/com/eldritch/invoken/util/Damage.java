@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.actor.items.RangedWeapon;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.proto.Effects.DamageType;
@@ -50,6 +51,7 @@ public class Damage {
     }
     
     private ReifiedDamage getDamage(Agent defender) {
+        float scale = getBaseScale(defender);
         if (!reified.containsKey(defender)) {
             ReifiedDamage damage = new ReifiedDamage();
             float attackMod = attacker.getInfo().getAttackModifier();
@@ -60,7 +62,7 @@ public class Damage {
                 float s = defender.getInfo().getDamageScale(mod.getDamage());
                 float magnitude = s * getDamage(atk, def);
 //                System.out.println(String.format("atk %.2f def %.2f scale %.2f", atk, def, s));
-                damage.add(mod.getDamage(), magnitude);
+                damage.add(mod.getDamage(), magnitude * scale);
             }
             
             System.out.println(String.format("%s -> %s = %.2f", attacker, defender, damage.total));
@@ -69,6 +71,10 @@ public class Damage {
         
         // lazily resolve the magnitude, but only do so once
         return reified.get(defender);
+    }
+    
+    protected float getBaseScale(Agent defender) {
+        return 1;
     }
     
     private float getDamage(float atk, float def) {
@@ -87,6 +93,10 @@ public class Damage {
     public static Damage from(Agent attacker, RangedWeapon weapon) {
         return new Damage(attacker, weapon.getDamageList());
     }
+    
+    public static Damage from(Agent attacker, RangedWeapon weapon, Vector2 origin) {
+        return new DistanceScaledDamage(attacker, weapon.getDamageList(), origin);
+    }
 
     public static Damage from(Agent attacker, DamageType type, int magnitude) {
         return new Damage(attacker, ImmutableList.of(DamageMod.newBuilder().setDamage(type)
@@ -95,6 +105,26 @@ public class Damage {
 
     public static Damage from(Agent attacker) {
         return new Damage(attacker, ImmutableList.<DamageMod> of());
+    }
+    
+    private static class DistanceScaledDamage extends Damage {
+        private static final float MAX_DST2 = 25f;
+        
+        private final Vector2 origin = new Vector2();
+        
+        public DistanceScaledDamage(Agent attacker, List<DamageMod> components, Vector2 origin) {
+            super(attacker, components);
+            this.origin.set(origin);
+        }
+        
+        @Override
+        protected float getBaseScale(Agent defender) {
+            float dst2 = defender.getPosition().dst2(origin);
+            if (dst2 > MAX_DST2) {
+                return 0.01f;
+            }
+            return Math.max((MAX_DST2 - dst2) / MAX_DST2, 0.01f);
+        }
     }
     
     private static class ReifiedDamage {

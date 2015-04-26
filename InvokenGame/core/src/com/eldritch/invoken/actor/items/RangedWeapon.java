@@ -29,6 +29,7 @@ import com.eldritch.invoken.util.Damage;
 import com.eldritch.invoken.util.Settings;
 import com.eldritch.invoken.util.SoundManager.SoundEffect;
 import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableList;
 
 public abstract class RangedWeapon extends Item {
     private static final float BASE_COST = 5f;
@@ -38,6 +39,8 @@ public abstract class RangedWeapon extends Item {
             GameScreen.getTexture("sprite/effects/bullet1.png"));
     private static final TextureRegion RAY_TEXTURE = new TextureRegion(
             GameScreen.getTexture("sprite/effects/bullet2.png"));
+    private static final TextureRegion PELLET_TEXTURE = new TextureRegion(
+            GameScreen.getTexture("sprite/effects/bullet1.png"));
 
     private final Map<Direction, Animation> animations = new HashMap<Direction, Animation>();
     private final TextureRegion texture;
@@ -91,15 +94,6 @@ public abstract class RangedWeapon extends Item {
                 texture.getRegionWidth(), texture.getRegionHeight(), // srcWidth, srcHeight
                 false, flipY); // flipX, flipY
         batch.end();
-    }
-
-    public HandledProjectile getProjectile(Agent owner) {
-        switch (primary) {
-            case THERMAL:
-                return new RangedWeaponBullet(owner);
-            default:
-                return new RangedWeaponRay(owner);
-        }
     }
 
     public List<DamageMod> getDamageList() {
@@ -171,6 +165,26 @@ public abstract class RangedWeapon extends Item {
         return String.format("sprite/items/weapons/%s.png", asset);
     }
 
+    public class ShotgunPellet extends HandledBullet {
+        public ShotgunPellet(Agent owner, float theta) {
+            super(owner, texture, BULLET_VELOCITY * 0.5f, Damage.from(owner, RangedWeapon.this, owner
+                    .getWeaponSentry().getPosition()));
+            rotate(theta);
+        }
+
+        @Override
+        protected void apply(Agent owner, Agent target) {
+            target.addEffect(new Stunned(owner, target, 0.2f));
+            target.addEffect(new Bleed(target, getDamage(), velocity.cpy().nor().scl(250)));
+            InvokenGame.SOUND_MANAGER.playAtPoint(SoundEffect.HIT, target.getPosition());
+        }
+
+        @Override
+        protected TextureRegion getTexture(float stateTime) {
+            return PELLET_TEXTURE;
+        }
+    }
+
     public class RangedWeaponBullet extends HandledBullet {
         public RangedWeaponBullet(Agent owner) {
             super(owner, texture, BULLET_VELOCITY, Damage.from(owner, RangedWeapon.this));
@@ -181,8 +195,6 @@ public abstract class RangedWeapon extends Item {
             // TODO: rail gun should continue on through enemies
             target.addEffect(new Stunned(owner, target, 0.2f));
             target.addEffect(new Bleed(target, getDamage(), velocity.cpy().nor().scl(250)));
-
-            // collision sound
             InvokenGame.SOUND_MANAGER.playAtPoint(SoundEffect.HIT, target.getPosition());
         }
 
@@ -341,6 +353,17 @@ public abstract class RangedWeapon extends Item {
 
     public abstract SoundEffect getSoundEffect();
 
+    public abstract List<HandledProjectile> getProjectiles(Agent owner);
+
+    protected HandledProjectile getPrimaryProjectile(Agent owner) {
+        switch (primary) {
+            case THERMAL:
+                return new RangedWeaponBullet(owner);
+            default:
+                return new RangedWeaponRay(owner);
+        }
+    }
+
     public static class Pistol extends RangedWeapon {
         public Pistol(Items.Item item) {
             super(item);
@@ -349,6 +372,11 @@ public abstract class RangedWeapon extends Item {
         @Override
         public SoundEffect getSoundEffect() {
             return SoundEffect.RANGED_WEAPON_SMALL;
+        }
+
+        @Override
+        public List<HandledProjectile> getProjectiles(Agent owner) {
+            return ImmutableList.of(getPrimaryProjectile(owner));
         }
     }
 
@@ -361,6 +389,34 @@ public abstract class RangedWeapon extends Item {
         public SoundEffect getSoundEffect() {
             return SoundEffect.RANGED_WEAPON_RIFLE;
         }
+
+        @Override
+        public List<HandledProjectile> getProjectiles(Agent owner) {
+            return ImmutableList.of(getPrimaryProjectile(owner));
+        }
+    }
+
+    public static class Shotgun extends RangedWeapon {
+        private static final float SPREAD_DEGREES = 10f;
+        
+        public Shotgun(Items.Item item) {
+            super(item);
+        }
+
+        @Override
+        public SoundEffect getSoundEffect() {
+            return SoundEffect.RANGED_WEAPON_SHOTGUN;
+        }
+
+        @Override
+        public List<HandledProjectile> getProjectiles(Agent owner) {
+            ImmutableList.Builder<HandledProjectile> builder = ImmutableList.builder();
+            for (int i = -2; i <= 2; i++) {
+                float theta = SPREAD_DEGREES * i;
+                builder.add(new ShotgunPellet(owner, theta));
+            }
+            return builder.build();
+        }
     }
 
     public static RangedWeapon from(Items.Item item) {
@@ -369,6 +425,8 @@ public abstract class RangedWeapon extends Item {
                 return new Pistol(item);
             case RIFLE:
                 return new Rifle(item);
+            case SHOTGUN:
+                return new Shotgun(item);
             default:
                 throw new IllegalArgumentException("Unrecognized ranged weapon type: "
                         + item.getRangedType());

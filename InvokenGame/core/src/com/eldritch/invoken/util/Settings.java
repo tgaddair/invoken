@@ -30,9 +30,10 @@ public class Settings {
 	public static final short BIT_WALL = 0x0004;
 	public static final short BIT_OBSTACLE = 0x0008;
 	public static final short BIT_SHORT_OBSTACLE = 0x0010;
+	public static final short BIT_BULLET = 0x0100;
 	public static final short BIT_SHOOTABLE = BIT_AGENT | BIT_WALL | BIT_OBSTACLE;  // can be shot
 	public static final short BIT_PHYSICAL = BIT_SHOOTABLE | BIT_SHORT_OBSTACLE;  // can walk into
-	public static final short BIT_ANYTHING = BIT_DEFAULT | BIT_PHYSICAL;  // everything
+	public static final short BIT_ANYTHING = BIT_DEFAULT | BIT_PHYSICAL | BIT_BULLET;  // everything
 	
 	// debug settings
 	public static final boolean GOD_MODE = false;

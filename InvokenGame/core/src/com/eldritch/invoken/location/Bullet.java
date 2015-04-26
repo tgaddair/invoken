@@ -62,7 +62,7 @@ public class Bullet implements AgentHandler {
         fixture.setUserData(this);
 
         Filter filter = fixture.getFilterData();
-        filter.categoryBits = Settings.BIT_PHYSICAL;
+        filter.categoryBits = Settings.BIT_BULLET;
         filter.maskBits = Settings.BIT_SHOOTABLE;
         fixture.setFilterData(filter);
         

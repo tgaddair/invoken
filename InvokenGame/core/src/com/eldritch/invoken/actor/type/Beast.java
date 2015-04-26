@@ -12,7 +12,7 @@ import com.eldritch.invoken.util.SoundManager.SoundEffect;
 import com.google.common.base.Strings;
 
 public class Beast extends Npc {
-    public static float MAX_VELOCITY = 8f;
+    public static float MAX_VELOCITY = 4f;
     public static int PX = 32;
 
     public Beast(NonPlayerActor data, float x, float y, Location location) {

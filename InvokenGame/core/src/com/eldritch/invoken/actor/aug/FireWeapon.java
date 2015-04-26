@@ -109,8 +109,9 @@ public class FireWeapon extends ProjectileAugmentation {
         public void apply(Location location) {
             // add projectile to scene
             RangedWeapon weapon = owner.getInventory().getRangedWeapon();
-            HandledProjectile projectile = weapon.getProjectile(owner);
-            location.addEntity(projectile);
+            for (HandledProjectile projectile : weapon.getProjectiles(owner)) {
+                location.addEntity(projectile);
+            }
 
             // update agent to fact the direction of their shots
             owner.setDirection(owner.getRelativeDirection(target));
