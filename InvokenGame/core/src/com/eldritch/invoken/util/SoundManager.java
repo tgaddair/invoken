@@ -35,6 +35,8 @@ public class SoundManager implements Disposable {
         CLICK(WAV, "click"),
         FOOTSTEP(OGG, "footstep00", "footstep01"),
         HIT(OGG, "hit00"),
+        MELEE_HIT(OGG, "melee-hit-00", "melee-hit-01"),
+        MELEE_SWING(WAV, "melee-swing-00", "melee-swing-01", "melee-swing-02"),
         DOOR_OPEN(WAV, "door-open"),
         RANGED_WEAPON_SMALL(WAV, "ranged-weapon-small"),
         RANGED_WEAPON_LARGE(WAV, "ranged-weapon-large"),
