@@ -1,30 +1,43 @@
 package com.eldritch.invoken.actor.type;
 
-import com.badlogic.gdx.ai.steer.behaviors.Wander;
+import java.util.List;
+
+import com.badlogic.gdx.ai.steer.behaviors.Pursue;
 import com.badlogic.gdx.ai.steer.limiters.LinearAccelerationLimiter;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.actor.Profession;
 import com.eldritch.invoken.location.Location;
 import com.eldritch.invoken.util.Settings;
 
 public class DummyPlayer extends Player {
+    private static final float MIN_DST2 = 9f;
+    
+    private final NavigatedSteerable lastSeen;
+    private final Pursue<Vector2> pursue;
+    
     public DummyPlayer(Profession profession, int level, float x, float y, Location location,
             String body) {
         super(profession, level, x, y, location, body);
+        lastSeen = new NavigatedSteerable(this, location);
 
-        Wander<Vector2> wander = new Wander<Vector2>(this).setFaceEnabled(false)
-                .setLimiter(new LinearAccelerationLimiter(5)).setWanderOffset(2)
-                .setWanderOrientation(0).setWanderRadius(0.5f).setWanderRate(MathUtils.PI / 5);
-        setBehavior(wander);
+        pursue = new Pursue<Vector2>(this, this).setLimiter(new LinearAccelerationLimiter(10));
+        setBehavior(pursue);
 
         setCollisionMask(Settings.BIT_PERIMETER);
     }
 
     @Override
-    protected void takeAction(float delta, Location screen) {
+    protected void takeAction(float delta, Location location) {
+        if (pursue.getTarget() == this || dst2(lastSeen.getTarget()) < MIN_DST2) {
+            List<Agent> agents = location.getAllAgents();
+            Agent agent = agents.get((int) (Math.random() * agents.size()));
+            lastSeen.setPosition(agent);
+            pursue.setTarget(lastSeen);
+        }
+        
         // steering and movement
+        lastSeen.update(delta);
         if (steeringBehavior != null) {
             // Calculate steering acceleration
             steeringBehavior.calculateSteering(steeringOutput);

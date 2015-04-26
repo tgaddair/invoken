@@ -676,8 +676,8 @@ public class Location {
                 || ((int) viewBounds.height) != ((int) cameraBounds.height);
     }
 
-    public List<Agent> getActors() {
-        return activeEntities;
+    public List<Agent> getAllAgents() {
+        return entities;
     }
 
     public List<Activator> getActivators() {
@@ -685,7 +685,7 @@ public class Location {
     }
 
     public List<Agent> getNeighbors(Agent agent) {
-        return getNeighbors(agent, agent.getNeighbors(), getActors());
+        return getNeighbors(agent, agent.getNeighbors(), getActiveEntities());
     }
 
     public List<Agent> getNeighbors(Agent agent, List<Agent> neighbors, List<Agent> actors) {

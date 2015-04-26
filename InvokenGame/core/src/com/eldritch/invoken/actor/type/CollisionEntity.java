@@ -21,7 +21,7 @@ public abstract class CollisionEntity implements Entity, Locatable {
     
     protected Array<Agent> getCollisionActors(Location screen) {
         Array<Agent> agents = new Array<Agent>();
-        for (Agent other : screen.getActors()) {
+        for (Agent other : screen.getActiveEntities()) {
             // only collide with enemies
             if (other == this)
                 continue;

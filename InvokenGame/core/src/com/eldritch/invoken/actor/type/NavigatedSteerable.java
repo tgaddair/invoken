@@ -16,7 +16,7 @@ public class NavigatedSteerable extends BasicSteerable {
     private static final float MIN_DIST = 1f;
     private static final float WAIT_SECONDS = 3f;
 
-    private final Npc npc;
+    private final Agent npc;
     private final PathManager pathManager;
     private final Vector2 lastSeen = new Vector2();
     private Agent target = null;
@@ -27,7 +27,7 @@ public class NavigatedSteerable extends BasicSteerable {
     private float pathAge = 0;
     private int pathIndex = 0;
 
-    public NavigatedSteerable(Npc npc, Location location) {
+    public NavigatedSteerable(Agent npc, Location location) {
         this.npc = npc;
         pathManager = location.getPathManager();
     }
