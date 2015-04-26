@@ -19,8 +19,10 @@ public class Toaster {
     private final LinkedList<Message> messages = new LinkedList<Message>();
     private final Skin skin;
     private final Table container;
+    
     private boolean active = false;
     private float displayTime = 1.75f;
+    private float fadeTime = 0.75f;
     
     public Toaster(Skin skin) {
         this.skin = skin;
@@ -53,6 +55,10 @@ public class Toaster {
         displayTime = time;
     }
     
+    public float getFadeTime() {
+        return fadeTime;
+    }
+    
     private void showNext() {
         Message message = messages.peek();
         LabelStyle labelStyle = skin.get("toast", LabelStyle.class);
@@ -66,8 +72,8 @@ public class Toaster {
 
         // configure the fade-in/out effect on the splash image
         active = true;
-        label.addAction(sequence(fadeIn(0.75f), delay(displayTime),
-                fadeOut(0.75f), new Action() {
+        label.addAction(sequence(fadeIn(fadeTime), delay(displayTime),
+                fadeOut(fadeTime), new Action() {
                     @Override
                     public boolean act(float delta) {
                         // the last action will remove this item from the queue

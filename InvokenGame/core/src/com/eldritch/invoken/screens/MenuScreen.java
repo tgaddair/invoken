@@ -42,6 +42,12 @@ public class MenuScreen extends AbstractScreen {
     public MenuScreen(InvokenGame game) {
         super(game);
     }
+    
+    public MenuScreen(InvokenGame game, Location location, OrthographicCamera camera) {
+        super(game);
+        this.location = location;
+        this.camera = camera;
+    }
 
     @Override
     public void show() {
@@ -85,7 +91,7 @@ public class MenuScreen extends AbstractScreen {
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 super.touchUp(event, x, y, pointer, button);
                 // game.getSoundManager().play(TyrianSound.CLICK);
-                game.setScreen(new CreditsScreen(game));
+                game.setScreen(new CreditsScreen(game, location, camera));
             }
         });
         table.add(optionsButton).size(300, 60).uniform().spaceBottom(10);
@@ -99,7 +105,10 @@ public class MenuScreen extends AbstractScreen {
         // return bgWorldSetup();
         // }
         // });
-        location = bgWorldSetup();
+        
+        if (location == null) {
+            location = bgWorldSetup();
+        }
 
         // play title music
         InvokenGame.MUSIC_MANAGER.play(MusicManager.MAIN);
