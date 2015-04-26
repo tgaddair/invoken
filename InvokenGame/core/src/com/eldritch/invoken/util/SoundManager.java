@@ -43,7 +43,9 @@ public class SoundManager implements Disposable {
         SWISH(OGG, "swish"),
         BUFF(WAV, "buff"),
         GHOST_DEATH(OGG, "ghost-death"),
-        HUMAN_DEATH(WAV, "human-death-00", "human-death-01", "human-death-02");
+        HUMAN_DEATH(WAV, "human-death-00", "human-death-01", "human-death-02"),
+        INVENTORY_OFF(OGG, "inventory-off"),
+        INVENTORY_ON(OGG, "inventory-on-00", "inventory-on-01");
 
         private final ImmutableList<String> filenames;
 
@@ -66,17 +68,16 @@ public class SoundManager implements Disposable {
         }
         
         public int randomIndex() {
+            if (filenames.size() == 1) {
+                return 0;
+            }
             return (int) (Math.random() * filenames.size());
         }
 
         public String getFilename() {
             // the null result can never happen, by virtue of our constructor that ensures at least
             // one asset is specified
-            if (filenames.size() == 1) {
-                return filenames.get(0);
-            } else {
-                return filenames.get(randomIndex());
-            }
+            return filenames.get(randomIndex());
         }
 
         private String format(String asset, CodingFormat coding) {
@@ -125,7 +126,11 @@ public class SoundManager implements Disposable {
      * Plays the specified sound.
      */
     public void play(SoundEffect sound) {
-        play(sound.getFilename());
+        play(sound, 1);
+    }
+    
+    public void play(SoundEffect sound, float s) {
+        play(sound.getFilename(), s);
     }
     
     public int playInSequence(SoundEffect sound, int index) {
@@ -135,7 +140,7 @@ public class SoundManager implements Disposable {
     }
     
     public void playAtPoint(SoundEffect sound, Vector2 point) {
-        playAtPoint(sound, 0, point);
+        playAtPoint(sound, sound.randomIndex(), point);
     }
     
     public int playAtPoint(SoundEffect sound, Vector2 point, float s) {

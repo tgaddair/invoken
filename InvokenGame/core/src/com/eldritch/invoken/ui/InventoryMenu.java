@@ -10,12 +10,14 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
+import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.actor.AgentInventory;
 import com.eldritch.invoken.actor.items.Item;
 import com.eldritch.invoken.actor.type.Player;
 import com.eldritch.invoken.state.Inventory.ItemState;
 import com.eldritch.invoken.util.DefaultInputListener;
 import com.eldritch.invoken.util.Settings;
+import com.eldritch.invoken.util.SoundManager.SoundEffect;
 
 public class InventoryMenu {
     private static final Color EQUIPPED_COLOR = new Color(0x7693E9FF);
@@ -36,23 +38,13 @@ public class InventoryMenu {
         ScrollPane scroll = new ScrollPane(table, skin);
         splitPane = new SplitPane(getPlayerView(), scroll, false, skin, "default-horizontal");
 
-        window = new Window("Inventory", skin);
+        window = new Window("", skin);
         window.setHeight(Settings.MENU_VIEWPORT_HEIGHT - 100);
         window.setWidth(Settings.MENU_VIEWPORT_WIDTH - 100);
         window.setPosition(Settings.MENU_VIEWPORT_WIDTH / 2 - window.getWidth() / 2,
                 Settings.MENU_VIEWPORT_HEIGHT / 2 - window.getHeight() / 2);
         window.center();
 
-        TextButton closeButton = new TextButton("X", skin);
-        closeButton.addListener(new DefaultInputListener() {
-            @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                show(false);
-            }
-        });
-
-        window.getButtonTable().add(closeButton).height(window.getPadTop());
-        window.row().fill().expandX();
         window.add(splitPane).expand().fill();
         window.setVisible(false);
     }
@@ -108,8 +100,10 @@ public class InventoryMenu {
                 AgentInventory inventory = player.getInfo().getInventory();
                 if (item.isEquipped(inventory)) {
                     inventory.unequip(item);
+                    InvokenGame.SOUND_MANAGER.play(SoundEffect.INVENTORY_OFF, 2);
                 } else {
                     inventory.equip(item);
+                    InvokenGame.SOUND_MANAGER.play(SoundEffect.INVENTORY_ON, 2);
                 }
                 refresh();
                 System.out.println(item.toString());

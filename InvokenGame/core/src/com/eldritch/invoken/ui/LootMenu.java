@@ -7,12 +7,14 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
+import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.actor.items.Item;
 import com.eldritch.invoken.actor.type.Player;
 import com.eldritch.invoken.actor.util.Lootable;
 import com.eldritch.invoken.state.Inventory.ItemState;
 import com.eldritch.invoken.util.DefaultInputListener;
 import com.eldritch.invoken.util.Settings;
+import com.eldritch.invoken.util.SoundManager.SoundEffect;
 
 public class LootMenu {
 	private final Table container;
@@ -84,6 +86,8 @@ public class LootMenu {
 				} else {
 					itemButton.setVisible(false);
 				}
+				
+				InvokenGame.SOUND_MANAGER.play(SoundEffect.INVENTORY_ON, 2);
 			}
 		});
 		table.row();
