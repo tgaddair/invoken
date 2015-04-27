@@ -1,0 +1,7 @@
+id: "Tutorial004"
+furniture {
+  id: "terminal1"
+  type: TERMINAL
+  asset_id: "Tutorial04"
+}
+size: MEDIUM

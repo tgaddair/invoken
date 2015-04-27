@@ -110,11 +110,11 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
     private final Texture bg = getTexture("sprite/starfield.png");
 
     public GameScreen(InvokenGame game, String playerName) {
-        this(game, playerName, null, "WelcomeCenter");
+        this(game, playerName, null, Settings.FIRST_LOCATION);
     }
 
     public GameScreen(InvokenGame game, Profession profession) {
-        this(game, "Player", profession, "WelcomeCenter");
+        this(game, "Player", profession, Settings.FIRST_LOCATION);
     }
 
     public GameScreen(InvokenGame game, Profession profession, String locationName) {

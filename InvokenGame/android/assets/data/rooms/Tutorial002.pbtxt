@@ -1,2 +1,12 @@
 id: "Tutorial002"
-size: LARGE
+furniture {
+  id: "container-small"
+  type: CONTAINER
+  asset_id: "Tutorial01"
+}
+furniture {
+  id: "terminal1"
+  type: TERMINAL
+  asset_id: "Tutorial02"
+}
+size: MEDIUM

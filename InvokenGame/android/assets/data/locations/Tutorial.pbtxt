@@ -22,9 +22,93 @@ control_point {
 }
 control_point {
   id: "Room2"
+  room_id: "Tutorial002"
   follows: "Entrance"
   lock_strength: 0
   required_key: "TutorialCredentials001"
+  available_key: "TutorialCredentials002"
+  origin: false
+  min: 0
+  max: 0
+  value: 0
+  closed: true
+  faction_id: ""
+}
+control_point {
+  id: "Room3"
+  room_id: "Tutorial003"
+  follows: "Room2"
+  lock_strength: 0
+  required_key: "TutorialCredentials002"
+  available_key: "TutorialCredentials003"
+  origin: false
+  min: 0
+  max: 0
+  value: 0
+  closed: true
+  faction_id: ""
+}
+control_point {
+  id: "Room4"
+  room_id: "Tutorial004"
+  follows: "Room3"
+  lock_strength: 0
+  required_key: "TutorialCredentials003"
+  available_key: "TutorialCredentials004"
+  origin: false
+  min: 0
+  max: 0
+  value: 0
+  closed: true
+  faction_id: ""
+}
+control_point {
+  id: "Room5"
+  room_id: "Tutorial005"
+  follows: "Room4"
+  lock_strength: 0
+  required_key: "TutorialCredentials004"
+  available_key: "TutorialCredentials005"
+  origin: false
+  min: 0
+  max: 0
+  value: 0
+  closed: true
+  faction_id: ""
+}
+control_point {
+  id: "Room6"
+  room_id: "Tutorial006"
+  follows: "Room5"
+  lock_strength: 0
+  required_key: "TutorialCredentials005"
+  available_key: "TutorialCredentials006"
+  origin: false
+  min: 0
+  max: 0
+  value: 0
+  closed: true
+  faction_id: ""
+}
+control_point {
+  id: "Room7"
+  room_id: "Tutorial007"
+  follows: "Room6"
+  lock_strength: 0
+  required_key: "TutorialCredentials006"
+  available_key: "TutorialCredentials007"
+  origin: false
+  min: 0
+  max: 0
+  value: 0
+  closed: true
+  faction_id: ""
+}
+control_point {
+  id: "Exit"
+  follows: "Room7"
+  lock_strength: 0
+  required_key: "TutorialCredentials007"
   origin: false
   min: 0
   max: 0

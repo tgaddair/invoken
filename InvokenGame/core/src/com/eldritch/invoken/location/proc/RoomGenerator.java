@@ -93,9 +93,9 @@ public class RoomGenerator extends BspGenerator {
 
         // seed the routine so we can connect to the origin, and we connected from a child
         connections++;
+        connected.add(origin);
         if (!origin.cp.getClosed()) {
             connectedSample.add(origin);
-            connected.add(origin);
         }
         for (ControlNode lock : origin.locks) {
             unlocked.add(lock);
@@ -110,18 +110,18 @@ public class RoomGenerator extends BspGenerator {
             }
 
             connections++;
+            connected.add(current);
             if (!current.cp.getClosed()) {
                 // can connect implicitly
                 if (!connectedSample.isEmpty()) {
                     ControlNode connection = connectedSample
-                            .get((int) (random() * connected.size()));
+                            .get((int) (random() * connectedSample.size()));
                     DigTunnel(connection.getBounds(), current.getBounds(), costs);
                 }
 
                 // add this node to the connected set, and maybe add its children if all its keys
                 // are also in the connected set
                 connectedSample.add(current);
-                connected.add(current);
             }
 
             // unlock dependencies

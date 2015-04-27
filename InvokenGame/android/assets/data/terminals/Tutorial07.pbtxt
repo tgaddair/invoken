@@ -1,0 +1,22 @@
+id: "Tutorial07"
+dialogue {
+  dialogue {
+    id: "Welcome"
+    text: "Activate nearby containers by clicking on them.  The container will display a list of items you can take along with the item\'s count.  Any items you take are added to your inventory.\n\nPress \'I\' to access your inventory at any time.  From here you can equip and unequip items by clicking in them, or consume items like stimpacks to restore your health.  Be aware that time will not stop for you when you\'re viewing your inventory, so do so with care for your surroundings.\n\nCurrently equipped items are shown in green.  You may have an outfit, a ranged weapon, and a melee weapon all equipped at once, but no more than one of each.\n\nPlease proceed to the next chamber."
+    outcome {
+      weight: 1.0
+      type: ITEM_CHANGE
+      target: "TutorialCredentials007"
+      value: 1
+    }
+    greeting: true
+    weight: 0
+    choice_id: "Exit"
+    forced: false
+  }
+  choice {
+    text: "[Exit]"
+    weight: 0
+    id: "Exit"
+  }
+}
