@@ -1,0 +1,68 @@
+id: "IcarianEmpire"
+name: "Icarian Empire"
+relation {
+  faction_id: "HouseEru"
+  reaction: -1
+}
+relation {
+  faction_id: "HouseLorent"
+  reaction: 1
+}
+relation {
+  faction_id: "HouseMorvayn"
+  reaction: -1
+}
+relation {
+  faction_id: "HouseArtoren"
+  reaction: -1
+}
+relation {
+  faction_id: "_ThugFaction"
+  reaction: -10
+}
+relation {
+  faction_id: "_TheHollow"
+  reaction: -10
+}
+relation {
+  faction_id: "_HostileCreatures"
+  reaction: -10
+}
+rank {
+  id: 1
+  title: "Citizen"
+}
+rank {
+  id: 2
+  title: "Clerk"
+}
+rank {
+  id: 3
+  title: "Officer"
+}
+rank {
+  id: 4
+  title: "Inspector"
+}
+rank {
+  id: 5
+  title: "Grand Inspector"
+}
+rank {
+  id: 6
+  title: "Governor"
+}
+rank {
+  id: 7
+  title: "Minister"
+}
+rank {
+  id: 8
+  title: "Archon"
+}
+rank {
+  id: 9
+  title: "Emperor"
+}
+alignment: WARDEN
+visible: true

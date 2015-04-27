@@ -1,0 +1,7 @@
+id: "_HostileCreatures"
+name: "Hostile Creatures"
+rank {
+  id: 3
+  title: "Creature"
+}
+visible: false

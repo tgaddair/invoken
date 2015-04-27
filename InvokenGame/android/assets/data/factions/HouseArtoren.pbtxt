@@ -1,0 +1,60 @@
+id: "HouseArtoren"
+name: "House Artoren"
+relation {
+  faction_id: "HouseEru"
+  reaction: 1
+}
+relation {
+  faction_id: "HouseLorent"
+  reaction: -1
+}
+relation {
+  faction_id: "HouseMorvayn"
+  reaction: -1
+}
+relation {
+  faction_id: "IcarianEmpire"
+  reaction: -1
+}
+relation {
+  faction_id: "_HostileCreatures"
+  reaction: -10
+}
+rank {
+  id: 1
+  title: "Recruit"
+}
+rank {
+  id: 2
+  title: "Squire"
+}
+rank {
+  id: 3
+  title: "Protector"
+}
+rank {
+  id: 4
+  title: "Sentinel"
+}
+rank {
+  id: 5
+  title: "Knight"
+}
+rank {
+  id: 6
+  title: "Captain"
+}
+rank {
+  id: 7
+  title: "Paladin"
+}
+rank {
+  id: 8
+  title: "Master"
+}
+rank {
+  id: 9
+  title: "Grandmaster"
+}
+alignment: WARDEN
+visible: true

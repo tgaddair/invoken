@@ -1,0 +1,60 @@
+id: "HouseMorvayn"
+name: "House Morvayn"
+relation {
+  faction_id: "HouseArtoren"
+  reaction: -1
+}
+relation {
+  faction_id: "HouseEru"
+  reaction: -1
+}
+relation {
+  faction_id: "HouseLorent"
+  reaction: -1
+}
+relation {
+  faction_id: "IcarianEmpire"
+  reaction: -1
+}
+relation {
+  faction_id: "_HostileCreatures"
+  reaction: -10
+}
+rank {
+  id: 1
+  title: "Initiate"
+}
+rank {
+  id: 2
+  title: "Apprentice"
+}
+rank {
+  id: 3
+  title: "Fellow"
+}
+rank {
+  id: 4
+  title: "Scholar"
+}
+rank {
+  id: 5
+  title: "Fabricant"
+}
+rank {
+  id: 6
+  title: "Framer"
+}
+rank {
+  id: 7
+  title: "Master"
+}
+rank {
+  id: 8
+  title: "Magister"
+}
+rank {
+  id: 9
+  title: "Archmagister"
+}
+alignment: ARCHITECT
+visible: true

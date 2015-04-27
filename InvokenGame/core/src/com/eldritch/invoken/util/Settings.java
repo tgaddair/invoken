@@ -49,8 +49,8 @@ public class Settings {
 	public static final int START_LEVEL = 10;  // 25
 	public static final Profession DEFAULT_PROFESSION = Profession.Agent;
 	
-	public static final String FIRST_LOCATION = "Tutorial";
-//	public static final String FIRST_LOCATION = "WelcomeCenter";
+//	public static final String FIRST_LOCATION = "Tutorial";
+	public static final String FIRST_LOCATION = "WelcomeCenter";
 	
 	// tutorial seed:
 	// global seed: -509684375407364354

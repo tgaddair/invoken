@@ -194,6 +194,28 @@ encounter {
   control_point_id: "GenericHall"
   faction_id: ""
 }
+encounter {
+  id: "Eru"
+  title: "Eru"
+  type: ACTOR
+  weight: 1.0
+  unique: false
+  actor_params {
+    description: ""
+    actor_scenario {
+      actor_id: "TerathOlo"
+      essential: true
+      blocking: false
+      min: 1
+      max: 1
+      alive: true
+    }
+    no_detect: false
+    no_flee: false
+  }
+  control_point_id: "Lobby"
+  faction_id: "HouseEru"
+}
 light {
   r: 179
   g: 179

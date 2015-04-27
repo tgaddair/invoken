@@ -20,7 +20,7 @@ params {
     level: 10
   }
   faction_status {
-    faction_id: "_SlimeFaction"
+    faction_id: "_HostileCreatures"
     rank: 3
   }
   inventory_item {

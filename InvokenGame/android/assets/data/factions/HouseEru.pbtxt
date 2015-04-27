@@ -1,0 +1,64 @@
+id: "HouseEru"
+name: "House Eru"
+relation {
+  faction_id: "HouseArtoren"
+  reaction: 1
+}
+relation {
+  faction_id: "HouseLorent"
+  reaction: -1
+}
+relation {
+  faction_id: "HouseMorvayn"
+  reaction: -2
+}
+relation {
+  faction_id: "IcarianEmpire"
+  reaction: -2
+}
+relation {
+  faction_id: "_TheHollow"
+  reaction: -10
+}
+relation {
+  faction_id: "_HostileCreatures"
+  reaction: -10
+}
+rank {
+  id: 1
+  title: "Initiate"
+}
+rank {
+  id: 2
+  title: "Acolyte"
+}
+rank {
+  id: 3
+  title: "Disciple"
+}
+rank {
+  id: 4
+  title: "Curate"
+}
+rank {
+  id: 5
+  title: "Vicar"
+}
+rank {
+  id: 6
+  title: "Prelate"
+}
+rank {
+  id: 7
+  title: "Ordinary"
+}
+rank {
+  id: 8
+  title: "Exarch"
+}
+rank {
+  id: 9
+  title: "Primarch"
+}
+alignment: INQUISITOR
+visible: true

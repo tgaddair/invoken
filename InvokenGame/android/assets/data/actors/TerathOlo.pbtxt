@@ -1,0 +1,228 @@
+params {
+  id: "TerathOlo"
+  name: "Terath Olo"
+  species: HUMAN
+  gender: MALE
+  profession: EXECUTOR
+  level: 8
+  skill {
+    discipline: WARFARE
+    level: 14
+  }
+  skill {
+    discipline: AUTOMATA
+    level: 12
+  }
+  skill {
+    discipline: SUBTERFUGE
+    level: 11
+  }
+  skill {
+    discipline: CHARISMA
+    level: 10
+  }
+  faction_status {
+    faction_id: "HouseEru"
+    rank: 3
+  }
+  inventory_item {
+    item_id: "Hammer"
+    count: 1
+    drop_chance: 1.0
+  }
+  inventory_item {
+    item_id: "EruInfantryArmor"
+    count: 1
+    drop_chance: 1.0
+  }
+  inventory_item {
+    item_id: "Shotgun"
+    count: 1
+    drop_chance: 1.0
+  }
+  known_aug_id: Drain
+  known_aug_id: Jaunt
+  known_aug_id: RendWeapon
+}
+unique: true
+dialogue {
+  dialogue {
+    id: "Greeting1"
+    text: "What\'s this?  Do the gods seek to test my faith, or do you truly stand here before my eyes?"
+    choice_DEPRECATED {
+      text: "What happened here?"
+      successor_id: "APlague"
+      weight: 0
+    }
+    greeting: true
+    weight: 0
+    choice_id: "What happened here?"
+  }
+  dialogue {
+    id: "APlague"
+    text: "A plague.  That\'s how it started, anyway.  The scarcity came after, then the riots.  We turned on one another.  Now we few who remain are scattered... and afraid."
+    greeting: false
+    weight: 0
+    choice_id: "Is there no one left"
+    choice_id: "WhatAreYouDoingHere"
+  }
+  dialogue {
+    id: "ThereAreMany"
+    text: "There are many.  Many factions proclaiming they have control, but all of them false.  I know who is in control, though I have not seen his face."
+    choice_DEPRECATED {
+      text: "Who?  Your god?"
+      successor_id: "NoTheirEyesAreTurned"
+      weight: 0
+    }
+    choice_DEPRECATED {
+      text: "You said there were others, sounded organized.  Where can I find them?"
+      weight: 0
+    }
+    greeting: false
+    weight: 0
+    choice_id: "Who?  Your god?"
+    choice_id: "You said there were others,"
+  }
+  dialogue {
+    id: "NoTheirEyesAreTurned"
+    text: "No.  Their eyes are turned from this place.  He is a man, as you or I.  They call him \"The Dreamer\"."
+    choice_DEPRECATED {
+      text: "They?  Have \"they\" seen him?  Sounds like I might wish to speak with your Dreamer."
+      successor_id: "YouCannot"
+      weight: 0
+    }
+    choice_DEPRECATED {
+      text: "You said there were others, sounded organized.  Where can I find them?"
+      weight: 0
+    }
+    greeting: false
+    weight: 0
+    choice_id: "They?  Have \"they\" seen"
+    choice_id: "You said there were others,"
+  }
+  dialogue {
+    id: "YouCannot"
+    text: "You cannot.  None have seen him.  He sees you.  He calls out to us in thought.  I can say no more."
+    greeting: false
+    weight: 0
+    choice_id: "You said there were others,"
+  }
+  dialogue {
+    id: "YoullFindThem"
+    text: "You\'ll find them, scattered throughout the station.  The trams down these halls can take you between the towers, if they yet work."
+    greeting: false
+    weight: 0
+    choice_id: "Great"
+  }
+  dialogue {
+    id: "Me?  I\'ve come here"
+    text: "Me?  I\'ve come here to die.  After my brethren took the tram to the Nosterra Tower, I was alone, as I am now."
+    greeting: false
+    weight: 0
+    choice_id: "Why not go after them"
+  }
+  dialogue {
+    id: "I suspect it is"
+    text: "I suspect it is, but I am not.  The plague has now consumed me.  Though I know what fate awaits me, I am not so eager to meet it.  Down those halls, there waits only death."
+    greeting: false
+    weight: 0
+    choice_id: "Is there no one left"
+  }
+  dialogue {
+    id: "Wait"
+    text: "Wait!  Before you go, you\'ll want this.  These credentials will grant you passage to Nosterra Tower.  I do not expect you to make it that far, but if you do... see Inquisitor Galt, he will show you what comes next."
+    greeting: false
+    weight: 0
+    choice_id: "I see"
+    choice_id: "Come with me"
+  }
+  dialogue {
+    id: "No, we would no"
+    text: "No, we would not, but you are welcome to try.  Farewell."
+    greeting: false
+    weight: 0
+  }
+  dialogue {
+    id: "In your eyes I see a hope"
+    text: "In your eyes I see a hope I thought lost forever.  Yes, I will fight by your side, if you will have me."
+    greeting: false
+    weight: 0
+    choice_id: "Then let\'s make haste"
+  }
+  dialogue {
+    id: "Agreed"
+    text: "Agreed."
+    greeting: false
+    weight: 0
+  }
+  choice {
+    text: "What happened here?"
+    successor_id: "APlague"
+    weight: 0
+    id: "What happened here?"
+  }
+  choice {
+    text: "They?  Have \"they\" seen him?  Sounds like I might wish to speak with your Dreamer."
+    successor_id: "YouCannot"
+    weight: 0
+    id: "They?  Have \"they\" seen"
+  }
+  choice {
+    text: "You said there were others, sounded organized.  Where can I find them?"
+    successor_id: "YoullFindThem"
+    weight: 0
+    id: "You said there were others,"
+  }
+  choice {
+    text: "Is there no one left in charge?"
+    successor_id: "ThereAreMany"
+    weight: 0
+    id: "Is there no one left"
+  }
+  choice {
+    text: "Who?  Your god?"
+    successor_id: "NoTheirEyesAreTurned"
+    weight: 0
+    id: "Who?  Your god?"
+  }
+  choice {
+    text: "Great.  Then that\'s where I\'m headed.  Goodbye."
+    successor_id: "Wait"
+    weight: 0
+    id: "Great"
+  }
+  choice {
+    text: "What are you doing here?"
+    successor_id: "Me?  I\'ve come here"
+    weight: 0
+    id: "WhatAreYouDoingHere"
+  }
+  choice {
+    text: "Why not go after them?  Is the tram still operable?"
+    successor_id: "I suspect it is"
+    weight: 0
+    id: "Why not go after them"
+  }
+  choice {
+    text: "I see... thank you."
+    weight: 0
+    id: "I see"
+  }
+  choice {
+    text: "Come with me.  Together we might survive, get you back to your people."
+    successor_id: "No, we would no"
+    successor_id: "In your eyes I see a hope"
+    weight: 0
+    id: "Come with me"
+  }
+  choice {
+    text: "Then let\'s make haste."
+    successor_id: "Agreed"
+    weight: 0
+    id: "Then let\'s make haste"
+  }
+}
+aggression: AGGRESSIVE
+assistance: LOYAL
+confidence: BRAVE
+guard: false

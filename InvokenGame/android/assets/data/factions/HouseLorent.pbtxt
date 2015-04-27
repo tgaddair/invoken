@@ -1,0 +1,60 @@
+id: "HouseLorent"
+name: "House Lorent"
+relation {
+  faction_id: "HouseArtoren"
+  reaction: -1
+}
+relation {
+  faction_id: "HouseEru"
+  reaction: -1
+}
+relation {
+  faction_id: "HouseMorvayn"
+  reaction: -1
+}
+relation {
+  faction_id: "IcarianEmpire"
+  reaction: 1
+}
+relation {
+  faction_id: "_HostileCreatures"
+  reaction: -10
+}
+rank {
+  id: 1
+  title: "Hireling"
+}
+rank {
+  id: 2
+  title: "Intern"
+}
+rank {
+  id: 3
+  title: "Kindred"
+}
+rank {
+  id: 4
+  title: "Operative"
+}
+rank {
+  id: 5
+  title: "Steward"
+}
+rank {
+  id: 6
+  title: "Governor"
+}
+rank {
+  id: 7
+  title: "Doyen"
+}
+rank {
+  id: 8
+  title: "Master"
+}
+rank {
+  id: 9
+  title: "Grandmaster"
+}
+alignment: AGENT
+visible: true

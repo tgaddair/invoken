@@ -1,0 +1,27 @@
+id: "_ThugFaction"
+name: "Thug Faction"
+relation {
+  faction_id: "IcarianEmpire"
+  reaction: -10
+}
+relation {
+  faction_id: "_TheHollow"
+  reaction: -10
+}
+relation {
+  faction_id: "_PlayerFaction"
+  reaction: -1
+}
+relation {
+  faction_id: "_HostileCreatures"
+  reaction: -10
+}
+rank {
+  id: 3
+  title: "Thug"
+}
+rank {
+  id: 7
+  title: "Leader"
+}
+visible: false
