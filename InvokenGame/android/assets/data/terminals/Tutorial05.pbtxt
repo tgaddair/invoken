@@ -2,7 +2,7 @@ id: "Tutorial05"
 dialogue {
   dialogue {
     id: "Welcome"
-    text: "Activate nearby containers by clicking on them.  The container will display a list of items you can take along with the item\'s count.  Any items you take are added to your inventory.\n\nPress \'I\' to access your inventory at any time.  From here you can equip and unequip items by clicking in them, or consume items like stimpacks to restore your health.  Be aware that time will not stop for you when you\'re viewing your inventory, so do so with care for your surroundings.\n\nCurrently equipped items are shown in green.  You may have an outfit, a ranged weapon, and a melee weapon all equipped at once, but no more than one of each.\n\nPlease proceed to the next chamber."
+    text: "Syncing with a nexus hub enables you to rest and enter a state of quiescence.  While quiescent, your thoughts will seem to stray out of time, and you will awake to a much changed reality.  You will be healed of your afflictions, and perhaps even awake stronger than you were before.  But slain enemies may have regenerated in that time.\n\nThe next chamber is designed to put what you\'ve learned to task.  You may not survive, but do not despair.  In death, you will regenerate as well.  The process takes some time, but you will awake again at the nexus at which you last synced.\n\nWhen you are ready, you may proceed."
     outcome {
       weight: 1.0
       type: ITEM_CHANGE

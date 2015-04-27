@@ -4,4 +4,9 @@ furniture {
   type: TERMINAL
   asset_id: "Tutorial06"
 }
+furniture {
+  id: "container-small"
+  type: CONTAINER
+  asset_id: "Tutorial02"
+}
 size: MEDIUM

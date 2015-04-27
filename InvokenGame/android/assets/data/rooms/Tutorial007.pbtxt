@@ -4,4 +4,4 @@ furniture {
   type: TERMINAL
   asset_id: "Tutorial07"
 }
-size: MEDIUM
+size: LARGE

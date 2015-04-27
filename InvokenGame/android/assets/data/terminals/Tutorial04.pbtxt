@@ -2,7 +2,7 @@ id: "Tutorial04"
 dialogue {
   dialogue {
     id: "Welcome"
-    text: "Activate nearby containers by clicking on them.  The container will display a list of items you can take along with the item\'s count.  Any items you take are added to your inventory.\n\nPress \'I\' to access your inventory at any time.  From here you can equip and unequip items by clicking in them, or consume items like stimpacks to restore your health.  Be aware that time will not stop for you when you\'re viewing your inventory, so do so with care for your surroundings.\n\nCurrently equipped items are shown in green.  You may have an outfit, a ranged weapon, and a melee weapon all equipped at once, but no more than one of each.\n\nPlease proceed to the next chamber."
+    text: "Taking damage will lower your health, and it will not regenerate naturally until you rest.  Consumable items like stimpacks may be used to hasten the regenerative process.\n\nIn the next room, you\'ll also be able to rest, in case you\'re feeling wary."
     outcome {
       weight: 1.0
       type: ITEM_CHANGE

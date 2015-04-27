@@ -1,5 +1,49 @@
 id: "Tutorial"
 name: "Tutorial"
+encounter {
+  id: "Slime1"
+  title: "Slime1"
+  type: ACTOR
+  weight: 1.0
+  unique: true
+  actor_params {
+    description: ""
+    actor_scenario {
+      actor_id: "Slime"
+      essential: false
+      blocking: false
+      min: 1
+      max: 1
+      alive: true
+    }
+    no_detect: false
+    no_flee: false
+  }
+  control_point_id: "Room4"
+  faction_id: ""
+}
+encounter {
+  id: "Slimehorde"
+  title: "SlimeHorde"
+  type: ACTOR
+  weight: 1.0
+  unique: true
+  actor_params {
+    description: ""
+    actor_scenario {
+      actor_id: "Slime"
+      essential: false
+      blocking: false
+      min: 4
+      max: 5
+      alive: true
+    }
+    no_detect: false
+    no_flee: false
+  }
+  control_point_id: "Room7"
+  faction_id: ""
+}
 light {
   r: 255
   g: 255

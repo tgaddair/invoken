@@ -52,6 +52,11 @@ public class Settings {
 	public static final String FIRST_LOCATION = "Tutorial";
 //	public static final String FIRST_LOCATION = "WelcomeCenter";
 	
+	// tutorial seed:
+	// global seed: -509684375407364354
+	// hash code: 257920894
+	// seed: -509684375158687360
+	
 	public static DebugGraph DRAW_GRAPH = DebugGraph.Disposition;
 	public enum DebugGraph {
 	    None, Disposition, Enemies, LOS, Visible

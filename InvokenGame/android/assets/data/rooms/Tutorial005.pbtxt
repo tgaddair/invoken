@@ -4,4 +4,21 @@ furniture {
   type: TERMINAL
   asset_id: "Tutorial05"
 }
+furniture {
+  id: "container-small"
+  type: CONTAINER
+  asset_id: "Tutorial02"
+}
+furniture {
+  id: "bed6"
+  type: TMX
+}
+furniture {
+  id: "chair1"
+  type: TMX
+}
+furniture {
+  id: "repository"
+  type: ACTIVATOR
+}
 size: MEDIUM

@@ -2,7 +2,7 @@ id: "Tutorial03"
 dialogue {
   dialogue {
     id: "Welcome"
-    text: "Activate nearby containers by clicking on them.  The container will display a list of items you can take along with the item\'s count.  Any items you take are added to your inventory.\n\nPress \'I\' to access your inventory at any time.  From here you can equip and unequip items by clicking in them, or consume items like stimpacks to restore your health.  Be aware that time will not stop for you when you\'re viewing your inventory, so do so with care for your surroundings.\n\nCurrently equipped items are shown in green.  You may have an outfit, a ranged weapon, and a melee weapon all equipped at once, but no more than one of each.\n\nPlease proceed to the next chamber."
+    text: "Once you have a weapon equipped you can use your \'Fire Weapon\' augmentation.  Augmentations are software systems that enhance your natural abilities, but using them expends energy -- shown as a blue bar on your display.\n\nTo fire your weapon, first prepare the augmentation by selecting it on your display.  Next, hold down the right mouse button to aim your weapon.  Finally, click again while still aiming to fire the weapon.\n\nWhen you\'re ready, proceed to the next room and eliminate the creature within."
     outcome {
       weight: 1.0
       type: ITEM_CHANGE

@@ -58,7 +58,7 @@ public class BspGenerator {
     public BspGenerator(int roomCount, long seed) {
         this.rand = new Random(seed);
         this.RoomCount = roomCount;
-        this.Width = Math.max((int) (RoomCount * ROOM_SPARSITY), 50);
+        this.Width = Math.max((int) (RoomCount * ROOM_SPARSITY), 100);
         this.Height = Width;
         map = new CellType[Width][Height];
     }

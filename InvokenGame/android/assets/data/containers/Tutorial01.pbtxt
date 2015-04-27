@@ -9,3 +9,8 @@ item {
   count: 1
   drop_chance: 1.0
 }
+item {
+  item_id: "TutorialCredentials002"
+  count: 1
+  drop_chance: 1.0
+}
