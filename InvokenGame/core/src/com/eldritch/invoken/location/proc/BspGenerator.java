@@ -157,7 +157,7 @@ public class BspGenerator {
     
     protected boolean placeRectRoom(Rectangle room) {
         // check room
-        if (Overlaps(room)) {
+        if (isClear(room)) {
             Rooms.add(room);
             DigRoom(room);
             return true;
@@ -337,7 +337,7 @@ public class BspGenerator {
     // / </summary>
     // / <param name="area"></param>
     // / <returns></returns>
-    private boolean Overlaps(Rectangle area) {
+    private boolean isClear(Rectangle area) {
         for (int i = 0; i < area.width; i++) {
             for (int j = 0; j < area.height; j++) {
                 int x = (int) area.x + i;

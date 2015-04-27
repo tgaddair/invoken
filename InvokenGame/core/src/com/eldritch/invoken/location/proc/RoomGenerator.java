@@ -74,7 +74,7 @@ public class RoomGenerator extends BspGenerator {
             int count = elem.second;
             for (int i = 0; i < count; i++) {
                 System.out.println("placing: " + cp.getId());
-                place(cp, null, cost);
+                place(cp, cost);
             }
         }
     }
@@ -215,6 +215,26 @@ public class RoomGenerator extends BspGenerator {
             return cost;
         }
     }
+    
+    private Rectangle place(ControlPoint cp, CostMatrix cost) {
+        // first, place the room somewhere valid on the map
+        Rectangle rect = place(cp);
+        
+        // next, place and connected to our followers
+        placeFollowers(cp, rect, cost);
+        return rect;
+    }
+    
+    private void placeFollowers(ControlPoint cp, Rectangle origin, CostMatrix cost) {
+        if (follows.containsKey(cp.getId())) {
+            for (ControlPoint follower : follows.get(cp.getId())) {
+                Rectangle rect = place(follower, origin);
+                DigTunnel(origin, rect, cost);
+                InvokenGame.log(cp.getId() + " -> " + follower.getId());
+                placeFollowers(follower, rect, cost);
+            }
+        }
+    }
 
     private Rectangle place(ControlPoint cp, Rectangle origin, CostMatrix cost) {
         Rectangle rect = origin == null ? place(cp) : place(cp, origin);
@@ -225,7 +245,8 @@ public class RoomGenerator extends BspGenerator {
                 Rectangle rect2 = place(follower, rect, cost);
                 // Rectangle rect2 = place(follower, rect);
                 DigTunnel(rect, rect2, cost);
-                System.out.println(rect + " -> " + rect2);
+//                System.out.println(rect + " -> " + rect2);
+                InvokenGame.log(cp.getId() + " -> " + follower.getId());
             }
         }
 
