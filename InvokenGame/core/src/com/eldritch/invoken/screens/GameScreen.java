@@ -576,6 +576,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         Vector3 world = camera.unproject(new Vector3(screenX, screenY, 0));
 
         // when the player is aiming, the only option is to use the augmentation
+        // TODO: if not enough energy to use the aug, then consume an aug cell
         if (player.isAiming()) {
             if (player.getInfo().getAugmentations().hasActiveAugmentation(button)) {
                 boolean success = player

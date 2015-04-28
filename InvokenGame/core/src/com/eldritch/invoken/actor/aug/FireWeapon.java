@@ -15,7 +15,6 @@ import com.eldritch.invoken.actor.type.HandledProjectile;
 import com.eldritch.invoken.effects.HoldingWeapon;
 import com.eldritch.invoken.location.Location;
 import com.eldritch.invoken.screens.GameScreen;
-import com.eldritch.invoken.util.SoundManager.SoundEffect;
 
 public class FireWeapon extends ProjectileAugmentation {
     private static final float ALERT_RADIUS = 10;
@@ -70,6 +69,17 @@ public class FireWeapon extends ProjectileAugmentation {
             return 0;
         }
         return owner.getInventory().getRangedWeapon().getBaseCost();
+    }
+    
+    @Override
+    public float quality(Agent owner, Agent target, Location location) {
+        if (!owner.getInventory().hasRangedWeapon() || !target.isAlive()) {
+            return 0;
+        }
+        
+        float idealDst = owner.getInventory().getRangedWeapon().getIdealDistance();
+        float delta = Math.abs(owner.dst2(target) - idealDst * idealDst);
+        return 10 / delta;
     }
 
     public class FireAction extends AnimatedAction {

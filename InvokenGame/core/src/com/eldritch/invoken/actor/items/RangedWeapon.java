@@ -378,11 +378,14 @@ public abstract class RangedWeapon extends Item {
             // does nothing
         }
     }
+    
+    
+    public abstract float getIdealDistance();
 
     public abstract SoundEffect getSoundEffect();
 
     public abstract List<HandledProjectile> getProjectiles(Agent owner);
-
+    
     protected HandledProjectile getPrimaryProjectile(Agent owner) {
         switch (primary) {
             case THERMAL:
@@ -395,6 +398,11 @@ public abstract class RangedWeapon extends Item {
     public static class Pistol extends RangedWeapon {
         public Pistol(Items.Item item) {
             super(item);
+        }
+        
+        @Override
+        public float getIdealDistance() {
+            return 4;
         }
 
         @Override
@@ -411,6 +419,11 @@ public abstract class RangedWeapon extends Item {
     public static class Rifle extends RangedWeapon {
         public Rifle(Items.Item item) {
             super(item);
+        }
+        
+        @Override
+        public float getIdealDistance() {
+            return 6;
         }
 
         @Override
@@ -430,6 +443,11 @@ public abstract class RangedWeapon extends Item {
         
         public Shotgun(Items.Item item) {
             super(item);
+        }
+        
+        @Override
+        public float getIdealDistance() {
+            return 1;
         }
 
         @Override

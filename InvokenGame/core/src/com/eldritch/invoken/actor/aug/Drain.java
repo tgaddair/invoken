@@ -38,6 +38,17 @@ public class Drain extends ProjectileAugmentation {
     public int getCost(Agent owner) {
         return BASE_COST;
     }
+    
+    @Override
+    public float quality(Agent owner, Agent target, Location location) {
+        if (!target.isAlive()) {
+            return 0;
+        }
+        
+        float idealDst = 3f;
+        float delta = Math.abs(owner.dst2(target) - idealDst * idealDst);
+        return 10 / delta;
+    }
 
     public class DrainAction extends AnimatedAction {
         private final Vector2 target;
