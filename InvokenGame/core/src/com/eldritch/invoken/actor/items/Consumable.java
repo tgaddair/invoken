@@ -25,7 +25,7 @@ public class Consumable extends Item {
         // cannot be equipped
         return false;
     }
-
+    
     @Override
     public void equipFrom(AgentInventory inventory) {
         // consume

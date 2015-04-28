@@ -79,7 +79,8 @@ public class FireWeapon extends ProjectileAugmentation {
         
         float idealDst = owner.getInventory().getRangedWeapon().getIdealDistance();
         float delta = Math.abs(owner.dst2(target) - idealDst * idealDst);
-        return 10 / delta;
+        float base = (float) (10 * Math.random());
+        return base / delta;
     }
 
     public class FireAction extends AnimatedAction {

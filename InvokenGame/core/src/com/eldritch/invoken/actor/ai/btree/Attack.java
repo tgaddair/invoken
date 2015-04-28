@@ -21,6 +21,7 @@ public class Attack extends Sequence<Npc> {
     public Attack() {
         // if we can't select a target, then attacking fails
         addChild(new SelectBestTarget());
+//        addChild(new EquipBestWeapon());
         
         Sequence<Npc> thrustSequence = new Sequence<>();
         thrustSequence.addChild(new ShouldThrust());

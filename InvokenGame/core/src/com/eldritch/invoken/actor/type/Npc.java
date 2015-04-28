@@ -130,7 +130,7 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
 
         // equip items
         for (ItemState item : info.getInventory().getItems()) {
-            info.getInventory().equip(item.getItem());
+            info.getInventory().equipIfBetter(item.getItem());
         }
 
         // pathfinding

@@ -122,6 +122,13 @@ public abstract class RangedWeapon extends Item {
     public float getCooldown() {
         return (float) getData().getCooldown();
     }
+    
+    @Override
+    public void equipIfBetter(AgentInventory inventory) {
+        if (!inventory.hasRangedWeapon() || inventory.getRangedWeapon().getDamage() < getDamage()) {
+            equipFrom(inventory);
+        }
+    }
 
     @Override
     public boolean isEquipped(AgentInventory inventory) {
@@ -447,7 +454,7 @@ public abstract class RangedWeapon extends Item {
         
         @Override
         public float getIdealDistance() {
-            return 1;
+            return 2;
         }
 
         @Override

@@ -47,7 +47,8 @@ public class Drain extends ProjectileAugmentation {
         
         float idealDst = 3f;
         float delta = Math.abs(owner.dst2(target) - idealDst * idealDst);
-        return 10 / delta;
+        float base = (float) (10 * Math.random());
+        return base / delta;
     }
 
     public class DrainAction extends AnimatedAction {

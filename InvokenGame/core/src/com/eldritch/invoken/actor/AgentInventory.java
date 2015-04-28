@@ -83,6 +83,10 @@ public class AgentInventory extends Inventory {
         this.meleeWeapon = weapon;
     }
     
+    public void equipIfBetter(Item item) {
+        item.equipIfBetter(this);
+    }
+    
     public void equip(Item item) {
         item.equipFrom(this);
     }

@@ -31,9 +31,13 @@ public abstract class Item {
         this.width = Settings.SCALE * width;
         this.height = Settings.SCALE * height;
     }
+    
+    public void equipIfBetter(AgentInventory inventory) {
+        equipFrom(inventory);
+    }
 
     public abstract boolean isEquipped(AgentInventory inventory);
-
+    
     public abstract void equipFrom(AgentInventory inventory);
 
     public abstract void unequipFrom(AgentInventory inventory);
