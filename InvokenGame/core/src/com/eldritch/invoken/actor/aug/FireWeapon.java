@@ -79,8 +79,7 @@ public class FireWeapon extends ProjectileAugmentation {
         }
         
         float idealDst = owner.getInventory().getRangedWeapon().getIdealDistance();
-        float score = Heuristics.distanceScore(owner.dst2(target), idealDst * idealDst);
-        return (float) (Math.random() * score);
+        return Heuristics.randomizedDistanceScore(owner.dst2(target), idealDst * idealDst);
     }
 
     public class FireAction extends AnimatedAction {

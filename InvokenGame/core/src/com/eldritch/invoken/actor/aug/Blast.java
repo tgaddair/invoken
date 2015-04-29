@@ -65,7 +65,7 @@ public class Blast extends Augmentation {
         if (x > RANGE * RANGE) {
             return 0;
         }
-        return Heuristics.distanceScore(x, 0);
+        return Heuristics.randomizedDistanceScore(x, 0);
     }
 
     public class BlastAction extends AnimatedAction {

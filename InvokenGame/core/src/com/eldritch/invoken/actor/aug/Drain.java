@@ -47,8 +47,7 @@ public class Drain extends ProjectileAugmentation {
         }
         
         float idealDst = 3f;
-        float score = Heuristics.distanceScore(owner.dst2(target), idealDst * idealDst);
-        return (float) (Math.random() * score);
+        return Heuristics.randomizedDistanceScore(owner.dst2(target), idealDst * idealDst);
     }
 
     public class DrainAction extends AnimatedAction {
