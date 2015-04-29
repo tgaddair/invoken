@@ -9,6 +9,7 @@ import com.eldritch.invoken.effects.Stunned;
 import com.eldritch.invoken.location.Location;
 import com.eldritch.invoken.proto.Effects.DamageType;
 import com.eldritch.invoken.util.Damage;
+import com.eldritch.invoken.util.Heuristics;
 import com.eldritch.invoken.util.SoundManager.SoundEffect;
 
 public class Blast extends Augmentation {
@@ -64,8 +65,7 @@ public class Blast extends Augmentation {
         if (x > RANGE * RANGE) {
             return 0;
         }
-        float score = (float) (1.0f / Math.pow(x, 0.4));
-        return score;
+        return Heuristics.distanceScore(x, 0);
     }
 
     public class BlastAction extends AnimatedAction {

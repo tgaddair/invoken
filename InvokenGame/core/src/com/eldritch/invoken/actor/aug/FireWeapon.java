@@ -15,6 +15,7 @@ import com.eldritch.invoken.actor.type.HandledProjectile;
 import com.eldritch.invoken.effects.HoldingWeapon;
 import com.eldritch.invoken.location.Location;
 import com.eldritch.invoken.screens.GameScreen;
+import com.eldritch.invoken.util.Heuristics;
 
 public class FireWeapon extends ProjectileAugmentation {
     private static final float ALERT_RADIUS = 10;
@@ -78,9 +79,8 @@ public class FireWeapon extends ProjectileAugmentation {
         }
         
         float idealDst = owner.getInventory().getRangedWeapon().getIdealDistance();
-        float delta = Math.abs(owner.dst2(target) - idealDst * idealDst);
-        float base = (float) (10 * Math.random());
-        return base / delta;
+        float score = Heuristics.distanceScore(owner.dst2(target), idealDst * idealDst);
+        return (float) (Math.random() * score);
     }
 
     public class FireAction extends AnimatedAction {

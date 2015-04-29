@@ -12,6 +12,7 @@ import com.eldritch.invoken.location.Location;
 import com.eldritch.invoken.proto.Effects.DamageType;
 import com.eldritch.invoken.screens.GameScreen;
 import com.eldritch.invoken.util.Damage;
+import com.eldritch.invoken.util.Heuristics;
 
 public class Drain extends ProjectileAugmentation {
     private static final int DAMAGE_SCALE = 25;
@@ -46,9 +47,8 @@ public class Drain extends ProjectileAugmentation {
         }
         
         float idealDst = 3f;
-        float delta = Math.abs(owner.dst2(target) - idealDst * idealDst);
-        float base = (float) (10 * Math.random());
-        return base / delta;
+        float score = Heuristics.distanceScore(owner.dst2(target), idealDst * idealDst);
+        return (float) (Math.random() * score);
     }
 
     public class DrainAction extends AnimatedAction {
