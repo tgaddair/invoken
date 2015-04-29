@@ -53,7 +53,7 @@ public class ThreatMonitor<T extends Agent> {
         
         // add new enemies
         for (Agent neighbor : agent.getVisibleNeighbors()) {
-            if (!enemies.contains(neighbor) && agent.isEnemy(neighbor)) {
+            if (neighbor.isAlive() && !enemies.contains(neighbor) && agent.isEnemy(neighbor)) {
                 enemies.add(neighbor);
             }
         }
