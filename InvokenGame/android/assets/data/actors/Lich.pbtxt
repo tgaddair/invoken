@@ -23,6 +23,7 @@ params {
   known_aug_id: Resurrect
   known_aug_id: Infect
   known_aug_id: Jaunt
+  known_aug_id: Blast
   body_type: "lich1"
 }
 unique: false

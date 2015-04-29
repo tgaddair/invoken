@@ -26,11 +26,6 @@ params {
     rank: 3
   }
   inventory_item {
-    item_id: "Hammer"
-    count: 1
-    drop_chance: 1.0
-  }
-  inventory_item {
     item_id: "EruInfantryArmor"
     count: 1
     drop_chance: 1.0
@@ -40,9 +35,14 @@ params {
     count: 1
     drop_chance: 1.0
   }
+  inventory_item {
+    item_id: "DamagedPistol"
+    count: 1
+    drop_chance: 1.0
+  }
   known_aug_id: Drain
-  known_aug_id: Jaunt
-  known_aug_id: RendWeapon
+  known_aug_id: FireWeapon
+  known_aug_id: Blast
 }
 unique: true
 dialogue {
