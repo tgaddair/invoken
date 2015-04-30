@@ -246,6 +246,10 @@ public class AgentInfo {
     public float getMaxHealth() {
         return Math.min(getBaseHealth() * getStatusEffect(DamageType.THERMAL), maxHealth);
     }
+    
+    public float getHealthPercent() {
+        return health / getMaxHealth();
+    }
 
     public void resetEnergy() {
         setEnergy(getMaxEnergy());

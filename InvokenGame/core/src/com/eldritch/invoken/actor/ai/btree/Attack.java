@@ -13,9 +13,11 @@ import com.badlogic.gdx.ai.btree.decorator.Invert;
 import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.actor.aug.Augmentation;
 import com.eldritch.invoken.actor.aug.Augmentation.Target;
+import com.eldritch.invoken.actor.items.RangedWeapon;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Npc;
 import com.eldritch.invoken.location.Location;
+import com.eldritch.invoken.util.Heuristics;
 
 public class Attack extends Sequence<Npc> {
     public Attack() {
@@ -272,19 +274,40 @@ public class Attack extends Sequence<Npc> {
     private static class ShouldDodge extends BooleanTask {
         @Override
         protected boolean check(Npc npc) {
-            if (npc.getInfo().getEnergyPercent() < 0.7f) {
-                // not enough energy
+            if (!npc.canDodge()) {
                 return false;
             }
             
             // when our target is aiming at us, then dodge with some probability
-            if (npc.hasTarget() && npc.getTarget().isAimingAt(npc)) {
+            float danger = getDanger(npc);
+            if (danger > 0) {
                 // average about a second of waiting before dodging
                 // if this routine is called once every STEP seconds, then we want to act after
                 // 1 / STEP invocations
-                return Math.random() < Npc.STEP;
+                return Math.random() * danger > Npc.STEP;
             }
             return false;
+        }
+        
+        private float getDanger(Npc npc) {
+            if (npc.hasTarget() && npc.getTarget().isAimingAt(npc)) {
+                Agent target = npc.getTarget();
+                
+                float threat = 1.0f;
+                if (target.getInventory().hasRangedWeapon()) {
+                    float dst2 = npc.dst2(target);
+                    RangedWeapon weapon = target.getInventory().getRangedWeapon();
+                    float ideal2 = weapon.getIdealDistance();
+                    threat = Heuristics.distanceScore(dst2, ideal2);
+                }
+                
+                float utility = npc.getInfo().getEnergyPercent() 
+                        * (1.0f - npc.getInfo().getHealthPercent());
+                float danger = threat * utility;
+                return danger;
+            }
+            
+            return 0;
         }
     }
     

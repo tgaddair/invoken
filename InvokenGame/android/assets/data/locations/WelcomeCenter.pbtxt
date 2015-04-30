@@ -243,6 +243,7 @@ territory {
 control_point {
   id: "GenericHall"
   room_id: "GenericHall"
+  room_id: "LoungeCommon1"
   room_id: "ConferenceRoom"
   room_id: "LabBig"
   lock_strength: 0
@@ -251,6 +252,8 @@ control_point {
   min: 22
   max: 25
   value: 1
+  closed: false
+  faction_id: ""
 }
 control_point {
   id: "Bedroom"
