@@ -7,6 +7,7 @@ import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.effects.BasicEffect;
 import com.eldritch.invoken.location.Location;
 import com.eldritch.invoken.util.GenericDialogue;
+import com.eldritch.invoken.util.Heuristics;
 import com.eldritch.invoken.util.SoundManager.SoundEffect;
 
 public class Charge extends Augmentation {
@@ -66,7 +67,7 @@ public class Charge extends Augmentation {
         
         if (owner.getInventory().hasMeleeWeapon()) {
             float r = CHARGE_RANGE;
-            return owner.dst2(target) < r * r ? 5 : 0;
+            return Heuristics.randomizedDistanceScore(owner.dst2(target), r * r);
         }
         return 0;
     }

@@ -71,7 +71,7 @@ public class Drain extends ProjectileAugmentation {
     }
 
     public static class DrainBullet extends HandledBullet {
-        private static final float MAX_SEEK_DST2 = 9f;
+        private static final float MAX_SEEK_DST2 = 25f;
         private static final float ADJUSTMENT_STEP = 0.05f;
         private static final float V_SCALE = 2.5f;
         private static final float V_MAX = 10f;
