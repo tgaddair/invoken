@@ -32,6 +32,7 @@ public class Attack extends Sequence<Npc> {
         // if we have a chosen augmentation, then continue to hold aim until we use it
         Sequence<Npc> useAugSequence = new Sequence<>();
         useAugSequence.addChild(new HasChosen());
+        useAugSequence.addChild(new TakeAim());
         useAugSequence.addChild(new HasSights());
         useAugSequence.addChild(new AlwaysSucceed<>(thrustSequence));
         useAugSequence.addChild(new UseAugmentation());

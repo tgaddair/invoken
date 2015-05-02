@@ -1807,11 +1807,11 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         }
 
         private void rotateTowards(float delta, Vector2 destination) {
-            rotate(delta, getTheta(destination));
+            rotate(delta, getTheta(destination), ROTATION_SCALE);
         }
 
-        protected void rotate(float delta, float theta) {
-            direction.rotate(theta * delta * ROTATION_SCALE * info.getAttackModifier());
+        protected void rotate(float delta, float theta, float rate) {
+            direction.rotate(theta * delta * rate * info.getAttackModifier());
         }
 
         protected float getTheta(Vector2 destination) {
@@ -1889,7 +1889,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
                 theta = getTheta(destination);
                 elapsed = 0;
             }
-            rotate(delta, theta);
+            rotate(delta, theta, ROTATION_SCALE * 1.5f);
 
             position.set(origin.x + direction.x, origin.y + direction.y).sub(offset);
             clear();
