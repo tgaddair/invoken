@@ -1374,10 +1374,10 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         if (observed != null) {
             float dx = observed.getPosition().x - getPosition().x;
             float dy = observed.getPosition().y - getPosition().y;
-            direction = getDominantDirection(dx, dy);
+            setDirection(getDominantDirection(dx, dy));
         } else if (isAiming()) {
             // face the aimed direction
-            direction = getDominantDirection(weaponSentry.direction.x, weaponSentry.direction.y);
+            setDirection(getDominantDirection(weaponSentry.direction.x, weaponSentry.direction.y));
         }
 
         // end interactions if outside range

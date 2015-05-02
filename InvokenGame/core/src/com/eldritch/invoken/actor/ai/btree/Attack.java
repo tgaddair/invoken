@@ -47,7 +47,7 @@ public class Attack extends Sequence<Npc> {
         Selector<Npc> augSelector = new Selector<>();
         augSelector.addChild(useAugSequence);
         augSelector.addChild(chooseAugSequence);
-        augSelector.addChild(new AlwaysFail<Npc>(new LowerAim())); // failed to choose aug, so lower
+        augSelector.addChild(new AlwaysSucceed<>(new LowerAim())); // failed to choose aug, so lower
                                                                    // our aim
         
         Sequence<Npc> dodgeSequence = new Sequence<>();
