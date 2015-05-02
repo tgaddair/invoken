@@ -142,6 +142,7 @@ public class Location {
     private NaturalVector2 currentCell = null;
     private float currentZoom = 0;
     private Rectangle viewBounds = new Rectangle();
+    private Rectangle worldBounds = new Rectangle();
     private ConnectedRoom currentRoom;
 
     DebugEntityRenderer debugEntityRenderer = DebugEntityRenderer.getInstance();
@@ -759,7 +760,7 @@ public class Location {
         return NaturalVector2.of((int) position.x, (int) position.y);
     }
 
-    private Rectangle getWorldBounds() {
+    private void resetWorldBounds() {
         final float layerTileWidth = 1;
         final float layerTileHeight = 1;
 
@@ -772,7 +773,15 @@ public class Location {
         final int y2 = Math.min(map.getHeight(),
                 (int) ((viewBounds.y + viewBounds.height + layerTileHeight) / layerTileHeight) + 1);
 
-        return new Rectangle(x1, y1, x2 - x1 + 1, y2 - y1 + 1);
+        this.worldBounds = new Rectangle(x1, y1, x2 - x1 + 1, y2 - y1 + 1);
+    }
+    
+    private Rectangle getWorldBounds() {
+        return worldBounds;
+    }
+    
+    public boolean inCameraBounds(Vector2 point) {
+        return worldBounds.contains(point);
     }
 
     private void resetActiveTiles(NaturalVector2 origin) {
@@ -829,6 +838,7 @@ public class Location {
         // }
         // }
 
+        resetWorldBounds();
         Rectangle bounds = getWorldBounds();
         resetFilledTiles(origin, bounds);
         fowMasker.setBounds(bounds);

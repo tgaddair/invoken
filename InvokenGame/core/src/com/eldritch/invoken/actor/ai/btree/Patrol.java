@@ -11,22 +11,28 @@ import com.eldritch.invoken.util.GenericDialogue;
 
 public class Patrol extends Selector<Npc> {
     public Patrol() {
-        Sequence<Npc> guardSequence = new Sequence<Npc>();
-        guardSequence.addChild(new IsGuard());
-        guardSequence.addChild(new WatchForTrespassers());
-        
-        Sequence<Npc> threatenedSequence = new Sequence<Npc>();
+        Sequence<Npc> threatenedSequence = new Sequence<>();
         threatenedSequence.addChild(new IsThreatened());
         threatenedSequence.addChild(new RespondToThreat());
         
-        Sequence<Npc> wanderSequence = new Sequence<Npc>();
-        wanderSequence.addChild(new WatchForCrime());  // while wandering, check for crime
-        wanderSequence.addChild(new AlwaysSucceed<Npc>(guardSequence));
+        Sequence<Npc> watchSequence = new Sequence<>();
+        watchSequence.addChild(new WatchForCrime());
+        
+        Sequence<Npc> guardSequence = new Sequence<>();
+        guardSequence.addChild(new IsGuard());
+        guardSequence.addChild(new WatchForTrespassers());
+        guardSequence.addChild(new HasPlan());
+        guardSequence.addChild(new SetDestination());
+        guardSequence.addChild(new Pursue());
+        
+        Sequence<Npc> wanderSequence = new Sequence<>();
         wanderSequence.addChild(new CanWander());
-        wanderSequence.addChild(new Invert<Npc>(new IsTired()));
+        wanderSequence.addChild(new Invert<>(new IsTired()));
         wanderSequence.addChild(new LowerWeapon());
         wanderSequence.addChild(new Wander());
         
+        addChild(new AlwaysSucceed<>(watchSequence));
+        addChild(new AlwaysSucceed<>(guardSequence));
         addChild(wanderSequence);
         addChild(new Idle());
     }
@@ -59,6 +65,25 @@ public class Patrol extends Selector<Npc> {
             for (Agent neighbor : npc.getVisibleNeighbors()) {
                 handleTrespasser(npc, neighbor);
             }
+        }
+    }
+    
+    private static class HasPlan extends BooleanTask {
+        @Override
+        protected boolean check(Npc npc) {
+            return npc.getPlanner().hasGoal();
+        }
+    }
+    
+    private static class SetDestination extends BooleanTask {
+        @Override
+        protected boolean check(Npc npc) {
+            Agent dest = npc.getPlanner().getDestination();
+            if (dest != null) {
+                npc.setTarget(dest);
+                return true;
+            }
+            return false;
         }
     }
     

@@ -142,7 +142,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 
         camera = new OrthographicCamera();
         camera.setToOrtho(false, (w / h) * 10, 10);
-        camera.zoom = 1.35f;
+        camera.zoom = Settings.DEFAULT_ZOOM;
         camera.update();
 
         font = new BitmapFont();

@@ -45,6 +45,7 @@ import com.eldritch.invoken.actor.ai.IntimidationMonitor;
 import com.eldritch.invoken.actor.ai.NpcState;
 import com.eldritch.invoken.actor.ai.NpcStateMachine;
 import com.eldritch.invoken.actor.ai.NpcThreatMonitor;
+import com.eldritch.invoken.actor.ai.Planner;
 import com.eldritch.invoken.actor.ai.Squad;
 import com.eldritch.invoken.actor.ai.TacticsManager;
 import com.eldritch.invoken.actor.ai.btree.Combat;
@@ -92,6 +93,7 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
     private final FatigueMonitor fatigue;
     private final IntimidationMonitor intimidation;
     private final TacticsManager tactics;
+    private final Planner planner;
     private Augmentation chosenAug;
     private float lastStep = 0;
     private float sighted = 0;
@@ -150,6 +152,7 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
         fatigue = new FatigueMonitor(this);
         intimidation = new IntimidationMonitor(this);
         tactics = new TacticsManager(this);
+        planner = new Planner(this);
         
         // post init
         setWeaponSentry(new RotatingWeaponSentry());
@@ -202,6 +205,10 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
 
     public TacticsManager getTactics() {
         return tactics;
+    }
+    
+    public Planner getPlanner() {
+        return planner;
     }
 
     @Override
@@ -332,6 +339,7 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
         
         // update tactics
         tactics.update(delta);
+        planner.update(delta);
 
         // update sighted info
         lastSeen.update(delta);

@@ -1,15 +1,17 @@
 package com.eldritch.invoken.actor.ai;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import com.eldritch.invoken.actor.factions.Faction;
+import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Npc;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
 
 public class Squad {
     private final Faction faction;
-    private final List<Npc> members = Lists.newArrayList();
+    private final Set<Npc> members = new HashSet<>();
     private final Npc leader;
     
     public Squad(Faction faction, List<Npc> members) {
@@ -25,6 +27,10 @@ public class Squad {
             }
         }
         this.leader = best;
+    }
+    
+    public boolean contains(Agent agent) {
+        return members.contains(agent);
     }
     
     public Npc getLeader() {
