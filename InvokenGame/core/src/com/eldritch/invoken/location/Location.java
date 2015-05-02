@@ -106,6 +106,7 @@ public class Location {
     private final Map<String, Agent> ids = new HashMap<>();
     private final List<Agent> entities = new ArrayList<>();
     private final List<Agent> inactiveEntities = new ArrayList<>();
+    private final Map<Agent, Float> elapsed = new HashMap<>();
     private final List<Agent> activeEntities = new ArrayList<>();
     private final Map<String, Integer> markers = new HashMap<>();
     private int inactiveIndex = 0;
@@ -498,10 +499,16 @@ public class Location {
 
         // updates
         if (!paused) {
-            // update one inactive entity
-            if (!inactiveEntities.isEmpty()) {
-                inactiveIndex = (inactiveIndex + 1) % inactiveEntities.size();
-                inactiveEntities.get(inactiveIndex).update(delta, this);
+            for (int i = 0; i < inactiveEntities.size(); i++) {
+                Agent agent = inactiveEntities.get(i);
+                if (i == inactiveIndex) {
+                    // update one inactive entity
+                    inactiveIndex = (inactiveIndex + 1) % inactiveEntities.size();
+                    inactiveEntities.get(inactiveIndex).update(getElapsed(agent) + delta, this);
+                    setElapsed(agent, 0);
+                } else {
+                    setElapsed(agent, getElapsed(agent) + delta);
+                }
             }
 
             // update all active entities
@@ -659,6 +666,17 @@ public class Location {
         // draw last seen
         debugEntityRenderer.renderLastSeen(player.getTarget(), camera);
     }
+    
+    private float getElapsed(Agent agent) {
+        if (!elapsed.containsKey(agent)) {
+            elapsed.put(agent, 0f);
+        }
+        return elapsed.get(agent);
+    }
+    
+    private void setElapsed(Agent agent, float value) {
+        elapsed.put(agent, value);
+    }
 
     private void drawCentered(TextureRegion region, Vector2 position, Color color) {
         float w = 1f / Settings.PX * region.getRegionWidth();
@@ -705,6 +723,7 @@ public class Location {
         inactiveEntities.clear();
         activeEntities.clear();
         drawables.clear();
+        elapsed.clear();
 
         // add agents
         for (Agent other : entities) {
