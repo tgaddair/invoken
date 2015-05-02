@@ -169,7 +169,7 @@ encounter {
     no_detect: false
     no_flee: false
   }
-  control_point_id: "GenericHall"
+  control_point_id: "LichContainment"
   faction_id: ""
 }
 encounter {
@@ -205,14 +205,6 @@ encounter {
     actor_scenario {
       actor_id: "TerathOlo"
       essential: true
-      blocking: false
-      min: 1
-      max: 1
-      alive: true
-    }
-    actor_scenario {
-      actor_id: "RoamingHunter"
-      essential: false
       blocking: false
       min: 1
       max: 1
@@ -365,6 +357,32 @@ control_point {
   min: 5
   max: 7
   value: 2
+  closed: false
+  faction_id: ""
+}
+control_point {
+  id: "LichContainment"
+  room_id: "LabBig"
+  follows: "PreLichContainment"
+  lock_strength: 2
+  required_key: "LichCredentials"
+  origin: false
+  min: 0
+  max: 0
+  value: 0
+  closed: true
+  faction_id: ""
+}
+control_point {
+  id: "PreLichContainment"
+  room_id: "NeutralChamber"
+  lock_strength: 0
+  required_key: ""
+  available_key: "LichCredentials"
+  origin: false
+  min: 1
+  max: 1
+  value: 0
   closed: false
   faction_id: ""
 }

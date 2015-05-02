@@ -73,6 +73,11 @@ public abstract class SteeringAgent extends Agent {
     }
     
     @Override
+    public float getBaseSpeed() {
+        return maxLinearVelocity;
+    }
+    
+    @Override
     public void setMaxAngularAcceleration(float acceleration) {
         this.maxAngularAcceleration = acceleration;
     }

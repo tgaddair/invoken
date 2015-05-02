@@ -79,7 +79,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     public static final int ASSAULT_PENALTY = -25;
     public static final float AIMING_V_PENALTY = 5;
 
-    public static final float DODGE_SCALE = 250f;
+    public static final float DODGE_SCALE = 500f;
     public static final float SPRINT_SCALE = 0.75f;
     public static final float DODGE_COST = 10f;
     public static final float SPRINT_COST = 5f;
@@ -275,10 +275,15 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
 
     public void dodge(Vector2 direction) {
         if (canDodge()) {
-            applyForce(direction.cpy().scl(DODGE_SCALE));
+            float s = getMaxLinearSpeed() / getBaseSpeed();
+            applyForce(direction.cpy().scl(DODGE_SCALE * s));
             info.expend(DODGE_COST);
             InvokenGame.SOUND_MANAGER.playAtPoint(SoundEffect.SWISH, getPosition());
         }
+    }
+    
+    public float getBaseSpeed() {
+        return getMaxLinearSpeed();
     }
 
     public boolean isSprinting() {

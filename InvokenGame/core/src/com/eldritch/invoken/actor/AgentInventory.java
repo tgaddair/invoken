@@ -56,7 +56,13 @@ public class AgentInventory extends Inventory {
     }
 
     public void setOutfit(Outfit outfit) {
+        if (this.outfit != null) {
+            info.getAgent().addVelocityPenalty(-this.outfit.getWeight());
+        }
         this.outfit = outfit;
+        if (outfit != null) {
+            info.getAgent().addVelocityPenalty(outfit.getWeight());
+        }
     }
 
     public boolean hasRangedWeapon() {
