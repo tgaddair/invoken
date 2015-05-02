@@ -21,6 +21,10 @@ params {
     discipline: CHARISMA
     level: 10
   }
+  faction_status {
+    faction_id: "_HatesPlayer"
+    rank: 3
+  }
   inventory_item {
     item_id: "RailGun"
     count: 1
@@ -32,6 +36,7 @@ params {
     drop_chance: 1.0
   }
   known_aug_id: FireWeapon
+  known_aug_id: Ping
 }
 unique: false
 aggression: AGGRESSIVE

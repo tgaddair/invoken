@@ -1,0 +1,11 @@
+id: "_HatesPlayer"
+name: "Hates Player"
+relation {
+  faction_id: "_PlayerFaction"
+  reaction: -10
+}
+rank {
+  id: 3
+  title: "Member"
+}
+visible: false

@@ -1,0 +1,7 @@
+id: "_PlayerFaction"
+name: "Player"
+rank {
+  id: 3
+  title: "Player"
+}
+visible: false

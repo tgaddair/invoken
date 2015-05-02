@@ -4,12 +4,14 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
+import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.actor.type.TemporaryEntity;
 import com.eldritch.invoken.effects.BasicEffect;
 import com.eldritch.invoken.location.Location;
 import com.eldritch.invoken.screens.GameScreen;
+import com.eldritch.invoken.util.SoundManager.SoundEffect;
 
 public class Ping extends Augmentation {
     private static final int COST = 10;
@@ -53,7 +55,7 @@ public class Ping extends Augmentation {
 	
     @Override
     public float quality(Agent owner, Agent target, Location location) {
-        return 1;
+        return owner.hasTarget() ? 0 : 1;
     }
 	
 	public class PingAction extends AnimatedAction {
@@ -76,13 +78,14 @@ public class Ping extends Augmentation {
 		        }
 		    }
 		    
-		    // notify the owner of the hostile's current realtive direction
+		    // notify the owner of the hostile's current relative direction
 		    if (nearest != null) {
 		        owner.addEffect(new Pinging(owner, nearest));
 		    }
 		    
 		    // remove the selected state of this aug, as it is not sustained
 		    owner.getInfo().getAugmentations().removeSelfAugmentation(Ping.this);
+		    InvokenGame.SOUND_MANAGER.playAtPoint(SoundEffect.INVALID, owner.getPosition(), 2.5f);
 		}
 		
 		@Override
@@ -133,6 +136,7 @@ public class Ping extends Augmentation {
 	
 	private static class PingIndicator implements TemporaryEntity {
 	    private static final float SIZE = 1.5f;
+	    private static final float OFFSET = 0.1f;
         private static final TextureRegion region = new TextureRegion(
                 GameScreen.getTexture("sprite/indicator.png"));
         
@@ -158,7 +162,7 @@ public class Ping extends Augmentation {
         @Override
         public void render(float delta, OrthogonalTiledMapRenderer renderer) {
             direction.set(nearest.getPosition()).sub(target.getPosition()).nor();
-            position.set(target.getPosition()).add(direction.x * 0.1f, direction.y * 0.1f);
+            position.set(target.getPosition()).add(direction.x * OFFSET, direction.y * OFFSET);
             float width = SIZE;
             float height = SIZE;
             

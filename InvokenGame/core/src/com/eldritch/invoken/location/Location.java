@@ -775,11 +775,11 @@ public class Location {
 
         this.worldBounds = new Rectangle(x1, y1, x2 - x1 + 1, y2 - y1 + 1);
     }
-    
+
     private Rectangle getWorldBounds() {
         return worldBounds;
     }
-    
+
     public boolean inCameraBounds(Vector2 point) {
         return worldBounds.contains(point);
     }
@@ -998,7 +998,7 @@ public class Location {
         }
         return Vector2.Zero;
     }
-    
+
     public Npc createNpc(String id, Vector2 position) {
         Npc npc = createTestNpc(position, id);
         addActor(npc);
@@ -1125,10 +1125,9 @@ public class Location {
         Player player = new Player(profession, Settings.START_LEVEL, x, y, this,
                 "sprite/characters/light-blue-hair.png");
 
-        Faction playerFaction = Faction.of("_PlayerFaction");
-
         // 3 is the "standard" rank at which members of the same faction should become allies
         // i.e. 30 rep
+        Faction playerFaction = Faction.of("_PlayerFaction");
         player.getInfo().addFaction(playerFaction, 3, 0);
 
         Item outfit = profession.getDefaultOutfit();
@@ -1194,11 +1193,11 @@ public class Location {
                 return Settings.BIT_OBSTACLE;
             }
         });
-        
+
         // add perimeter
         addPerimeter(world);
     }
-    
+
     private void addPerimeter(World world) {
         addEdge(0, 0, map.getWidth(), 0, world, Settings.BIT_PERIMETER);
         addEdge(0, map.getHeight(), map.getWidth(), map.getHeight(), world, Settings.BIT_PERIMETER);
