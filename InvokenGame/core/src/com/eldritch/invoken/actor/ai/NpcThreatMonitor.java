@@ -7,6 +7,7 @@ import com.badlogic.gdx.ai.msg.Telegram;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Npc;
 import com.eldritch.invoken.actor.util.ThreatMonitor;
+import com.eldritch.invoken.util.GenericDialogue;
 import com.eldritch.invoken.util.StepTimer;
 
 public class NpcThreatMonitor extends ThreatMonitor<Npc> {
@@ -129,7 +130,8 @@ public class NpcThreatMonitor extends ThreatMonitor<Npc> {
          */
         Calm() {
             @Override
-            public void enter(Npc entity) {
+            public void enter(Npc npc) {
+                npc.announce(GenericDialogue.enterCalm(npc, npc.getTarget()));
             }
 
             @Override
@@ -167,8 +169,9 @@ public class NpcThreatMonitor extends ThreatMonitor<Npc> {
          */
         Suspicious() {
             @Override
-            public void enter(Npc entity) {
-                reset(entity);
+            public void enter(Npc npc) {
+                reset(npc);
+                npc.announce(GenericDialogue.enterSuspicious(npc, npc.getTarget()));
             }
 
             @Override
@@ -220,8 +223,9 @@ public class NpcThreatMonitor extends ThreatMonitor<Npc> {
          */
         Alerted() {
             @Override
-            public void enter(Npc entity) {
-                reset(entity);
+            public void enter(Npc npc) {
+                reset(npc);
+                npc.announce(GenericDialogue.enterAlert(npc, npc.getTarget()));
             }
 
             @Override

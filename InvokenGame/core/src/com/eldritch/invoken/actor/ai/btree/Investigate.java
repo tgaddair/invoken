@@ -8,6 +8,7 @@ import com.eldritch.invoken.util.GenericDialogue;
 
 public class Investigate extends Sequence<Npc> {
     public static final int INVESTIGATION_PENALTY = -5;
+    private static final float RANGE2 = 3f * 3f;
     
     public Investigate() {
         addChild(new IsSuspicious());
@@ -29,8 +30,8 @@ public class Investigate extends Sequence<Npc> {
 
         // once we've confirmed the agent is suspicious, one of these actions will be taken
         Selector<Npc> selector = new Selector<>();
-        selector.addChild(pursueSequence);
         selector.addChild(alertSequence);
+        selector.addChild(pursueSequence);
         selector.addChild(confrontSequence);
 
         addChild(selector);
@@ -46,7 +47,7 @@ public class Investigate extends Sequence<Npc> {
     private static class CanPursue extends BooleanTask {
         @Override
         protected boolean check(Npc npc) {
-            return !npc.getLastSeen().hasArrived();
+            return npc.dst2(npc.getLastSeen()) > RANGE2;
         }
     }
 
@@ -68,7 +69,7 @@ public class Investigate extends Sequence<Npc> {
             npc.changeRelation(npc.getTarget(), INVESTIGATION_PENALTY);
             if (!npc.isEnemy(npc.getTarget())) {
                 // express our disapproval
-                npc.announce(GenericDialogue.forSuspiciousActivity(npc, npc.getTarget()));
+//                npc.announce(GenericDialogue.forSuspiciousActivity(npc, npc.getTarget()));
                 npc.getThreat().setCalm();
             } else {
                 // begin hostility

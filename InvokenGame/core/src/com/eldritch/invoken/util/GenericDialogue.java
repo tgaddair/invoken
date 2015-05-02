@@ -28,6 +28,18 @@ public class GenericDialogue {
     public static String forSuspiciousActivity(Agent speaker, Agent agent) {
         return "I'm watching you, scum.";
     }
+    
+    public static String enterCalm(Agent speaker, Agent agent) {
+        return "Must have been nothing.";
+    }
+    
+    public static String enterSuspicious(Agent speaker, Agent agent) {
+        return "What was that?";
+    }
+    
+    public static String enterAlert(Agent speaker, Agent agent) {
+        return "Take them out!";
+    }
 
     public static String forHostility(Agent speaker, Agent agent) {
         return sample(HOSTILITY);
