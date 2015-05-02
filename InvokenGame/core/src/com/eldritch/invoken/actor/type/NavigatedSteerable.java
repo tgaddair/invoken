@@ -97,9 +97,17 @@ public class NavigatedSteerable extends BasicSteerable implements Locatable {
 
         sr.end();
     }
-
+    
+    public void locate(Agent target) {
+        setPosition(target, true);
+    }
+    
     public void setPosition(Agent target) {
-        if (target != this.target) {
+        setPosition(target, false);
+    }
+
+    public void setPosition(Agent target, boolean invalidate) {
+        if (target != this.target || invalidate) {
             // invalidate the path
             resetPath();
             this.target = target;

@@ -42,6 +42,10 @@ public class PreparedAugmentations {
 	    return activeSelfAugmentations.contains(aug);
 	}
 	
+	public boolean isPrepared(Augmentation aug) {
+	    return augs.contains(aug);
+	}
+	
 	public Set<Augmentation> getActiveSelfAugmentations() {
 	    return activeSelfAugmentations;
 	}

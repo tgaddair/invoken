@@ -152,7 +152,7 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
         fatigue = new FatigueMonitor(this);
         intimidation = new IntimidationMonitor(this);
         tactics = new TacticsManager(this);
-        planner = new Planner(this);
+        planner = Planner.from(this);
         
         // post init
         setWeaponSentry(new RotatingWeaponSentry());
@@ -339,7 +339,7 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
         
         // update tactics
         tactics.update(delta);
-        planner.update(delta);
+        planner.plan(delta);
 
         // update sighted info
         lastSeen.update(delta);
@@ -460,6 +460,11 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
         if (behavior.wantsToAttack(other, true)) {
             threat.addEnemy(other);
         }
+    }
+    
+    @Override
+    public void locate(Agent other) {
+        lastSeen.locate(other);
     }
 
     @Override

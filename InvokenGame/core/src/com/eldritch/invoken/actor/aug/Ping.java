@@ -101,17 +101,20 @@ public class Ping extends Augmentation {
 	public static class Pinging extends BasicEffect {
 	    private static final float DURATION = 3f;
 	    
+	    private final Agent nearest;
 	    private final PingIndicator indicator;
 	    private float elapsed = 0;
 	    
 	    public Pinging(Agent actor, Agent nearest) {
 	        super(actor);
+	        this.nearest = nearest;
 	        this.indicator = new PingIndicator(target, nearest);
 	    }
 	    
 	    @Override
 	    public void doApply() {
 	        target.getLocation().addEntity(indicator);
+	        target.locate(nearest);
 	    }
 	    
 	    @Override

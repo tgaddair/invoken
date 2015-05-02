@@ -20,9 +20,10 @@ public class Patrol extends Selector<Npc> {
         Sequence<Npc> guardSequence = new Sequence<>();
         guardSequence.addChild(new IsGuard());
         guardSequence.addChild(new WatchForTrespassers());
-        guardSequence.addChild(new HasPlan());
-        guardSequence.addChild(new SetDestination());
-        guardSequence.addChild(new Pursue());
+        
+        Sequence<Npc> planSequence = new Sequence<>();
+        planSequence.addChild(new HasPlan());
+        planSequence.addChild(new FollowPlan());
         
         Sequence<Npc> wanderSequence = new Sequence<>();
         wanderSequence.addChild(new CanWander());
@@ -32,6 +33,7 @@ public class Patrol extends Selector<Npc> {
         
         addChild(watchSequence);
         addChild(guardSequence);
+        addChild(planSequence);
         addChild(wanderSequence);
         addChild(new Idle());
     }
@@ -61,12 +63,14 @@ public class Patrol extends Selector<Npc> {
         }
     }
     
-    private static class WatchForTrespassers extends SuccessTask {
+    private static class WatchForTrespassers extends BooleanTask {
         @Override
-        protected void doFor(Npc npc) {
+        protected boolean check(Npc npc) {
+            boolean success = false;
             for (Agent neighbor : npc.getVisibleNeighbors()) {
-                handleTrespasser(npc, neighbor);
+                success |= handleTrespasser(npc, neighbor);
             }
+            return success;
         }
     }
     
@@ -77,15 +81,10 @@ public class Patrol extends Selector<Npc> {
         }
     }
     
-    private static class SetDestination extends BooleanTask {
+    private static class FollowPlan extends BooleanTask {
         @Override
         protected boolean check(Npc npc) {
-            Agent dest = npc.getPlanner().getDestination();
-            if (dest != null) {
-                npc.setTarget(dest);
-                return true;
-            }
-            return false;
+            return npc.getPlanner().act();
         }
     }
     
@@ -112,7 +111,7 @@ public class Patrol extends Selector<Npc> {
         }
     }
     
-    private static void handleTrespasser(Npc npc, Agent neighbor) {
+    private static boolean handleTrespasser(Npc npc, Agent neighbor) {
         Location location = npc.getLocation();
         if (location.isTrespasser(neighbor)) {
             if (location.isOnFrontier(neighbor)) {
@@ -121,6 +120,8 @@ public class Patrol extends Selector<Npc> {
                 npc.changeRelation(neighbor, -10);
                 npc.announce(GenericDialogue.forCrime(npc, neighbor));
             }
+            return true;
         }
+        return false;
     }
 }

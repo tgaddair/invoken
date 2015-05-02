@@ -962,11 +962,14 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     public abstract void alertTo(Agent target);
 
     public abstract ThreatMonitor<?> getThreat();
+    
+    public void locate(Agent other) {
+    }
 
     public void setTarget(Agent target) {
         this.target = target;
     }
-
+    
     public Agent getTarget() {
         return target;
     }
