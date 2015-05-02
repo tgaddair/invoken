@@ -29,12 +29,27 @@ public class Planner {
     
     public void update(float delta) {
         if (owner.isGuard() && isLeader()) {
-            if (!hasGoal) {
+            if (isLeader()) {
+                planForLeader(delta);
+            } else if (owner.hasSquad()) {
                 planForGuard(delta);
-            } else {
-                if (destination != null) {
-                    updateDestination(delta);
-                }
+            }
+        }
+    }
+    
+    private void planForGuard(float delta) {
+        if (destination == null) {
+            destination = owner.getSquad().getLeader();
+            setPlan();
+        }
+    }
+    
+    private void planForLeader(float delta) {
+        if (!hasGoal) {
+            setDestination(delta);
+        } else {
+            if (destination != null) {
+                updateDestination(delta);
             }
         }
     }
@@ -42,11 +57,11 @@ public class Planner {
     private void updateDestination(float delta) {
         elapsed += delta;
         if (destination == owner || owner.dst2(destination) < MIN_DST2 || elapsed > DURATION) {
-            planForGuard(delta);
+            setDestination(delta);
         }
     }
     
-    private void planForGuard(float delta) {
+    private void setDestination(float delta) {
         List<Agent> agents = owner.getLocation().getAllAgents();
         Agent agent = agents.get((int) (Math.random() * agents.size()));
         
