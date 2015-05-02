@@ -1,0 +1,14 @@
+id: "MessHall"
+furniture {
+  id: "table-diner1"
+  type: TMX
+}
+furniture {
+  id: "table-diner2"
+  type: TMX
+}
+furniture {
+  id: "diner1"
+  type: TMX
+}
+size: LARGE

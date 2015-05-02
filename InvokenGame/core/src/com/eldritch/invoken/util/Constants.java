@@ -7,5 +7,8 @@ public class Constants {
     public static final String CONSTRAINTS = "constraints";
     public static final String TRANSIENT = "transient";
     
+    public static final String CATEGORY = "category";
+    public static final String LOW = "low";
+    
     private Constants() {};
 }

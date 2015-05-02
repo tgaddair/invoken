@@ -210,6 +210,12 @@ encounter {
       max: 1
       alive: true
     }
+    actor_scenario {
+      actor_id: "Cyrus"
+      essential: false
+      blocking: false
+      alive: true
+    }
     no_detect: false
     no_flee: false
   }
@@ -242,15 +248,15 @@ territory {
 }
 control_point {
   id: "GenericHall"
-  room_id: "GenericHall"
   room_id: "LoungeCommon1"
+  room_id: "GenericHall"
   room_id: "ConferenceRoom"
   room_id: "LabBig"
   lock_strength: 0
   required_key: ""
   origin: false
-  min: 22
-  max: 25
+  min: 17
+  max: 20
   value: 1
   closed: false
   faction_id: ""
@@ -347,5 +353,17 @@ control_point {
   value: 1
   closed: false
   faction_id: "_ThugFaction"
+}
+control_point {
+  id: "LargeHall"
+  room_id: "MessHall"
+  lock_strength: 0
+  required_key: ""
+  origin: false
+  min: 5
+  max: 7
+  value: 2
+  closed: false
+  faction_id: ""
 }
 music: "factory.ogg"

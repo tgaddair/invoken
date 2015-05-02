@@ -1,0 +1,26 @@
+id: "LoungeCommon1"
+furniture {
+  id: "sofa-grime1"
+  type: TMX
+}
+furniture {
+  id: "table-grime1"
+  type: TMX
+}
+furniture {
+  id: "table-grime3"
+  type: TMX
+}
+furniture {
+  id: "sofa-grime2"
+  type: TMX
+}
+furniture {
+  id: "sofa-2-table-grime-2"
+  type: TMX
+}
+furniture {
+  id: "sofa-2-table-grime"
+  type: TMX
+}
+size: MEDIUM

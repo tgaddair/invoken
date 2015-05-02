@@ -25,24 +25,28 @@ import com.eldritch.invoken.util.Settings;
 public class InanimateEntity extends CollisionEntity implements Drawable, Registered {
     private final TiledMapTileLayer layer;
     private final BodyType bodyType;
-    
+    private final float zOff;
+
     private TiledMapTileLayer collisionLayer;
     private Vector2 offset;
     private Body body;
     private float radius = 0;
 
     public InanimateEntity(TiledMapTileLayer layer, NaturalVector2 position, BodyType bodyType) {
-        super(getWidth(layer), getHeight(layer));
+        super(getWidth(layer, false), getHeight(layer, false));
         this.layer = layer;
         this.offset = Vector2.Zero;
+        this.zOff = getOffset(layer, false).y;
         this.bodyType = bodyType;
         this.position.set(position.x, position.y);
     }
-    
+
     public void addCollisionLayer(TiledMapTileLayer collisionLayer) {
         this.collisionLayer = collisionLayer;
-        this.offset = getOffset(collisionLayer);
-        this.radius = getWidth(collisionLayer) / 3;
+        this.radius = getWidth(collisionLayer, true) / 3;
+        if (radius > 0) {
+            this.offset = getOffset(collisionLayer, true).add(0.5f, 0.5f); // centered
+        }
     }
 
     @Override
@@ -65,21 +69,21 @@ public class InanimateEntity extends CollisionEntity implements Drawable, Regist
                 Cell cell = layer.getCell(i, j);
                 if (cell != null && cell.getTile() != null) {
                     Vector2 position = getBodyPosition();
-                    batch.draw(cell.getTile().getTextureRegion(), position.x + i
-                            - offset.x - 0.5f, position.y + j - offset.y - 0.5f, 1, 1);
+                    batch.draw(cell.getTile().getTextureRegion(), position.x + i - offset.x,
+                            position.y + j - offset.y, 1, 1);
                 }
             }
         }
         batch.end();
     }
-    
+
     public Vector2 getBodyPosition() {
         return body != null ? body.getPosition() : getPosition();
     }
 
     @Override
     public float getZ() {
-        return getBodyPosition().y;
+        return body != null ? getBodyPosition().y : getPosition().y + zOff;
     }
 
     private Body createBody(World world) {
@@ -104,15 +108,15 @@ public class InanimateEntity extends CollisionEntity implements Drawable, Regist
         Filter filter = fixture.getFilterData();
         filter.categoryBits = Settings.BIT_AGENT;
         filter.maskBits = Settings.BIT_ANYTHING;
-        
+
         // optional collision filter
         MapProperties props = collisionLayer.getProperties();
-        if (props.containsKey("category")) {
-            if (props.get("category").equals("low")) {
+        if (props.containsKey(Constants.CATEGORY)) {
+            if (props.get(Constants.CATEGORY).equals(Constants.LOW)) {
                 filter.categoryBits = Settings.BIT_SHORT_OBSTACLE;
             }
         }
-        
+
         fixture.setFilterData(filter);
 
         body.setAngularDamping(10);
@@ -126,69 +130,72 @@ public class InanimateEntity extends CollisionEntity implements Drawable, Regist
         return radius;
     }
 
-    private static float getWidth(TiledMapTileLayer layer) {
+    private static float getWidth(TiledMapTileLayer layer, boolean checkTransient) {
         float maxWidth = 0;
         for (int j = 0; j < layer.getHeight(); j++) {
             int width = 0;
             for (int i = 0; i < layer.getWidth(); i++) {
-                if (isCollider(layer, i, j)) {
+                if (isCollider(layer, i, j, checkTransient)) {
                     width++;
                 }
             }
             maxWidth = Math.max(maxWidth, width);
         }
-//        System.out.println("width = " + maxWidth);
+        // System.out.println("width = " + maxWidth);
         return maxWidth;
     }
 
-    private static float getHeight(TiledMapTileLayer layer) {
+    private static float getHeight(TiledMapTileLayer layer, boolean checkTransient) {
         float maxHeight = 0;
         for (int i = 0; i < layer.getWidth(); i++) {
             int height = 0;
             for (int j = 0; j < layer.getHeight(); j++) {
-                if (isCollider(layer, i, j)) {
+                if (isCollider(layer, i, j, checkTransient)) {
                     height++;
                 }
             }
             maxHeight = Math.max(maxHeight, height);
         }
-        System.out.println("height = " + maxHeight);
+        // System.out.println("height = " + maxHeight);
         return maxHeight;
     }
 
-    private static Vector2 getOffset(TiledMapTileLayer layer) {
+    private static Vector2 getOffset(TiledMapTileLayer layer, boolean checkTransient) {
         for (int i = 0; i < layer.getWidth(); i++) {
             for (int j = 0; j < layer.getHeight(); j++) {
-                if (isCollider(layer, i, j)) {
-                    System.out.println("offset = " + i + " " + j);
+                if (isCollider(layer, i, j, checkTransient)) {
+                    // System.out.println("offset = " + i + " " + j);
                     return new Vector2(i, j);
                 }
             }
         }
-        return Vector2.Zero;
+        return Vector2.Zero.cpy();
     }
-    
-    private static boolean isCollider(TiledMapTileLayer layer, int x, int y) {
+
+    private static boolean isCollider(TiledMapTileLayer layer, int x, int y, boolean checkTransient) {
         Cell cell = layer.getCell(x, y);
         if (cell == null) {
             return false;
         }
-        
-        TiledMapTile tile = cell.getTile();
-        if (tile == null) {
-            return false;
+
+        if (checkTransient) {
+            TiledMapTile tile = cell.getTile();
+            if (tile == null) {
+                return false;
+            }
+
+            MapProperties props = tile.getProperties();
+            return props.containsKey(Constants.TRANSIENT);
         }
-        
-        MapProperties props = tile.getProperties();
-        return props.containsKey(Constants.TRANSIENT);
+        return true;
     }
-    
+
     public static class DynamicEntity extends InanimateEntity {
         public DynamicEntity(TiledMapTileLayer layer, NaturalVector2 position) {
             super(layer, position, BodyType.DynamicBody);
         }
     }
-    
+
     public static class StaticEntity extends InanimateEntity {
         public StaticEntity(TiledMapTileLayer layer, NaturalVector2 position) {
             super(layer, position, BodyType.StaticBody);
