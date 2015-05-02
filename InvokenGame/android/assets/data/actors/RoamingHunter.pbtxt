@@ -1,0 +1,40 @@
+params {
+  id: "RoamingHunter"
+  name: "Roaming Hunter"
+  species: HUMAN
+  gender: MALE
+  profession: ASSASSIN
+  level: 15
+  skill {
+    discipline: WARFARE
+    level: 15
+  }
+  skill {
+    discipline: SUBTERFUGE
+    level: 18
+  }
+  skill {
+    discipline: AUTOMATA
+    level: 11
+  }
+  skill {
+    discipline: CHARISMA
+    level: 10
+  }
+  inventory_item {
+    item_id: "RailGun"
+    count: 1
+    drop_chance: 1.0
+  }
+  inventory_item {
+    item_id: "HunterGarb"
+    count: 1
+    drop_chance: 1.0
+  }
+  known_aug_id: FireWeapon
+}
+unique: false
+aggression: AGGRESSIVE
+assistance: LOYAL
+confidence: CAPABLE
+guard: false

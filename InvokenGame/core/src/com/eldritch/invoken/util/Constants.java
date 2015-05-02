@@ -7,6 +7,13 @@ public class Constants {
     public static final String CONSTRAINTS = "constraints";
     public static final String TRANSIENT = "transient";
     
+    // opposite of a traditional collision constraint, this tile explicitly allows layers named
+    // "surface" to be placed here
+    // dock: layer defining where something can be placed
+    // anchor: layer defining tiles that must match with a dock layer in order to be placed
+    public static final String DOCK = "dock";
+    public static final String ANCHOR = "anchor";
+    
     public static final String CATEGORY = "category";
     public static final String LOW = "low";
     

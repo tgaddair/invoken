@@ -23,4 +23,12 @@ furniture {
   id: "sofa-2-table-grime"
   type: TMX
 }
+furniture {
+  id: "plant-wall1"
+  type: TMX
+}
+furniture {
+  id: "plant-wall2"
+  type: TMX
+}
 size: MEDIUM

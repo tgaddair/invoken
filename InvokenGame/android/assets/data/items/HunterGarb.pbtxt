@@ -1,0 +1,21 @@
+id: "HunterGarb"
+name: "Hunter Garb"
+description: "Lightweight and reactive battle armor worn by Icarian operatives."
+value: 500
+droppable: true
+hidden: false
+damage_modifier {
+  damage: PHYSICAL
+  magnitude: 25
+}
+damage_modifier {
+  damage: THERMAL
+  magnitude: 25
+}
+damage_modifier {
+  damage: VIRAL
+  magnitude: 25
+}
+type: OUTFIT
+asset: "hunter"
+covers: true
