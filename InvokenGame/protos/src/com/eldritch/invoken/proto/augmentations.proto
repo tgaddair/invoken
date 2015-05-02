@@ -21,6 +21,7 @@ enum AugmentationProto {
 	Scramble = 15;
 	ThrowGrenade = 16;
 	Blast = 19;
+	Ping = 20;
 
 	// NPC only
 	Charge = 17;

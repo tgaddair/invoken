@@ -27,6 +27,7 @@ import com.eldritch.invoken.actor.aug.Jaunt;
 import com.eldritch.invoken.actor.aug.Mirror;
 import com.eldritch.invoken.actor.aug.Observe;
 import com.eldritch.invoken.actor.aug.Paralyze;
+import com.eldritch.invoken.actor.aug.Ping;
 import com.eldritch.invoken.actor.aug.RendWeapon;
 import com.eldritch.invoken.actor.aug.Resurrect;
 import com.eldritch.invoken.actor.aug.Scramble;
@@ -294,7 +295,8 @@ public enum Profession {
 		public List<Augmentation> getStartingAugmentations() {
 			return ImmutableList.<Augmentation>of(
 			        FireWeapon.getInstance(),
-			        Observe.getInstance());
+			        Observe.getInstance(),
+			        Ping.getInstance());
 		}
 		
 		@Override
