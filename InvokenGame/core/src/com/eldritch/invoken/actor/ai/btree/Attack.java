@@ -60,10 +60,15 @@ public class Attack extends Sequence<Npc> {
         hideSequence.addChild(new IsIntimidated());
         hideSequence.addChild(new Invert<>(new HasCover()));
         hideSequence.addChild(new SeekCover());
+        
+        Sequence<Npc> pursueSequence = new Sequence<>();
+        pursueSequence.addChild(new HasTarget());
+        pursueSequence.addChild(new Pursue());
 
         Selector<Npc> evasionSelector = new Selector<>();
         evasionSelector.addChild(dodgeSequence);
         evasionSelector.addChild(hideSequence);
+        evasionSelector.addChild(pursueSequence);
         // selector.addChild(suppressSequence);
 
         addChild(new AlwaysSucceed<>(evasionSelector));
@@ -344,6 +349,13 @@ public class Attack extends Sequence<Npc> {
             Agent target = npc.getTarget();
             direction.set(target.getPosition()).sub(npc.getPosition()).nor();
             npc.dodge(direction);
+        }
+    }
+    
+    private static class HasTarget extends BooleanTask {
+        @Override
+        protected boolean check(Npc npc) {
+            return npc.hasTarget();
         }
     }
 }

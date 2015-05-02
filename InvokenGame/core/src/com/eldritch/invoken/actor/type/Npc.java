@@ -573,6 +573,7 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
             cover = null;
             int count = 0;
             if (getHide().getTarget() != null && !getLocation().getActiveCover().isEmpty()) {
+                Steerable<Vector2> target = getHide().getTarget();
                 CoverPoint bestCover = null;
                 boolean bestLos = false;
                 float bestDistance = Float.POSITIVE_INFINITY;
@@ -583,6 +584,11 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
                             .hasLineOfSight(getHide().getTarget().getPosition(), position)) {
                         boolean los = hasLineOfSight(position);
                         float distance = position.dst2(getPosition());
+                        if (target.getPosition().dst2(position) < distance) {
+                            // enemy in the way
+                            continue;
+                        }
+                        
                         if (los && !bestLos) {
                             // any cover point we can see is immediately better
                             bestLos = true;
