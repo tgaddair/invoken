@@ -52,6 +52,7 @@ public class Attack extends Sequence<Npc> {
         
         Sequence<Npc> dodgeSequence = new Sequence<>();
         dodgeSequence.addChild(new ShouldDodge());
+        dodgeSequence.addChild(new LowerAim());
         dodgeSequence.addChild(new Dodge());
 
         // hide if we have line of sight to our last seen, otherwise we idle in defensive posture
