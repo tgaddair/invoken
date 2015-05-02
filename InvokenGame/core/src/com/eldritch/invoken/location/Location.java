@@ -57,7 +57,7 @@ import com.eldritch.invoken.actor.pathfinding.PathManager;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.CoverPoint;
 import com.eldritch.invoken.actor.type.DummyPlayer;
-import com.eldritch.invoken.actor.type.DynamicEntity;
+import com.eldritch.invoken.actor.type.InanimateEntity;
 import com.eldritch.invoken.actor.type.Npc;
 import com.eldritch.invoken.actor.type.Player;
 import com.eldritch.invoken.actor.type.TemporaryEntity;
@@ -103,21 +103,21 @@ public class Location {
     private final GameTransition state;
     private final long seed;
 
-    private final Map<String, Agent> ids = Maps.newHashMap();
-    private final List<Agent> entities = new ArrayList<Agent>();
-    private final List<Agent> inactiveEntities = new ArrayList<Agent>();
-    private final List<Agent> activeEntities = new ArrayList<Agent>();
-    private final Map<String, Integer> markers = Maps.newHashMap();
+    private final Map<String, Agent> ids = new HashMap<>();
+    private final List<Agent> entities = new ArrayList<>();
+    private final List<Agent> inactiveEntities = new ArrayList<>();
+    private final List<Agent> activeEntities = new ArrayList<>();
+    private final Map<String, Integer> markers = new HashMap<>();
     private int inactiveIndex = 0;
 
-    private final List<Drawable> drawables = new ArrayList<Drawable>();
-    private final List<TemporaryEntity> tempEntities = new ArrayList<TemporaryEntity>();
-    private final List<Activator> activators = new ArrayList<Activator>();
-    private final List<DynamicEntity> objects = Lists.newArrayList();
-    private final List<SecurityCamera> securityCameras = new ArrayList<SecurityCamera>();
-    private final Set<NaturalVector2> activeTiles = new HashSet<NaturalVector2>();
-    private final Set<NaturalVector2> filledTiles = new HashSet<NaturalVector2>();
-    private final List<CoverPoint> activeCover = new ArrayList<CoverPoint>();
+    private final List<Drawable> drawables = new ArrayList<>();
+    private final List<TemporaryEntity> tempEntities = new ArrayList<>();
+    private final List<Activator> activators = new ArrayList<>();
+    private final List<InanimateEntity> objects = new ArrayList<>();
+    private final List<SecurityCamera> securityCameras = new ArrayList<>();
+    private final Set<NaturalVector2> activeTiles = new HashSet<>();
+    private final Set<NaturalVector2> filledTiles = new HashSet<>();
+    private final List<CoverPoint> activeCover = new ArrayList<>();
     private final LightManager lightManager;
     private final NormalMapShader normalMapShader;
     private final OverlayLightMasker lightMasker;
@@ -352,7 +352,7 @@ public class Location {
         for (Activator activator : activators) {
             activator.register(this);
         }
-        for (DynamicEntity entity : map.getEntities()) {
+        for (InanimateEntity entity : map.getEntities()) {
             objects.add(entity);
             entity.register(this);
         }
@@ -729,7 +729,7 @@ public class Location {
         }
 
         // add objects
-        for (DynamicEntity entity : objects) {
+        for (InanimateEntity entity : objects) {
             if (activeTiles.contains(getCellPosition(entity.getPosition()))) {
                 drawables.add(entity);
             }

@@ -20,15 +20,17 @@ import com.eldritch.invoken.location.Location;
 import com.eldritch.invoken.location.NaturalVector2;
 import com.eldritch.invoken.util.Settings;
 
-public class DynamicEntity extends CollisionEntity implements Drawable, Registered {
+public class InanimateEntity extends CollisionEntity implements Drawable, Registered {
     private final TiledMapTileLayer layer;
     private final Vector2 offset;
+    private final BodyType bodyType;
     private Body body;
 
-    public DynamicEntity(TiledMapTileLayer layer, NaturalVector2 position) {
+    public InanimateEntity(TiledMapTileLayer layer, NaturalVector2 position, BodyType bodyType) {
         super(getWidth(layer), getHeight(layer));
         this.layer = layer;
         this.offset = getOffset(layer);
+        this.bodyType = bodyType;
         this.position.set(position.x, position.y);
     }
 
@@ -70,7 +72,7 @@ public class DynamicEntity extends CollisionEntity implements Drawable, Register
         BodyDef characterBodyDef = new BodyDef();
         characterBodyDef.position.set(getPosition().x + offset.x + getRadius(), getPosition().y
                 + offset.y + getRadius());
-        characterBodyDef.type = BodyType.DynamicBody;
+        characterBodyDef.type = bodyType;
         Body body = world.createBody(characterBodyDef);
 
         FixtureDef charFixtureDef = new FixtureDef();
@@ -146,5 +148,17 @@ public class DynamicEntity extends CollisionEntity implements Drawable, Register
             }
         }
         return Vector2.Zero;
+    }
+    
+    public static class DynamicEntity extends InanimateEntity {
+        public DynamicEntity(TiledMapTileLayer layer, NaturalVector2 position) {
+            super(layer, position, BodyType.DynamicBody);
+        }
+    }
+    
+    public static class StaticEntity extends InanimateEntity {
+        public StaticEntity(TiledMapTileLayer layer, NaturalVector2 position) {
+            super(layer, position, BodyType.StaticBody);
+        }
     }
 }

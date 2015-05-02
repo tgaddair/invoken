@@ -13,12 +13,13 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
 import com.eldritch.invoken.activators.Activator;
 import com.eldritch.invoken.actor.type.CoverPoint;
-import com.eldritch.invoken.actor.type.DynamicEntity;
+import com.eldritch.invoken.actor.type.InanimateEntity;
+import com.eldritch.invoken.actor.type.InanimateEntity.DynamicEntity;
+import com.eldritch.invoken.actor.type.InanimateEntity.StaticEntity;
 import com.eldritch.invoken.location.ConnectedRoomManager;
 import com.eldritch.invoken.location.NaturalVector2;
 import com.eldritch.invoken.location.layer.LocationLayer.CollisionLayer;
 import com.eldritch.invoken.util.Settings;
-import com.google.common.collect.Lists;
 
 public class LocationMap extends TiledMap {
 	private enum Type {
@@ -33,9 +34,9 @@ public class LocationMap extends TiledMap {
     private final int width;
     private final int height;
     private Set<NaturalVector2> activeTiles = null;
-    private final List<Activator> activators = new ArrayList<Activator>();
-    private final List<DynamicEntity> entities = Lists.newArrayList();
-    private final List<CoverPoint> coverPoints = new ArrayList<CoverPoint>();
+    private final List<Activator> activators = new ArrayList<>();
+    private final List<InanimateEntity> entities = new ArrayList<>();
+    private final List<CoverPoint> coverPoints = new ArrayList<>();
     private final TiledMap overlayMap = new TiledMap();
 
     private ConnectedRoomManager rooms;
@@ -110,7 +111,7 @@ public class LocationMap extends TiledMap {
     	activators.add(activator);
     }
     
-    public void addEntity(DynamicEntity entity) {
+    public void addEntity(InanimateEntity entity) {
         entities.add(entity);
     }
     
@@ -118,7 +119,7 @@ public class LocationMap extends TiledMap {
     	return activators;
     }
     
-    public List<DynamicEntity> getEntities() {
+    public List<InanimateEntity> getEntities() {
         return entities;
     }
     
@@ -185,6 +186,12 @@ public class LocationMap extends TiledMap {
             if (layer.getName().startsWith("dynamics")) {
                 // add dynamic entities separately
                 addEntity(new DynamicEntity(layer, offset));
+                continue;
+            }
+            
+            if (layer.getName().startsWith("statics")) {
+                // add dynamic entities separately
+                addEntity(new StaticEntity(layer, offset));
                 continue;
             }
             
