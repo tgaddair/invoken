@@ -19,6 +19,7 @@ import com.eldritch.invoken.actor.type.InanimateEntity.StaticEntity;
 import com.eldritch.invoken.location.ConnectedRoomManager;
 import com.eldritch.invoken.location.NaturalVector2;
 import com.eldritch.invoken.location.layer.LocationLayer.CollisionLayer;
+import com.eldritch.invoken.util.Constants;
 import com.eldritch.invoken.util.Settings;
 
 public class LocationMap extends TiledMap {
@@ -175,24 +176,36 @@ public class LocationMap extends TiledMap {
     }
     
     public void merge(TiledMap map, NaturalVector2 offset) {
+        List<InanimateEntity> inanimates = new ArrayList<>();
+        List<TiledMapTileLayer> collisions = new ArrayList<>();
+        
         Map<String, LocationLayer> presentLayers = getLayerMap();
         for (MapLayer mapLayer : map.getLayers()) {
             TiledMapTileLayer layer = (TiledMapTileLayer) mapLayer;
-            if (layer.getName().startsWith("constraints")) {
+            if (layer.getName().startsWith(Constants.CONSTRAINTS)) {
                 // don't add the constraints
                 continue;
             }
             
-            if (layer.getName().startsWith("dynamics")) {
+            if (layer.getName().startsWith(Constants.DYNAMICS)) {
                 // add dynamic entities separately
-                addEntity(new DynamicEntity(layer, offset));
+                InanimateEntity entity = new DynamicEntity(layer, offset);
+                inanimates.add(entity);
+                addEntity(entity);
                 continue;
             }
             
-            if (layer.getName().startsWith("statics")) {
+            if (layer.getName().startsWith(Constants.STATICS)) {
                 // add dynamic entities separately
-                addEntity(new StaticEntity(layer, offset));
+                InanimateEntity entity = new StaticEntity(layer, offset);
+                inanimates.add(entity);
+                addEntity(entity);
                 continue;
+            }
+            
+            // add collision layer
+            if (layer.getName().startsWith(Constants.COLLISION)) {
+                collisions.add(layer);
             }
             
             LocationLayer existing = presentLayers.get(mapLayer.getName());
@@ -217,6 +230,13 @@ public class LocationMap extends TiledMap {
                     }
                 }
             }
+        }
+        
+        // add collisions to entities
+        for (int i = 0; i < inanimates.size() && i < collisions.size(); i++) {
+            InanimateEntity entity = inanimates.get(i);
+            TiledMapTileLayer collision = collisions.get(i);
+            entity.addCollisionLayer(collision);
         }
     }
 }

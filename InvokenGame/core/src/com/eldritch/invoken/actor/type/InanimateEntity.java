@@ -2,6 +2,7 @@ package com.eldritch.invoken.actor.type;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.maps.MapProperties;
+import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
@@ -18,25 +19,37 @@ import com.eldritch.invoken.actor.Drawable;
 import com.eldritch.invoken.actor.Registered;
 import com.eldritch.invoken.location.Location;
 import com.eldritch.invoken.location.NaturalVector2;
+import com.eldritch.invoken.util.Constants;
 import com.eldritch.invoken.util.Settings;
 
 public class InanimateEntity extends CollisionEntity implements Drawable, Registered {
     private final TiledMapTileLayer layer;
-    private final Vector2 offset;
     private final BodyType bodyType;
+    
+    private TiledMapTileLayer collisionLayer;
+    private Vector2 offset;
     private Body body;
+    private float radius = 0;
 
     public InanimateEntity(TiledMapTileLayer layer, NaturalVector2 position, BodyType bodyType) {
         super(getWidth(layer), getHeight(layer));
         this.layer = layer;
-        this.offset = getOffset(layer);
+        this.offset = Vector2.Zero;
         this.bodyType = bodyType;
         this.position.set(position.x, position.y);
+    }
+    
+    public void addCollisionLayer(TiledMapTileLayer collisionLayer) {
+        this.collisionLayer = collisionLayer;
+        this.offset = getOffset(collisionLayer);
+        this.radius = getWidth(collisionLayer) / 3;
     }
 
     @Override
     public void register(Location location) {
-        body = createBody(location.getWorld());
+        if (radius > 0) {
+            body = createBody(location.getWorld());
+        }
     }
 
     @Override
@@ -51,17 +64,22 @@ public class InanimateEntity extends CollisionEntity implements Drawable, Regist
             for (int j = 0; j < layer.getHeight(); j++) {
                 Cell cell = layer.getCell(i, j);
                 if (cell != null && cell.getTile() != null) {
-                    batch.draw(cell.getTile().getTextureRegion(), body.getPosition().x + i
-                            - offset.x - 0.5f, body.getPosition().y + j - offset.y - 0.5f, 1, 1);
+                    Vector2 position = getBodyPosition();
+                    batch.draw(cell.getTile().getTextureRegion(), position.x + i
+                            - offset.x - 0.5f, position.y + j - offset.y - 0.5f, 1, 1);
                 }
             }
         }
         batch.end();
     }
+    
+    public Vector2 getBodyPosition() {
+        return body != null ? body.getPosition() : getPosition();
+    }
 
     @Override
     public float getZ() {
-        return body.getPosition().y;
+        return getBodyPosition().y;
     }
 
     private Body createBody(World world) {
@@ -88,7 +106,7 @@ public class InanimateEntity extends CollisionEntity implements Drawable, Regist
         filter.maskBits = Settings.BIT_ANYTHING;
         
         // optional collision filter
-        MapProperties props = layer.getProperties();
+        MapProperties props = collisionLayer.getProperties();
         if (props.containsKey("category")) {
             if (props.get("category").equals("low")) {
                 filter.categoryBits = Settings.BIT_SHORT_OBSTACLE;
@@ -105,7 +123,7 @@ public class InanimateEntity extends CollisionEntity implements Drawable, Regist
     }
 
     private float getRadius() {
-        return getWidth() / 3;
+        return radius;
     }
 
     private static float getWidth(TiledMapTileLayer layer) {
@@ -113,7 +131,7 @@ public class InanimateEntity extends CollisionEntity implements Drawable, Regist
         for (int j = 0; j < layer.getHeight(); j++) {
             int width = 0;
             for (int i = 0; i < layer.getWidth(); i++) {
-                if (layer.getCell(i, j) != null) {
+                if (isCollider(layer, i, j)) {
                     width++;
                 }
             }
@@ -128,26 +146,41 @@ public class InanimateEntity extends CollisionEntity implements Drawable, Regist
         for (int i = 0; i < layer.getWidth(); i++) {
             int height = 0;
             for (int j = 0; j < layer.getHeight(); j++) {
-                if (layer.getCell(i, j) != null) {
+                if (isCollider(layer, i, j)) {
                     height++;
                 }
             }
             maxHeight = Math.max(maxHeight, height);
         }
-//        System.out.println("height = " + maxHeight);
+        System.out.println("height = " + maxHeight);
         return maxHeight;
     }
 
     private static Vector2 getOffset(TiledMapTileLayer layer) {
         for (int i = 0; i < layer.getWidth(); i++) {
             for (int j = 0; j < layer.getHeight(); j++) {
-                if (layer.getCell(i, j) != null) {
-//                    System.out.println("offset = " + i + " " + j);
+                if (isCollider(layer, i, j)) {
+                    System.out.println("offset = " + i + " " + j);
                     return new Vector2(i, j);
                 }
             }
         }
         return Vector2.Zero;
+    }
+    
+    private static boolean isCollider(TiledMapTileLayer layer, int x, int y) {
+        Cell cell = layer.getCell(x, y);
+        if (cell == null) {
+            return false;
+        }
+        
+        TiledMapTile tile = cell.getTile();
+        if (tile == null) {
+            return false;
+        }
+        
+        MapProperties props = tile.getProperties();
+        return props.containsKey(Constants.TRANSIENT);
     }
     
     public static class DynamicEntity extends InanimateEntity {

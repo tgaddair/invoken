@@ -6,6 +6,7 @@ import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.eldritch.invoken.location.NaturalVector2;
+import com.eldritch.invoken.util.Constants;
 import com.eldritch.invoken.util.Settings;
 import com.google.common.collect.Sets;
 
@@ -94,7 +95,7 @@ public class LocationLayer extends TiledMapTileLayer {
         public Cell addCell(TiledMapTile tile, int x, int y) {
             if (tile != null) {
                 MapProperties props = tile.getProperties();
-                if (props.containsKey("transient")) {
+                if (props.containsKey(Constants.TRANSIENT)) {
                     setTransient(x, y);
                 }
             }
