@@ -386,7 +386,6 @@ public abstract class RangedWeapon extends Item {
         }
     }
     
-    
     public abstract float getIdealDistance();
 
     public abstract SoundEffect getSoundEffect();

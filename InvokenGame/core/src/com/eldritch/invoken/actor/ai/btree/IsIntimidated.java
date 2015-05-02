@@ -3,7 +3,7 @@ package com.eldritch.invoken.actor.ai.btree;
 import com.eldritch.invoken.actor.type.Npc;
 
 public class IsIntimidated extends BooleanTask {
-    private static final float RANGE2 = 3 * 3;
+    private static final float RANGE = 3;
     
     @Override
     protected boolean check(Npc npc) {
@@ -27,7 +27,8 @@ public class IsIntimidated extends BooleanTask {
     }
 
     private boolean isTooClose(Npc npc) {
-        return npc.dst2(npc.getTarget()) < RANGE2;
+        float r = npc.getInventory().getRangedWeapon().getIdealDistance();
+        return npc.dst2(npc.getTarget()) < r * r;
     }
 
     private boolean isTargeted(Npc npc) {
