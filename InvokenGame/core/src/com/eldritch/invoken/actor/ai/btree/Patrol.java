@@ -2,7 +2,6 @@ package com.eldritch.invoken.actor.ai.btree;
 
 import com.badlogic.gdx.ai.btree.branch.Selector;
 import com.badlogic.gdx.ai.btree.branch.Sequence;
-import com.badlogic.gdx.ai.btree.decorator.AlwaysSucceed;
 import com.badlogic.gdx.ai.btree.decorator.Invert;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Npc;
@@ -31,15 +30,16 @@ public class Patrol extends Selector<Npc> {
         wanderSequence.addChild(new LowerWeapon());
         wanderSequence.addChild(new Wander());
         
-        addChild(new AlwaysSucceed<>(watchSequence));
-        addChild(new AlwaysSucceed<>(guardSequence));
+        addChild(watchSequence);
+        addChild(guardSequence);
         addChild(wanderSequence);
         addChild(new Idle());
     }
     
-    private static class WatchForCrime extends SuccessTask {
+    private static class WatchForCrime extends BooleanTask {
         @Override
-        protected void doFor(Npc npc) {
+        protected boolean check(Npc npc) {
+            boolean crime = false;
             for (Agent neighbor : npc.getVisibleNeighbors()) {
                 if (neighbor.isCommittingCrime()) {
                     // TODO: count this as a faction offense and confront them
@@ -47,8 +47,10 @@ public class Patrol extends Selector<Npc> {
                     // TODO: this should only accrue once for each crime
                     npc.changeRelation(neighbor, -10);
                     npc.announce(GenericDialogue.forCrime(npc, neighbor));
+                    crime = true;
                 }
             }
+            return crime;
         }
     }
     

@@ -1,11 +1,17 @@
 package com.eldritch.invoken.actor.ai;
 
+import java.util.List;
+
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Npc;
 
 public class Planner {
+    private static final float MIN_DST2 = 9f;
+    private static final float DURATION = 20f;
+    
     private final Npc owner;
     
+    private float elapsed = 0;
     private boolean hasGoal = false;
     private Agent destination = null;
     
@@ -22,19 +28,36 @@ public class Planner {
     }
     
     public void update(float delta) {
-        if (owner.isGuard() && isLeader() && !hasGoal) {
+        if (owner.isGuard() && isLeader()) {
+            if (!hasGoal) {
+                planForGuard(delta);
+            } else {
+                if (destination != null) {
+                    updateDestination(delta);
+                }
+            }
+        }
+    }
+    
+    private void updateDestination(float delta) {
+        elapsed += delta;
+        if (destination == owner || owner.dst2(destination) < MIN_DST2 || elapsed > DURATION) {
             planForGuard(delta);
         }
     }
     
     private void planForGuard(float delta) {
-        for (Agent agent : owner.getLocation().getAllAgents()) {
-            if (owner != agent && !inSquad(agent) && owner.isAlly(agent)) {
-                // navigate towards this agent as part of a routine patrol
-                destination = agent;
-                hasGoal = true;
-            }
-        }
+        List<Agent> agents = owner.getLocation().getAllAgents();
+        Agent agent = agents.get((int) (Math.random() * agents.size()));
+        
+        // navigate towards this agent as part of a routine patrol
+        destination = agent;
+        setPlan();
+    }
+    
+    private void setPlan() {
+        hasGoal = true;
+        elapsed = 0;
     }
     
     private boolean isLeader() {
