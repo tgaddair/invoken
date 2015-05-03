@@ -164,6 +164,11 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 
             // load from disk
             player = location.createPlayer(state);
+            
+            // create a corpse, if present
+            if (state.hasCorpse()) {
+                location.createPlayerCorpse(state.getCorpse());
+            }
         } else {
             Random rand = new Random();
             Locations.Location data = InvokenGame.LOCATION_READER.readAsset(locationName);
@@ -182,7 +187,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
             player = location.createPlayer(profession);
 
             // save in case they die before reaching the first save point
-            save(player);
+            save(player, Optional.<PlayerActor>absent());
         }
 
         // init camera position
@@ -259,7 +264,8 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         // check that the player is still alive
         if (location.getPlayer().isCompletelyDead()) {
             // game over
-            game.setScreen(new GameOverScreen(game, location.getPlayer().getInfo().getName()));
+            saveOnDeath(location);
+            game.setScreen(new GameOverScreen(game, location.getPlayer().getInfo().getId()));
         }
 
         // update UI menus
@@ -741,7 +747,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         return textureManager.get(assetName, Texture.class);
     }
 
-    public PlayerActor load(String name) {
+    public static PlayerActor load(String name) {
         FileHandle handle = Gdx.files.local("saves/" + name + ".dat");
         try {
             return PlayerActor.parseFrom(handle.readBytes());
@@ -784,16 +790,29 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
             InvokenGame.MUSIC_MANAGER.play(location.getMusicId());
         }
     }
-
-    public static void save(Location location) {
-        save(location.getPlayer());
+    
+    private static void saveOnDeath(Location location) {
+        Player player = location.getPlayer();
+        save(player, Optional.of(load(player.getInfo().getId())));
     }
 
-    private static void save(Player player) {
+    public static void save(Location location) {
+        save(location.getPlayer(), Optional.<PlayerActor>absent());
+    }
+
+    private static void save(Player player, Optional<PlayerActor> previous) {
+        // setup the save state
+        PlayerActor data = player.serialize();
+        if (previous.isPresent()) {
+            PlayerActor.Builder builder = PlayerActor.newBuilder(previous.get());
+            builder.setCorpse(data);
+            data = builder.build();
+        }
+        
         FileHandle handle = Gdx.files.local("saves/" + player.getInfo().getName() + ".dat");
         try {
             final boolean append = false;
-            handle.writeBytes(player.serialize().toByteArray(), append);
+            handle.writeBytes(data.toByteArray(), append);
         } catch (Exception ex) {
             InvokenGame.error("Failed writing " + handle.name(), ex);
         }

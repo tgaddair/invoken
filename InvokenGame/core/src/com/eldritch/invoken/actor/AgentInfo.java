@@ -458,6 +458,7 @@ public class AgentInfo {
 
     public ActorParams serialize() {
         ActorParams.Builder builder = ActorParams.newBuilder();
+        builder.setId(id);
         builder.setName(name);
         builder.setSpecies(species.toProto());
         builder.setProfession(profession.toProto());

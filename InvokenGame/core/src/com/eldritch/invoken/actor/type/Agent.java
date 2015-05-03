@@ -388,6 +388,10 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         return !isAlive()
                 && animations.get(Activity.Death).get(direction).isAnimationFinished(stateTime);
     }
+    
+    public void kill() {
+        info.setHealth(0);
+    }
 
     public boolean isAlive() {
         return info.isAlive();

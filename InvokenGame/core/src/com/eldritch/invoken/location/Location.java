@@ -1111,9 +1111,16 @@ public class Location {
         }
         return list;
     }
+    
+    public Player createPlayerCorpse(PlayerActor proto) {
+        Player corpse = createPlayer(proto, proto.getX(), proto.getY());
+        corpse.kill();
+        return corpse;
+    }
 
     public Player createPlayer(PlayerActor proto) {
-        return createPlayer(proto, proto.getX(), proto.getY());
+        this.player = createPlayer(proto, proto.getX(), proto.getY());
+        return player;
     }
 
     public Player spawnPlayer(Player player) {
@@ -1124,8 +1131,8 @@ public class Location {
         return player;
     }
 
-    public Player createPlayer(PlayerActor proto, float x, float y) {
-        this.player = new Player(proto, x, y, this, "sprite/characters/light-blue-hair.png");
+    private Player createPlayer(PlayerActor proto, float x, float y) {
+        Player player = new Player(proto, x, y, this, "sprite/characters/light-blue-hair.png");
         addActor(player);
 
         // PointLight light = new PointLight(rayHandler, LightManager.RAYS_PER_BALL, null,

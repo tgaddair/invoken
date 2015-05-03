@@ -46,8 +46,6 @@ public class Player extends SteeringAgent {
             }
         }
         
-        // set health
-        info.setHealth(data.getHealth());
         this.threat = new ThreatMonitor<Player>(this);
     }
 
@@ -250,9 +248,6 @@ public class Player extends SteeringAgent {
         if (inventory.hasRangedWeapon()) {
             builder.addEquippedItemId(inventory.getRangedWeapon().getId());
         }
-        
-        // health
-        builder.setHealth(info.getHealth());
         
         return builder.build();
     }
