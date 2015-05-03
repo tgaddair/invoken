@@ -1,21 +1,19 @@
 package com.eldritch.invoken.ui;
 
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.eldritch.invoken.actor.type.Agent;
 
 public class StatusBar extends ProgressBar {
-    private static final Color HEALTH_COLOR = new Color(0xFF1414FF);
+//    private static final Color HEALTH_COLOR = new Color(0xFF1414FF);
     
     private final Agent agent;
     private final StatusCalculator calculator;
     
     public StatusBar(Agent agent, StatusCalculator calculator, Skin skin) {
-        super(0, calculator.getBaseStatus(agent), 1, true, skin);
+        super(0, calculator.getBaseStatus(agent), 1, true, skin, calculator.getStyleName());
         this.agent = agent;
         this.calculator = calculator;
-        setColor(calculator.getRenderColor());
     }
 
     public void update() {
@@ -38,10 +36,10 @@ public class StatusBar extends ProgressBar {
         public float getBaseStatus(Agent agent) {
             return agent.getInfo().getBaseHealth();
         }
-
+        
         @Override
-        public Color getRenderColor() {
-            return HEALTH_COLOR;
+        public String getStyleName() {
+            return "health-vertical";
         }
     }
     
@@ -57,8 +55,8 @@ public class StatusBar extends ProgressBar {
         }
 
         @Override
-        public Color getRenderColor() {
-            return Color.WHITE;
+        public String getStyleName() {
+            return "default-vertical";
         }
     }
     
@@ -67,6 +65,6 @@ public class StatusBar extends ProgressBar {
         
         float getBaseStatus(Agent agent);
         
-        Color getRenderColor();
+        String getStyleName();
     }
 }

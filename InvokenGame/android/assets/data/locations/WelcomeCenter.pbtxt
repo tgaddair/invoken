@@ -276,7 +276,7 @@ control_point {
 }
 control_point {
   id: "Entrance"
-  room_id: "NeutralChamber"
+  room_id: "Bedroom"
   lock_strength: 0
   required_key: ""
   origin: true

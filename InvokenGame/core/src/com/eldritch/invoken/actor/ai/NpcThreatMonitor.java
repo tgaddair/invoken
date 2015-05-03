@@ -233,10 +233,10 @@ public class NpcThreatMonitor extends ThreatMonitor<Npc> {
                 NpcThreatMonitor monitor = entity.getThreat();
                 monitor.alert.update(DELTA);
 
-                // in order to go from alerted to suspicious, we must meet the following criteria:
+                // in order to go from alerted to suspicious, we must meet one of these criteria:
                 // 1. alert timer is finished
                 // 2. has no enemies
-                if (monitor.alert.isFinished() && !monitor.hasEnemies()) {
+                if (monitor.alert.isFinished() || !monitor.hasEnemies()) {
                     // alerted -> suspicious
                     monitor.setSuspicious();
                 }

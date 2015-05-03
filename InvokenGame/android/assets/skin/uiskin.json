@@ -21,6 +21,10 @@ com.badlogic.gdx.scenes.scene2d.ui.ProgressBar$ProgressBarStyle: {
     background: default-progress-bg,
     knobBefore: default-progress-vertical,
   },
+	health-vertical: {
+    background: default-progress-bg,
+    knobBefore: health-progress-vertical,
+  },
 	default-horizontal: {
     background: default-progress-bgh,
     knobBefore: default-progress-horizontal,

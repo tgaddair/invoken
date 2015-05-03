@@ -206,6 +206,14 @@ default-progress-vertical
   orig: 18, 18
   offset: 0, 0
   index: -1
+health-progress-vertical
+  rotate: false
+  xy: 356, 413
+  size: 18, 18
+  split: 0, 0, 0, 0
+  orig: 18, 18
+  offset: 0, 0
+  index: -1
 default-progress-horizontal
   rotate: false
   xy: 356, 376
