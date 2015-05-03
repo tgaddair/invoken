@@ -812,7 +812,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
             PlayerActor.Builder corpseBuilder = PlayerActor.newBuilder(data);
             corpseBuilder.clearEquippedItemId();
             corpseBuilder.getParamsBuilder().clearInventoryItem();
-            corpseBuilder.getParamsBuilder().setBodyType("hollow");
+            corpseBuilder.getParamsBuilder().setBodyType("sprite/characters/hollow.png");
             corpseBuilder.setFragments(player.getLastFragments());
             builder.setCorpse(corpseBuilder.build());
 

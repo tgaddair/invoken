@@ -23,25 +23,28 @@ import com.eldritch.invoken.util.SoundManager.SoundEffect;
 public class Player extends SteeringAgent {
     private final Vector2 targetCoord = new Vector2();
     private final ThreatMonitor<Player> threat;
-    
+    private final String bodyType;
+
     private boolean holding = false;
     private boolean moving = false;
     private boolean fixedTarget = false;
     private boolean lightOn = false;
     private Augmentation lastAug = null;
-    
+
     private int lastFragments = 0;
 
     public Player(Profession profession, int level, float x, float y, Location location, String body) {
         super(x, y, Human.getWidth(), Human.getHeight(), Human.MAX_VELOCITY, profession, level,
                 location, Human.getAllAnimations(body));
         this.threat = new ThreatMonitor<Player>(this);
+        this.bodyType = body;
     }
 
-    public Player(PlayerActor data, float x, float y, Location location, String body) {
+    public Player(PlayerActor data, float x, float y, Location location) {
         super(data.getParams(), true, x, y, Human.getWidth(), Human.getHeight(),
-                Human.MAX_VELOCITY, location, Human.getAllAnimations(body));
-        
+                Human.MAX_VELOCITY, location, Human
+                        .getAllAnimations(data.getParams().getBodyType()));
+
         // equip items
         Set<String> equipped = new HashSet<String>(data.getEquippedItemIdList());
         for (ItemState item : info.getInventory().getItems()) {
@@ -49,18 +52,19 @@ public class Player extends SteeringAgent {
                 info.getInventory().equip(item.getItem());
             }
         }
-        
+
         if (data.hasFragments()) {
             getInfo().getInventory().addItem(Fragment.getInstance(), data.getFragments());
         }
-        
+
         this.threat = new ThreatMonitor<Player>(this);
+        this.bodyType = data.getParams().getBodyType();
     }
-    
+
     public int getLastFragments() {
         return lastFragments;
     }
-    
+
     @Override
     protected void releaseFragments() {
         int total = info.getInventory().getItemCount((Fragment.getInstance()));
@@ -77,7 +81,7 @@ public class Player extends SteeringAgent {
             prepared.toggleActiveAugmentation(lastAug, 0);
         }
     }
-    
+
     @Override
     protected SoundEffect getDeathSound() {
         return SoundEffect.HUMAN_DEATH;
@@ -154,19 +158,19 @@ public class Player extends SteeringAgent {
     public boolean hasFixedTarget() {
         return fixedTarget;
     }
-    
+
     @Override
     public void setLocation(Location location, float x, float y) {
         super.setLocation(location, x, y);
     }
-    
+
     @Override
     public boolean canKeepTarget(Agent other) {
         return true;
     }
 
     public boolean select(Agent other, Location location) {
-//        if (other == this || other == null || canTarget(other, location)) {
+        // if (other == this || other == null || canTarget(other, location)) {
         setTarget(other);
         endJointInteraction();
         return true;
@@ -195,7 +199,6 @@ public class Player extends SteeringAgent {
     public void alertTo(Agent other) {
         // does nothing
     }
-    
 
     @Override
     public ThreatMonitor<?> getThreat() {
@@ -207,7 +210,7 @@ public class Player extends SteeringAgent {
         // let the player make seemingly bad shots
         return true;
     }
-    
+
     @Override
     public float getCloakAlpha() {
         // player should be able to see themself on screen even when invisible
@@ -247,15 +250,16 @@ public class Player extends SteeringAgent {
     public PlayerActor serialize() {
         PlayerActor.Builder builder = PlayerActor.newBuilder();
         builder.setParams(info.serialize());
-        
+        builder.getParamsBuilder().setBodyType(bodyType);
+
         // position
         builder.setX(getPosition().x);
         builder.setY(getPosition().y);
-        
+
         // location
         builder.setSeed(getLocation().getSeed());
         builder.setLocation(getLocation().getId());
-        
+
         // equipped items
         AgentInventory inventory = info.getInventory();
         if (inventory.hasOutfit()) {
@@ -267,7 +271,7 @@ public class Player extends SteeringAgent {
         if (inventory.hasRangedWeapon()) {
             builder.addEquippedItemId(inventory.getRangedWeapon().getId());
         }
-        
+
         return builder.build();
     }
 }

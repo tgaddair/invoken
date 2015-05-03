@@ -1133,7 +1133,7 @@ public class Location {
     }
 
     private Player createPlayer(PlayerActor proto, float x, float y) {
-        Player player = new Player(proto, x, y, this, "sprite/characters/light-blue-hair.png");
+        Player player = new Player(proto, x, y, this);
         addActor(player);
 
         // PointLight light = new PointLight(rayHandler, LightManager.RAYS_PER_BALL, null,
