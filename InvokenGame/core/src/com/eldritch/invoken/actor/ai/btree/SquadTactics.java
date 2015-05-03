@@ -45,6 +45,12 @@ public class SquadTactics extends Sequence<Npc> {
         protected void doFor(Npc npc) {
             Agent leader = npc.getSquad().getLeader();
             npc.setTarget(leader);
+            
+            // in case we're at the last seen, but unable to find the leader
+            float r = SQUAD_COHESION;
+            if (npc.getPosition().dst2(npc.getLastSeen().getLastLocation()) < r * r) {
+                npc.locate(leader);
+            }
         }
     }
 }

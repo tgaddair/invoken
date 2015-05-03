@@ -98,6 +98,10 @@ public class NavigatedSteerable extends BasicSteerable implements Locatable {
         sr.end();
     }
     
+    public Vector2 getLastLocation() {
+        return lastSeen;
+    }
+    
     public void locate(Agent target) {
         setPosition(target, true);
     }
