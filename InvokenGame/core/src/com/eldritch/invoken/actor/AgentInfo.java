@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -39,7 +40,7 @@ public class AgentInfo {
     private final AgentInventory inventory = new AgentInventory(this);
     final Map<Discipline, SkillState> skills = new HashMap<>();
     final Map<Discipline, Double> skillBonus = new HashMap<>();
-    final Set<AugmentationProto> knownAugmentations = new HashSet<>();
+    final Set<Augmentation> knownAugmentations = new LinkedHashSet<>();
     final Map<Agent, Float> personalRelations = new HashMap<>();
     final Map<DamageType, Float> statusEffects = new EnumMap<>(DamageType.class);
 
@@ -82,8 +83,8 @@ public class AgentInfo {
             skillBonus.put(d, skillBonus.get(d) + MASTERY_BONUS);
         }
         for (AugmentationProto knownAug : params.getKnownAugIdList()) {
-            knownAugmentations.add(knownAug);
             Augmentation aug = Augmentation.fromProto(knownAug);
+            knownAugmentations.add(aug);
             if (aug != null) {
                 addAugmentation(aug);
             }
@@ -113,6 +114,7 @@ public class AgentInfo {
 
         this.profession = profession;
         for (Augmentation aug : profession.getStartingAugmentations()) {
+            knownAugmentations.add(aug);
             addAugmentation(aug);
         }
         for (Skill skill : profession.getSkillsFor(level)) {
@@ -150,6 +152,26 @@ public class AgentInfo {
 
     public Profession getProfession() {
         return profession;
+    }
+    
+    public void levelUp(Discipline discipline) {
+        level++;
+        skills.get(discipline).level++;
+        
+        maxHealth = getBaseHealth();
+        health = getMaxHealth();
+        energy = getMaxEnergy();
+    }
+    
+    public void levelUp(int level, Map<Discipline, Integer> attributes) {
+        this.level = level;
+        for (Discipline d : attributes.keySet()) {
+            skills.get(d).level = attributes.get(d);
+        }
+        
+        maxHealth = getBaseHealth();
+        health = getMaxHealth();
+        energy = getMaxEnergy();
     }
 
     public int getLevel() {
@@ -204,7 +226,7 @@ public class AgentInfo {
         return augmentations;
     }
 
-    public Collection<AugmentationProto> getKnownAugmentations() {
+    public Collection<Augmentation> getKnownAugmentations() {
         return knownAugmentations;
     }
 
@@ -214,6 +236,13 @@ public class AgentInfo {
 
     public void addAugmentation(Augmentation aug) {
         augmentations.addAugmentation(aug);
+    }
+    
+    public void setPreparedAugmentations(Collection<Augmentation> augs) {
+        augmentations.clear();
+        for (Augmentation aug : augs) {
+            augmentations.addAugmentation(aug);
+        }
     }
 
     public boolean isAlive() {
@@ -480,7 +509,9 @@ public class AgentInfo {
         }
 
         // add known augs
-        builder.addAllKnownAugId(knownAugmentations);
+        for (Augmentation aug : knownAugmentations) {
+            builder.addKnownAugId(aug.toProto());
+        }
 
         return builder.build();
     }

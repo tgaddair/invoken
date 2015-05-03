@@ -20,6 +20,7 @@ public class PreparedAugmentations {
 	private final Set<Augmentation> activeSelfAugmentations = new HashSet<Augmentation>();
 	private final Map<Integer, Augmentation> activeAugmentations = new HashMap<Integer, Augmentation>();
 	private final Set<Augmentation> prepared = new HashSet<Augmentation>();
+	private final List<AugmentationListener> listeners = new ArrayList<>();
 	
 	public PreparedAugmentations(Agent owner) {
 		this.owner = owner;
@@ -50,8 +51,25 @@ public class PreparedAugmentations {
 	    return activeSelfAugmentations;
 	}
 	
+    public void addListener(AugmentationListener listener) {
+        listeners.add(listener);
+    }
+	
+	public void clear() {
+	    augs.clear();
+	    activeSelfAugmentations.clear();
+	    activeAugmentations.clear();
+	    prepared.clear();
+	    for (AugmentationListener listener : listeners) {
+	        listener.onClear();
+	    }
+	}
+	
 	public void addAugmentation(Augmentation aug) {
 		augs.add(aug);
+		for (AugmentationListener listener : listeners) {
+            listener.onAdd(aug);
+        }
 	}
 	
 	public boolean hasActiveAugmentation() {
@@ -207,5 +225,11 @@ public class PreparedAugmentations {
             aug.unprepare(owner);
             prepared.remove(aug);
         }
+    }
+    
+    public interface AugmentationListener {
+        void onClear();
+        
+        void onAdd(Augmentation aug);
     }
 }

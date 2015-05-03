@@ -2,7 +2,7 @@ package com.eldritch.invoken.ui;
 
 import java.util.ArrayList;
 import java.util.EnumMap;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -35,7 +35,7 @@ public class UploadMenu implements HudElement {
 
     private final List<LevelListener> listeners = new ArrayList<>();
     private final Map<Discipline, Integer> attributes = new EnumMap<>(Discipline.class);
-    private final Set<Augmentation> preparedAugs = new HashSet<>();
+    private final Set<Augmentation> preparedAugs = new LinkedHashSet<>();
 
     private int level;
     private int currentFragments;
@@ -162,7 +162,7 @@ public class UploadMenu implements HudElement {
 
             int i = 0;
             Table augTable = new Table(skin);
-            for (final Augmentation aug : player.getInfo().getAugmentations().getAugmentations()) {
+            for (final Augmentation aug : player.getInfo().getKnownAugmentations()) {
                 final Image image = new Image(aug.getIcon());
                 image.addListener(new DefaultInputListener() {
                     @Override
@@ -205,6 +205,11 @@ public class UploadMenu implements HudElement {
         requiredFragments = AgentInfo.getFragmentRequirement(level + 1);
         currentFragments += requiredFragments;
         onLevel();
+    }
+    
+    private void commit() {
+        player.getInfo().levelUp(level, attributes);
+        player.getInfo().setPreparedAugmentations(preparedAugs);
     }
     
     private void onLevel() {
@@ -275,6 +280,8 @@ public class UploadMenu implements HudElement {
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 super.touchUp(event, x, y, pointer, button);
+                
+                commit();
                 GameScreen.toast("Saving...");
                 GameScreen.save(player.getLocation());
             }

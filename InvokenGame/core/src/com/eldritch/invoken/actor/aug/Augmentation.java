@@ -144,6 +144,10 @@ public abstract class Augmentation {
 	
 	public abstract Action getAction(Agent owner, Vector2 target);
 	
+	public AugmentationProto toProto() {
+	    return AugmentationProto.valueOf(getClass().getSimpleName());
+	}
+	
 	public static Augmentation fromProto(AugmentationProto proto) {
 	    String className = Augmentation.class.getPackage().getName() + "." + proto.name();
 	    try {
