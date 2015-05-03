@@ -32,7 +32,6 @@ import com.eldritch.invoken.actor.type.Npc;
 import com.eldritch.invoken.actor.type.Player;
 import com.eldritch.invoken.location.Location;
 import com.eldritch.invoken.location.proc.LocationGenerator;
-import com.eldritch.invoken.proto.Actors.InventoryItem;
 import com.eldritch.invoken.proto.Actors.PlayerActor;
 import com.eldritch.invoken.proto.Effects.DamageType;
 import com.eldritch.invoken.proto.Locations;

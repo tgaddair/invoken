@@ -72,7 +72,7 @@ message Room {
 		// some pieces of furniture have custom behavior described by another asset proto
 		optional string asset_id = 3;
 
-		optional int32 min = 4 [default = 1];
+		optional int32 min = 4 [default = 0];
 		optional int32 max = 5 [default = 1];
 	}
 

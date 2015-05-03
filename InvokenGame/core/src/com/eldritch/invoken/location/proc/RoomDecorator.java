@@ -103,6 +103,8 @@ public class RoomDecorator {
                     }
                 }
             }
+            
+            // TODO: throw an exception if we're below the min
         }
     }
 

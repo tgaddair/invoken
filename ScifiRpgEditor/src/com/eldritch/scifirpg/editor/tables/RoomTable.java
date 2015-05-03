@@ -152,6 +152,8 @@ public class RoomTable extends MajorAssetTable<Room> {
         private final JComboBox<String> idBox = new JComboBox<>();
         private final JComboBox<Type> typeBox = new JComboBox<>(Type.values());
         private final JComboBox<String> assetBox = new JComboBox<>();
+        private final JTextField minField = new JTextField();
+        private final JTextField maxField = new JTextField();
 
         public FurnitureEditorPanel(FurnitureTable owner, JFrame frame, Optional<Furniture> prev) {
             super(owner, frame, prev);
@@ -185,6 +187,12 @@ public class RoomTable extends MajorAssetTable<Room> {
                     getAssets((Type) typeBox.getSelectedItem()).toArray(new String[0])));
             builder.append("Asset:", assetBox);
             builder.nextLine();
+            
+            builder.append("Min:", minField);
+            builder.nextLine();
+            
+            builder.append("Max:", maxField);
+            builder.nextLine();
 
             JButton saveButton = new JButton("Save");
             saveButton.addActionListener(this);
@@ -198,6 +206,12 @@ public class RoomTable extends MajorAssetTable<Room> {
                 if (asset.hasAssetId()) {
                     assetBox.setSelectedItem(asset.getAssetId());
                 }
+                if (asset.hasMin()) {
+                    minField.setText(String.valueOf(asset.getMin()));
+                }
+                if (asset.hasMax()) {
+                    maxField.setText(String.valueOf(asset.getMax()));
+                }
             }
 
             add(builder.getPanel());
@@ -210,6 +224,12 @@ public class RoomTable extends MajorAssetTable<Room> {
                     .setType((Type) typeBox.getSelectedItem());
             if (assetBox.getItemCount() > 0) {
                 builder.setAssetId((String) assetBox.getSelectedItem());
+            }
+            if (!minField.getText().isEmpty()) {
+                builder.setMin(Integer.valueOf(minField.getText()));
+            }
+            if (!maxField.getText().isEmpty()) {
+                builder.setMax(Integer.valueOf(maxField.getText()));
             }
             return builder.build();
         }

@@ -215,4 +215,5 @@ message PlayerActor {
 	optional int64 seed = 25;
 	optional string location = 26;
 	optional PlayerActor corpse = 27;
+	optional int32 fragments = 28;
 }

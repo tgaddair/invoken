@@ -10,17 +10,21 @@ furniture {
 furniture {
   id: "plant-wall1"
   type: TMX
+  max: 3
 }
 furniture {
   id: "plant-wall2"
   type: TMX
+  max: 3
 }
 furniture {
   id: "sofas1"
   type: TMX
+  max: 2
 }
 furniture {
   id: "sofas2"
   type: TMX
+  max: 2
 }
 size: MEDIUM
