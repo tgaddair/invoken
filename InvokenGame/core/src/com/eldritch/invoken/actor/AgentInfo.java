@@ -12,6 +12,7 @@ import java.util.Set;
 import com.eldritch.invoken.actor.aug.Augmentation;
 import com.eldritch.invoken.actor.factions.Faction;
 import com.eldritch.invoken.actor.factions.FactionManager;
+import com.eldritch.invoken.actor.items.Fragment;
 import com.eldritch.invoken.actor.items.Outfit;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.proto.Actors.ActorParams;
@@ -157,17 +158,19 @@ public class AgentInfo {
     public void levelUp(Discipline discipline) {
         level++;
         skills.get(discipline).level++;
+        inventory.removeItem(Fragment.getInstance(), getFragmentRequirement(level));
         
         maxHealth = getBaseHealth();
         health = getMaxHealth();
         energy = getMaxEnergy();
     }
     
-    public void levelUp(int level, Map<Discipline, Integer> attributes) {
+    public void levelUp(int level, Map<Discipline, Integer> attributes, int fragments) {
         this.level = level;
         for (Discipline d : attributes.keySet()) {
             skills.get(d).level = attributes.get(d);
         }
+        inventory.removeItem(Fragment.getInstance(), fragments);
         
         maxHealth = getBaseHealth();
         health = getMaxHealth();
@@ -238,10 +241,13 @@ public class AgentInfo {
         augmentations.addAugmentation(aug);
     }
     
-    public void setPreparedAugmentations(Collection<Augmentation> augs) {
+    public void setPreparedAugmentations(Set<Augmentation> prepared) {
         augmentations.clear();
-        for (Augmentation aug : augs) {
-            augmentations.addAugmentation(aug);
+        for (Augmentation aug : knownAugmentations) {
+            // iterate over the known augs so we have a consistent ordering
+            if (prepared.contains(aug)) {
+                augmentations.addAugmentation(aug);
+            }
         }
     }
 

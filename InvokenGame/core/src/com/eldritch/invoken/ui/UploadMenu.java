@@ -2,7 +2,7 @@ package com.eldritch.invoken.ui;
 
 import java.util.ArrayList;
 import java.util.EnumMap;
-import java.util.LinkedHashSet;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -35,7 +35,7 @@ public class UploadMenu implements HudElement {
 
     private final List<LevelListener> listeners = new ArrayList<>();
     private final Map<Discipline, Integer> attributes = new EnumMap<>(Discipline.class);
-    private final Set<Augmentation> preparedAugs = new LinkedHashSet<>();
+    private final Set<Augmentation> preparedAugs = new HashSet<>();
 
     private int level;
     private int currentFragments;
@@ -94,7 +94,7 @@ public class UploadMenu implements HudElement {
     private void refresh() {
         table.clear();
         listeners.clear();
-        
+
         // init attributes
         attributes.clear();
         for (Discipline d : Discipline.values()) {
@@ -124,7 +124,7 @@ public class UploadMenu implements HudElement {
             fragmentsLabel.setColor(canLevel() ? Color.WHITE : Color.GRAY);
             topTable.add(fragmentsLabel).left().expandX().fillX().space(10);
             topTable.row();
-            
+
             listeners.add(new LevelListener() {
                 @Override
                 public void onLevel() {
@@ -206,12 +206,14 @@ public class UploadMenu implements HudElement {
         currentFragments += requiredFragments;
         onLevel();
     }
-    
+
     private void commit() {
-        player.getInfo().levelUp(level, attributes);
+        int fragments = player.getInventory().getItemCount(Fragment.getInstance())
+                - currentFragments;
+        player.getInfo().levelUp(level, attributes, fragments);
         player.getInfo().setPreparedAugmentations(preparedAugs);
     }
-    
+
     private void onLevel() {
         for (LevelListener listener : listeners) {
             listener.onLevel();
@@ -280,7 +282,7 @@ public class UploadMenu implements HudElement {
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 super.touchUp(event, x, y, pointer, button);
-                
+
                 commit();
                 GameScreen.toast("Saving...");
                 GameScreen.save(player.getLocation());
