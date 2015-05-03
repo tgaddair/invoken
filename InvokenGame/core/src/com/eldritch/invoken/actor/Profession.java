@@ -419,9 +419,13 @@ public enum Profession {
 	public List<Texture> getIcons() {
 	    ImmutableList.Builder<Texture> builder = ImmutableList.builder();
 	    for (Discipline d : getMasteries()) {
-	        builder.add(Holder.DISCIPLINE_ICONS.get(d));
+	        builder.add(getIcon(d));
 	    }
 	    return builder.build();
+	}
+	
+	public static Texture getIcon(Discipline d) {
+	    return Holder.DISCIPLINE_ICONS.get(d);
 	}
 	
 	public static Profession fromProto(Disciplines.Profession p) {

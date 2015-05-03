@@ -48,6 +48,7 @@ import com.eldritch.invoken.ui.StatusBar.EnergyCalculator;
 import com.eldritch.invoken.ui.StatusBar.HealthCalculator;
 import com.eldritch.invoken.ui.Toaster;
 import com.eldritch.invoken.ui.Toaster.Message;
+import com.eldritch.invoken.ui.UploadMenu;
 import com.eldritch.invoken.util.GameTransition;
 import com.eldritch.invoken.util.Settings;
 import com.eldritch.invoken.util.SoundManager;
@@ -203,6 +204,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         playerHealth = new StatusBar(player, new HealthCalculator(), getSkin());
         selectedHealth = new HealthBar(getSkin());
         hud.add(new FragmentCounter(getSkin()));
+        hud.add(new UploadMenu(player, getSkin()));
 
         statusTable = new Table(getSkin());
         statusTable.setHeight(Settings.MENU_VIEWPORT_HEIGHT / 2);
