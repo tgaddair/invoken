@@ -13,6 +13,10 @@ public class NaturalVector2 {
         this.y = y;
     }
     
+    public NaturalVector2 add(int x, int y) {
+        return NaturalVector2.of(this.x + x, this.y + y);
+    }
+    
     // manhattan distance
     public int mdst(NaturalVector2 other) {
         return Math.abs(this.x - other.x) + Math.abs(this.y - other.y);

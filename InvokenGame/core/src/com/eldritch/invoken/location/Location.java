@@ -666,14 +666,14 @@ public class Location {
         // draw last seen
         debugEntityRenderer.renderLastSeen(player.getTarget(), camera);
     }
-    
+
     private float getElapsed(Agent agent) {
         if (!elapsed.containsKey(agent)) {
             elapsed.put(agent, 0f);
         }
         return elapsed.get(agent);
     }
-    
+
     private void setElapsed(Agent agent, float value) {
         elapsed.put(agent, value);
     }
@@ -749,13 +749,26 @@ public class Location {
 
         // add objects
         for (InanimateEntity entity : objects) {
-            if (activeTiles.contains(getCellPosition(entity.getPosition()))) {
+            if (isActive(entity)) {
                 drawables.add(entity);
             }
         }
 
         // add temporary entities
         drawables.addAll(tempEntities);
+    }
+
+    private boolean isActive(InanimateEntity entity) {
+        // check the 4 corners
+        NaturalVector2 point = getCellPosition(entity.getPosition());
+        return isActive(point)
+                || isActive(point.add((int) entity.getWidth(), 0))
+                || isActive(point.add(0, (int) entity.getHeight()))
+                || isActive(point.add((int) entity.getWidth(), (int) entity.getHeight()));
+    }
+    
+    private boolean isActive(NaturalVector2 point) {
+        return activeTiles.contains(point);
     }
 
     private void resetActiveCover() {
