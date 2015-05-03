@@ -270,6 +270,12 @@ public class UploadMenu implements HudElement {
                 }
             }
         });
+        listeners.add(new LevelListener() {
+            @Override
+            public void onLevel() {
+                button.getLabel().setColor(canLevel() ? Color.WHITE : Color.GRAY);
+            }
+        });
         button.getLabel().setColor(canLevel() ? Color.WHITE : Color.GRAY);
 
         table.add(button).size(50, 50).space(25);
