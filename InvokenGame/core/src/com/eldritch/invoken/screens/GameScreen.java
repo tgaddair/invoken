@@ -32,6 +32,7 @@ import com.eldritch.invoken.actor.type.Npc;
 import com.eldritch.invoken.actor.type.Player;
 import com.eldritch.invoken.location.Location;
 import com.eldritch.invoken.location.proc.LocationGenerator;
+import com.eldritch.invoken.proto.Actors.InventoryItem;
 import com.eldritch.invoken.proto.Actors.PlayerActor;
 import com.eldritch.invoken.proto.Effects.DamageType;
 import com.eldritch.invoken.proto.Locations;
@@ -165,7 +166,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 
             // load from disk
             player = location.createPlayer(state);
-            
+
             // create a corpse, if present
             if (state.hasCorpse()) {
                 location.createPlayerCorpse(state.getCorpse());
@@ -188,7 +189,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
             player = location.createPlayer(profession);
 
             // save in case they die before reaching the first save point
-            save(player, Optional.<PlayerActor>absent());
+            save(player, Optional.<PlayerActor> absent());
         }
 
         // init camera position
@@ -792,25 +793,33 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
             InvokenGame.MUSIC_MANAGER.play(location.getMusicId());
         }
     }
-    
+
     private static void saveOnDeath(Location location) {
         Player player = location.getPlayer();
         save(player, Optional.of(load(player.getInfo().getId())));
     }
 
     public static void save(Location location) {
-        save(location.getPlayer(), Optional.<PlayerActor>absent());
+        save(location.getPlayer(), Optional.<PlayerActor> absent());
     }
 
     private static void save(Player player, Optional<PlayerActor> previous) {
         // setup the save state
         PlayerActor data = player.serialize();
         if (previous.isPresent()) {
-            PlayerActor.Builder builder = PlayerActor.newBuilder(previous.get());
-            builder.setCorpse(data);
+            PlayerActor.Builder builder = PlayerActor.newBuilder(data);
+            
+            PlayerActor.Builder corpseBuilder = PlayerActor.newBuilder(data);
+            corpseBuilder.setFragments(player.getLastFragments());
+            builder.setCorpse(corpseBuilder.build());
+
+            PlayerActor last = previous.get();
+            builder.setX(last.getX());
+            builder.setY(last.getY());
+
             data = builder.build();
         }
-        
+
         FileHandle handle = Gdx.files.local("saves/" + player.getInfo().getName() + ".dat");
         try {
             final boolean append = false;

@@ -11,6 +11,7 @@ import com.eldritch.invoken.actor.ConversationHandler;
 import com.eldritch.invoken.actor.PreparedAugmentations;
 import com.eldritch.invoken.actor.Profession;
 import com.eldritch.invoken.actor.aug.Augmentation;
+import com.eldritch.invoken.actor.items.Fragment;
 import com.eldritch.invoken.actor.util.ThreatMonitor;
 import com.eldritch.invoken.location.Location;
 import com.eldritch.invoken.proto.Actors.PlayerActor;
@@ -22,11 +23,14 @@ import com.eldritch.invoken.util.SoundManager.SoundEffect;
 public class Player extends SteeringAgent {
     private final Vector2 targetCoord = new Vector2();
     private final ThreatMonitor<Player> threat;
+    
     private boolean holding = false;
     private boolean moving = false;
     private boolean fixedTarget = false;
     private boolean lightOn = false;
     private Augmentation lastAug = null;
+    
+    private int lastFragments = 0;
 
     public Player(Profession profession, int level, float x, float y, Location location, String body) {
         super(x, y, Human.getWidth(), Human.getHeight(), Human.MAX_VELOCITY, profession, level,
@@ -46,7 +50,22 @@ public class Player extends SteeringAgent {
             }
         }
         
+        if (data.hasFragments()) {
+            getInfo().getInventory().addItem(Fragment.getInstance(), data.getFragments());
+        }
+        
         this.threat = new ThreatMonitor<Player>(this);
+    }
+    
+    public int getLastFragments() {
+        return lastFragments;
+    }
+    
+    @Override
+    protected void releaseFragments() {
+        int total = info.getInventory().getItemCount((Fragment.getInstance()));
+        lastFragments = total;
+        super.releaseFragments();
     }
 
     public void toggleLastAugmentation() {
