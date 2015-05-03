@@ -1,8 +1,13 @@
 package com.eldritch.invoken.ui;
 
+import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -27,9 +32,14 @@ public class UploadMenu implements HudElement {
     private final Table table;
     private final Skin skin;
     private final Player player;
-    
+
+    private final List<LevelListener> listeners = new ArrayList<>();
+    private final Map<Discipline, Integer> attributes = new EnumMap<>(Discipline.class);
     private final Set<Augmentation> preparedAugs = new HashSet<>();
 
+    private int level;
+    private int currentFragments;
+    private int requiredFragments;
     private boolean active = false;
 
     public UploadMenu(Player player, Skin skin) {
@@ -83,7 +93,14 @@ public class UploadMenu implements HudElement {
 
     private void refresh() {
         table.clear();
+        listeners.clear();
         
+        // init attributes
+        attributes.clear();
+        for (Discipline d : Discipline.values()) {
+            attributes.put(d, player.getInfo().getSkillLevel(d));
+        }
+
         // init prepared augs
         preparedAugs.clear();
         for (Augmentation aug : player.getInfo().getAugmentations().getAugmentations()) {
@@ -95,18 +112,27 @@ public class UploadMenu implements HudElement {
 
         // level and fragments
         {
-            int level = player.getInfo().getLevel();
+            level = player.getInfo().getLevel();
             Label levelLabel = new Label("Level: " + level, skin);
             topTable.add(levelLabel).left().expandX().fillX().space(25);
             topTable.row();
 
-            int currentFragments = player.getInventory().getItemCount(Fragment.getInstance());
-            int requiredFragments = AgentInfo.getFragmentRequirement(level + 1);
+            currentFragments = player.getInventory().getItemCount(Fragment.getInstance());
+            requiredFragments = AgentInfo.getFragmentRequirement(level + 1);
             String fragmentsText = String.format("%d / %d", currentFragments, requiredFragments);
-            Label fragmentsLabel = new Label(fragmentsText, skin);
-            fragmentsLabel.setColor(Color.GRAY);
+            final Label fragmentsLabel = new Label(fragmentsText, skin);
+            fragmentsLabel.setColor(canLevel() ? Color.WHITE : Color.GRAY);
             topTable.add(fragmentsLabel).left().expandX().fillX().space(10);
             topTable.row();
+            
+            listeners.add(new LevelListener() {
+                @Override
+                public void onLevel() {
+                    String text = String.format("%d / %d", currentFragments, requiredFragments);
+                    fragmentsLabel.setText(text);
+                    fragmentsLabel.setColor(canLevel() ? Color.WHITE : Color.GRAY);
+                }
+            });
         }
 
         // disciplines
@@ -144,10 +170,10 @@ public class UploadMenu implements HudElement {
                         toggle(aug, image);
                     }
                 });
-                
+
                 // initial color
                 image.setColor(preparedAugs.contains(aug) ? Color.WHITE : Color.GRAY);
-                
+
                 augTable.add(image).size(48, 48).space(50);
                 if (++i % 5 == 0) {
                     augTable.row();
@@ -166,7 +192,31 @@ public class UploadMenu implements HudElement {
         TextButton start = createCommitButton();
         table.add(start).size(200, 50).right();
     }
+
+    private void increaseLevel() {
+        level++;
+        currentFragments -= requiredFragments;
+        requiredFragments = AgentInfo.getFragmentRequirement(level + 1);
+        onLevel();
+    }
+
+    private void decreaseLevel() {
+        level--;
+        requiredFragments = AgentInfo.getFragmentRequirement(level + 1);
+        currentFragments += requiredFragments;
+        onLevel();
+    }
     
+    private void onLevel() {
+        for (LevelListener listener : listeners) {
+            listener.onLevel();
+        }
+    }
+
+    private boolean canLevel() {
+        return currentFragments >= requiredFragments;
+    }
+
     private void toggle(Augmentation aug, Image image) {
         if (preparedAugs.contains(aug)) {
             preparedAugs.remove(aug);
@@ -177,7 +227,7 @@ public class UploadMenu implements HudElement {
         }
     }
 
-    private Table createTable(Discipline d) {
+    private Table createTable(final Discipline d) {
         Table table = new Table(skin);
 
         // image
@@ -197,13 +247,25 @@ public class UploadMenu implements HudElement {
             public void touchUp(InputEvent event, float x, float y, int pointer, int buttonNumber) {
                 super.touchUp(event, x, y, pointer, buttonNumber);
 
-                // increment
-                int value = Integer.valueOf(button.getText().toString()) + 1;
-                button.setText(String.valueOf(value));
+                if (buttonNumber == Input.Buttons.LEFT && canLevel()) {
+                    // increment
+                    int value = attributes.get(d) + 1;
+                    attributes.put(d, value);
+                    button.setText(String.valueOf(value));
+                    increaseLevel();
+                } else if (buttonNumber == Input.Buttons.RIGHT
+                        && level > player.getInfo().getLevel()) {
+                    // decrement
+                    int value = attributes.get(d) - 1;
+                    attributes.put(d, value);
+                    button.setText(String.valueOf(value));
+                    decreaseLevel();
+                }
             }
         });
-        table.add(button).size(50, 50).space(25);
+        button.getLabel().setColor(canLevel() ? Color.WHITE : Color.GRAY);
 
+        table.add(button).size(50, 50).space(25);
         return table;
     }
 
@@ -218,5 +280,9 @@ public class UploadMenu implements HudElement {
             }
         });
         return button;
+    }
+
+    private interface LevelListener {
+        void onLevel();
     }
 }

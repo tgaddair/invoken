@@ -52,6 +52,7 @@ import com.eldritch.invoken.actor.Profession;
 import com.eldritch.invoken.actor.ai.Squad;
 import com.eldritch.invoken.actor.aug.Action;
 import com.eldritch.invoken.actor.factions.Faction;
+import com.eldritch.invoken.actor.items.Fragment;
 import com.eldritch.invoken.actor.items.Item;
 import com.eldritch.invoken.actor.pathfinding.PathManager;
 import com.eldritch.invoken.actor.type.Agent;
@@ -1182,6 +1183,9 @@ public class Location {
         Item melee = Item.fromProto(InvokenGame.ITEM_READER.readAsset("Hammer"));
         player.getInfo().getInventory().addItem(melee);
         player.getInfo().getInventory().equip(melee);
+        
+        // test
+        player.getInfo().getInventory().addItem(Fragment.getInstance(), 1000);
 
         return player;
     }
