@@ -30,7 +30,7 @@ public class SquadTactics extends Sequence<Npc> {
         @Override
         protected boolean check(Npc npc) {
             Agent leader = npc.getSquad().getLeader();
-            if (leader == npc) {
+            if (leader == npc || !leader.isAlive()) {
                 // cannot stray from oneself
                 return false;
             }

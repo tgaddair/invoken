@@ -363,22 +363,23 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
             font.draw(batch, String.format("Energy: %.0f", energy), 10, getHeight()
                     - (30 + 20 * i++));
             font.draw(batch, String.format("Level: %d", level), 10, getHeight() - (30 + 20 * i++));
-            font.draw(batch, String.format("Freezing: %.2f", freezing), 10, getHeight()
-                    - (30 + 20 * i++));
+            // font.draw(batch, String.format("Freezing: %.2f", freezing), 10, getHeight()
+            // - (30 + 20 * i++));
             font.draw(batch, String.format("Enemies: %d", enemies), 10, getHeight()
                     - (30 + 20 * i++));
-            font.draw(batch, String.format("Visibility: %.2f", visibility), 10, getHeight()
-                    - (30 + 20 * i++));
+            // font.draw(batch, String.format("Visibility: %.2f", visibility), 10, getHeight()
+            // - (30 + 20 * i++));
 
             AgentInfo info = target.getInfo();
-            font.draw(batch, String.format("Warfare: %d", info.getWarfare()), 10, getHeight()
-                    - (30 + 20 * i++));
-            font.draw(batch, String.format("Automata: %d", info.getAutomata()), 10, getHeight()
-                    - (30 + 20 * i++));
-            font.draw(batch, String.format("Subterfuge: %d", info.getSubterfuge()), 10, getHeight()
-                    - (30 + 20 * i++));
-            font.draw(batch, String.format("Charisma: %d", info.getCharisma()), 10, getHeight()
-                    - (30 + 20 * i++));
+            // font.draw(batch, String.format("Warfare: %d", info.getWarfare()), 10, getHeight()
+            // - (30 + 20 * i++));
+            // font.draw(batch, String.format("Automata: %d", info.getAutomata()), 10, getHeight()
+            // - (30 + 20 * i++));
+            // font.draw(batch, String.format("Subterfuge: %d", info.getSubterfuge()), 10,
+            // getHeight()
+            // - (30 + 20 * i++));
+            // font.draw(batch, String.format("Charisma: %d", info.getCharisma()), 10, getHeight()
+            // - (30 + 20 * i++));
             // font.draw(batch, String.format("Trespass: %s", trespass), 10, getHeight()
             // - (30 + 20 * i++));
 
@@ -393,18 +394,23 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
                 float intimidation = npc.getIntimidation().getValue();
                 String targetName = npc.hasTarget() ? npc.getTarget().getInfo().getName() : "None";
 
-                font.draw(batch, "Graph: " + Settings.DRAW_GRAPH, 10, getHeight() - (30 + 20 * i++));
-                font.draw(batch, "Task: " + task, 10, getHeight() - (30 + 20 * i++));
-                font.draw(batch, "Threat: " + threat, 10, getHeight() - (30 + 20 * i++));
-                font.draw(batch, String.format("Aiming: %s", npc.isAiming()), 10, getHeight()
+                font.draw(batch, String.format("Squad: %s", npc.hasSquad() ? (npc.getSquad()
+                        .getLeader() == npc ? "leader" : "member") : "no"), 10, getHeight()
                         - (30 + 20 * i++));
-                font.draw(batch, String.format("Sighted: %s", npc.hasSights()), 10, getHeight()
-                        - (30 + 20 * i++));
+
+                // font.draw(batch, "Graph: " + Settings.DRAW_GRAPH, 10, getHeight() - (30 + 20 *
+                // i++));
+                // font.draw(batch, "Task: " + task, 10, getHeight() - (30 + 20 * i++));
+                // font.draw(batch, "Threat: " + threat, 10, getHeight() - (30 + 20 * i++));
+                // font.draw(batch, String.format("Aiming: %s", npc.isAiming()), 10, getHeight()
+                // - (30 + 20 * i++));
+                // font.draw(batch, String.format("Sighted: %s", npc.hasSights()), 10, getHeight()
+                // - (30 + 20 * i++));
                 // font.draw(batch, String.format("Fatigued: %s (%.2f)", fatigued, fatigue), 10,
                 // getHeight() - (30 + 20 * i++));
-                font.draw(batch,
-                        String.format("Intimidated: %s (%.2f)", intimidated, intimidation), 10,
-                        getHeight() - (30 + 20 * i++));
+                // font.draw(batch,
+                // String.format("Intimidated: %s (%.2f)", intimidated, intimidation), 10,
+                // getHeight() - (30 + 20 * i++));
                 font.draw(batch, String.format("Target: %s", targetName), 10, getHeight()
                         - (30 + 20 * i++));
             }
