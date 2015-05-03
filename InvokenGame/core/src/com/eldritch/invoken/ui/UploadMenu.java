@@ -145,7 +145,7 @@ public class UploadMenu implements HudElement {
             Table disciplinesTable = new Table(skin);
             for (Discipline d : Discipline.values()) {
                 Table disciplineTable = createTable(d);
-                disciplinesTable.add(disciplineTable).fillX().expandX();
+                disciplinesTable.add(disciplineTable).fillX().expandX().space(25);
                 if (++i % 2 == 0) {
                     disciplinesTable.row();
                 }
@@ -179,7 +179,7 @@ public class UploadMenu implements HudElement {
                     augTable.row();
                 }
             }
-            topTable.add(augTable).expandX().fillX().space(10);
+            topTable.add(augTable).expandX().fillX().space(25);
             topTable.row();
         }
 
