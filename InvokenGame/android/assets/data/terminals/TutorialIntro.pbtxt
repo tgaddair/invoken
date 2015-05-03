@@ -2,7 +2,7 @@ id: "TutorialIntro"
 dialogue {
   dialogue {
     id: "Welcome"
-    text: "Welcome to Nosterra Station orientation. These terminals will help ease you into your new life with us.  Take these credentials and proceed to the next room.\n\nTo use these credentials on the door ahead, click on the door when you\'re in close proximity. When the door changes tone from red to green, it has been unlocked."
+    text: "Menus and World Interaction"
     outcome {
       weight: 1.0
       type: ITEM_CHANGE
@@ -11,12 +11,63 @@ dialogue {
     }
     greeting: true
     weight: 0
+    choice_id: "Interact"
+    choice_id: "Inventory"
+    choice_id: "Loot"
+    choice_id: "Exit"
+    forced: false
+  }
+  dialogue {
+    id: "InventoryResponse"
+    text: "Press <I> to open your inventory.  \n\nClick items to equip them.  Right-click on items to see a description."
+    greeting: false
+    weight: 0
+    choice_id: "Interact"
+    choice_id: "Loot"
+    choice_id: "Exit"
+    forced: false
+  }
+  dialogue {
+    id: "InteractResponse"
+    text: "Click on items in the environment when nearby to interact.\n\nInteract with doors to unlock them.\n\nInteract with characters to select them.  Click again to speak with them or loot them."
+    greeting: false
+    weight: 0
+    choice_id: "Inventory"
+    choice_id: "Loot"
+    choice_id: "Exit"
+    forced: false
+  }
+  dialogue {
+    id: "LootResponse"
+    text: "Click on fallen characters to loot them.\n\nClick on items in their inventory to transfer them to your own."
+    greeting: false
+    weight: 0
+    choice_id: "Interact"
+    choice_id: "Inventory"
     choice_id: "Exit"
     forced: false
   }
   choice {
-    text: "[Exit]"
+    text: "[ Interact ]"
+    successor_id: "InteractResponse"
     weight: 0
+    id: "Interact"
+  }
+  choice {
+    text: "[ Inventory ]"
+    successor_id: "InventoryResponse"
+    weight: 1
+    id: "Inventory"
+  }
+  choice {
+    text: "[ Loot ]"
+    successor_id: "LootResponse"
+    weight: 2
+    id: "Loot"
+  }
+  choice {
+    text: "[ Exit ]"
+    weight: 5
     id: "Exit"
   }
 }

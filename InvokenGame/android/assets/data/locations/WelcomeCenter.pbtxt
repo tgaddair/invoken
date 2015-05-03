@@ -292,6 +292,7 @@ control_point {
   follows: "Entrance"
   lock_strength: 1
   required_key: ""
+  available_key: "TerathsHideoutCredentials"
   origin: false
   min: 0
   max: 0
@@ -301,10 +302,10 @@ control_point {
 }
 control_point {
   id: "LobbyA"
-  room_id: "MediumLobby"
+  room_id: "Bedroom"
   follows: "Lobby"
-  lock_strength: 0
-  required_key: ""
+  lock_strength: 1
+  required_key: "TerathsHideoutCredentials"
   origin: false
   min: 0
   max: 0

@@ -21,7 +21,9 @@ import com.eldritch.invoken.proto.Prerequisites.Prerequisite;
 import com.eldritch.scifirpg.editor.AssetTablePanel;
 import com.eldritch.scifirpg.editor.panel.AssetEditorPanel;
 import com.eldritch.scifirpg.editor.panel.DialogueEditorPanel;
+import com.google.common.base.Function;
 import com.google.common.base.Optional;
+import com.google.common.collect.Lists;
 import com.jgoodies.forms.builder.DefaultFormBuilder;
 import com.jgoodies.forms.layout.FormLayout;
 
@@ -153,12 +155,27 @@ public class ChoiceTable extends IdentifiedAssetTable<Choice> {
 
 		@Override
 		public Choice createAsset() {
+		    // sort by ascending weight
+		    List<Response> successors = new ArrayList<>(successorTable.getAssets());
+		    Collections.sort(successors, new Comparator<Response>() {
+                @Override
+                public int compare(Response r1, Response r2) {
+                    return Double.compare(r1.getWeight(), r2.getWeight());
+                }
+		    });
+		    List<String> successorIds = Lists.transform(successors, new Function<Response, String>() {
+		        @Override
+		        public String apply(Response response) {
+		            return response.getId();
+		        }
+		    });
+		    
 			return Choice.newBuilder()
 					.setId(idField.getText())
 					.setText(textField.getText())
 					.setWeight(Integer.parseInt(weightField.getText()))
 					.addAllPrereq(prereqTable.getAssets())
-					.addAllSuccessorId(successorTable.getAssetIds())
+					.addAllSuccessorId(successorIds)
 					.build();
 		}
 	}

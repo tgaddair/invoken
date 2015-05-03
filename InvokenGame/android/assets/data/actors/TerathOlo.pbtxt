@@ -40,6 +40,11 @@ params {
     count: 1
     drop_chance: 1.0
   }
+  inventory_item {
+    item_id: "TerathsHideoutCredentials"
+    count: 1
+    drop_chance: 1.0
+  }
   known_aug_id: Drain
   known_aug_id: FireWeapon
   known_aug_id: Blast

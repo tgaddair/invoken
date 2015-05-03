@@ -2,7 +2,7 @@ id: "Tutorial03"
 dialogue {
   dialogue {
     id: "Welcome"
-    text: "Movement and Aiming"
+    text: "Augmentations and Combat"
     outcome {
       weight: 1.0
       type: ITEM_CHANGE
@@ -11,63 +11,63 @@ dialogue {
     }
     greeting: true
     weight: 0
+    choice_id: "Augmentations"
+    choice_id: "Health"
+    choice_id: "Energy"
     choice_id: "Exit"
-    choice_id: "Aiming"
-    choice_id: "Dodging"
-    choice_id: "Movement"
     forced: false
   }
   dialogue {
-    id: "MovementResponse"
-    text: "Use the <WASD> keys to move.  Hold <SHIFT> and move to sprint."
+    id: "AugmentationsResponse"
+    text: "Augmentations are the configurable abilities you can perform.\n\nPrepared augmentations can be activated by clicking on the icons at the bottom of the screen.  Most augmentations are then used by clicking on a target while an augmentation is active.  \n\nSome augmentations like <Fire Weapon> require you to be aiming to use them.  Other are automatically invoked when you activate them."
     greeting: false
     weight: 0
+    choice_id: "Health"
+    choice_id: "Energy"
     choice_id: "Exit"
-    choice_id: "Aiming"
-    choice_id: "Dodging"
     forced: false
   }
   dialogue {
-    id: "DodgingResponse"
-    text: "Tap <SHIFT> to dodge."
+    id: "HealthResponse"
+    text: "Health is shown by the vertical red bar on the left.\n\nHealth does not regenerate naturally on its own.  You must rest or use stimpaks to recover it."
     greeting: false
     weight: 0
+    choice_id: "Augmentations"
+    choice_id: "Energy"
     choice_id: "Exit"
-    choice_id: "Aiming"
-    choice_id: "Movement"
     forced: false
   }
   dialogue {
-    id: "AimingResponse"
-    text: "Hold the <Right Mouse Button> to aim."
+    id: "EnergyResponse"
+    text: "Energy is shown by the vertical blue bar to the right.  \n\nEnergy is required to perform most actions, including: using augmentations, sprinting, and dodging.  It will naturally regenerate over time, but the rate of regeneration will vary with your current status."
     greeting: false
     weight: 0
+    choice_id: "Augmentations"
+    choice_id: "Health"
     choice_id: "Exit"
-    choice_id: "Dodging"
-    choice_id: "Movement"
     forced: false
+  }
+  choice {
+    text: "[ Augmentations ]"
+    successor_id: "AugmentationsResponse"
+    weight: 0
+    id: "Augmentations"
+  }
+  choice {
+    text: "[ Health ]"
+    successor_id: "HealthResponse"
+    weight: 1
+    id: "Health"
+  }
+  choice {
+    text: "[ Energy ]"
+    successor_id: "EnergyResponse"
+    weight: 2
+    id: "Energy"
   }
   choice {
     text: "[ Exit ]"
-    weight: 0
+    weight: 10
     id: "Exit"
-  }
-  choice {
-    text: "[ Movement ]"
-    successor_id: "MovementResponse"
-    weight: 0
-    id: "Movement"
-  }
-  choice {
-    text: "[ Dodging ]"
-    successor_id: "DodgingResponse"
-    weight: 0
-    id: "Dodging"
-  }
-  choice {
-    text: "[ Aiming ]"
-    successor_id: "AimingResponse"
-    weight: 0
-    id: "Aiming"
   }
 }

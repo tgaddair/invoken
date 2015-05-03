@@ -2,66 +2,66 @@ id: "Tutorial02"
 dialogue {
   dialogue {
     id: "Welcome"
-    text: "Menus and World Interaction"
+    text: "Movement and Aiming"
     greeting: true
     weight: 0
-    choice_id: "Loot"
+    choice_id: "Movement"
+    choice_id: "Aiming"
+    choice_id: "Dodging"
     choice_id: "Exit"
-    choice_id: "Interact"
-    choice_id: "Inventory"
     forced: false
   }
   dialogue {
-    id: "InventoryResponse"
-    text: "Press <I> to open your inventory.  \n\nClick items to equip them.  Right-click on items to see a description."
+    id: "MovementResponse"
+    text: "Use the <WASD> keys to move.  Hold <SHIFT> and move to sprint."
     greeting: false
     weight: 0
-    choice_id: "Loot"
+    choice_id: "Aiming"
+    choice_id: "Dodging"
     choice_id: "Exit"
-    choice_id: "Interact"
     forced: false
   }
   dialogue {
-    id: "InteractResponse"
-    text: "Click on items in the environment when nearby to interact.\n\nInteract with doors to unlock them.\n\nInteract with characters to select them.  Click again to speak with them or loot them."
+    id: "DodgingResponse"
+    text: "Tap <SHIFT> to dodge."
     greeting: false
     weight: 0
-    choice_id: "Loot"
+    choice_id: "Movement"
+    choice_id: "Aiming"
     choice_id: "Exit"
-    choice_id: "Inventory"
     forced: false
   }
   dialogue {
-    id: "LootResponse"
-    text: "Click on fallen characters to loot them.\n\nClick on items in their inventory to transfer them to your own."
+    id: "AimingResponse"
+    text: "Hold the <Right Mouse Button> to aim."
     greeting: false
     weight: 0
+    choice_id: "Movement"
+    choice_id: "Dodging"
     choice_id: "Exit"
-    choice_id: "Interact"
-    choice_id: "Inventory"
     forced: false
+  }
+  choice {
+    text: "[ Movement ]"
+    successor_id: "MovementResponse"
+    weight: 0
+    id: "Movement"
+  }
+  choice {
+    text: "[ Aiming ]"
+    successor_id: "AimingResponse"
+    weight: 1
+    id: "Aiming"
+  }
+  choice {
+    text: "[ Dodging ]"
+    successor_id: "DodgingResponse"
+    weight: 2
+    id: "Dodging"
   }
   choice {
     text: "[ Exit ]"
-    weight: 0
+    weight: 10
     id: "Exit"
-  }
-  choice {
-    text: "[ Interact ]"
-    successor_id: "InteractResponse"
-    weight: 0
-    id: "Interact"
-  }
-  choice {
-    text: "[ Inventory ]"
-    successor_id: "InventoryResponse"
-    weight: 0
-    id: "Inventory"
-  }
-  choice {
-    text: "[ Loot ]"
-    successor_id: "LootResponse"
-    weight: 0
-    id: "Loot"
   }
 }

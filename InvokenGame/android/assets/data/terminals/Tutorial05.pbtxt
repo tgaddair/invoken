@@ -2,7 +2,7 @@ id: "Tutorial05"
 dialogue {
   dialogue {
     id: "Welcome"
-    text: "Syncing with a nexus hub enables you to rest and enter a state of quiescence.  While quiescent, your thoughts will seem to stray out of time, and you will awake to a much changed reality.  You will be healed of your afflictions, and perhaps even awake stronger than you were before.  But slain enemies may have regenerated in that time.\n\nThe next chamber is designed to put what you\'ve learned to task.  You may not survive, but do not despair.  In death, you will regenerate as well.  The process takes some time, but you will awake again at the nexus at which you last synced.\n\nWhen you are ready, you may proceed."
+    text: "Repositories"
     outcome {
       weight: 1.0
       type: ITEM_CHANGE
@@ -11,12 +11,63 @@ dialogue {
     }
     greeting: true
     weight: 0
+    choice_id: "Upload"
+    choice_id: "Quiescence"
+    choice_id: "Reification"
+    choice_id: "Exit"
+    forced: false
+  }
+  dialogue {
+    id: "QuiescenceResponse"
+    text: "Enter a state of quiescence to rest and accelerate the passage of time.\n\nQuiescence will restore health, remove negative status effects, and allow you to prepare augmentations and upgrade your character.  This process takes time, and you will awake to an altered reality."
+    greeting: false
+    weight: 0
+    choice_id: "Upload"
+    choice_id: "Reification"
+    choice_id: "Exit"
+    forced: false
+  }
+  dialogue {
+    id: "UploadResponse"
+    text: "Upload to the repository to sync the current state of your character with the station\'s network."
+    greeting: false
+    weight: 0
+    choice_id: "Quiescence"
+    choice_id: "Reification"
+    choice_id: "Exit"
+    forced: false
+  }
+  dialogue {
+    id: "ReificationResponse"
+    text: "On bodily death, your conscience will be reified into a new host.  This process takes time, and you will awake to an altered reality."
+    greeting: false
+    weight: 0
+    choice_id: "Upload"
+    choice_id: "Quiescence"
     choice_id: "Exit"
     forced: false
   }
   choice {
-    text: "[Exit]"
+    text: "[ Upload ]"
+    successor_id: "UploadResponse"
     weight: 0
+    id: "Upload"
+  }
+  choice {
+    text: "[ Quiescence ]"
+    successor_id: "QuiescenceResponse"
+    weight: 1
+    id: "Quiescence"
+  }
+  choice {
+    text: "[ Reification ]"
+    successor_id: "ReificationResponse"
+    weight: 2
+    id: "Reification"
+  }
+  choice {
+    text: "[Exit]"
+    weight: 10
     id: "Exit"
   }
 }
