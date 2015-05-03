@@ -22,7 +22,8 @@ import com.eldritch.invoken.util.MusicManager;
  * Shows a splash image and moves on to the next screen.
  */
 public class CreditsScreen extends AbstractScreen implements InputProcessor {
-    private static final float RUNTIME_SECS = 240f;  // four minutes
+//    private static final float RUNTIME_SECS = 240f;  // four minutes
+    private static final float RUNTIME_SECS = 90f;  // 1:30
     private final Location location;
     private final OrthographicCamera camera;
     private final Toaster toaster;

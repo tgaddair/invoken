@@ -108,7 +108,7 @@ public abstract class Planner {
         
         @Override
         public void plan(float delta) {
-            if (owner.isGuard() && isLeader()) {
+            if (isLeader()) {
                 if (isLeader()) {
                     planForLeader(delta);
                 } else if (owner.hasSquad()) {
@@ -150,6 +150,7 @@ public abstract class Planner {
         
         private void setDestination(Agent destination) {
             this.destination = destination;
+            owner.locate(destination);
             elapsed = 0;
         }
         

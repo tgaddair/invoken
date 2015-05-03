@@ -2,15 +2,66 @@ id: "Tutorial02"
 dialogue {
   dialogue {
     id: "Welcome"
-    text: "Activate nearby containers by clicking on them.  The container will display a list of items you can take along with the item\'s count.  Any items you take are added to your inventory.\n\nPress \'I\' to access your inventory at any time.  From here you can equip and unequip items by clicking in them, or consume items like stimpacks to restore your health.  Be aware that time will not stop for you when you\'re viewing your inventory, so do so with care for your surroundings.\n\nCurrently equipped items are shown in green.  You may have an outfit, a ranged weapon, and a melee weapon all equipped at once, but no more than one of each.\n\nPlease proceed to the next chamber."
+    text: "Menus and World Interaction"
     greeting: true
     weight: 0
+    choice_id: "Loot"
     choice_id: "Exit"
+    choice_id: "Interact"
+    choice_id: "Inventory"
+    forced: false
+  }
+  dialogue {
+    id: "InventoryResponse"
+    text: "Press <I> to open your inventory.  \n\nClick items to equip them.  Right-click on items to see a description."
+    greeting: false
+    weight: 0
+    choice_id: "Loot"
+    choice_id: "Exit"
+    choice_id: "Interact"
+    forced: false
+  }
+  dialogue {
+    id: "InteractResponse"
+    text: "Click on items in the environment when nearby to interact.\n\nInteract with doors to unlock them.\n\nInteract with characters to select them.  Click again to speak with them or loot them."
+    greeting: false
+    weight: 0
+    choice_id: "Loot"
+    choice_id: "Exit"
+    choice_id: "Inventory"
+    forced: false
+  }
+  dialogue {
+    id: "LootResponse"
+    text: "Click on fallen characters to loot them.\n\nClick on items in their inventory to transfer them to your own."
+    greeting: false
+    weight: 0
+    choice_id: "Exit"
+    choice_id: "Interact"
+    choice_id: "Inventory"
     forced: false
   }
   choice {
-    text: "[Exit]"
+    text: "[ Exit ]"
     weight: 0
     id: "Exit"
+  }
+  choice {
+    text: "[ Interact ]"
+    successor_id: "InteractResponse"
+    weight: 0
+    id: "Interact"
+  }
+  choice {
+    text: "[ Inventory ]"
+    successor_id: "InventoryResponse"
+    weight: 0
+    id: "Inventory"
+  }
+  choice {
+    text: "[ Loot ]"
+    successor_id: "LootResponse"
+    weight: 0
+    id: "Loot"
   }
 }

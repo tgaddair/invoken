@@ -2,7 +2,7 @@ id: "Tutorial03"
 dialogue {
   dialogue {
     id: "Welcome"
-    text: "Once you have a weapon equipped you can use your \'Fire Weapon\' augmentation.  Augmentations are software systems that enhance your natural abilities, but using them expends energy -- shown as a blue bar on your display.\n\nTo fire your weapon, first prepare the augmentation by selecting it on your display.  Next, hold down the right mouse button to aim your weapon.  Finally, click again while still aiming to fire the weapon.\n\nWhen you\'re ready, proceed to the next room and eliminate the creature within."
+    text: "Movement and Aiming"
     outcome {
       weight: 1.0
       type: ITEM_CHANGE
@@ -12,11 +12,62 @@ dialogue {
     greeting: true
     weight: 0
     choice_id: "Exit"
+    choice_id: "Aiming"
+    choice_id: "Dodging"
+    choice_id: "Movement"
+    forced: false
+  }
+  dialogue {
+    id: "MovementResponse"
+    text: "Use the <WASD> keys to move.  Hold <SHIFT> and move to sprint."
+    greeting: false
+    weight: 0
+    choice_id: "Exit"
+    choice_id: "Aiming"
+    choice_id: "Dodging"
+    forced: false
+  }
+  dialogue {
+    id: "DodgingResponse"
+    text: "Tap <SHIFT> to dodge."
+    greeting: false
+    weight: 0
+    choice_id: "Exit"
+    choice_id: "Aiming"
+    choice_id: "Movement"
+    forced: false
+  }
+  dialogue {
+    id: "AimingResponse"
+    text: "Hold the <Right Mouse Button> to aim."
+    greeting: false
+    weight: 0
+    choice_id: "Exit"
+    choice_id: "Dodging"
+    choice_id: "Movement"
     forced: false
   }
   choice {
-    text: "[Exit]"
+    text: "[ Exit ]"
     weight: 0
     id: "Exit"
+  }
+  choice {
+    text: "[ Movement ]"
+    successor_id: "MovementResponse"
+    weight: 0
+    id: "Movement"
+  }
+  choice {
+    text: "[ Dodging ]"
+    successor_id: "DodgingResponse"
+    weight: 0
+    id: "Dodging"
+  }
+  choice {
+    text: "[ Aiming ]"
+    successor_id: "AimingResponse"
+    weight: 0
+    id: "Aiming"
   }
 }

@@ -56,4 +56,7 @@ message Item {
 	optional double range = 13; // scales ranged weapon damage and acts as cutoff for melee
 	optional double cooldown = 14;
 	optional RangedWeaponType ranged_type = 15;
+
+	// outfits: weight acts as a penalty to movement and dodge speed
+	optional double weight = 16 [default = 1.0];
 }
