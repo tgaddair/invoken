@@ -232,8 +232,8 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
         selector.addChild(new Combat());
         selector.addChild(new HandleThreat());
         selector.addChild(new Investigate());
-        selector.addChild(new SquadTactics());
         selector.addChild(new Speak());
+        selector.addChild(new SquadTactics());
         selector.addChild(new Patrol());
         return selector;
     }

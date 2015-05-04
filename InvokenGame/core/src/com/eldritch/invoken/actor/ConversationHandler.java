@@ -101,6 +101,10 @@ public class ConversationHandler {
         return null;
     }
     
+    public boolean hasForcedGreeting() {
+        return !forced.isEmpty();
+    }
+    
     public Response getForcedGreeting(Agent interactor) {
         for (Response r : forced) {
             if (verifier.isValid(r, interactor)) {
