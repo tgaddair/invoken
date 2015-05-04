@@ -12,6 +12,7 @@ public class Investigate extends Sequence<Npc> {
     
     public Investigate() {
         addChild(new IsSuspicious());
+        addChild(new SetLastTask("Investigate"));
 
         // first we pursue the source of the suspicion
         Sequence<Npc> pursueSequence = new Sequence<>();

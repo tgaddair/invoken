@@ -11,6 +11,7 @@ public class Combat extends Sequence<Npc> {
     public Combat() {
         // first check that we have enemies, and failover to the next task if we don't
         addChild(new HasEnemies());
+        addChild(new SetLastTask("Combat"));
 
         // select the best combat strategy
         Selector<Npc> selector = new Selector<Npc>();

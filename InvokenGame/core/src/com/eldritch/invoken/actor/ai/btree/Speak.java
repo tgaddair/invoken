@@ -16,6 +16,7 @@ public class Speak extends Sequence<Npc> {
         Sequence<Npc> greetSequence = new Sequence<Npc>();
         greetSequence.addChild(new CanInteract());  // skip pursue if we're within interact range
         greetSequence.addChild(new Greet());  // speak to the target
+        greetSequence.addChild(new SetLastTask("Greet"));
         
         // pursue them until we're within interaction range
         Selector<Npc> greetOrPursue = new Selector<Npc>();

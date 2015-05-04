@@ -13,6 +13,7 @@ public class Patrol extends Selector<Npc> {
         Sequence<Npc> threatenedSequence = new Sequence<>();
         threatenedSequence.addChild(new IsThreatened());
         threatenedSequence.addChild(new RespondToThreat());
+        threatenedSequence.addChild(new SetLastTask("RespondToThreat"));
         
         Sequence<Npc> watchSequence = new Sequence<>();
         watchSequence.addChild(new WatchForCrime());
@@ -20,16 +21,19 @@ public class Patrol extends Selector<Npc> {
         Sequence<Npc> guardSequence = new Sequence<>();
         guardSequence.addChild(new IsGuard());
         guardSequence.addChild(new WatchForTrespassers());
+        guardSequence.addChild(new SetLastTask("Guarding"));
         
         Sequence<Npc> planSequence = new Sequence<>();
         planSequence.addChild(new HasPlan());
         planSequence.addChild(new FollowPlan());
+        planSequence.addChild(new SetLastTask("FollowPlan"));
         
         Sequence<Npc> wanderSequence = new Sequence<>();
         wanderSequence.addChild(new CanWander());
         wanderSequence.addChild(new Invert<>(new IsTired()));
         wanderSequence.addChild(new LowerWeapon());
         wanderSequence.addChild(new Wander());
+        wanderSequence.addChild(new SetLastTask("Wander"));
         
         addChild(watchSequence);
         addChild(guardSequence);

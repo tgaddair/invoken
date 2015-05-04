@@ -13,10 +13,12 @@ public class HandleThreat extends Selector<Npc> {
         Sequence<Npc> calmSequence = new Sequence<Npc>();
         calmSequence.addChild(new IsCalm());
         calmSequence.addChild(new RespondToThreat());
+        calmSequence.addChild(new SetLastTask("RespondToThreat"));
 
         // what to do when actively under duress
         Sequence<Npc> duressSequence = new Sequence<Npc>();
         duressSequence.addChild(new IsUnderDuress());
+        duressSequence.addChild(new SetLastTask("Duress"));
 
         // if the threatener is still threatening us then lower our relation to them
         Selector<Npc> duressSelector = new Selector<Npc>();

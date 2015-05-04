@@ -15,6 +15,7 @@ public class SquadTactics extends Sequence<Npc> {
     public SquadTactics() {
         addChild(new HasSquad());
         addChild(new StrayedFromLeader());
+        addChild(new SetLastTask("SquadTactics"));
         addChild(new SeekLeader());
         addChild(new Pursue());
     }

@@ -408,7 +408,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 
                 // font.draw(batch, "Graph: " + Settings.DRAW_GRAPH, 10, getHeight() - (30 + 20 *
                 // i++));
-                // font.draw(batch, "Task: " + task, 10, getHeight() - (30 + 20 * i++));
+                 font.draw(batch, "Task: " + task, 10, getHeight() - (30 + 20 * i++));
                 // font.draw(batch, "Threat: " + threat, 10, getHeight() - (30 + 20 * i++));
                 // font.draw(batch, String.format("Aiming: %s", npc.isAiming()), 10, getHeight()
                 // - (30 + 20 * i++));

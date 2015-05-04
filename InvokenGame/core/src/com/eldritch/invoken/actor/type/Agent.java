@@ -1249,7 +1249,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     }
 
     private void updateReaction(Agent agent, float relation) {
-        if (!isAlive()) {
+        if (!isAlive() || !agent.isAlive()) {
             // no need to do this check in this case
             return;
         }

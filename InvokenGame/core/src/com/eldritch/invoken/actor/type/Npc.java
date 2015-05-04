@@ -217,7 +217,10 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
     }
 
     public void setTask(String taskName) {
-        lastTask = taskName;
+        if (!lastTask.isEmpty()) {
+            lastTask += " -> ";
+        }
+        lastTask += taskName;
     }
 
     public String getLastTask() {
@@ -359,6 +362,7 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
         // action planning
         lastStep += delta;
         if (lastStep > STEP) {
+            lastTask = "";
             behaviorTree.step();
             lastStep = 0;
         }
