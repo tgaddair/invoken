@@ -1358,6 +1358,9 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
 
                 // take conscious action
                 attemptTakeAction(delta, location);
+                
+                // update threat
+                getThreat().update(delta);
             }
         } else if (activity != Activity.Death) {
             // kill the agent
@@ -1368,9 +1371,6 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         if (hasTarget() && !canKeepTarget(target)) {
             setTarget(null);
         }
-
-        // update threat
-        getThreat().update(delta);
 
         // set activity
         Activity last = activity;
