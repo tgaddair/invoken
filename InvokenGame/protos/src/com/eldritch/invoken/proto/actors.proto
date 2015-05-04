@@ -205,6 +205,7 @@ message PlayerActor {
 	repeated StagedAugmentation staged_augmentation = 16; // if not specified, inferred from known augs
 	repeated StateMarker state_marker = 19;
 	repeated string known_npc = 20;
+	repeated string unique_dialogue = 30;
 	repeated Mission mission = 22;
 
 	// position

@@ -905,7 +905,11 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
             endJointInteraction();
         }
     }
-
+    
+    protected Set<String> getUniqueDialogue() {
+        return uniqueDialogue;
+    }
+    
     public void addDialogue(String id) {
         uniqueDialogue.add(id);
     }

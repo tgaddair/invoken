@@ -62,7 +62,12 @@ public class Player extends SteeringAgent {
 
         this.threat = new ThreatMonitor<Player>(this);
         this.bodyType = data.getParams().getBodyType();
+        
+        // restore prior state
         this.priorState = Optional.of(data);
+        for (String dialogue : data.getUniqueDialogueList()) {
+            addDialogue(dialogue);
+        }
     }
 
     public int getLastFragments() {
@@ -281,6 +286,9 @@ public class Player extends SteeringAgent {
             PlayerActor prior = priorState.get();
             builder.addAllVisitedRooms(prior.getVisitedRoomsList());
         }
+        
+        // state markers
+        builder.addAllUniqueDialogue(getUniqueDialogue());
 
         return builder.build();
     }
