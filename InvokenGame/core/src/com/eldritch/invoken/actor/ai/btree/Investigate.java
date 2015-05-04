@@ -2,6 +2,7 @@ package com.eldritch.invoken.actor.ai.btree;
 
 import com.badlogic.gdx.ai.btree.branch.Selector;
 import com.badlogic.gdx.ai.btree.branch.Sequence;
+import com.badlogic.gdx.ai.btree.decorator.AlwaysFail;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Npc;
 import com.eldritch.invoken.util.GenericDialogue;
@@ -34,6 +35,7 @@ public class Investigate extends Sequence<Npc> {
         selector.addChild(alertSequence);
         selector.addChild(pursueSequence);
         selector.addChild(confrontSequence);
+        selector.addChild(new AlwaysFail<>(new DropTarget()));
 
         addChild(selector);
     }
@@ -55,7 +57,7 @@ public class Investigate extends Sequence<Npc> {
     private static class HasCaughtInstigator extends BooleanTask {
         @Override
         protected boolean check(Npc npc) {
-            if (!npc.hasTarget()) {
+            if (!npc.hasTarget() || !npc.getTarget().isAlive()) {
                 return false;
             }
 
@@ -96,6 +98,13 @@ public class Investigate extends Sequence<Npc> {
         protected void doFor(Npc npc) {
             npc.announce(GenericDialogue.forDeadAlly(npc));
             npc.getThreat().setAlerted();
+        }
+    }
+    
+    private static class DropTarget extends SuccessTask {
+        @Override
+        protected void doFor(Npc npc) {
+            npc.setTarget(null);
         }
     }
 }

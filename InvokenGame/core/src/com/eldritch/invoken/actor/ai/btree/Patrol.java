@@ -33,7 +33,6 @@ public class Patrol extends Selector<Npc> {
         wanderSequence.addChild(new Invert<>(new IsTired()));
         wanderSequence.addChild(new LowerWeapon());
         wanderSequence.addChild(new Wander());
-        wanderSequence.addChild(new SetLastTask("Wander"));
         
         addChild(watchSequence);
         addChild(guardSequence);

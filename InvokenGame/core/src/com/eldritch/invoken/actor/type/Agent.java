@@ -1265,8 +1265,10 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
             }
 
             // request help from allies
-            onHostility(agent);
-            requestAssistance(agent);
+            if (visibleNeighbors.contains(agent)) {
+                onHostility(agent);
+                requestAssistance(agent);
+            }
         }
     }
 
