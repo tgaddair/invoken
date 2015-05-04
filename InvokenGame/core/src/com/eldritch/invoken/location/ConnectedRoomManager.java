@@ -1,6 +1,8 @@
 package com.eldritch.invoken.location;
 
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 
@@ -26,6 +28,18 @@ public class ConnectedRoomManager {
         rooms[x][y] = room;
         room.addPoint(x, y);
         roomSet.add(room);
+    }
+    
+    public List<Integer> getIndices(Set<ConnectedRoom> rooms) {
+        List<Integer> indices = new ArrayList<>();
+        int i = 0;
+        for (ConnectedRoom room : roomSet) {
+            if (rooms.contains(room)) {
+                indices.add(i);
+            }
+            i++;
+        }
+        return indices;
     }
 
     public ConnectedRoom getRoom(int x, int y) {

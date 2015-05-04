@@ -18,12 +18,14 @@ import com.eldritch.invoken.proto.Actors.PlayerActor;
 import com.eldritch.invoken.state.Inventory.ItemState;
 import com.eldritch.invoken.util.Settings;
 import com.eldritch.invoken.util.SoundManager.SoundEffect;
+import com.google.common.base.Optional;
 
 /** The player character, has state and state time, */
 public class Player extends SteeringAgent {
     private final Vector2 targetCoord = new Vector2();
     private final ThreatMonitor<Player> threat;
     private final String bodyType;
+    private final Optional<PlayerActor> priorState;
 
     private boolean holding = false;
     private boolean moving = false;
@@ -38,6 +40,7 @@ public class Player extends SteeringAgent {
                 location, Human.getAllAnimations(body));
         this.threat = new ThreatMonitor<Player>(this);
         this.bodyType = body;
+        this.priorState = Optional.<PlayerActor>absent();
     }
 
     public Player(PlayerActor data, float x, float y, Location location) {
@@ -59,6 +62,7 @@ public class Player extends SteeringAgent {
 
         this.threat = new ThreatMonitor<Player>(this);
         this.bodyType = data.getParams().getBodyType();
+        this.priorState = Optional.of(data);
     }
 
     public int getLastFragments() {
@@ -270,6 +274,12 @@ public class Player extends SteeringAgent {
         }
         if (inventory.hasRangedWeapon()) {
             builder.addEquippedItemId(inventory.getRangedWeapon().getId());
+        }
+        
+        // carry over previous state
+        if (priorState.isPresent()) {
+            PlayerActor prior = priorState.get();
+            builder.addAllVisitedRooms(prior.getVisitedRoomsList());
         }
 
         return builder.build();

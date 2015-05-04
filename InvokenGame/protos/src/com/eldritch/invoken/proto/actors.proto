@@ -216,4 +216,7 @@ message PlayerActor {
 	optional string location = 26;
 	optional PlayerActor corpse = 27;
 	optional int32 fragments = 28;
+
+	// minimap persistence
+	repeated int32 visited_rooms = 29;
 }

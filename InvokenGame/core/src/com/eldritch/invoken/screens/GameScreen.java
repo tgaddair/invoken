@@ -161,7 +161,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
             LocationGenerator generator = new LocationGenerator(gameState, data.getBiome(),
                     state.getSeed());
             location = generator.generate(data);
-            onLoad(location);
+            onLoad(location, Optional.of(state));
 
             // load from disk
             player = location.createPlayer(state);
@@ -182,7 +182,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
             LocationGenerator generator = new LocationGenerator(gameState, data.getBiome(),
                     rand.nextLong());
             location = generator.generate(data);
-            onLoad(location);
+            onLoad(location, Optional.<PlayerActor>absent());
 
             // create a new player
             player = location.createPlayer(profession);
@@ -769,7 +769,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
                 state.getSeed());
         location = generator.generate(data, encounterName);
         location.spawnPlayer(player);
-        onLoad(location);
+        onLoad(location, Optional.of(state));
 
         // resize
         location.resize(getWidth(), getHeight());
@@ -786,8 +786,8 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         toast(location.getName());
     }
 
-    private void onLoad(Location location) {
-        minimap = new Minimap(location.getMap(), location.getSeed());
+    private void onLoad(Location location, Optional<PlayerActor> state) {
+        minimap = new Minimap(location.getMap(), location.getSeed(), state);
         if (location.hasMusic()) {
             InvokenGame.MUSIC_MANAGER.play(location.getMusicId());
         }
@@ -818,6 +818,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
             PlayerActor last = previous.get();
             builder.setX(last.getX());
             builder.setY(last.getY());
+            builder.addAllVisitedRooms(player.getLocation().getVisitedIndices());
 
             data = builder.build();
         }

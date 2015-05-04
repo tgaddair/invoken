@@ -145,6 +145,8 @@ public class Location {
     private float currentZoom = 0;
     private Rectangle viewBounds = new Rectangle();
     private Rectangle worldBounds = new Rectangle();
+    
+    private final Set<ConnectedRoom> visitedRooms = new HashSet<>();
     private ConnectedRoom currentRoom;
 
     DebugEntityRenderer debugEntityRenderer = DebugEntityRenderer.getInstance();
@@ -449,6 +451,10 @@ public class Location {
         cameraV.x += offset.x;
         cameraV.y += offset.y;
     }
+    
+    public List<Integer> getVisitedIndices() {
+        return map.getRooms().getIndices(visitedRooms);
+    }
 
     public void render(float delta, OrthographicCamera camera, TextureRegion selector,
             boolean paused) {
@@ -492,6 +498,13 @@ public class Location {
             resetActiveTiles(origin);
             resetActiveEntities();
             resetActiveCover();
+            
+            // visit room
+            ConnectedRoom room = map.getRooms().getRoom(origin.x, origin.y);
+            if (room != null && room != currentRoom && !visitedRooms.contains(room)) {
+                currentRoom = room;
+                visitedRooms.add(room);
+            }
 
             // reset lights
             normalMapShader.setLightGeometry(lightManager.getLights(), getWorldBounds());
@@ -762,12 +775,11 @@ public class Location {
     private boolean isActive(InanimateEntity entity) {
         // check the 4 corners
         NaturalVector2 point = getCellPosition(entity.getPosition());
-        return isActive(point)
-                || isActive(point.add((int) entity.getWidth(), 0))
+        return isActive(point) || isActive(point.add((int) entity.getWidth(), 0))
                 || isActive(point.add(0, (int) entity.getHeight()))
                 || isActive(point.add((int) entity.getWidth(), (int) entity.getHeight()));
     }
-    
+
     private boolean isActive(NaturalVector2 point) {
         return activeTiles.contains(point);
     }
@@ -1112,7 +1124,7 @@ public class Location {
         }
         return list;
     }
-    
+
     public Player createPlayerCorpse(PlayerActor proto) {
         Player corpse = createPlayer(proto, proto.getX(), proto.getY());
         corpse.kill();
@@ -1183,9 +1195,8 @@ public class Location {
         Item melee = Item.fromProto(InvokenGame.ITEM_READER.readAsset("Hammer"));
         player.getInfo().getInventory().addItem(melee);
         player.getInfo().getInventory().equip(melee);
-        
-        // test
-        player.getInfo().getInventory().addItem(Fragment.getInstance(), 1000);
+
+        // player.getInfo().getInventory().addItem(Fragment.getInstance(), 1000);
 
         return player;
     }
