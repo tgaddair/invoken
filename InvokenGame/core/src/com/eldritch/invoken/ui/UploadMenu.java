@@ -16,6 +16,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.eldritch.invoken.actor.AgentInfo;
 import com.eldritch.invoken.actor.Profession;
 import com.eldritch.invoken.actor.aug.Augmentation;
@@ -113,21 +114,23 @@ public class UploadMenu implements HudElement {
         // level and fragments
         {
             level = player.getInfo().getLevel();
-            Label levelLabel = new Label("Level: " + level, skin);
+            final Label levelLabel = new Label("Level: " + level, skin);
             topTable.add(levelLabel).left().expandX().fillX().space(25);
             topTable.row();
 
             currentFragments = player.getInventory().getItemCount(Fragment.getInstance());
             requiredFragments = AgentInfo.getFragmentRequirement(level + 1);
             String fragmentsText = String.format("%d / %d", currentFragments, requiredFragments);
-            final Label fragmentsLabel = new Label(fragmentsText, skin);
+            final Label fragmentsLabel = new Label(fragmentsText, skin.get("default-nobg", LabelStyle.class));
             fragmentsLabel.setColor(canLevel() ? Color.WHITE : Color.GRAY);
-            topTable.add(fragmentsLabel).left().expandX().fillX().space(10);
+            topTable.add(fragmentsLabel).left().expandX().fillX().space(10).padLeft(25);
             topTable.row();
 
             listeners.add(new LevelListener() {
                 @Override
                 public void onLevel() {
+                    levelLabel.setText("Level: " + level);
+                    
                     String text = String.format("%d / %d", currentFragments, requiredFragments);
                     fragmentsLabel.setText(text);
                     fragmentsLabel.setColor(canLevel() ? Color.WHITE : Color.GRAY);
@@ -242,7 +245,7 @@ public class UploadMenu implements HudElement {
         table.add(image).size(50, 50).space(10);
 
         // label
-        Label label = new Label(d.name(), skin);
+        Label label = new Label(d.name(), skin.get("default-nobg", LabelStyle.class));
         label.setColor(Color.GRAY);
         table.add(label).size(150, 50).space(10);
 

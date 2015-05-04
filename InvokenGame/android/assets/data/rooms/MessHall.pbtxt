@@ -2,10 +2,12 @@ id: "MessHall"
 furniture {
   id: "table-diner1"
   type: TMX
+  max: 2
 }
 furniture {
   id: "table-diner2"
   type: TMX
+  max: 2
 }
 furniture {
   id: "diner1"
@@ -14,9 +16,11 @@ furniture {
 furniture {
   id: "plant-wall1"
   type: TMX
+  max: 3
 }
 furniture {
   id: "plant-wall2"
   type: TMX
+  max: 3
 }
 size: LARGE

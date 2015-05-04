@@ -222,3 +222,11 @@ default-progress-horizontal
   orig: 6, 6
   offset: 0, 0
   index: -1
+default-panel-transparent
+  rotate: false
+  xy: 338, 386
+  size: 18, 18
+  pads: 10, 10, 10, 10
+  orig: 18, 18
+  offset: 0, 0
+  index: -1

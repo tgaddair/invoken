@@ -64,6 +64,7 @@ com.badlogic.gdx.scenes.scene2d.ui.Slider$SliderStyle: {
 },
 com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle: {
 	default: { background: default-panel-inset, font: default-font, fontColor: white },
+	default-nobg: { background: default-panel-transparent, font: default-font, fontColor: white },
 	response: { font: default-font, fontColor: grey },
 	toast: { font: default-font, fontColor: white },
 },
