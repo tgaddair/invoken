@@ -52,7 +52,6 @@ import com.eldritch.invoken.actor.Profession;
 import com.eldritch.invoken.actor.ai.Squad;
 import com.eldritch.invoken.actor.aug.Action;
 import com.eldritch.invoken.actor.factions.Faction;
-import com.eldritch.invoken.actor.items.Fragment;
 import com.eldritch.invoken.actor.items.Item;
 import com.eldritch.invoken.actor.pathfinding.PathManager;
 import com.eldritch.invoken.actor.type.Agent;
@@ -62,6 +61,7 @@ import com.eldritch.invoken.actor.type.InanimateEntity;
 import com.eldritch.invoken.actor.type.Npc;
 import com.eldritch.invoken.actor.type.Player;
 import com.eldritch.invoken.actor.type.TemporaryEntity;
+import com.eldritch.invoken.gfx.FogMaskManager;
 import com.eldritch.invoken.gfx.FogOfWarMasker;
 import com.eldritch.invoken.gfx.Light;
 import com.eldritch.invoken.gfx.LightManager;
@@ -124,6 +124,7 @@ public class Location {
     private final NormalMapShader normalMapShader;
     private final OverlayLightMasker lightMasker;
     private final FogOfWarMasker fowMasker;
+    private final FogMaskManager fogManager;
 
     private OrthogonalShadedTiledMapRenderer renderer;
     private OrthogonalShadedTiledMapRenderer overlayRenderer;
@@ -169,6 +170,7 @@ public class Location {
         normalMapShader = new NormalMapShader();
         lightMasker = new OverlayLightMasker(lightManager.getVertexShaderDef());
         fowMasker = new FogOfWarMasker();
+        fogManager = new FogMaskManager();
 
         // create territory table
         assignTerritory(map.getRooms(), data.getTerritoryList());
@@ -633,6 +635,9 @@ public class Location {
         overlayRenderer.getBatch().setShader(normalMapShader.getShader());
         normalMapShader.useNormalMap(true);
         overlayRenderer.render();
+        
+        fogManager.update(delta);
+        fogManager.render(renderer);
 
         // render lighting
         // boolean stepped = fixedStep(delta);
