@@ -145,7 +145,7 @@ public class Location {
     private float currentZoom = 0;
     private Rectangle viewBounds = new Rectangle();
     private Rectangle worldBounds = new Rectangle();
-    
+
     private final Set<ConnectedRoom> visitedRooms = new HashSet<>();
     private ConnectedRoom currentRoom;
 
@@ -451,7 +451,7 @@ public class Location {
         cameraV.x += offset.x;
         cameraV.y += offset.y;
     }
-    
+
     public List<Integer> getVisitedIndices() {
         return map.getRooms().getIndices(visitedRooms);
     }
@@ -498,7 +498,7 @@ public class Location {
             resetActiveTiles(origin);
             resetActiveEntities();
             resetActiveCover();
-            
+
             // visit room
             ConnectedRoom room = map.getRooms().getRoom(origin.x, origin.y);
             if (room != null && room != currentRoom && !visitedRooms.contains(room)) {
@@ -827,6 +827,15 @@ public class Location {
 
     public boolean inCameraBounds(Vector2 point) {
         return worldBounds.contains(point);
+    }
+
+    public boolean isFilled(NaturalVector2 point) {
+        return filledTiles.contains(point);
+    }
+
+    public boolean isVisibleOnScreen(Agent agent) {
+        // not covered by fog of war, and within the camera bounds
+        return isFilled(agent.getNaturalPosition()) && inCameraBounds(agent.getPosition());
     }
 
     private void resetActiveTiles(NaturalVector2 origin) {

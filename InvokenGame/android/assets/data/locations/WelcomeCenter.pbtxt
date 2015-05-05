@@ -22,7 +22,7 @@ encounter {
   actor_params {
     description: ""
     actor_scenario {
-      actor_id: "StreetThug"
+      actor_id: "StreetThugGreeter"
       essential: false
       blocking: false
       min: 2

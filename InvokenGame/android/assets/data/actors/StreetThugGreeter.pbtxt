@@ -1,0 +1,207 @@
+params {
+  id: "StreetThugGreeter"
+  name: "Street Thug"
+  species: HUMAN
+  gender: MALE
+  profession: CENTURION
+  level: 3
+  skill {
+    discipline: WARFARE
+    level: 12
+  }
+  skill {
+    discipline: AUTOMATA
+    level: 10
+  }
+  skill {
+    discipline: SUBTERFUGE
+    level: 10
+  }
+  skill {
+    discipline: CHARISMA
+    level: 10
+  }
+  faction_status {
+    faction_id: "_ThugFaction"
+    rank: 3
+  }
+  inventory_item {
+    item_id: "StreetClothes"
+    count: 1
+    drop_chance: 0.2
+  }
+  inventory_item {
+    item_id: "DamagedPistol"
+    count: 1
+    drop_chance: 1.0
+  }
+  inventory_item {
+    item_id: "CustomsCredentialsLevel1"
+    count: 1
+    drop_chance: 1.0
+  }
+  known_aug_id: FireWeapon
+}
+unique: false
+dialogue {
+  dialogue {
+    id: "Greeting1"
+    text: "Hold, outsider!  I\'m afraid I can\'t let you into our compound with those weapons.  Hand them over, and you can go about your way."
+    greeting: true
+    weight: 0
+    choice_id: "Decline"
+    choice_id: "Uncertain"
+    choice_id: "Accept"
+    choice_id: "DeclineAndFight"
+    forced: true
+  }
+  dialogue {
+    id: "VeryReasonable"
+    text: "Very reasonable of you. Now like I said, you\'re free to go about your business."
+    outcome {
+      weight: 1.0
+      type: REP_CHANGE
+      target: "_ThugFaction"
+      value: 5
+    }
+    outcome {
+      weight: 1.0
+      type: ITEM_CHANGE
+      target: "CustomsCredentialsLevel1"
+      value: 1
+    }
+    outcome {
+      weight: 1.0
+      type: ITEM_TRANSFER_ALL
+      target: "RANGED_WEAPON"
+    }
+    outcome {
+      weight: 1.0
+      type: ITEM_TRANSFER_ALL
+      target: "MELEE_WEAPON"
+    }
+    outcome {
+      weight: 1.0
+      type: ITEM_TRANSFER_ALL
+      target: "HEAVY_WEAPON"
+    }
+    greeting: false
+    weight: 0
+    choice_id: "Goodbye"
+    choice_id: "Question1"
+    forced: false
+  }
+  dialogue {
+    id: "YouDont"
+    text: "You don\'t.  You\'ll just have to trust me, or trust that me and my friends here will shoot you down if you so much as make a move."
+    greeting: false
+    weight: 0
+    choice_id: "Accept"
+    choice_id: "DeclineAndFight"
+  }
+  dialogue {
+    id: "KillHim"
+    text: "Kill this asshole!"
+    outcome {
+      weight: 1.0
+      type: RELATION_CHANGE
+      value: -70
+    }
+    outcome {
+      weight: 1.0
+      type: START_COMBAT
+    }
+    outcome {
+      weight: 1.0
+      type: REP_CHANGE
+      target: "_ThugFaction"
+      value: -30
+    }
+    greeting: false
+    weight: 0
+    forced: false
+  }
+  dialogue {
+    id: "Q1R1"
+    text: "An old administrative office for processing new arrivals. We don\'t get much of you these days. Now if there\'s no more questions, you should get on."
+    greeting: false
+    weight: 0
+    choice_id: "Goodbye"
+  }
+  dialogue {
+    id: "SuitYourself"
+    text: "Then you\'re not getting through this door, outsider. Turn back."
+    greeting: false
+    weight: 0
+    forced: false
+  }
+  dialogue {
+    id: "Greeting2"
+    text: "You ready to hand your weapons over, outsider?"
+    prereq {
+      type: ITEM_HAS
+      target: "CustomsCredentialsLevel1"
+      min: 1
+      not: true
+    }
+    greeting: true
+    weight: 0
+    choice_id: "Decline"
+    choice_id: "Uncertain"
+    choice_id: "Accept"
+    choice_id: "DeclineAndFight"
+    forced: false
+  }
+  dialogue {
+    id: "GreetingWithCredentials"
+    text: "Like I said, you\'re free to enter the compound. Now leave me alone."
+    prereq {
+      type: ITEM_HAS
+      target: "CustomsCredentialsLevel1"
+      min: 1
+      not: false
+    }
+    greeting: true
+    weight: 0
+    forced: false
+  }
+  choice {
+    text: "Alright. I don\'t suppose I have much of a choice."
+    successor_id: "VeryReasonable"
+    weight: 0
+    id: "Accept"
+  }
+  choice {
+    text: "Just try and take it from me, punk!"
+    successor_id: "KillHim"
+    weight: 0
+    id: "DeclineAndFight"
+  }
+  choice {
+    text: "How do I know you\'ll keep word?"
+    successor_id: "YouDont"
+    weight: 0
+    id: "Uncertain"
+  }
+  choice {
+    text: "What is this place?  Why are you all holed up here?"
+    successor_id: "Q1R1"
+    weight: 0
+    id: "Question1"
+  }
+  choice {
+    text: "I\'ll do that."
+    weight: 0
+    id: "Goodbye"
+  }
+  choice {
+    text: "I\'m not looking for a fight, but I\'m not handing you my weapons, either."
+    successor_id: "SuitYourself"
+    weight: 0
+    id: "Decline"
+  }
+}
+aggression: AGGRESSIVE
+assistance: LOYAL
+confidence: BRAVE
+guard: false

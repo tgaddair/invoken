@@ -1,0 +1,52 @@
+params {
+  id: "StreetThug"
+  name: "Street Thug"
+  species: HUMAN
+  gender: MALE
+  profession: CENTURION
+  level: 3
+  skill {
+    discipline: WARFARE
+    level: 12
+  }
+  skill {
+    discipline: AUTOMATA
+    level: 10
+  }
+  skill {
+    discipline: SUBTERFUGE
+    level: 10
+  }
+  skill {
+    discipline: CHARISMA
+    level: 10
+  }
+  faction_status {
+    faction_id: "_ThugFaction"
+    rank: 3
+  }
+  inventory_item {
+    item_id: "StreetClothes"
+    count: 1
+    drop_chance: 0.2
+  }
+  inventory_item {
+    item_id: "DamagedPistol"
+    count: 1
+    drop_chance: 1.0
+  }
+  known_aug_id: FireWeapon
+}
+unique: false
+dialogue {
+  dialogue {
+    id: "Greeting1"
+    text: "Keep walking."
+    greeting: true
+    weight: 0
+  }
+}
+aggression: AGGRESSIVE
+assistance: LOYAL
+confidence: BRAVE
+guard: true

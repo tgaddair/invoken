@@ -13,7 +13,6 @@ public class Speak extends Selector<Npc> {
         // find a valid dialogue candidate
         Sequence<Npc> startSequence = new Sequence<>();
         startSequence.addChild(new CanStartConversation());
-        startSequence.addChild(new SetLastTask("StartConversation"));
 
         Sequence<Npc> greetSequence = new Sequence<Npc>();
         greetSequence.addChild(new CanInteract()); // skip pursue if we're within interact range
@@ -24,9 +23,10 @@ public class Speak extends Selector<Npc> {
         greetOrPursue.addChild(greetSequence); // greet if we can
         greetOrPursue.addChild(new Pursue()); // otherwise, we pursue
 
-        Sequence<Npc> forcedSequence = Tasks.sequence(new FindInteractor(),
-                new SetLastTask("Greet"), greetOrPursue);
-        Sequence<Npc> banterSequence = Tasks.sequence(new CanBanter(), new Banter());
+        Sequence<Npc> forcedSequence = Tasks.sequence(new CanForceDialogue(), new FindInteractor(),
+                new SetLastTask("ForceDialogue"), greetOrPursue);
+        Sequence<Npc> banterSequence = Tasks.sequence(new CanBanter(), new Banter(),
+                new SetLastTask("Banter"));
         startSequence.addChild(Tasks.selector(forcedSequence, banterSequence));
 
         addChild(Tasks.sequence(new CanContinueConversation(), new SetLastTask(
@@ -44,7 +44,14 @@ public class Speak extends Selector<Npc> {
     private static class CanStartConversation extends BooleanTask {
         @Override
         protected boolean check(Npc npc) {
-            return npc.canSpeak() && npc.getDialogueHandler().hasForcedGreeting()
+            return npc.canSpeak() && npc.getLocation().inCameraBounds(npc.getPosition());
+        }
+    }
+
+    private static class CanForceDialogue extends BooleanTask {
+        @Override
+        protected boolean check(Npc npc) {
+            return npc.getDialogueHandler().hasForcedGreeting()
                     && npc.getVisibleNeighbors().contains(npc.getLocation().getPlayer());
         }
     }
@@ -82,8 +89,9 @@ public class Speak extends Selector<Npc> {
         @Override
         protected boolean check(Npc npc) {
             // take a break between banter, and make sure the player can listen in
+            // for the player to be able to listen in, the NPC
             return npc.getLastDialogue() >= DIALOGUE_BREAK_SECS
-                    && npc.isNeighbor(npc.getLocation().getPlayer());
+                    && npc.getLocation().isVisibleOnScreen(npc);
         }
     }
 

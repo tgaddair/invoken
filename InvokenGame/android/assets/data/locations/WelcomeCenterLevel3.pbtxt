@@ -1,0 +1,62 @@
+id: "WelcomeCenterLevel3"
+name: "Welcome Center - Level 3"
+encounter {
+  id: "Cyrus"
+  title: "Cyrus"
+  type: ACTOR
+  weight: 1.0
+  unique: false
+  actor_params {
+    description: ""
+    actor_scenario {
+      actor_id: "Cyrus"
+      essential: true
+      blocking: false
+      alive: true
+    }
+    actor_scenario {
+      actor_id: "StreetThugGuard"
+      essential: false
+      blocking: false
+      min: 2
+      max: 2
+      alive: true
+    }
+    no_detect: false
+    no_flee: false
+  }
+  control_point_id: "Room1"
+  faction_id: ""
+}
+light {
+  r: 179
+  g: 179
+  b: 230
+  intensity: 1.25
+}
+biome: INDUSTRY
+control_point {
+  id: "Entrance"
+  room_id: "MediumLobby"
+  lock_strength: 0
+  required_key: ""
+  origin: true
+  min: 1
+  max: 1
+  value: 0
+  closed: false
+  faction_id: ""
+}
+control_point {
+  id: "Room1"
+  room_id: "GenericHall"
+  follows: "Entrance"
+  lock_strength: 0
+  required_key: ""
+  origin: false
+  min: 0
+  max: 0
+  value: 0
+  closed: true
+  faction_id: ""
+}
