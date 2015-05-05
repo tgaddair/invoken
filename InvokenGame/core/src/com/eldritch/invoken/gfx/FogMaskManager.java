@@ -1,6 +1,7 @@
 package com.eldritch.invoken.gfx;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture.TextureWrap;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
@@ -32,6 +33,7 @@ public class FogMaskManager {
         private static final float MAX_FOG = 0.4f;
         private static final float DELTA = 0.01f;
         private static final float DURATION = 3f;
+        private static final float SCALE = 32f;
         private final TextureRegion region;
 
         private int direction = 1;
@@ -40,6 +42,7 @@ public class FogMaskManager {
         public Fader(String asset, float start) {
             this.region = new TextureRegion(GameScreen.getTexture(String.format(
                     "sprite/mask/%s.png", asset)));
+            region.getTexture().setWrap(TextureWrap.Repeat, TextureWrap.Repeat);
             this.elapsed = start * DURATION;
         }
 
@@ -53,6 +56,11 @@ public class FogMaskManager {
 
         public void render(Batch batch, Rectangle bounds) {
             float alpha = MathUtils.lerp(0, MAX_FOG, elapsed / DURATION);
+            region.setU(bounds.x / SCALE);
+            region.setV(bounds.y / SCALE);
+            region.setU2(bounds.x / SCALE + 1);
+            region.setV2(bounds.y / SCALE - 1);
+            
             batch.setColor(1, 1, 1, alpha);
             batch.draw(region, bounds.x, bounds.y, bounds.width, bounds.height);
             batch.setColor(Color.WHITE);
