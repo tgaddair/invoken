@@ -8,6 +8,7 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.eldritch.invoken.screens.GameScreen;
+import com.eldritch.invoken.util.Settings;
 
 public class FogMaskManager {
     private final Fader[] faders = { new Fader("mask1", 0),
@@ -33,7 +34,6 @@ public class FogMaskManager {
         private static final float MAX_FOG = 0.4f;
         private static final float DELTA = 0.01f;
         private static final float DURATION = 3f;
-        private static final float SCALE = 32f;
         private final TextureRegion region;
 
         private int direction = 1;
@@ -56,10 +56,10 @@ public class FogMaskManager {
 
         public void render(Batch batch, Rectangle bounds) {
             float alpha = MathUtils.lerp(0, MAX_FOG, elapsed / DURATION);
-            region.setU(bounds.x / SCALE);
-            region.setV(bounds.y / SCALE);
-            region.setU2(bounds.x / SCALE + 1);
-            region.setV2(bounds.y / SCALE - 1);
+            region.setU(bounds.x / bounds.width);
+            region.setV(bounds.y / bounds.height);
+            region.setU2(bounds.x / bounds.width + 1);
+            region.setV2(bounds.y / bounds.height - 1);
             
             batch.setColor(1, 1, 1, alpha);
             batch.draw(region, bounds.x, bounds.y, bounds.width, bounds.height);
