@@ -41,6 +41,9 @@ public class Settings {
 	public static final short BIT_PHYSICAL = BIT_SHOOTABLE | BIT_SHORT_OBSTACLE;  // can walk into
 	public static final short BIT_ANYTHING = BIT_DEFAULT | BIT_PHYSICAL | BIT_BULLET;  // everything
 	
+	// visuals
+	public static final boolean ENABLE_FOG = false;
+	
 	// debug settings
 	public static final boolean GOD_MODE = false;
 	public static final boolean DEBUG_DRAW = false;

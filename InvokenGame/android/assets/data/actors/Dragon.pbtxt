@@ -1,0 +1,39 @@
+params {
+  id: "Dragon"
+  name: "Dragon"
+  species: BEAST
+  level: 15
+  skill {
+    discipline: WARFARE
+    level: 25
+  }
+  skill {
+    discipline: AUTOMATA
+    level: 13
+  }
+  skill {
+    discipline: SUBTERFUGE
+    level: 25
+  }
+  skill {
+    discipline: CHARISMA
+    level: 14
+  }
+  faction_status {
+    faction_id: "_HostileCreatures"
+    rank: 3
+  }
+  inventory_item {
+    item_id: "Claws"
+    count: 1
+    drop_chance: 1.0
+  }
+  known_aug_id: RendWeapon
+  known_aug_id: Mitosis
+  body_type: "dragon"
+}
+unique: false
+aggression: HOSTILE
+assistance: LOYAL
+confidence: RECKLESS
+guard: false

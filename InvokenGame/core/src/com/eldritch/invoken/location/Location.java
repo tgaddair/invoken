@@ -636,8 +636,10 @@ public class Location {
         normalMapShader.useNormalMap(true);
         overlayRenderer.render();
         
-        fogManager.update(delta);
-        fogManager.render(renderer);
+        if (Settings.ENABLE_FOG) {
+            fogManager.update(delta);
+            fogManager.render(renderer);
+        }
 
         // render lighting
         // boolean stepped = fixedStep(delta);

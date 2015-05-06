@@ -63,7 +63,7 @@ public class FogMaskManager {
             
             batch.setColor(1, 1, 1, alpha);
             batch.draw(region, bounds.x, bounds.y, bounds.width, bounds.height);
-            batch.setColor(Color.WHITE);
+            batch.setColor(1, 1, 1, 1);
         }
     }
 }

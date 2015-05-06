@@ -1,25 +1,17 @@
 id: "WelcomeCenterLevel3"
 name: "Welcome Center - Level 3"
 encounter {
-  id: "Cyrus"
-  title: "Cyrus"
+  id: "Test"
+  title: "Test"
   type: ACTOR
   weight: 1.0
   unique: false
   actor_params {
     description: ""
     actor_scenario {
-      actor_id: "Cyrus"
-      essential: true
-      blocking: false
-      alive: true
-    }
-    actor_scenario {
-      actor_id: "StreetThugGuard"
+      actor_id: "Dragon"
       essential: false
       blocking: false
-      min: 2
-      max: 2
       alive: true
     }
     no_detect: false

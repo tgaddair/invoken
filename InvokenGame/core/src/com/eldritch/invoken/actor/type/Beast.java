@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.eldritch.invoken.location.Location;
 import com.eldritch.invoken.proto.Actors.NonPlayerActor;
 import com.eldritch.invoken.screens.GameScreen;
+import com.eldritch.invoken.util.Settings;
 import com.eldritch.invoken.util.SoundManager.SoundEffect;
 import com.google.common.base.Strings;
 
@@ -15,15 +16,11 @@ public class Beast extends Npc {
     public static float MAX_VELOCITY = 4f;
     public static int PX = 32;
 
-    public Beast(NonPlayerActor data, float x, float y, Location location) {
-        this(data, x, y, getAsset(data), location);
+    public Beast(NonPlayerActor data, float x, float y, float width, float height, float velocity,
+            Map<Activity, Map<Direction, Animation>> animations, Location location) {
+        super(data, x, y, width, height, velocity, animations, location);
     }
 
-    public Beast(NonPlayerActor data, float x, float y, String asset, Location location) {
-        super(data, x, y, 1 / 32f * PX, 1 / 32f * PX, MAX_VELOCITY, getAllAnimations(asset),
-                location);
-    }
-    
     @Override
     protected SoundEffect getDeathSound() {
         return SoundEffect.GHOST_DEATH;
@@ -40,47 +37,113 @@ public class Beast extends Npc {
         return hasLineOfSight(other);
     }
 
-    public static Map<Activity, Map<Direction, Animation>> getAllAnimations(String assetName) {
-        Map<Activity, Map<Direction, Animation>> animations = new HashMap<Activity, Map<Direction, Animation>>();
-
-        TextureRegion[][] regions = GameScreen.getRegions(assetName + "-walk.png", PX, PX);
-        animations.put(Activity.Cast, getAnimations(regions));
-        animations.put(Activity.Thrust, getAnimations(regions));
-        animations.put(Activity.Explore, getAnimations(regions));
-        animations.put(Activity.Swipe, getAnimations(regions));
-        animations.put(Activity.Combat, getAnimations(regions));
-
-        regions = GameScreen.getRegions(assetName + "-death.png", PX, PX);
-        animations.put(Activity.Death, getAnimations(regions, Animation.PlayMode.NORMAL, false));
-
-        return animations;
-    }
-
-    public static Map<Direction, Animation> getAnimations(TextureRegion[][] regions) {
-        return getAnimations(regions, Animation.PlayMode.LOOP_PINGPONG, true);
-    }
-
-    public static Map<Direction, Animation> getAnimations(TextureRegion[][] regions,
-            Animation.PlayMode playMode, boolean increment) {
-        Map<Direction, Animation> animations = new HashMap<Direction, Animation>();
-
-        // up, left, down, right
-        int index = 0;
-        for (Direction d : Direction.values()) {
-            Animation anim = new Animation(0.15f, regions[index]);
-            anim.setPlayMode(playMode);
-            animations.put(d, anim);
-            if (increment) {
-                index++;
-            }
-        }
-
-        return animations;
+    private static String getAssetPath(String asset) {
+        return "sprite/characters/beast/" + asset;
     }
 
     private static String getAsset(NonPlayerActor data) {
-        String asset = !Strings.isNullOrEmpty(data.getParams().getBodyType()) ? data.getParams()
+        return !Strings.isNullOrEmpty(data.getParams().getBodyType()) ? data.getParams()
                 .getBodyType() : "slime";
-        return "sprite/characters/beast/" + asset;
+    }
+
+    public static Beast from(NonPlayerActor data, float x, float y, Location location) {
+        String asset = getAsset(data);
+        switch (asset) {
+            case "dragon":
+                return new Dragon(data, x, y, getAssetPath(asset), location);
+            default:
+                return new DefaultBeast(data, x, y, getAssetPath(asset), location);
+        }
+    }
+
+    public static class DefaultBeast extends Beast {
+        public DefaultBeast(NonPlayerActor data, float x, float y, String asset, Location location) {
+            super(data, x, y, Settings.SCALE * PX, Settings.SCALE * PX, MAX_VELOCITY,
+                    getAllAnimations(asset), location);
+        }
+
+        private static Map<Activity, Map<Direction, Animation>> getAllAnimations(String assetName) {
+            Map<Activity, Map<Direction, Animation>> animations = new HashMap<Activity, Map<Direction, Animation>>();
+
+            TextureRegion[][] regions = GameScreen.getRegions(assetName + "-walk.png", PX, PX);
+            animations.put(Activity.Cast, getAnimations(regions));
+            animations.put(Activity.Thrust, getAnimations(regions));
+            animations.put(Activity.Explore, getAnimations(regions));
+            animations.put(Activity.Swipe, getAnimations(regions));
+            animations.put(Activity.Combat, getAnimations(regions));
+
+            regions = GameScreen.getRegions(assetName + "-death.png", PX, PX);
+            animations
+                    .put(Activity.Death, getAnimations(regions, Animation.PlayMode.NORMAL, false));
+
+            return animations;
+        }
+
+        private static Map<Direction, Animation> getAnimations(TextureRegion[][] regions) {
+            return getAnimations(regions, Animation.PlayMode.LOOP_PINGPONG, true);
+        }
+
+        private static Map<Direction, Animation> getAnimations(TextureRegion[][] regions,
+                Animation.PlayMode playMode, boolean increment) {
+            Map<Direction, Animation> animations = new HashMap<Direction, Animation>();
+
+            // up, left, down, right
+            int index = 0;
+            for (Direction d : Direction.values()) {
+                Animation anim = new Animation(0.15f, regions[index]);
+                anim.setPlayMode(playMode);
+                animations.put(d, anim);
+                if (increment) {
+                    index++;
+                }
+            }
+
+            return animations;
+        }
+    }
+
+    public static class Dragon extends Beast {
+        private static final int WIDTH = 600;
+        private static final int HEIGHT = 360;
+
+        public Dragon(NonPlayerActor data, float x, float y, String asset, Location location) {
+            super(data, x, y, scale(WIDTH), scale(HEIGHT), MAX_VELOCITY, getAnimations(asset), location);
+        }
+        
+        private static float scale(float pixels) {
+            return (pixels * Settings.SCALE) / 5f; 
+        }
+
+        private static Map<Activity, Map<Direction, Animation>> getAnimations(String assetPath) {
+            Map<Activity, Map<Direction, Animation>> animations = new HashMap<Activity, Map<Direction, Animation>>();
+
+            TextureRegion[][] regions = GameScreen.getRegions(assetPath + ".png", WIDTH, HEIGHT);
+
+            animations.put(Activity.Cast, getAnimations(regions, 2));
+            animations.put(Activity.Thrust, getAnimations(regions, 3));
+            animations.put(Activity.Explore, getAnimations(regions, 1));
+            animations.put(Activity.Swipe, getAnimations(regions, 3));
+            animations.put(Activity.Combat, getAnimations(regions, 3));
+            animations.put(Activity.Death, getAnimations(regions, 0));
+            return animations;
+        }
+
+        private static Map<Direction, Animation> getAnimations(TextureRegion[][] regions, int offset) {
+            return getAnimations(regions, offset, Animation.PlayMode.LOOP_PINGPONG);
+        }
+
+        private static Map<Direction, Animation> getAnimations(TextureRegion[][] regions,
+                int offset, Animation.PlayMode playMode) {
+            Map<Direction, Animation> animations = new HashMap<Direction, Animation>();
+
+            // up, left, down, right
+            for (Direction d : Direction.values()) {
+                Animation anim = new Animation(0.15f, regions[offset]);
+                anim.setPlayMode(playMode);
+                animations.put(d, anim);
+            }
+
+            return animations;
+        }
     }
 }
