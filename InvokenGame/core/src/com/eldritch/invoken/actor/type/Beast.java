@@ -4,7 +4,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.eldritch.invoken.actor.type.Agent.Direction;
 import com.eldritch.invoken.location.Location;
 import com.eldritch.invoken.proto.Actors.NonPlayerActor;
 import com.eldritch.invoken.screens.GameScreen;
@@ -105,9 +107,38 @@ public class Beast extends Npc {
     public static class Dragon extends Beast {
         private static final int WIDTH = 600;
         private static final int HEIGHT = 360;
+        
+        private Direction lastDirection;
+        private boolean flipX;
 
         public Dragon(NonPlayerActor data, float x, float y, String asset, Location location) {
             super(data, x, y, scale(WIDTH), scale(HEIGHT), MAX_VELOCITY, getAnimations(asset), location);
+        }
+        
+        @Override
+        protected void draw(Batch batch, TextureRegion frame, Direction direction) {
+            if (direction != lastDirection) {
+                lastDirection = direction;
+                
+                // only change our direction if we are explicitly facing a different x direction
+                // otherwise, keep the current horizontal heading
+                if (direction == Direction.Right) {
+                    flipX = true;
+                } else if (direction == Direction.Left) {
+                    flipX = false;
+                }
+            }
+            
+            float width = getWidth();
+            float height = getHeight();
+            batch.draw(frame.getTexture(), position.x - width / 2, position.y - height / 2, // position
+                    width / 2, height / 2, // origin
+                    width, height, // size
+                    1f, 1f, // scale
+                    0, // rotation
+                    frame.getRegionX(), frame.getRegionY(), // srcX, srcY
+                    frame.getRegionWidth(), frame.getRegionHeight(), // srcWidth, srcHeight
+                    flipX, false); // flipX, flipY
         }
         
         private static float scale(float pixels) {

@@ -1567,13 +1567,17 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
             OrthogonalTiledMapRenderer renderer) {
         // based on the actor state, get the animation frame
         TextureRegion frame = animations.get(activity).get(direction).getKeyFrame(stateTime);
-        float width = getWidth();
-        float height = getHeight();
-
+        
         Batch batch = renderer.getBatch();
         batch.begin();
-        batch.draw(frame, position.x - width / 2, position.y - height / 2, width, height);
+        draw(batch, frame, direction);
         batch.end();
+    }
+    
+    protected void draw(Batch batch, TextureRegion frame, Direction direction) {
+        float width = getWidth();
+        float height = getHeight();
+        batch.draw(frame, position.x - width / 2, position.y - height / 2, width, height);
     }
 
     public Rectangle getLargeBoundingBox(Rectangle rect) {
