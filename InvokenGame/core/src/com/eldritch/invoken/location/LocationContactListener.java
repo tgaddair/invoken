@@ -51,16 +51,26 @@ public class LocationContactListener implements ContactListener {
 
         if (handler instanceof AgentHandler) {
             AgentHandler agentHandler = (AgentHandler) handler;
-            if (handled != null && handled instanceof Agent) {
-                Agent agent = (Agent) handled;
-                if (agent.isAlive()) {
-                    // only collide with living agents
-                    agentHandler.handle(agent);
-                }
-            } else {
-                // generic handler
-                agentHandler.handle();
+            handle(agentHandler, handled);
+        } else if (handler instanceof Agent) {
+            Agent agent = (Agent) handler;
+            if (agent.hasCollisionDelegate()) {
+                // delegate collisions
+                handle(agent.getCollisionDelegate(), handled);
             }
+        }
+    }
+    
+    private void handle(AgentHandler agentHandler, Object handled) {
+        if (handled != null && handled instanceof Agent) {
+            Agent agent = (Agent) handled;
+            if (agent.isAlive()) {
+                // only collide with living agents
+                agentHandler.handle(agent);
+            }
+        } else {
+            // generic handler
+            agentHandler.handle(handled);
         }
     }
 }

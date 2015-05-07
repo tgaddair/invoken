@@ -687,7 +687,7 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
         hide = new Hide<Vector2>(this, null, new CoverProximity()).setArrivalTolerance(.0001f)
                 .setDecelerationRadius(.001f).setDistanceFromBoundary(0f);
         evade = new Evade<Vector2>(this, location.getPlayer())
-                .setLimiter(new LinearAccelerationLimiter(10));
+                .setLimiter(new LinearAccelerationLimiter(getDefaultAcceleration()));
         pursue = new Pursue<Vector2>(this, location.getPlayer());
         flee = new Flee<Vector2>(this);
         seek = new Seek<Vector2>(this);
@@ -699,10 +699,10 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
                 // We don't need a limiter supporting angular components because Face is not used
                 // No need to call setAlignTolerance, setDecelerationRadius and setTimeToTarget for
                 // the same reason
-                .setLimiter(new LinearAccelerationLimiter(5)).setWanderOffset(2)
+                .setLimiter(new LinearAccelerationLimiter(getDefaultAcceleration() / 2)).setWanderOffset(2)
                 .setWanderOrientation(0).setWanderRadius(0.5f).setWanderRate(MathUtils.PI / 5);
         Wander<Vector2> combatWander = new Wander<Vector2>(this).setFaceEnabled(false)
-                .setLimiter(new LinearAccelerationLimiter(10)).setWanderOffset(3)
+                .setLimiter(new LinearAccelerationLimiter(getDefaultAcceleration())).setWanderOffset(3)
                 .setWanderOrientation(0).setWanderRadius(2).setWanderRate(MathUtils.PI / 5);
 
         // initially disable our states
@@ -725,7 +725,7 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
         behaviors.put(SteeringMode.Wander, wanderSteering);
 
         SteeringBehavior<Vector2> blendedPursuing = new BlendedSteering<Vector2>(this).add(pursue,
-                2f).add(combatWander, 2f);
+                2f).add(combatWander, getCombatWander());
         // .add(wander, 1f);
         SteeringBehavior<Vector2> pursueSteering = new PrioritySteering<Vector2>(this)
                 .setLimiter(NullLimiter.NEUTRAL_LIMITER) //
@@ -749,6 +749,10 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
         behaviors.put(SteeringMode.Follow, followSteering);
 
         return behaviors;
+    }
+    
+    protected float getCombatWander() {
+        return 2f;
     }
 
     private static int getFragments(int level) {

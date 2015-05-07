@@ -27,7 +27,7 @@ public abstract class SteeringAgent extends Agent {
     private final float baseLinearVelocity;
     private float maxAngularAcceleration = 1;
     private float maxAngularVelocity = 1;
-    private float maxLinearAcceleration = 10;
+    private float maxLinearAcceleration;
     private float maxLinearVelocity;
 
     public SteeringAgent(ActorParams params, boolean unique, float x, float y, float width,
@@ -36,6 +36,7 @@ public abstract class SteeringAgent extends Agent {
         super(params, unique, x, y, width, height, location, animations);
         this.maxLinearVelocity = maxVelocity;
         this.baseLinearVelocity = maxVelocity;
+        this.maxLinearAcceleration = getDefaultAcceleration();
     }
 
     public SteeringAgent(float x, float y, float width, float height, float maxVelocity,
@@ -44,8 +45,13 @@ public abstract class SteeringAgent extends Agent {
         super(x, y, width, height, profession, level, location, animations);
         this.maxLinearVelocity = maxVelocity;
         this.baseLinearVelocity = maxVelocity;
+        this.maxLinearAcceleration = getDefaultAcceleration();
     }
-
+    
+    public float getDefaultAcceleration() {
+        return 10;
+    }
+    
     protected void setBehavior(SteeringBehavior<Vector2> behavior) {
         this.steeringBehavior = behavior;
     }

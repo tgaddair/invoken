@@ -6,7 +6,6 @@ import java.util.Map;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.eldritch.invoken.actor.type.Agent.Direction;
 import com.eldritch.invoken.location.Location;
 import com.eldritch.invoken.proto.Actors.NonPlayerActor;
 import com.eldritch.invoken.screens.GameScreen;
@@ -113,6 +112,26 @@ public class Beast extends Npc {
 
         public Dragon(NonPlayerActor data, float x, float y, String asset, Location location) {
             super(data, x, y, scale(WIDTH), scale(HEIGHT), MAX_VELOCITY, getAnimations(asset), location);
+        }
+        
+        @Override
+        public float getDensity() {
+            return 25f;
+        }
+        
+        @Override
+        protected float getBodyRadius() {
+            return 0.5f;
+        }
+        
+        @Override
+        protected float getCombatWander() {
+            return 0.5f;
+        }
+        
+        @Override
+        public float getDefaultAcceleration() {
+            return 25 * getDensity();
         }
         
         @Override

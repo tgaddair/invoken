@@ -1406,6 +1406,9 @@ public class Location {
 
         Body body = world.createBody(groundBodyDef);
         Fixture fixture = body.createFixture(fixtureDef);
+        if (category == Settings.BIT_WALL) {
+            fixture.setUserData(new Wall());
+        }
 
         // collision filters
         Filter filter = fixture.getFilterData();

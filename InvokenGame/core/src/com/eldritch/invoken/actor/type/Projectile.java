@@ -51,7 +51,7 @@ public abstract class Projectile extends CollisionEntity implements AgentHandler
     }
 
     @Override
-    public boolean handle() {
+    public boolean handle(Object userData) {
         handleObstacleContact();
         return true;
     }

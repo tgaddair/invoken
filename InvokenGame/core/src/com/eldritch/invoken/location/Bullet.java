@@ -77,7 +77,7 @@ public class Bullet implements AgentHandler {
     }
 
     @Override
-    public boolean handle() {
-        return delegate.handle();
+    public boolean handle(Object userData) {
+        return delegate.handle(userData);
     }
 }

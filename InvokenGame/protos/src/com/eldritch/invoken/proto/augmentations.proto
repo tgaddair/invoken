@@ -26,4 +26,6 @@ enum AugmentationProto {
 	// NPC only
 	Charge = 17;
 	Mitosis = 18;
+	Ram = 21;
+	Leech = 22;
 }

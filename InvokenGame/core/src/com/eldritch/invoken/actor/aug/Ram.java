@@ -1,0 +1,167 @@
+package com.eldritch.invoken.actor.aug;
+
+import java.util.HashSet;
+import java.util.Set;
+
+import com.badlogic.gdx.math.Vector2;
+import com.eldritch.invoken.InvokenGame;
+import com.eldritch.invoken.actor.AgentHandler;
+import com.eldritch.invoken.actor.type.Agent;
+import com.eldritch.invoken.actor.type.Agent.Activity;
+import com.eldritch.invoken.effects.BasicEffect;
+import com.eldritch.invoken.location.Location;
+import com.eldritch.invoken.location.Wall;
+import com.eldritch.invoken.proto.Effects.DamageType;
+import com.eldritch.invoken.util.Damage;
+import com.eldritch.invoken.util.Heuristics;
+import com.eldritch.invoken.util.SoundManager.SoundEffect;
+
+public class Ram extends Augmentation {
+    private static final float RANGE = 5;
+    private static final float DURATION = 1f;
+    private static final float MAGNITUDE = 1500f;
+    private static final int DAMAGE = 25;
+
+    private static class Holder {
+        private static final Ram INSTANCE = new Ram();
+    }
+
+    public static Ram getInstance() {
+        return Holder.INSTANCE;
+    }
+
+    private Ram() {
+        super(false);
+    }
+
+    @Override
+    public boolean isValid(Agent owner) {
+        // only one at a time
+        return !owner.isToggled(Ram.class);
+    }
+
+    @Override
+    public boolean isValid(Agent owner, Agent target) {
+        return isValid(owner);
+    }
+
+    @Override
+    public boolean isValid(Agent owner, Vector2 target) {
+        return isValid(owner);
+    }
+
+    @Override
+    public Action getAction(Agent owner, Agent target) {
+        return new RamAction(owner, target.getPosition());
+    }
+
+    @Override
+    public Action getAction(Agent owner, Vector2 target) {
+        return new RamAction(owner, target);
+    }
+
+    @Override
+    public int getCost(Agent owner) {
+        return 2;
+    }
+
+    @Override
+    public float quality(Agent owner, Agent target, Location location) {
+        if (!target.isAlive()) {
+            return 0;
+        }
+
+        if (owner.getInventory().hasMeleeWeapon()) {
+            float r = RANGE;
+            return Heuristics.randomizedDistanceScore(owner.dst2(target), r * r);
+        }
+        return 0;
+    }
+
+    public class RamAction extends AnimatedAction {
+        private final Vector2 target;
+
+        public RamAction(Agent actor, Vector2 target) {
+            super(actor, Activity.Cast, Ram.this);
+            this.target = target;
+        }
+
+        @Override
+        public void apply(Location location) {
+            owner.addEffect(new RamEffect(owner, target));
+            InvokenGame.SOUND_MANAGER.playAtPoint(SoundEffect.BUFF, owner.getPosition());
+        }
+
+        @Override
+        public Vector2 getPosition() {
+            return owner.getPosition();
+        }
+    }
+
+    private static class RamEffect extends BasicEffect {
+        private final Vector2 force = new Vector2();
+
+        public RamEffect(Agent agent, Vector2 target) {
+            super(agent);
+            this.force.set(target).sub(agent.getPosition()).nor().scl(MAGNITUDE);
+        }
+
+        @Override
+        protected void doApply() {
+            target.toggleOn(Ram.class);
+            target.setParalyzed(true);
+
+            Damage damage = Damage.from(target, DamageType.PHYSICAL, DAMAGE);
+            target.setCollisionDelegate(new RamHandler(damage, force));
+        }
+
+        @Override
+        public void dispel() {
+            target.toggleOff(Ram.class);
+            target.setParalyzed(false);
+            target.removeCollisionDelegate();
+        }
+
+        @Override
+        public boolean isFinished() {
+            return getStateTime() > DURATION;
+        }
+
+        @Override
+        protected void update(float delta) {
+            target.applyForce(force);
+        }
+    }
+
+    private static class RamHandler implements AgentHandler {
+        private final Set<Agent> damaged = new HashSet<>();
+        private final Damage damage;
+        private final Vector2 force;
+
+        public RamHandler(Damage damage, Vector2 force) {
+            this.damage = damage;
+            this.force = force.cpy().scl(0.5f);
+        }
+
+        @Override
+        public boolean handle(Agent agent) {
+            // avoid damaging more than once
+            if (!damaged.contains(agent)) {
+                agent.damage(damage);
+                agent.applyForce(force);
+                damaged.add(agent);
+                return true;
+            }
+
+            return false;
+        }
+
+        @Override
+        public boolean handle(Object userData) {
+            if (userData instanceof Wall) {
+                return true;
+            }
+            return false;
+        }
+    }
+}

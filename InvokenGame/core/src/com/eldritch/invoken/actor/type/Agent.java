@@ -32,6 +32,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Array;
 import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.activators.Activator;
+import com.eldritch.invoken.actor.AgentHandler;
 import com.eldritch.invoken.actor.AgentInfo;
 import com.eldritch.invoken.actor.AgentInventory;
 import com.eldritch.invoken.actor.Conversable;
@@ -68,6 +69,7 @@ import com.eldritch.invoken.ui.MultiTextureRegionDrawable;
 import com.eldritch.invoken.util.Damage;
 import com.eldritch.invoken.util.Settings;
 import com.eldritch.invoken.util.SoundManager.SoundEffect;
+import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
@@ -159,6 +161,8 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     private final TargetingHandler targetingHandler = new TargetingHandler();
 
     private final Color color = new Color(1, 1, 1, 1);
+    
+    private Optional<AgentHandler> collisionDelegate = Optional.absent();
 
     public Agent(ActorParams params, boolean unique, float x, float y, float width, float height,
             Location location, Map<Activity, Map<Direction, Animation>> animations) {
@@ -182,9 +186,13 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         setPosition(x, y);
         this.animations = animations;
 
-        radius = Math.max(width, height) / 5;
+        radius = getBodyRadius();
         this.location = location;
         body = createBody(x, y, location.getWorld());
+    }
+    
+    protected float getBodyRadius() {
+        return Math.max(getWidth(), getHeight()) / 5;
     }
 
     protected void setWeaponSentry(WeaponSentry sentry) {
@@ -207,6 +215,8 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
 
         FixtureDef charFixtureDef = new FixtureDef();
         charFixtureDef.density = getDensity();
+        charFixtureDef.friction = 0.5f;
+        charFixtureDef.restitution = 0.1f;
         charFixtureDef.shape = circleShape;
         charFixtureDef.filter.groupIndex = 0;
 
@@ -224,6 +234,22 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
 
         circleShape.dispose();
         return body;
+    }
+    
+    public boolean hasCollisionDelegate() {
+        return collisionDelegate.isPresent();
+    }
+    
+    public void setCollisionDelegate(AgentHandler delegate) {
+        this.collisionDelegate = Optional.of(delegate);
+    }
+    
+    public void removeCollisionDelegate() {
+        this.collisionDelegate = Optional.absent();
+    }
+    
+    public AgentHandler getCollisionDelegate() {
+        return collisionDelegate.get();
     }
 
     public abstract void changeMaxVelocity(float delta);
