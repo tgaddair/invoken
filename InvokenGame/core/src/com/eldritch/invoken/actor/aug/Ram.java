@@ -100,10 +100,15 @@ public class Ram extends Augmentation {
 
     private static class RamEffect extends BasicEffect {
         private final Vector2 force = new Vector2();
+        private boolean cancelled = false;
 
         public RamEffect(Agent agent, Vector2 target) {
             super(agent);
             this.force.set(target).sub(agent.getPosition()).nor().scl(MAGNITUDE);
+        }
+        
+        public void cancel() {
+            this.cancelled = true;
         }
 
         @Override
@@ -112,7 +117,7 @@ public class Ram extends Augmentation {
             target.setParalyzed(true);
 
             Damage damage = Damage.from(target, DamageType.PHYSICAL, DAMAGE);
-            target.setCollisionDelegate(new RamHandler(damage, force));
+            target.setCollisionDelegate(new RamHandler(damage, force, this));
         }
 
         @Override
@@ -124,7 +129,7 @@ public class Ram extends Augmentation {
 
         @Override
         public boolean isFinished() {
-            return getStateTime() > DURATION;
+            return getStateTime() > DURATION || cancelled;
         }
 
         @Override
@@ -137,10 +142,12 @@ public class Ram extends Augmentation {
         private final Set<Agent> damaged = new HashSet<>();
         private final Damage damage;
         private final Vector2 force;
+        private final RamEffect effect;
 
-        public RamHandler(Damage damage, Vector2 force) {
+        public RamHandler(Damage damage, Vector2 force, RamEffect effect) {
             this.damage = damage;
             this.force = force.cpy().scl(0.5f);
+            this.effect = effect;
         }
 
         @Override
@@ -159,6 +166,7 @@ public class Ram extends Augmentation {
         @Override
         public boolean handle(Object userData) {
             if (userData instanceof Wall) {
+                effect.cancel();
                 return true;
             }
             return false;
