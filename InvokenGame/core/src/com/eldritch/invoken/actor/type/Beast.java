@@ -52,6 +52,8 @@ public class Beast extends Npc {
         switch (asset) {
             case "dragon":
                 return new Dragon(data, x, y, getAssetPath(asset), location);
+            case "parasite":
+                return new Parasite(data, x, y, getAssetPath(asset), location);
             default:
                 return new DefaultBeast(data, x, y, getAssetPath(asset), location);
         }
@@ -106,39 +108,40 @@ public class Beast extends Npc {
     public static class Dragon extends Beast {
         private static final int WIDTH = 600;
         private static final int HEIGHT = 360;
-        
+
         private Direction lastDirection;
         private boolean flipX;
 
         public Dragon(NonPlayerActor data, float x, float y, String asset, Location location) {
-            super(data, x, y, scale(WIDTH), scale(HEIGHT), MAX_VELOCITY, getAnimations(asset), location);
+            super(data, x, y, scale(WIDTH), scale(HEIGHT), MAX_VELOCITY, getAnimations(asset),
+                    location);
         }
-        
+
         @Override
         public float getDensity() {
             return 25f;
         }
-        
+
         @Override
         protected float getBodyRadius() {
             return 0.4f;
         }
-        
+
         @Override
         protected float getCombatWander() {
             return 0.5f;
         }
-        
+
         @Override
         public float getDefaultAcceleration() {
             return 25 * getDensity();
         }
-        
+
         @Override
         protected void draw(Batch batch, TextureRegion frame, Direction direction) {
             if (direction != lastDirection) {
                 lastDirection = direction;
-                
+
                 // only change our direction if we are explicitly facing a different x direction
                 // otherwise, keep the current horizontal heading
                 if (direction == Direction.Right) {
@@ -147,7 +150,7 @@ public class Beast extends Npc {
                     flipX = false;
                 }
             }
-            
+
             float width = getWidth();
             float height = getHeight();
             batch.draw(frame.getTexture(), position.x - width / 2, position.y - height / 2, // position
@@ -159,9 +162,9 @@ public class Beast extends Npc {
                     frame.getRegionWidth(), frame.getRegionHeight(), // srcWidth, srcHeight
                     flipX, false); // flipX, flipY
         }
-        
+
         private static float scale(float pixels) {
-            return (pixels * Settings.SCALE) / 5f; 
+            return (pixels * Settings.SCALE) / 5f;
         }
 
         private static Map<Activity, Map<Direction, Animation>> getAnimations(String assetPath) {
@@ -174,7 +177,7 @@ public class Beast extends Npc {
             animations.put(Activity.Explore, getAnimations(regions, 1));
             animations.put(Activity.Swipe, getAnimations(regions, 3));
             animations.put(Activity.Combat, getAnimations(regions, 3));
-            animations.put(Activity.Death, getAnimations(regions, 0));
+            animations.put(Activity.Death, getAnimations(regions, 0, Animation.PlayMode.NORMAL));
             return animations;
         }
 
@@ -187,6 +190,50 @@ public class Beast extends Npc {
             Map<Direction, Animation> animations = new HashMap<Direction, Animation>();
 
             // up, left, down, right
+            for (Direction d : Direction.values()) {
+                Animation anim = new Animation(0.15f, regions[offset]);
+                anim.setPlayMode(playMode);
+                animations.put(d, anim);
+            }
+
+            return animations;
+        }
+    }
+
+    public static class Parasite extends Beast {
+        private static final int PX = 20;
+
+        public Parasite(NonPlayerActor data, float x, float y, String asset, Location location) {
+            super(data, x, y, Settings.SCALE * PX, Settings.SCALE * PX, MAX_VELOCITY,
+                    getAnimations(asset), location);
+        }
+
+        private static Map<Activity, Map<Direction, Animation>> getAnimations(String assetPath) {
+            Map<Activity, Map<Direction, Animation>> animations = new HashMap<Activity, Map<Direction, Animation>>();
+
+            TextureRegion[][] moveRegions = GameScreen.getRegions(assetPath + "-move.png", 20, 20);
+            TextureRegion[][] attackRegions = GameScreen.getRegions(assetPath + "-attack.png", 20,
+                    20);
+
+            animations.put(Activity.Cast, getAnimations(attackRegions));
+            animations.put(Activity.Thrust, getAnimations(attackRegions));
+            animations.put(Activity.Explore, getAnimations(moveRegions));
+            animations.put(Activity.Swipe, getAnimations(attackRegions));
+            animations.put(Activity.Combat, getAnimations(moveRegions));
+            animations.put(Activity.Death, getAnimations(moveRegions, Animation.PlayMode.NORMAL));
+            return animations;
+        }
+
+        private static Map<Direction, Animation> getAnimations(TextureRegion[][] regions) {
+            return getAnimations(regions, Animation.PlayMode.LOOP_PINGPONG);
+        }
+
+        private static Map<Direction, Animation> getAnimations(TextureRegion[][] regions,
+                Animation.PlayMode playMode) {
+            Map<Direction, Animation> animations = new HashMap<Direction, Animation>();
+
+            // up, left, down, right
+            final int offset = 0;
             for (Direction d : Direction.values()) {
                 Animation anim = new Animation(0.15f, regions[offset]);
                 anim.setPlayMode(playMode);
