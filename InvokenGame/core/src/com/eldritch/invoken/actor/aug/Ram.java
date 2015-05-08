@@ -99,11 +99,14 @@ public class Ram extends Augmentation {
     }
 
     private static class RamEffect extends BasicEffect {
+        private final Vector2 targetPosition;
         private final Vector2 force = new Vector2();
+        private final Vector2 deltaVector = new Vector2();
         private boolean cancelled = false;
 
         public RamEffect(Agent agent, Vector2 target) {
             super(agent);
+            this.targetPosition = target;
             this.force.set(target).sub(agent.getPosition()).nor().scl(MAGNITUDE);
         }
         
@@ -134,6 +137,8 @@ public class Ram extends Augmentation {
 
         @Override
         protected void update(float delta) {
+            deltaVector.set(targetPosition).sub(target.getPosition());
+            force.rotate(force.angle(deltaVector) * delta * 5);
             target.applyForce(force);
         }
     }

@@ -5,6 +5,8 @@ import com.eldritch.invoken.actor.type.Agent;
 
 
 public class Wall implements AgentHandler {
+    private Wall() {}
+    
     @Override
     public boolean handle(Agent agent) {
         return false;
@@ -13,5 +15,13 @@ public class Wall implements AgentHandler {
     @Override
     public boolean handle(Object userData) {
         return false;
+    }
+    
+    private static class Holder {
+        private static final Wall INSTANCE = new Wall();
+    }
+
+    public static Wall getInstance() {
+        return Holder.INSTANCE;
     }
 }

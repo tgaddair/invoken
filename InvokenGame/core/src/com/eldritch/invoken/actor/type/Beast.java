@@ -121,7 +121,7 @@ public class Beast extends Npc {
         
         @Override
         protected float getBodyRadius() {
-            return 0.5f;
+            return 0.4f;
         }
         
         @Override

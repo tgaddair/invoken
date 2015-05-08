@@ -41,7 +41,7 @@ control_point {
 }
 control_point {
   id: "Room1"
-  room_id: "GenericHall"
+  room_id: "LabBig"
   follows: "Entrance"
   lock_strength: 0
   required_key: ""
