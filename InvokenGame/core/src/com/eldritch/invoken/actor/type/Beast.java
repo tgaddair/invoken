@@ -207,6 +207,11 @@ public class Beast extends Npc {
             super(data, x, y, Settings.SCALE * PX, Settings.SCALE * PX, MAX_VELOCITY,
                     getAnimations(asset), location);
         }
+        
+        @Override
+        public float getDensity() {
+            return 5f;
+        }
 
         private static Map<Activity, Map<Direction, Animation>> getAnimations(String assetPath) {
             Map<Activity, Map<Direction, Animation>> animations = new HashMap<Activity, Map<Direction, Animation>>();

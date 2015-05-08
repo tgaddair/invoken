@@ -2,14 +2,14 @@ params {
   id: "Parasite"
   name: "Parasite"
   species: BEAST
-  level: 1
+  level: 5
   skill {
     discipline: WARFARE
-    level: 5
+    level: 10
   }
   skill {
     discipline: AUTOMATA
-    level: 10
+    level: 14
   }
   skill {
     discipline: SUBTERFUGE
