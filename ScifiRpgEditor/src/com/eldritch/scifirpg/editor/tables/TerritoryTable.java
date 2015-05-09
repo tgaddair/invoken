@@ -6,6 +6,7 @@ import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -48,6 +49,7 @@ public class TerritoryTable extends IdentifiedAssetTable<Territory> {
         private final JTextField minRankField = new JTextField();
         private final JComboBox<String> credentialBox = new JComboBox<>();
         private final JTextField controlField = new JTextField("0");
+        private final JCheckBox compoundCheck = new JCheckBox();
 
         public TerritoryEditorPanel(TerritoryTable owner, JFrame frame, Optional<Territory> prev) {
             super(owner, frame, prev);
@@ -77,6 +79,9 @@ public class TerritoryTable extends IdentifiedAssetTable<Territory> {
             
             builder.append("Control:", controlField);
             builder.nextLine();
+            
+            builder.append("Compound:", compoundCheck);
+            builder.nextLine();
 
             JButton saveButton = new JButton("Save");
             saveButton.addActionListener(this);
@@ -93,6 +98,7 @@ public class TerritoryTable extends IdentifiedAssetTable<Territory> {
                     credentialBox.setSelectedItem(asset.getCredential());
                 }
                 controlField.setText(asset.getControl() + "");
+                compoundCheck.setSelected(asset.getCompound());
             }
 
             add(builder.getPanel());
@@ -107,6 +113,7 @@ public class TerritoryTable extends IdentifiedAssetTable<Territory> {
             }
             builder.setCredential((String) credentialBox.getSelectedItem());
             builder.setControl(Integer.parseInt(controlField.getText()));
+            builder.setCompound(compoundCheck.isSelected());
             return builder.build();
         }
     }

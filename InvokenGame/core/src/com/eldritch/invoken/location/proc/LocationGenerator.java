@@ -144,7 +144,8 @@ public class LocationGenerator {
         System.out.println("seed: " + seed);
         this.rand = new Random(seed);
 
-        RoomGenerator bsp = RoomGenerator.from(proto.getControlPointList(), seed);
+        RoomGenerator bsp = RoomGenerator.from(proto.getTerritoryList(),
+                proto.getControlPointList(), seed);
         NaturalVector2.init(bsp.getWidth(), bsp.getHeight());
 
         bsp.generateSegments();

@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -22,6 +23,7 @@ import com.eldritch.invoken.location.proc.RoomDecorator.RoomType;
 import com.eldritch.invoken.proto.Locations.ControlPoint;
 import com.eldritch.invoken.proto.Locations.Encounter;
 import com.eldritch.invoken.proto.Locations.Room;
+import com.eldritch.invoken.proto.Locations.Territory;
 import com.eldritch.invoken.util.Pair;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
@@ -32,11 +34,29 @@ public class RoomGenerator extends BspGenerator {
     private final List<Pair<ControlPoint, Integer>> roomCounts = new ArrayList<>();
     private final Map<Rectangle, ControlRoom> controlRooms = new LinkedHashMap<>();
     private final Map<String, List<ControlPoint>> follows = new HashMap<>();
+    private final Map<String, Compound> compounds = new HashMap<>();
 
-    public RoomGenerator(int roomCount, List<ControlPoint> points,
+    public RoomGenerator(int roomCount, List<Territory> territories, List<ControlPoint> points,
             List<Pair<ControlPoint, Integer>> roomCounts, long seed) {
         super(roomCount, seed);
         this.roomCounts.addAll(roomCounts);
+
+        // create compounds
+        for (Territory territory : territories) {
+            if (!territory.getCompound()) {
+                continue;
+            }
+
+            // allocate a rectangular region of the space for the compound, based on the amount of
+            // control required
+            int size = getSize(territory.getControl(), 100);
+            Rectangle bounds = new Rectangle( //
+                    range(0, getWidth() - size - 1), //
+                    range(0, getHeight() - size - 1), //
+                    size, size);
+            InvokenGame.logfmt("territory %s at %s", territory.getFactionId(), bounds);
+            compounds.put(territory.getFactionId(), new Compound(territory, bounds));
+        }
 
         // create following
         for (ControlPoint cp : points) {
@@ -59,6 +79,27 @@ public class RoomGenerator extends BspGenerator {
         Collections.sort(roomCounts, new Comparator<Pair<ControlPoint, Integer>>() {
             @Override
             public int compare(Pair<ControlPoint, Integer> o1, Pair<ControlPoint, Integer> o2) {
+                String fid1 = o1.first.getFactionId();
+                String fid2 = o2.first.getFactionId();
+                if (!Strings.isNullOrEmpty(fid1)) {
+                    if (!Strings.isNullOrEmpty(fid2)) {
+                        if (fid1.equals(fid2)) {
+                            if (o1.first.getAccess() != o2.first.getAccess()) {
+                                // sort by access point
+                                return o1.first.getAccess() ? -1 : 1;
+                            }
+                        } else {
+                            // sort by faction ID
+                            fid1.compareTo(fid2);
+                        }
+                    }
+
+                    // explicit factions come first
+                    return -1;
+                } else if (!Strings.isNullOrEmpty(fid2)) {
+                    return 1;
+                }
+
                 int count1 = follows.containsKey(o1.first.getId()) ? follows.get(o1.first.getId())
                         .size() : 0;
                 int count2 = follows.containsKey(o2.first.getId()) ? follows.get(o2.first.getId())
@@ -69,14 +110,50 @@ public class RoomGenerator extends BspGenerator {
 
         InvokenGame.log("Room Count: " + getRoomCount());
         CostMatrix cost = new DefaultCostMatrix();
+        LinkedList<Compound> unbuilt = new LinkedList<>(compounds.values());
         for (Pair<ControlPoint, Integer> elem : roomCounts) {
             ControlPoint cp = elem.first;
             int count = elem.second;
             for (int i = 0; i < count; i++) {
                 System.out.println("placing: " + cp.getId());
-                place(cp, cost);
+                place(cp, cost, unbuilt);
             }
         }
+    }
+
+    private Rectangle place(ControlPoint cp, CostMatrix cost, LinkedList<Compound> unbuilt) {
+        if (!Strings.isNullOrEmpty(cp.getFactionId()) && compounds.containsKey(cp.getFactionId())
+                && compounds.get(cp.getFactionId()).hasRemainingControl()) {
+            // this room must be placed within this compound
+            Compound compound = compounds.get(cp.getFactionId());
+            Rectangle room = place(cp, cost, compound.getBounds());
+            compound.addRoom(room);
+            return room;
+        } else if (cp.getValue() > 0) {
+            // this point is eligible for placing into a specific compound
+            Compound next = getNext(unbuilt);
+            if (next != null) {
+                // place the room in this compound
+                Rectangle room = place(cp, cost, next.getBounds());
+                next.addRoom(room);
+                return room;
+            }
+        }
+
+        // no value or compound, so place normally
+        return place(cp, cost, getBounds());
+    }
+
+    private Compound getNext(LinkedList<Compound> unbuilt) {
+        while (!unbuilt.isEmpty()) {
+            Compound next = unbuilt.element();
+            if (!next.hasRemainingControl()) {
+                unbuilt.remove();
+            } else {
+                return next;
+            }
+        }
+        return null;
     }
 
     @Override
@@ -114,8 +191,8 @@ public class RoomGenerator extends BspGenerator {
             if (!current.cp.getClosed()) {
                 // can connect implicitly
                 if (!connectedSample.isEmpty()) {
-                    ControlNode connection = connectedSample
-                            .get((int) (random() * connectedSample.size()));
+                    ControlNode connection = connectedSample.get((int) (random() * connectedSample
+                            .size()));
                     DigTunnel(connection.getBounds(), current.getBounds(), costs);
                 }
 
@@ -215,52 +292,53 @@ public class RoomGenerator extends BspGenerator {
             return cost;
         }
     }
-    
-    private Rectangle place(ControlPoint cp, CostMatrix cost) {
+
+    private Rectangle place(ControlPoint cp, CostMatrix cost, Rectangle bounds) {
         // first, place the room somewhere valid on the map
-        Rectangle rect = place(cp);
-        
+        Rectangle rect = place(cp, bounds);
+
         // next, place and connected to our followers
-        placeFollowers(cp, rect, cost);
+        placeFollowers(cp, rect, cost, bounds);
         return rect;
     }
-    
-    private void placeFollowers(ControlPoint cp, Rectangle origin, CostMatrix cost) {
+
+    private void placeFollowers(ControlPoint cp, Rectangle origin, CostMatrix cost, Rectangle bounds) {
         if (follows.containsKey(cp.getId())) {
             for (ControlPoint follower : follows.get(cp.getId())) {
-                Rectangle rect = place(follower, origin);
+                Rectangle rect = placeFollower(follower, origin, bounds);
                 DigTunnel(origin, rect, cost);
                 InvokenGame.log(cp.getId() + " -> " + follower.getId());
-                placeFollowers(follower, rect, cost);
+                placeFollowers(follower, rect, cost, bounds);
             }
         }
     }
 
-    private Rectangle place(ControlPoint cp, Rectangle origin, CostMatrix cost) {
-        Rectangle rect = origin == null ? place(cp) : place(cp, origin);
+    // private Rectangle placeFollowers(ControlPoint cp, Rectangle origin, CostMatrix cost,
+    // Rectangle bounds) {
+    // Rectangle rect = origin == null ? place(cp, bounds) : placeFollower(cp, origin, bounds);
+    //
+    // // following
+    // if (follows.containsKey(cp.getId())) {
+    // for (ControlPoint follower : follows.get(cp.getId())) {
+    // Rectangle rect2 = placeFollowers(follower, rect, cost, bounds);
+    // // Rectangle rect2 = place(follower, rect);
+    // DigTunnel(rect, rect2, cost);
+    // // System.out.println(rect + " -> " + rect2);
+    // InvokenGame.log(cp.getId() + " -> " + follower.getId());
+    // }
+    // }
+    //
+    // return rect;
+    // }
 
-        // following
-        if (follows.containsKey(cp.getId())) {
-            for (ControlPoint follower : follows.get(cp.getId())) {
-                Rectangle rect2 = place(follower, rect, cost);
-                // Rectangle rect2 = place(follower, rect);
-                DigTunnel(rect, rect2, cost);
-//                System.out.println(rect + " -> " + rect2);
-                InvokenGame.log(cp.getId() + " -> " + follower.getId());
-            }
-        }
-
-        return rect;
-    }
-
-    private Rectangle place(ControlPoint cp) {
+    private Rectangle place(ControlPoint cp, Rectangle bounds) {
         // InvokenGame.log("Place: " + encounter.getId());
         int count = 0;
         while (count < 1000) {
             if (cp.getRoomIdList().isEmpty()) {
                 int width = range(MinRoomSize, MaxRoomSize);
                 int height = range(MinRoomSize, MaxRoomSize);
-                Rectangle rect = PlaceRectRoom(width, height);
+                Rectangle rect = PlaceRectRoom(bounds, width, height);
                 if (rect != null) {
                     controlRooms.put(rect, new ControlRoom(cp, Room.getDefaultInstance(), rect));
                     return rect;
@@ -272,7 +350,7 @@ public class RoomGenerator extends BspGenerator {
 
                     int width = range(type);
                     int height = range(type);
-                    Rectangle rect = PlaceRectRoom(width, height);
+                    Rectangle rect = PlaceRectRoom(bounds, width, height);
                     if (rect != null) {
                         controlRooms.put(rect, new ControlRoom(cp, room, rect));
                         return rect;
@@ -297,7 +375,7 @@ public class RoomGenerator extends BspGenerator {
         return new Rectangle(x, y, width, height);
     }
 
-    private Rectangle place(ControlPoint cp, Rectangle followed) {
+    private Rectangle placeFollower(ControlPoint cp, Rectangle followed, Rectangle bounds) {
         // InvokenGame.log("Place: " + encounter.getId());
         int dx = 0;
         int dy = 0;
@@ -337,7 +415,7 @@ public class RoomGenerator extends BspGenerator {
 
         // TODO: get first available
         // throw new IllegalStateException("Unable to place: " + cp.getId());
-        return place(cp);
+        return place(cp, bounds);
     }
 
     private int range(RoomType type) {
@@ -564,7 +642,38 @@ public class RoomGenerator extends BspGenerator {
         }
     }
 
-    public static RoomGenerator from(List<ControlPoint> points, long seed) {
+    public static class Compound {
+        private final Set<Rectangle> rooms = new HashSet<>();
+        private final Territory territory;
+        private final Rectangle bounds;
+        private int control;
+
+        public Compound(Territory territory, Rectangle bounds) {
+            this.territory = territory;
+            this.bounds = bounds;
+            this.control = territory.getControl();
+        }
+
+        public Territory getTerritory() {
+            return territory;
+        }
+
+        public Rectangle getBounds() {
+            return bounds;
+        }
+
+        public void addRoom(Rectangle room) {
+            rooms.add(room);
+            control--;
+        }
+
+        public boolean hasRemainingControl() {
+            return control > 0;
+        }
+    }
+
+    public static RoomGenerator from(List<Territory> territories, List<ControlPoint> points,
+            long seed) {
         Random rand = new Random(seed);
         int total = 0;
         List<Pair<ControlPoint, Integer>> roomCounts = new ArrayList<>();
@@ -577,6 +686,6 @@ public class RoomGenerator extends BspGenerator {
             InvokenGame.log(String.format("%s [%d, %d] -> %d", cp.getId(), cp.getMin(),
                     cp.getMax(), count));
         }
-        return new RoomGenerator(total, points, roomCounts, seed);
+        return new RoomGenerator(total, territories, points, roomCounts, seed);
     }
 }

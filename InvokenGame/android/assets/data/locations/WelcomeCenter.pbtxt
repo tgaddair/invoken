@@ -228,6 +228,7 @@ territory {
   min_rank: 3
   credential: "CustomsCredentialsLevel1"
   control: 10
+  compound: true
 }
 territory {
   faction_id: "HouseEru"

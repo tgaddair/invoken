@@ -28,6 +28,7 @@ public class BspGenerator {
     private CellType[][] map;
     private final int Width;
     private final int Height;
+    private final Rectangle bounds;
     int RoomCount;
 
     public int Grid = 16;
@@ -53,14 +54,24 @@ public class BspGenerator {
         map = new CellType[width][height];
 
         RoomCount = (int) (Math.sqrt(width * height) / ROOM_SPARSITY);
+        this.bounds = new Rectangle(0, 0, getWidth(), getHeight());
     }
 
     public BspGenerator(int roomCount, long seed) {
         this.rand = new Random(seed);
         this.RoomCount = roomCount;
-        this.Width = Math.max((int) (RoomCount * ROOM_SPARSITY), 100);
+        this.Width = getSize(RoomCount, 200);
         this.Height = Width;
         map = new CellType[Width][Height];
+        this.bounds = new Rectangle(0, 0, getWidth(), getHeight());
+    }
+    
+    public Rectangle getBounds() {
+        return bounds;
+    }
+    
+    protected int getSize(int rooms, int min) {
+        return Math.max((int) (rooms * ROOM_SPARSITY), min);
     }
     
     public double random() {
@@ -108,7 +119,7 @@ public class BspGenerator {
             // if (btrial()) {
             int width = range(MinRoomSize, MaxRoomSize) + 2;
             int height = range(MinRoomSize, MaxRoomSize) + 2;
-            if (PlaceRectRoom(width, height) != null)
+            if (PlaceRectRoom(bounds, width, height) != null)
                 placed++;
             // } else {
             // if (PlaceTemplateRoom())
@@ -139,16 +150,16 @@ public class BspGenerator {
         }
     }
     
-    protected float getRandomX(int width) {
-        return range(Padding, Width - width - Padding * 2);
+    protected float getRandomX(Rectangle bounds, int width) {
+        return range(bounds.x + Padding, (bounds.x + bounds.width) - width - Padding * 2);
     }
     
-    protected float getRandomY(int height) {
-        return range(Padding, Height - height - Padding * 2);
+    protected float getRandomY(Rectangle bounds, int height) {
+        return range(bounds.y + Padding, (bounds.y + bounds.height) - height - Padding * 2);
     }
 
-    protected Rectangle PlaceRectRoom(int width, int height) {
-        Rectangle room = new Rectangle(getRandomX(width), getRandomY(height), width, height);
+    protected Rectangle PlaceRectRoom(Rectangle bounds, int width, int height) {
+        Rectangle room = new Rectangle(getRandomX(bounds, width), getRandomY(bounds, height), width, height);
         if (placeRectRoom(room)) {
             return room;
         }
@@ -368,6 +379,10 @@ public class BspGenerator {
         } else {
             return target - length + point;
         }
+    }
+    
+    protected int range(float min, float max) {
+        return range((int) min, (int) max);
     }
 
     protected int range(int min, int max) {
