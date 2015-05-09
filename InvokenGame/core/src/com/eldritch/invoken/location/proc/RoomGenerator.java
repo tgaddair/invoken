@@ -333,9 +333,9 @@ public class RoomGenerator extends BspGenerator {
             if (room != null) {
                 cost += getCost(room);
             }
-            if (compounds[x1][y1] != compounds[x2][y2]) {
+            if (compounds[x2][y2] != null && compounds[x1][y1] != compounds[x2][y2]) {
                 // heavy penalty for crossing territory
-                cost += 10000;
+                cost += 1000;
             }
             return cost;
         }
@@ -484,7 +484,8 @@ public class RoomGenerator extends BspGenerator {
                 int width = range(MinRoomSize, MaxRoomSize);
                 int height = range(MinRoomSize, MaxRoomSize);
                 Rectangle rect = randomRect(followed, dx, dy, width, height);
-                if (placeRectRoom(rect)) {
+                if (canPlace(rect, bounds)) {
+                    place(rect);
                     controlRooms.put(rect, new ControlRoom(cp, Room.getDefaultInstance(), rect));
                     return rect;
                 }
@@ -496,7 +497,8 @@ public class RoomGenerator extends BspGenerator {
                     int width = range(type);
                     int height = range(type);
                     Rectangle rect = randomRect(followed, dx, dy, width, height);
-                    if (placeRectRoom(rect)) {
+                    if (canPlace(rect, bounds)) {
+                        place(rect);
                         controlRooms.put(rect, new ControlRoom(cp, room, rect));
                         return rect;
                     }

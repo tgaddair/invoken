@@ -21,20 +21,21 @@ public class TerritoryGenerator {
     private final RoomGenerator generator;
     private final ConnectedRoomManager rooms;
     private final List<Territory> territories;
-    
-    public TerritoryGenerator(RoomGenerator generator, ConnectedRoomManager rooms, List<Territory> territories) {
+
+    public TerritoryGenerator(RoomGenerator generator, ConnectedRoomManager rooms,
+            List<Territory> territories) {
         this.generator = generator;
         this.rooms = rooms;
         this.territories = territories;
     }
-    
+
     public void claim() {
         // define a number of sectors to roughly divide the territories on opposite ends of the map
         // in general, we want to avoid placing capitals right next to one another so that one
         // territory gets immediately surrounded and subsequently swarmed by another
         int sectors = (int) Math.ceil(Math.sqrt(territories.size()));
         InvokenGame.logfmt("Sectors: %d", sectors);
-        
+
         // randomly assign capitals for every faction with territory
         int sectorX = 0;
         int sectorY = 0;
@@ -45,7 +46,7 @@ public class TerritoryGenerator {
                 GrowthRegion region = new GrowthRegion(territory, claimed);
                 Compound compound = generator.getCompound(territory);
                 List<ControlRoom> controlRooms = generator.getControlRooms(compound);
-                
+
                 // claim chambers
                 Set<ConnectedRoom> owned = new HashSet<>();
                 for (ControlRoom cr : controlRooms) {
@@ -54,12 +55,11 @@ public class TerritoryGenerator {
                     claimed.put(room, region);
                     owned.add(room);
                 }
-                
+
                 // claim hallways
                 for (ConnectedRoom room : owned) {
                     for (ConnectedRoom neighbor : room.getNeighbors()) {
                         if (!neighbor.isChamber() && allClaimed(neighbor, owned)) {
-                            System.out.println("all claimed");
                             neighbor.setFaction(territory.getFactionId());
                             claimed.put(neighbor, region);
                         }
@@ -69,7 +69,7 @@ public class TerritoryGenerator {
                 // choose a random point in the sector, find the nearest unclaimed room to act as
                 // the capital
                 InvokenGame.logfmt("Placing at sector (%d,  %d)", sectorX, sectorY);
-    
+
                 // only assign a capital of the faction has some remaining control in the area
                 int control = territory.getControl();
                 if (control > 0) {
@@ -79,13 +79,13 @@ public class TerritoryGenerator {
                         // something went wrong
                         throw new IllegalStateException("Failed to find capital");
                     }
-    
+
                     // claim the capital
                     // grow territory outwards from each capital until all control is expended
                     InvokenGame.logfmt("Claiming %s as capital for %s", capital.getCenter(),
                             territory.getFactionId());
                     regions.add(new GrowthRegion(territory, capital, claimed, rooms));
-    
+
                     // update sectors
                     sectorX++;
                     if (sectorX >= sectors) {
@@ -108,9 +108,10 @@ public class TerritoryGenerator {
             }
         }
     }
-    
+
     private boolean allClaimed(ConnectedRoom room, Set<ConnectedRoom> claimed) {
         for (ConnectedRoom neighbor : room.getNeighbors()) {
+            // if (room != neighbor && claimed.contains(neighbor)) {
             if (neighbor.isChamber() && !claimed.contains(neighbor)) {
                 return false;
             }
@@ -129,7 +130,7 @@ public class TerritoryGenerator {
                 // owned by another faction
                 continue;
             }
-            
+
             ConnectedRoom room = chamber.getValue();
             int value = cr.getControlPoint().getValue();
             if (!claimed.containsKey(room) && factionId.equals(cr.getControlPoint().getFactionId())
@@ -151,7 +152,7 @@ public class TerritoryGenerator {
                     // owned by another faction
                     continue;
                 }
-                
+
                 ConnectedRoom room = chamber.getValue();
                 if (!claimed.containsKey(room) && cr.getControlPoint().getValue() > 0) {
                     int connections = room.getNeighbors().size();
@@ -173,10 +174,10 @@ public class TerritoryGenerator {
         private final PriorityQueue<ConnectedRoom> reclaimed;
         private final Map<ConnectedRoom, GrowthRegion> claimed;
         private final Set<ConnectedRoom> visited = new HashSet<>();
-        
+
         private boolean allClaimed = false;
         private int control;
-        
+
         public GrowthRegion(Territory territory, Map<ConnectedRoom, GrowthRegion> claimed) {
             this.territory = territory;
             this.rooms = null;
@@ -225,7 +226,7 @@ public class TerritoryGenerator {
                     allClaimed = true;
                 }
             }
-            
+
             if (!bestRooms.isEmpty()) {
                 // claim the next room
                 ConnectedRoom room = bestRooms.remove();

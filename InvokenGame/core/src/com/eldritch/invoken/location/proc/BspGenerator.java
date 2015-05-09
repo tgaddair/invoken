@@ -244,47 +244,59 @@ public class BspGenerator {
     // ways of writing this
     // / </summary>
     protected void Pathfind(int x, int y, int x2, int y2, CostMatrix base) {
-        final int[][] cost = new int[Width][Height];
+        final long[][] cost = new long[Width][Height];
         cost[x][y] = CellType.Floor.cost;
 
         PriorityQueue<NaturalVector2> active = new PriorityQueue<NaturalVector2>(1,
                 new Comparator<NaturalVector2>() {
                     @Override
                     public int compare(NaturalVector2 p1, NaturalVector2 p2) {
-                        return Integer.compare(cost[p1.x][p1.y], cost[p2.x][p2.y]);
+                        return Long.compare(cost[p1.x][p1.y], cost[p2.x][p2.y]);
                     }
                 });
 
+        long bestCost = Long.MAX_VALUE;
+        
         active.add(NaturalVector2.of(x, y));
         // pathfind
-        while (true) {
+        while (!active.isEmpty()) {
             // get lowest cost point in active list
             NaturalVector2 point = active.remove();
 
             // if end point
-            if (point.x == x2 && point.y == y2)
-                break;
+            if (point.x == x2 && point.y == y2) {
+                bestCost = cost[point.x][point.y];
+                continue;
+            }
 
             // move in directions
             // cost == 0 check tells us we haven't visited this node yet
             // then we add the cost by checking the node's type in the map and adding it to the
             // cost coming from the previous node
-            int currentCost = cost[point.x][point.y];
+            long currentCost = cost[point.x][point.y];
             if (point.x - 1 >= 0 && cost[point.x - 1][point.y] == 0) {
-                cost[point.x - 1][point.y] = currentCost + map[point.x - 1][point.y].cost + base.getCost(point.x, point.y, point.x - 1, point.y);
-                active.add(NaturalVector2.of(point.x - 1, point.y));
+                cost[point.x - 1][point.y] = currentCost + map[point.x - 1][point.y].cost + base.getCost(x, y, point.x - 1, point.y);
+                if (cost[point.x - 1][point.y] < bestCost) {
+                    active.add(NaturalVector2.of(point.x - 1, point.y));
+                }
             }
             if (point.x + 1 < Width && cost[point.x + 1][point.y] == 0) {
-                cost[point.x + 1][point.y] = currentCost + map[point.x + 1][point.y].cost + base.getCost(point.x, point.y, point.x + 1, point.y);
-                active.add(NaturalVector2.of(point.x + 1, point.y));
+                cost[point.x + 1][point.y] = currentCost + map[point.x + 1][point.y].cost + base.getCost(x, y, point.x + 1, point.y);
+                if (cost[point.x + 1][point.y] < bestCost) {
+                    active.add(NaturalVector2.of(point.x + 1, point.y));
+                }
             }
             if (point.y - 1 >= 0 && cost[point.x][point.y - 1] == 0) {
-                cost[point.x][point.y - 1] = currentCost + map[point.x][point.y - 1].cost + base.getCost(point.x, point.y, point.x, point.y - 1);
-                active.add(NaturalVector2.of(point.x, point.y - 1));
+                cost[point.x][point.y - 1] = currentCost + map[point.x][point.y - 1].cost + base.getCost(x, y, point.x, point.y - 1);
+                if (cost[point.x][point.y - 1] < bestCost) {
+                    active.add(NaturalVector2.of(point.x, point.y - 1));
+                }
             }
             if (point.y + 1 < Height && cost[point.x][point.y + 1] == 0) {
-                cost[point.x][point.y + 1] = currentCost + map[point.x][point.y + 1].cost + base.getCost(point.x, point.y, point.x, point.y + 1);
-                active.add(NaturalVector2.of(point.x, point.y + 1));
+                cost[point.x][point.y + 1] = currentCost + map[point.x][point.y + 1].cost + base.getCost(x, y, point.x, point.y + 1);
+                if (cost[point.x][point.y + 1] < bestCost) {
+                    active.add(NaturalVector2.of(point.x, point.y + 1));
+                }
             }
         }
 
@@ -294,8 +306,8 @@ public class BspGenerator {
         points.add(current);
 
         while (current.x != x || current.y != y) {
-            int highest = cost[current.x][current.y];
-            int left = highest, right = highest, up = highest, down = highest;
+            long highest = cost[current.x][current.y];
+            long left = highest, right = highest, up = highest, down = highest;
 
             // get cost of each direction
             if (current.x - 1 >= 0 && cost[current.x - 1][current.y] != 0) {
@@ -401,9 +413,9 @@ public class BspGenerator {
         return rand.nextInt(max - min + 1) + min;
     }
 
-    private int min(int a, int b, int... extra) {
-        int min = Math.min(a, b);
-        for (int c : extra) {
+    private long min(long a, long b, long... extra) {
+        long min = Math.min(a, b);
+        for (long c : extra) {
             min = Math.min(min, c);
         }
         return min;
