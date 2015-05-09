@@ -159,18 +159,30 @@ public class BspGenerator {
     }
 
     protected Rectangle PlaceRectRoom(Rectangle bounds, int width, int height) {
-        Rectangle room = new Rectangle(getRandomX(bounds, width), getRandomY(bounds, height), width, height);
+        Rectangle room = getRectangle(bounds, width, height);
         if (placeRectRoom(room)) {
             return room;
         }
         return null;
     }
     
+    protected Rectangle getRectangle(Rectangle bounds, int width, int height) {
+        return new Rectangle(getRandomX(bounds, width), getRandomY(bounds, height), width, height);
+    }
+    
+    protected boolean canPlace(Rectangle room) {
+        return isClear(room);
+    }
+    
+    protected void place(Rectangle room) {
+        Rooms.add(room);
+        DigRoom(room);
+    }
+    
     protected boolean placeRectRoom(Rectangle room) {
         // check room
-        if (isClear(room)) {
-            Rooms.add(room);
-            DigRoom(room);
+        if (canPlace(room)) {
+            place(room);
             return true;
         }
         return false;

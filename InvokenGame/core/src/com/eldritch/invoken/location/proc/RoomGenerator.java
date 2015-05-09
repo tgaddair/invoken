@@ -35,6 +35,7 @@ public class RoomGenerator extends BspGenerator {
     private final Map<Rectangle, ControlRoom> controlRooms = new LinkedHashMap<>();
     private final Map<String, List<ControlPoint>> follows = new HashMap<>();
     private final Map<String, Compound> compounds = new HashMap<>();
+    private final Compound[][] compoundIndex;
 
     public RoomGenerator(int roomCount, List<Territory> territories, List<ControlPoint> points,
             List<Pair<ControlPoint, Integer>> roomCounts, long seed) {
@@ -42,6 +43,7 @@ public class RoomGenerator extends BspGenerator {
         this.roomCounts.addAll(roomCounts);
 
         // create compounds
+        this.compoundIndex = new Compound[getWidth()][getHeight()];
         for (Territory territory : territories) {
             if (!territory.getCompound()) {
                 continue;
@@ -55,7 +57,21 @@ public class RoomGenerator extends BspGenerator {
                     range(0, getHeight() - size - 1), //
                     size, size);
             InvokenGame.logfmt("territory %s at %s", territory.getFactionId(), bounds);
-            compounds.put(territory.getFactionId(), new Compound(territory, bounds));
+            
+            Compound compound = new Compound(territory, bounds);
+            compounds.put(territory.getFactionId(), compound);
+            
+            // add to index
+            int startX = (int) bounds.x;
+            int endX = (int) (bounds.x + bounds.width - 1);
+            int startY = (int) bounds.y;
+            int endY = (int) (bounds.y + bounds.height - 1);
+
+            for (int x = startX; x <= endX; x++) {
+                for (int y = startY; y <= endY; y++) {
+                    this.compoundIndex[x][y] = compound;
+                }
+            }
         }
 
         // create following
@@ -203,7 +219,7 @@ public class RoomGenerator extends BspGenerator {
         }
 
         CostMatrix costs = new EncounterCostMatrix(getWidth(), getHeight(), controlRooms.values(),
-                compounds.values());
+                compoundIndex);
         while (!unlocked.isEmpty()) {
             ControlNode current = unlocked.removeFirst();
             if (connected.contains(current)) {
@@ -215,6 +231,7 @@ public class RoomGenerator extends BspGenerator {
             connected.add(current);
             if (!current.cp.getClosed()) {
                 if (current.controlRoom.hasTerritory()) {
+                    InvokenGame.logfmt("room %s territory %s", current.cp.getId(), current.controlRoom.getTerritory().getFactionId());
                     // we use separate wells for connecting compound rooms
                     List<ControlNode> sample = compoundSample.get(current.controlRoom
                             .getTerritory().getFactionId());
@@ -227,6 +244,10 @@ public class RoomGenerator extends BspGenerator {
                 }
 
                 if (!current.controlRoom.hasTerritory() || current.cp.getAccess()) {
+                    if (current.controlRoom.hasTerritory()) {
+                        InvokenGame.logfmt("ACCESS room %s territory %s", current.cp.getId(), current.controlRoom.getTerritory().getFactionId());
+                    }
+                    
                     // can connect implicitly
                     if (!connectedSample.isEmpty()) {
                         ControlNode connection = connectedSample
@@ -279,7 +300,7 @@ public class RoomGenerator extends BspGenerator {
         private final Compound[][] compounds;
 
         public EncounterCostMatrix(int width, int height, Collection<ControlRoom> list,
-                Collection<Compound> compounds) {
+                Compound[][] compoundIndex) {
             rooms = new ControlRoom[width][height];
             for (ControlRoom room : list) {
                 Rectangle bounds = room.getBounds();
@@ -302,26 +323,7 @@ public class RoomGenerator extends BspGenerator {
                     }
                 }
             }
-
-            this.compounds = new Compound[width][height];
-            for (Compound compound : compounds) {
-                Rectangle bounds = compound.getBounds();
-
-                // boundary of the chamber, the stone border goes 1 unit out of the bounds
-                int startX = (int) bounds.x - 1;
-                int endX = (int) (bounds.x + bounds.width);
-                int startY = (int) bounds.y - 1;
-                int endY = (int) (bounds.y + bounds.height);
-
-                // the endpoints are exclusive, as a rectangle at (0, 0) with size
-                // (1, 1) should cover
-                // only rooms[0][0], not rooms[1][1]
-                for (int x = startX; x <= endX; x++) {
-                    for (int y = startY; y <= endY; y++) {
-                        this.compounds[x][y] = compound;
-                    }
-                }
-            }
+            this.compounds = compoundIndex;
         }
 
         public int getCost(int x, int y) {
@@ -403,8 +405,9 @@ public class RoomGenerator extends BspGenerator {
             if (cp.getRoomIdList().isEmpty()) {
                 int width = range(MinRoomSize, MaxRoomSize);
                 int height = range(MinRoomSize, MaxRoomSize);
-                Rectangle rect = PlaceRectRoom(bounds, width, height);
-                if (rect != null) {
+                Rectangle rect = getRectangle(bounds, width, height);
+                if (canPlace(rect, bounds)) {
+                    place(rect);
                     controlRooms.put(rect, new ControlRoom(cp, Room.getDefaultInstance(), rect));
                     return rect;
                 }
@@ -415,8 +418,9 @@ public class RoomGenerator extends BspGenerator {
 
                     int width = range(type);
                     int height = range(type);
-                    Rectangle rect = PlaceRectRoom(bounds, width, height);
-                    if (rect != null) {
+                    Rectangle rect = getRectangle(bounds, width, height);
+                    if (canPlace(rect, bounds)) {
+                        place(rect);
                         controlRooms.put(rect, new ControlRoom(cp, room, rect));
                         return rect;
                     }
@@ -427,6 +431,33 @@ public class RoomGenerator extends BspGenerator {
 
         // TODO: get first available
         throw new IllegalStateException("Unable to place: " + cp.getId());
+    }
+    
+    protected boolean canPlace(Rectangle rect, Rectangle bounds) {
+        if (canPlace(rect)) {
+            int startX = (int) bounds.x;
+            int startY = (int) bounds.y;
+            Compound c1 = compoundIndex[startX][startY];
+            if (c1 != null) {
+                // reference the same bounds pointer, so they are the same compound
+                if (bounds != c1.getBounds()) {
+                    return false;
+                }
+            }
+            
+            int endX = (int) (bounds.x + bounds.width - 1);
+            int endY = (int) (bounds.y + bounds.height - 1);
+            Compound c2 = compoundIndex[endX][endY];
+            if (c2 != null) {
+                if (bounds != c2.getBounds()) {
+                    return false;
+                }
+            }
+            
+            return true;
+        }
+        
+        return false;
     }
 
     private Rectangle randomRect(Rectangle origin, int dx, int dy, int width, int height) {
