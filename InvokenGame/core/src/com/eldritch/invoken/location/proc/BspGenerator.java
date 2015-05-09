@@ -271,19 +271,19 @@ public class BspGenerator {
             // cost coming from the previous node
             int currentCost = cost[point.x][point.y];
             if (point.x - 1 >= 0 && cost[point.x - 1][point.y] == 0) {
-                cost[point.x - 1][point.y] = currentCost + map[point.x - 1][point.y].cost + base.getCost(point.x - 1, point.y);
+                cost[point.x - 1][point.y] = currentCost + map[point.x - 1][point.y].cost + base.getCost(point.x, point.y, point.x - 1, point.y);
                 active.add(NaturalVector2.of(point.x - 1, point.y));
             }
             if (point.x + 1 < Width && cost[point.x + 1][point.y] == 0) {
-                cost[point.x + 1][point.y] = currentCost + map[point.x + 1][point.y].cost + base.getCost(point.x + 1, point.y);
+                cost[point.x + 1][point.y] = currentCost + map[point.x + 1][point.y].cost + base.getCost(point.x, point.y, point.x + 1, point.y);
                 active.add(NaturalVector2.of(point.x + 1, point.y));
             }
             if (point.y - 1 >= 0 && cost[point.x][point.y - 1] == 0) {
-                cost[point.x][point.y - 1] = currentCost + map[point.x][point.y - 1].cost + base.getCost(point.x, point.y - 1);
+                cost[point.x][point.y - 1] = currentCost + map[point.x][point.y - 1].cost + base.getCost(point.x, point.y, point.x, point.y - 1);
                 active.add(NaturalVector2.of(point.x, point.y - 1));
             }
             if (point.y + 1 < Height && cost[point.x][point.y + 1] == 0) {
-                cost[point.x][point.y + 1] = currentCost + map[point.x][point.y + 1].cost + base.getCost(point.x, point.y + 1);
+                cost[point.x][point.y + 1] = currentCost + map[point.x][point.y + 1].cost + base.getCost(point.x, point.y, point.x, point.y + 1);
                 active.add(NaturalVector2.of(point.x, point.y + 1));
             }
         }
@@ -450,12 +450,12 @@ public class BspGenerator {
     
     protected static class DefaultCostMatrix implements CostMatrix {
         @Override
-        public int getCost(int x, int y) {
+        public int getCost(int x1, int y1, int x2, int y2) {
             return 0;
         }
     }
     
     protected static interface CostMatrix {
-        int getCost(int x, int y);
+        int getCost(int x1, int y1, int x2, int y2);
     }
 }

@@ -42,6 +42,7 @@ public class TerritoryGenerator {
         List<GrowthRegion> regions = new ArrayList<>();
         for (Territory territory : territories) {
             if (generator.hasCompound(territory)) {
+                GrowthRegion region = new GrowthRegion(territory, claimed);
                 Compound compound = generator.getCompound(territory);
                 List<ControlRoom> controlRooms = generator.getControlRooms(compound);
                 
@@ -50,6 +51,7 @@ public class TerritoryGenerator {
                 for (ControlRoom cr : controlRooms) {
                     ConnectedRoom room = rooms.getConnected(cr);
                     room.setFaction(territory.getFactionId());
+                    claimed.put(room, region);
                     owned.add(room);
                 }
                 
@@ -57,7 +59,9 @@ public class TerritoryGenerator {
                 for (ConnectedRoom room : owned) {
                     for (ConnectedRoom neighbor : room.getNeighbors()) {
                         if (!neighbor.isChamber() && allClaimed(neighbor, owned)) {
-                            room.setFaction(territory.getFactionId());
+                            System.out.println("all claimed");
+                            neighbor.setFaction(territory.getFactionId());
+                            claimed.put(neighbor, region);
                         }
                     }
                 }
@@ -121,6 +125,11 @@ public class TerritoryGenerator {
         ConnectedRoom capital = null;
         for (Entry<ControlRoom, ConnectedRoom> chamber : rooms.getChambers()) {
             ControlRoom cr = chamber.getKey();
+            if (cr.hasTerritory() && !cr.getTerritory().getFactionId().equals(factionId)) {
+                // owned by another faction
+                continue;
+            }
+            
             ConnectedRoom room = chamber.getValue();
             int value = cr.getControlPoint().getValue();
             if (!claimed.containsKey(room) && factionId.equals(cr.getControlPoint().getFactionId())
@@ -138,6 +147,11 @@ public class TerritoryGenerator {
             int maxConnections = 0;
             for (Entry<ControlRoom, ConnectedRoom> chamber : rooms.getChambers()) {
                 ControlRoom cr = chamber.getKey();
+                if (cr.hasTerritory() && !cr.getTerritory().getFactionId().equals(factionId)) {
+                    // owned by another faction
+                    continue;
+                }
+                
                 ConnectedRoom room = chamber.getValue();
                 if (!claimed.containsKey(room) && cr.getControlPoint().getValue() > 0) {
                     int connections = room.getNeighbors().size();
@@ -162,6 +176,14 @@ public class TerritoryGenerator {
         
         private boolean allClaimed = false;
         private int control;
+        
+        public GrowthRegion(Territory territory, Map<ConnectedRoom, GrowthRegion> claimed) {
+            this.territory = territory;
+            this.rooms = null;
+            this.bestRooms = null;
+            this.reclaimed = null;
+            this.claimed = claimed;
+        }
 
         public GrowthRegion(Territory territory, ConnectedRoom capital,
                 Map<ConnectedRoom, GrowthRegion> claimed, ConnectedRoomManager rooms) {

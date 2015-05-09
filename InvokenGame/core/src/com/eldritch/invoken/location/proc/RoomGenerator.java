@@ -53,8 +53,8 @@ public class RoomGenerator extends BspGenerator {
             // control required
             int size = getSize(territory.getControl(), 75);
             Rectangle bounds = new Rectangle( //
-                    range(0, getWidth() - size - 1), //
-                    range(0, getHeight() - size - 1), //
+                    range(0, getWidth() - size), //
+                    range(0, getHeight() - size), //
                     size, size);
             InvokenGame.logfmt("territory %s at %s", territory.getFactionId(), bounds);
             
@@ -326,15 +326,18 @@ public class RoomGenerator extends BspGenerator {
             this.compounds = compoundIndex;
         }
 
-        public int getCost(int x, int y) {
-            ControlRoom room = rooms[x][y];
+        @Override
+        public int getCost(int x1, int y1, int x2, int y2) {
+            ControlRoom room = rooms[x2][y2];
+            int cost = 0;
             if (room != null) {
-                return getCost(room);
+                cost += getCost(room);
             }
-            if (compounds[x][y] != null) {
-                return 250;
+            if (compounds[x1][y1] != compounds[x2][y2]) {
+                // heavy penalty for crossing territory
+                cost += 10000;
             }
-            return 0;
+            return cost;
         }
 
         private static int getCost(ControlRoom room) {
