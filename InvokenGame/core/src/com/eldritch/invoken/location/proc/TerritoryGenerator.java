@@ -13,14 +13,17 @@ import java.util.Map.Entry;
 import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.location.ConnectedRoom;
 import com.eldritch.invoken.location.ConnectedRoomManager;
+import com.eldritch.invoken.location.proc.RoomGenerator.Compound;
 import com.eldritch.invoken.location.proc.RoomGenerator.ControlRoom;
 import com.eldritch.invoken.proto.Locations.Territory;
 
 public class TerritoryGenerator {
+    private final RoomGenerator generator;
     private final ConnectedRoomManager rooms;
     private final List<Territory> territories;
     
-    public TerritoryGenerator(final ConnectedRoomManager rooms, List<Territory> territories) {
+    public TerritoryGenerator(RoomGenerator generator, ConnectedRoomManager rooms, List<Territory> territories) {
+        this.generator = generator;
         this.rooms = rooms;
         this.territories = territories;
     }
@@ -38,31 +41,53 @@ public class TerritoryGenerator {
         Map<ConnectedRoom, GrowthRegion> claimed = new HashMap<>();
         List<GrowthRegion> regions = new ArrayList<>();
         for (Territory territory : territories) {
-            // choose a random point in the sector, find the nearest unclaimed room to act as
-            // the capital
-            InvokenGame.logfmt("Placing at sector (%d,  %d)", sectorX, sectorY);
-
-            // only assign a capital of the faction has some remaining control in the area
-            int control = territory.getControl();
-            if (control > 0) {
-                // choose a room with the greatest number of connections
-                ConnectedRoom capital = findCapital(territory.getFactionId(), rooms, claimed);
-                if (capital == null) {
-                    // something went wrong
-                    throw new IllegalStateException("Failed to find capital");
+            if (generator.hasCompound(territory)) {
+                Compound compound = generator.getCompound(territory);
+                List<ControlRoom> controlRooms = generator.getControlRooms(compound);
+                
+                // claim chambers
+                Set<ConnectedRoom> owned = new HashSet<>();
+                for (ControlRoom cr : controlRooms) {
+                    ConnectedRoom room = rooms.getConnected(cr);
+                    room.setFaction(territory.getFactionId());
+                    owned.add(room);
                 }
-
-                // claim the capital
-                // grow territory outwards from each capital until all control is expended
-                InvokenGame.logfmt("Claiming %s as capital for %s", capital.getCenter(),
-                        territory.getFactionId());
-                regions.add(new GrowthRegion(territory, capital, claimed, rooms));
-
-                // update sectors
-                sectorX++;
-                if (sectorX >= sectors) {
-                    sectorX = 0;
-                    sectorY++;
+                
+                // claim hallways
+                for (ConnectedRoom room : owned) {
+                    for (ConnectedRoom neighbor : room.getNeighbors()) {
+                        if (!neighbor.isChamber() && allClaimed(neighbor, owned)) {
+                            room.setFaction(territory.getFactionId());
+                        }
+                    }
+                }
+            } else {
+                // choose a random point in the sector, find the nearest unclaimed room to act as
+                // the capital
+                InvokenGame.logfmt("Placing at sector (%d,  %d)", sectorX, sectorY);
+    
+                // only assign a capital of the faction has some remaining control in the area
+                int control = territory.getControl();
+                if (control > 0) {
+                    // choose a room with the greatest number of connections
+                    ConnectedRoom capital = findCapital(territory.getFactionId(), rooms, claimed);
+                    if (capital == null) {
+                        // something went wrong
+                        throw new IllegalStateException("Failed to find capital");
+                    }
+    
+                    // claim the capital
+                    // grow territory outwards from each capital until all control is expended
+                    InvokenGame.logfmt("Claiming %s as capital for %s", capital.getCenter(),
+                            territory.getFactionId());
+                    regions.add(new GrowthRegion(territory, capital, claimed, rooms));
+    
+                    // update sectors
+                    sectorX++;
+                    if (sectorX >= sectors) {
+                        sectorX = 0;
+                        sectorY++;
+                    }
                 }
             }
         }
@@ -78,6 +103,15 @@ public class TerritoryGenerator {
                 }
             }
         }
+    }
+    
+    private boolean allClaimed(ConnectedRoom room, Set<ConnectedRoom> claimed) {
+        for (ConnectedRoom neighbor : room.getNeighbors()) {
+            if (neighbor.isChamber() && !claimed.contains(neighbor)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private static ConnectedRoom findCapital(String factionId, ConnectedRoomManager rooms,

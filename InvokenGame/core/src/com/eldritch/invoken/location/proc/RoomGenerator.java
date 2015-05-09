@@ -68,6 +68,22 @@ public class RoomGenerator extends BspGenerator {
             }
         }
     }
+    
+    public boolean hasCompound(Territory territory) {
+        return compounds.containsKey(territory.getFactionId());
+    }
+    
+    public Compound getCompound(Territory territory) {
+        return compounds.get(territory.getFactionId());
+    }
+    
+    public List<ControlRoom> getControlRooms(Compound compound) {
+        List<ControlRoom> rooms = new ArrayList<>();
+        for (Rectangle rect : compound.rooms) {
+            rooms.add(controlRooms.get(rect));
+        }
+        return rooms;
+    }
 
     public Collection<ControlRoom> getEncounterRooms() {
         return controlRooms.values();
@@ -99,7 +115,7 @@ public class RoomGenerator extends BspGenerator {
                 } else if (!Strings.isNullOrEmpty(fid2)) {
                     return 1;
                 }
-
+                
                 int count1 = follows.containsKey(o1.first.getId()) ? follows.get(o1.first.getId())
                         .size() : 0;
                 int count2 = follows.containsKey(o2.first.getId()) ? follows.get(o2.first.getId())

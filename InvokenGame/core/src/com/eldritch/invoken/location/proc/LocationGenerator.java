@@ -208,7 +208,7 @@ public class LocationGenerator {
         save(rooms.getGrid(), "connected-rooms");
 
         InvokenGame.log("Claiming Territory");
-        TerritoryGenerator territoryGen = new TerritoryGenerator(rooms, proto.getTerritoryList());
+        TerritoryGenerator territoryGen = new TerritoryGenerator(bsp, rooms, proto.getTerritoryList());
         territoryGen.claim();
 
         InvokenGame.log("Adding Furniture");
