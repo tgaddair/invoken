@@ -20,7 +20,7 @@ public class BspGenerator {
     // 2 -> lots of big halls
     // 4 -> lots of corridors
     private static final float ROOM_SPARSITY = 4.5f;
-    
+
     public static final int MinRoomSize = 7;
     public static final int MaxRoomSize = 15;
 
@@ -65,15 +65,15 @@ public class BspGenerator {
         map = new CellType[Width][Height];
         this.bounds = new Rectangle(0, 0, getWidth(), getHeight());
     }
-    
+
     public Rectangle getBounds() {
         return bounds;
     }
-    
+
     protected int getSize(int rooms, int min) {
         return Math.max((int) (rooms * ROOM_SPARSITY), min);
     }
-    
+
     public double random() {
         return rand.nextDouble();
     }
@@ -149,11 +149,11 @@ public class BspGenerator {
             InvokenGame.log(String.format("Pathfound %d/%d", count, Rooms.size()));
         }
     }
-    
+
     protected float getRandomX(Rectangle bounds, int width) {
         return range(bounds.x + Padding, (bounds.x + bounds.width) - width - Padding * 2);
     }
-    
+
     protected float getRandomY(Rectangle bounds, int height) {
         return range(bounds.y + Padding, (bounds.y + bounds.height) - height - Padding * 2);
     }
@@ -165,20 +165,20 @@ public class BspGenerator {
         }
         return null;
     }
-    
+
     protected Rectangle getRectangle(Rectangle bounds, int width, int height) {
         return new Rectangle(getRandomX(bounds, width), getRandomY(bounds, height), width, height);
     }
-    
+
     protected boolean canPlace(Rectangle room) {
         return isClear(room);
     }
-    
+
     protected void place(Rectangle room) {
         Rooms.add(room);
         DigRoom(room);
     }
-    
+
     protected boolean placeRectRoom(Rectangle room) {
         // check room
         if (canPlace(room)) {
@@ -254,11 +254,10 @@ public class BspGenerator {
                         return Long.compare(cost[p1.x][p1.y], cost[p2.x][p2.y]);
                     }
                 });
-
-        long bestCost = Long.MAX_VALUE;
-        
         active.add(NaturalVector2.of(x, y));
+
         // pathfind
+        long bestCost = Long.MAX_VALUE;
         while (!active.isEmpty()) {
             // get lowest cost point in active list
             NaturalVector2 point = active.remove();
@@ -273,31 +272,10 @@ public class BspGenerator {
             // cost == 0 check tells us we haven't visited this node yet
             // then we add the cost by checking the node's type in the map and adding it to the
             // cost coming from the previous node
-            long currentCost = cost[point.x][point.y];
-            if (point.x - 1 >= 0 && cost[point.x - 1][point.y] == 0) {
-                cost[point.x - 1][point.y] = currentCost + map[point.x - 1][point.y].cost + base.getCost(x, y, point.x - 1, point.y);
-                if (cost[point.x - 1][point.y] < bestCost) {
-                    active.add(NaturalVector2.of(point.x - 1, point.y));
-                }
-            }
-            if (point.x + 1 < Width && cost[point.x + 1][point.y] == 0) {
-                cost[point.x + 1][point.y] = currentCost + map[point.x + 1][point.y].cost + base.getCost(x, y, point.x + 1, point.y);
-                if (cost[point.x + 1][point.y] < bestCost) {
-                    active.add(NaturalVector2.of(point.x + 1, point.y));
-                }
-            }
-            if (point.y - 1 >= 0 && cost[point.x][point.y - 1] == 0) {
-                cost[point.x][point.y - 1] = currentCost + map[point.x][point.y - 1].cost + base.getCost(x, y, point.x, point.y - 1);
-                if (cost[point.x][point.y - 1] < bestCost) {
-                    active.add(NaturalVector2.of(point.x, point.y - 1));
-                }
-            }
-            if (point.y + 1 < Height && cost[point.x][point.y + 1] == 0) {
-                cost[point.x][point.y + 1] = currentCost + map[point.x][point.y + 1].cost + base.getCost(x, y, point.x, point.y + 1);
-                if (cost[point.x][point.y + 1] < bestCost) {
-                    active.add(NaturalVector2.of(point.x, point.y + 1));
-                }
-            }
+            update(point, -1, 0, cost, base, active, x, y, bestCost);
+            update(point, 1, 0, cost, base, active, x, y, bestCost);
+            update(point, 0, -1, cost, base, active, x, y, bestCost);
+            update(point, 0, 1, cost, base, active, x, y, bestCost);
         }
 
         // work backwards and find path
@@ -338,7 +316,22 @@ public class BspGenerator {
         Collections.reverse(points);
         currentPath = points;
     }
-    
+
+    private void update(NaturalVector2 point, int dx, int dy, long[][] cost, CostMatrix base,
+            PriorityQueue<NaturalVector2> active, int x, int y, long bestCost) {
+        long currentCost = cost[point.x][point.y];
+        int x2 = point.x + dx;
+        int y2 = point.y + dy;
+        if (x2 >= 0 && x2 < Width && y2 >= 0 && y2 < Height) {
+            if (cost[x2][y2] == 0) {
+                cost[x2][y2] = currentCost + map[x2][y2].cost + base.getCost(x, y, x2, y2);
+                if (cost[x2][y2] < bestCost) {
+                    active.add(NaturalVector2.of(x2, y2));
+                }
+            }
+        }
+    }
+
     protected CellType get(int x, int y) {
         return map[x][y];
     }
@@ -392,11 +385,11 @@ public class BspGenerator {
     private int choose(int a, int b) {
         return btrial() ? a : b;
     }
-    
+
     protected int rangeAround(int target, int targetLength, int length, int maxLength) {
         int min = Math.max(length + Padding - target, 0);
         int max = Math.min(maxLength - Padding - target - targetLength, 2 * length);
-//        System.out.println(String.format("[%d, %d]", min, max));
+        // System.out.println(String.format("[%d, %d]", min, max));
         int point = range(min, max);
         if (point > length) {
             return target + targetLength + point - length;
@@ -404,7 +397,7 @@ public class BspGenerator {
             return target - length + point;
         }
     }
-    
+
     protected int range(float min, float max) {
         return range((int) min, (int) max);
     }
@@ -459,14 +452,14 @@ public class BspGenerator {
             InvokenGame.error("Failed saving level image!", e);
         }
     }
-    
+
     protected static class DefaultCostMatrix implements CostMatrix {
         @Override
         public int getCost(int x1, int y1, int x2, int y2) {
             return 0;
         }
     }
-    
+
     protected static interface CostMatrix {
         int getCost(int x1, int y1, int x2, int y2);
     }
