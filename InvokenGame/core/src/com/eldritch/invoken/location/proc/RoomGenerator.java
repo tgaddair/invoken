@@ -49,7 +49,7 @@ public class RoomGenerator extends BspGenerator {
 
             // allocate a rectangular region of the space for the compound, based on the amount of
             // control required
-            int size = getSize(territory.getControl(), 100);
+            int size = getSize(territory.getControl(), 75);
             Rectangle bounds = new Rectangle( //
                     range(0, getWidth() - size - 1), //
                     range(0, getHeight() - size - 1), //
@@ -68,15 +68,15 @@ public class RoomGenerator extends BspGenerator {
             }
         }
     }
-    
+
     public boolean hasCompound(Territory territory) {
         return compounds.containsKey(territory.getFactionId());
     }
-    
+
     public Compound getCompound(Territory territory) {
         return compounds.get(territory.getFactionId());
     }
-    
+
     public List<ControlRoom> getControlRooms(Compound compound) {
         List<ControlRoom> rooms = new ArrayList<>();
         for (Rectangle rect : compound.rooms) {
@@ -115,7 +115,7 @@ public class RoomGenerator extends BspGenerator {
                 } else if (!Strings.isNullOrEmpty(fid2)) {
                     return 1;
                 }
-                
+
                 int count1 = follows.containsKey(o1.first.getId()) ? follows.get(o1.first.getId())
                         .size() : 0;
                 int count2 = follows.containsKey(o2.first.getId()) ? follows.get(o2.first.getId())
@@ -144,6 +144,7 @@ public class RoomGenerator extends BspGenerator {
             Compound compound = compounds.get(cp.getFactionId());
             Rectangle room = place(cp, cost, compound.getBounds());
             compound.addRoom(room);
+            controlRooms.get(room).setTerritory(compound.territory);
             return room;
         } else if (cp.getValue() > 0) {
             // this point is eligible for placing into a specific compound
@@ -152,6 +153,7 @@ public class RoomGenerator extends BspGenerator {
                 // place the room in this compound
                 Rectangle room = place(cp, cost, next.getBounds());
                 next.addRoom(room);
+                controlRooms.get(room).setTerritory(next.territory);
                 return room;
             }
         }
@@ -184,6 +186,12 @@ public class RoomGenerator extends BspGenerator {
         List<ControlNode> connectedSample = new ArrayList<ControlNode>(); // can connect to
         Set<ControlNode> connected = new LinkedHashSet<ControlNode>();
 
+        // draw from a separate well for connecting rooms in compounds
+        Map<String, List<ControlNode>> compoundSample = new HashMap<>();
+        for (Compound compound : compounds.values()) {
+            compoundSample.put(compound.territory.getFactionId(), new ArrayList<ControlNode>());
+        }
+
         // seed the routine so we can connect to the origin, and we connected from a child
         connections++;
         connected.add(origin);
@@ -194,7 +202,8 @@ public class RoomGenerator extends BspGenerator {
             unlocked.add(lock);
         }
 
-        CostMatrix costs = new EncounterCostMatrix(getWidth(), getHeight(), controlRooms.values());
+        CostMatrix costs = new EncounterCostMatrix(getWidth(), getHeight(), controlRooms.values(),
+                compounds.values());
         while (!unlocked.isEmpty()) {
             ControlNode current = unlocked.removeFirst();
             if (connected.contains(current)) {
@@ -205,16 +214,31 @@ public class RoomGenerator extends BspGenerator {
             connections++;
             connected.add(current);
             if (!current.cp.getClosed()) {
-                // can connect implicitly
-                if (!connectedSample.isEmpty()) {
-                    ControlNode connection = connectedSample.get((int) (random() * connectedSample
-                            .size()));
-                    DigTunnel(connection.getBounds(), current.getBounds(), costs);
+                if (current.controlRoom.hasTerritory()) {
+                    // we use separate wells for connecting compound rooms
+                    List<ControlNode> sample = compoundSample.get(current.controlRoom
+                            .getTerritory().getFactionId());
+                    if (!sample.isEmpty()) {
+                        ControlNode connection = sample.get((int) (random() * sample.size()));
+                        DigTunnel(connection.getBounds(), current.getBounds(), costs);
+                    }
+
+                    sample.add(current);
                 }
 
-                // add this node to the connected set, and maybe add its children if all its keys
-                // are also in the connected set
-                connectedSample.add(current);
+                if (!current.controlRoom.hasTerritory() || current.cp.getAccess()) {
+                    // can connect implicitly
+                    if (!connectedSample.isEmpty()) {
+                        ControlNode connection = connectedSample
+                                .get((int) (random() * connectedSample.size()));
+                        DigTunnel(connection.getBounds(), current.getBounds(), costs);
+                    }
+
+                    // add this node to the connected set, and maybe add its children if all its
+                    // keys
+                    // are also in the connected set
+                    connectedSample.add(current);
+                }
             }
 
             // unlock dependencies
@@ -252,8 +276,10 @@ public class RoomGenerator extends BspGenerator {
 
     private static class EncounterCostMatrix implements CostMatrix {
         private final ControlRoom[][] rooms;
+        private final Compound[][] compounds;
 
-        public EncounterCostMatrix(int width, int height, Collection<ControlRoom> list) {
+        public EncounterCostMatrix(int width, int height, Collection<ControlRoom> list,
+                Collection<Compound> compounds) {
             rooms = new ControlRoom[width][height];
             for (ControlRoom room : list) {
                 Rectangle bounds = room.getBounds();
@@ -276,12 +302,35 @@ public class RoomGenerator extends BspGenerator {
                     }
                 }
             }
+
+            this.compounds = new Compound[width][height];
+            for (Compound compound : compounds) {
+                Rectangle bounds = compound.getBounds();
+
+                // boundary of the chamber, the stone border goes 1 unit out of the bounds
+                int startX = (int) bounds.x - 1;
+                int endX = (int) (bounds.x + bounds.width);
+                int startY = (int) bounds.y - 1;
+                int endY = (int) (bounds.y + bounds.height);
+
+                // the endpoints are exclusive, as a rectangle at (0, 0) with size
+                // (1, 1) should cover
+                // only rooms[0][0], not rooms[1][1]
+                for (int x = startX; x <= endX; x++) {
+                    for (int y = startY; y <= endY; y++) {
+                        this.compounds[x][y] = compound;
+                    }
+                }
+            }
         }
 
         public int getCost(int x, int y) {
             ControlRoom room = rooms[x][y];
             if (room != null) {
                 return getCost(room);
+            }
+            if (compounds[x][y] != null) {
+                return 250;
             }
             return 0;
         }
@@ -538,11 +587,24 @@ public class RoomGenerator extends BspGenerator {
         private final ControlPoint cp;
         private final Room room;
         private final Rectangle bounds;
+        private Optional<Territory> territory = Optional.absent();
 
         public ControlRoom(ControlPoint cp, Room room, Rectangle bounds) {
             this.cp = cp;
             this.room = room;
             this.bounds = bounds;
+        }
+
+        public boolean hasTerritory() {
+            return territory.isPresent();
+        }
+
+        public Territory getTerritory() {
+            return territory.get();
+        }
+
+        public void setTerritory(Territory territory) {
+            this.territory = Optional.of(territory);
         }
 
         public ControlPoint getControlPoint() {
