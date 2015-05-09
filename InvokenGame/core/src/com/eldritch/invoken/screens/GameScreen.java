@@ -182,7 +182,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
             LocationGenerator generator = new LocationGenerator(gameState, data.getBiome(),
                     rand.nextLong());
             location = generator.generate(data);
-            onLoad(location, Optional.<PlayerActor>absent());
+            onLoad(location, Optional.<PlayerActor> absent());
 
             // create a new player
             player = location.createPlayer(profession);
@@ -409,7 +409,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 
                 // font.draw(batch, "Graph: " + Settings.DRAW_GRAPH, 10, getHeight() - (30 + 20 *
                 // i++));
-                 font.draw(batch, "Task: " + task, 10, getHeight() - (30 + 20 * i++));
+                font.draw(batch, "Task: " + task, 10, getHeight() - (30 + 20 * i++));
                 // font.draw(batch, "Threat: " + threat, 10, getHeight() - (30 + 20 * i++));
                 // font.draw(batch, String.format("Aiming: %s", npc.isAiming()), 10, getHeight()
                 // - (30 + 20 * i++));
@@ -424,6 +424,8 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
                         - (30 + 20 * i++));
             }
 
+            font.draw(batch, String.format("Fatigue: %.2f", info.getFatigue()), 10, getHeight()
+                    - (30 + 20 * i++));
             font.draw(batch,
                     String.format("Thermal: %.2f", info.getStatusEffect(DamageType.THERMAL)), 10,
                     getHeight() - (30 + 20 * i++));
@@ -812,7 +814,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         PlayerActor data = player.serialize();
         if (previous.isPresent()) {
             PlayerActor.Builder builder = PlayerActor.newBuilder(data);
-            
+
             PlayerActor.Builder corpseBuilder = PlayerActor.newBuilder(data);
             corpseBuilder.clearEquippedItemId();
             corpseBuilder.getParamsBuilder().clearInventoryItem();

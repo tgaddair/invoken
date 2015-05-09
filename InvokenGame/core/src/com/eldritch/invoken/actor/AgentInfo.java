@@ -52,6 +52,9 @@ public class AgentInfo {
     float maxHealth = 0;
     float energyOffset = 0;
 
+    // fatigue is a penalty to energy recharge rate that increases as you use augs
+    float fatigue = 0;
+
     int activeDefense = 0;
 
     public AgentInfo(Agent agent, NonPlayerActor params) {
@@ -133,11 +136,11 @@ public class AgentInfo {
 
         factions = new FactionManager(agent);
     }
-    
+
     public Agent getAgent() {
         return agent;
     }
-    
+
     public String getId() {
         return id;
     }
@@ -153,24 +156,24 @@ public class AgentInfo {
     public Profession getProfession() {
         return profession;
     }
-    
+
     public void levelUp(Discipline discipline) {
         level++;
         skills.get(discipline).level++;
         inventory.removeItem(Fragment.getInstance(), getFragmentRequirement(level));
-        
+
         maxHealth = getBaseHealth();
         health = getMaxHealth();
         energy = getMaxEnergy();
     }
-    
+
     public void levelUp(int level, Map<Discipline, Integer> attributes, int fragments) {
         this.level = level;
         for (Discipline d : attributes.keySet()) {
             skills.get(d).level = attributes.get(d);
         }
         inventory.removeItem(Fragment.getInstance(), fragments);
-        
+
         maxHealth = getBaseHealth();
         health = getMaxHealth();
         energy = getMaxEnergy();
@@ -239,7 +242,7 @@ public class AgentInfo {
     public void addAugmentation(Augmentation aug) {
         augmentations.addAugmentation(aug);
     }
-    
+
     public void setPreparedAugmentations(Set<Augmentation> prepared) {
         augmentations.clear();
         for (Augmentation aug : knownAugmentations) {
@@ -272,15 +275,15 @@ public class AgentInfo {
     public float getBaseHealth() {
         return getWarfare() + getLevel() * 0.05f * getWarfare();
     }
-    
+
     public void setMaxHealth(float maxHealth) {
         this.maxHealth = maxHealth;
     }
-    
+
     public float getMaxHealth() {
         return Math.min(getBaseHealth() * getStatusEffect(DamageType.THERMAL), maxHealth);
     }
-    
+
     public float getHealthPercent() {
         return health / getMaxHealth();
     }
@@ -305,26 +308,42 @@ public class AgentInfo {
         energyOffset += delta;
         energy = Math.min(energy, getMaxEnergy());
     }
-    
+
     public float getBaseEnergy() {
         return 30f + getAutomata() / 2f + getLevel() * 0.01f * getAutomata();
     }
 
     public float getMaxEnergy() {
-        return getBaseEnergy() + energyOffset;
+        return (getBaseEnergy() + energyOffset) * getStatusEffect(DamageType.VIRAL);
     }
 
     public float expend(float value) {
         float delta = Math.max(Math.min(value, energy), 0);
         energy -= delta;
+
+        // gain 1 point of fatigue for every 10 points of energy, scaled by one's automata skill
+        changeFatigue(delta / (10f * getExecuteModifier()));
+
         return delta;
     }
 
     public float restore(float value) {
-        value *= BASE_ENERGY_RATE * getStatusEffect(DamageType.VIRAL);
+        value *= BASE_ENERGY_RATE * getFatigueModifier();
         float delta = Math.max(Math.min(value, getMaxEnergy() - energy), 0);
         energy += delta;
         return delta;
+    }
+
+    public void changeFatigue(float d) {
+        fatigue = Math.max(Math.min(fatigue + d, 100f), 0f);
+    }
+
+    public float getFatigue() {
+        return fatigue;
+    }
+
+    public float getFatigueModifier() {
+        return 1f - Math.min(getFatigue() / 100f, 0.5f);
     }
 
     public float damage(float value) {
@@ -338,19 +357,19 @@ public class AgentInfo {
         health += delta;
         return delta;
     }
-    
+
     public void addStatus(DamageType damage, float magnitude) {
         if (!statusEffects.containsKey(damage)) {
             statusEffects.put(damage, 0f);
         }
         statusEffects.put(damage, statusEffects.get(damage) + magnitude);
     }
-    
+
     public float getStatusEffect(DamageType damage) {
         if (!statusEffects.containsKey(damage)) {
             return 1;
         }
-        
+
         // status effect can never more than half something's effectiveness
         float effect = Math.min(statusEffects.get(damage), 50f);
         return 1f - effect / 100f;
@@ -375,7 +394,7 @@ public class AgentInfo {
     public int getCharisma() {
         return getSkill(Discipline.CHARISMA);
     }
-    
+
     private int getSkill(Discipline d) {
         return (int) (skills.get(Discipline.WARFARE).getLevel() * skillBonus.get(d));
     }
@@ -416,11 +435,11 @@ public class AgentInfo {
     public float getAttackModifier() {
         return 0.5f + getWarfare() / 100f;
     }
-    
+
     public float getExecuteModifier() {
         return 0.5f + getAutomata() / 100f;
     }
-    
+
     public float getStealthModifier() {
         return 0.5f + getSubterfuge() / 100f;
     }
@@ -428,11 +447,11 @@ public class AgentInfo {
     public void modActiveDefense(int bonus) {
         activeDefense += bonus;
     }
-    
+
     public float getDefense(DamageType damage) {
         return getResistance(damage) + getArmorRating(damage);
     }
-    
+
     public float getArmorRating(DamageType damage) {
         float armorRating = 0;
         if (inventory.hasOutfit()) {
@@ -441,7 +460,7 @@ public class AgentInfo {
         }
         return armorRating;
     }
-    
+
     public float getResistance(DamageType damage) {
         float rating = 0;
         switch (damage) {
@@ -454,13 +473,13 @@ public class AgentInfo {
                 // at 100 warfare, we have 20 resistance naturally
                 rating += getWarfare() / 5;
         }
-        
+
         // overall level resistance
         // at level 25, we have 25 resistance naturally
         rating += getLevel();
         return rating;
     }
-    
+
     public float getDamageScale(DamageType damage) {
         return species.getDamageScale(damage);
     }

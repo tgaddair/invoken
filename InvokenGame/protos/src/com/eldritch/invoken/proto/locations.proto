@@ -34,6 +34,9 @@ message Territory {
 	optional string credential = 3;  // allows wandering the premises
 
 	optional int32 control = 4;
+
+	// a compound is contiguous and only connects to other territories through key 'access' points
+	optional bool compound = 5 [default = false];
 }
 
 message ControlPoint {
@@ -49,6 +52,7 @@ message ControlPoint {
 
 	optional bool origin = 7 [default = false];
 	optional bool closed = 11 [default = false];
+	optional bool access = 13 [default = false];
 
 	optional int32 min = 8 [default = 1];
 	optional int32 max = 9 [default = 1];
