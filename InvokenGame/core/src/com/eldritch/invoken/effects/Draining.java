@@ -8,6 +8,7 @@ import com.eldritch.invoken.util.Damage;
 public class Draining extends AnimatedEffect {
     private final Damage damage;
 	private final float duration;
+	private boolean cancelled = false;
 	
 	/**
 	 * @param actor caster, the one to be healed
@@ -21,10 +22,14 @@ public class Draining extends AnimatedEffect {
 		this.damage = damage;
 		this.duration = duration;
 	}
+	
+	public void cancel() {
+	    this.cancelled = true;
+	}
 
 	@Override
 	public boolean isFinished() {
-		return getStateTime() > duration;
+		return getStateTime() > duration || cancelled;
 	}
 
 	@Override

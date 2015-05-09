@@ -9,7 +9,10 @@ import com.eldritch.invoken.actor.AgentHandler;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.effects.BasicEffect;
+import com.eldritch.invoken.effects.Draining;
 import com.eldritch.invoken.location.Location;
+import com.eldritch.invoken.proto.Effects.DamageType;
+import com.eldritch.invoken.util.Damage;
 import com.eldritch.invoken.util.Heuristics;
 import com.eldritch.invoken.util.SoundManager.SoundEffect;
 
@@ -91,6 +94,7 @@ public class Leech extends Augmentation {
     private static class LeechEffect extends BasicEffect {
         private final LeechHandler handler;
         private Joint joint = null;
+        private Draining draining = null;
         private boolean cancelled = false;
 
         public LeechEffect(Agent agent) {
@@ -126,6 +130,11 @@ public class Leech extends Augmentation {
                 if (joint == null) {
                     // weld the entities
                     weld(handler.victim);
+                    
+                    // start draining until detachment
+                    Damage damage = Damage.from(target, DamageType.VIRAL, getBaseDamage(target));
+                    this.draining = new Draining(handler.victim, damage, DURATION);
+                    handler.victim.addEffect(draining);
                 } else {
                     // check that the weld condition still holds
                     if (handler.victim.getBody().getLinearVelocity().len2() > MIN_V2) {
@@ -156,6 +165,7 @@ public class Leech extends Augmentation {
         private void unweld() {
             if (joint != null) {
                 target.getLocation().getWorld().destroyJoint(joint);
+                draining.cancel();
             }
         }
     }
@@ -177,5 +187,9 @@ public class Leech extends Augmentation {
         public boolean handle(Object userData) {
             return false;
         }
+    }
+    
+    private static int getBaseDamage(Agent owner) {
+        return (int) (DAMAGE * owner.getInfo().getExecuteModifier());
     }
 }
