@@ -74,7 +74,7 @@ public class Minimap {
         texture = new Texture(pixmap);
     }
     
-    public void render(Player player, Batch batch, int width, int height) {
+    public void update(Player player) {
         if (player.getNaturalPosition() != lastPosition) {
             if (lastPosition != null) {
                 // resets the old color
@@ -93,7 +93,9 @@ public class Minimap {
             pixmap.drawPixel(lastPosition.x, pixmap.getHeight() - lastPosition.y - 1, 0xFFFFFFFF);
             texture = new Texture(pixmap);
         }
-        
+    }
+    
+    public void render(Batch batch, int width, int height) {
         // divide screen into fifths
         // we draw to the 2nd through 4th slices
         int length = 3 * height / 5;

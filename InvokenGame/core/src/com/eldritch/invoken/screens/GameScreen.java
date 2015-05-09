@@ -280,6 +280,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         for (HudElement element : hud) {
             element.update(delta, location);
         }
+        minimap.update(location.getPlayer());
 
         // draw our toast
         toaster.update(delta);
@@ -303,7 +304,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         dialogue.draw(batch);
         // draw minimap
         if (showMinimap) {
-            minimap.render(location.getPlayer(), batch, getWidth(), getHeight());
+            minimap.render(batch, getWidth(), getHeight());
         }
         batch.end();
 
