@@ -3,7 +3,6 @@ package com.eldritch.invoken.actor;
 import java.util.Collection;
 import java.util.EnumMap;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -308,7 +307,7 @@ public class AgentInfo {
     }
     
     public float getBaseEnergy() {
-        return 10f + getAutomata() / 2f + getLevel() * 0.01f * getAutomata();
+        return 30f + getAutomata() / 2f + getLevel() * 0.01f * getAutomata();
     }
 
     public float getMaxEnergy() {

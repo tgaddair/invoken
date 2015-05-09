@@ -71,11 +71,8 @@ public class Ram extends Augmentation {
             return 0;
         }
 
-        if (owner.getInventory().hasMeleeWeapon()) {
-            float r = RANGE;
-            return Heuristics.randomizedDistanceScore(owner.dst2(target), r * r);
-        }
-        return 0;
+        float r = RANGE;
+        return Heuristics.randomizedDistanceScore(owner.dst2(target), r * r);
     }
 
     public class RamAction extends AnimatedAction {

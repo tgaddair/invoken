@@ -10,6 +10,7 @@ import com.eldritch.invoken.effects.Bleed;
 import com.eldritch.invoken.location.Location;
 import com.eldritch.invoken.proto.Effects.DamageType;
 import com.eldritch.invoken.util.Damage;
+import com.eldritch.invoken.util.Heuristics;
 import com.eldritch.invoken.util.SoundManager.SoundEffect;
 
 public class RendWeapon extends Augmentation {
@@ -57,7 +58,8 @@ public class RendWeapon extends Augmentation {
         }
 
         MeleeWeapon weapon = owner.getInventory().getMeleeWeapon();
-        return owner.dst2(target) <= weapon.getRange() ? 1 : 0;
+        return owner.dst2(target) <= weapon.getRange() ? Heuristics.randomizedDistanceScore(
+                owner.dst2(target), weapon.getRange()) : 0;
     }
 
     public class RendAction extends AnimatedAction {
