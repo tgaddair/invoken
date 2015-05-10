@@ -265,7 +265,6 @@ public class LocationMap extends TiledMap {
             LightDescription light = lights.get(i);
             if (i < inanimates.size()) {
                 // attach to an entity
-                System.out.println("attach!");
                 InanimateEntity entity = inanimates.get(i);
                 entity.addLight(light);
             } else {
