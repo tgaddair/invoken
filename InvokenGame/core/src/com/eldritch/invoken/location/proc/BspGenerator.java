@@ -65,7 +65,7 @@ public class BspGenerator {
         map = new CellType[Width][Height];
         this.bounds = new Rectangle(0, 0, getWidth(), getHeight());
     }
-    
+
     public CellType getType(int x, int y) {
         return map[x][y];
     }
@@ -230,9 +230,16 @@ public class BspGenerator {
 
     protected void DigTunnel(Rectangle prev, Rectangle next, CostMatrix base) {
         // pathfind from the center of the previous room to the center of the next room
-        Pathfind((int) (prev.x + prev.width / 2), (int) (prev.y + prev.height / 2),
-                (int) (next.x + next.width / 2), (int) (next.y + next.height / 2), base);
+        int x1 = (int) (prev.x + prev.width / 2);
+        int y1 = (int) (prev.y + prev.height / 2);
+        int x2 = (int) (next.x + next.width / 2);
+        int y2 = (int) (next.y + next.height / 2);
+        
+        Pathfind(x1, y1, x2, y2, base);
+        addPath(x1, y1, x2, y2, currentPath);
+    }
 
+    protected void addPath(int x, int y, int x2, int y2, List<NaturalVector2> currentPath) {
         // dig out the tunnel we just found
         // int size = choose(1, 2);
         int size = 2;

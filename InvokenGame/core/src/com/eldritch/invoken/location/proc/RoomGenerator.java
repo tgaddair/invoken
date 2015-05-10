@@ -19,6 +19,7 @@ import java.util.TreeSet;
 import com.badlogic.gdx.math.Rectangle;
 import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.location.ConnectedRoomManager;
+import com.eldritch.invoken.location.NaturalVector2;
 import com.eldritch.invoken.location.proc.RoomDecorator.RoomType;
 import com.eldritch.invoken.proto.Locations.ControlPoint;
 import com.eldritch.invoken.proto.Locations.Encounter;
@@ -36,6 +37,7 @@ public class RoomGenerator extends BspGenerator {
     private final Map<String, List<ControlPoint>> follows = new HashMap<>();
     private final Map<String, Compound> compounds = new HashMap<>();
     private final Compound[][] compoundIndex;
+    private final CompoundPair[][] compoundPairs;
 
     public RoomGenerator(int roomCount, List<Territory> territories, List<ControlPoint> points,
             List<Pair<ControlPoint, Integer>> roomCounts, long seed) {
@@ -73,6 +75,7 @@ public class RoomGenerator extends BspGenerator {
                 }
             }
         }
+        this.compoundPairs = new CompoundPair[getWidth()][getHeight()];
 
         // create following
         for (ControlPoint cp : points) {
@@ -352,10 +355,19 @@ public class RoomGenerator extends BspGenerator {
                 // heavy penalty for crossing territory
                 cost *= 10;
                 cost += 1000;
+                
+                if (compoundPairs[x2][y2] != null) {
+                    CompoundPair cp = compoundPairs[x2][y2];
+                    if (cp.c1 != compounds[x1][y1] || cp.c2 != compounds[x2][y2]) {
+                        // crossing a hall that connects different territory types, which we really
+                        // want to avoid
+                        cost += 2000;
+                    }
+                }
 
                 // when crossing territory, it's actually more expensive to touch floor tiles
                 if (compounds[x2][y2] != null && getType(x2, y2) != CellType.Wall) {
-                    cost += 500;
+//                    cost += 500;
                 }
             }
             return cost;
@@ -381,6 +393,28 @@ public class RoomGenerator extends BspGenerator {
             }
 
             return cost;
+        }
+    }
+    
+    @Override
+    protected void addPath(int x, int y, int x2, int y2, List<NaturalVector2> path) {
+        super.addPath(x, y, x2, y2, path);
+        for (NaturalVector2 point : path) {
+            compoundPairs[point.x][point.y] = new CompoundPair(x, y, x2, y2);
+        }
+    }
+    
+    private class CompoundPair {
+        final Compound c1;
+        final Compound c2;
+        
+        public CompoundPair(int x1, int y1, int x2, int y2) {
+            this(compoundIndex[x1][y1], compoundIndex[x2][y2]);
+        }
+        
+        public CompoundPair(Compound c1, Compound c2) {
+            this.c1 = c1;
+            this.c2 = c2;
         }
     }
 
