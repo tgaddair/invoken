@@ -6,7 +6,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.maps.MapLayer;
+import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
@@ -216,7 +218,7 @@ public class LocationMap extends TiledMap {
 
             if (layer.getName().startsWith(Constants.LIGHTS)) {
                 // add lights separately
-                lights.add(new LightDescription(getBounds(layer)));
+                lights.add(new LightDescription(getBounds(layer), getColor(layer)));
                 continue;
             }
 
@@ -297,5 +299,15 @@ public class LocationMap extends TiledMap {
         }
 
         return new Rectangle(startX, startY, endX - startX + 1, endY - startY + 1);
+    }
+    
+    private static Color getColor(TiledMapTileLayer layer) {
+        MapProperties props = layer.getProperties();
+        Color color = new Color();
+        color.r = props.containsKey("r") ? Float.parseFloat((String) props.get("r")) : 1;
+        color.g = props.containsKey("g") ? Float.parseFloat((String) props.get("g")) : 1;
+        color.b = props.containsKey("b") ? Float.parseFloat((String) props.get("b")) : 1;
+        color.a = props.containsKey("a") ? Float.parseFloat((String) props.get("a")) : 1;
+        return color;
     }
 }

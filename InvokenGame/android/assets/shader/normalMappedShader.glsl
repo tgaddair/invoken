@@ -19,10 +19,11 @@ uniform sampler2D u_overlay;   //overlay map
 //values used for shading algorithm...
 uniform vec2 Resolution;         //resolution of screen
 uniform vec3 LightPos;           //light position, normalized
-uniform LOWP vec4 LightColor;    //light RGBA -- alpha is intensity
+//uniform LOWP vec4 LightColor;    //light RGBA -- alpha is intensity
 uniform LOWP vec4 AmbientColor;  //ambient RGBA -- alpha is intensity 
 uniform vec3 Falloff;            //attenuation coefficients
 uniform vec3 lightGeometry[64];
+uniform vec4 lightColors[64];
 uniform int lightCount;
 uniform bool useNormal;
 
@@ -51,6 +52,7 @@ void main() {
      vec3 light = lightGeometry[i];
      vec2 lightCoord = light.xy / Resolution.xy;
      float radius = light.z;
+     vec4 lightColor = lightColors[i];
 
      // the delta position of light
      vec3 LightDir = vec3(lightCoord - globalCoord, LightPos.z);
@@ -67,7 +69,7 @@ void main() {
        
        // pre-multiply light color with intensity
        // then perform \"N dot L\" to determine our diffuse term
-       vec3 Diffuse = (LightColor.rgb * LightColor.a) * max(dot(N, L), 0.0);
+       vec3 Diffuse = (lightColor.rgb * lightColor.a) * max(dot(N, L), 0.0);
        
        // calculate attenuation
        float r = radius / 5.0;

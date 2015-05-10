@@ -1,5 +1,6 @@
 package com.eldritch.invoken.gfx;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.MathUtils;
@@ -9,6 +10,7 @@ import com.eldritch.invoken.actor.util.Locatable;
 
 public abstract class Light {
     private final float magnitude;
+    private final Color color;
     private boolean oscillate;
     private Texture light;
     private float zAngle;
@@ -16,7 +18,19 @@ public abstract class Light {
     public Light(float magnitude, boolean oscillate) {
         this.magnitude = magnitude;
         this.oscillate = oscillate;
+        this.color = new Color(0.9f, 0.4f, 0.2f, 1f);
         light = new Texture("light/light3.png");
+    }
+    
+    public Light(LightDescription description) {
+        this.magnitude = description.getMagnitude();
+        this.oscillate = description.getOscillate();
+        this.color = description.getColor();
+        light = new Texture("light/light3.png");
+    }
+    
+    public Color getColor() {
+        return color;
     }
     
     public void update(float zAngle) {
@@ -83,11 +97,13 @@ public abstract class Light {
     
     public static class LightDescription {
         private final Rectangle bounds;
+        private final Color color;
         private final float magnitude;
         private final boolean oscillate = false;
         
-        public LightDescription(Rectangle bounds) {
+        public LightDescription(Rectangle bounds, Color color) {
             this.bounds = bounds;
+            this.color = color;
             this.magnitude = 3;
         }
         
@@ -101,6 +117,10 @@ public abstract class Light {
         
         public Rectangle getBounds() {
             return bounds;
+        }
+        
+        public Color getColor() {
+            return color;
         }
     }
 }

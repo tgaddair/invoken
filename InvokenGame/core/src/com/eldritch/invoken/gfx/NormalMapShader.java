@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Pixmap.Format;
@@ -63,6 +64,7 @@ public class NormalMapShader {
     
     private final List<Light> visibleLights = new ArrayList<Light>();
     private float[] values;
+    private float[] colors;
 
     ShaderProgram shader;
     SpriteBatch batch;
@@ -89,13 +91,14 @@ public class NormalMapShader {
         shader.setUniformi("u_overlay", 3); // GL_TEXTURE2
         
         shader.setUniform3fv("lightGeometry", new float[] {}, 0, 0);
+        shader.setUniform3fv("lightColors", new float[] {}, 0, 0);
         shader.setUniformi("lightCount", 0);
         shader.setUniformi("useNormal", 0);
 
         // light/ambient colors
         // LibGDX doesn't have Vector4 class at the moment, so we pass them individually...
-        shader.setUniformf("LightColor", LIGHT_COLOR.x, LIGHT_COLOR.y, LIGHT_COLOR.z,
-                LIGHT_INTENSITY);
+        //shader.setUniformf("LightColor", LIGHT_COLOR.x, LIGHT_COLOR.y, LIGHT_COLOR.z,
+        //        LIGHT_INTENSITY);
         shader.setUniformf("AmbientColor", AMBIENT_COLOR.x, AMBIENT_COLOR.y, AMBIENT_COLOR.z,
                 AMBIENT_INTENSITY);
         shader.setUniformf("Falloff", FALLOFF);
@@ -136,6 +139,7 @@ public class NormalMapShader {
         }
 //        System.out.println("visible lights: " + visibleLights.size());
         values = new float[(visibleLights.size() + 1) * 3];
+        colors = new float[(visibleLights.size() + 1) * 4];
     }
     
     private void updateLightGeometry(OrthographicCamera camera, Player player) {
@@ -146,14 +150,26 @@ public class NormalMapShader {
             values[i * 3 + 0] = screen.x;
             values[i * 3 + 1] = screen.y;
             values[i * 3 + 2] = light.getRadius();
+            
+            Color color = light.getColor();
+            colors[i * 4 + 0] = color.r;
+            colors[i * 4 + 1] = color.g;
+            colors[i * 4 + 2] = color.b;
+            colors[i * 4 + 3] = DEFAULT_LIGHT_INTENSITY;
         }
         
         values[visibleLights.size() * 3 + 0] = LIGHT_POS.x;
         values[visibleLights.size() * 3 + 1] = LIGHT_POS.y;
         values[visibleLights.size() * 3 + 2] = player.hasLightOn() ? 3 : 0;
         
+        colors[visibleLights.size() * 4 + 0] = 1;
+        colors[visibleLights.size() * 4 + 1] = 1;
+        colors[visibleLights.size() * 4 + 2] = 1;
+        colors[visibleLights.size() * 4 + 3] = DEFAULT_LIGHT_INTENSITY;
+        
         shader.begin();
         shader.setUniform3fv("lightGeometry", values, 0, values.length);
+        shader.setUniform4fv("lightColors", colors, 0, colors.length);
         shader.setUniformi("lightCount", visibleLights.size() + 1);
         shader.end();
     }
