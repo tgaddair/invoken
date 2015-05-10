@@ -6,10 +6,51 @@ import java.util.Map;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.actor.type.Agent.Direction;
+import com.eldritch.invoken.screens.GameScreen;
 
 public class AnimationUtils {
+    public final static int HUMAN_PX = 64;
+
     private AnimationUtils() {
+    }
+
+    public static Map<Activity, Map<Direction, Animation>> getHumanAnimations(String assetName) {
+        Map<Activity, Map<Direction, Animation>> animations = new HashMap<Activity, Map<Direction, Animation>>();
+        TextureRegion[][] regions = GameScreen.getRegions(assetName, HUMAN_PX, HUMAN_PX);
+
+        // cast
+        int offset = 0;
+        animations.put(Activity.Cast, AnimationBuilder.from(regions).setOffset(offset).setEndX(7)
+                .build());
+
+        // thrust
+        offset += Direction.values().length;
+        animations.put(Activity.Thrust, AnimationBuilder.from(regions).setOffset(offset).setEndX(8)
+                .build());
+
+        // walk
+        offset += Direction.values().length;
+        animations.put(Activity.Explore, AnimationBuilder.from(regions).setOffset(offset).setX(1)
+                .setEndX(9).setPlayMode(Animation.PlayMode.LOOP).build());
+
+        // swipe
+        offset += Direction.values().length;
+        animations.put(Activity.Swipe, AnimationBuilder.from(regions).setOffset(offset).setEndX(6)
+                .build());
+
+        // shoot
+        offset += Direction.values().length;
+        animations.put(Activity.Combat, AnimationBuilder.from(regions).setOffset(offset)
+                .setEndX(13).build());
+
+        // hurt
+        offset += Direction.values().length;
+        animations.put(Activity.Death, AnimationBuilder.from(regions).setOffset(offset).setEndX(6)
+                .setExplicitDirections(false).setPlayMode(Animation.PlayMode.NORMAL).build());
+
+        return animations;
     }
 
     public static Map<Direction, Animation> getFixedAnimation(TextureRegion[][] regions) {
@@ -71,7 +112,7 @@ public class AnimationUtils {
         }
         return directions;
     }
-    
+
     public static class AnimationBuilder {
         private final TextureRegion[][] regions;
         private int offset = 0;
@@ -79,12 +120,12 @@ public class AnimationUtils {
         private int endX;
         private Animation.PlayMode playMode = Animation.PlayMode.LOOP_PINGPONG;
         private boolean explicitDirections = true;
-        
+
         private AnimationBuilder(TextureRegion[][] regions) {
             this.regions = regions;
             endX = regions[0].length;
         }
-        
+
         public int getOffset() {
             return offset;
         }
@@ -142,7 +183,7 @@ public class AnimationUtils {
                 if (x > 0 || endX < textures.length) {
                     textures = Arrays.copyOfRange(textures, x, endX);
                 }
-                
+
                 Animation anim = new Animation(Settings.FRAME_DURATION, textures);
                 anim.setPlayMode(playMode);
                 directions.put(d, anim);
@@ -152,7 +193,7 @@ public class AnimationUtils {
             }
             return directions;
         }
-        
+
         public static AnimationBuilder from(TextureRegion[][] regions) {
             return new AnimationBuilder(regions);
         }

@@ -16,6 +16,7 @@ import com.eldritch.invoken.actor.util.ThreatMonitor;
 import com.eldritch.invoken.location.Location;
 import com.eldritch.invoken.proto.Actors.PlayerActor;
 import com.eldritch.invoken.state.Inventory.ItemState;
+import com.eldritch.invoken.util.AnimationUtils;
 import com.eldritch.invoken.util.Settings;
 import com.eldritch.invoken.util.SoundManager.SoundEffect;
 import com.google.common.base.Optional;
@@ -37,16 +38,16 @@ public class Player extends SteeringAgent {
 
     public Player(Profession profession, int level, float x, float y, Location location, String body) {
         super(x, y, Human.getWidth(), Human.getHeight(), Human.MAX_VELOCITY, profession, level,
-                location, Human.getAllAnimations(body));
+                location, AnimationUtils.getHumanAnimations(body));
         this.threat = new ThreatMonitor<Player>(this);
         this.bodyType = body;
-        this.priorState = Optional.<PlayerActor>absent();
+        this.priorState = Optional.<PlayerActor> absent();
     }
 
     public Player(PlayerActor data, float x, float y, Location location) {
         super(data.getParams(), true, x, y, Human.getWidth(), Human.getHeight(),
-                Human.MAX_VELOCITY, location, Human
-                        .getAllAnimations(data.getParams().getBodyType()));
+                Human.MAX_VELOCITY, location, AnimationUtils.getHumanAnimations(data.getParams()
+                        .getBodyType()));
 
         // equip items
         Set<String> equipped = new HashSet<String>(data.getEquippedItemIdList());
@@ -62,7 +63,7 @@ public class Player extends SteeringAgent {
 
         this.threat = new ThreatMonitor<Player>(this);
         this.bodyType = data.getParams().getBodyType();
-        
+
         // restore prior state
         this.priorState = Optional.of(data);
         for (String dialogue : data.getUniqueDialogueList()) {
@@ -280,13 +281,13 @@ public class Player extends SteeringAgent {
         if (inventory.hasRangedWeapon()) {
             builder.addEquippedItemId(inventory.getRangedWeapon().getId());
         }
-        
+
         // carry over previous state
         if (priorState.isPresent()) {
             PlayerActor prior = priorState.get();
             builder.addAllVisitedRooms(prior.getVisitedRoomsList());
         }
-        
+
         // state markers
         builder.addAllUniqueDialogue(getUniqueDialogue());
 

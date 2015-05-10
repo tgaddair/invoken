@@ -1,6 +1,5 @@
 package com.eldritch.invoken.actor.type;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -9,7 +8,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.actor.type.Agent.Direction;
 import com.eldritch.invoken.screens.GameScreen;
-import com.eldritch.invoken.util.Settings;
+import com.eldritch.invoken.util.AnimationUtils;
 
 public class Human {
     public static float MAX_VELOCITY = 8f;
@@ -35,7 +34,7 @@ public class Human {
     }
     
     public static Map<Activity, Map<Direction, Animation>> getDefaultAnimations() {
-        return getAllAnimations("sprite/characters/light-blue-hair.png");
+        return AnimationUtils.getHumanAnimations("sprite/characters/light-blue-hair.png");
     }
     
     public static Map<Direction, Animation> getAnimations(String assetName) {
@@ -54,59 +53,6 @@ public class Human {
         }
 
         return animations;
-    }
-
-    public static Map<Activity, Map<Direction, Animation>> getAllAnimations(String assetName) {
-        Map<Activity, Map<Direction, Animation>> animations = new HashMap<Activity, Map<Direction, Animation>>();
-        TextureRegion[][] regions = GameScreen.getRegions(assetName, PX, PX);
-
-        // cast
-        int offset = 0;
-        animations.put(Activity.Cast, getAnimations(regions, 7, offset));
-
-        // thrust
-        offset += Direction.values().length;
-        animations.put(Activity.Thrust, getAnimations(regions, 8, offset));
-
-        // walk
-        offset += Direction.values().length;
-        animations.put(Activity.Explore, getAnimations(regions, 9, offset));
-
-        // swipe
-        offset += Direction.values().length;
-        animations.put(Activity.Swipe, getAnimations(regions, 6, offset));
-
-        // shoot
-        offset += Direction.values().length;
-        animations.put(Activity.Combat, getAnimations(regions, 13, offset));
-
-        // hurt
-        offset += Direction.values().length;
-        animations.put(Activity.Death,
-                getAnimations(regions, 6, offset, false, Animation.PlayMode.NORMAL));
-
-        return animations;
-    }
-
-    private static Map<Direction, Animation> getAnimations(TextureRegion[][] regions, int length,
-            int offset) {
-        return getAnimations(regions, length, offset, true, Animation.PlayMode.LOOP);
-    }
-
-    private static Map<Direction, Animation> getAnimations(TextureRegion[][] regions, int length,
-            int offset, boolean increment, Animation.PlayMode playMode) {
-        int index = offset;
-        Map<Direction, Animation> directions = new HashMap<Direction, Animation>();
-        for (Direction d : Direction.values()) {
-            TextureRegion[] textures = Arrays.copyOfRange(regions[index], 0, length);
-            Animation anim = new Animation(Settings.FRAME_DURATION, textures);
-            anim.setPlayMode(playMode);
-            directions.put(d, anim);
-            if (increment) {
-                index++;
-            }
-        }
-        return directions;
     }
     
     private Human() {}

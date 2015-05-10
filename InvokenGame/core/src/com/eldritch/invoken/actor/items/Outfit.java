@@ -10,6 +10,7 @@ import com.eldritch.invoken.actor.type.Agent.Direction;
 import com.eldritch.invoken.actor.type.Human;
 import com.eldritch.invoken.proto.Effects.DamageType;
 import com.eldritch.invoken.proto.Items.Item.DamageMod;
+import com.eldritch.invoken.util.AnimationUtils;
 
 public class Outfit extends Item {
     private final Map<DamageType, Integer> resistance = new HashMap<>();
@@ -18,7 +19,7 @@ public class Outfit extends Item {
 
     public Outfit(com.eldritch.invoken.proto.Items.Item item) {
         super(item, Human.PX);
-        animations = Human.getAllAnimations(getAssetPath(item.getAsset()));
+        animations = AnimationUtils.getHumanAnimations(getAssetPath(item.getAsset()));
         
         float damageSum = 0;
         for (DamageMod mod : item.getDamageModifierList()) {
