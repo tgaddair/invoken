@@ -1,0 +1,19 @@
+id: "HiddenPistol"
+name: "Hidden Pistol"
+description: ""
+value: 10
+droppable: false
+requirement {
+  discipline: WARFARE
+  value: 10
+}
+hidden: true
+damage_modifier {
+  damage: PHYSICAL
+  magnitude: 20
+}
+type: RANGED_WEAPON
+asset: ""
+covers: false
+cooldown: 1.0
+ranged_type: PISTOL

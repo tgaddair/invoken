@@ -6,6 +6,7 @@ import java.util.Map;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.actor.type.Agent.Direction;
 import com.eldritch.invoken.actor.type.Beast.Crawler;
@@ -24,8 +25,8 @@ import com.google.common.base.Strings;
 public class Automaton extends Npc {
     public static float MAX_VELOCITY = 4f;
 
-    public Automaton(NonPlayerActor data, float x, float y, float width, float height, float velocity,
-            Map<Activity, Map<Direction, Animation>> animations, Location location) {
+    public Automaton(NonPlayerActor data, float x, float y, float width, float height,
+            float velocity, Map<Activity, Map<Direction, Animation>> animations, Location location) {
         super(data, x, y, width, height, velocity, animations, location);
     }
 
@@ -63,7 +64,7 @@ public class Automaton extends Npc {
         // automatons do not see visible light, but other spectra
         return hasLineOfSight(other);
     }
-    
+
     private static String getAssetPath(String asset) {
         return "sprite/characters/automaton/" + asset;
     }
@@ -91,7 +92,7 @@ public class Automaton extends Npc {
                 return new Mech(data, x, y, getAssetPath(asset), location);
         }
     }
-    
+
     public static class Android extends Automaton {
         private static final int PX = 64;
 
@@ -100,13 +101,25 @@ public class Automaton extends Npc {
                     AnimationUtils.getHumanAnimations(asset + ".png"), location);
         }
     }
-    
+
     public static class Drone extends Automaton {
         private static final int PX = 200;
 
         public Drone(NonPlayerActor data, float x, float y, String asset, Location location) {
-            super(data, x, y, 1, 1, MAX_VELOCITY,
-                    AnimationUtils.forSingleSequence(asset, PX), location);
+            super(data, x, y, 1, 1, MAX_VELOCITY, AnimationUtils.forSingleSequence(asset, PX),
+                    location);
+        }
+
+        @Override
+        protected void draw(Batch batch, TextureRegion frame, Direction direction) {
+            final float width = getWidth();
+            final float height = getHeight();
+            batch.draw(frame, // texture
+                    position.x - width / 2, position.y - height / 2, // position
+                    width / 2, height / 2, // origin
+                    width, height, // size
+                    1f, 1f, // scale
+                    getWeaponSentry().getDirection().angle()); // rotation
         }
     }
 

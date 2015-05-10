@@ -28,4 +28,5 @@ enum AugmentationProto {
 	Mitosis = 18;
 	Ram = 21;
 	Leech = 22;
+	Acid = 23;
 }

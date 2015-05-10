@@ -24,11 +24,11 @@ params {
     rank: 3
   }
   inventory_item {
-    item_id: "SlimeClaws"
+    item_id: "HiddenPistol"
     count: 1
     drop_chance: 1.0
   }
-  known_aug_id: RendWeapon
+  known_aug_id: FireWeapon
   body_type: "drone/drone2"
 }
 unique: false
