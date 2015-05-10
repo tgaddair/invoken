@@ -3,9 +3,14 @@ package com.eldritch.invoken.actor.aug;
 import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.location.Location;
+import com.google.common.base.Optional;
 
 public abstract class ProjectileAugmentation extends Augmentation {
     public ProjectileAugmentation(String asset) {
+        super(asset);
+    }
+    
+    public ProjectileAugmentation(Optional<String> asset) {
         super(asset);
     }
     

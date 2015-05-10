@@ -2,18 +2,18 @@ params {
   id: "AcidCrawler"
   name: "Acid Crawler"
   species: BEAST
-  level: 1
+  level: 5
   skill {
     discipline: WARFARE
-    level: 5
+    level: 12
   }
   skill {
     discipline: AUTOMATA
-    level: 10
+    level: 11
   }
   skill {
     discipline: SUBTERFUGE
-    level: 10
+    level: 11
   }
   skill {
     discipline: CHARISMA
@@ -29,6 +29,7 @@ params {
     drop_chance: 1.0
   }
   known_aug_id: RendWeapon
+  known_aug_id: Acid
   body_type: "crawler/crawler-09"
 }
 unique: false
