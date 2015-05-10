@@ -2,7 +2,6 @@ package com.eldritch.invoken.actor.aug;
 
 import java.util.List;
 
-import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
@@ -28,7 +27,7 @@ import com.google.common.collect.ImmutableList;
 
 public class Acid extends ProjectileAugmentation {
     private static final int DAMAGE_SCALE = 10;
-    private static final int BASE_COST = 10;
+    private static final int BASE_COST = 20;
     private static final float SPREAD_DEGREES = 5f;
     private static final float PELLET_SCALE = 0.35f;
 
