@@ -28,7 +28,7 @@ import com.eldritch.invoken.location.NaturalVector2;
 import com.eldritch.invoken.util.Constants;
 import com.eldritch.invoken.util.Settings;
 
-public class InanimateEntity extends CollisionEntity implements Drawable, Registered {
+public abstract class InanimateEntity extends CollisionEntity implements Drawable, Registered {
     private final List<Light> lights = new ArrayList<>();
     private final TiledMapTileLayer layer;
     private final BodyType bodyType;
@@ -57,7 +57,7 @@ public class InanimateEntity extends CollisionEntity implements Drawable, Regist
     }
     
     public void addLight(LightDescription description) {
-        lights.add(new OwnedLight(this, description));
+        lights.add(new OwnedLight(this, description, useOffset()));
     }
 
     @Override
@@ -207,16 +207,28 @@ public class InanimateEntity extends CollisionEntity implements Drawable, Regist
         }
         return true;
     }
+    
+    protected abstract boolean useOffset();
 
     public static class DynamicEntity extends InanimateEntity {
         public DynamicEntity(TiledMapTileLayer layer, NaturalVector2 position) {
             super(layer, position, BodyType.DynamicBody);
+        }
+
+        @Override
+        protected boolean useOffset() {
+            return false;
         }
     }
 
     public static class StaticEntity extends InanimateEntity {
         public StaticEntity(TiledMapTileLayer layer, NaturalVector2 position) {
             super(layer, position, BodyType.StaticBody);
+        }
+
+        @Override
+        protected boolean useOffset() {
+            return true;
         }
     }
 }

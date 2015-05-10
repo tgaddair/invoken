@@ -71,4 +71,14 @@
    eJxjYEAF7IwMGAAAAMMACQ==
   </data>
  </layer>
+ <layer name="lights" width="3" height="3">
+  <properties>
+   <property name="b" value="1"/>
+   <property name="g" value=".2"/>
+   <property name="r" value=".15"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJxjYGBgYGVkwAsAAOMABw==
+  </data>
+ </layer>
 </map>

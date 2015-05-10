@@ -46,12 +46,12 @@
    eJxjYGBgCGVmgINUKBsACjIAwQ==
   </data>
  </layer>
- <layer name="constraints" width="3" height="2">
+ <layer name="constraints" width="3" height="2" visible="0">
   <data encoding="base64" compression="zlib">
    eJxjYWRgYAZiEGBBYgMAATgAEw==
   </data>
  </layer>
- <layer name="constraints2" width="3" height="2">
+ <layer name="constraints2" width="3" height="2" visible="0">
   <data encoding="base64" compression="zlib">
    eJxjYGBgYGZkYGABYgYkNgAA6AAT
   </data>
@@ -59,6 +59,16 @@
  <layer name="collision" width="3" height="2" visible="0">
   <data encoding="base64" compression="zlib">
    eJxjYGBgYGVkgAMYGwAAvgAN
+  </data>
+ </layer>
+ <layer name="lights" width="3" height="2">
+  <properties>
+   <property name="b" value="1"/>
+   <property name="g" value="1"/>
+   <property name="r" value="1"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJxjYEAFHIwQGgAAXwAK
   </data>
  </layer>
 </map>

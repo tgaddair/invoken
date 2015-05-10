@@ -51,15 +51,30 @@
  </layer>
  <layer name="constraints" width="3" height="3">
   <data encoding="base64" compression="zlib">
-   eJxjYEAFzIwMGAAAAHMABQ==
+   eJxjYGBgYGFkgANmJDYMAAABEgAK
   </data>
  </layer>
- <layer name="collision" width="3" height="3">
+ <layer name="constraints2" width="3" height="3">
+  <data encoding="base64" compression="zlib">
+   eJxjYEAFzIwMDCyMqGIAAMIACg==
+  </data>
+ </layer>
+ <layer name="constraints3" width="3" height="3">
+  <data encoding="base64" compression="zlib">
+   eJxjYEAFzIwINguUDQAAmgAK
+  </data>
+ </layer>
+ <layer name="constraints4" width="3" height="3">
+  <data encoding="base64" compression="zlib">
+   eJxjYEAAFkYGBmZGBgwAAADqAAo=
+  </data>
+ </layer>
+ <layer name="collision" width="3" height="3" visible="0">
   <data encoding="base64" compression="zlib">
    eJxjYEAF7IwMGAAAAMMACQ==
   </data>
  </layer>
- <layer name="lights" width="3" height="3">
+ <layer name="lights" width="3" height="3" visible="0">
   <properties>
    <property name="b" value="1"/>
    <property name="g" value="0.2"/>

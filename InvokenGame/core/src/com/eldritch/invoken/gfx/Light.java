@@ -67,10 +67,12 @@ public abstract class Light {
             this.owner = owner;
         }
 
-        public OwnedLight(Locatable owner, LightDescription description) {
+        public OwnedLight(Locatable owner, LightDescription description, boolean useOffset) {
             super(description);
             this.owner = owner;
-            // this.offset.set(description.getBounds().x, description.getBounds().y);
+            if (useOffset) {
+                description.getBounds().getCenter(offset);
+            }
         }
 
         @Override
@@ -117,7 +119,7 @@ public abstract class Light {
         public LightDescription(Rectangle bounds, Color color) {
             this.bounds = bounds;
             this.color = color;
-            this.magnitude = 3;
+            this.magnitude = 2 + bounds.area();
         }
 
         public float getMagnitude() {
