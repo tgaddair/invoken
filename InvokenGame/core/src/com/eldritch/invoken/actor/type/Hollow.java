@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.eldritch.invoken.location.Location;
 import com.eldritch.invoken.proto.Actors.NonPlayerActor;
+import com.eldritch.invoken.proto.Effects.DamageType;
 import com.eldritch.invoken.screens.GameScreen;
 import com.eldritch.invoken.util.SoundManager.SoundEffect;
 
@@ -16,6 +17,17 @@ public class Hollow extends Npc {
 
     public Hollow(NonPlayerActor data, float x, float y, String asset, Location location) {
         super(data, x, y, 1 / 32f * PX, 1 / 32f * PX, MAX_VELOCITY, getAllAnimations(asset), location);
+    }
+    
+    @Override
+    public float getDamageScale(DamageType damage) {
+        switch (damage) {
+            case VIRAL:
+                // resistant
+                return 0.5f;
+            default:
+                return 1;
+        }
     }
     
     @Override

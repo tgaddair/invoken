@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.eldritch.invoken.location.Location;
 import com.eldritch.invoken.proto.Actors.NonPlayerActor;
+import com.eldritch.invoken.proto.Effects.DamageType;
 import com.eldritch.invoken.screens.GameScreen;
 import com.eldritch.invoken.util.AnimationUtils;
 import com.eldritch.invoken.util.Settings;
@@ -22,6 +23,23 @@ public class Beast extends Npc {
     public Beast(NonPlayerActor data, float x, float y, float width, float height, float velocity,
             Map<Activity, Map<Direction, Animation>> animations, Location location) {
         super(data, x, y, width, height, velocity, animations, location);
+    }
+    
+    @Override
+    public float getDamageScale(DamageType damage) {
+        switch (damage) {
+            case PHYSICAL:
+            case RADIOACTIVE:
+            case VIRAL:
+                // weak
+                return 1.25f;
+            case THERMAL:
+            case TOXIC:
+                // resistant
+                return 0.5f;
+            default:
+                return 1;
+        }
     }
 
     @Override
@@ -99,6 +117,17 @@ public class Beast extends Npc {
         public Crawler(NonPlayerActor data, float x, float y, String asset, Location location) {
             super(data, x, y, Settings.SCALE * PX, Settings.SCALE * PX, MAX_VELOCITY,
                     getAnimations(asset), location);
+        }
+        
+        @Override
+        public float getDamageScale(DamageType damage) {
+            switch (damage) {
+                case TOXIC:
+                    // immune
+                    return 0f;
+                default:
+                    return 1;
+            }
         }
 
         private static Map<Activity, Map<Direction, Animation>> getAnimations(String assetPath) {

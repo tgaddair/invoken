@@ -481,7 +481,7 @@ public class AgentInfo {
     }
 
     public float getDamageScale(DamageType damage) {
-        return species.getDamageScale(damage);
+        return agent.getDamageScale(damage);
     }
 
     public float getDefenseBonus() {

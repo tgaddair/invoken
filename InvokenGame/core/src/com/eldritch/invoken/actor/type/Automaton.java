@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.eldritch.invoken.location.Location;
 import com.eldritch.invoken.proto.Actors.NonPlayerActor;
+import com.eldritch.invoken.proto.Effects.DamageType;
 import com.eldritch.invoken.screens.GameScreen;
 import com.eldritch.invoken.util.SoundManager.SoundEffect;
 import com.google.common.base.Strings;
@@ -22,6 +23,25 @@ public class Automaton extends Npc {
     public Automaton(NonPlayerActor data, float x, float y, String asset, Location location) {
         super(data, x, y, 1 / 32f * PX, 1 / 32f * PX, MAX_VELOCITY, getAllAnimations(asset),
                 location);
+    }
+    
+    @Override
+    public float getDamageScale(DamageType damage) {
+        switch (damage) {
+            case PHYSICAL:
+                // very resistant
+                return 0.5f;
+            case THERMAL:
+            case TOXIC:
+                // weak
+                return 1.5f;
+            case RADIOACTIVE:
+            case VIRAL:
+                // immune
+                return 0;
+            default:
+                return 1;
+        }
     }
     
     @Override
