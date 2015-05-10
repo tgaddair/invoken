@@ -65,6 +65,10 @@ public class BspGenerator {
         map = new CellType[Width][Height];
         this.bounds = new Rectangle(0, 0, getWidth(), getHeight());
     }
+    
+    public CellType getType(int x, int y) {
+        return map[x][y];
+    }
 
     public Rectangle getBounds() {
         return bounds;

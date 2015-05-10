@@ -21,7 +21,7 @@ public class NavigatedSteerable extends BasicSteerable implements Locatable {
     private final PathManager pathManager;
     private final Vector2 lastSeen = new Vector2();
     private Agent target = null;
-    private boolean arrived = false;  // done navigating
+    private boolean arrived = false; // done navigating
 
     // path state
     private LocationGraphPath path = null;
@@ -38,7 +38,7 @@ public class NavigatedSteerable extends BasicSteerable implements Locatable {
             // don't update
             return;
         }
-        
+
         if (path != null) {
             pathAge += delta;
 
@@ -55,20 +55,20 @@ public class NavigatedSteerable extends BasicSteerable implements Locatable {
                 }
             }
         }
-        
+
         // consider updating the path if it has gone stale
         updatePath();
-        
+
         // make note of when we reach our navigation target
         if (target != null && npc.getPosition().dst2(lastSeen) < MIN_DIST) {
             arrived = true;
         }
     }
-    
+
     public void setArrived(boolean arrived) {
         this.arrived = arrived;
     }
-    
+
     public boolean hasArrived() {
         return arrived;
     }
@@ -97,15 +97,15 @@ public class NavigatedSteerable extends BasicSteerable implements Locatable {
 
         sr.end();
     }
-    
+
     public Vector2 getLastLocation() {
         return lastSeen;
     }
-    
+
     public void locate(Agent target) {
         setPosition(target, true);
     }
-    
+
     public void setPosition(Agent target) {
         setPosition(target, false);
     }
@@ -141,8 +141,7 @@ public class NavigatedSteerable extends BasicSteerable implements Locatable {
             // only update the path if the new position is sufficiently different from the last we
             // computed a path for, and a certain amount of time has elapsed
             if (path == null
-                    || (pathAge > WAIT_SECONDS && lastSeen.dst2(
-                            path.getNodePosition(pathIndex)) > MIN_DIST)) {
+                    || (pathAge > WAIT_SECONDS && lastSeen.dst2(path.getNodePosition(pathIndex)) > MIN_DIST)) {
                 resetPath();
                 computePath(NaturalVector2.of(lastSeen));
 
@@ -182,10 +181,10 @@ public class NavigatedSteerable extends BasicSteerable implements Locatable {
         }
 
         path = pathManager.getPath(a, b);
-        if (path == null) {
-            InvokenGame.logfmt("Failed to find path: %s -> %s", npc.getNaturalPosition(),
-                    destination);
-        }
+        // if (path == null) {
+        // InvokenGame.logfmt("Failed to find path: %s -> %s", npc.getNaturalPosition(),
+        // destination);
+        // }
     }
 
     private NaturalVector2 getNearestGround(NaturalVector2 position) {

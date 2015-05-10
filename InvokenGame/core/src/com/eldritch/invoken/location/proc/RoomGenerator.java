@@ -259,16 +259,22 @@ public class RoomGenerator extends BspGenerator {
                 }
 
                 if (!current.controlRoom.hasTerritory() || current.cp.getAccess()) {
+//                if (!current.controlRoom.hasTerritory()) {
                     // can connect implicitly
                     if (!connectedSample.isEmpty()) {
                         ControlNode connection = sample(current, connectedSample);
                         DigTunnel(connection.getBounds(), current.getBounds(), costs);
+                        if (connection.cp.getAccess()) {
+                            connectedSample.remove(connection);
+                        }
                     }
 
                     // add this node to the connected set, and maybe add its children if all its
                     // keys
                     // are also in the connected set
-                    connectedSample.add(current);
+                    if (!current.cp.getAccess() || connectedSample.isEmpty()) {
+                        connectedSample.add(current);
+                    }
                 }
             }
 
@@ -305,7 +311,7 @@ public class RoomGenerator extends BspGenerator {
         // rebuildWalls();
     }
 
-    private static class EncounterCostMatrix implements CostMatrix {
+    private class EncounterCostMatrix implements CostMatrix {
         private final ControlRoom[][] rooms;
         private final Compound[][] compounds;
 
@@ -343,15 +349,20 @@ public class RoomGenerator extends BspGenerator {
             if (room != null) {
                 cost += getCost(room);
             }
-            if (compounds[x2][y2] != null && compounds[x1][y1] != compounds[x2][y2]) {
+            if (compounds[x1][y1] != compounds[x2][y2]) {
                 // heavy penalty for crossing territory
                 cost *= 10;
                 cost += 1000;
+
+                // when crossing territory, it's actually more expensive to touch floor tiles
+                if (compounds[x2][y2] != null && getType(x2, y2) != CellType.Wall) {
+                    cost += 500;
+                }
             }
             return cost;
         }
 
-        private static int getCost(ControlRoom room) {
+        private int getCost(ControlRoom room) {
             int cost = 0;
 
             // origin should be somewhat costly to pass through to reduce traffic
