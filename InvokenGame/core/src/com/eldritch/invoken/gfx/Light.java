@@ -66,7 +66,7 @@ public abstract class Light {
         }
         
         public OwnedLight(Locatable owner, LightDescription description) {
-            super(description.getMagnitude(), description.getOscillate());
+            super(description);
             this.owner = owner;
         }
 
@@ -85,7 +85,7 @@ public abstract class Light {
         }
         
         public StaticLight(Vector2 position, LightDescription description) {
-            super(description.getMagnitude(), description.getOscillate());
+            super(description);
             this.position = position;
         }
 
