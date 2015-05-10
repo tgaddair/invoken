@@ -41,6 +41,9 @@
  <tileset firstgid="781" name="future-obj1" tilewidth="32" tileheight="32">
   <image source="../image-atlases/future-obj1.png" width="512" height="512"/>
  </tileset>
+ <tileset firstgid="1037" name="light-markers" tilewidth="32" tileheight="32">
+  <image source="../image-atlases/light-markers.png" width="64" height="64"/>
+ </tileset>
  <layer name="dynamics" width="3" height="3">
   <data encoding="base64" compression="zlib">
    eJxjYGBgSGZmgINiJDYMAAAWFgDd
@@ -54,6 +57,16 @@
  <layer name="collision" width="3" height="3">
   <data encoding="base64" compression="zlib">
    eJxjYEAF7IwMGAAAAMMACQ==
+  </data>
+ </layer>
+ <layer name="lights" width="3" height="3">
+  <properties>
+   <property name="b" value="1"/>
+   <property name="g" value="0.2"/>
+   <property name="r" value="0.15"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJxjYGBg4GVhwAsAAkAAEg==
   </data>
  </layer>
 </map>

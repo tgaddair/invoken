@@ -80,7 +80,7 @@ public class InanimateEntity extends CollisionEntity implements Drawable, Regist
             for (int j = 0; j < layer.getHeight(); j++) {
                 Cell cell = layer.getCell(i, j);
                 if (cell != null && cell.getTile() != null) {
-                    Vector2 position = getBodyPosition();
+                    Vector2 position = getPosition();
                     batch.draw(cell.getTile().getTextureRegion(), position.x + i - offset.x,
                             position.y + j - offset.y, 1, 1);
                 }
@@ -89,13 +89,14 @@ public class InanimateEntity extends CollisionEntity implements Drawable, Regist
         batch.end();
     }
 
-    public Vector2 getBodyPosition() {
-        return body != null ? body.getPosition() : getPosition();
+    @Override
+    public Vector2 getPosition() {
+        return body != null ? body.getPosition() : super.getPosition();
     }
 
     @Override
     public float getZ() {
-        return body != null ? getBodyPosition().y : getPosition().y + zOff;
+        return body != null ? body.getPosition().y : super.getPosition().y + zOff;
     }
 
     private Body createBody(World world) {
