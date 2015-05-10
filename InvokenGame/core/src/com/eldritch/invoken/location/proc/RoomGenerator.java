@@ -191,19 +191,19 @@ public class RoomGenerator extends BspGenerator {
     }
 
     private ControlNode sample(ControlNode current, List<ControlNode> sample) {
-        // return sample.get((int) (random() * sample.size()));
+        return sample.get((int) (random() * sample.size()));
 
-        ControlNode closest = null;
-        int bestDistance = Integer.MAX_VALUE;
-        for (ControlNode node : sample) {
-            int distance = (int) (Math.abs(current.getBounds().x - node.getBounds().x) + Math
-                    .abs(current.getBounds().y - node.getBounds().y));
-            if (distance < bestDistance) {
-                closest = node;
-                bestDistance = distance;
-            }
-        }
-        return closest;
+        // ControlNode closest = null;
+        // int bestDistance = Integer.MAX_VALUE;
+        // for (ControlNode node : sample) {
+        // int distance = (int) (Math.abs(current.getBounds().x - node.getBounds().x) + Math
+        // .abs(current.getBounds().y - node.getBounds().y));
+        // if (distance < bestDistance) {
+        // closest = node;
+        // bestDistance = distance;
+        // }
+        // }
+        // return closest;
     }
 
     @Override
@@ -259,7 +259,6 @@ public class RoomGenerator extends BspGenerator {
                 }
 
                 if (!current.controlRoom.hasTerritory() || current.cp.getAccess()) {
-//                if (!current.controlRoom.hasTerritory()) {
                     // can connect implicitly
                     if (!connectedSample.isEmpty()) {
                         ControlNode connection = sample(current, connectedSample);
