@@ -16,30 +16,39 @@ import com.eldritch.invoken.util.Settings;
 public class Bullet implements AgentHandler {
     private final Body body;
     private AgentHandler delegate;
-    
+
     public Bullet(World world) {
         this.body = createBody(world);
     }
-    
+
     public void setup(AgentHandler handler, Vector2 position, Vector2 velocity) {
         delegate = handler;
         body.setTransform(position, 0);
         body.setLinearVelocity(velocity);
         body.setActive(true);
+
+        // collision filters
+        for (Fixture fixture : body.getFixtureList()) {
+            Filter filter = fixture.getFilterData();
+            if (filter.maskBits != handler.getCollisionMask()) {
+                filter.maskBits = handler.getCollisionMask();
+                fixture.setFilterData(filter);
+            }
+        }
     }
-    
+
     public void setActive(boolean active) {
         body.setActive(active);
     }
-    
+
     public Vector2 getPosition() {
         return body.getPosition();
     }
-    
+
     public Vector2 getVelocity() {
         return body.getLinearVelocity();
     }
-    
+
     public void setVelocity(Vector2 velocity) {
         body.setLinearVelocity(velocity);
     }
@@ -47,7 +56,7 @@ public class Bullet implements AgentHandler {
     private Body createBody(World world) {
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = BodyType.DynamicBody;
-        bodyDef.bullet = true;  // move fast, so prevent speeding through walls
+        bodyDef.bullet = true; // move fast, so prevent speeding through walls
         bodyDef.position.set(0, 0);
         Body body = world.createBody(bodyDef);
         body.setUserData(this);
@@ -65,9 +74,9 @@ public class Bullet implements AgentHandler {
         filter.categoryBits = Settings.BIT_BULLET;
         filter.maskBits = Settings.BIT_SHOOTABLE;
         fixture.setFilterData(filter);
-        
+
         circle.dispose();
-        
+
         return body;
     }
 
@@ -79,5 +88,10 @@ public class Bullet implements AgentHandler {
     @Override
     public boolean handle(Object userData) {
         return delegate.handle(userData);
+    }
+
+    @Override
+    public short getCollisionMask() {
+        return delegate.getCollisionMask();
     }
 }

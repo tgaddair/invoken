@@ -163,6 +163,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
 
     private final Color color = new Color(1, 1, 1, 1);
 
+    private short lastMask;
     private Optional<AgentHandler> collisionDelegate = Optional.absent();
 
     public Agent(ActorParams params, boolean unique, float x, float y, float width, float height,
@@ -243,10 +244,12 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
 
     public void setCollisionDelegate(AgentHandler delegate) {
         this.collisionDelegate = Optional.of(delegate);
+        setCollisionMask(delegate.getCollisionMask());
     }
 
     public void removeCollisionDelegate() {
         this.collisionDelegate = Optional.absent();
+        resetCollisionMask();
     }
 
     public AgentHandler getCollisionDelegate() {
@@ -1174,9 +1177,16 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         for (Fixture fixture : body.getFixtureList()) {
             // collision filters
             Filter filter = fixture.getFilterData();
-            filter.maskBits = maskBits;
-            fixture.setFilterData(filter);
+            if (filter.maskBits != maskBits) {
+                lastMask = filter.maskBits;
+                filter.maskBits = maskBits;
+                fixture.setFilterData(filter);
+            }
         }
+    }
+    
+    private void resetCollisionMask() {
+        setCollisionMask(lastMask);
     }
 
     protected void attemptTakeAction(float delta, Location location) {

@@ -55,6 +55,11 @@ public abstract class Projectile extends CollisionEntity implements AgentHandler
         handleObstacleContact();
         return true;
     }
+    
+    @Override
+    public short getCollisionMask() {
+        return Settings.BIT_SHOOTABLE;
+    }
 
     public float getSpeed() {
         return speed;

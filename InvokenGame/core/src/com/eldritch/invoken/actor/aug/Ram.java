@@ -14,6 +14,7 @@ import com.eldritch.invoken.location.Wall;
 import com.eldritch.invoken.proto.Effects.DamageType;
 import com.eldritch.invoken.util.Damage;
 import com.eldritch.invoken.util.Heuristics;
+import com.eldritch.invoken.util.Settings;
 import com.eldritch.invoken.util.SoundManager.SoundEffect;
 
 public class Ram extends Augmentation {
@@ -177,6 +178,11 @@ public class Ram extends Augmentation {
                 return true;
             }
             return false;
+        }
+        
+        @Override
+        public short getCollisionMask() {
+            return Settings.BIT_ANYTHING;
         }
     }
 }

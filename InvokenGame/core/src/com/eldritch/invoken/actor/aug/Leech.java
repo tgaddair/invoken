@@ -14,6 +14,7 @@ import com.eldritch.invoken.location.Location;
 import com.eldritch.invoken.proto.Effects.DamageType;
 import com.eldritch.invoken.util.Damage;
 import com.eldritch.invoken.util.Heuristics;
+import com.eldritch.invoken.util.Settings;
 import com.eldritch.invoken.util.SoundManager.SoundEffect;
 
 public class Leech extends Augmentation {
@@ -186,6 +187,11 @@ public class Leech extends Augmentation {
         @Override
         public boolean handle(Object userData) {
             return false;
+        }
+        
+        @Override
+        public short getCollisionMask() {
+            return Settings.BIT_ANYTHING;
         }
     }
     

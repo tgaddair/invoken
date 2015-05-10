@@ -6,4 +6,6 @@ public interface AgentHandler {
     boolean handle(Agent agent);
     
     boolean handle(Object userData);
+    
+    short getCollisionMask();
 }

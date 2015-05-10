@@ -113,6 +113,11 @@ public class Acid extends ProjectileAugmentation {
         }
         
         @Override
+        public short getCollisionMask() {
+            return Settings.BIT_HIGH_SHOOTABLE;
+        }
+        
+        @Override
         protected void onFinish() {
             getOwner().getLocation().addEntity(new Splash(getPosition().cpy(), 3));
         }

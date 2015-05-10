@@ -2,6 +2,7 @@ package com.eldritch.invoken.location;
 
 import com.eldritch.invoken.actor.AgentHandler;
 import com.eldritch.invoken.actor.type.Agent;
+import com.eldritch.invoken.util.Settings;
 
 
 public class Wall implements AgentHandler {
@@ -23,5 +24,10 @@ public class Wall implements AgentHandler {
 
     public static Wall getInstance() {
         return Holder.INSTANCE;
+    }
+
+    @Override
+    public short getCollisionMask() {
+        return Settings.BIT_ANYTHING;
     }
 }
