@@ -3,8 +3,9 @@ package com.eldritch.invoken.gfx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import com.eldritch.invoken.actor.type.Agent;
+import com.eldritch.invoken.actor.util.Locatable;
 
 public abstract class Light {
     private final float magnitude;
@@ -42,11 +43,16 @@ public abstract class Light {
 
     public abstract Vector2 getPosition();
     
-    public static class AgentLight extends Light {
-        private final Agent owner;
+    public static class OwnedLight extends Light {
+        private final Locatable owner;
         
-        public AgentLight(Agent owner) {
+        public OwnedLight(Locatable owner) {
             super(5, false);
+            this.owner = owner;
+        }
+        
+        public OwnedLight(Locatable owner, LightDescription description) {
+            super(description.getMagnitude(), description.getOscillate());
             this.owner = owner;
         }
 
@@ -63,10 +69,38 @@ public abstract class Light {
             super(5, Math.random() < 0.2);
             this.position = position;
         }
+        
+        public StaticLight(Vector2 position, LightDescription description) {
+            super(description.getMagnitude(), description.getOscillate());
+            this.position = position;
+        }
 
         @Override
         public Vector2 getPosition() {
             return position;
+        }
+    }
+    
+    public static class LightDescription {
+        private final Rectangle bounds;
+        private final float magnitude;
+        private final boolean oscillate = false;
+        
+        public LightDescription(Rectangle bounds) {
+            this.bounds = bounds;
+            this.magnitude = 3;
+        }
+        
+        public float getMagnitude() {
+            return magnitude;
+        }
+        
+        public boolean getOscillate() {
+            return oscillate;
+        }
+        
+        public Rectangle getBounds() {
+            return bounds;
         }
     }
 }

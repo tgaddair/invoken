@@ -245,6 +245,7 @@ public class LocationGenerator {
 
         Location location = new Location(proto, map, state, globalSeed);
         location.addLights(lights);
+        location.addLights(map.getLights());
         // location.addActivators(activators);
         location.addEntities(map);
 

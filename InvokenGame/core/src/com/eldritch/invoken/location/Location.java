@@ -396,6 +396,10 @@ public class Location {
             this.lightManager.addLight(light);
         }
     }
+    
+    public void addLight(Light light) {
+        lightManager.addLight(light);
+    }
 
     public static Pool<Rectangle> getRectPool() {
         return rectPool;

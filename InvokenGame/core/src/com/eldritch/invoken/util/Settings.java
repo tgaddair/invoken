@@ -49,7 +49,7 @@ public class Settings {
 	// debug settings
 	public static final boolean GOD_MODE = false;
 	public static final boolean DEBUG_DRAW = false;
-	public static final boolean DEBUG_LIGHTS = false;
+	public static final boolean DEBUG_LIGHTS = true;
 	public static final boolean DEBUG_COVER = false;
 	public static final boolean DEBUG_PATHFINDING = false;
 	public static final boolean DEBUG_STEALTH = false;
@@ -59,8 +59,8 @@ public class Settings {
 	public static final Profession DEFAULT_PROFESSION = Profession.Agent;
 	
 //	public static final String FIRST_LOCATION = "Tutorial";
-//	public static final String FIRST_LOCATION = "WelcomeCenter";
-	public static final String FIRST_LOCATION = "WelcomeCenterLevel3";
+	public static final String FIRST_LOCATION = "WelcomeCenter";
+//	public static final String FIRST_LOCATION = "WelcomeCenterLevel3";
 	
 	// tutorial seed:
 	// global seed: -509684375407364354

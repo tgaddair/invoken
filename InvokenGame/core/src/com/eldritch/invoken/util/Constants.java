@@ -5,6 +5,7 @@ public class Constants {
     public static final String DYNAMICS = "dynamics";
     public static final String COLLISION = "collision";
     public static final String CONSTRAINTS = "constraints";
+    public static final String LIGHTS = "lights";
     public static final String TRANSIENT = "transient";
     public static final String BLANK = "blank";
     public static final String BUFFER = "buffer";

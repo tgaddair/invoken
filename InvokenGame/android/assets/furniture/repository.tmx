@@ -17,28 +17,31 @@
   </tile>
  </tileset>
  <tileset firstgid="261" name="collision" tilewidth="32" tileheight="32">
-  <image source="../maps/graphics/tiles/collision.png" width="64" height="32"/>
+  <image source="../maps/graphics/tiles/collision.png" width="64" height="64"/>
  </tileset>
- <tileset firstgid="263" name="furniture-lab" tilewidth="32" tileheight="32">
+ <tileset firstgid="265" name="furniture-lab" tilewidth="32" tileheight="32">
   <image source="../maps/graphics/tiles/furniture-lab.png" width="512" height="512"/>
  </tileset>
- <tileset firstgid="519" name="future-obj2" tilewidth="32" tileheight="32">
+ <tileset firstgid="521" name="future-obj2" tilewidth="32" tileheight="32">
   <image source="../image-atlases/future-obj2.png" width="512" height="512"/>
  </tileset>
- <tileset firstgid="775" name="future-obj3" tilewidth="32" tileheight="32">
+ <tileset firstgid="777" name="future-obj3" tilewidth="32" tileheight="32">
   <image source="../image-atlases/future-obj3.png" width="512" height="512"/>
  </tileset>
- <tileset firstgid="1031" name="future-obj4" tilewidth="32" tileheight="32">
+ <tileset firstgid="1033" name="future-obj4" tilewidth="32" tileheight="32">
   <image source="../image-atlases/future-obj4.png" width="512" height="512"/>
+ </tileset>
+ <tileset firstgid="1289" name="light-markers" tilewidth="32" tileheight="32">
+  <image source="../image-atlases/light-markers.png" width="64" height="64"/>
  </tileset>
  <layer name="objects" width="1" height="2">
   <data encoding="base64" compression="zlib">
-   eJzzYmRgiAJiAAPKAKc=
+   eJzzYWRgiAFiAAPiAKs=
   </data>
  </layer>
  <layer name="objects2" width="1" height="2">
   <data encoding="base64" compression="zlib">
-   eJzLZmEAAwADfABw
+   eJzLZWEAAwADjABy
   </data>
  </layer>
  <layer name="constraints" width="1" height="2" visible="0">
@@ -49,6 +52,16 @@
  <layer name="collision" width="1" height="2">
   <data encoding="base64" compression="zlib">
    eJxjYIAAAAAIAAE=
+  </data>
+ </layer>
+ <layer name="lights" width="1" height="2">
+  <properties>
+   <property name="b" value="1"/>
+   <property name="g" value="0.4"/>
+   <property name="r" value="0.3"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJzjZGUAAwAAcwAP
   </data>
  </layer>
 </map>

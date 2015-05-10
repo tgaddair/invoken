@@ -1,5 +1,8 @@
 package com.eldritch.invoken.actor.type;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
@@ -17,12 +20,16 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.eldritch.invoken.actor.Drawable;
 import com.eldritch.invoken.actor.Registered;
+import com.eldritch.invoken.gfx.Light;
+import com.eldritch.invoken.gfx.Light.LightDescription;
+import com.eldritch.invoken.gfx.Light.OwnedLight;
 import com.eldritch.invoken.location.Location;
 import com.eldritch.invoken.location.NaturalVector2;
 import com.eldritch.invoken.util.Constants;
 import com.eldritch.invoken.util.Settings;
 
 public class InanimateEntity extends CollisionEntity implements Drawable, Registered {
+    private final List<Light> lights = new ArrayList<>();
     private final TiledMapTileLayer layer;
     private final BodyType bodyType;
     private final float zOff;
@@ -48,12 +55,17 @@ public class InanimateEntity extends CollisionEntity implements Drawable, Regist
             this.offset = getOffset(collisionLayer, true).add(0.5f, 0.5f); // centered
         }
     }
+    
+    public void addLight(LightDescription description) {
+        lights.add(new OwnedLight(this, description));
+    }
 
     @Override
     public void register(Location location) {
         if (radius > 0) {
             body = createBody(location.getWorld());
         }
+        location.addLights(lights);
     }
 
     @Override
