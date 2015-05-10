@@ -151,6 +151,10 @@ public abstract class Projectile extends CollisionEntity implements AgentHandler
 
     private void finish() {
         finished = true;
+        onFinish();
+    }
+    
+    protected void onFinish() {
     }
 
     @Override

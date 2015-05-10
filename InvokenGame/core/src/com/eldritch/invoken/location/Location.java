@@ -113,6 +113,7 @@ public class Location {
     private int inactiveIndex = 0;
 
     private final List<Drawable> drawables = new ArrayList<>();
+    private final List<TemporaryEntity> pending = new ArrayList<>();
     private final List<TemporaryEntity> tempEntities = new ArrayList<>();
     private final List<Activator> activators = new ArrayList<>();
     private final List<InanimateEntity> objects = new ArrayList<>();
@@ -346,8 +347,12 @@ public class Location {
         ConnectedRoom room = getConnections().getRoom(position.x, position.y);
         return territory[position.x][position.y].isOnFrontier(room);
     }
-
+    
     public void addEntity(TemporaryEntity entity) {
+        pending.add(entity);
+    }
+
+    private void addFromPending(TemporaryEntity entity) {
         tempEntities.add(entity);
         drawables.add(entity);
     }
@@ -535,6 +540,14 @@ public class Location {
             // update the activators
             for (Activator activator : activators) {
                 activator.update(delta, this);
+            }
+            
+            // add pending
+            if (!pending.isEmpty()) {
+                for (TemporaryEntity entity : pending) {
+                    addFromPending(entity);
+                }
+                pending.clear();
             }
 
             // update all temporary entities

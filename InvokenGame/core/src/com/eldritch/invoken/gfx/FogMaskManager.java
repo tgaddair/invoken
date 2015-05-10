@@ -1,6 +1,5 @@
 package com.eldritch.invoken.gfx;
 
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture.TextureWrap;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -8,7 +7,6 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.eldritch.invoken.screens.GameScreen;
-import com.eldritch.invoken.util.Settings;
 
 public class FogMaskManager {
     private final Fader[] faders = { new Fader("mask1", 0),
