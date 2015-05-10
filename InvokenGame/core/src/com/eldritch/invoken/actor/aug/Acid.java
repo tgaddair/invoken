@@ -164,7 +164,7 @@ public class Acid extends ProjectileAugmentation {
 
         @Override
         public float getZ() {
-            return position.y;
+            return Float.POSITIVE_INFINITY;
         }
 
         @Override
