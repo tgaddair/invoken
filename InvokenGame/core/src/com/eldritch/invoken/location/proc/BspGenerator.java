@@ -60,7 +60,7 @@ public class BspGenerator {
     public BspGenerator(int roomCount, long seed) {
         this.rand = new Random(seed);
         this.RoomCount = roomCount;
-        this.Width = getSize(RoomCount, 200);
+        this.Width = getSize(RoomCount, 150);
         this.Height = Width;
         map = new CellType[Width][Height];
         this.bounds = new Rectangle(0, 0, getWidth(), getHeight());

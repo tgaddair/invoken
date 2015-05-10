@@ -57,10 +57,10 @@ public class RoomGenerator extends BspGenerator {
                     range(0, getHeight() - size), //
                     size, size);
             InvokenGame.logfmt("territory %s at %s", territory.getFactionId(), bounds);
-            
+
             Compound compound = new Compound(territory, bounds);
             compounds.put(territory.getFactionId(), compound);
-            
+
             // add to index
             int startX = (int) bounds.x;
             int endX = (int) (bounds.x + bounds.width - 1);
@@ -162,7 +162,7 @@ public class RoomGenerator extends BspGenerator {
             compound.addRoom(room);
             controlRooms.get(room).setTerritory(compound.territory);
             return room;
-        } else if (cp.getValue() > 0) {
+        } else if (cp.getValue() > 0 && Strings.isNullOrEmpty(cp.getFactionId())) {
             // this point is eligible for placing into a specific compound
             Compound next = getNext(unbuilt);
             if (next != null) {
@@ -188,6 +188,22 @@ public class RoomGenerator extends BspGenerator {
             }
         }
         return null;
+    }
+
+    private ControlNode sample(ControlNode current, List<ControlNode> sample) {
+        // return sample.get((int) (random() * sample.size()));
+
+        ControlNode closest = null;
+        int bestDistance = Integer.MAX_VALUE;
+        for (ControlNode node : sample) {
+            int distance = (int) (Math.abs(current.getBounds().x - node.getBounds().x) + Math
+                    .abs(current.getBounds().y - node.getBounds().y));
+            if (distance < bestDistance) {
+                closest = node;
+                bestDistance = distance;
+            }
+        }
+        return closest;
     }
 
     @Override
@@ -231,12 +247,11 @@ public class RoomGenerator extends BspGenerator {
             connected.add(current);
             if (!current.cp.getClosed()) {
                 if (current.controlRoom.hasTerritory()) {
-                    InvokenGame.logfmt("room %s territory %s", current.cp.getId(), current.controlRoom.getTerritory().getFactionId());
                     // we use separate wells for connecting compound rooms
                     List<ControlNode> sample = compoundSample.get(current.controlRoom
                             .getTerritory().getFactionId());
                     if (!sample.isEmpty()) {
-                        ControlNode connection = sample.get((int) (random() * sample.size()));
+                        ControlNode connection = sample(current, sample);
                         DigTunnel(connection.getBounds(), current.getBounds(), costs);
                     }
 
@@ -244,14 +259,9 @@ public class RoomGenerator extends BspGenerator {
                 }
 
                 if (!current.controlRoom.hasTerritory() || current.cp.getAccess()) {
-                    if (current.controlRoom.hasTerritory()) {
-                        InvokenGame.logfmt("ACCESS room %s territory %s", current.cp.getId(), current.controlRoom.getTerritory().getFactionId());
-                    }
-                    
                     // can connect implicitly
                     if (!connectedSample.isEmpty()) {
-                        ControlNode connection = connectedSample
-                                .get((int) (random() * connectedSample.size()));
+                        ControlNode connection = sample(current, connectedSample);
                         DigTunnel(connection.getBounds(), current.getBounds(), costs);
                     }
 
@@ -335,6 +345,7 @@ public class RoomGenerator extends BspGenerator {
             }
             if (compounds[x2][y2] != null && compounds[x1][y1] != compounds[x2][y2]) {
                 // heavy penalty for crossing territory
+                cost *= 10;
                 cost += 1000;
             }
             return cost;
@@ -435,32 +446,36 @@ public class RoomGenerator extends BspGenerator {
         // TODO: get first available
         throw new IllegalStateException("Unable to place: " + cp.getId());
     }
-    
+
     protected boolean canPlace(Rectangle rect, Rectangle bounds) {
         if (canPlace(rect)) {
-            int startX = (int) bounds.x;
-            int startY = (int) bounds.y;
-            Compound c1 = compoundIndex[startX][startY];
-            if (c1 != null) {
-                // reference the same bounds pointer, so they are the same compound
-                if (bounds != c1.getBounds()) {
-                    return false;
-                }
+            int startX = (int) rect.x;
+            int startY = (int) rect.y;
+            if (!isClear(startX, startY, bounds)) {
+                return false;
             }
-            
-            int endX = (int) (bounds.x + bounds.width - 1);
-            int endY = (int) (bounds.y + bounds.height - 1);
-            Compound c2 = compoundIndex[endX][endY];
-            if (c2 != null) {
-                if (bounds != c2.getBounds()) {
-                    return false;
-                }
+
+            int endX = (int) (rect.x + rect.width - 1);
+            int endY = (int) (rect.y + rect.height - 1);
+            if (!isClear(endX, endY, bounds)) {
+                return false;
             }
-            
+
             return true;
         }
-        
+
         return false;
+    }
+
+    private boolean isClear(int x, int y, Rectangle bounds) {
+        Compound c = compoundIndex[x][y];
+        if (c != null) {
+            // reference the same bounds pointer, then they are the same compound
+            if (bounds != c.getBounds()) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private Rectangle randomRect(Rectangle origin, int dx, int dy, int width, int height) {
