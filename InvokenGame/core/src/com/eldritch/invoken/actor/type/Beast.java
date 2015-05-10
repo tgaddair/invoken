@@ -11,6 +11,7 @@ import com.eldritch.invoken.proto.Actors.NonPlayerActor;
 import com.eldritch.invoken.screens.GameScreen;
 import com.eldritch.invoken.util.AnimationUtils;
 import com.eldritch.invoken.util.Settings;
+import com.eldritch.invoken.util.AnimationUtils.AnimationBuilder;
 import com.eldritch.invoken.util.SoundManager.SoundEffect;
 import com.google.common.base.Strings;
 
@@ -104,13 +105,20 @@ public class Beast extends Npc {
             Map<Activity, Map<Direction, Animation>> animations = new HashMap<Activity, Map<Direction, Animation>>();
 
             TextureRegion[][] regions = GameScreen.getRegions(assetPath + ".png", PX, PX);
-            animations.put(Activity.Cast, AnimationUtils.getAnimations(regions));
-            animations.put(Activity.Thrust, AnimationUtils.getAnimations(regions));
-            animations.put(Activity.Explore, AnimationUtils.getAnimations(regions));
-            animations.put(Activity.Swipe, AnimationUtils.getAnimations(regions));
-            animations.put(Activity.Combat, AnimationUtils.getAnimations(regions));
-            animations.put(Activity.Death,
-                    AnimationUtils.getAnimations(regions, Animation.PlayMode.NORMAL, 4));
+            Map<Direction, Animation> move = AnimationBuilder.from(regions)
+                    .setPlayMode(Animation.PlayMode.LOOP).setX(4).build();
+            Map<Direction, Animation> attack = AnimationBuilder.from(regions).setEndX(4)
+                    .build();
+            Map<Direction, Animation> death = AnimationBuilder.from(regions)
+                    .setPlayMode(Animation.PlayMode.NORMAL).setOffset(4).setEndX(4)
+                    .setExplicitDirections(false).build();
+
+            animations.put(Activity.Cast, attack);
+            animations.put(Activity.Thrust, attack);
+            animations.put(Activity.Explore, move);
+            animations.put(Activity.Swipe, attack);
+            animations.put(Activity.Combat, attack);
+            animations.put(Activity.Death, death);
             return animations;
         }
     }

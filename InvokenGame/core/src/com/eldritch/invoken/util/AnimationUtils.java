@@ -1,5 +1,6 @@
 package com.eldritch.invoken.util;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -53,5 +54,107 @@ public class AnimationUtils {
         }
 
         return animations;
+    }
+
+    public static Map<Direction, Animation> getAnimations(TextureRegion[][] regions, int x,
+            int length, int offset, boolean increment, Animation.PlayMode playMode) {
+        int index = offset;
+        Map<Direction, Animation> directions = new HashMap<Direction, Animation>();
+        for (Direction d : Direction.values()) {
+            TextureRegion[] textures = Arrays.copyOfRange(regions[index], x, length);
+            Animation anim = new Animation(Settings.FRAME_DURATION, textures);
+            anim.setPlayMode(playMode);
+            directions.put(d, anim);
+            if (increment) {
+                index++;
+            }
+        }
+        return directions;
+    }
+    
+    public static class AnimationBuilder {
+        private final TextureRegion[][] regions;
+        private int offset = 0;
+        private int x = 0;
+        private int endX;
+        private Animation.PlayMode playMode = Animation.PlayMode.LOOP_PINGPONG;
+        private boolean explicitDirections = true;
+        
+        private AnimationBuilder(TextureRegion[][] regions) {
+            this.regions = regions;
+            endX = regions[0].length;
+        }
+        
+        public int getOffset() {
+            return offset;
+        }
+
+        public AnimationBuilder setOffset(int offset) {
+            this.offset = offset;
+            return this;
+        }
+
+        public int getX() {
+            return x;
+        }
+
+        public AnimationBuilder setX(int x) {
+            this.x = x;
+            return this;
+        }
+
+        public int getEndX() {
+            return endX;
+        }
+
+        public AnimationBuilder setEndX(int endX) {
+            this.endX = endX;
+            return this;
+        }
+
+        public Animation.PlayMode getPlayMode() {
+            return playMode;
+        }
+
+        public AnimationBuilder setPlayMode(Animation.PlayMode playMode) {
+            this.playMode = playMode;
+            return this;
+        }
+
+        public boolean getExplicitDirections() {
+            return explicitDirections;
+        }
+
+        public AnimationBuilder setExplicitDirections(boolean explicitDirections) {
+            this.explicitDirections = explicitDirections;
+            return this;
+        }
+
+        public TextureRegion[][] getRegions() {
+            return regions;
+        }
+
+        public Map<Direction, Animation> build() {
+            int index = offset;
+            Map<Direction, Animation> directions = new HashMap<Direction, Animation>();
+            for (Direction d : Direction.values()) {
+                TextureRegion[] textures = regions[index];
+                if (x > 0 || endX < textures.length) {
+                    textures = Arrays.copyOfRange(textures, x, endX);
+                }
+                
+                Animation anim = new Animation(Settings.FRAME_DURATION, textures);
+                anim.setPlayMode(playMode);
+                directions.put(d, anim);
+                if (explicitDirections) {
+                    index++;
+                }
+            }
+            return directions;
+        }
+        
+        public static AnimationBuilder from(TextureRegion[][] regions) {
+            return new AnimationBuilder(regions);
+        }
     }
 }
