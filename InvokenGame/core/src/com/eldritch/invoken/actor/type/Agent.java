@@ -204,6 +204,10 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     public Body getBody() {
         return body;
     }
+    
+    protected short getCategoryBits() {
+        return Settings.BIT_AGENT;
+    }
 
     private Body createBody(float x, float y, World world) {
         CircleShape circleShape = new CircleShape();
@@ -227,7 +231,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
 
         // collision filters
         Filter filter = fixture.getFilterData();
-        filter.categoryBits = Settings.BIT_AGENT;
+        filter.categoryBits = getCategoryBits();
         filter.maskBits = Settings.BIT_ANYTHING;
         fixture.setFilterData(filter);
 

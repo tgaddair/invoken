@@ -129,6 +129,11 @@ public class Beast extends Npc {
                     return 1;
             }
         }
+        
+        @Override
+        protected short getCategoryBits() {
+            return Settings.BIT_LOW_AGENT;
+        }
 
         private static Map<Activity, Map<Direction, Animation>> getAnimations(String assetPath) {
             Map<Activity, Map<Direction, Animation>> animations = new HashMap<Activity, Map<Direction, Animation>>();
