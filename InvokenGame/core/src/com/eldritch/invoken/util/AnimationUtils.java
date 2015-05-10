@@ -15,6 +15,21 @@ public class AnimationUtils {
 
     private AnimationUtils() {
     }
+    
+    public static Map<Activity, Map<Direction, Animation>> forSingleSequence(String assetName, int px) {
+        Map<Activity, Map<Direction, Animation>> animations = new HashMap<Activity, Map<Direction, Animation>>();
+
+        TextureRegion[][] regions = GameScreen.getRegions(assetName + ".png", px, px);
+        animations.put(Activity.Cast, AnimationUtils.getAnimations(regions, false));
+        animations.put(Activity.Thrust, AnimationUtils.getAnimations(regions, false));
+        animations.put(Activity.Idle, AnimationUtils.getAnimations(regions, false));
+        animations.put(Activity.Explore, AnimationUtils.getAnimations(regions, false));
+        animations.put(Activity.Swipe, AnimationUtils.getAnimations(regions, false));
+        animations.put(Activity.Combat, AnimationUtils.getAnimations(regions, false));
+        animations.put(Activity.Death, AnimationUtils.getAnimations(regions, false));
+
+        return animations;
+    }
 
     public static Map<Activity, Map<Direction, Animation>> getHumanAnimations(String assetName) {
         Map<Activity, Map<Direction, Animation>> animations = new HashMap<Activity, Map<Direction, Animation>>();
@@ -32,6 +47,9 @@ public class AnimationUtils {
 
         // walk
         offset += Direction.values().length;
+        animations.put(Activity.Idle, AnimationBuilder.from(regions).setOffset(offset).setX(0)
+                .setEndX(1).setPlayMode(Animation.PlayMode.LOOP).build());
+        
         animations.put(Activity.Explore, AnimationBuilder.from(regions).setOffset(offset).setX(1)
                 .setEndX(9).setPlayMode(Animation.PlayMode.LOOP).build());
 

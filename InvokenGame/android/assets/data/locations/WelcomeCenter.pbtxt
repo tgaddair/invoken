@@ -226,6 +226,36 @@ encounter {
   control_point_id: "Lobby"
   faction_id: "HouseEru"
 }
+encounter {
+  id: "StationParty"
+  title: "Station Party"
+  type: ACTOR
+  weight: 0.25
+  unique: false
+  actor_params {
+    description: ""
+    actor_scenario {
+      actor_id: "Android"
+      essential: false
+      blocking: false
+      min: 1
+      max: 1
+      alive: true
+    }
+    actor_scenario {
+      actor_id: "SmallDrone"
+      essential: false
+      blocking: false
+      min: 1
+      max: 4
+      alive: true
+    }
+    no_detect: false
+    no_flee: false
+  }
+  control_point_id: "GenericHall"
+  faction_id: ""
+}
 light {
   r: 179
   g: 179

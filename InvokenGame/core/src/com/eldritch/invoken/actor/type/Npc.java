@@ -632,7 +632,7 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
             case UNDEAD:
                 return new Undead(data, x, y, "sprite/characters/hollow-zombie.png", location);
             case AUTOMATON:
-                return new Automaton(data, x, y, location);
+                return Automaton.from(data, x, y, location);
             case BEAST:
                 return Beast.from(data, x, y, location);
             case HOLLOW:

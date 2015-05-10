@@ -100,6 +100,7 @@ public class Beast extends Npc {
             TextureRegion[][] regions = GameScreen.getRegions(assetName + "-walk.png", PX, PX);
             animations.put(Activity.Cast, AnimationUtils.getAnimations(regions));
             animations.put(Activity.Thrust, AnimationUtils.getAnimations(regions));
+            animations.put(Activity.Idle, AnimationUtils.getAnimations(regions));
             animations.put(Activity.Explore, AnimationUtils.getAnimations(regions));
             animations.put(Activity.Swipe, AnimationUtils.getAnimations(regions));
             animations.put(Activity.Combat, AnimationUtils.getAnimations(regions));
@@ -149,6 +150,7 @@ public class Beast extends Npc {
 
             animations.put(Activity.Cast, attack);
             animations.put(Activity.Thrust, attack);
+            animations.put(Activity.Idle, move);
             animations.put(Activity.Explore, move);
             animations.put(Activity.Swipe, attack);
             animations.put(Activity.Combat, attack);
@@ -226,6 +228,7 @@ public class Beast extends Npc {
 
             animations.put(Activity.Cast, AnimationUtils.getAnimations(regions, 2));
             animations.put(Activity.Thrust, AnimationUtils.getAnimations(regions, 3));
+            animations.put(Activity.Idle, AnimationUtils.getAnimations(regions, 1));
             animations.put(Activity.Explore, AnimationUtils.getAnimations(regions, 1));
             animations.put(Activity.Swipe, AnimationUtils.getAnimations(regions, 3));
             animations.put(Activity.Combat, AnimationUtils.getAnimations(regions, 3));
@@ -257,6 +260,7 @@ public class Beast extends Npc {
 
             animations.put(Activity.Cast, AnimationUtils.getAnimations(attackRegions));
             animations.put(Activity.Thrust, AnimationUtils.getAnimations(attackRegions));
+            animations.put(Activity.Idle, AnimationUtils.getAnimations(moveRegions));
             animations.put(Activity.Explore, AnimationUtils.getAnimations(moveRegions));
             animations.put(Activity.Swipe, AnimationUtils.getAnimations(attackRegions));
             animations.put(Activity.Combat, AnimationUtils.getAnimations(moveRegions));

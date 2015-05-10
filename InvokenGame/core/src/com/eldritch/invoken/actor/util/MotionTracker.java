@@ -5,7 +5,6 @@ import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.util.Settings;
 import com.eldritch.invoken.util.SoundManager;
-import com.eldritch.invoken.util.SoundManager.SoundEffect;
 
 public class MotionTracker {
     private static final float FOOTSTEP_DELAY_SECS = Settings.FRAME_DURATION * 4;

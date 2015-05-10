@@ -108,7 +108,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     }
 
     public enum Activity {
-        Explore, Combat, Cast, Thrust, Swipe, Death
+        Idle, Explore, Combat, Cast, Thrust, Swipe, Death
     }
 
     AgentInfo info;
@@ -784,7 +784,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     }
 
     public TextureRegionDrawable getPortrait() {
-        TextureRegion region = animations.get(Activity.Explore).get(Direction.Right).getKeyFrame(0);
+        TextureRegion region = animations.get(Activity.Idle).get(Direction.Right).getKeyFrame(0);
         if (info.getInventory().hasOutfit()) {
             Outfit outfit = info.getInventory().getOutfit();
             TextureRegion outfitRegion = outfit.getPortrait();
@@ -1428,7 +1428,11 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         if (!isAlive()) {
             activity = Activity.Death;
         } else {
-            activity = Activity.Explore;
+            if (motionTracker.isStanding()) {
+                activity = Activity.Idle;
+            } else {
+                activity = Activity.Explore;
+            }
         }
 
         // reset state if the activity was changed

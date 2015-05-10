@@ -1,0 +1,38 @@
+params {
+  id: "Android"
+  name: "Android"
+  species: AUTOMATON
+  level: 10
+  skill {
+    discipline: WARFARE
+    level: 14
+  }
+  skill {
+    discipline: AUTOMATA
+    level: 14
+  }
+  skill {
+    discipline: SUBTERFUGE
+    level: 10
+  }
+  skill {
+    discipline: CHARISMA
+    level: 11
+  }
+  faction_status {
+    faction_id: "TheStation"
+    rank: 3
+  }
+  inventory_item {
+    item_id: "SlimeClaws"
+    count: 1
+    drop_chance: 1.0
+  }
+  known_aug_id: RendWeapon
+  body_type: "android"
+}
+unique: false
+aggression: AGGRESSIVE
+assistance: LOYAL
+confidence: RECKLESS
+guard: false
