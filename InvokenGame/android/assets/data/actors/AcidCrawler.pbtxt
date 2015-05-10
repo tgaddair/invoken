@@ -1,0 +1,38 @@
+params {
+  id: "AcidCrawler"
+  name: "Acid Crawler"
+  species: BEAST
+  level: 1
+  skill {
+    discipline: WARFARE
+    level: 5
+  }
+  skill {
+    discipline: AUTOMATA
+    level: 10
+  }
+  skill {
+    discipline: SUBTERFUGE
+    level: 10
+  }
+  skill {
+    discipline: CHARISMA
+    level: 10
+  }
+  faction_status {
+    faction_id: "_HostileCreatures"
+    rank: 3
+  }
+  inventory_item {
+    item_id: "SlimeClaws"
+    count: 1
+    drop_chance: 1.0
+  }
+  known_aug_id: RendWeapon
+  body_type: "crawler/crawler-09"
+}
+unique: false
+aggression: HOSTILE
+assistance: LOYAL
+confidence: RECKLESS
+guard: false

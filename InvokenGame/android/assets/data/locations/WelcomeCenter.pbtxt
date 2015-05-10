@@ -175,19 +175,27 @@ encounter {
   faction_id: ""
 }
 encounter {
-  id: "Slime"
-  title: "Slime"
+  id: "Creatures"
+  title: "Creatures"
   type: ACTOR
   weight: 1.0
   unique: false
   actor_params {
     description: ""
     actor_scenario {
-      actor_id: "Slime"
+      actor_id: "Crawler"
       essential: false
       blocking: false
-      min: 3
-      max: 7
+      min: 2
+      max: 4
+      alive: true
+    }
+    actor_scenario {
+      actor_id: "AcidCrawler"
+      essential: false
+      blocking: false
+      min: 1
+      max: 3
       alive: true
     }
     no_detect: false
