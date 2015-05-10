@@ -212,7 +212,9 @@ public class LocationMap extends TiledMap {
             if (existing == null) {
                 existing = new LocationLayer(getWidth(), getHeight(), 
                         Settings.PX, Settings.PX, this);
-                existing.setVisible(true);
+                
+                // buffer layer handled constraints, but is not visible
+                existing.setVisible(!layer.getName().startsWith(Constants.BUFFER));
                 existing.setOpacity(1.0f);
                 existing.setName(layer.getName());
                 

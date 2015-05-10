@@ -367,7 +367,7 @@ public class RoomGenerator extends BspGenerator {
 
                 // when crossing territory, it's actually more expensive to touch floor tiles
                 if (compounds[x2][y2] != null && getType(x2, y2) != CellType.Wall) {
-//                    cost += 500;
+                    cost += 500;
                 }
             }
             return cost;

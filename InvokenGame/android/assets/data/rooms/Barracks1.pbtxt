@@ -1,0 +1,19 @@
+id: "Barracks1"
+furniture {
+  id: "bed-industry1"
+  type: TMX
+  min: 3
+  max: 6
+}
+furniture {
+  id: "locker1"
+  type: TMX
+  min: 3
+  max: 6
+}
+furniture {
+  id: "table-industry1"
+  type: TMX
+  max: 4
+}
+size: LARGE

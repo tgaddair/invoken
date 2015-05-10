@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" width="3" height="4" tilewidth="32" tileheight="32">
+<map version="1.0" orientation="orthogonal" width="1" height="2" tilewidth="32" tileheight="32">
  <tileset firstgid="1" name="furniture-modern" tilewidth="32" tileheight="32">
   <image source="../maps/graphics/tiles/furniture-modern.png" width="512" height="512"/>
  </tileset>
@@ -33,24 +33,22 @@
  <tileset firstgid="777" name="future-obj4" tilewidth="32" tileheight="32">
   <image source="../image-atlases/future-obj4.png" width="512" height="512"/>
  </tileset>
- <layer name="objects" width="3" height="4">
+ <tileset firstgid="1033" name="future-obj1" tilewidth="32" tileheight="32">
+  <image source="../image-atlases/future-obj1.png" width="512" height="512"/>
+ </tileset>
+ <layer name="objects" width="1" height="2">
   <data encoding="base64" compression="zlib">
-   eJxjYEAFAkwItgITAwYAAAUUADU=
+   eJzrYGFgmAHEAAbQASk=
   </data>
  </layer>
- <layer name="constraints" width="3" height="4" visible="0">
+ <layer name="constraints" width="1" height="2" visible="0">
   <data encoding="base64" compression="zlib">
-   eJxjYEAFzIzY2TAAAAD+AAk=
+   eJxjYWRgYAZiAAA+AAo=
   </data>
  </layer>
- <layer name="collision" width="3" height="4">
+ <layer name="collision" width="1" height="2">
   <data encoding="base64" compression="zlib">
-   eJxjYEAFrIzY2TAAAAFmAA0=
-  </data>
- </layer>
- <layer name="buffer" width="3" height="4">
-  <data encoding="base64" compression="zlib">
-   eJxjY2RgYEPCIICNDcMAB0IARw==
+   eJxjYGBgYGNkYAAAACMACA==
   </data>
  </layer>
 </map>

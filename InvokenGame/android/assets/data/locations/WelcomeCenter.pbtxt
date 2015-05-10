@@ -74,7 +74,7 @@ encounter {
     no_detect: false
     no_flee: false
   }
-  control_point_id: "GenericHall"
+  control_point_id: "ThugCapital"
   faction_id: "_ThugFaction"
 }
 encounter {
@@ -105,6 +105,7 @@ encounter {
     no_flee: false
   }
   control_point_id: "GenericHall"
+  control_point_id: "Barracks"
   faction_id: "_ThugFaction"
 }
 encounter {
@@ -341,7 +342,7 @@ control_point {
 }
 control_point {
   id: "ThugCapital"
-  room_id: "GenericHall"
+  room_id: "ThugCapital1"
   lock_strength: 0
   required_key: ""
   origin: false
@@ -350,6 +351,7 @@ control_point {
   value: 1
   closed: false
   faction_id: "_ThugFaction"
+  access: false
 }
 control_point {
   id: "LargeHall"
@@ -391,6 +393,7 @@ control_point {
 }
 control_point {
   id: "ThugCompoundEntrance"
+  room_id: "LabBig"
   lock_strength: 0
   required_key: ""
   origin: false
@@ -400,5 +403,18 @@ control_point {
   closed: false
   faction_id: "_ThugFaction"
   access: true
+}
+control_point {
+  id: "Barracks"
+  room_id: "Barracks1"
+  lock_strength: 0
+  required_key: ""
+  origin: false
+  min: 1
+  max: 1
+  value: 2
+  closed: false
+  faction_id: "_ThugFaction"
+  access: false
 }
 music: "factory.ogg"

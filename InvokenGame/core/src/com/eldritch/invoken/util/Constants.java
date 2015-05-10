@@ -6,6 +6,8 @@ public class Constants {
     public static final String COLLISION = "collision";
     public static final String CONSTRAINTS = "constraints";
     public static final String TRANSIENT = "transient";
+    public static final String BLANK = "blank";
+    public static final String BUFFER = "buffer";
     
     // opposite of a traditional collision constraint, this tile explicitly allows layers named
     // "surface" to be placed here

@@ -1,0 +1,49 @@
+id: "ThugCapital1"
+furniture {
+  id: "plant-wall1"
+  type: TMX
+  max: 3
+}
+furniture {
+  id: "plant-wall2"
+  type: TMX
+  max: 3
+}
+furniture {
+  id: "sofas1"
+  type: TMX
+  max: 2
+}
+furniture {
+  id: "aquarium1"
+  type: TMX
+}
+furniture {
+  id: "aquarium2"
+  type: TMX
+}
+furniture {
+  id: "aquarium-side1"
+  type: TMX
+}
+furniture {
+  id: "lamp-tall1"
+  type: TMX
+}
+furniture {
+  id: "lamp-tall3"
+  type: TMX
+}
+furniture {
+  id: "rug-upper1"
+  type: TMX
+}
+furniture {
+  id: "table-industry1"
+  type: TMX
+}
+furniture {
+  id: "table-industry2"
+  type: TMX
+}
+size: LARGE

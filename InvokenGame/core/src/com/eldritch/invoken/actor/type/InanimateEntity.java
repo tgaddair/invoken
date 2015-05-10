@@ -177,6 +177,11 @@ public class InanimateEntity extends CollisionEntity implements Drawable, Regist
         if (cell == null) {
             return false;
         }
+        
+        if (cell.getTile() != null && cell.getTile().getProperties().containsKey(Constants.BLANK)) {
+            // blank tile, no collisions
+            return false;
+        }
 
         if (checkTransient) {
             TiledMapTile tile = cell.getTile();

@@ -95,7 +95,7 @@ public class LocationLayer extends TiledMapTileLayer {
         public Cell addCell(TiledMapTile tile, int x, int y) {
             if (tile != null) {
                 MapProperties props = tile.getProperties();
-                if (props.containsKey(Constants.TRANSIENT)) {
+                if (props.containsKey(Constants.TRANSIENT) || props.containsKey(Constants.BLANK)) {
                     setTransient(x, y);
                 }
             }
