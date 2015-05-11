@@ -126,12 +126,8 @@ public abstract class InanimateEntity extends CollisionEntity implements Drawabl
         filter.maskBits = Settings.BIT_ANYTHING;
 
         // optional collision filter
-        MapProperties props = collisionLayer.getProperties();
-        if (props.containsKey(Constants.CATEGORY)) {
-            if (props.get(Constants.CATEGORY).equals(Constants.LOW)) {
-                filter.categoryBits = Settings.BIT_SHORT_OBSTACLE;
-            }
-        }
+        updateCategory(layer, filter);
+        updateCategory(collisionLayer, filter);
 
         fixture.setFilterData(filter);
 
@@ -140,6 +136,15 @@ public abstract class InanimateEntity extends CollisionEntity implements Drawabl
 
         circleShape.dispose();
         return body;
+    }
+    
+    private void updateCategory(TiledMapTileLayer layer, Filter filter) {
+        MapProperties props = layer.getProperties();
+        if (props.containsKey(Constants.CATEGORY)) {
+            if (props.get(Constants.CATEGORY).equals(Constants.LOW)) {
+                filter.categoryBits = Settings.BIT_SHORT_OBSTACLE;
+            }
+        }
     }
 
     private float getRadius() {

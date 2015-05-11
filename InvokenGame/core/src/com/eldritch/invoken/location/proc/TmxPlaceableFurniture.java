@@ -53,6 +53,7 @@ public class TmxPlaceableFurniture implements PlaceableFurniture {
         for (NaturalVector2 origin : origins) {
             int x = origin.x;
             int y = origin.y;
+            
             if (isContiguous(tiles, x, y, map) && compatible(presentLayers, tiles, x, y, room)) {
                 return NaturalVector2.of(x, y);
             }
@@ -64,7 +65,6 @@ public class TmxPlaceableFurniture implements PlaceableFurniture {
     @Override
     public void place(NaturalVector2 position, LocationMap map) {
         map.merge(tiles, position);
-
     }
 
     private boolean compatible(Map<String, LocationLayer> presentLayers, TiledMap furniture, int x,
@@ -121,8 +121,9 @@ public class TmxPlaceableFurniture implements PlaceableFurniture {
                     String constraint = cell.getTile().getProperties()
                             .get("constraint", String.class);
                     if (constraint != null) {
-                        if (constraint.equals("ground") && (!existing.isGround(x + i, y + j)
-                                || !points.contains(NaturalVector2.of(x + i, y + j)))) {
+                        if (constraint.equals("ground")
+                                && (!existing.isGround(x + i, y + j) || !points
+                                        .contains(NaturalVector2.of(x + i, y + j)))) {
                             // tile in base is required to be ground, but isn't
                             return false;
                         }
