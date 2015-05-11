@@ -18,7 +18,7 @@ public abstract class Light {
     public Light(float magnitude, boolean oscillate) {
         this.magnitude = magnitude;
         this.oscillate = oscillate;
-        this.color = new Color(0.9f, 0.4f, 0.2f, 1f);
+        this.color = new Color(0.9f, 0.4f, 0.2f, NormalMapShader.DEFAULT_LIGHT_INTENSITY);
         light = new Texture("light/light3.png");
     }
 

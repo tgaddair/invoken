@@ -155,7 +155,7 @@ public class NormalMapShader {
             colors[i * 4 + 0] = color.r;
             colors[i * 4 + 1] = color.g;
             colors[i * 4 + 2] = color.b;
-            colors[i * 4 + 3] = DEFAULT_LIGHT_INTENSITY;
+            colors[i * 4 + 3] = color.a;
         }
         
         values[visibleLights.size() * 3 + 0] = LIGHT_POS.x;

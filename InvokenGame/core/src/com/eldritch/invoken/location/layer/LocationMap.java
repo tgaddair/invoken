@@ -23,6 +23,7 @@ import com.eldritch.invoken.actor.type.InanimateEntity.StaticEntity;
 import com.eldritch.invoken.gfx.Light;
 import com.eldritch.invoken.gfx.Light.LightDescription;
 import com.eldritch.invoken.gfx.Light.StaticLight;
+import com.eldritch.invoken.gfx.NormalMapShader;
 import com.eldritch.invoken.location.ConnectedRoomManager;
 import com.eldritch.invoken.location.NaturalVector2;
 import com.eldritch.invoken.location.layer.LocationLayer.CollisionLayer;
@@ -300,14 +301,15 @@ public class LocationMap extends TiledMap {
 
         return new Rectangle(startX, startY, endX - startX + 1, endY - startY + 1);
     }
-    
+
     private static Color getColor(TiledMapTileLayer layer) {
         MapProperties props = layer.getProperties();
         Color color = new Color();
         color.r = props.containsKey("r") ? Float.parseFloat((String) props.get("r")) : 1;
         color.g = props.containsKey("g") ? Float.parseFloat((String) props.get("g")) : 1;
         color.b = props.containsKey("b") ? Float.parseFloat((String) props.get("b")) : 1;
-        color.a = props.containsKey("a") ? Float.parseFloat((String) props.get("a")) : 1;
+        color.a = props.containsKey("a") ? Float.parseFloat((String) props.get("a"))
+                : NormalMapShader.DEFAULT_LIGHT_INTENSITY;
         return color;
     }
 }
