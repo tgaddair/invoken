@@ -3,6 +3,9 @@ package com.eldritch.invoken.gfx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.maps.MapProperties;
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
@@ -121,11 +124,11 @@ public abstract class Light {
         private final Color color;
         private final float magnitude;
         private final boolean oscillate = false;
-
-        public LightDescription(Rectangle bounds, Color color) {
+        
+        public LightDescription(Rectangle bounds, Color color, float magnitude) {
             this.bounds = bounds;
             this.color = color;
-            this.magnitude = 2 + bounds.area();
+            this.magnitude = magnitude;
         }
 
         public float getMagnitude() {
@@ -141,6 +144,58 @@ public abstract class Light {
         }
 
         public Color getColor() {
+            return color;
+        }
+        
+        public static LightDescription from(TiledMapTileLayer layer) {
+            Rectangle bounds = getBounds(layer);
+            Color color = getColor(layer);
+            float magnitude = getMagnitude(layer, bounds);
+            return new LightDescription(bounds, color, magnitude);
+        }
+        
+        private static float getMagnitude(TiledMapTileLayer layer, Rectangle bounds) {
+            MapProperties props = layer.getProperties();
+            if (props.containsKey("magnitude")) {
+                return Float.parseFloat((String) props.get("magnitude"));
+            }
+            
+            return 2 + bounds.area();
+        }
+        
+        private static Rectangle getBounds(TiledMapTileLayer layer) {
+            boolean origin = false;
+            float startX = 0;
+            float startY = 0;
+            float endX = 0;
+            float endY = 0;
+
+            for (int x = 0; x < layer.getWidth(); x++) {
+                for (int y = 0; y < layer.getHeight(); y++) {
+                    Cell cell = layer.getCell(x, y);
+                    if (cell != null) {
+                        if (!origin) {
+                            startX = x;
+                            startY = y;
+                            origin = true;
+                        }
+                        endX = x;
+                        endY = y;
+                    }
+                }
+            }
+
+            return new Rectangle(startX, startY, endX - startX + 1, endY - startY + 1);
+        }
+
+        private static Color getColor(TiledMapTileLayer layer) {
+            MapProperties props = layer.getProperties();
+            Color color = new Color();
+            color.r = props.containsKey("r") ? Float.parseFloat((String) props.get("r")) : 1;
+            color.g = props.containsKey("g") ? Float.parseFloat((String) props.get("g")) : 1;
+            color.b = props.containsKey("b") ? Float.parseFloat((String) props.get("b")) : 1;
+            color.a = props.containsKey("a") ? Float.parseFloat((String) props.get("a"))
+                    : NormalMapShader.DEFAULT_LIGHT_INTENSITY;
             return color;
         }
     }

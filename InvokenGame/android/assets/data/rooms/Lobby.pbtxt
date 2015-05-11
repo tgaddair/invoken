@@ -1,2 +1,7 @@
 id: "Lobby"
+furniture {
+  id: "light-wall-warm1"
+  type: TMX
+  max: 4
+}
 size: LARGE

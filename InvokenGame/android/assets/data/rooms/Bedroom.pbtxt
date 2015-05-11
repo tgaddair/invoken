@@ -1,0 +1,18 @@
+id: "Bedroom"
+furniture {
+  id: "repository"
+  type: ACTIVATOR
+}
+furniture {
+  id: "bed6"
+  type: TMX
+}
+furniture {
+  id: "chair1"
+  type: TMX
+}
+furniture {
+  id: "lamp-tall1"
+  type: TMX
+}
+size: SMALL

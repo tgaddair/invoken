@@ -1,0 +1,95 @@
+id: "GenericHall"
+furniture {
+  id: "security-camera"
+  type: ACTIVATOR
+}
+furniture {
+  id: "container-small"
+  type: ACTIVATOR
+}
+furniture {
+  id: "plant-tall1"
+  type: TMX
+}
+furniture {
+  id: "mattress-trash"
+  type: TMX
+}
+furniture {
+  id: "mattress1"
+  type: TMX
+}
+furniture {
+  id: "mattress2"
+  type: TMX
+}
+furniture {
+  id: "meal1"
+  type: TMX
+}
+furniture {
+  id: "bottles1"
+  type: TMX
+}
+furniture {
+  id: "bottles2"
+  type: TMX
+}
+furniture {
+  id: "cabinets1"
+  type: TMX
+}
+furniture {
+  id: "chair3"
+  type: TMX
+}
+furniture {
+  id: "cubicle1"
+  type: TMX
+}
+furniture {
+  id: "cubicle2"
+  type: TMX
+}
+furniture {
+  id: "fan1"
+  type: TMX
+}
+furniture {
+  id: "plant-small1"
+  type: TMX
+}
+furniture {
+  id: "plant-small2"
+  type: TMX
+}
+furniture {
+  id: "plant-small3"
+  type: TMX
+}
+furniture {
+  id: "vase1"
+  type: TMX
+}
+furniture {
+  id: "tires1"
+  type: TMX
+}
+furniture {
+  id: "tires2"
+  type: TMX
+}
+furniture {
+  id: "trashbag1"
+  type: TMX
+}
+furniture {
+  id: "trashbag2"
+  type: TMX
+}
+furniture {
+  id: "light-wall-warm1"
+  type: TMX
+  max: 4
+}
+size: MEDIUM
