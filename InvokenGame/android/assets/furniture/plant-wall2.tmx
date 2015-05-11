@@ -50,7 +50,6 @@
  </layer>
  <layer name="lights" width="2" height="2">
   <properties>
-   <property name="a" value="0.05"/>
    <property name="b" value=".4"/>
    <property name="g" value=".9"/>
    <property name="r" value=".2"/>

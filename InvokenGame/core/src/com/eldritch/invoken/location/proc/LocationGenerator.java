@@ -208,7 +208,8 @@ public class LocationGenerator {
         save(rooms.getGrid(), "connected-rooms");
 
         InvokenGame.log("Claiming Territory");
-        TerritoryGenerator territoryGen = new TerritoryGenerator(bsp, rooms, proto.getTerritoryList());
+        TerritoryGenerator territoryGen = new TerritoryGenerator(bsp, rooms,
+                proto.getTerritoryList());
         territoryGen.claim();
 
         InvokenGame.log("Adding Furniture");
@@ -234,7 +235,7 @@ public class LocationGenerator {
         // lights
         InvokenGame.log("Adding Lights");
         List<Light> lights = new ArrayList<Light>();
-        furnitureGenerator.addLights(trim, base, lights, walls.getTile(WallTile.MidWallTop));
+        // furnitureGenerator.addLights(trim, base, lights, walls.getTile(WallTile.MidWallTop));
 
         // clutter
         InvokenGame.log("Adding Clutter");

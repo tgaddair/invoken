@@ -17,25 +17,25 @@
   </tile>
  </tileset>
  <tileset firstgid="261" name="collision" tilewidth="32" tileheight="32">
-  <image source="../maps/graphics/tiles/collision.png" width="64" height="32"/>
+  <image source="../maps/graphics/tiles/collision.png" width="64" height="64"/>
   <tile id="0">
    <properties>
     <property name="collision" value="short"/>
    </properties>
   </tile>
  </tileset>
- <tileset firstgid="263" name="furniture-lab" tilewidth="32" tileheight="32">
+ <tileset firstgid="265" name="furniture-lab" tilewidth="32" tileheight="32">
   <image source="../maps/graphics/tiles/furniture-lab.png" width="512" height="512"/>
  </tileset>
- <tileset firstgid="519" name="future-obj3" tilewidth="32" tileheight="32">
+ <tileset firstgid="521" name="future-obj3" tilewidth="32" tileheight="32">
   <image source="../image-atlases/future-obj3.png" width="512" height="512"/>
  </tileset>
- <tileset firstgid="775" name="future-obj4" tilewidth="32" tileheight="32">
+ <tileset firstgid="777" name="future-obj4" tilewidth="32" tileheight="32">
   <image source="../image-atlases/future-obj4.png" width="512" height="512"/>
  </tileset>
  <layer name="objects" width="2" height="2">
   <data encoding="base64" compression="zlib">
-   eJxjYICAdiYGhg4gBgAGfAEU
+   eJxjYICATiYGhi4gBgAGlAEY
   </data>
  </layer>
  <layer name="constraints" width="2" height="2" visible="0">
@@ -46,6 +46,16 @@
  <layer name="collision" width="2" height="2">
   <data encoding="base64" compression="zlib">
    eJxjYIAAVkYIBgAAVgAN
+  </data>
+ </layer>
+ <layer name="lights" width="2" height="2">
+  <properties>
+   <property name="b" value=".4"/>
+   <property name="g" value=".9"/>
+   <property name="r" value=".2"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJxjYIAADkYIBgAAegAT
   </data>
  </layer>
 </map>
