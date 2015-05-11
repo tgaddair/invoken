@@ -28,6 +28,10 @@ public abstract class Light {
         this.color = description.getColor();
         light = new Texture("light/light3.png");
     }
+    
+    public void setColor(float r, float g, float b, float a) {
+        color.set(r, g, b, a);
+    }
 
     public Color getColor() {
         return color;
@@ -88,7 +92,11 @@ public abstract class Light {
         private final Vector2 position;
 
         public StaticLight(Vector2 position) {
-            super(5, Math.random() < 0.2);
+            this(position, 5, Math.random() < 0.2);
+        }
+        
+        public StaticLight(Vector2 position, float magnitude, boolean oscillate) {
+            super(magnitude, oscillate);
             this.position = position;
         }
 

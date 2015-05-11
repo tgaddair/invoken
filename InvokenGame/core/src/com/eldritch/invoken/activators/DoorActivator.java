@@ -13,6 +13,10 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.actor.items.Item;
 import com.eldritch.invoken.actor.type.Agent;
+import com.eldritch.invoken.gfx.Light;
+import com.eldritch.invoken.gfx.Light.OwnedLight;
+import com.eldritch.invoken.gfx.Light.StaticLight;
+import com.eldritch.invoken.gfx.NormalMapShader;
 import com.eldritch.invoken.location.Location;
 import com.eldritch.invoken.location.NaturalVector2;
 import com.eldritch.invoken.proto.Locations.ControlPoint;
@@ -45,6 +49,7 @@ public class DoorActivator extends ClickActivator implements ProximityActivator,
     private final boolean front;
     private boolean open = false;
 
+    private final Light light;
     private final List<Body> bodies = new ArrayList<Body>();
 
     private boolean activating = false;
@@ -68,13 +73,17 @@ public class DoorActivator extends ClickActivator implements ProximityActivator,
             lockedAnimation = new Animation(0.05f, frontRegionsLocked);
             lockedAnimation.setPlayMode(Animation.PlayMode.NORMAL);
             center = new Vector2(x + 1, y + 0.5f);
+            this.light = new StaticLight(center.cpy().add(0.5f, 0.5f), 0.5f, false);
         } else {
             unlockedAnimation = new Animation(0.05f, sideRegions);
             unlockedAnimation.setPlayMode(Animation.PlayMode.NORMAL);
             lockedAnimation = new Animation(0.05f, sideRegionsLocked);
             lockedAnimation.setPlayMode(Animation.PlayMode.NORMAL);
             center = new Vector2(x + 0.5f, y - 1);
+            this.light = new StaticLight(center.cpy().add(0.5f, 1.5f), 0.5f, false);
         }
+        
+        setColor();
     }
 
     @Override
@@ -128,6 +137,14 @@ public class DoorActivator extends ClickActivator implements ProximityActivator,
         setLightWalls(location, !opened);
         InvokenGame.SOUND_MANAGER.playAtPoint(SoundEffect.DOOR_OPEN, getPosition());
     }
+    
+    private void setColor() {
+        if (!lock.isLocked()) {
+            light.setColor(0.2f, 0.9f, 0.4f, 0.5f);
+        } else {
+            light.setColor(0.9f, 0.2f, 0.4f, 0.5f);
+        }
+    }
 
     private void setLightWalls(Location location, boolean value) {
         Vector2 position = getPosition();
@@ -156,6 +173,7 @@ public class DoorActivator extends ClickActivator implements ProximityActivator,
             bodies.add(location.createEdge(x + 0.5f, y, x + 0.5f, y + SIZE));
         }
         setLightWalls(location, true);
+        location.addLight(light);
     }
 
     @Override
@@ -196,6 +214,7 @@ public class DoorActivator extends ClickActivator implements ProximityActivator,
         // unlock
         lock.setLocked(false);
         // location.alertTo(agent);
+        setColor();
     }
 
     @Override
