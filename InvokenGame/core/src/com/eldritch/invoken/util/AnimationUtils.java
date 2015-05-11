@@ -138,6 +138,7 @@ public class AnimationUtils {
         private int endX;
         private Animation.PlayMode playMode = Animation.PlayMode.LOOP_PINGPONG;
         private boolean explicitDirections = true;
+        private float frameDuration = Settings.FRAME_DURATION;
 
         private AnimationBuilder(TextureRegion[][] regions) {
             this.regions = regions;
@@ -188,6 +189,15 @@ public class AnimationUtils {
             this.explicitDirections = explicitDirections;
             return this;
         }
+        
+        public float getFrameDuration() {
+            return frameDuration;
+        }
+        
+        public AnimationBuilder setFrameDuration(float frameDuration) {
+            this.frameDuration = frameDuration;
+            return this;
+        }
 
         public TextureRegion[][] getRegions() {
             return regions;
@@ -202,7 +212,7 @@ public class AnimationUtils {
                     textures = Arrays.copyOfRange(textures, x, endX);
                 }
 
-                Animation anim = new Animation(Settings.FRAME_DURATION, textures);
+                Animation anim = new Animation(frameDuration, textures);
                 anim.setPlayMode(playMode);
                 directions.put(d, anim);
                 if (explicitDirections) {

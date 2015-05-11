@@ -67,20 +67,22 @@ public class DoorActivator extends ClickActivator implements ProximityActivator,
         super(NaturalVector2.of(x, y), 2, 2);
         this.lock = lock;
         this.front = front;
+        
+        final float magnitude = 0.1f;
         if (front) {
             unlockedAnimation = new Animation(0.05f, frontRegions);
             unlockedAnimation.setPlayMode(Animation.PlayMode.NORMAL);
             lockedAnimation = new Animation(0.05f, frontRegionsLocked);
             lockedAnimation.setPlayMode(Animation.PlayMode.NORMAL);
             center = new Vector2(x + 1, y + 0.5f);
-            this.light = new StaticLight(center.cpy().add(0.5f, 0.5f), 0.5f, false);
+            this.light = new StaticLight(center.cpy().add(0.5f, 0.5f), magnitude, false);
         } else {
             unlockedAnimation = new Animation(0.05f, sideRegions);
             unlockedAnimation.setPlayMode(Animation.PlayMode.NORMAL);
             lockedAnimation = new Animation(0.05f, sideRegionsLocked);
             lockedAnimation.setPlayMode(Animation.PlayMode.NORMAL);
             center = new Vector2(x + 0.5f, y - 1);
-            this.light = new StaticLight(center.cpy().add(0.5f, 1.5f), 0.5f, false);
+            this.light = new StaticLight(center.cpy().add(0.5f, 1.5f), magnitude, false);
         }
         
         setColor();
@@ -139,10 +141,10 @@ public class DoorActivator extends ClickActivator implements ProximityActivator,
     }
     
     private void setColor() {
-        if (!lock.isLocked()) {
-            light.setColor(0.2f, 0.9f, 0.4f, 0.5f);
+        if (lock.isLocked()) {
+            light.setColor(1, 0, 0, 1f);
         } else {
-            light.setColor(0.9f, 0.2f, 0.4f, 0.5f);
+            light.setColor(1, 1, 1, 1f);
         }
     }
 

@@ -67,7 +67,7 @@ public class Acid extends ProjectileAugmentation {
         private final Vector2 target;
 
         public AcidAction(Agent actor, Vector2 target) {
-            super(actor, Activity.Swipe, Acid.this);
+            super(actor, Activity.Cast, Acid.this);
             this.target = target;
         }
 

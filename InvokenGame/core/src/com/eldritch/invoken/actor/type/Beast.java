@@ -24,7 +24,7 @@ public class Beast extends Npc {
             Map<Activity, Map<Direction, Animation>> animations, Location location) {
         super(data, x, y, width, height, velocity, animations, location);
     }
-    
+
     @Override
     public float getDamageScale(DamageType damage) {
         switch (damage) {
@@ -119,7 +119,7 @@ public class Beast extends Npc {
             super(data, x, y, Settings.SCALE * PX, Settings.SCALE * PX, MAX_VELOCITY,
                     getAnimations(asset), location);
         }
-        
+
         @Override
         public float getDamageScale(DamageType damage) {
             switch (damage) {
@@ -130,7 +130,7 @@ public class Beast extends Npc {
                     return 1;
             }
         }
-        
+
         @Override
         protected short getCategoryBits() {
             return Settings.BIT_LOW_AGENT;
@@ -142,13 +142,14 @@ public class Beast extends Npc {
             TextureRegion[][] regions = GameScreen.getRegions(assetPath + ".png", PX, PX);
             Map<Direction, Animation> move = AnimationBuilder.from(regions)
                     .setPlayMode(Animation.PlayMode.LOOP).setX(4).build();
-            Map<Direction, Animation> attack = AnimationBuilder.from(regions).setEndX(4)
-                    .build();
+            Map<Direction, Animation> attack = AnimationBuilder.from(regions).setEndX(4).build();
+            Map<Direction, Animation> slowAttack = AnimationBuilder.from(regions).setEndX(4)
+                    .setFrameDuration(Settings.FRAME_DURATION * 2).build();
             Map<Direction, Animation> death = AnimationBuilder.from(regions)
                     .setPlayMode(Animation.PlayMode.NORMAL).setOffset(4).setEndX(4)
                     .setExplicitDirections(false).build();
 
-            animations.put(Activity.Cast, attack);
+            animations.put(Activity.Cast, slowAttack);
             animations.put(Activity.Thrust, attack);
             animations.put(Activity.Idle, move);
             animations.put(Activity.Explore, move);
