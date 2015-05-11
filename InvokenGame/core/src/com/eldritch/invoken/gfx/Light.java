@@ -67,12 +67,10 @@ public abstract class Light {
             this.owner = owner;
         }
 
-        public OwnedLight(Locatable owner, LightDescription description, boolean useOffset) {
+        public OwnedLight(Locatable owner, LightDescription description, Vector2 offset) {
             super(description);
             this.owner = owner;
-            if (useOffset) {
-                description.getBounds().getCenter(offset);
-            }
+            this.offset.set(offset);
         }
 
         @Override

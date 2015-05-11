@@ -57,7 +57,10 @@ public abstract class InanimateEntity extends CollisionEntity implements Drawabl
     }
     
     public void addLight(LightDescription description) {
-        lights.add(new OwnedLight(this, description, useOffset()));
+        Vector2 lightOffset = new Vector2();
+        description.getBounds().getCenter(lightOffset);
+        lightOffset.sub(offset);
+        lights.add(new OwnedLight(this, description, lightOffset));
     }
 
     @Override
@@ -208,27 +211,15 @@ public abstract class InanimateEntity extends CollisionEntity implements Drawabl
         return true;
     }
     
-    protected abstract boolean useOffset();
-
     public static class DynamicEntity extends InanimateEntity {
         public DynamicEntity(TiledMapTileLayer layer, NaturalVector2 position) {
             super(layer, position, BodyType.DynamicBody);
-        }
-
-        @Override
-        protected boolean useOffset() {
-            return false;
         }
     }
 
     public static class StaticEntity extends InanimateEntity {
         public StaticEntity(TiledMapTileLayer layer, NaturalVector2 position) {
             super(layer, position, BodyType.StaticBody);
-        }
-
-        @Override
-        protected boolean useOffset() {
-            return true;
         }
     }
 }
