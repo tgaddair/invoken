@@ -82,6 +82,11 @@ public class Acid extends ProjectileAugmentation {
         public Vector2 getPosition() {
             return target;
         }
+        
+        @Override
+        protected float getHoldSeconds() {
+            return 0.25f;
+        }
     }
 
     public static class AcidPellet extends HandledBullet {

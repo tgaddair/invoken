@@ -431,6 +431,10 @@ public class AgentInfo {
     public float getPerception() {
         return Math.min(getSubterfuge() / 100f + getAlertness() + getPerceptionBonus(), 1.0f);
     }
+    
+    public float getEfficacy() {
+        return getEnergy() > 0 ? 1 : 0.1f;
+    }
 
     public float getAttackModifier() {
         return 0.5f + getWarfare() / 100f;

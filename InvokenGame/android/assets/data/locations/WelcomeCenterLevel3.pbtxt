@@ -9,15 +9,15 @@ encounter {
   actor_params {
     description: ""
     actor_scenario {
-      actor_id: "Android"
+      actor_id: "AcidCrawler"
       essential: false
       blocking: false
-      min: 1
-      max: 1
+      min: 2
+      max: 3
       alive: true
     }
     actor_scenario {
-      actor_id: "SmallDrone"
+      actor_id: "Crawler"
       essential: false
       blocking: false
       min: 1

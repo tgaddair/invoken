@@ -9,8 +9,12 @@ import com.eldritch.invoken.location.Location;
 
 public abstract class AnimatedAction extends AugmentationAction {
 	final Activity activity;
+	float elapsed = 0;
 	float stateTime = 0;
-	boolean applied;
+	boolean applied = false;
+	
+	boolean canApply = false;
+	float holdTime = 0;
 	
 	public AnimatedAction(Agent actor, Activity activity, Augmentation aug) {
 	    super(actor, aug);
@@ -20,16 +24,33 @@ public abstract class AnimatedAction extends AugmentationAction {
 	
 	@Override
 	public void update(float delta, Location location) {
-		stateTime += delta;
+	    elapsed += delta;
+		if (!canApply && canApplyFrame()) {
+		    holdTime += delta;
+		    if (holdTime > getHoldSeconds()) {
+		        canApply = true;
+		    }
+		} else {
+	        stateTime += delta * getOwner().getInfo().getEfficacy();
+		}
+		
 		if (!applied && canApply()) {
 		    apply(location);
 		    applied = true;
 		}
 	}
 	
-	protected boolean canApply() {
+	protected float getHoldSeconds() {
+	    return 0;
+	}
+	
+	protected boolean canApplyFrame() {
 	    Animation anim = owner.getAnimation(activity);
-	    return anim.getKeyFrameIndex(stateTime) == anim.getKeyFrames().length / 3;
+        return anim.getKeyFrameIndex(stateTime) == anim.getKeyFrames().length / 2;
+	}
+	
+	protected boolean canApply() {
+	    return canApply;
 	}
 	
 	@Override
