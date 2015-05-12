@@ -234,18 +234,9 @@ public class BspGenerator {
         int y1 = (int) (prev.y + prev.height / 2);
         int x2 = (int) (next.x + next.width / 2);
         int y2 = (int) (next.y + next.height / 2);
-        
+
         Pathfind(x1, y1, x2, y2, base);
         addPath(x1, y1, x2, y2, currentPath);
-    }
-
-    protected void addPath(int x, int y, int x2, int y2, List<NaturalVector2> currentPath) {
-        // dig out the tunnel we just found
-        // int size = choose(1, 2);
-        int size = 2;
-        for (NaturalVector2 point : currentPath) {
-            Set(point.x - size / 2, point.y - size / 2, size, size, CellType.Floor, CellType.Stone);
-        }
     }
 
     // / <summary>
@@ -347,8 +338,30 @@ public class BspGenerator {
         return map[x][y];
     }
 
-    protected void Set(int x, int y, CellType type) {
-        Set(x, y, type, CellType.None);
+    protected void addPath(int x, int y, int x2, int y2, List<NaturalVector2> currentPath) {
+        // dig out the tunnel we just found
+        // int size = choose(1, 2);
+        addPath(x, y, x2, y2, currentPath, 4, CellType.Stone);
+        addPath(x, y, x2, y2, currentPath, 2, CellType.None);
+    }
+
+    protected void addPath(int x, int y, int x2, int y2, List<NaturalVector2> currentPath,
+            int size, CellType untype) {
+        for (NaturalVector2 point : currentPath) {
+            Set(point.x - size / 2, point.y - size / 2, size, size, CellType.Floor, untype);
+            Set(point.x - size / 2, point.y - size / 2, size, size, CellType.Floor, untype);
+        }
+    }
+
+    // / <summary>
+    // / Sets the given rectangle of cells to the type
+    // / </summary>
+    protected void Set(int x, int y, int w, int h, CellType type, CellType untype) {
+        for (int i = x; i < x + w; i++) {
+            for (int j = y; j < y + h; j++) {
+                Set(i, j, type, untype);
+            }
+        }
     }
 
     // / <summary>
@@ -361,15 +374,8 @@ public class BspGenerator {
             map[x][y] = type;
     }
 
-    // / <summary>
-    // / Sets the given rectangle of cells to the type
-    // / </summary>
-    protected void Set(int x, int y, int w, int h, CellType type, CellType untype) {
-        for (int i = x; i < x + w; i++) {
-            for (int j = y; j < y + h; j++) {
-                Set(i, j, type);
-            }
-        }
+    protected void Set(int x, int y, CellType type) {
+        Set(x, y, type, CellType.None);
     }
 
     // / Makes sure the area doesn't overlap any floors

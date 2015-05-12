@@ -344,7 +344,6 @@ control_point {
 control_point {
   id: "LobbyA"
   room_id: "Bedroom"
-  follows: "Lobby"
   lock_strength: 1
   required_key: "TerathsHideoutCredentials"
   origin: false
@@ -353,6 +352,7 @@ control_point {
   value: 0
   closed: false
   faction_id: ""
+  access: false
 }
 control_point {
   id: "LobbyB"
@@ -451,6 +451,19 @@ control_point {
   min: 1
   max: 1
   value: 2
+  closed: false
+  faction_id: "_ThugFaction"
+  access: false
+}
+control_point {
+  id: "ThugLeaderBedroom"
+  room_id: "ThugLeaderBedroom"
+  lock_strength: 1
+  required_key: ""
+  origin: false
+  min: 1
+  max: 1
+  value: 3
   closed: false
   faction_id: "_ThugFaction"
   access: false

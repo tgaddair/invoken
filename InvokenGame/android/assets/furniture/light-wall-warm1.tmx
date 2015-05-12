@@ -57,15 +57,15 @@
  </layer>
  <layer name="constraints" width="5" height="3">
   <data encoding="base64" compression="zlib">
-   eJxjYGBgYGFEYBjAJoYOAAUiAB8=
+   eJxjYGBgYGFEYBjAJgYCzEh8AAVRACM=
   </data>
  </layer>
- <layer name="collision" width="5" height="3">
+ <layer name="collision" width="5" height="3" visible="0">
   <data encoding="base64" compression="zlib">
    eJxjYCAfAAAAPAAB
   </data>
  </layer>
- <layer name="lights" width="5" height="3">
+ <layer name="lights" width="5" height="3" visible="0">
   <properties>
    <property name="b" value=".2"/>
    <property name="g" value=".4"/>
