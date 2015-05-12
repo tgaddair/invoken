@@ -1,0 +1,40 @@
+id: "ThugLeaderBedroom"
+furniture {
+  id: "chair-upper1"
+  type: TMX
+}
+furniture {
+  id: "repository"
+  type: TMX
+  min: 1
+}
+furniture {
+  id: "bed-upper1"
+  type: TMX
+}
+furniture {
+  id: "lamp-tall1"
+  type: TMX
+  max: 2
+}
+furniture {
+  id: "bench-upper1"
+  type: TMX
+}
+furniture {
+  id: "sofa-pair-upper1"
+  type: TMX
+}
+furniture {
+  id: "art-upper1"
+  type: TMX
+}
+furniture {
+  id: "art-upper2"
+  type: TMX
+}
+furniture {
+  id: "art-upper3"
+  type: TMX
+}
+size: MEDIUM

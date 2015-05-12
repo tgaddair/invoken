@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" width="6" height="3" tilewidth="32" tileheight="32">
+ <tileset firstgid="1" name="furniture-modern" tilewidth="32" tileheight="32">
+  <image source="../maps/graphics/tiles/furniture-modern.png" width="512" height="512"/>
+ </tileset>
+ <tileset firstgid="257" name="furniture-placement" tilewidth="32" tileheight="32">
+  <image source="../maps/graphics/tiles/furniture-placement.png" width="64" height="64"/>
+  <tile id="2">
+   <properties>
+    <property name="constraint" value="ground"/>
+   </properties>
+  </tile>
+  <tile id="3">
+   <properties>
+    <property name="constraint" value="wall"/>
+   </properties>
+  </tile>
+ </tileset>
+ <tileset firstgid="261" name="collision" tilewidth="32" tileheight="32">
+  <image source="../maps/graphics/tiles/collision.png" width="64" height="64"/>
+  <tile id="0">
+   <properties>
+    <property name="collision" value="short"/>
+   </properties>
+  </tile>
+  <tile id="2">
+   <properties>
+    <property name="transient" value=""/>
+   </properties>
+  </tile>
+ </tileset>
+ <tileset firstgid="265" name="modern-activators" tilewidth="32" tileheight="32">
+  <image source="../image-atlases/modern-activators.png" width="64" height="64"/>
+ </tileset>
+ <tileset firstgid="269" name="lab-tiles" tilewidth="32" tileheight="32">
+  <image source="../image-atlases/lab-tiles.png" width="512" height="512"/>
+ </tileset>
+ <tileset firstgid="525" name="future-obj4" tilewidth="32" tileheight="32">
+  <image source="../image-atlases/future-obj4.png" width="512" height="512"/>
+ </tileset>
+ <tileset firstgid="781" name="future-obj1" tilewidth="32" tileheight="32">
+  <image source="../image-atlases/future-obj1.png" width="512" height="512"/>
+ </tileset>
+ <tileset firstgid="1037" name="light-markers" tilewidth="32" tileheight="32">
+  <image source="../image-atlases/light-markers.png" width="64" height="64"/>
+ </tileset>
+ <tileset firstgid="1041" name="future-obj3" tilewidth="32" tileheight="32">
+  <image source="../image-atlases/future-obj3.png" width="512" height="512"/>
+ </tileset>
+ <tileset firstgid="1297" name="future-obj2" tilewidth="32" tileheight="32">
+  <image source="../image-atlases/future-obj2.png" width="512" height="512"/>
+ </tileset>
+ <layer name="objects" width="6" height="3">
+  <data encoding="base64" compression="zlib">
+   eJxjYICAZUwMDMuZGMgGAFHgAVI=
+  </data>
+ </layer>
+ <layer name="constraints" width="6" height="3" visible="0">
+  <data encoding="base64" compression="zlib">
+   eJxjYIAAFkYIRge4xJkZIRgGAASaAB0=
+  </data>
+ </layer>
+ <layer name="collision" width="6" height="3" visible="0">
+  <data encoding="base64" compression="zlib">
+   eJxjYKAOAAAASAAB
+  </data>
+ </layer>
+ <layer name="buffer" width="6" height="3">
+  <data encoding="base64" compression="zlib">
+   eJxjYGBgYGNExeQAAAcMAB0=
+  </data>
+ </layer>
+</map>
