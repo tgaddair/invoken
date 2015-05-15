@@ -37,6 +37,12 @@ public class Consumable extends Item {
     public void unequipFrom(AgentInventory inventory) {
         // does nothing
     }
+    
+    @Override
+    public boolean mapTo(AgentInventory inventory, int index) {
+        inventory.setConsumable(index, this);
+        return true;
+    }
 
     @Override
     protected Animation getAnimation(Activity activity, Direction direction) {

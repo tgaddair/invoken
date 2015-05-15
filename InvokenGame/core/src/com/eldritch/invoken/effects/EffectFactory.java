@@ -28,6 +28,13 @@ public class EffectFactory {
                         return new Regenerating(target, proto.getMagnitude(), proto.getDuration());
                     }
                 };
+            case ENERGIZE:
+                return new EffectGenerator() {
+                    @Override
+                    public Effect generate(Agent target) {
+                        return new Energizing(target, proto.getMagnitude(), proto.getDuration());
+                    }
+                };
             default:
                 throw new IllegalArgumentException("Unrecognized effect type: " + proto.getType());
         }

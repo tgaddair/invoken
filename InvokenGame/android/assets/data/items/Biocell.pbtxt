@@ -1,0 +1,14 @@
+id: "Biocell"
+name: "Biocell"
+description: "Stimulation delivery package, a type of hand-held medication used for healing the body. This item consists of a syringe for containing and delivering the medication and a gauge for measuring the status of the stimpak\'s contents. When the medicine is injected, it provides immediate healing of the body\'s minor wounds."
+value: 100
+droppable: true
+effect {
+  magnitude: 15
+  range: PLAYER
+  type: ENERGIZE
+}
+hidden: false
+type: CONSUMABLE
+asset: ""
+covers: false

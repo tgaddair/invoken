@@ -63,6 +63,7 @@ message Effect {
 
 		// Execute - Upgrade
 		REGENERATE = 19; // MAGNITUDE change in health for DURATION on TARGET
+		ENERGIZE = 46;
 		BARRIER = 20; // MAGNITUDE change in defense to DAMAGE_TYPE on TARGET for DURATION
 		MIRROR = 21; // TARGET reflects up to MAGNITUDE damage of DAMAGE_TYPE for DURATION
 		ABSORB = 22; // TARGET absorbs up to MAGNITUDE damage of DAMAGE_TYPE for DURATION

@@ -41,6 +41,10 @@ public abstract class Item {
     public abstract void equipFrom(AgentInventory inventory);
 
     public abstract void unequipFrom(AgentInventory inventory);
+    
+    public boolean mapTo(AgentInventory inventory, int index) {
+        return false;
+    }
 
     public void render(Agent agent, Activity activity, float stateTime,
             OrthogonalTiledMapRenderer renderer) {

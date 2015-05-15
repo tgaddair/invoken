@@ -47,6 +47,7 @@ import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.activators.Activator;
 import com.eldritch.invoken.activators.SecurityCamera;
 import com.eldritch.invoken.actor.AgentHandler;
+import com.eldritch.invoken.actor.AgentInventory;
 import com.eldritch.invoken.actor.Drawable;
 import com.eldritch.invoken.actor.Profession;
 import com.eldritch.invoken.actor.ai.Squad;
@@ -347,7 +348,7 @@ public class Location {
         ConnectedRoom room = getConnections().getRoom(position.x, position.y);
         return territory[position.x][position.y].isOnFrontier(room);
     }
-    
+
     public void addEntity(TemporaryEntity entity) {
         pending.add(entity);
     }
@@ -396,7 +397,7 @@ public class Location {
             this.lightManager.addLight(light);
         }
     }
-    
+
     public void addLight(Light light) {
         lightManager.addLight(light);
     }
@@ -545,7 +546,7 @@ public class Location {
             for (Activator activator : activators) {
                 activator.update(delta, this);
             }
-            
+
             // add pending
             if (!pending.isEmpty()) {
                 for (TemporaryEntity entity : pending) {
@@ -652,7 +653,7 @@ public class Location {
         overlayRenderer.getBatch().setShader(normalMapShader.getShader());
         normalMapShader.useNormalMap(true);
         overlayRenderer.render();
-        
+
         if (Settings.ENABLE_FOG) {
             fogManager.update(delta);
             fogManager.render(renderer);
@@ -1215,19 +1216,28 @@ public class Location {
         Faction playerFaction = Faction.of("_PlayerFaction");
         player.getInfo().addFaction(playerFaction, 3, 0);
 
+        AgentInventory inv = player.getInfo().getInventory();
         Item outfit = profession.getDefaultOutfit();
-        player.getInfo().getInventory().addItem(outfit);
-        player.getInfo().getInventory().equip(outfit);
+        inv.addItem(outfit);
+        inv.equip(outfit);
 
         // Item weapon = Item.fromProto(InvokenGame.ITEM_READER.readAsset("RailGun"));
         Item weapon = Item.fromProto(InvokenGame.ITEM_READER.readAsset("Shotgun"));
         // Item weapon = Item.fromProto(InvokenGame.ITEM_READER.readAsset("DamagedPistol"));
-        player.getInfo().getInventory().addItem(weapon);
-        player.getInfo().getInventory().equip(weapon);
+        inv.addItem(weapon);
+        inv.equip(weapon);
 
         Item melee = Item.fromProto(InvokenGame.ITEM_READER.readAsset("Hammer"));
-        player.getInfo().getInventory().addItem(melee);
-        player.getInfo().getInventory().equip(melee);
+        inv.addItem(melee);
+        inv.equip(melee);
+        
+        Item biocell = Item.fromProto(InvokenGame.ITEM_READER.readAsset("Biocell"));
+        inv.addItem(biocell, 3);
+        biocell.mapTo(inv, 0);
+
+        Item stimpak = Item.fromProto(InvokenGame.ITEM_READER.readAsset("Stimpak"));
+        inv.addItem(stimpak, 3);
+        stimpak.mapTo(inv, 1);
 
         // player.getInfo().getInventory().addItem(Fragment.getInstance(), 1000);
 

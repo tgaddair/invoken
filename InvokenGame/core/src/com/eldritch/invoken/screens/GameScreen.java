@@ -522,6 +522,12 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
             case Keys.F:
                 player.toggleLastAugmentation();
                 return true;
+            case Keys.R:
+                player.getInventory().consume(0);
+                return true;
+            case Keys.T:
+                player.getInventory().consume(1);
+                return true;
             case Keys.TAB:
                 showMinimap = false;
                 return true;

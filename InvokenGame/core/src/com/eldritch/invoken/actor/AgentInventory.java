@@ -2,6 +2,7 @@ package com.eldritch.invoken.actor;
 
 import java.util.ArrayList;
 
+import com.eldritch.invoken.actor.items.Consumable;
 import com.eldritch.invoken.actor.items.Item;
 import com.eldritch.invoken.actor.items.MeleeWeapon;
 import com.eldritch.invoken.actor.items.Outfit;
@@ -13,6 +14,7 @@ public class AgentInventory extends Inventory {
     private final AgentInfo info;
     
     // equipment
+    private final Consumable[] consumables = new Consumable[2];
     private Outfit outfit;
     private RangedWeapon rangedWeapon;
     private MeleeWeapon meleeWeapon;
@@ -45,6 +47,38 @@ public class AgentInventory extends Inventory {
     
     public boolean isCooling(Item item) {
         return getState(item.getId()).getCooldown() > 0;
+    }
+    
+    public boolean hasConsumable(int index) {
+        return index < consumables.length && consumables[index] != null;
+    }
+    
+    public Consumable getConsumable(int index) {
+        return consumables[index];
+    }
+    
+    public void setConsumable(int index, Consumable consumable) {
+        consumables[index] = consumable;
+    }
+    
+    public boolean canConsume(int index) {
+        return canConsume(getConsumable(index));
+    }
+    
+    public boolean canConsume(Consumable consumable) {
+        return hasItem(consumable);
+    }
+    
+    public boolean consume(int index) {
+        return consume(consumables[index]);
+    }
+    
+    public boolean consume(Consumable consumable) {
+        if (canConsume(consumable)) {
+            consumable.equipFrom(this);
+            return true;
+        }
+        return false;
     }
 
     public boolean hasOutfit() {
