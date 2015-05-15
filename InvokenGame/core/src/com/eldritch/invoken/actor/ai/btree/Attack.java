@@ -22,8 +22,8 @@ public class Attack extends Sequence<Npc> {
     public Attack() {
         // if we can't select a target, then attacking fails
         addChild(new SelectBestTarget());
-//        addChild(new EquipBestWeapon());
-        
+        // addChild(new EquipBestWeapon());
+
         Sequence<Npc> thrustSequence = new Sequence<>();
         thrustSequence.addChild(new ShouldThrust());
         thrustSequence.addChild(new Thrust());
@@ -48,7 +48,7 @@ public class Attack extends Sequence<Npc> {
         augSelector.addChild(chooseAugSequence);
         augSelector.addChild(new AlwaysSucceed<>(new LowerAim())); // failed to choose aug, so lower
                                                                    // our aim
-        
+
         Sequence<Npc> dodgeSequence = new Sequence<>();
         dodgeSequence.addChild(new ShouldDodge());
         dodgeSequence.addChild(new LowerAim());
@@ -60,7 +60,7 @@ public class Attack extends Sequence<Npc> {
         hideSequence.addChild(new IsIntimidated());
         hideSequence.addChild(new Invert<>(new HasCover()));
         hideSequence.addChild(new SeekCover());
-        
+
         Sequence<Npc> pursueSequence = new Sequence<>();
         pursueSequence.addChild(new HasTarget());
         pursueSequence.addChild(new Pursue());
@@ -163,7 +163,9 @@ public class Attack extends Sequence<Npc> {
             if (!npc.hasPendingAction() && !npc.actionInProgress()) {
                 // choose the aug with the highest situational quality score
                 Augmentation chosen = null;
-                float bestQuality = 0; // never choose an aug with quality <= 0
+                
+                // sometimes we don't want to choose an aug
+                float bestQuality = (float) (Math.random() * Heuristics.getDesperation(npc));
                 for (Augmentation aug : npc.getInfo().getAugmentations().getAugmentations()) {
                     if (aug.hasEnergy(npc)
                             && aug.isValidWithAiming(npc, aug.getBestTarget(npc, npc.getTarget(),
@@ -276,14 +278,14 @@ public class Attack extends Sequence<Npc> {
             entity.setAiming(false);
         }
     }
-    
+
     private static class ShouldDodge extends BooleanTask {
         @Override
         protected boolean check(Npc npc) {
             if (!npc.canDodge()) {
                 return false;
             }
-            
+
             // when our target is aiming at us, then dodge with some probability
             float danger = getDanger(npc);
             if (danger > 0) {
@@ -294,11 +296,11 @@ public class Attack extends Sequence<Npc> {
             }
             return false;
         }
-        
+
         private float getDanger(Npc npc) {
             if (npc.hasTarget() && npc.getTarget().isAimingAt(npc)) {
                 Agent target = npc.getTarget();
-                
+
                 float threat = 1.0f;
                 if (target.getInventory().hasRangedWeapon()) {
                     float dst2 = npc.dst2(target);
@@ -306,31 +308,29 @@ public class Attack extends Sequence<Npc> {
                     float ideal2 = weapon.getIdealDistance();
                     threat = Heuristics.distanceScore(dst2, ideal2);
                 }
-                
-                float utility = npc.getInfo().getEnergyPercent() 
-                        * (1.0f - npc.getInfo().getHealthPercent());
-                float danger = threat * utility;
+
+                float danger = threat * Heuristics.getDesperation(npc);
                 return danger;
             }
-            
+
             return 0;
         }
     }
-    
+
     private static class Dodge extends SuccessTask {
         private final Vector2 direction = new Vector2();
-        
+
         @Override
         public void doFor(Npc npc) {
             Agent target = npc.getTarget();
             direction.set(target.getPosition()).sub(npc.getPosition()).nor();
-            
+
             // randomly dodge left or right
             direction.rotate90((int) Math.signum(Math.random() - 0.5));
             npc.dodge(direction);
         }
     }
-    
+
     private static class ShouldThrust extends BooleanTask {
         @Override
         protected boolean check(Npc npc) {
@@ -340,10 +340,10 @@ public class Attack extends Sequence<Npc> {
             return npc.dst2(npc.getTarget()) < 3;
         }
     }
-    
+
     private static class Thrust extends SuccessTask {
         private final Vector2 direction = new Vector2();
-        
+
         @Override
         public void doFor(Npc npc) {
             Agent target = npc.getTarget();
@@ -351,7 +351,7 @@ public class Attack extends Sequence<Npc> {
             npc.dodge(direction);
         }
     }
-    
+
     private static class HasTarget extends BooleanTask {
         @Override
         protected boolean check(Npc npc) {

@@ -3,6 +3,7 @@ package com.eldritch.invoken.actor.items;
 import java.util.List;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
+import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.actor.AgentInventory;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Agent.Activity;
@@ -11,6 +12,7 @@ import com.eldritch.invoken.effects.Effect;
 import com.eldritch.invoken.effects.EffectFactory;
 import com.eldritch.invoken.effects.EffectFactory.EffectGenerator;
 import com.eldritch.invoken.proto.Items;
+import com.eldritch.invoken.util.SoundManager.SoundEffect;
 
 public class Consumable extends Item {
     private final List<EffectGenerator> effects;
@@ -31,6 +33,7 @@ public class Consumable extends Item {
         // consume
         inventory.removeItem(this);
         apply(inventory.getAgentInfo().getAgent());
+        InvokenGame.SOUND_MANAGER.play(SoundEffect.CONSUMABLE, 3);
     }
 
     @Override

@@ -43,6 +43,7 @@ public class SoundManager implements Disposable {
         RANGED_WEAPON_LARGE(WAV, "ranged-weapon-large"),
         RANGED_WEAPON_SHOTGUN(WAV, "ranged-weapon-shotgun"),
         RANGED_WEAPON_RIFLE(WAV, "ranged-weapon-rifle"),
+        CONSUMABLE(OGG, "consume"),
         SWISH(OGG, "swish"),
         BUFF(WAV, "buff"),
         GHOST_DEATH(OGG, "ghost-death"),

@@ -66,7 +66,7 @@ public class AgentInventory extends Inventory {
     }
     
     public boolean canConsume(Consumable consumable) {
-        return hasItem(consumable);
+        return consumable != null && hasItem(consumable);
     }
     
     public boolean consume(int index) {
