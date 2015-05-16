@@ -351,9 +351,13 @@ public class BspGenerator {
 
     protected void addPath(int x, int y, int x2, int y2, List<NaturalVector2> currentPath,
             int size, CellType untype) {
-        for (NaturalVector2 point : currentPath) {
-            Set(point.x - size / 2, point.y - size / 2, size, size, CellType.Floor, untype);
-            Set(point.x - size / 2, point.y - size / 2, size, size, CellType.Floor, untype);
+        for (int i = 1; i < currentPath.size(); i++) {
+            NaturalVector2 prev = currentPath.get(i - 1);
+            NaturalVector2 point = currentPath.get(i);
+            
+            int width = prev.y != point.y ? size : 1;
+            int height = prev.x != point.x ? size : 1;
+            Set(point.x - width / 2, point.y - height / 2, width, height, CellType.Floor, untype);
         }
     }
 
