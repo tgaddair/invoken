@@ -42,6 +42,10 @@ public abstract class FuzzyMonitor {
     public float getValue() {
         return value;
     }
+    
+    public float getPercent() {
+        return value / limit;
+    }
 
     public boolean isExpended() {
         return ready ? value >= limit : value >= 0;

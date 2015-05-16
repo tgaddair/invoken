@@ -2,7 +2,6 @@ package com.eldritch.invoken.actor.ai.btree;
 
 import com.badlogic.gdx.ai.btree.branch.Selector;
 import com.badlogic.gdx.ai.btree.branch.Sequence;
-import com.badlogic.gdx.ai.btree.decorator.Invert;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Npc;
 import com.eldritch.invoken.location.Location;
@@ -24,21 +23,13 @@ public class Patrol extends Selector<Npc> {
         guardSequence.addChild(new SetLastTask("Guarding"));
         
         Sequence<Npc> planSequence = new Sequence<>();
-        planSequence.addChild(new HasPlan());
+//        planSequence.addChild(new HasPlan());
         planSequence.addChild(new FollowPlan());
         planSequence.addChild(new SetLastTask("FollowPlan"));
-        
-        Sequence<Npc> wanderSequence = new Sequence<>();
-        wanderSequence.addChild(new CanWander());
-        wanderSequence.addChild(new Invert<>(new IsTired()));
-        wanderSequence.addChild(new LowerWeapon());
-        wanderSequence.addChild(new Wander());
         
         addChild(watchSequence);
         addChild(guardSequence);
         addChild(planSequence);
-        addChild(wanderSequence);
-        addChild(new Idle());
     }
     
     private static class WatchForCrime extends BooleanTask {
@@ -77,24 +68,10 @@ public class Patrol extends Selector<Npc> {
         }
     }
     
-    private static class HasPlan extends BooleanTask {
-        @Override
-        protected boolean check(Npc npc) {
-            return npc.getPlanner().hasGoal();
-        }
-    }
-    
     private static class FollowPlan extends BooleanTask {
         @Override
         protected boolean check(Npc npc) {
             return npc.getPlanner().act();
-        }
-    }
-    
-    private static class CanWander extends BooleanTask {
-        @Override
-        protected boolean check(Npc npc) {
-            return !npc.inDialogue();
         }
     }
     

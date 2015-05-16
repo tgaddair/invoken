@@ -20,6 +20,8 @@ message Location {
 
 	optional string music = 13;
 
+	repeated string hall_id = 14;
+
 	// DEPRECATED
 	optional int32 parent_id_DEPRECATED = 4;
 	repeated string room_id_DEPRECATED = 9;
@@ -57,7 +59,8 @@ message ControlPoint {
 	optional int32 min = 8 [default = 1];
 	optional int32 max = 9 [default = 1];
 
-	optional string faction_id = 12;
+	optional string faction_id = 12;  // owned by a specific faction
+	optional string agent_id = 14;  // owned by a specific agent
 }
 
 message Room {
@@ -86,9 +89,18 @@ message Room {
 		LARGE = 2;
 	}
 
+	enum Type {
+		NONE = 0;
+		DINING = 1;  // reduces desire to Eat
+		BEDROOM = 2;  // reduces desire to Rest
+		LOUNGE = 3;   // reduces desire to Socialize
+		STUDY = 4;   // reduces desire for Solitude
+	}
+
 	optional string id = 1;
 	repeated Furniture furniture = 2;
 	optional Size size = 3;
+	optional Type type = 4 [default = NONE];
 }
 
 enum Biome {

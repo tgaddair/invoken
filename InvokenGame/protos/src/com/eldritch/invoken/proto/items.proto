@@ -24,7 +24,7 @@ message Item {
 		PISTOL = 0;
 		RIFLE = 1;
 		SHOTGUN = 2;
-		AUTO = 3;
+		ASSAULT = 3;
 	}
 
 	message Requirement {
