@@ -18,6 +18,11 @@ import com.eldritch.invoken.actor.type.HandledBullet;
 import com.eldritch.invoken.actor.type.HandledProjectile;
 import com.eldritch.invoken.actor.AgentInventory;
 import com.eldritch.invoken.effects.Bleed;
+import com.eldritch.invoken.effects.ProjectileSpawn;
+import com.eldritch.invoken.effects.ProjectileSpawn.DelayedProjectileSpawn;
+import com.eldritch.invoken.effects.ProjectileSpawn.FixedProjectileSpawn;
+import com.eldritch.invoken.effects.ProjectileSpawn.ProjectileGenerator;
+import com.eldritch.invoken.effects.ProjectileSpawn.SingleProjectileSpawn;
 import com.eldritch.invoken.effects.Stunned;
 import com.eldritch.invoken.location.Location;
 import com.eldritch.invoken.proto.Effects.DamageType;
@@ -121,6 +126,10 @@ public abstract class RangedWeapon extends Item {
 
     public float getCooldown() {
         return (float) getData().getCooldown();
+    }
+    
+    public boolean isAuto() {
+        return false;
     }
     
     @Override
@@ -390,9 +399,9 @@ public abstract class RangedWeapon extends Item {
 
     public abstract SoundEffect getSoundEffect();
 
-    public abstract List<HandledProjectile> getProjectiles(Agent owner);
+    public abstract ProjectileSpawn getProjectileSpawn(Agent owner);
     
-    protected HandledProjectile getPrimaryProjectile(Agent owner) {
+    protected HandledBullet getPrimaryProjectile(Agent owner) {
         switch (primary) {
             case THERMAL:
                 return new RailBullet(owner);
@@ -400,7 +409,7 @@ public abstract class RangedWeapon extends Item {
                 return new PistolBullet(owner);
         }
     }
-
+    
     public static class Pistol extends RangedWeapon {
         public Pistol(Items.Item item) {
             super(item);
@@ -417,8 +426,47 @@ public abstract class RangedWeapon extends Item {
         }
 
         @Override
-        public List<HandledProjectile> getProjectiles(Agent owner) {
-            return ImmutableList.of(getPrimaryProjectile(owner));
+        public ProjectileSpawn getProjectileSpawn(Agent owner) {
+            return new SingleProjectileSpawn(owner, getPrimaryProjectile(owner));
+        }
+    }
+    
+    public static class AssaultRifle extends RangedWeapon {
+        private static final float SPREAD_DEGREES = 10f;
+        private static final int LIMIT = 3;
+        private static final float DELAY = 0.25f;
+        
+        public AssaultRifle(Items.Item item) {
+            super(item);
+        }
+        
+        @Override
+        public float getIdealDistance() {
+            return 4;
+        }
+
+        @Override
+        public SoundEffect getSoundEffect() {
+            return SoundEffect.RANGED_WEAPON_SMALL;
+        }
+
+        @Override
+        public ProjectileSpawn getProjectileSpawn(final Agent owner) {
+            ProjectileGenerator generator = new ProjectileGenerator() {
+                @Override
+                public HandledProjectile generate(Agent owner) {
+                    float theta = (float) (SPREAD_DEGREES * Math.random());
+                    HandledBullet bullet = getPrimaryProjectile(owner);
+                    bullet.rotate(theta);
+                    return bullet;
+                }
+            };
+            return new DelayedProjectileSpawn(owner, generator, LIMIT, DELAY);
+        }
+        
+        @Override
+        public float getCooldown() {
+            return 0.5f;
         }
     }
 
@@ -438,8 +486,8 @@ public abstract class RangedWeapon extends Item {
         }
 
         @Override
-        public List<HandledProjectile> getProjectiles(Agent owner) {
-            return ImmutableList.of(getPrimaryProjectile(owner));
+        public ProjectileSpawn getProjectileSpawn(Agent owner) {
+            return new SingleProjectileSpawn(owner, getPrimaryProjectile(owner));
         }
     }
 
@@ -462,13 +510,13 @@ public abstract class RangedWeapon extends Item {
         }
 
         @Override
-        public List<HandledProjectile> getProjectiles(Agent owner) {
+        public ProjectileSpawn getProjectileSpawn(Agent owner) {
             ImmutableList.Builder<HandledProjectile> builder = ImmutableList.builder();
             for (int i = -2; i <= 2; i++) {
                 float theta = SPREAD_DEGREES * i;
                 builder.add(new ShotgunPellet(owner, theta, PELLET_SCALE));
             }
-            return builder.build();
+            return new FixedProjectileSpawn(owner, builder.build());
         }
     }
 
@@ -476,6 +524,8 @@ public abstract class RangedWeapon extends Item {
         switch (item.getRangedType()) {
             case PISTOL:
                 return new Pistol(item);
+            case ASSAULT:
+                return new AssaultRifle(item);
             case RIFLE:
                 return new Rifle(item);
             case SHOTGUN:

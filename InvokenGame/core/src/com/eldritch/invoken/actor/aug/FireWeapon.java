@@ -43,6 +43,11 @@ public class FireWeapon extends ProjectileAugmentation {
     public void unprepare(Agent owner) {
         owner.toggleOff(HoldingWeapon.class);
     }
+    
+    @Override
+    public void release(Agent owner) {
+        owner.toggleOff(FireWeapon.class);
+    }
 
     @Override
     public Action getAction(Agent owner, Vector2 target) {
@@ -119,28 +124,7 @@ public class FireWeapon extends ProjectileAugmentation {
         public void apply(Location location) {
             // add projectile to scene
             RangedWeapon weapon = owner.getInventory().getRangedWeapon();
-            for (HandledProjectile projectile : weapon.getProjectiles(owner)) {
-                location.addEntity(projectile);
-            }
-
-            // update agent to fact the direction of their shots
-            owner.setDirection(owner.getRelativeDirection(target));
-
-            // add camera shake
-            owner.recoil();
-
-            // add cooldown to weapon
-            owner.getInventory().setCooldown(weapon, weapon.getCooldown());
-
-            // alert all enemies in range if the weapon is not silenced
-            for (Agent neighbor : owner.getNeighbors()) {
-                if (owner.dst2(neighbor) < ALERT_RADIUS * ALERT_RADIUS) {
-                    neighbor.alertTo(owner);
-                }
-            }
-
-            // play sound effect
-            InvokenGame.SOUND_MANAGER.playAtPoint(weapon.getSoundEffect(), owner.getPosition());
+            owner.addEffect(weapon.getProjectileSpawn(owner));
         }
 
         @Override

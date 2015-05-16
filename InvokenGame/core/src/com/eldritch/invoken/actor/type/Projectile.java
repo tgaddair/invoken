@@ -87,7 +87,7 @@ public abstract class Projectile extends CollisionEntity implements AgentHandler
     /**
      * Rotate velocity theta degrees.
      */
-    protected void rotate(float theta) {
+    public void rotate(float theta) {
         bullet.setVelocity(bullet.getVelocity().rotate(theta));
     }
 
