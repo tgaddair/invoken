@@ -130,7 +130,7 @@ public abstract class ProjectileSpawn extends BasicEffect {
 
         @Override
         public boolean isFinished() {
-            return count < limit;
+            return count >= limit;
         }
 
         private void spawn() {

@@ -87,7 +87,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     public static final float DODGE_COST = 10f;
     public static final float SPRINT_COST = 5f;
 
-    private static final float ROTATION_SCALE = 3f;
+    private static final float ROTATION_SCALE = 4.5f;
 
     static AssetManager assetManager = new AssetManager();
     static float MAX_FREEZE = 25f;
@@ -1974,7 +1974,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
                 theta = getTheta(destination);
                 elapsed = 0;
             }
-            rotate(delta, theta, ROTATION_SCALE * 1.5f);
+            rotate(delta, theta, ROTATION_SCALE);
 
             position.set(origin.x + direction.x, origin.y + direction.y).sub(offset);
             clear();

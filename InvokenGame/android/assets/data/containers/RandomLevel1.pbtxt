@@ -9,3 +9,18 @@ item {
   count: 1
   drop_chance: 1.0
 }
+item {
+  item_id: "Biocell"
+  count: 3
+  drop_chance: 1.0
+}
+item {
+  item_id: "DamagedPistol"
+  count: 1
+  drop_chance: 1.0
+}
+item {
+  item_id: "AssaultRifle"
+  count: 1
+  drop_chance: 1.0
+}

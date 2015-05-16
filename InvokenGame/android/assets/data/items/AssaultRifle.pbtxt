@@ -1,0 +1,19 @@
+id: "AssaultRifle"
+name: "Assault Rifle"
+description: "Conventional military-grade fully-automatic rifle.  Include auto-reload module."
+value: 25
+droppable: true
+requirement {
+  discipline: WARFARE
+  value: 20
+}
+hidden: false
+damage_modifier {
+  damage: PHYSICAL
+  magnitude: 15
+}
+type: RANGED_WEAPON
+asset: "assault"
+covers: false
+cooldown: 0.5
+ranged_type: ASSAULT

@@ -434,7 +434,7 @@ public abstract class RangedWeapon extends Item {
     public static class AssaultRifle extends RangedWeapon {
         private static final float SPREAD_DEGREES = 10f;
         private static final int LIMIT = 3;
-        private static final float DELAY = 0.25f;
+        private static final float DELAY = 0.15f;
         
         public AssaultRifle(Items.Item item) {
             super(item);

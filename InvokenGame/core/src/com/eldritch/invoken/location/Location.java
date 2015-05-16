@@ -1222,8 +1222,9 @@ public class Location {
         inv.equip(outfit);
 
         // Item weapon = Item.fromProto(InvokenGame.ITEM_READER.readAsset("RailGun"));
-        Item weapon = Item.fromProto(InvokenGame.ITEM_READER.readAsset("Shotgun"));
+//        Item weapon = Item.fromProto(InvokenGame.ITEM_READER.readAsset("Shotgun"));
         // Item weapon = Item.fromProto(InvokenGame.ITEM_READER.readAsset("DamagedPistol"));
+         Item weapon = Item.fromProto(InvokenGame.ITEM_READER.readAsset("AssaultRifle"));
         inv.addItem(weapon);
         inv.equip(weapon);
 
