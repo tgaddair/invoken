@@ -54,6 +54,7 @@ import com.eldritch.invoken.proto.Locations.Biome;
 import com.eldritch.invoken.proto.Locations.ControlPoint;
 import com.eldritch.invoken.proto.Locations.Encounter;
 import com.eldritch.invoken.proto.Locations.Encounter.ActorParams.ActorScenario;
+import com.eldritch.invoken.proto.Locations.Room;
 import com.eldritch.invoken.screens.GameScreen;
 import com.eldritch.invoken.util.GameTransition;
 import com.eldritch.invoken.util.Settings;
@@ -211,10 +212,16 @@ public class LocationGenerator {
         TerritoryGenerator territoryGen = new TerritoryGenerator(bsp, rooms,
                 proto.getTerritoryList());
         territoryGen.claim();
+        
+        // load hallways
+        List<Room> hallways = new ArrayList<>();
+        for (String id : proto.getHallIdList()) {
+            hallways.add(bsp.getRoom(id));
+        }
 
         InvokenGame.log("Adding Furniture");
         RoomDecorator roomDecorator = new RoomDecorator(map, seed);
-        roomDecorator.generate(rooms);
+        roomDecorator.generate(rooms, hallways);
 
         InvokenGame.log("Creating Spawn Layers");
         for (LocationLayer layer : createSpawnLayers(base, collision, bsp, map, rooms,

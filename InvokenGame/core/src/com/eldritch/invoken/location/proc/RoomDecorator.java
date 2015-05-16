@@ -60,9 +60,17 @@ public class RoomDecorator {
         this.rand = new Random(seed);
     }
 
-    public void generate(ConnectedRoomManager rooms) {
+    public void generate(ConnectedRoomManager rooms, List<Room> halls) {
+        // chambers
         for (Entry<ControlRoom, ConnectedRoom> room : rooms.getChambers()) {
             place(room.getKey(), room.getValue());
+        }
+        
+        // halls
+        for (ConnectedRoom connected : rooms.getRooms()) {
+            if (!connected.isChamber()) {
+                place(halls.get((int) (Math.random() * halls.size())), connected);
+            }
         }
         
         // remove collision points used during procedural generation
@@ -80,8 +88,16 @@ public class RoomDecorator {
 
         // decrease bounds by 1 in each direction to prevent placing on border
         Rectangle bounds = encounter.getRestrictedBounds();
-
         double area = bounds.area();
+        
+        place(room, connected, area);
+    }
+    
+    private void place(Room room, ConnectedRoom connected) {
+        place(room, connected, connected.getAllPoints().size());
+    }
+    
+    private void place(Room room, ConnectedRoom connected, double area) {
         int coveredTiles = 0; // running count of covered tiles
         List<Furniture> availableFurniture = new ArrayList<Furniture>(room.getFurnitureList());
         Collections.shuffle(availableFurniture, rand);

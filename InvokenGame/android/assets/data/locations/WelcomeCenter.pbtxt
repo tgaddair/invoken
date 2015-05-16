@@ -469,3 +469,4 @@ control_point {
   access: false
 }
 music: "factory.ogg"
+hall_id: "HallCommon1"

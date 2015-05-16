@@ -87,6 +87,10 @@ public class RoomGenerator extends BspGenerator {
             }
         }
     }
+    
+    public Room getRoom(String id) {
+        return roomCache.lookupRoom(id);
+    }
 
     public boolean hasCompound(Territory territory) {
         return compounds.containsKey(territory.getFactionId());

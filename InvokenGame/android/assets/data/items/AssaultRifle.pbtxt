@@ -15,5 +15,5 @@ damage_modifier {
 type: RANGED_WEAPON
 asset: "assault"
 covers: false
-cooldown: 0.5
+cooldown: 0.15
 ranged_type: ASSAULT
