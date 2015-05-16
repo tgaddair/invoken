@@ -325,8 +325,14 @@ public class Attack extends Sequence<Npc> {
             Agent target = npc.getTarget();
             direction.set(target.getPosition()).sub(npc.getPosition()).nor();
 
-            // randomly dodge left or right
-            direction.rotate90((int) Math.signum(Math.random() - 0.5));
+            if (!npc.getInventory().hasMeleeWeapon() && npc.dst2(npc.getTarget()) < 3) {
+                // dodge back
+                direction.scl(-1);
+            } else {
+                // randomly dodge left or right
+                direction.rotate90((int) Math.signum(Math.random() - 0.5));
+            }
+            
             npc.dodge(direction);
         }
     }
