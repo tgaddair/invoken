@@ -3,16 +3,10 @@ package com.eldritch.invoken.actor.aug;
 import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Agent.Activity;
-import com.eldritch.invoken.effects.Cloaked;
+import com.eldritch.invoken.effects.ActivatedEffect;
 import com.eldritch.invoken.location.Location;
 
-/**
- * Charisma check against nearby Beast types.  If the check is successful, then the Beast is
- * deemed passive (will not attack). 
- */
 public class Empathy extends Augmentation {
-    private static final int BASE_COST = 3;
-    
 	private static class Holder {
         private static final Empathy INSTANCE = new Empathy();
 	}
@@ -22,17 +16,17 @@ public class Empathy extends Augmentation {
 	}
 	
     private Empathy() {
-        super("cloak", true);
+        super("observe", false);
     }
     
     @Override
     public Action getAction(Agent owner, Agent target) {
-        return new CloakAction(owner);
+        return new EmpathizeAction(owner, target);
     }
     
     @Override
     public Action getAction(Agent owner, Vector2 target) {
-        return new CloakAction(owner);
+        return getAction(owner, owner);
     }
     
     @Override
@@ -42,51 +36,56 @@ public class Empathy extends Augmentation {
     
     @Override
     public boolean isValid(Agent owner, Vector2 target) {
-        return true;
+        // only to dispel
+        return owner.isToggled(Empathy.class);
     }
     
     @Override
     public int getCost(Agent owner) {
-        return owner.isCloaked() ? 0 : BASE_COST;
+        return owner.isToggled(Empathy.class) ? 0 : 1;
     }
     
     @Override
     public float quality(Agent owner, Agent target, Location location) {
-        float dst2 = owner.dst2(target);
-        if (owner.isCloaked()) {
-            if (dst2 > 70) {
-                return 10f;
-            }
-            return -1f;
-        }
-        
-        float score = 0f;
-        if (dst2 < 50 && dst2 > 5) {
-            score = 10f;
-        }
-        return score;
+        return 1;
     }
     
-    public class CloakAction extends AnimatedAction {
-        private final boolean cloaked;
+    public class EmpathizeAction extends AnimatedAction {
+        private final Agent target;
+        private final boolean activate;
         
-        public CloakAction(Agent actor) {
-            super(actor, Activity.Cast, Empathy.this);
-            cloaked = !actor.isCloaked();
+        public EmpathizeAction(Agent actor, Agent target) {
+            super(actor, Activity.Swipe, Empathy.this);
+            this.target = target;
+            activate = !actor.isToggled(Empathy.class);
         }
 
         @Override
         public void apply(Location location) {
-            if (cloaked) {
-                owner.addEffect(new Cloaked(owner, Empathy.this, getCost()));
+            if (activate) {
+                owner.addEffect(new Empathizing(owner, target, Empathy.this, getCost()));
             } else {
-                owner.setCloaked(false);
+                owner.toggleOff(Empathy.class);
             }
         }
         
         @Override
         public Vector2 getPosition() {
             return owner.getPosition();
+        }
+    }
+    
+    public class Empathizing extends ActivatedEffect<Empathy> {
+        public Empathizing(Agent target, Agent observed, Empathy aug, int cost) {
+            super(target, aug, Empathy.class, cost);
+        }
+
+        @Override
+        protected void afterApply() {
+        }
+
+        @Override
+        protected void afterDispel() {
         }
     }
 }

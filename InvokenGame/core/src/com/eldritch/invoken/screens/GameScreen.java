@@ -20,6 +20,7 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.activators.Activator;
@@ -36,6 +37,7 @@ import com.eldritch.invoken.proto.Actors.PlayerActor;
 import com.eldritch.invoken.proto.Effects.DamageType;
 import com.eldritch.invoken.proto.Locations;
 import com.eldritch.invoken.ui.ActionBar;
+import com.eldritch.invoken.ui.DesireMenu;
 import com.eldritch.invoken.ui.DialogueMenu;
 import com.eldritch.invoken.ui.FragmentCounter;
 import com.eldritch.invoken.ui.HealthBar;
@@ -198,13 +200,15 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         location.setCamera(camera);
 
         // create HUD elements
+        Skin skin = getSkin();
         actionBar = new ActionBar(player);
-        energyBar = new StatusBar(player, new EnergyCalculator(), getSkin());
-        inventoryMenu = new InventoryMenu(player, getSkin());
-        playerHealth = new StatusBar(player, new HealthCalculator(), getSkin());
-        selectedHealth = new HealthBar(getSkin());
-        hud.add(new FragmentCounter(getSkin()));
-        hud.add(new UploadMenu(player, getSkin()));
+        energyBar = new StatusBar(player, new EnergyCalculator(), skin);
+        inventoryMenu = new InventoryMenu(player, skin);
+        playerHealth = new StatusBar(player, new HealthCalculator(), skin);
+        selectedHealth = new HealthBar(skin);
+        hud.add(new FragmentCounter(skin));
+        hud.add(new UploadMenu(player, skin));
+        hud.add(new DesireMenu(player, skin));
 
         statusTable = new Table(getSkin());
         statusTable.setHeight(Settings.MENU_VIEWPORT_HEIGHT / 2);
