@@ -7,7 +7,6 @@ import com.eldritch.invoken.actor.Profession;
 import com.eldritch.invoken.actor.type.Npc;
 
 public class Planner {
-    private final Desire loiter;  // fallback behavior
     private final List<Desire> desires = new ArrayList<>();
     private final Npc owner;
     
@@ -15,13 +14,12 @@ public class Planner {
 
     private Planner(Npc owner, List<Desire> desires) {
         this.owner = owner;
-        this.loiter = new Loiter(owner);
+        this.desires.add(new Loiter(owner));
         this.desires.addAll(desires);
         active = getGreatestDesire();
     }
     
     public void plan(float delta) {
-        loiter.update(delta);
         for (Desire desire : desires) {
             desire.update(delta);
         }
@@ -36,9 +34,14 @@ public class Planner {
         return success;
     }
     
+    public List<Desire> getDesires() {
+        return desires;
+    }
+    
     private Desire getGreatestDesire() {
-        Desire greatest = loiter;
-        for (Desire desire : desires) {
+        Desire greatest = desires.get(0);
+        for (int i = 1; i < desires.size(); i++) {
+            Desire desire = desires.get(i);
             if (desire.getValue() > greatest.getValue()) {
                 greatest = desire;
             }

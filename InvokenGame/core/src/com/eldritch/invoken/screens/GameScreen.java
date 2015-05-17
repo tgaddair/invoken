@@ -82,8 +82,8 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
     private InventoryMenu inventoryMenu;
 
     private Table statusTable;
-    private StatusBar playerHealth;
-    private StatusBar energyBar;
+    private StatusBar<Agent> playerHealth;
+    private StatusBar<Agent> energyBar;
     private final List<HudElement> hud = new ArrayList<HudElement>();
 
     private HealthBar selectedHealth;
@@ -202,9 +202,9 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         // create HUD elements
         Skin skin = getSkin();
         actionBar = new ActionBar(player);
-        energyBar = new StatusBar(player, new EnergyCalculator(), skin);
+        energyBar = new StatusBar<Agent>(player, new EnergyCalculator(), skin);
         inventoryMenu = new InventoryMenu(player, skin);
-        playerHealth = new StatusBar(player, new HealthCalculator(), skin);
+        playerHealth = new StatusBar<Agent>(player, new HealthCalculator(), skin);
         selectedHealth = new HealthBar(skin);
         hud.add(new FragmentCounter(skin));
         hud.add(new UploadMenu(player, skin));

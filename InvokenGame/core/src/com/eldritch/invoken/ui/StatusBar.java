@@ -4,13 +4,13 @@ import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.eldritch.invoken.actor.type.Agent;
 
-public class StatusBar extends ProgressBar {
+public class StatusBar<T extends Agent> extends ProgressBar {
 //    private static final Color HEALTH_COLOR = new Color(0xFF1414FF);
     
-    private final Agent agent;
-    private final StatusCalculator calculator;
+    private final T agent;
+    private final StatusCalculator<T> calculator;
     
-    public StatusBar(Agent agent, StatusCalculator calculator, Skin skin) {
+    public StatusBar(T agent, StatusCalculator<T> calculator, Skin skin) {
         super(0, calculator.getBaseStatus(agent), 1, true, skin, calculator.getStyleName());
         this.agent = agent;
         this.calculator = calculator;
@@ -26,7 +26,7 @@ public class StatusBar extends ProgressBar {
     public void resize(int width, int height) {
     }
     
-    public static class HealthCalculator implements StatusCalculator {
+    public static class HealthCalculator implements StatusCalculator<Agent> {
         @Override
         public float getStatus(Agent agent) {
             return agent.getInfo().getHealth();
@@ -43,7 +43,7 @@ public class StatusBar extends ProgressBar {
         }
     }
     
-    public static class EnergyCalculator implements StatusCalculator {
+    public static class EnergyCalculator implements StatusCalculator<Agent> {
         @Override
         public float getStatus(Agent agent) {
             return agent.getInfo().getEnergy();
@@ -60,10 +60,10 @@ public class StatusBar extends ProgressBar {
         }
     }
     
-    public interface StatusCalculator {
-        float getStatus(Agent agent);
+    public interface StatusCalculator<T extends Agent> {
+        float getStatus(T agent);
         
-        float getBaseStatus(Agent agent);
+        float getBaseStatus(T agent);
         
         String getStyleName();
     }
