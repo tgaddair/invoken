@@ -17,8 +17,10 @@ import com.eldritch.invoken.proto.Locations.ControlPoint;
 import com.eldritch.invoken.proto.Locations.Encounter;
 import com.eldritch.invoken.proto.Locations.Light;
 import com.eldritch.invoken.proto.Locations.Location;
+import com.eldritch.invoken.proto.Locations.Room;
 import com.eldritch.invoken.proto.Locations.Territory;
 import com.eldritch.scifirpg.editor.AssetTablePanel;
+import com.eldritch.scifirpg.editor.MainPanel;
 import com.eldritch.scifirpg.editor.panel.AssetEditorPanel;
 import com.google.common.base.Optional;
 import com.google.common.base.Strings;
@@ -89,6 +91,8 @@ public class LocationTable extends MajorAssetTable<Location> {
 		private final TerritoryTable territoryTable = new TerritoryTable();
 		private final ControlPointTable controlPointTable = new ControlPointTable();
 		private final EncounterTable encounterTable = new EncounterTable(controlPointTable);
+		private final AssetPointerTable<Room> hallTable = new AssetPointerTable<>(
+                MainPanel.ROOM_TABLE);
 
 		public LocationEditorPanel(LocationTable owner, JFrame frame, Optional<Location> prev) {
 			super(owner, frame, prev);
@@ -126,6 +130,10 @@ public class LocationTable extends MajorAssetTable<Location> {
 			builder.append("Encounters:", new AssetTablePanel(encounterTable));
 			builder.nextLine();
 			
+			builder.appendRow("fill:50dlu");
+            builder.append("Halls:", new AssetTablePanel(hallTable));
+            builder.nextLine();
+			
 			builder.appendRow("fill:p:grow");
             builder.append("Control Points:", new AssetTablePanel(controlPointTable));
             builder.nextLine();
@@ -158,6 +166,9 @@ public class LocationTable extends MajorAssetTable<Location> {
 				for (Encounter e : loc.getEncounterList()) {
 					encounterTable.addAsset(e);
 				}
+				for (String roomId : loc.getHallIdList()) {
+                    hallTable.addAssetId(roomId);
+                }
 			}
 
 			add(builder.getPanel());
@@ -179,7 +190,8 @@ public class LocationTable extends MajorAssetTable<Location> {
 							.build())
 					.addAllTerritory(territoryTable.getAssets())
 					.addAllControlPoint(controlPointTable.getAssets())
-					.addAllEncounter(encounterTable.getAssets());
+					.addAllEncounter(encounterTable.getAssets())
+                    .addAllHallId(hallTable.getAssetIds());
 			if (!Strings.isNullOrEmpty(musicField.getText())) {
 			    location.setMusic(musicField.getText());
 			}
