@@ -6,7 +6,7 @@ import java.util.Map;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.eldritch.invoken.location.Location;
+import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.proto.Actors.NonPlayerActor;
 import com.eldritch.invoken.proto.Effects.DamageType;
 import com.eldritch.invoken.screens.GameScreen;
@@ -21,8 +21,8 @@ public class Beast extends Npc {
     public static int PX = 32;
 
     public Beast(NonPlayerActor data, float x, float y, float width, float height, float velocity,
-            Map<Activity, Map<Direction, Animation>> animations, Location location) {
-        super(data, x, y, width, height, velocity, animations, location);
+            Map<Activity, Map<Direction, Animation>> animations, Level level) {
+        super(data, x, y, width, height, velocity, animations, level);
     }
 
     @Override
@@ -67,7 +67,7 @@ public class Beast extends Npc {
                 .getBodyType() : "slime";
     }
 
-    public static Beast from(NonPlayerActor data, float x, float y, Location location) {
+    public static Beast from(NonPlayerActor data, float x, float y, Level level) {
         String asset = getAsset(data);
 
         String base = asset;
@@ -78,20 +78,20 @@ public class Beast extends Npc {
 
         switch (base) {
             case "crawler":
-                return new Crawler(data, x, y, getAssetPath(asset), location);
+                return new Crawler(data, x, y, getAssetPath(asset), level);
             case "dragon":
-                return new Dragon(data, x, y, getAssetPath(asset), location);
+                return new Dragon(data, x, y, getAssetPath(asset), level);
             case "parasite":
-                return new Parasite(data, x, y, getAssetPath(asset), location);
+                return new Parasite(data, x, y, getAssetPath(asset), level);
             default:
-                return new DefaultBeast(data, x, y, getAssetPath(asset), location);
+                return new DefaultBeast(data, x, y, getAssetPath(asset), level);
         }
     }
 
     public static class DefaultBeast extends Beast {
-        public DefaultBeast(NonPlayerActor data, float x, float y, String asset, Location location) {
+        public DefaultBeast(NonPlayerActor data, float x, float y, String asset, Level level) {
             super(data, x, y, Settings.SCALE * PX, Settings.SCALE * PX, MAX_VELOCITY,
-                    getAllAnimations(asset), location);
+                    getAllAnimations(asset), level);
         }
 
         private static Map<Activity, Map<Direction, Animation>> getAllAnimations(String assetName) {
@@ -115,9 +115,9 @@ public class Beast extends Npc {
     public static class Crawler extends Beast {
         private static final int PX = 64;
 
-        public Crawler(NonPlayerActor data, float x, float y, String asset, Location location) {
+        public Crawler(NonPlayerActor data, float x, float y, String asset, Level level) {
             super(data, x, y, Settings.SCALE * PX, Settings.SCALE * PX, MAX_VELOCITY,
-                    getAnimations(asset), location);
+                    getAnimations(asset), level);
         }
 
         @Override
@@ -167,9 +167,9 @@ public class Beast extends Npc {
         private Direction lastDirection;
         private boolean flipX;
 
-        public Dragon(NonPlayerActor data, float x, float y, String asset, Location location) {
+        public Dragon(NonPlayerActor data, float x, float y, String asset, Level level) {
             super(data, x, y, scale(WIDTH), scale(HEIGHT), MAX_VELOCITY, getAnimations(asset),
-                    location);
+                    level);
         }
 
         @Override
@@ -242,9 +242,9 @@ public class Beast extends Npc {
     public static class Parasite extends Beast {
         private static final int PX = 20;
 
-        public Parasite(NonPlayerActor data, float x, float y, String asset, Location location) {
+        public Parasite(NonPlayerActor data, float x, float y, String asset, Level level) {
             super(data, x, y, Settings.SCALE * PX, Settings.SCALE * PX, MAX_VELOCITY,
-                    getAnimations(asset), location);
+                    getAnimations(asset), level);
         }
 
         @Override

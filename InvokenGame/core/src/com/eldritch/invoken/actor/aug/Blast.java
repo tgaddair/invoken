@@ -6,7 +6,7 @@ import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.effects.Bleed;
 import com.eldritch.invoken.effects.Stunned;
-import com.eldritch.invoken.location.Location;
+import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.proto.Effects.DamageType;
 import com.eldritch.invoken.util.Damage;
 import com.eldritch.invoken.util.Heuristics;
@@ -60,7 +60,7 @@ public class Blast extends Augmentation {
     }
 
     @Override
-    public float quality(Agent owner, Agent target, Location location) {
+    public float quality(Agent owner, Agent target, Level level) {
         float x = owner.dst2(target);
         if (x > RANGE * RANGE) {
             return 0;
@@ -74,7 +74,7 @@ public class Blast extends Augmentation {
         }
 
         @Override
-        public void apply(Location location) {
+        public void apply(Level level) {
             Damage damage = Damage.from(owner, DamageType.PHYSICAL, getBaseDamage(owner));
             for (Agent neighbor : owner.getNeighbors()) {
                 if (owner.dst2(neighbor) < RANGE * RANGE) {

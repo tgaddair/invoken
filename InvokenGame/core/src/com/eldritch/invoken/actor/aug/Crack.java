@@ -4,7 +4,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.effects.Cracking;
-import com.eldritch.invoken.location.Location;
+import com.eldritch.invoken.location.Level;
 
 public class Crack extends Augmentation {
     private static final int BASE_COST = 5;
@@ -47,7 +47,7 @@ public class Crack extends Augmentation {
     }
     
     @Override
-    public float quality(Agent owner, Agent target, Location location) {
+    public float quality(Agent owner, Agent target, Level level) {
         return 1;
     }
     
@@ -60,7 +60,7 @@ public class Crack extends Augmentation {
         }
 
         @Override
-        public void apply(Location location) {
+        public void apply(Level level) {
             if (activate) {
                 owner.addEffect(new Cracking(owner, Crack.this, getCost()));
             } else {

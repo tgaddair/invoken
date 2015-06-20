@@ -24,7 +24,7 @@ import com.eldritch.invoken.effects.ProjectileSpawn.FixedProjectileSpawn;
 import com.eldritch.invoken.effects.ProjectileSpawn.ProjectileGenerator;
 import com.eldritch.invoken.effects.ProjectileSpawn.SingleProjectileSpawn;
 import com.eldritch.invoken.effects.Stunned;
-import com.eldritch.invoken.location.Location;
+import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.proto.Effects.DamageType;
 import com.eldritch.invoken.proto.Items;
 import com.eldritch.invoken.proto.Items.Item.DamageMod;
@@ -282,7 +282,7 @@ public abstract class RangedWeapon extends Item {
         }
 
         @Override
-        public void update(float delta, Location location) {
+        public void update(float delta, Level level) {
             if (target == null) {
                 apply();
             } else {
@@ -290,7 +290,7 @@ public abstract class RangedWeapon extends Item {
             }
 
             if (successor != null) {
-                successor.update(delta, location);
+                successor.update(delta, level);
             }
         }
 

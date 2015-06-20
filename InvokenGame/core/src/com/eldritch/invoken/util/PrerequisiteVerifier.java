@@ -6,7 +6,7 @@ import com.eldritch.invoken.actor.AgentInfo;
 import com.eldritch.invoken.actor.AgentInventory;
 import com.eldritch.invoken.actor.factions.Faction;
 import com.eldritch.invoken.actor.type.Agent;
-import com.eldritch.invoken.location.Location;
+import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.proto.Disciplines.Discipline;
 import com.eldritch.invoken.proto.Prerequisites.Prerequisite;
 
@@ -57,22 +57,22 @@ public abstract class PrerequisiteVerifier {
                 return verifyHas(prereq, equipped);
             }
             case FOLLOWER: { // TARGET following agent
-                Location location = agent.getLocation();
+                Level level = agent.getLocation();
                 String id = prereq.getTarget();
-                boolean follower = location.hasAgentWithId(id)
-                        && location.getAgentById(id).isFollowing(agent);
+                boolean follower = level.hasAgentWithId(id)
+                        && level.getAgentById(id).isFollowing(agent);
                 return verifyHas(prereq, follower);
             }
             case INTERACTOR: { // TARGET interactor
-                Location location = agent.getLocation();
+                Level level = agent.getLocation();
                 String id = prereq.getTarget();
-                boolean interactor = location.hasAgentWithId(id)
-                        && location.getAgentById(id) == agent;
+                boolean interactor = level.hasAgentWithId(id)
+                        && level.getAgentById(id) == agent;
                 return verifyHas(prereq, interactor);
             }
             case STATE_MARKER: {
-                Location location = agent.getLocation();
-                int value = location.getMarkerCount(prereq.getTarget());
+                Level level = agent.getLocation();
+                int value = level.getMarkerCount(prereq.getTarget());
                 return verifyBetween(prereq, value);
             }
             // case ACTIVE_AUG: {
@@ -105,13 +105,13 @@ public abstract class PrerequisiteVerifier {
     protected boolean verifyRelation(Prerequisite prereq, Agent agent) {
         Agent source = getSource();
         if (prereq.hasTarget()) {
-            Location location = agent.getLocation();
+            Level level = agent.getLocation();
             String id = prereq.getTarget();
-            if (!location.hasAgentWithId(id)) {
+            if (!level.hasAgentWithId(id)) {
                 // cannot meet standing requirements, low or high, if the agent is missing
                 return false;
             }
-            source = location.getAgentById(id);
+            source = level.getAgentById(id);
         } else if (source == null) {
             // missing agent
             return false;

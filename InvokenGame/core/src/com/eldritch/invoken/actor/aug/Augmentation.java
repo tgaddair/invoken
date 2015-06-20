@@ -6,7 +6,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.actor.type.Agent;
-import com.eldritch.invoken.location.Location;
+import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.proto.Augmentations.AugmentationProto;
 import com.eldritch.invoken.screens.GameScreen;
 import com.google.common.base.Optional;
@@ -148,7 +148,7 @@ public abstract class Augmentation {
 
     public abstract int getCost(Agent owner);
 
-    public abstract float quality(Agent owner, Agent target, Location location);
+    public abstract float quality(Agent owner, Agent target, Level level);
 
     public abstract Action getAction(Agent owner, Agent target);
 

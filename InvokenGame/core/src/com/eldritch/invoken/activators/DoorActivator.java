@@ -14,10 +14,8 @@ import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.actor.items.Item;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.gfx.Light;
-import com.eldritch.invoken.gfx.Light.OwnedLight;
 import com.eldritch.invoken.gfx.Light.StaticLight;
-import com.eldritch.invoken.gfx.NormalMapShader;
-import com.eldritch.invoken.location.Location;
+import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.location.NaturalVector2;
 import com.eldritch.invoken.proto.Locations.ControlPoint;
 import com.eldritch.invoken.screens.GameScreen;
@@ -94,10 +92,10 @@ public class DoorActivator extends ClickActivator implements ProximityActivator,
     }
 
     @Override
-    public void update(float delta, Location location) {
+    public void update(float delta, Level level) {
         // if a single agent is in the proximity, then open the door, otherwise close it
         boolean shouldOpen = false;
-        for (Agent agent : location.getActiveEntities()) {
+        for (Agent agent : level.getActiveEntities()) {
             if (inProximity(agent)) {
                 shouldOpen = true;
                 break;
@@ -107,12 +105,12 @@ public class DoorActivator extends ClickActivator implements ProximityActivator,
         // only change the state of the door if it differs from the current state
         // must click to unlock
         if (shouldOpen != open && !lock.isLocked()) {
-            setOpened(shouldOpen, location);
+            setOpened(shouldOpen, level);
         }
     }
 
     @Override
-    public void activate(Agent agent, Location location) {
+    public void activate(Agent agent, Level level) {
         if (lock.isLocked()) {
             if (lock.canUnlock(agent)) {
                 crack(agent);
@@ -122,10 +120,10 @@ public class DoorActivator extends ClickActivator implements ProximityActivator,
             return;
         }
 
-        setOpened(!open, location);
+        setOpened(!open, level);
     }
 
-    private synchronized void setOpened(boolean opened, Location location) {
+    private synchronized void setOpened(boolean opened, Level level) {
         if (activating) {
             // cannot interrupt
             return;
@@ -136,7 +134,7 @@ public class DoorActivator extends ClickActivator implements ProximityActivator,
         for (Body body : bodies) {
             body.setActive(!opened);
         }
-        setLightWalls(location, !opened);
+        setLightWalls(level, !opened);
         InvokenGame.SOUND_MANAGER.playAtPoint(SoundEffect.DOOR_OPEN, getPosition());
     }
     
@@ -148,34 +146,34 @@ public class DoorActivator extends ClickActivator implements ProximityActivator,
         }
     }
 
-    private void setLightWalls(Location location, boolean value) {
+    private void setLightWalls(Level level, boolean value) {
         Vector2 position = getPosition();
         float x = (int) position.x;
         float y = (int) position.y;
         if (front) {
             // add two columns for the front to prevent the flood fill from going around the bottom
-            location.setLightWalls((int) x - 1, (int) y + 1, (int) x + SIZE + 1, (int) y + 1, value);
+            level.setLightWalls((int) x - 1, (int) y + 1, (int) x + SIZE + 1, (int) y + 1, value);
         } else {
-            location.setLightWalls((int) x, (int) y, (int) x, (int) y + SIZE, value);
+            level.setLightWalls((int) x, (int) y, (int) x, (int) y + SIZE, value);
         }
     }
 
     @Override
-    public void register(Location location) {
+    public void register(Level level) {
         Vector2 position = getPosition();
         float x = (int) position.x;
         float y = (int) position.y;
         if (front) {
-            bodies.add(location.createEdge(x, y, x + SIZE, y));
-            bodies.add(location.createEdge(x, y + 1, x + SIZE, y + 1));
+            bodies.add(level.createEdge(x, y, x + SIZE, y));
+            bodies.add(level.createEdge(x, y + 1, x + SIZE, y + 1));
         } else {
             x += 0.2f;
             y -= 1;
-            bodies.add(location.createEdge(x + 0.2f, y, x + 0.2f, y + SIZE));
-            bodies.add(location.createEdge(x + 0.5f, y, x + 0.5f, y + SIZE));
+            bodies.add(level.createEdge(x + 0.2f, y, x + 0.2f, y + SIZE));
+            bodies.add(level.createEdge(x + 0.5f, y, x + 0.5f, y + SIZE));
         }
-        setLightWalls(location, true);
-        location.addLight(light);
+        setLightWalls(level, true);
+        level.addLight(light);
     }
 
     @Override

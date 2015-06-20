@@ -5,7 +5,7 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
-import com.eldritch.invoken.location.Location;
+import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.util.Damage;
 
 public abstract class AoeProjectile extends Projectile {
@@ -31,7 +31,7 @@ public abstract class AoeProjectile extends Projectile {
     }
     
     @Override
-    public boolean handleBeforeUpdate(float delta, Location location) {
+    public boolean handleBeforeUpdate(float delta, Level level) {
         Vector2 position = getPosition();
     	if (detonated) {
     		// update the explosion
@@ -41,7 +41,7 @@ public abstract class AoeProjectile extends Projectile {
     		if (explosion.isAnimationFinished(explosionTime)) {
     			cancel();
     		} else {
-    			doDuringExplosion(delta, location);
+    			doDuringExplosion(delta, level);
     		}
     	} else if (position.dst2(target) < 0.5f) {
     		// special case where the position is very close to the target
@@ -90,6 +90,6 @@ public abstract class AoeProjectile extends Projectile {
 	
 	protected abstract void onDetonate();
 	
-	protected abstract void doDuringExplosion(float delta, Location location);
+	protected abstract void doDuringExplosion(float delta, Level level);
 
 }

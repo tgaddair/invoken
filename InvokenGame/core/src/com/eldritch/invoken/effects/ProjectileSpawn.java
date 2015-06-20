@@ -7,7 +7,7 @@ import com.eldritch.invoken.actor.aug.FireWeapon;
 import com.eldritch.invoken.actor.items.RangedWeapon;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.HandledProjectile;
-import com.eldritch.invoken.location.Location;
+import com.eldritch.invoken.location.Level;
 import com.google.common.collect.ImmutableList;
 
 /**
@@ -65,9 +65,9 @@ public abstract class ProjectileSpawn extends BasicEffect {
         @Override
         protected void doApply() {
             // add projectiles to scene
-            Location location = target.getLocation();
+            Level level = target.getLocation();
             for (HandledProjectile projectile : bullets) {
-                location.addEntity(projectile);
+                level.addEntity(projectile);
             }
 
             afterSpawn();

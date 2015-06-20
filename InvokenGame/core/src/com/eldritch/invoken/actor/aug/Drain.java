@@ -8,7 +8,7 @@ import com.eldritch.invoken.actor.type.HandledBullet;
 import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.effects.Draining;
 import com.eldritch.invoken.location.Bullet;
-import com.eldritch.invoken.location.Location;
+import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.proto.Effects.DamageType;
 import com.eldritch.invoken.screens.GameScreen;
 import com.eldritch.invoken.util.Damage;
@@ -41,7 +41,7 @@ public class Drain extends ProjectileAugmentation {
     }
     
     @Override
-    public float quality(Agent owner, Agent target, Location location) {
+    public float quality(Agent owner, Agent target, Level level) {
         if (!target.isAlive()) {
             return 0;
         }
@@ -59,9 +59,9 @@ public class Drain extends ProjectileAugmentation {
         }
 
         @Override
-        public void apply(Location location) {
+        public void apply(Level level) {
             DrainBullet bullet = new DrainBullet(owner);
-            location.addEntity(bullet);
+            level.addEntity(bullet);
         }
 
         @Override
@@ -94,7 +94,7 @@ public class Drain extends ProjectileAugmentation {
         }
 
         @Override
-        public boolean handleBeforeUpdate(float delta, Location location) {
+        public boolean handleBeforeUpdate(float delta, Level level) {
             lastAdjustment += delta;
 
             // adjust the trajectory of the bullet at certain intervals

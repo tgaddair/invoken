@@ -13,21 +13,21 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextArea;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.actor.Profession;
-import com.eldritch.invoken.location.Location;
+import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.util.DefaultInputListener;
 import com.eldritch.invoken.util.Settings;
 
 public class CharacterCreationScreen extends AbstractScreen {
-    private final Location location;
+    private final Level level;
     private final OrthographicCamera camera;
     
     private Profession selectedProfession = Profession.Centurion;
     private ScrollPane scroll;
     private SplitPane descriptionPane;
     
-	public CharacterCreationScreen(InvokenGame game, Location location, OrthographicCamera camera) {
+	public CharacterCreationScreen(InvokenGame game, Level level, OrthographicCamera camera) {
         super(game);
-        this.location = location;
+        this.level = level;
         this.camera = camera;
     }
 
@@ -61,7 +61,7 @@ public class CharacterCreationScreen extends AbstractScreen {
         Gdx.gl.glClearColor(0f / 255f, 0f / 255f, 0f / 255f, 1f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         
-        location.render(delta, camera, null, false);
+        level.render(delta, camera, null, false);
         stage.act(delta);
         stage.draw();
     }

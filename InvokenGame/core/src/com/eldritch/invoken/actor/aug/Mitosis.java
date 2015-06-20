@@ -5,7 +5,7 @@ import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.actor.type.Npc;
-import com.eldritch.invoken.location.Location;
+import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.util.SoundManager.SoundEffect;
 
 public class Mitosis extends Augmentation {
@@ -53,7 +53,7 @@ public class Mitosis extends Augmentation {
     }
 
     @Override
-    public float quality(Agent owner, Agent target, Location location) {
+    public float quality(Agent owner, Agent target, Level level) {
         if (owner.getInfo().getHealth() < owner.getInfo().getMaxHealth()) {
             return 5;
         }
@@ -66,11 +66,11 @@ public class Mitosis extends Augmentation {
         }
 
         @Override
-        public void apply(Location location) {
+        public void apply(Level level) {
             owner.toggleOn(Mitosis.class);
             
             // every split reduces the max health of the twin
-            Npc twin = location.createNpc(owner.getInfo().getId(), owner.getPosition());
+            Npc twin = level.createNpc(owner.getInfo().getId(), owner.getPosition());
             twin.getInfo().setMaxHealth(owner.getInfo().getHealth());
             twin.getInfo().resetHealth();
             

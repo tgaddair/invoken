@@ -2,14 +2,14 @@ package com.eldritch.invoken.activators;
 
 import com.eldritch.invoken.actor.Drawable;
 import com.eldritch.invoken.actor.type.Agent;
-import com.eldritch.invoken.location.Location;
+import com.eldritch.invoken.location.Level;
 
 public interface Activator extends Drawable {
-    void update(float delta, Location location);
+    void update(float delta, Level level);
     
-    boolean click(Agent agent, Location location, float x, float y);
+    boolean click(Agent agent, Level level, float x, float y);
     
-    void activate(Agent agent, Location location);
+    void activate(Agent agent, Level level);
     
-    void register(Location location);
+    void register(Level level);
 }

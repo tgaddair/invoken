@@ -7,7 +7,7 @@ import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.actor.type.AoeProjectile;
 import com.eldritch.invoken.effects.Bleed;
 import com.eldritch.invoken.effects.Stunned;
-import com.eldritch.invoken.location.Location;
+import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.proto.Effects.DamageType;
 import com.eldritch.invoken.screens.GameScreen;
 import com.eldritch.invoken.util.Damage;
@@ -51,7 +51,7 @@ public class ThrowGrenade extends Augmentation {
     }
 
     @Override
-    public float quality(Agent owner, Agent target, Location location) {
+    public float quality(Agent owner, Agent target, Level level) {
         return owner.getWeaponSentry().hasLineOfSight(target) ? 1 : 0;
     }
 
@@ -64,12 +64,12 @@ public class ThrowGrenade extends Augmentation {
         }
 
         @Override
-        public void apply(Location location) {
+        public void apply(Level level) {
             // update agent to fact the direction of their strike
             owner.setDirection(owner.getRelativeDirection(target));
 
             Grenade bullet = new Grenade(owner, target);
-            location.addEntity(bullet);
+            level.addEntity(bullet);
         }
 
         @Override
@@ -109,7 +109,7 @@ public class ThrowGrenade extends Augmentation {
         }
 
         @Override
-        protected void doDuringExplosion(float delta, Location location) {
+        protected void doDuringExplosion(float delta, Level level) {
         }
     }
 }

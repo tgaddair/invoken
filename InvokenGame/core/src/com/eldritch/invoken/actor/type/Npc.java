@@ -56,7 +56,7 @@ import com.eldritch.invoken.actor.ai.btree.SquadTactics;
 import com.eldritch.invoken.actor.ai.planning.Planner;
 import com.eldritch.invoken.actor.aug.Augmentation;
 import com.eldritch.invoken.actor.items.Fragment;
-import com.eldritch.invoken.location.Location;
+import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.proto.Actors.ActorParams.Species;
 import com.eldritch.invoken.proto.Actors.DialogueTree.Choice;
 import com.eldritch.invoken.proto.Actors.DialogueTree.Response;
@@ -118,8 +118,8 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
     private String lastTask = "";
 
     public Npc(NonPlayerActor data, float x, float y, float width, float height, float maxVelocity,
-            Map<Activity, Map<Direction, Animation>> animations, Location location) {
-        super(data.getParams(), data.getUnique(), x, y, width, height, maxVelocity, location,
+            Map<Activity, Map<Direction, Animation>> animations, Level level) {
+        super(data.getParams(), data.getUnique(), x, y, width, height, maxVelocity, level,
                 animations);
         this.data = data;
         scenario = Optional.absent();
@@ -136,10 +136,10 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
         }
 
         // pathfinding
-        lastSeen = new NavigatedSteerable(this, location);
+        lastSeen = new NavigatedSteerable(this, level);
 
         // steering behaviors
-        behaviors = getSteeringBehaviors(location);
+        behaviors = getSteeringBehaviors(level);
         setBehavior(behaviors.get(SteeringMode.Default));
 
         // state machine
@@ -316,7 +316,7 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
     }
 
     @Override
-    protected void takeAction(float delta, Location screen) {
+    protected void takeAction(float delta, Level screen) {
         // update detected set
         Iterator<Agent> it = detected.iterator();
         while (it.hasNext()) {
@@ -624,32 +624,32 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
         }
     }
 
-    public static Npc create(NonPlayerActor data, float x, float y, Location location) {
+    public static Npc create(NonPlayerActor data, float x, float y, Level level) {
         Species species = data.getParams().getSpecies();
         switch (species) {
             case HUMAN:
-                return new HumanNpc(data, x, y, location);
+                return new HumanNpc(data, x, y, level);
             case UNDEAD:
-                return new Undead(data, x, y, "sprite/characters/hollow-zombie.png", location);
+                return new Undead(data, x, y, "sprite/characters/hollow-zombie.png", level);
             case AUTOMATON:
-                return Automaton.from(data, x, y, location);
+                return Automaton.from(data, x, y, level);
             case BEAST:
-                return Beast.from(data, x, y, location);
+                return Beast.from(data, x, y, level);
             case HOLLOW:
-                return new Hollow(data, x, y, "sprite/characters/hollow/golem", location);
+                return new Hollow(data, x, y, "sprite/characters/hollow/golem", level);
             default:
                 throw new IllegalArgumentException("unrecognized species: " + species);
         }
     }
 
-    private Map<SteeringMode, SteeringBehavior<Vector2>> getSteeringBehaviors(Location location) {
+    private Map<SteeringMode, SteeringBehavior<Vector2>> getSteeringBehaviors(Level level) {
         Map<SteeringMode, SteeringBehavior<Vector2>> behaviors = new EnumMap<SteeringMode, SteeringBehavior<Vector2>>(
                 SteeringMode.class);
 
         rayConfiguration = new AdaptiveRayWithWhiskersConfiguration<Vector2>(this, 3, 1,
                 35 * MathUtils.degreesToRadians);
         RaycastObstacleAvoidance<Vector2> obstacleAvoidance = new RaycastObstacleAvoidance<Vector2>(
-                this, rayConfiguration, new Box2dRaycastCollisionDetector(location.getWorld()), 1f);
+                this, rayConfiguration, new Box2dRaycastCollisionDetector(level.getWorld()), 1f);
 
         // ally proximity
         // TODO: move this to Location, have a set of "squads" managed at a higher level with a
@@ -686,9 +686,9 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
 
         hide = new Hide<Vector2>(this, null, new CoverProximity()).setArrivalTolerance(.0001f)
                 .setDecelerationRadius(.001f).setDistanceFromBoundary(0f);
-        evade = new Evade<Vector2>(this, location.getPlayer())
+        evade = new Evade<Vector2>(this, level.getPlayer())
                 .setLimiter(new LinearAccelerationLimiter(getDefaultAcceleration()));
-        pursue = new Pursue<Vector2>(this, location.getPlayer());
+        pursue = new Pursue<Vector2>(this, level.getPlayer());
         flee = new Flee<Vector2>(this);
         seek = new Seek<Vector2>(this);
         arrive = new Arrive<Vector2>(this).setArrivalTolerance(3f).setDecelerationRadius(5f);

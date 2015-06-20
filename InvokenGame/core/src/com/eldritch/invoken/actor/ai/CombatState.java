@@ -11,7 +11,7 @@ import com.eldritch.invoken.actor.aug.Augmentation;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Npc;
 import com.eldritch.invoken.actor.type.Npc.SteeringMode;
-import com.eldritch.invoken.location.Location;
+import com.eldritch.invoken.location.Level;
 
 public enum CombatState implements State<Npc> {
 	ATTACK() {
@@ -74,8 +74,8 @@ public enum CombatState implements State<Npc> {
 		}
 		
 		private void attack(Npc npc, Agent target) {
-			Location location = npc.getLocation();
-			if (!npc.canTarget(target, location)) {
+			Level level = npc.getLocation();
+			if (!npc.canTarget(target, level)) {
 	            // can't attack invalid targets
 	            return;
 	        }
@@ -86,7 +86,7 @@ public enum CombatState implements State<Npc> {
 	            float bestQuality = 0; // never choose an aug with quality <= 0
 	            for (Augmentation aug : npc.getInfo().getAugmentations().getAugmentations()) {
 	                if (aug.hasEnergy(npc) && aug.isValid(npc, npc.getTarget())) {
-	                    float quality = aug.quality(npc, npc.getTarget(), location);
+	                    float quality = aug.quality(npc, npc.getTarget(), level);
 	                    if (quality > bestQuality) {
 	                        chosen = aug;
 	                        bestQuality = quality;

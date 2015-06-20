@@ -3,7 +3,7 @@ package com.eldritch.invoken.activators;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.util.Interactable;
-import com.eldritch.invoken.location.Location;
+import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.location.NaturalVector2;
 
 public class Repository extends ClickActivator implements Interactable {
@@ -14,7 +14,7 @@ public class Repository extends ClickActivator implements Interactable {
     }
 
     @Override
-    public void activate(Agent agent, Location location) {
+    public void activate(Agent agent, Level level) {
         // mutual exclusion
         if (interactor == null) {
             // assign the interactor
@@ -25,7 +25,7 @@ public class Repository extends ClickActivator implements Interactable {
     }
 
     @Override
-    public void register(Location location) {
+    public void register(Level level) {
     }
 
     @Override

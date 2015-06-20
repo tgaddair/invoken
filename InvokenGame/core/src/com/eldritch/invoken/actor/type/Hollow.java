@@ -5,7 +5,7 @@ import java.util.Map;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.eldritch.invoken.location.Location;
+import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.proto.Actors.NonPlayerActor;
 import com.eldritch.invoken.proto.Effects.DamageType;
 import com.eldritch.invoken.screens.GameScreen;
@@ -15,8 +15,8 @@ public class Hollow extends Npc {
     public static float MAX_VELOCITY = 3f;
     public static int PX = 96;
 
-    public Hollow(NonPlayerActor data, float x, float y, String asset, Location location) {
-        super(data, x, y, 1 / 32f * PX, 1 / 32f * PX, MAX_VELOCITY, getAllAnimations(asset), location);
+    public Hollow(NonPlayerActor data, float x, float y, String asset, Level level) {
+        super(data, x, y, 1 / 32f * PX, 1 / 32f * PX, MAX_VELOCITY, getAllAnimations(asset), level);
     }
     
     @Override

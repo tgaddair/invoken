@@ -6,7 +6,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.Align;
 import com.eldritch.invoken.actor.items.Fragment;
-import com.eldritch.invoken.location.Location;
+import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.util.Settings;
 
 public class FragmentCounter implements HudElement {
@@ -43,8 +43,8 @@ public class FragmentCounter implements HudElement {
     }
     
     @Override
-    public void update(float delta, Location location) {
-        target = location.getPlayer().getInventory().getItemCount(Fragment.getInstance());
+    public void update(float delta, Level level) {
+        target = level.getPlayer().getInventory().getItemCount(Fragment.getInstance());
         if (current != target) {
             elapsed += delta;
             if (elapsed > DELAY) {

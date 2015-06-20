@@ -5,7 +5,7 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.eldritch.invoken.actor.aug.Augmentation.AugmentationAction;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Agent.Activity;
-import com.eldritch.invoken.location.Location;
+import com.eldritch.invoken.location.Level;
 
 public abstract class AnimatedAction extends AugmentationAction {
 	final Activity activity;
@@ -23,7 +23,7 @@ public abstract class AnimatedAction extends AugmentationAction {
 	}
 	
 	@Override
-	public void update(float delta, Location location) {
+	public void update(float delta, Level level) {
 	    elapsed += delta;
 		if (!canApply && canApplyFrame()) {
 		    holdTime += delta;
@@ -35,7 +35,7 @@ public abstract class AnimatedAction extends AugmentationAction {
 		}
 		
 		if (!applied && canApply()) {
-		    apply(location);
+		    apply(level);
 		    applied = true;
 		}
 	}

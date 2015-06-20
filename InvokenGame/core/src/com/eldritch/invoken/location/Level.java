@@ -16,8 +16,6 @@ import box2dLight.PointLight;
 import box2dLight.RayHandler;
 
 import com.badlogic.gdx.ai.steer.utils.Collision;
-import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Batch;
@@ -26,7 +24,6 @@ import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
-import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
@@ -70,13 +67,14 @@ import com.eldritch.invoken.gfx.NormalMapShader;
 import com.eldritch.invoken.gfx.OrthogonalShadedTiledMapRenderer;
 import com.eldritch.invoken.gfx.OverlayLightMasker;
 import com.eldritch.invoken.location.layer.EncounterLayer;
-import com.eldritch.invoken.location.layer.LocationMap;
 import com.eldritch.invoken.location.layer.LocationLayer.CollisionLayer;
+import com.eldritch.invoken.location.layer.LocationMap;
 import com.eldritch.invoken.location.proc.LocationGenerator;
 import com.eldritch.invoken.proto.Actors.PlayerActor;
 import com.eldritch.invoken.proto.Locations;
 import com.eldritch.invoken.proto.Locations.Encounter;
 import com.eldritch.invoken.proto.Locations.Encounter.ActorParams.ActorScenario;
+import com.eldritch.invoken.proto.Locations.Location;
 import com.eldritch.invoken.ui.AgentStatusRenderer;
 import com.eldritch.invoken.ui.DebugEntityRenderer;
 import com.eldritch.invoken.util.GameTransition;
@@ -85,7 +83,7 @@ import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-public class Location {
+public class Level {
     private static Pool<Rectangle> rectPool = new Pool<Rectangle>() {
         @Override
         protected Rectangle newObject() {
@@ -98,7 +96,7 @@ public class Location {
     private final Color actionsColor = new Color(1, 0, 0, 1);
 
     private Player player;
-    private final com.eldritch.invoken.proto.Locations.Location data;
+    private final Locations.Level data;
     private final LocationMap map;
     private final Territory[][] territory;
     private final PathManager pathManager;
@@ -144,6 +142,7 @@ public class Location {
     private final Vector2 offset = new Vector2();
     private final Vector2 losFocus = new Vector2();
 
+    private final Map<NaturalVector2, Location> locations = new HashMap<>();
     private NaturalVector2 currentCell = null;
     private float currentZoom = 0;
     private Rectangle viewBounds = new Rectangle();
@@ -155,13 +154,7 @@ public class Location {
     DebugEntityRenderer debugEntityRenderer = DebugEntityRenderer.getInstance();
     Box2DDebugRenderer debugRenderer = new Box2DDebugRenderer();
 
-    public Location(com.eldritch.invoken.proto.Locations.Location data, GameTransition state,
-            long seed) {
-        this(data, readMap(data), state, seed);
-    }
-
-    public Location(com.eldritch.invoken.proto.Locations.Location data, LocationMap map,
-            GameTransition state, long seed) {
+    public Level(Locations.Level data, LocationMap map, GameTransition state, long seed) {
         this.data = data;
         this.map = map;
         this.territory = new Territory[map.getWidth()][map.getHeight()];
@@ -175,7 +168,8 @@ public class Location {
         fogManager = new FogMaskManager();
 
         // create territory table
-        assignTerritory(map.getRooms(), data.getTerritoryList());
+        assignTerritory(map.getRooms(), data.getLocationList());
+//        assignLocations(map.getRooms(), data.getLocationList());
 
         // find layers we care about
         CollisionLayer collision = null;
@@ -239,6 +233,10 @@ public class Location {
         state.transition(locationName, encounterName, player.serialize());
     }
 
+    public void transition(int offset) {
+        state.transition("", data.getLevel() + offset, player.serialize());
+    }
+
     public Player getPlayer() {
         return player;
     }
@@ -267,19 +265,28 @@ public class Location {
     }
 
     public boolean hasMusic() {
-        return data.hasMusic();
+        if (!locations.containsKey(currentCell)) {
+            return false;
+        }
+        return locations.get(currentCell).hasMusic();
     }
 
     public String getMusicId() {
-        return data.getMusic();
+        return locations.get(currentCell).getMusic();
     }
 
     public String getId() {
-        return data.getId();
+        if (!locations.containsKey(currentCell)) {
+            return "";
+        }
+        return locations.get(currentCell).getId();
     }
 
     public String getName() {
-        return data.getName();
+        if (!locations.containsKey(currentCell)) {
+            return "";
+        }
+        return locations.get(currentCell).getName();
     }
 
     public LocationMap getMap() {
@@ -298,11 +305,13 @@ public class Location {
         // rayHandler.dispose();
     }
 
-    private void assignTerritory(ConnectedRoomManager rooms, List<Locations.Territory> territories) {
+    private void assignTerritory(ConnectedRoomManager rooms, List<Location> locations) {
         // relate the owning faction to the given territory
         Map<String, Territory> factionMap = new HashMap<>();
-        for (Locations.Territory territory : territories) {
-            factionMap.put(territory.getFactionId(), new Territory(territory));
+        for (Location location : locations) {
+            for (Locations.Territory territory : location.getTerritoryList()) {
+                factionMap.put(territory.getFactionId(), new Territory(territory));
+            }
         }
 
         // default the map to the empty territory
@@ -1038,16 +1047,6 @@ public class Location {
         return false;
     }
 
-    private static LocationMap readMap(com.eldritch.invoken.proto.Locations.Location data) {
-        // load the map, set the unit scale to 1/32 (1 unit == 32 pixels)
-        String mapAsset = String.format("maps/%s.tmx", data.getId());
-        AssetManager assetManager = new AssetManager();
-        assetManager.setLoader(TiledMap.class, new TmxMapLoader(new InternalFileHandleResolver()));
-        assetManager.load(mapAsset, LocationMap.class);
-        assetManager.finishLoading();
-        return assetManager.get(mapAsset);
-    }
-
     public boolean hasLineOfSight(Vector2 origin, Vector2 target) {
         losHandler.reset();
         return rayCast(origin, target);
@@ -1093,7 +1092,7 @@ public class Location {
         return Npc.create(InvokenGame.ACTOR_READER.readAsset(id), x, y, this);
     }
 
-    public void addEntities(com.eldritch.invoken.proto.Locations.Location data, TiledMap map) {
+    public void addEntities(Locations.Level data, TiledMap map) {
         // find spawn nodes
         for (MapLayer layer : map.getLayers()) {
             if (layer instanceof EncounterLayer) {
@@ -1222,16 +1221,16 @@ public class Location {
         inv.equip(outfit);
 
         // Item weapon = Item.fromProto(InvokenGame.ITEM_READER.readAsset("RailGun"));
-//        Item weapon = Item.fromProto(InvokenGame.ITEM_READER.readAsset("Shotgun"));
+        // Item weapon = Item.fromProto(InvokenGame.ITEM_READER.readAsset("Shotgun"));
         // Item weapon = Item.fromProto(InvokenGame.ITEM_READER.readAsset("DamagedPistol"));
-         Item weapon = Item.fromProto(InvokenGame.ITEM_READER.readAsset("AssaultRifle"));
+        Item weapon = Item.fromProto(InvokenGame.ITEM_READER.readAsset("AssaultRifle"));
         inv.addItem(weapon);
         inv.equip(weapon);
 
         Item melee = Item.fromProto(InvokenGame.ITEM_READER.readAsset("Hammer"));
         inv.addItem(melee);
         inv.equip(melee);
-        
+
         Item biocell = Item.fromProto(InvokenGame.ITEM_READER.readAsset("Biocell"));
         inv.addItem(biocell, 3);
         biocell.mapTo(inv, 0);
@@ -1282,7 +1281,7 @@ public class Location {
         addWalls(world, new ObstaclePredicate() {
             @Override
             public boolean isObstacle(int x, int y) {
-                return Location.this.isObstacle(x, y) && !map.isWall(x, y)
+                return Level.this.isObstacle(x, y) && !map.isWall(x, y)
                         && !collision.ignoresBullets(x, y);
             }
 

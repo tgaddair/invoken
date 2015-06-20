@@ -7,7 +7,7 @@ import com.badlogic.gdx.ai.steer.limiters.LinearAccelerationLimiter;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.actor.Profession;
-import com.eldritch.invoken.location.Location;
+import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.util.Settings;
 
 public class DummyPlayer extends Player {
@@ -18,7 +18,7 @@ public class DummyPlayer extends Player {
     private final Pursue<Vector2> pursue;
     private float elapsed = 0;
     
-    public DummyPlayer(Profession profession, int level, float x, float y, Location location,
+    public DummyPlayer(Profession profession, int level, float x, float y, Level location,
             String body) {
         super(profession, level, x, y, location, body);
         lastSeen = new NavigatedSteerable(this, location);
@@ -30,10 +30,10 @@ public class DummyPlayer extends Player {
     }
 
     @Override
-    protected void takeAction(float delta, Location location) {
+    protected void takeAction(float delta, Level level) {
         elapsed += delta;
         if (pursue.getTarget() == this || dst2(lastSeen.getTarget()) < MIN_DST2 || elapsed > DURATION) {
-            List<Agent> agents = location.getAllAgents();
+            List<Agent> agents = level.getAllAgents();
             Agent agent = agents.get((int) (Math.random() * agents.size()));
             lastSeen.setPosition(agent);
             pursue.setTarget(lastSeen);

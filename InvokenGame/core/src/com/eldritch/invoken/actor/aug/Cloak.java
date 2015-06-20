@@ -4,7 +4,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.effects.Cloaked;
-import com.eldritch.invoken.location.Location;
+import com.eldritch.invoken.location.Level;
 
 public class Cloak extends Augmentation {
     private static final int BASE_COST = 3;
@@ -47,7 +47,7 @@ public class Cloak extends Augmentation {
     }
     
     @Override
-    public float quality(Agent owner, Agent target, Location location) {
+    public float quality(Agent owner, Agent target, Level level) {
         float dst2 = owner.dst2(target);
         if (owner.isCloaked()) {
             if (dst2 > 70) {
@@ -72,7 +72,7 @@ public class Cloak extends Augmentation {
         }
 
         @Override
-        public void apply(Location location) {
+        public void apply(Level level) {
             if (cloaked) {
                 owner.addEffect(new Cloaked(owner, Cloak.this, getCost()));
             } else {

@@ -19,6 +19,7 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.eldritch.invoken.location.NaturalVector2;
+import com.eldritch.invoken.proto.Locations.Level;
 import com.eldritch.invoken.proto.Locations.Location;
 import com.eldritch.invoken.util.Settings;
 
@@ -60,10 +61,13 @@ public class LightManager {
 	private int width;
 	private int height;
 
-	public LightManager(Location location) {
-		ambientIntensity = location.getLight().getIntensity();
-		ambientColor = getColor(location.getLight().getR(), location.getLight()
-				.getG(), location.getLight().getB());
+	public LightManager(Level location) {
+//		ambientIntensity = location.getLight().getIntensity();
+//		ambientColor = getColor(location.getLight().getR(), location.getLight()
+//				.getG(), location.getLight().getB());
+		
+		ambientIntensity = 0.8f;
+		ambientColor = getColor(255, 255, 255);
 
 		ShaderProgram.pedantic = false;
 		defaultShader = new ShaderProgram(vertexShader, defaultPixelShader);

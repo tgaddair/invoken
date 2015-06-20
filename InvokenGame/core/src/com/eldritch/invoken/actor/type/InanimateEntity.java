@@ -23,7 +23,7 @@ import com.eldritch.invoken.actor.Registered;
 import com.eldritch.invoken.gfx.Light;
 import com.eldritch.invoken.gfx.Light.LightDescription;
 import com.eldritch.invoken.gfx.Light.OwnedLight;
-import com.eldritch.invoken.location.Location;
+import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.location.NaturalVector2;
 import com.eldritch.invoken.util.Constants;
 import com.eldritch.invoken.util.Settings;
@@ -64,15 +64,15 @@ public abstract class InanimateEntity extends CollisionEntity implements Drawabl
     }
 
     @Override
-    public void register(Location location) {
+    public void register(Level level) {
         if (radius > 0) {
-            body = createBody(location.getWorld());
+            body = createBody(level.getWorld());
         }
-        location.addLights(lights);
+        level.addLights(lights);
     }
 
     @Override
-    public void update(float delta, Location location) {
+    public void update(float delta, Level level) {
     }
 
     @Override

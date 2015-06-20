@@ -9,7 +9,7 @@ import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.actor.type.TemporaryEntity;
 import com.eldritch.invoken.effects.BasicEffect;
-import com.eldritch.invoken.location.Location;
+import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.screens.GameScreen;
 import com.eldritch.invoken.util.SoundManager.SoundEffect;
 
@@ -54,7 +54,7 @@ public class Ping extends Augmentation {
     }
 	
     @Override
-    public float quality(Agent owner, Agent target, Location location) {
+    public float quality(Agent owner, Agent target, Level level) {
         return owner.hasTarget() ? 0 : 1;
     }
 	
@@ -64,11 +64,11 @@ public class Ping extends Augmentation {
 		}
 
 		@Override
-		public void apply(Location location) {
+		public void apply(Level level) {
 		    // find nearest hostile
 		    Agent nearest = null;
 		    float bestDst2 = Float.POSITIVE_INFINITY;
-		    for (Agent agent : location.getAllAgents()) {
+		    for (Agent agent : level.getAllAgents()) {
 		        if (owner != agent && agent.isAlive() && hasAnimosity(agent)) {
 		            float dst2 = agent.dst2(owner);
 		            if (dst2 < bestDst2) {
@@ -159,7 +159,7 @@ public class Ping extends Augmentation {
 	    }
 	    
         @Override
-        public void update(float delta, Location location) {
+        public void update(float delta, Level level) {
         }
 
         @Override

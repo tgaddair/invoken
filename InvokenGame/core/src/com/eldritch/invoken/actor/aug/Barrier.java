@@ -4,7 +4,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.effects.Shield;
-import com.eldritch.invoken.location.Location;
+import com.eldritch.invoken.location.Level;
 
 public class Barrier extends Augmentation {
     private static class Holder {
@@ -50,7 +50,7 @@ public class Barrier extends Augmentation {
     }
 
     @Override
-    public float quality(Agent owner, Agent target, Location location) {
+    public float quality(Agent owner, Agent target, Level level) {
         if (!owner.isToggled(Shield.class)) {
             // shield is currently inactive
             if (owner.getInfo().getEnergyPercent() > 0.75f) {
@@ -83,7 +83,7 @@ public class Barrier extends Augmentation {
         }
 
         @Override
-        public void apply(Location location) {
+        public void apply(Level level) {
             if (owner.toggle(Shield.class)) {
                 owner.addEffect(new Shield(owner, Barrier.this));
             }

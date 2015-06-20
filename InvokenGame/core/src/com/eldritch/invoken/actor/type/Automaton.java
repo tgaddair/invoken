@@ -13,7 +13,7 @@ import com.eldritch.invoken.actor.type.Beast.Crawler;
 import com.eldritch.invoken.actor.type.Beast.DefaultBeast;
 import com.eldritch.invoken.actor.type.Beast.Dragon;
 import com.eldritch.invoken.actor.type.Beast.Parasite;
-import com.eldritch.invoken.location.Location;
+import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.proto.Actors.NonPlayerActor;
 import com.eldritch.invoken.proto.Effects.DamageType;
 import com.eldritch.invoken.screens.GameScreen;
@@ -26,8 +26,8 @@ public class Automaton extends Npc {
     public static float MAX_VELOCITY = 4f;
 
     public Automaton(NonPlayerActor data, float x, float y, float width, float height,
-            float velocity, Map<Activity, Map<Direction, Animation>> animations, Location location) {
-        super(data, x, y, width, height, velocity, animations, location);
+            float velocity, Map<Activity, Map<Direction, Animation>> animations, Level level) {
+        super(data, x, y, width, height, velocity, animations, level);
     }
 
     @Override
@@ -74,7 +74,7 @@ public class Automaton extends Npc {
                 .getBodyType() : "mech1";
     }
 
-    public static Automaton from(NonPlayerActor data, float x, float y, Location location) {
+    public static Automaton from(NonPlayerActor data, float x, float y, Level level) {
         String asset = getAsset(data);
 
         String base = asset;
@@ -85,29 +85,29 @@ public class Automaton extends Npc {
 
         switch (base) {
             case "android":
-                return new Android(data, x, y, getAssetPath(asset), location);
+                return new Android(data, x, y, getAssetPath(asset), level);
             case "drone":
-                return new Drone(data, x, y, getAssetPath(asset), location);
+                return new Drone(data, x, y, getAssetPath(asset), level);
             default:
-                return new Mech(data, x, y, getAssetPath(asset), location);
+                return new Mech(data, x, y, getAssetPath(asset), level);
         }
     }
 
     public static class Android extends Automaton {
         private static final int PX = 64;
 
-        public Android(NonPlayerActor data, float x, float y, String asset, Location location) {
+        public Android(NonPlayerActor data, float x, float y, String asset, Level level) {
             super(data, x, y, Settings.SCALE * PX, Settings.SCALE * PX, MAX_VELOCITY,
-                    AnimationUtils.getHumanAnimations(asset + ".png"), location);
+                    AnimationUtils.getHumanAnimations(asset + ".png"), level);
         }
     }
 
     public static class Drone extends Automaton {
         private static final int PX = 200;
 
-        public Drone(NonPlayerActor data, float x, float y, String asset, Location location) {
+        public Drone(NonPlayerActor data, float x, float y, String asset, Level level) {
             super(data, x, y, 1, 1, MAX_VELOCITY, AnimationUtils.forSingleSequence(asset, PX),
-                    location);
+                    level);
         }
 
         @Override
@@ -126,9 +126,9 @@ public class Automaton extends Npc {
     public static class Mech extends Automaton {
         private static final int PX = 64;
 
-        public Mech(NonPlayerActor data, float x, float y, String asset, Location location) {
+        public Mech(NonPlayerActor data, float x, float y, String asset, Level level) {
             super(data, x, y, Settings.SCALE * PX, Settings.SCALE * PX, MAX_VELOCITY,
-                    getAnimations(asset), location);
+                    getAnimations(asset), level);
         }
 
         @Override

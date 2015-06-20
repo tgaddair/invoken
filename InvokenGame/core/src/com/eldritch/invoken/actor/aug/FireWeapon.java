@@ -13,7 +13,7 @@ import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.actor.type.Agent.Direction;
 import com.eldritch.invoken.actor.type.HandledProjectile;
 import com.eldritch.invoken.effects.HoldingWeapon;
-import com.eldritch.invoken.location.Location;
+import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.screens.GameScreen;
 import com.eldritch.invoken.util.Heuristics;
 
@@ -78,7 +78,7 @@ public class FireWeapon extends ProjectileAugmentation {
     }
     
     @Override
-    public float quality(Agent owner, Agent target, Location location) {
+    public float quality(Agent owner, Agent target, Level level) {
         if (!owner.getInventory().hasRangedWeapon() || !target.isAlive()) {
             return 0;
         }
@@ -121,7 +121,7 @@ public class FireWeapon extends ProjectileAugmentation {
         }
 
         @Override
-        public void apply(Location location) {
+        public void apply(Level level) {
             // add projectile to scene
             RangedWeapon weapon = owner.getInventory().getRangedWeapon();
             owner.addEffect(weapon.getProjectileSpawn(owner));

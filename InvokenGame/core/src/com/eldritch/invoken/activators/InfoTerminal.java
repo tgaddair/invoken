@@ -6,7 +6,7 @@ import com.eldritch.invoken.actor.Conversable;
 import com.eldritch.invoken.actor.ConversationHandler;
 import com.eldritch.invoken.actor.ConversationHandler.DialogueVerifier;
 import com.eldritch.invoken.actor.type.Agent;
-import com.eldritch.invoken.location.Location;
+import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.location.NaturalVector2;
 import com.eldritch.invoken.proto.Actors.DialogueTree.Choice;
 import com.eldritch.invoken.proto.Actors.DialogueTree.Response;
@@ -28,12 +28,12 @@ public class InfoTerminal extends ClickActivator implements Conversable {
     }
 
     @Override
-    public void activate(Agent agent, Location location) {
+    public void activate(Agent agent, Level level) {
         agent.beginDialogue(this);
     }
 
     @Override
-    public void register(Location location) {
+    public void register(Level level) {
     }
 
     @Override

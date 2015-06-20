@@ -2,7 +2,7 @@ package com.eldritch.invoken.activators;
 
 import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.actor.type.Agent;
-import com.eldritch.invoken.location.Location;
+import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.location.NaturalVector2;
 
 public abstract class ClickActivator extends BasicActivator {
@@ -34,12 +34,12 @@ public abstract class ClickActivator extends BasicActivator {
 	}
 	
 	@Override
-	public void update(float delta, Location location) {
+	public void update(float delta, Level level) {
 	    // does nothing
 	}
 	
 	@Override
-	public boolean click(Agent agent, Location location, float x, float y) {
+	public boolean click(Agent agent, Level level, float x, float y) {
 	    Vector2 position = getPosition();
 		boolean clicked = x >= position.x && x <= position.x + width && y >= position.y
                 && y <= position.y + height;
@@ -47,7 +47,7 @@ public abstract class ClickActivator extends BasicActivator {
             // first, attempt to handle the click event with a handler
             if (!agent.handle(this)) {
                 // could not handle, so delegate to the activation mechanism
-                activate(agent, location);
+                activate(agent, level);
             }
         }
         return clicked;

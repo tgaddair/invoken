@@ -131,28 +131,6 @@ encounter {
   faction_id: "_ThugFaction"
 }
 encounter {
-  id: "FacelessHorde"
-  title: "Faceless Horde"
-  type: ACTOR
-  weight: 1.0
-  unique: false
-  actor_params {
-    description: ""
-    actor_scenario {
-      actor_id: "BrokenHollow"
-      essential: false
-      blocking: false
-      min: 1
-      max: 4
-      alive: true
-    }
-    no_detect: false
-    no_flee: false
-  }
-  control_point_id: "GenericHall"
-  faction_id: "_TheHollow"
-}
-encounter {
   id: "Lich"
   title: "Lich"
   type: ACTOR
@@ -227,10 +205,10 @@ encounter {
   faction_id: "HouseEru"
 }
 encounter {
-  id: "StationParty"
+  id: "StationAndroids"
   title: "Station Party"
   type: ACTOR
-  weight: 0.25
+  weight: 2.0
   unique: false
   actor_params {
     description: ""

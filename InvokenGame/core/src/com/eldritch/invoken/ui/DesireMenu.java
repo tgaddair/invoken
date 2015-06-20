@@ -10,7 +10,7 @@ import com.eldritch.invoken.actor.ai.planning.Desire;
 import com.eldritch.invoken.actor.aug.Empathy;
 import com.eldritch.invoken.actor.type.Npc;
 import com.eldritch.invoken.actor.type.Player;
-import com.eldritch.invoken.location.Location;
+import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.ui.StatusBar.StatusCalculator;
 import com.eldritch.invoken.util.Settings;
 
@@ -55,7 +55,7 @@ public class DesireMenu implements HudElement {
     }
 
     @Override
-    public void update(float delta, Location location) {
+    public void update(float delta, Level level) {
         if (canActivate()) {
             if (!active) {
                 setActive(true);

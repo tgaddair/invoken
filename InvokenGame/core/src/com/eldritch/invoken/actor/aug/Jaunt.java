@@ -5,7 +5,7 @@ import com.eldritch.invoken.actor.items.MeleeWeapon;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.effects.Jaunting;
-import com.eldritch.invoken.location.Location;
+import com.eldritch.invoken.location.Level;
 
 public class Jaunt extends Augmentation {
 	private static class Holder {
@@ -46,7 +46,7 @@ public class Jaunt extends Augmentation {
     }
 	
     @Override
-    public float quality(Agent owner, Agent target, Location location) {
+    public float quality(Agent owner, Agent target, Level level) {
         if (owner.getInventory().hasMeleeWeapon()) {
             MeleeWeapon weapon = owner.getInventory().getMeleeWeapon();
             return owner.dst2(target) > weapon.getRange() ? 2 : 0;
@@ -63,7 +63,7 @@ public class Jaunt extends Augmentation {
 		}
 
 		@Override
-		public void apply(Location location) {
+		public void apply(Level level) {
 			owner.addEffect(new Jaunting(owner, target));
 		}
 		

@@ -5,7 +5,7 @@ import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.effects.BasicEffect;
-import com.eldritch.invoken.location.Location;
+import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.util.GenericDialogue;
 import com.eldritch.invoken.util.Heuristics;
 import com.eldritch.invoken.util.SoundManager.SoundEffect;
@@ -60,7 +60,7 @@ public class Charge extends Augmentation {
     }
 
     @Override
-    public float quality(Agent owner, Agent target, Location location) {
+    public float quality(Agent owner, Agent target, Level level) {
         if (!target.isAlive()) {
             return 0;
         }
@@ -78,7 +78,7 @@ public class Charge extends Augmentation {
         }
 
         @Override
-        public void apply(Location location) {
+        public void apply(Level level) {
             owner.addEffect(new ChargeEffect(owner));
             owner.announce(GenericDialogue.onCharge(owner, owner.getTarget()));
             InvokenGame.SOUND_MANAGER.playAtPoint(SoundEffect.BUFF, owner.getPosition());

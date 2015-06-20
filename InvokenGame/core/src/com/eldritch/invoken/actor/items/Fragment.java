@@ -12,7 +12,7 @@ import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.actor.type.Agent.Direction;
 import com.eldritch.invoken.actor.type.CollisionEntity;
 import com.eldritch.invoken.actor.type.TemporaryEntity;
-import com.eldritch.invoken.location.Location;
+import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.proto.Items;
 import com.eldritch.invoken.screens.GameScreen;
 
@@ -58,12 +58,12 @@ public class Fragment extends Item {
         return instance;
     }
 
-    public static void release(Location location, Vector2 origin, int count) {
+    public static void release(Level level, Vector2 origin, int count) {
         int remaining = count;
         while (remaining > 0) {
             int quantity = (int) (Math.random() * remaining) + 1; // [1, remaining]
             FragmentEntity entity = FragmentEntity.of(origin, quantity);
-            location.addEntity(entity);
+            level.addEntity(entity);
             remaining -= quantity;
         }
     }
@@ -85,14 +85,14 @@ public class Fragment extends Item {
         }
 
         @Override
-        public void update(float delta, Location location) {
+        public void update(float delta, Level level) {
             // update our position
             position.add(velocity);
             
             // find the closest entity
             Agent closest = null;
             float bestD = Float.POSITIVE_INFINITY;
-            for (Agent agent : location.getActiveEntities()) {
+            for (Agent agent : level.getActiveEntities()) {
                 if (agent.getInfo().isUnique() && agent.isAlive()) {
                     // move towards closest
                     float d = agent.getPosition().dst2(getPosition());

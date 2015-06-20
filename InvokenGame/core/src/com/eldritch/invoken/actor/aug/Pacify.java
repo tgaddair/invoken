@@ -4,7 +4,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.effects.Cloaked;
-import com.eldritch.invoken.location.Location;
+import com.eldritch.invoken.location.Level;
 
 /**
  * Charisma check against nearby Beast types.  If the check is successful, then the Beast is
@@ -51,7 +51,7 @@ public class Pacify extends Augmentation {
     }
     
     @Override
-    public float quality(Agent owner, Agent target, Location location) {
+    public float quality(Agent owner, Agent target, Level level) {
         float dst2 = owner.dst2(target);
         if (owner.isCloaked()) {
             if (dst2 > 70) {
@@ -76,7 +76,7 @@ public class Pacify extends Augmentation {
         }
 
         @Override
-        public void apply(Location location) {
+        public void apply(Level level) {
             if (cloaked) {
                 owner.addEffect(new Cloaked(owner, Pacify.this, getCost()));
             } else {

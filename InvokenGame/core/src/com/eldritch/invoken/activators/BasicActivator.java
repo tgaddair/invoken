@@ -3,7 +3,7 @@ package com.eldritch.invoken.activators;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.actor.type.Agent;
-import com.eldritch.invoken.location.Location;
+import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.location.NaturalVector2;
 
 public abstract class BasicActivator implements Activator {
@@ -18,12 +18,12 @@ public abstract class BasicActivator implements Activator {
     }
     
     @Override
-    public boolean click(Agent agent, Location location, float x, float y) {
+    public boolean click(Agent agent, Level level, float x, float y) {
         return false;
     }
     
     @Override
-    public void register(Location location) {
+    public void register(Level level) {
     }
 
     @Override

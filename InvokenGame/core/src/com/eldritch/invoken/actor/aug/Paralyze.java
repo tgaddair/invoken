@@ -9,7 +9,7 @@ import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.HandledBullet;
 import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.effects.Paralyzed;
-import com.eldritch.invoken.location.Location;
+import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.screens.GameScreen;
 import com.eldritch.invoken.util.Damage;
 
@@ -37,8 +37,8 @@ public class Paralyze extends ProjectileAugmentation {
     }
 
     @Override
-    public float quality(Agent owner, Agent target, Location location) {
-        return !target.isParalyzed() ? super.quality(owner, target, location) * 5 : 0;
+    public float quality(Agent owner, Agent target, Level level) {
+        return !target.isParalyzed() ? super.quality(owner, target, level) * 5 : 0;
     }
 
     public class ParalyzeAction extends AnimatedAction {
@@ -50,9 +50,9 @@ public class Paralyze extends ProjectileAugmentation {
         }
 
         @Override
-        public void apply(Location location) {
+        public void apply(Level level) {
             ParalyzeBullet bullet = new ParalyzeBullet(owner);
-            location.addEntity(bullet);
+            level.addEntity(bullet);
         }
 
         @Override

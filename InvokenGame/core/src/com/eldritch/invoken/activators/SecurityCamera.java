@@ -3,7 +3,7 @@ package com.eldritch.invoken.activators;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.eldritch.invoken.actor.GameCamera;
 import com.eldritch.invoken.actor.type.Agent;
-import com.eldritch.invoken.location.Location;
+import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.location.NaturalVector2;
 
 public class SecurityCamera extends ClickActivator implements GameCamera {
@@ -14,7 +14,7 @@ public class SecurityCamera extends ClickActivator implements GameCamera {
 	}
 
 	@Override
-	public void activate(Agent agent, Location location) {
+	public void activate(Agent agent, Level level) {
 		if (next != null && agent.usingRemoteCamera()) {
 			agent.setCamera(next);
 		} else {
@@ -23,8 +23,8 @@ public class SecurityCamera extends ClickActivator implements GameCamera {
 	}
 
 	@Override
-	public void register(Location location) {
-		location.addSecurityCamera(this);
+	public void register(Level level) {
+		level.addSecurityCamera(this);
 	}
 	
 	public void setNext(SecurityCamera camera) {

@@ -32,6 +32,113 @@ params {
   body_type: "android"
 }
 unique: false
+dialogue {
+  dialogue {
+    id: "Welcome"
+    text: "The Administrator welcomes you to Talagora Station, $Name."
+    outcome {
+      weight: 1.0
+      type: NO_REPEAT
+    }
+    greeting: true
+    weight: 0
+    choice_id: "DontUnderstand"
+    choice_id: "ThisPlace"
+    choice_id: "HowDoI"
+    forced: true
+  }
+  dialogue {
+    id: "AlwaysHere"
+    text: "You have always been here.  You were born here.  \n\nSleeping.  Dreaming.  \n\nNow you are awake."
+    greeting: false
+    weight: 0
+    forced: false
+  }
+  dialogue {
+    id: "WelcomeBack"
+    text: "Is there something else you require, $Name?"
+    greeting: true
+    weight: 0
+    choice_id: "DontUnderstand"
+    choice_id: "ThisPlace"
+    choice_id: "HowDoI"
+    forced: false
+  }
+  dialogue {
+    id: "ThisIs"
+    text: "This is the Welcome Center for Central Tower, Telagora Station, Faragon System.  This is your home."
+    greeting: false
+    weight: 0
+    choice_id: "MyHome"
+    forced: false
+  }
+  dialogue {
+    id: "TheDormitory"
+    text: "The Dormitory is no longer suitable for residence at this time.  Please be patient as The Administrator works to restore the facilities.  In the meantime, the Welcome Center has been refitted to provide all your required amenities."
+    greeting: false
+    weight: 0
+    choice_id: "WhatHappened"
+    forced: false
+  }
+  dialogue {
+    id: "ThereIsInfestation"
+    text: "There was an infestation.  The Administrator has the situation under control.  You need not be concerned."
+    greeting: false
+    weight: 0
+    choice_id: "WhatInfestation"
+    forced: false
+  }
+  dialogue {
+    id: "YouNeedNot"
+    text: "You need not be concerned.  The situation is under control."
+    greeting: false
+    weight: 0
+    forced: false
+  }
+  dialogue {
+    id: "ThereIsAQuarantine"
+    text: "Telagora Station is under quarantine by order of The Administrator until the infestation is eradicated.\n\nYou may freely travel within the confines of the Welcome Center.  If you should encounter any signs of the infestation, please report your findings to the nearest sentry unit immediately."
+    greeting: false
+    weight: 0
+    forced: false
+  }
+  choice {
+    text: "I don\'t understand.  How did I get here?"
+    successor_id: "AlwaysHere"
+    weight: 0
+    id: "DontUnderstand"
+  }
+  choice {
+    text: "What is this place?"
+    successor_id: "ThisIs"
+    weight: 0
+    id: "ThisPlace"
+  }
+  choice {
+    text: "My home is a Welcome Center?  "
+    successor_id: "TheDormitory"
+    weight: 0
+    id: "MyHome"
+  }
+  choice {
+    text: "What happened to the Dormitory?  What makes it \"unsuitable\"?"
+    successor_id: "ThereIsInfestation"
+    weight: 0
+    id: "WhatHappened"
+  }
+  choice {
+    text: "What kind of \"infestation\"?"
+    successor_id: "YouNeedNot"
+    weight: 0
+    id: "WhatInfestation"
+  }
+  choice {
+    text: "How do I get out of here?"
+    successor_id: "ThereIsAQuarantine"
+    weight: 0
+    id: "HowDoI"
+  }
+}
 aggression: AGGRESSIVE
 assistance: LOYAL
 confidence: RECKLESS

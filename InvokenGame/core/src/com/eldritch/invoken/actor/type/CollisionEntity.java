@@ -4,7 +4,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.eldritch.invoken.actor.Entity;
 import com.eldritch.invoken.actor.util.Locatable;
-import com.eldritch.invoken.location.Location;
+import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.location.NaturalVector2;
 
 public abstract class CollisionEntity implements Entity, Locatable {
@@ -19,7 +19,7 @@ public abstract class CollisionEntity implements Entity, Locatable {
         this.height = height;
     }
     
-    protected Array<Agent> getCollisionActors(Location screen) {
+    protected Array<Agent> getCollisionActors(Level screen) {
         Array<Agent> agents = new Array<Agent>();
         for (Agent other : screen.getActiveEntities()) {
             // only collide with enemies

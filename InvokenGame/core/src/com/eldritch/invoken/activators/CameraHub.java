@@ -3,7 +3,7 @@ package com.eldritch.invoken.activators;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.eldritch.invoken.actor.aug.Crack;
 import com.eldritch.invoken.actor.type.Agent;
-import com.eldritch.invoken.location.Location;
+import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.location.NaturalVector2;
 import com.eldritch.invoken.screens.GameScreen;
 
@@ -13,16 +13,16 @@ public class CameraHub extends ClickActivator {
 	}
 
 	@Override
-	public void activate(Agent agent, Location location) {
-		if (agent.isToggled(Crack.class) && location.hasSecurityCamera()) {
-			agent.setCamera(location.getFirstSecurityCamera());
+	public void activate(Agent agent, Level level) {
+		if (agent.isToggled(Crack.class) && level.hasSecurityCamera()) {
+			agent.setCamera(level.getFirstSecurityCamera());
 		} else {
 		    GameScreen.toast("Requires: Crack Augmentation");
 		}
 	}
 
 	@Override
-	public void register(Location location) {
+	public void register(Level level) {
 	}
 
     @Override

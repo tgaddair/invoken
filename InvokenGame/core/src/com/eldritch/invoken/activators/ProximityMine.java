@@ -10,7 +10,7 @@ import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.TemporaryEntity;
 import com.eldritch.invoken.effects.Bleed;
 import com.eldritch.invoken.effects.Stunned;
-import com.eldritch.invoken.location.Location;
+import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.screens.GameScreen;
 import com.eldritch.invoken.util.Damage;
 
@@ -31,12 +31,12 @@ public class ProximityMine extends ClickActivator implements ProximityActivator,
     }
     
     @Override
-    public void update(float delta, Location location) {
+    public void update(float delta, Level level) {
         if (detonation.isActive()) {
             detonation.update(delta);
         } else {
             Agent source = detonation.damage.getSource();
-            for (Agent agent : location.getActiveEntities()) {
+            for (Agent agent : level.getActiveEntities()) {
                 if (agent == source || agent.isFollowing(source)) {
                     // can't trip our own mine
                     // also prevent it for followers, otherwise placing them could be cumbersome
@@ -65,7 +65,7 @@ public class ProximityMine extends ClickActivator implements ProximityActivator,
     }
 
     @Override
-    public void activate(Agent agent, Location location) {
+    public void activate(Agent agent, Level level) {
         detonation.cancel();
     }
     
@@ -121,8 +121,8 @@ public class ProximityMine extends ClickActivator implements ProximityActivator,
                 return;
             }
             
-            Location location = damage.getSource().getLocation();
-            for (Agent neighbor : location.getActiveEntities()) {
+            Level level = damage.getSource().getLocation();
+            for (Agent neighbor : level.getActiveEntities()) {
                 apply(neighbor);
             }
             active = true;

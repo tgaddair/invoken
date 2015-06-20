@@ -7,7 +7,7 @@ import com.eldritch.invoken.actor.items.MeleeWeapon;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.effects.Bleed;
-import com.eldritch.invoken.location.Location;
+import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.proto.Effects.DamageType;
 import com.eldritch.invoken.util.Damage;
 import com.eldritch.invoken.util.Heuristics;
@@ -52,7 +52,7 @@ public class RendWeapon extends Augmentation {
     }
 
     @Override
-    public float quality(Agent owner, Agent target, Location location) {
+    public float quality(Agent owner, Agent target, Level level) {
         if (!target.isAlive()) {
             return 0;
         }
@@ -76,7 +76,7 @@ public class RendWeapon extends Augmentation {
         }
 
         @Override
-        public void apply(Location location) {
+        public void apply(Level level) {
             MeleeWeapon weapon = owner.getInventory().getMeleeWeapon();
             strike.set(owner.getPosition());
             strike.add(owner.getForwardVector().scl(weapon.getRange() / 2));

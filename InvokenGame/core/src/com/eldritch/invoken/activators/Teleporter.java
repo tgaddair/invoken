@@ -8,7 +8,7 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.location.ConnectedRoomManager;
-import com.eldritch.invoken.location.Location;
+import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.location.NaturalVector2;
 import com.eldritch.invoken.location.proc.RoomGenerator.ControlRoom;
 import com.eldritch.invoken.screens.GameScreen;
@@ -47,12 +47,12 @@ public class Teleporter extends ClickActivator implements ProximityActivator {
     }
 
     @Override
-    public void update(float delta, Location location) {
-        canActivate = inProximity(location.getPlayer());
+    public void update(float delta, Level level) {
+        canActivate = inProximity(level.getPlayer());
         
         // actually do the teleportation
         if (transitioned) {
-            transition(location);
+            transition(level);
             transitioned = false;
         }
     }
@@ -85,7 +85,7 @@ public class Teleporter extends ClickActivator implements ProximityActivator {
     }
 
     @Override
-    public void activate(Agent agent, Location location) {
+    public void activate(Agent agent, Level level) {
         activating = true;
     }
 
@@ -95,8 +95,8 @@ public class Teleporter extends ClickActivator implements ProximityActivator {
     }
     
     @Override
-    public void register(Location location) {
-        ConnectedRoomManager rooms = location.getConnections();
+    public void register(Level level) {
+        ConnectedRoomManager rooms = level.getConnections();
         ControlRoom encounter = rooms.getControlRoom(rooms.getRoom(origin.x, origin.y));
 //        if (encounter != null && encounter.getEncounter().hasSuccessor()) {
 //            destination = Optional.fromNullable(encounter.getEncounter().getSuccessor());
@@ -111,9 +111,9 @@ public class Teleporter extends ClickActivator implements ProximityActivator {
         return Float.POSITIVE_INFINITY;
     }
     
-    private void transition(Location location) {
+    private void transition(Level level) {
         if (destination.isPresent() && !Strings.isNullOrEmpty(destination.get())) {
-            location.transition(destination.get(), nextEncounter);
+            level.transition(destination.get(), nextEncounter);
         }
     }
 }

@@ -15,7 +15,7 @@ import com.badlogic.gdx.utils.async.AsyncResult;
 import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.actor.Profession;
 import com.eldritch.invoken.actor.type.Player;
-import com.eldritch.invoken.location.Location;
+import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.location.proc.LocationGenerator;
 import com.eldritch.invoken.proto.Actors.PlayerActor;
 import com.eldritch.invoken.proto.Locations;
@@ -32,20 +32,25 @@ public class MenuScreen extends AbstractScreen {
                 PlayerActor state) {
             // do nothing
         }
+
+        @Override
+        public void transition(String region, int level, PlayerActor state) {
+            // do nothing
+        }
     };
     private OrthographicCamera camera;
-    private Location location;
+    private Level level;
 
     private final AsyncExecutor executor = new AsyncExecutor(1);
-    private AsyncResult<Location> locationFuture;
+    private AsyncResult<Level> locationFuture;
 
     public MenuScreen(InvokenGame game) {
         super(game);
     }
-    
-    public MenuScreen(InvokenGame game, Location location, OrthographicCamera camera) {
+
+    public MenuScreen(InvokenGame game, Level level, OrthographicCamera camera) {
         super(game);
-        this.location = location;
+        this.level = level;
         this.camera = camera;
     }
 
@@ -65,7 +70,7 @@ public class MenuScreen extends AbstractScreen {
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 super.touchUp(event, x, y, pointer, button);
                 // game.getSoundManager().play(TyrianSound.CLICK);
-                game.setScreen(new CharacterCreationScreen(game, location, camera));
+                game.setScreen(new CharacterCreationScreen(game, level, camera));
             }
         });
         table.add(startGameButton).size(300, 60).uniform().spaceBottom(10);
@@ -91,7 +96,7 @@ public class MenuScreen extends AbstractScreen {
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 super.touchUp(event, x, y, pointer, button);
                 // game.getSoundManager().play(TyrianSound.CLICK);
-                game.setScreen(new CreditsScreen(game, location, camera));
+                game.setScreen(new CreditsScreen(game, level, camera));
             }
         });
         table.add(optionsButton).size(300, 60).uniform().spaceBottom(10);
@@ -105,9 +110,9 @@ public class MenuScreen extends AbstractScreen {
         // return bgWorldSetup();
         // }
         // });
-        
-        if (location == null) {
-            location = bgWorldSetup();
+
+        if (level == null) {
+            level = bgWorldSetup();
         }
 
         // play title music
@@ -135,7 +140,7 @@ public class MenuScreen extends AbstractScreen {
         // } else {
         // location.render(delta, camera, null, false);
         // }
-        location.render(delta, camera, null, false);
+        level.render(delta, camera, null, false);
 
         stage.act(delta);
         stage.draw();
@@ -144,12 +149,12 @@ public class MenuScreen extends AbstractScreen {
     @Override
     public void resize(int width, int height) {
         super.resize(width, height);
-        if (location != null) {
-            location.resize(width, height);
+        if (level != null) {
+            level.resize(width, height);
         }
     }
 
-    private Location bgWorldSetup() {
+    private Level bgWorldSetup() {
         // create an orthographic camera, shows us 10(w/h) x 10 units of the
         // world
         float w = Gdx.graphics.getWidth();
@@ -164,14 +169,14 @@ public class MenuScreen extends AbstractScreen {
         Locations.Location data = InvokenGame.LOCATION_READER.readAsset("WelcomeCenter");
         LocationGenerator generator = new LocationGenerator(gameState, data.getBiome(),
                 rand.nextLong());
-        Location location = generator.generate(data);
-        Player player = location.createDummyPlayer();
+        Level level = generator.generate(data);
+        Player player = level.createDummyPlayer();
 
         // init camera position
         Vector2 position = player.getCamera().getPosition();
-        camera.position.x = location.scale(position.x, camera.zoom);
-        camera.position.y = location.scale(position.y, camera.zoom);
-        location.setCamera(camera);
-        return location;
+        camera.position.x = level.scale(position.x, camera.zoom);
+        camera.position.y = level.scale(position.y, camera.zoom);
+        level.setCamera(camera);
+        return level;
     }
 }

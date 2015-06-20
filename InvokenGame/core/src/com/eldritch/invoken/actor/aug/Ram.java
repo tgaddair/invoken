@@ -9,7 +9,7 @@ import com.eldritch.invoken.actor.AgentHandler;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.effects.BasicEffect;
-import com.eldritch.invoken.location.Location;
+import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.location.Wall;
 import com.eldritch.invoken.proto.Effects.DamageType;
 import com.eldritch.invoken.util.Damage;
@@ -67,7 +67,7 @@ public class Ram extends Augmentation {
     }
 
     @Override
-    public float quality(Agent owner, Agent target, Location location) {
+    public float quality(Agent owner, Agent target, Level level) {
         if (!target.isAlive()) {
             return 0;
         }
@@ -85,7 +85,7 @@ public class Ram extends Augmentation {
         }
 
         @Override
-        public void apply(Location location) {
+        public void apply(Level level) {
             owner.addEffect(new RamEffect(owner, target));
             InvokenGame.SOUND_MANAGER.playAtPoint(SoundEffect.BUFF, owner.getPosition());
         }

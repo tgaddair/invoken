@@ -10,7 +10,7 @@ import com.eldritch.invoken.actor.pathfinding.LocationGraphPath;
 import com.eldritch.invoken.actor.pathfinding.LocationNode;
 import com.eldritch.invoken.actor.pathfinding.PathManager;
 import com.eldritch.invoken.actor.util.Locatable;
-import com.eldritch.invoken.location.Location;
+import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.location.NaturalVector2;
 
 public class NavigatedSteerable extends BasicSteerable implements Locatable {
@@ -28,9 +28,9 @@ public class NavigatedSteerable extends BasicSteerable implements Locatable {
     private float pathAge = 0;
     private int pathIndex = 0;
 
-    public NavigatedSteerable(Agent npc, Location location) {
+    public NavigatedSteerable(Agent npc, Level level) {
         this.npc = npc;
-        pathManager = location.getPathManager();
+        pathManager = level.getPathManager();
     }
 
     public void update(float delta) {

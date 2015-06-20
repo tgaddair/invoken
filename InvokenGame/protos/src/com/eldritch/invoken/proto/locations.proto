@@ -7,6 +7,12 @@ import "com/eldritch/invoken/proto/actors.proto";
 import "com/eldritch/invoken/proto/prerequisites.proto";
 import "com/eldritch/invoken/proto/outcomes.proto";
 
+message Level {
+	optional int32 level = 1;
+	repeated Location location = 2;
+	optional string region = 3;
+}
+
 message Location {
 	required string id = 1;  // unique key
 	required string name = 2;

@@ -22,7 +22,7 @@ import com.eldritch.invoken.actor.Profession;
 import com.eldritch.invoken.actor.aug.Augmentation;
 import com.eldritch.invoken.actor.items.Fragment;
 import com.eldritch.invoken.actor.type.Player;
-import com.eldritch.invoken.location.Location;
+import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.proto.Disciplines.Discipline;
 import com.eldritch.invoken.screens.GameScreen;
 import com.eldritch.invoken.util.DefaultInputListener;
@@ -74,7 +74,7 @@ public class UploadMenu implements HudElement {
     }
 
     @Override
-    public void update(float delta, Location location) {
+    public void update(float delta, Level level) {
         if (player.isUploading()) {
             if (!active) {
                 setActive(true);

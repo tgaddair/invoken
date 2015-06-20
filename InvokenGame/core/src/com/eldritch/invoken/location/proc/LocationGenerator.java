@@ -38,7 +38,7 @@ import com.eldritch.invoken.gfx.Light;
 import com.eldritch.invoken.gfx.NormalMappedTile;
 import com.eldritch.invoken.location.ConnectedRoom;
 import com.eldritch.invoken.location.ConnectedRoomManager;
-import com.eldritch.invoken.location.Location;
+import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.location.NaturalVector2;
 import com.eldritch.invoken.location.ConnectedRoom.Type;
 import com.eldritch.invoken.location.layer.EncounterLayer;
@@ -118,11 +118,11 @@ public class LocationGenerator {
                 + asset));
     }
 
-    public Location generate(Locations.Location proto) {
+    public Level generate(Locations.Location proto) {
         return generate(proto, Optional.<String> absent());
     }
 
-    public Location generate(Locations.Location proto, Optional<String> encounterName) {
+    public Level generate(Locations.Location proto, Optional<String> encounterName) {
         System.out.println("global seed: " + globalSeed);
         System.out.println("hash code: " + proto.getId().hashCode());
 
@@ -141,7 +141,7 @@ public class LocationGenerator {
                 "Failed to generate location %s after %d attempts", proto.getId(), attempts));
     }
 
-    private Location generate(Locations.Location proto, Optional<String> encounterName, long seed) {
+    private Level generate(Locations.Location proto, Optional<String> encounterName, long seed) {
         System.out.println("seed: " + seed);
         this.rand = new Random(seed);
 
@@ -250,17 +250,21 @@ public class LocationGenerator {
 
         // add cover points now that all collidable furniture has been placed
         map.addAllCover(getCover(base, collision));
+        
+        Locations.Level.Builder builder = Locations.Level.newBuilder();
+        builder.setLevel(0);
+        builder.addLocation(proto);
 
-        Location location = new Location(proto, map, state, globalSeed);
-        location.addLights(lights);
-        location.addLights(map.getLights());
+        Level level = new Level(builder.build(), map, state, globalSeed);
+        level.addLights(lights);
+        level.addLights(map.getLights());
         // location.addActivators(activators);
-        location.addEntities(map);
+        level.addEntities(map);
 
         // debug
         // saveLayer(base);
 
-        return location;
+        return level;
     }
 
     private List<CoverPoint> getCover(LocationLayer base, CollisionLayer collision) {

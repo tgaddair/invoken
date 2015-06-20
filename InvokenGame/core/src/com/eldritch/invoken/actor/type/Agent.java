@@ -60,7 +60,7 @@ import com.eldritch.invoken.actor.util.ThreatMonitor;
 import com.eldritch.invoken.effects.Effect;
 import com.eldritch.invoken.effects.HoldingWeapon;
 import com.eldritch.invoken.effects.Sprinting;
-import com.eldritch.invoken.location.Location;
+import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.location.NaturalVector2;
 import com.eldritch.invoken.proto.Actors.ActorParams;
 import com.eldritch.invoken.proto.Actors.DialogueTree.Choice;
@@ -97,7 +97,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     private final GameCamera defaultCamera = new AgentCamera();
     private GameCamera camera = defaultCamera;
 
-    private Location location;
+    private Level level;
     protected Body body;
     private final float radius;
 
@@ -167,30 +167,30 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     private Optional<AgentHandler> collisionDelegate = Optional.absent();
 
     public Agent(ActorParams params, boolean unique, float x, float y, float width, float height,
-            Location location, Map<Activity, Map<Direction, Animation>> animations) {
-        this(x, y, width, height, location, animations);
+            Level level, Map<Activity, Map<Direction, Animation>> animations) {
+        this(x, y, width, height, level, animations);
 
         // health, level, augmentations, etc.
         this.info = new AgentInfo(this, params, unique);
     }
 
     public Agent(float x, float y, float width, float height, Profession profession, int level,
-            Location location, Map<Activity, Map<Direction, Animation>> animations) {
+            Level location, Map<Activity, Map<Direction, Animation>> animations) {
         this(x, y, width, height, location, animations);
 
         // health, level, augmentations, etc.
         this.info = new AgentInfo(this, profession, level);
     }
 
-    public Agent(float x, float y, float width, float height, Location location,
+    public Agent(float x, float y, float width, float height, Level level,
             Map<Activity, Map<Direction, Animation>> animations) {
         super(width, height);
         setPosition(x, y);
         this.animations = animations;
 
         radius = getBodyRadius();
-        this.location = location;
-        body = createBody(x, y, location.getWorld());
+        this.level = level;
+        body = createBody(x, y, level.getWorld());
     }
 
     protected float getBodyRadius() {
@@ -300,7 +300,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
             return false;
         }
 
-        location.getWorld().rayCast(targetingHandler, source, target);
+        level.getWorld().rayCast(targetingHandler, source, target);
         return true;
     }
 
@@ -359,8 +359,8 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         return velocityPenalty;
     }
 
-    public Location getLocation() {
-        return location;
+    public Level getLocation() {
+        return level;
     }
 
     public void setCamera(GameCamera camera) {
@@ -1039,11 +1039,11 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         return target != null;
     }
 
-    public boolean canTarget(Location location) {
-        return canTarget(target, location);
+    public boolean canTarget(Level level) {
+        return canTarget(target, level);
     }
 
-    public boolean canTarget(Agent other, Location location) {
+    public boolean canTarget(Agent other, Level level) {
         if (other == this) {
             // can always target ourselves
             return true;
@@ -1130,7 +1130,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
             // Expression: r.LengthSquared() > 0.0f
             return true;
         }
-        location.getWorld().rayCast(losHandler, source, target);
+        level.getWorld().rayCast(losHandler, source, target);
         return losHandler.hasLineOfSight();
     }
 
@@ -1173,7 +1173,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     // for persistence
     protected void releaseFragments() {
         int total = info.getInventory().getItemCount((Fragment.getInstance()));
-        Fragment.release(location, getPosition(), total);
+        Fragment.release(level, getPosition(), total);
         info.getInventory().removeItem(Fragment.getInstance(), total);
     }
 
@@ -1194,7 +1194,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         setCollisionMask(lastMask);
     }
 
-    protected void attemptTakeAction(float delta, Location location) {
+    protected void attemptTakeAction(float delta, Level level) {
         lastAction += delta;
         if (actionInProgress()) {
             // cannot act if another action is in progress
@@ -1222,7 +1222,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         } else {
             // no disorienting effects, so take conscious action
             lastAction = 0;
-            takeAction(delta, location);
+            takeAction(delta, level);
         }
     }
 
@@ -1346,7 +1346,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     }
 
     @Override
-    public void update(float delta, Location location) {
+    public void update(float delta, Level level) {
         if (delta == 0)
             return;
         stateTime += delta;
@@ -1356,7 +1356,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         distanceCache.clear();
 
         // update neighbors
-        location.getNeighbors(this);
+        level.getNeighbors(this);
         visibleNeighbors.clear();
         for (Agent neighbor : neighbors) {
             if (isVisible(neighbor)) {
@@ -1398,18 +1398,18 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
             if (!isParalyzed()) {
                 // handle the action queue
                 if (actionInProgress()) {
-                    action.update(delta, location);
+                    action.update(delta, level);
                 } else {
                     action = actions.poll();
                     if (action != null) {
                         // any action breaks cloaking
                         setCloaked(false);
-                        action.update(delta, location);
+                        action.update(delta, level);
                     }
                 }
 
                 // take conscious action
-                attemptTakeAction(delta, location);
+                attemptTakeAction(delta, level);
 
                 // update threat
                 getThreat().update(delta);
@@ -1477,16 +1477,16 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
             return false;
         }
 
-        Rectangle rect = getLargeBoundingBox(Location.getRectPool().obtain());
+        Rectangle rect = getLargeBoundingBox(Level.getRectPool().obtain());
         boolean result = rect.contains(x, y);
-        Location.getRectPool().free(rect);
+        Level.getRectPool().free(rect);
         return result;
     }
 
     public boolean collidesWith(Rectangle actorRect) {
-        Rectangle rect = getBoundingBox(Location.getRectPool().obtain());
+        Rectangle rect = getBoundingBox(Level.getRectPool().obtain());
         boolean result = actorRect.overlaps(rect);
-        Location.getRectPool().free(rect);
+        Level.getRectPool().free(rect);
         return result;
     }
 
@@ -1687,15 +1687,15 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         return isAlive() ? super.getZ() : Float.POSITIVE_INFINITY;
     }
 
-    protected void setLocation(Location location, float x, float y) {
-        this.location = location;
-        body = createBody(x, y, location.getWorld());
+    protected void setLocation(Level level, float x, float y) {
+        this.level = level;
+        body = createBody(x, y, level.getWorld());
         position.set(x, y);
     }
 
     public abstract boolean canSpeak();
 
-    protected abstract void takeAction(float delta, Location screen);
+    protected abstract void takeAction(float delta, Level screen);
 
     private class TargetingHandler implements RayCastCallback {
         private final short mask = Settings.BIT_SHOOTABLE;
@@ -1875,7 +1875,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         }
 
         @Override
-        public void update(float delta, Location location) {
+        public void update(float delta, Level level) {
             if (!Agent.this.aiming) {
                 rotateTowards(delta, getForwardVector());
                 updatePosition();

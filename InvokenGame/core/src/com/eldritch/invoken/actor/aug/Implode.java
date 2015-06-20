@@ -4,7 +4,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.effects.Imploding;
-import com.eldritch.invoken.location.Location;
+import com.eldritch.invoken.location.Level;
 
 public class Implode extends Augmentation {
 	private static final float RADIUS = 3;
@@ -49,7 +49,7 @@ public class Implode extends Augmentation {
     }
 	
     @Override
-    public float quality(Agent owner, Agent target, Location location) {
+    public float quality(Agent owner, Agent target, Level level) {
         return 1;
     }
 	
@@ -62,7 +62,7 @@ public class Implode extends Augmentation {
 		}
 
 		@Override
-		public void apply(Location location) {
+		public void apply(Level level) {
 			Agent owner = getOwner();
 			for (Agent neighbor : owner.getNeighbors()) {
 				if (neighbor.inRange(target, RADIUS)) {

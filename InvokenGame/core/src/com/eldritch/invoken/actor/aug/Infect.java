@@ -9,7 +9,7 @@ import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.actor.type.AoeProjectile;
 import com.eldritch.invoken.effects.Infected;
-import com.eldritch.invoken.location.Location;
+import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.proto.Effects.DamageType;
 import com.eldritch.invoken.screens.GameScreen;
 import com.eldritch.invoken.util.Damage;
@@ -57,7 +57,7 @@ public class Infect extends Augmentation {
     }
 
     @Override
-    public float quality(Agent owner, Agent target, Location location) {
+    public float quality(Agent owner, Agent target, Level level) {
         // TODO: get neighbors, check that they're enemies, and lower quality for allies
         return owner.getWeaponSentry().hasLineOfSight(target) ? 1 : 0;
     }
@@ -71,12 +71,12 @@ public class Infect extends Augmentation {
         }
 
         @Override
-        public void apply(Location location) {
+        public void apply(Level level) {
             // update agent to fact the direction of their strike
             owner.setDirection(owner.getRelativeDirection(target));
 
             Grenade bullet = new Grenade(owner, target);
-            location.addEntity(bullet);
+            level.addEntity(bullet);
         }
 
         @Override
@@ -101,7 +101,7 @@ public class Infect extends Augmentation {
         }
 
         @Override
-        protected void doDuringExplosion(float delta, Location location) {
+        protected void doDuringExplosion(float delta, Level level) {
             // create a set of immune agents to prevent the infinite spreading loop
             // once you've gotten infected by this virus, you can't get it again
             Set<Agent> immune = new HashSet<Agent>();

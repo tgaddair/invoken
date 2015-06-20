@@ -7,7 +7,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.actor.AgentHandler;
 import com.eldritch.invoken.actor.type.Agent.WeaponSentry;
 import com.eldritch.invoken.location.Bullet;
-import com.eldritch.invoken.location.Location;
+import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.location.NaturalVector2;
 import com.eldritch.invoken.util.Damage;
 import com.eldritch.invoken.util.Settings;
@@ -33,8 +33,8 @@ public abstract class Projectile extends CollisionEntity implements AgentHandler
         this.owner = owner;
         setup(owner);
 
-        Location location = owner.getLocation();
-        bullet = location.obtainBullet(this, position, velocity);
+        Level level = owner.getLocation();
+        bullet = level.obtainBullet(this, position, velocity);
     }
     
     public Damage getDamage() {
@@ -102,17 +102,17 @@ public abstract class Projectile extends CollisionEntity implements AgentHandler
     }
 
     @Override
-    public void update(float delta, Location location) {
+    public void update(float delta, Level level) {
         stateTime += delta;
         
-        if (handleBeforeUpdate(delta, location)) {
+        if (handleBeforeUpdate(delta, level)) {
             return;
         }
         
         // check that we've passed into the walls, possibly skipping over an edge
         position.set(bullet.getPosition());
         NaturalVector2 position = NaturalVector2.of(bullet.getPosition());
-        if (location.isBulletWall(position)) {
+        if (level.isBulletWall(position)) {
             handleObstacleContact();
         }
 
@@ -122,7 +122,7 @@ public abstract class Projectile extends CollisionEntity implements AgentHandler
         }
     }
 
-    public boolean handleBeforeUpdate(float delta, Location location) {
+    public boolean handleBeforeUpdate(float delta, Level level) {
         return false;
     }
 

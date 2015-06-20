@@ -5,4 +5,6 @@ import com.google.common.base.Optional;
 
 public interface GameTransition {
     void transition(String locationName, Optional<String> encounterName, PlayerActor state);
+    
+    void transition(String region, int level, PlayerActor state);
 }

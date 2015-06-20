@@ -15,7 +15,7 @@ import com.eldritch.invoken.actor.aug.Augmentation.Target;
 import com.eldritch.invoken.actor.items.RangedWeapon;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Npc;
-import com.eldritch.invoken.location.Location;
+import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.util.Heuristics;
 
 public class Attack extends Sequence<Npc> {
@@ -153,8 +153,8 @@ public class Attack extends Sequence<Npc> {
                 return false;
             }
 
-            Location location = npc.getLocation();
-            if (!npc.canTarget(target, location)) {
+            Level level = npc.getLocation();
+            if (!npc.canTarget(target, level)) {
                 // can't attack invalid targets
                 return false;
             }
@@ -170,7 +170,7 @@ public class Attack extends Sequence<Npc> {
                     if (aug.hasEnergy(npc)
                             && aug.isValidWithAiming(npc, aug.getBestTarget(npc, npc.getTarget(),
                                     tmpTarget))) {
-                        float quality = aug.quality(npc, npc.getTarget(), location);
+                        float quality = aug.quality(npc, npc.getTarget(), level);
                         if (quality > bestQuality) {
                             chosen = aug;
                             bestQuality = quality;
@@ -178,6 +178,10 @@ public class Attack extends Sequence<Npc> {
                         }
                     }
                 }
+                
+                // TODO: incorporate other signals besides "quality" into our decision-making
+                // process.  specifically, think about choices in terms of "risk" and "reward" and
+                // how an individual's preferences change based on their attributes
 
                 // if an aug was chosen, then go ahead and use it
                 if (chosen != null) {

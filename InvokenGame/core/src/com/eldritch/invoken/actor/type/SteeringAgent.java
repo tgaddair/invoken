@@ -9,7 +9,7 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.actor.Profession;
-import com.eldritch.invoken.location.Location;
+import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.proto.Actors.ActorParams;
 import com.eldritch.invoken.proto.Effects.DamageType;
 
@@ -31,16 +31,16 @@ public abstract class SteeringAgent extends Agent {
     private float maxLinearVelocity;
 
     public SteeringAgent(ActorParams params, boolean unique, float x, float y, float width,
-            float height, float maxVelocity, Location location,
+            float height, float maxVelocity, Level level,
             Map<Activity, Map<Direction, Animation>> animations) {
-        super(params, unique, x, y, width, height, location, animations);
+        super(params, unique, x, y, width, height, level, animations);
         this.maxLinearVelocity = maxVelocity;
         this.baseLinearVelocity = maxVelocity;
         this.maxLinearAcceleration = getDefaultAcceleration();
     }
 
     public SteeringAgent(float x, float y, float width, float height, float maxVelocity,
-            Profession profession, int level, Location location,
+            Profession profession, int level, Level location,
             Map<Activity, Map<Direction, Animation>> animations) {
         super(x, y, width, height, profession, level, location, animations);
         this.maxLinearVelocity = maxVelocity;

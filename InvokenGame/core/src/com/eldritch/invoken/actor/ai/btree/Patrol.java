@@ -4,7 +4,7 @@ import com.badlogic.gdx.ai.btree.branch.Selector;
 import com.badlogic.gdx.ai.btree.branch.Sequence;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Npc;
-import com.eldritch.invoken.location.Location;
+import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.util.GenericDialogue;
 
 public class Patrol extends Selector<Npc> {
@@ -92,9 +92,9 @@ public class Patrol extends Selector<Npc> {
     }
     
     private static boolean handleTrespasser(Npc npc, Agent neighbor) {
-        Location location = npc.getLocation();
-        if (location.isTrespasser(neighbor)) {
-            if (location.isOnFrontier(neighbor)) {
+        Level level = npc.getLocation();
+        if (level.isTrespasser(neighbor)) {
+            if (level.isOnFrontier(neighbor)) {
                 npc.announce(GenericDialogue.forFrontier(npc, neighbor));
             } else {
                 npc.changeRelation(neighbor, -10);

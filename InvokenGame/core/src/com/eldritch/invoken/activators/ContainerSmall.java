@@ -10,7 +10,7 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.util.Lootable;
-import com.eldritch.invoken.location.Location;
+import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.location.NaturalVector2;
 import com.eldritch.invoken.proto.Actors.InventoryItem;
 import com.eldritch.invoken.screens.GameScreen;
@@ -44,7 +44,7 @@ public class ContainerSmall extends ClickActivator implements Lootable {
     }
 
     @Override
-    public void activate(Agent agent, Location location) {
+    public void activate(Agent agent, Level level) {
         if (!activating) {
             activating = true;
             this.agent = agent;
@@ -52,11 +52,11 @@ public class ContainerSmall extends ClickActivator implements Lootable {
     }
 
     @Override
-    public void register(Location location) {
+    public void register(Level level) {
     }
     
     @Override
-    public void update(float delta, Location location) {
+    public void update(float delta, Level level) {
         if (activating) {
             stateTime += delta;
             if (animation.isAnimationFinished(stateTime)) {

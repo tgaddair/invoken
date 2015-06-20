@@ -15,7 +15,7 @@ import com.eldritch.invoken.actor.type.HandledProjectile;
 import com.eldritch.invoken.actor.type.TemporaryEntity;
 import com.eldritch.invoken.effects.Bleed;
 import com.eldritch.invoken.effects.Stunned;
-import com.eldritch.invoken.location.Location;
+import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.proto.Effects.DamageType;
 import com.eldritch.invoken.screens.GameScreen;
 import com.eldritch.invoken.util.Damage;
@@ -54,7 +54,7 @@ public class Acid extends ProjectileAugmentation {
     }
 
     @Override
-    public float quality(Agent owner, Agent target, Location location) {
+    public float quality(Agent owner, Agent target, Level level) {
         if (!target.isAlive()) {
             return 0;
         }
@@ -72,9 +72,9 @@ public class Acid extends ProjectileAugmentation {
         }
 
         @Override
-        public void apply(Location location) {
+        public void apply(Level level) {
             for (HandledProjectile bullet : getProjectiles(owner)) {
-                location.addEntity(bullet);
+                level.addEntity(bullet);
             }
         }
 
@@ -151,7 +151,7 @@ public class Acid extends ProjectileAugmentation {
         }
         
         @Override
-        public void update(float delta, Location location) {
+        public void update(float delta, Level level) {
             elapsed += delta;
         }
 

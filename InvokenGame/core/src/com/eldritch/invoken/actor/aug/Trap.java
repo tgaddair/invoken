@@ -5,7 +5,7 @@ import com.eldritch.invoken.activators.ProximityMine;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.effects.DamagedEnergy;
-import com.eldritch.invoken.location.Location;
+import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.location.NaturalVector2;
 import com.eldritch.invoken.proto.Effects.DamageType;
 import com.eldritch.invoken.util.Condition;
@@ -55,7 +55,7 @@ public class Trap extends Augmentation {
     }
 	
     @Override
-    public float quality(Agent owner, Agent target, Location location) {
+    public float quality(Agent owner, Agent target, Level level) {
         return 1;
     }
 	
@@ -68,11 +68,11 @@ public class Trap extends Augmentation {
 		}
 
 		@Override
-		public void apply(Location location) {
+		public void apply(Level level) {
 		    Damage damage = Damage.from(owner, DamageType.PHYSICAL, getBaseDamage(owner));
 		    final ProximityMine mine = new ProximityMine(target, damage);
-		    location.addEntity(mine);
-		    location.addActivator(mine);
+		    level.addEntity(mine);
+		    level.addActivator(mine);
 		    
 		    // having a proximity mine imposes an energy cost on the invocator
 		    getOwner().addEffect(new DamagedEnergy(getOwner(), COST, new Condition() {

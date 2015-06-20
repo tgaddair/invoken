@@ -31,7 +31,7 @@ import com.eldritch.invoken.actor.ai.NpcThreatMonitor.ThreatLevel;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Npc;
 import com.eldritch.invoken.actor.type.Player;
-import com.eldritch.invoken.location.Location;
+import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.location.proc.LocationGenerator;
 import com.eldritch.invoken.proto.Actors.PlayerActor;
 import com.eldritch.invoken.proto.Effects.DamageType;
@@ -89,7 +89,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
     private HealthBar selectedHealth;
 
     private Player player;
-    private Location location;
+    private Level level;
 
     private TextureRegion selector;
     private OrthographicCamera camera;
@@ -162,15 +162,15 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
             Locations.Location data = InvokenGame.LOCATION_READER.readAsset(state.getLocation());
             LocationGenerator generator = new LocationGenerator(gameState, data.getBiome(),
                     state.getSeed());
-            location = generator.generate(data);
-            onLoad(location, Optional.of(state));
+            level = generator.generate(data);
+            onLoad(level, Optional.of(state));
 
             // load from disk
-            player = location.createPlayer(state);
+            player = level.createPlayer(state);
 
             // create a corpse, if present
             if (state.hasCorpse()) {
-                location.createPlayerCorpse(state.getCorpse());
+                level.createPlayerCorpse(state.getCorpse());
             }
         } else {
             Random rand = new Random();
@@ -183,11 +183,11 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
             // InvokenGame.LOCATION_READER.readAsset("DebugArena");
             LocationGenerator generator = new LocationGenerator(gameState, data.getBiome(),
                     rand.nextLong());
-            location = generator.generate(data);
-            onLoad(location, Optional.<PlayerActor> absent());
+            level = generator.generate(data);
+            onLoad(level, Optional.<PlayerActor> absent());
 
             // create a new player
-            player = location.createPlayer(profession);
+            player = level.createPlayer(profession);
 
             // save in case they die before reaching the first save point
             save(player, Optional.<PlayerActor> absent());
@@ -195,9 +195,9 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 
         // init camera position
         Vector2 position = player.getCamera().getPosition();
-        camera.position.x = location.scale(position.x, camera.zoom);
-        camera.position.y = location.scale(position.y, camera.zoom);
-        location.setCamera(camera);
+        camera.position.x = level.scale(position.x, camera.zoom);
+        camera.position.y = level.scale(position.y, camera.zoom);
+        level.setCamera(camera);
 
         // create HUD elements
         Skin skin = getSkin();
@@ -231,7 +231,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         // announce the new location
         toaster = new Toaster(getSkin());
         stage.addActor(toaster.getContainer());
-        toast(location.getName());
+        toast(level.getName());
 
         // music settings
         InvokenGame.MUSIC_MANAGER.setEnabled(!Settings.MUTE);
@@ -268,10 +268,10 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         }
 
         // check that the player is still alive
-        if (location.getPlayer().isCompletelyDead()) {
+        if (level.getPlayer().isCompletelyDead()) {
             // game over
-            saveOnDeath(location);
-            game.setScreen(new GameOverScreen(game, location.getPlayer().getInfo().getId()));
+            saveOnDeath(level);
+            game.setScreen(new GameOverScreen(game, level.getPlayer().getInfo().getId()));
         }
 
         // update UI menus
@@ -282,16 +282,16 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         dialogue.update(delta, player, camera);
         loot.update(player);
         for (HudElement element : hud) {
-            element.update(delta, location);
+            element.update(delta, level);
         }
-        minimap.update(location.getPlayer());
+        minimap.update(level.getPlayer());
 
         // draw our toast
         toaster.update(delta);
 
         // update mouse position
         Vector3 world = camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
-        location.setFocusPoint(world.x, world.y);
+        level.setFocusPoint(world.x, world.y);
 
         // render the background
         // TODO: trim must use the 16x16 pixel patches for this to work
@@ -300,7 +300,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         // batch.end();
 
         // render the location
-        location.render(delta, camera, selector, tacticalPause);
+        level.render(delta, camera, selector, tacticalPause);
 
         // draw health bars
         selectedHealth.draw();
@@ -331,7 +331,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         actionBar.resize(width, height);
         statusTable.setSize(width, height / 2);
         loot.resize(width, height);
-        location.resize(width, height);
+        level.resize(width, height);
         toaster.resize(width, height);
         for (HudElement element : hud) {
             element.resize(width, height);
@@ -341,7 +341,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
     @Override
     public void dispose() {
         super.dispose();
-        location.dispose();
+        level.dispose();
     }
 
     private void drawFps() {
@@ -564,15 +564,15 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
                 SCREEN_GRAB = true;
                 return true;
             case Keys.NUMPAD_0:
-                loadLocation("WelcomeCenterLevel2", Optional.<String> absent(), location
+                loadLocation("WelcomeCenterLevel2", Optional.<String> absent(), level
                         .getPlayer().serialize());
                 return true;
             case Keys.NUMPAD_1:
-                loadLocation("Tutorial", Optional.<String> absent(), location.getPlayer()
+                loadLocation("Tutorial", Optional.<String> absent(), level.getPlayer()
                         .serialize());
                 return true;
             case Keys.NUMPAD_2:
-                loadLocation("WelcomeCenterLevel3", Optional.<String> absent(), location
+                loadLocation("WelcomeCenterLevel3", Optional.<String> absent(), level
                         .getPlayer().serialize());
                 return true;
             default:
@@ -626,17 +626,17 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 
         // handle entity selection
         boolean selection = false;
-        for (Agent entity : location.getActiveEntities()) {
+        for (Agent entity : level.getActiveEntities()) {
             if (entity.contains(world.x, world.y)) { // && player.canTarget(entity, location)) {
                 selection = true;
                 if (player.getInfo().getAugmentations().hasActiveAugmentation(button)
                         && player.getInfo().getAugmentations().getActiveAugmentation(button)
-                                .isValid(player) && player.select(entity, location)) {
+                                .isValid(player) && player.select(entity, level)) {
                     player.getInfo().getAugmentations()
                             .useActiveAugmentation(button, tacticalPause);
                 } else if (player.getTarget() != entity) {
                     // initial selection -> set target
-                    player.select(entity, location);
+                    player.select(entity, level);
                 } else if (!tacticalPause) {
                     // already selected -> start interaction
                     player.reselect(entity);
@@ -651,8 +651,8 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         }
 
         // handle activators
-        for (Activator activator : location.getActivators()) {
-            if (activator.click(player, location, world.x, world.y)) {
+        for (Activator activator : level.getActivators()) {
+            if (activator.click(player, level, world.x, world.y)) {
                 // allow multiple activators
                 selection = true;
             }
@@ -660,7 +660,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 
         if (!playerClicked && !selection) {
             // clicked on a non-interactive object, so deselect
-            player.select(null, location);
+            player.select(null, level);
         }
         playerClicked = false;
 
@@ -778,45 +778,72 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 
     private void loadLocation(String locationName, Optional<String> encounterName, PlayerActor state) {
         // dispose of the current location
-        location.dispose();
+        level.dispose();
 
         // load the location
         Locations.Location data = InvokenGame.LOCATION_READER.readAsset(locationName);
         LocationGenerator generator = new LocationGenerator(gameState, data.getBiome(),
                 state.getSeed());
-        location = generator.generate(data, encounterName);
-        location.spawnPlayer(player);
-        onLoad(location, Optional.of(state));
+        level = generator.generate(data, encounterName);
+        level.spawnPlayer(player);
+        onLoad(level, Optional.of(state));
 
         // resize
-        location.resize(getWidth(), getHeight());
+        level.resize(getWidth(), getHeight());
 
         // init camera position
         Vector2 position = player.getCamera().getPosition();
-        camera.position.x = location.scale(position.x, camera.zoom);
-        camera.position.y = location.scale(position.y, camera.zoom);
-        location.setCamera(camera);
+        camera.position.x = level.scale(position.x, camera.zoom);
+        camera.position.y = level.scale(position.y, camera.zoom);
+        level.setCamera(camera);
 
         // announce the new location
         toaster = new Toaster(getSkin());
         stage.addActor(toaster.getContainer());
-        toast(location.getName());
+        toast(level.getName());
+    }
+    
+    private void loadLocation(int floor, PlayerActor state) {
+        // dispose of the current location
+        level.dispose();
+
+        // load the location
+        Locations.Location data = InvokenGame.LOCATION_READER.readAsset(locationName);
+        LocationGenerator generator = new LocationGenerator(gameState, data.getBiome(),
+                state.getSeed());
+        level = generator.generate(data);
+        level.spawnPlayer(player);
+        onLoad(level, Optional.of(state));
+
+        // resize
+        level.resize(getWidth(), getHeight());
+
+        // init camera position
+        Vector2 position = player.getCamera().getPosition();
+        camera.position.x = level.scale(position.x, camera.zoom);
+        camera.position.y = level.scale(position.y, camera.zoom);
+        level.setCamera(camera);
+
+        // announce the new location
+        toaster = new Toaster(getSkin());
+        stage.addActor(toaster.getContainer());
+        toast(level.getName());
     }
 
-    private void onLoad(Location location, Optional<PlayerActor> state) {
-        minimap = new Minimap(location.getMap(), location.getSeed(), state);
-        if (location.hasMusic()) {
-            InvokenGame.MUSIC_MANAGER.play(location.getMusicId());
+    private void onLoad(Level level, Optional<PlayerActor> state) {
+        minimap = new Minimap(level.getMap(), level.getSeed(), state);
+        if (level.hasMusic()) {
+            InvokenGame.MUSIC_MANAGER.play(level.getMusicId());
         }
     }
 
-    private static void saveOnDeath(Location location) {
-        Player player = location.getPlayer();
+    private static void saveOnDeath(Level level) {
+        Player player = level.getPlayer();
         save(player, Optional.of(load(player.getInfo().getId())));
     }
 
-    public static void save(Location location) {
-        save(location.getPlayer(), Optional.<PlayerActor> absent());
+    public static void save(Level level) {
+        save(level.getPlayer(), Optional.<PlayerActor> absent());
     }
 
     private static void save(Player player, Optional<PlayerActor> previous) {
@@ -854,6 +881,11 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         public void transition(String locationName, Optional<String> encounterName,
                 PlayerActor state) {
             loadLocation(locationName, encounterName, state);
+        }
+
+        @Override
+        public void transition(String region, int level, PlayerActor state) {
+            loadLocation(level, state);
         }
     }
 }

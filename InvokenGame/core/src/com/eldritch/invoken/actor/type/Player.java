@@ -13,7 +13,7 @@ import com.eldritch.invoken.actor.Profession;
 import com.eldritch.invoken.actor.aug.Augmentation;
 import com.eldritch.invoken.actor.items.Fragment;
 import com.eldritch.invoken.actor.util.ThreatMonitor;
-import com.eldritch.invoken.location.Location;
+import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.proto.Actors.PlayerActor;
 import com.eldritch.invoken.state.Inventory.ItemState;
 import com.eldritch.invoken.util.AnimationUtils;
@@ -36,7 +36,7 @@ public class Player extends SteeringAgent {
 
     private int lastFragments = 0;
 
-    public Player(Profession profession, int level, float x, float y, Location location, String body) {
+    public Player(Profession profession, int level, float x, float y, Level location, String body) {
         super(x, y, Human.getWidth(), Human.getHeight(), Human.MAX_VELOCITY, profession, level,
                 location, AnimationUtils.getHumanAnimations(body));
         this.threat = new ThreatMonitor<Player>(this);
@@ -44,9 +44,9 @@ public class Player extends SteeringAgent {
         this.priorState = Optional.<PlayerActor> absent();
     }
 
-    public Player(PlayerActor data, float x, float y, Location location) {
+    public Player(PlayerActor data, float x, float y, Level level) {
         super(data.getParams(), true, x, y, Human.getWidth(), Human.getHeight(),
-                Human.MAX_VELOCITY, location, AnimationUtils.getHumanAnimations(data.getParams()
+                Human.MAX_VELOCITY, level, AnimationUtils.getHumanAnimations(data.getParams()
                         .getBodyType()));
 
         // equip items
@@ -98,7 +98,7 @@ public class Player extends SteeringAgent {
     }
 
     @Override
-    protected void takeAction(float delta, Location screen) {
+    protected void takeAction(float delta, Level screen) {
         if (moving) {
             // moving = mover.takeAction(delta, targetCoord, screen);
             if (!moving) {
@@ -170,8 +170,8 @@ public class Player extends SteeringAgent {
     }
 
     @Override
-    public void setLocation(Location location, float x, float y) {
-        super.setLocation(location, x, y);
+    public void setLocation(Level level, float x, float y) {
+        super.setLocation(level, x, y);
     }
 
     @Override
@@ -179,7 +179,7 @@ public class Player extends SteeringAgent {
         return true;
     }
 
-    public boolean select(Agent other, Location location) {
+    public boolean select(Agent other, Level level) {
         // if (other == this || other == null || canTarget(other, location)) {
         setTarget(other);
         endJointInteraction();
