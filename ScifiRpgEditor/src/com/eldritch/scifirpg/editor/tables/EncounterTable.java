@@ -20,16 +20,13 @@ public class EncounterTable extends CollectedAssetTable<Encounter> {
 	private static final String[] COLUMN_NAMES = { 
 		"ID", "Title", "Type", "Weight", "Unique" };
 	
-	private final ControlPointTable cpTable;
-	
-	public EncounterTable(ControlPointTable cpTable) {
+	public EncounterTable() {
 		super(COLUMN_NAMES, "Encounter");
-		this.cpTable = cpTable;
 	}
 
 	@Override
 	protected JPanel getEditorPanel(Optional<Encounter> prev, JFrame frame) {
-		return new EncounterEditorPanel(this, cpTable, frame, prev);
+		return new EncounterEditorPanel(this, frame, prev);
 	}
 	
 	@Override

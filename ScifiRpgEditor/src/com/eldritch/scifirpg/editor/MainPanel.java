@@ -9,6 +9,7 @@ import com.eldritch.scifirpg.editor.tables.ActorTable;
 import com.eldritch.scifirpg.editor.tables.AssetTable;
 import com.eldritch.scifirpg.editor.tables.AugmentationTable;
 import com.eldritch.scifirpg.editor.tables.ContainerTable;
+import com.eldritch.scifirpg.editor.tables.EncounterTable;
 import com.eldritch.scifirpg.editor.tables.FactionTable;
 import com.eldritch.scifirpg.editor.tables.ItemTable;
 import com.eldritch.scifirpg.editor.tables.LocationTable;
@@ -27,6 +28,8 @@ public class MainPanel extends JPanel {
 	public static final FactionTable FACTION_TABLE = new FactionTable();
 	
 	public static final LocationTable LOCATION_TABLE = new LocationTable();
+	
+	public static final EncounterTable ENCOUNTER_TABLE = new EncounterTable();
 	
 	public static final RoomTable ROOM_TABLE = new RoomTable();
 	
