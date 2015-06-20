@@ -56,7 +56,12 @@ public class EncounterEditorPanel extends AssetEditorPanel<Encounter, EncounterT
 
     private final JTextField idField = new JTextField();
     private final JTextField titleField = new JTextField();
+    
+    private final JTextField minLevelField = new JTextField();
+    private final JTextField maxLevelField = new JTextField();
+    
     // private final JComboBox<Type> typeBox = new JComboBox<Type>(Type.values());
+    
     private final JTextField weightField = new JTextField();
     private final JCheckBox uniqueCheck = new JCheckBox();
 
@@ -85,6 +90,12 @@ public class EncounterEditorPanel extends AssetEditorPanel<Encounter, EncounterT
         builder.nextLine();
 
         builder.append("ID:", idField);
+        builder.nextLine();
+        
+        builder.append("Min Level:", minLevelField);
+        builder.nextLine();
+        
+        builder.append("Max Level:", maxLevelField);
         builder.nextLine();
 
         // typeBox.addItemListener(this);
@@ -144,7 +155,13 @@ public class EncounterEditorPanel extends AssetEditorPanel<Encounter, EncounterT
             Encounter asset = prev.get();
             idField.setText(asset.getId());
             titleField.setText(asset.getTitle());
-            weightField.setText(asset.getWeight() + "");
+            
+            minLevelField.setText(String.valueOf(asset.getMinLevel()));
+            if (asset.hasMaxLevel()) {
+                maxLevelField.setText(String.valueOf(asset.getMaxLevel()));
+            }
+            
+            weightField.setText(String.valueOf(asset.getWeight()));
             uniqueCheck.setSelected(asset.getUnique());
 
             for (Prerequisite p : asset.getPrereqList()) {
@@ -182,7 +199,11 @@ public class EncounterEditorPanel extends AssetEditorPanel<Encounter, EncounterT
                 .setUnique(uniqueCheck.isSelected()).addAllPrereq(prereqTable.getAssets())
                 .addAllRoomId(roomTable.getAssetIds())
                 .setFactionId((String) factionBox.getSelectedItem())
-                .setActorParams(actorPanel.getParams());
+                .setActorParams(actorPanel.getParams())
+                .setMinLevel(Integer.parseInt(minLevelField.getText()));
+        if (!maxLevelField.getText().isEmpty()) {
+            encounter.setMaxLevel(Integer.parseInt(maxLevelField.getText()));
+        }
         return encounter.build();
     }
 

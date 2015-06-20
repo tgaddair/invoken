@@ -1,0 +1,124 @@
+encounter {
+  id: "Crawlers1"
+  title: "Crawlers1"
+  type: ACTOR
+  weight: 1.0
+  unique: false
+  actor_params {
+    description: ""
+    actor_scenario {
+      actor_id: "AcidCrawler"
+      essential: false
+      blocking: false
+      min: 1
+      max: 3
+      alive: true
+    }
+    actor_scenario {
+      actor_id: "Crawler"
+      essential: false
+      blocking: false
+      min: 2
+      max: 4
+      alive: true
+    }
+    no_detect: false
+    no_flee: false
+  }
+  faction_id: ""
+}
+encounter {
+  id: "MeleeThugs1"
+  title: "Melee Thugs1"
+  type: ACTOR
+  weight: 1.0
+  unique: false
+  actor_params {
+    description: ""
+    actor_scenario {
+      actor_id: "StreetThugMelee"
+      essential: false
+      blocking: false
+      min: 3
+      max: 4
+      alive: true
+    }
+    no_detect: false
+    no_flee: false
+  }
+  faction_id: "_ThugFaction"
+  min_level: 3
+}
+encounter {
+  id: "Cyrus"
+  title: "Cyrus"
+  type: ACTOR
+  weight: 1.0
+  unique: true
+  actor_params {
+    description: ""
+    actor_scenario {
+      actor_id: "Cyrus"
+      essential: true
+      blocking: false
+      alive: true
+    }
+    actor_scenario {
+      actor_id: "StreetThugGuard"
+      essential: false
+      blocking: false
+      min: 2
+      max: 2
+      alive: true
+    }
+    no_detect: false
+    no_flee: false
+  }
+  faction_id: "_ThugFaction"
+  min_level: 3
+  room_id: "ThugCapital1"
+}
+encounter {
+  id: "Thugs1"
+  title: "Thugs1"
+  type: ACTOR
+  weight: 1.0
+  unique: false
+  actor_params {
+    description: ""
+    actor_scenario {
+      actor_id: "StreetThugGreeter"
+      essential: false
+      blocking: false
+      min: 2
+      max: 3
+      alive: true
+    }
+    no_detect: false
+    no_flee: false
+  }
+  faction_id: "_ThugFaction"
+  min_level: 3
+}
+encounter {
+  id: "Lich1"
+  title: "Lich1"
+  type: ACTOR
+  weight: 1.0
+  unique: false
+  actor_params {
+    description: ""
+    actor_scenario {
+      actor_id: "Lich"
+      essential: false
+      blocking: false
+      min: 1
+      max: 1
+      alive: true
+    }
+    no_detect: false
+    no_flee: false
+  }
+  faction_id: ""
+  min_level: 5
+}

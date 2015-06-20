@@ -3,6 +3,9 @@ package com.eldritch.scifirpg.editor.tables;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.swing.JFrame;
@@ -18,7 +21,7 @@ import com.google.protobuf.TextFormat;
 public class EncounterTable extends CollectedAssetTable<Encounter> {
 	private static final long serialVersionUID = 1L;
 	private static final String[] COLUMN_NAMES = { 
-		"ID", "Title", "Type", "Weight", "Unique" };
+		"ID", "Title", "Level", "Weight", "Unique" };
 	
 	public EncounterTable() {
 		super(COLUMN_NAMES, "Encounter");
@@ -31,7 +34,7 @@ public class EncounterTable extends CollectedAssetTable<Encounter> {
 	
 	@Override
 	protected Object[] getDisplayFields(Encounter asset) {
-		return new Object[]{asset.getId(), asset.getTitle(), asset.getType(),
+		return new Object[]{asset.getId(), asset.getTitle(), asset.getMinLevel(),
 				asset.getWeight(), asset.getUnique()};
 	}
 
@@ -42,7 +45,14 @@ public class EncounterTable extends CollectedAssetTable<Encounter> {
 
     @Override
     protected Message collect(List<Encounter> assets) {
-        return EncounterCollection.newBuilder().addAllEncounter(assets).build();
+        List<Encounter> sorted = new ArrayList<>(assets);
+        Collections.sort(sorted, new Comparator<Encounter>() {
+            @Override
+            public int compare(Encounter e1, Encounter e2) {
+                return Integer.compare(e1.getMinLevel(), e2.getMinLevel());
+            }
+        });
+        return EncounterCollection.newBuilder().addAllEncounter(sorted).build();
     }
 
     @Override
