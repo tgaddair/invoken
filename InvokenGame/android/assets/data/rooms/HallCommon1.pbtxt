@@ -1,0 +1,12 @@
+id: "HallCommon1"
+furniture {
+  id: "plant-wall2"
+  type: TMX
+  max: 3
+}
+furniture {
+  id: "light-wall-warm1"
+  type: TMX
+  max: 6
+}
+size: MEDIUM

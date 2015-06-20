@@ -36,6 +36,10 @@ message Location {
 	optional string credential_DEPRECATED = 10;  // allows wandering the premises
 }
 
+message EncounterCollection {
+	repeated Encounter encounter = 1;
+}
+
 message Territory {
 	optional string faction_id = 1;
 	optional int32 min_rank = 2;  // min rank allowed in area
@@ -215,6 +219,9 @@ message Encounter {
 	optional DecisionParams decision_params = 9;
 	optional ActorParams actor_params = 10;
 	optional RegionParams region_params = 11;
+
+	optional int32 min_level = 20 [default = 0];
+	optional int32 max_level = 21;
 
 	// DEPRECATED
 	optional bool origin_DEPRECATED = 7 [default = false];

@@ -11,6 +11,7 @@ import com.eldritch.invoken.screens.MenuScreen;
 import com.eldritch.invoken.screens.SplashScreen;
 import com.eldritch.invoken.util.ActorMarshaller;
 import com.eldritch.invoken.util.ContainerMarshaller;
+import com.eldritch.invoken.util.EncounterSelector;
 import com.eldritch.invoken.util.FactionMarshaller;
 import com.eldritch.invoken.util.ItemMarshaller;
 import com.eldritch.invoken.util.LocationMarshaller;
@@ -31,6 +32,8 @@ public class InvokenGame extends Game {
 	public final static ContainerMarshaller CONTAINER_READER = new ContainerMarshaller();
 	public final static TerminalMarshaller TERMINAL_READER = new TerminalMarshaller();
 	
+	public final static EncounterSelector ENCOUNTER_SELECTOR = new EncounterSelector();
+	
 	public static MusicManager MUSIC_MANAGER;
 	public static SoundManager SOUND_MANAGER;
 
@@ -48,6 +51,8 @@ public class InvokenGame extends Game {
 	@Override
 	public void create() {
 		Gdx.app.log(InvokenGame.LOG, "Creating game on " + Gdx.app.getType());
+		
+		ENCOUNTER_SELECTOR.load();
 		
 		MUSIC_MANAGER = new MusicManager();
 		SOUND_MANAGER = new SoundManager();
