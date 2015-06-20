@@ -211,7 +211,7 @@ message Encounter {
 	required bool unique = 5 [default = false];
 
 	repeated Prerequisite prereq = 6;
-	repeated string control_point_id = 18;
+	repeated string room_id = 22;
 	optional string faction_id = 19;
 
 	// Parameters specific to encounter type
@@ -231,4 +231,5 @@ message Encounter {
 	repeated string available_key_DEPRECATED = 15;
 	optional string successor_DEPRECATED = 16;
 	optional string next_encounter_DEPRECATED = 17;
+	repeated string control_point_id = 18;
 }

@@ -30,12 +30,12 @@ public abstract class CollectedAssetTable<T extends Message> extends IdentifiedA
 
     @Override
     public void saveAsset(Optional<T> prev, T asset) {
-        exportAsset(asset);
         if (prev.isPresent() && !getAssetId(prev.get()).equals(getAssetId(asset))) {
             // Do not replace the asset if the ID was changed -> create a new asset
             prev = Optional.<T> absent();
         }
         addAsset(prev, asset);
+        exportAsset(asset);
     }
 
     @Override

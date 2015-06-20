@@ -50,6 +50,7 @@ public class MainPanel extends JPanel {
 		addTable(ACTOR_TABLE, tabbedPane);
 		addTable(FACTION_TABLE, tabbedPane);
 		addTable(LOCATION_TABLE, tabbedPane);
+		addTable(ENCOUNTER_TABLE, tabbedPane);
 		addTable(ROOM_TABLE, tabbedPane);
 		addTable(CONTAINER_TABLE, tabbedPane);
 		addTable(TERMINAL_TABLE, tabbedPane);
