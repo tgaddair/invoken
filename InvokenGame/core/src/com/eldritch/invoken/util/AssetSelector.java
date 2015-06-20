@@ -1,7 +1,8 @@
 package com.eldritch.invoken.util;
 
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -21,8 +22,8 @@ public abstract class AssetSelector<V extends Message> {
         loadInto(levelToAsset, assets);
     }
 
-    public Set<V> select(int level) {
-        Set<V> results = new HashSet<>();
+    public List<V> select(int level) {
+        List<V> results = new ArrayList<>();
         for (int i = 0; i <= level; i++) {
             for (V asset : get(levelToAsset, level)) {
                 if (isValid(asset, level)) {

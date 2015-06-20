@@ -119,10 +119,10 @@ public class LocationGenerator {
     }
 
     public Level generate(Locations.Location proto) {
-        return generate(proto, Optional.<String> absent());
+        return generate(proto, 0);
     }
 
-    public Level generate(Locations.Location proto, Optional<String> encounterName) {
+    public Level generate(Locations.Location proto, int floor) {
         System.out.println("global seed: " + globalSeed);
         System.out.println("hash code: " + proto.getId().hashCode());
 
@@ -132,7 +132,7 @@ public class LocationGenerator {
             // name
             long seed = (globalSeed ^ proto.getId().hashCode()) + counter++;
             try {
-                return generate(proto, encounterName, seed);
+                return generate(proto, floor, seed);
             } catch (Exception ex) {
                 InvokenGame.error("Failed generating location: " + counter, ex);
             }
@@ -141,7 +141,7 @@ public class LocationGenerator {
                 "Failed to generate location %s after %d attempts", proto.getId(), attempts));
     }
 
-    private Level generate(Locations.Location proto, Optional<String> encounterName, long seed) {
+    private Level generate(Locations.Location proto, int floor, long seed) {
         System.out.println("seed: " + seed);
         this.rand = new Random(seed);
 
@@ -212,7 +212,7 @@ public class LocationGenerator {
         TerritoryGenerator territoryGen = new TerritoryGenerator(bsp, rooms,
                 proto.getTerritoryList());
         territoryGen.claim();
-        
+
         // load hallways
         List<Room> hallways = new ArrayList<>();
         for (String id : proto.getHallIdList()) {
@@ -224,8 +224,8 @@ public class LocationGenerator {
         roomDecorator.generate(rooms, hallways);
 
         InvokenGame.log("Creating Spawn Layers");
-        for (LocationLayer layer : createSpawnLayers(base, collision, bsp, map, rooms,
-                proto.getEncounterList(), encounterName)) {
+        List<Encounter> encounters = InvokenGame.ENCOUNTER_SELECTOR.select(floor);
+        for (LocationLayer layer : createSpawnLayers(base, collision, bsp, map, rooms, encounters)) {
             map.getLayers().add(layer);
         }
 
@@ -250,7 +250,7 @@ public class LocationGenerator {
 
         // add cover points now that all collidable furniture has been placed
         map.addAllCover(getCover(base, collision));
-        
+
         Locations.Level.Builder builder = Locations.Level.newBuilder();
         builder.setLevel(0);
         builder.addLocation(proto);
@@ -805,7 +805,7 @@ public class LocationGenerator {
 
     private List<LocationLayer> createSpawnLayers(LocationLayer base, LocationLayer collision,
             RoomGenerator generator, LocationMap map, ConnectedRoomManager rooms,
-            List<Encounter> encounterList, Optional<String> playerSpawnEncounter) {
+            List<Encounter> encounterList) {
         Set<Encounter> encounters = new LinkedHashSet<>(encounterList);
         List<LocationLayer> layers = new ArrayList<LocationLayer>();
         for (ControlRoom controlRoom : generator.getEncounterRooms()) {
@@ -818,7 +818,7 @@ public class LocationGenerator {
             freeSpaces.retainAll(connected.getPoints());
 
             // generate the player layer
-            if (isSpawnRoom(controlRoom.getControlPoint(), playerSpawnEncounter)) {
+            if (isSpawnRoom(controlRoom.getControlPoint())) {
                 LocationLayer playerLayer = new LocationLayer(base.getWidth(), base.getHeight(),
                         PX, PX, map);
                 playerLayer.setVisible(false);
@@ -867,12 +867,8 @@ public class LocationGenerator {
         return freeSpaces;
     }
 
-    private boolean isSpawnRoom(ControlPoint cp, Optional<String> playerSpawnEncounter) {
-        if (playerSpawnEncounter.isPresent()) {
-            return cp.getId().equals(playerSpawnEncounter.get());
-        } else {
-            return cp.getOrigin();
-        }
+    private boolean isSpawnRoom(ControlPoint cp) {
+        return cp.getOrigin();
     }
 
     private void createLayer(Rectangle bounds, Encounter encounter,
