@@ -76,6 +76,7 @@ public class LocationGenerator {
     private final long globalSeed;
     private Random rand;
     private long counter = 0;
+    private int floor;
 
     private final GameTransition state;
     private final String biome;
@@ -148,6 +149,7 @@ public class LocationGenerator {
     private Level generate(List<Locations.Location> protos, int floor, long seed) {
         System.out.println("seed: " + seed);
         this.rand = new Random(seed);
+        this.floor = floor;
 
         // territory
         List<Territory> territory = new ArrayList<>();
@@ -264,7 +266,7 @@ public class LocationGenerator {
         map.addAllCover(getCover(base, collision));
 
         Locations.Level.Builder builder = Locations.Level.newBuilder();
-        builder.setLevel(0);
+        builder.setLevel(floor);
         builder.addAllLocation(protos);
 
         Level level = new Level(builder.build(), map, state, globalSeed);
@@ -896,12 +898,27 @@ public class LocationGenerator {
         Collections.shuffle(freeSpaces);
         Iterator<NaturalVector2> it = freeSpaces.iterator();
         for (ActorScenario scenario : encounter.getActorParams().getActorScenarioList()) {
-            for (int i = 0; i < scenario.getMax(); i++) {
+            int count = getCount(encounter, scenario);
+            for (int i = 0; i < count; i++) {
                 NaturalVector2 position = it.hasNext() ? it.next() : getPoint(bounds, base, layer);
                 addCell(layer, collider, position.x, position.y);
             }
         }
         layers.add(layer);
+    }
+    
+    public int getCount(Encounter encounter, ActorScenario scenario) {
+        // the greater the delta, the greater the chance of getting a higher count
+        int delta = encounter.getMinLevel() - floor;
+        float target = rand.nextFloat() * sigmoid(delta);
+        
+        // fit the target between the min and the max
+        float count = target * (scenario.getMax() - scenario.getMin()) + scenario.getMin();
+        return Math.round(count);
+    }
+    
+    private static float sigmoid(float x) {
+        return (float) (1f / (1f + Math.exp(-x)));
     }
 
     public static void sortByWeight(List<Encounter> encounters) {

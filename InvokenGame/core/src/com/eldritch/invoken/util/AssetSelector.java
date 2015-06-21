@@ -25,7 +25,7 @@ public abstract class AssetSelector<V extends Message> {
     public List<V> select(int level) {
         List<V> results = new ArrayList<>();
         for (int i = 0; i <= level; i++) {
-            for (V asset : get(levelToAsset, level)) {
+            for (V asset : get(levelToAsset, i)) {
                 if (isValid(asset, level)) {
                     results.add(asset);
                 }
