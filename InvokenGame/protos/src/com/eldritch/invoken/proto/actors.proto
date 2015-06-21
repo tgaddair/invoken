@@ -69,6 +69,7 @@ message Terminal {
 message InventoryItem {
 	optional string item_id = 1; // OPTIONAL: may change to int32
 	required int32 count = 2 [default = 1];
+	optional int32 variance = 4 [default = 0];
 	optional double drop_chance = 3 [default = 1.0]; // ignored for player
 }
 

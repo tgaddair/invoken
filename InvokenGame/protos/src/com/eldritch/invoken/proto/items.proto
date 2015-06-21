@@ -12,6 +12,7 @@ message Item {
 		MELEE_WEAPON = 0;
 		RANGED_WEAPON = 1;
 		HEAVY_WEAPON = 2;
+		AMMUNITION = 9;
 		OUTFIT = 3;
 		ACCESSORY = 4;
 		CONSUMABLE = 8;

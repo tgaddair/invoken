@@ -216,7 +216,7 @@ public class ItemTable extends MajorAssetTable<Item> {
             if (!cooldownField.getText().isEmpty()) {
                 item.setCooldown(Double.parseDouble(cooldownField.getText()));
             }
-            if (item.getType() == Type.RANGED_WEAPON) {
+            if (item.getType() == Type.RANGED_WEAPON || item.getType() == Type.AMMUNITION) {
                 item.setRangedType((RangedWeaponType) rangedTypeBox.getSelectedItem());
             }
             return item.build();

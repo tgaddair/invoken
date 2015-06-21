@@ -291,7 +291,7 @@ public class ActorEditorPanel extends AssetEditorPanel<NonPlayerActor, ActorTabl
 	public static class InventoryTable extends AssetTable<InventoryItem> {
 		private static final long serialVersionUID = 1L;
 		private static final String[] COLUMN_NAMES = { 
-			"Item", "Count", "Drop Chance" };
+			"Item", "Count", "Variance", "Drop Chance" };
 		
 		public InventoryTable() {
 			super(COLUMN_NAMES, "Faction Status");
@@ -304,7 +304,7 @@ public class ActorEditorPanel extends AssetEditorPanel<NonPlayerActor, ActorTabl
 		
 		@Override
 		protected Object[] getDisplayFields(InventoryItem item) {
-			return new Object[]{item.getItemId(), item.getCount(), item.getDropChance()};
+			return new Object[]{item.getItemId(), item.getCount(), item.getVariance(), item.getDropChance()};
 		}
 	}
 	
@@ -313,6 +313,7 @@ public class ActorEditorPanel extends AssetEditorPanel<NonPlayerActor, ActorTabl
 		
 		private final JComboBox<String> pointerBox = new JComboBox<String>();
 		private final JTextField countField = new JTextField("1");
+		private final JTextField varianceField = new JTextField("0");
 		private final JTextField dropField = new JTextField("1.0");
 		
 		public InventoryPanel(InventoryTable table, JFrame frame, Optional<InventoryItem> prev) {
@@ -343,6 +344,9 @@ public class ActorEditorPanel extends AssetEditorPanel<NonPlayerActor, ActorTabl
 			builder.append("Count:", countField);
 			builder.nextLine();
 			
+			builder.append("Variance:", varianceField);
+            builder.nextLine();
+			
 			builder.append("Drop Chance:", dropField);
 			builder.nextLine();
 
@@ -355,6 +359,7 @@ public class ActorEditorPanel extends AssetEditorPanel<NonPlayerActor, ActorTabl
 				InventoryItem asset = prev.get();
 				pointerBox.setSelectedItem(asset.getItemId());
 				countField.setText(asset.getCount() + "");
+				varianceField.setText(asset.getVariance() + "");
 				dropField.setText(asset.getDropChance() + "");
 			}
 
@@ -367,6 +372,7 @@ public class ActorEditorPanel extends AssetEditorPanel<NonPlayerActor, ActorTabl
 			return InventoryItem.newBuilder()
 					.setItemId(id)
 					.setCount(Integer.parseInt(countField.getText()))
+					.setVariance(Integer.parseInt(varianceField.getText()))
 					.setDropChance(Double.parseDouble(dropField.getText()))
 					.build();
 		}
