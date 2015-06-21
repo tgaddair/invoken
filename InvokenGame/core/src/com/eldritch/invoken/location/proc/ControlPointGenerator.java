@@ -7,6 +7,8 @@ public class ControlPointGenerator {
         ControlPoint.Builder builder = ControlPoint.newBuilder().setOrigin(true);
         if (floor == 0) {
             builder.addRoomId("Bedroom");
+        } else {
+            builder.addRoomId("Entrance");
         }
         return builder.build();
     }

@@ -34,11 +34,11 @@ public class LevelDoorActivator extends ClickActivator {
         super(NaturalVector2.of(x + offset.x, y + offset.y), 3, 2);
         this.increment = increment;
 
-        final float magnitude = 0.1f;
+        final float magnitude = 0.25f;
         animation = new Animation(0.05f, regions);
         animation.setPlayMode(Animation.PlayMode.NORMAL);
-        center = new Vector2(x + 1, y + 0.5f);
-        this.light = new StaticLight(center.cpy().add(0.5f, 0.5f), magnitude, false);
+        center = new Vector2(x + offset.x, y + offset.y);
+        this.light = new StaticLight(center.cpy().add(2f, 1f), magnitude, false);
         setColor();
     }
 
