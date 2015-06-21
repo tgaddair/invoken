@@ -119,30 +119,33 @@ public class LocationGenerator {
                 + asset));
     }
 
-    public Level generate(Locations.Location proto) {
-        return generate(proto, 0);
+    public Level generate(List<Locations.Location> protos) {
+        return generate(protos, 0);
     }
 
-    public Level generate(Locations.Location proto, int floor) {
+    public Level generate(List<Locations.Location> protos, int floor) {
         System.out.println("global seed: " + globalSeed);
-        System.out.println("hash code: " + proto.getId().hashCode());
+
+        // System.out.println("hash code: " + proto.getId().hashCode());
+        // long hashCode = proto.getId().hashCode();
+        long hashCode = floor;
 
         final int attempts = 3;
         while (counter < attempts) {
             // generate a new random seed that combines the global player seed with the location
             // name
-            long seed = (globalSeed ^ proto.getId().hashCode()) + counter++;
+            long seed = (globalSeed ^ hashCode) + counter++;
             try {
-                return generate(proto, floor, seed);
+                return generate(protos, floor, seed);
             } catch (Exception ex) {
                 InvokenGame.error("Failed generating location: " + counter, ex);
             }
         }
         throw new IllegalStateException(String.format(
-                "Failed to generate location %s after %d attempts", proto.getId(), attempts));
+                "Failed to generate level %d after %d attempts", floor, attempts));
     }
 
-    private Level generate(Locations.Location proto, int floor, long seed) {
+    private Level generate(List<Locations.Location> protos, int floor, long seed) {
         System.out.println("seed: " + seed);
         this.rand = new Random(seed);
 
@@ -223,9 +226,10 @@ public class LocationGenerator {
 
         // load hallways
         List<Room> hallways = new ArrayList<>();
-        for (String id : proto.getHallIdList()) {
-            hallways.add(bsp.getRoom(id));
-        }
+//        for (String id : proto.getHallIdList()) {
+//            hallways.add(bsp.getRoom(id));
+//        }
+        // TODO: get generic hallways from the room selector
 
         InvokenGame.log("Adding Furniture");
         RoomDecorator roomDecorator = new RoomDecorator(map, seed);
@@ -261,7 +265,7 @@ public class LocationGenerator {
 
         Locations.Level.Builder builder = Locations.Level.newBuilder();
         builder.setLevel(0);
-        builder.addLocation(proto);
+        builder.addAllLocation(protos);
 
         Level level = new Level(builder.build(), map, state, globalSeed);
         level.addLights(lights);

@@ -36,6 +36,7 @@ import com.eldritch.invoken.location.proc.LocationGenerator;
 import com.eldritch.invoken.proto.Actors.PlayerActor;
 import com.eldritch.invoken.proto.Effects.DamageType;
 import com.eldritch.invoken.proto.Locations;
+import com.eldritch.invoken.proto.Locations.Biome;
 import com.eldritch.invoken.ui.ActionBar;
 import com.eldritch.invoken.ui.DesireMenu;
 import com.eldritch.invoken.ui.DialogueMenu;
@@ -56,6 +57,7 @@ import com.eldritch.invoken.util.Settings;
 import com.eldritch.invoken.util.SoundManager;
 import com.eldritch.invoken.util.SoundManager.SoundEffect;
 import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableList;
 
 public class GameScreen extends AbstractScreen implements InputProcessor {
     public static final AssetManager textureManager = new AssetManager();
@@ -159,10 +161,10 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
             PlayerActor state = load(playerName);
 
             // load the location
-            Locations.Location data = InvokenGame.LOCATION_READER.readAsset(state.getLocation());
-            LocationGenerator generator = new LocationGenerator(gameState, data.getBiome(),
+            // Locations.Location data = InvokenGame.LOCATION_READER.readAsset(state.getLocation());
+            LocationGenerator generator = new LocationGenerator(gameState, getBiome(),
                     state.getSeed());
-            level = generator.generate(data);
+            level = generator.generate(ImmutableList.<Locations.Location> of());
             onLoad(level, Optional.of(state));
 
             // load from disk
@@ -174,16 +176,16 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
             }
         } else {
             Random rand = new Random();
-            Locations.Location data = InvokenGame.LOCATION_READER.readAsset(locationName);
+            // Locations.Location data = InvokenGame.LOCATION_READER.readAsset(locationName);
             // InvokenGame.LOCATION_READER.readAsset("DebugPlayground");
             // InvokenGame.LOCATION_READER.readAsset("CentralProcessing");
             // InvokenGame.LOCATION_READER.readAsset("WelcomeCenterLevel2");
             // InvokenGame.LOCATION_READER.readAsset("WelcomeCenter");
             // InvokenGame.LOCATION_READER.readAsset("TestWorld1");
             // InvokenGame.LOCATION_READER.readAsset("DebugArena");
-            LocationGenerator generator = new LocationGenerator(gameState, data.getBiome(),
+            LocationGenerator generator = new LocationGenerator(gameState, getBiome(),
                     rand.nextLong());
-            level = generator.generate(data);
+            level = generator.generate(ImmutableList.<Locations.Location> of());
             onLoad(level, Optional.<PlayerActor> absent());
 
             // create a new player
@@ -564,16 +566,16 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
                 SCREEN_GRAB = true;
                 return true;
             case Keys.NUMPAD_0:
-//                loadLocation("WelcomeCenterLevel2", Optional.<String> absent(), level
-//                        .getPlayer().serialize());
+                // loadLocation("WelcomeCenterLevel2", Optional.<String> absent(), level
+                // .getPlayer().serialize());
                 return true;
             case Keys.NUMPAD_1:
-//                loadLocation("Tutorial", Optional.<String> absent(), level.getPlayer()
-//                        .serialize());
+                // loadLocation("Tutorial", Optional.<String> absent(), level.getPlayer()
+                // .serialize());
                 return true;
             case Keys.NUMPAD_2:
-//                loadLocation("WelcomeCenterLevel3", Optional.<String> absent(), level
-//                        .getPlayer().serialize());
+                // loadLocation("WelcomeCenterLevel3", Optional.<String> absent(), level
+                // .getPlayer().serialize());
                 return true;
             default:
                 return false;
@@ -776,42 +778,42 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         }
     }
 
-//    private void loadLocation(String locationName, Optional<String> encounterName, PlayerActor state) {
-//        // dispose of the current location
-//        level.dispose();
-//
-//        // load the location
-//        Locations.Location data = InvokenGame.LOCATION_READER.readAsset(locationName);
-//        LocationGenerator generator = new LocationGenerator(gameState, data.getBiome(),
-//                state.getSeed());
-//        level = generator.generate(data, encounterName);
-//        level.spawnPlayer(player);
-//        onLoad(level, Optional.of(state));
-//
-//        // resize
-//        level.resize(getWidth(), getHeight());
-//
-//        // init camera position
-//        Vector2 position = player.getCamera().getPosition();
-//        camera.position.x = level.scale(position.x, camera.zoom);
-//        camera.position.y = level.scale(position.y, camera.zoom);
-//        level.setCamera(camera);
-//
-//        // announce the new location
-//        toaster = new Toaster(getSkin());
-//        stage.addActor(toaster.getContainer());
-//        toast(level.getName());
-//    }
-    
+    // private void loadLocation(String locationName, Optional<String> encounterName, PlayerActor
+    // state) {
+    // // dispose of the current location
+    // level.dispose();
+    //
+    // // load the location
+    // Locations.Location data = InvokenGame.LOCATION_READER.readAsset(locationName);
+    // LocationGenerator generator = new LocationGenerator(gameState, data.getBiome(),
+    // state.getSeed());
+    // level = generator.generate(data, encounterName);
+    // level.spawnPlayer(player);
+    // onLoad(level, Optional.of(state));
+    //
+    // // resize
+    // level.resize(getWidth(), getHeight());
+    //
+    // // init camera position
+    // Vector2 position = player.getCamera().getPosition();
+    // camera.position.x = level.scale(position.x, camera.zoom);
+    // camera.position.y = level.scale(position.y, camera.zoom);
+    // level.setCamera(camera);
+    //
+    // // announce the new location
+    // toaster = new Toaster(getSkin());
+    // stage.addActor(toaster.getContainer());
+    // toast(level.getName());
+    // }
+
     private void loadLocation(int floor, PlayerActor state) {
         // dispose of the current location
         level.dispose();
 
         // load the location
-        Locations.Location data = InvokenGame.LOCATION_READER.readAsset(locationName);
-        LocationGenerator generator = new LocationGenerator(gameState, data.getBiome(),
-                state.getSeed());
-        level = generator.generate(data, floor);
+        // Locations.Location data = InvokenGame.LOCATION_READER.readAsset(locationName);
+        LocationGenerator generator = new LocationGenerator(gameState, getBiome(), state.getSeed());
+        level = generator.generate(ImmutableList.<Locations.Location> of(), floor);
         level.spawnPlayer(player);
         onLoad(level, Optional.of(state));
 
@@ -876,11 +878,15 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         }
     }
 
+    public static Biome getBiome() {
+        return Biome.INDUSTRY;
+    }
+
     public class GameState implements GameTransition {
         @Override
         public void transition(String locationName, Optional<String> encounterName,
                 PlayerActor state) {
-//            loadLocation(locationName, encounterName, state);
+            // loadLocation(locationName, encounterName, state);
         }
 
         @Override

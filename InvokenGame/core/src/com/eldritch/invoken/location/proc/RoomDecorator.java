@@ -67,9 +67,11 @@ public class RoomDecorator {
         }
         
         // halls
-        for (ConnectedRoom connected : rooms.getRooms()) {
-            if (!connected.isChamber()) {
-                place(halls.get((int) (Math.random() * halls.size())), connected);
+        if (!halls.isEmpty()) {
+            for (ConnectedRoom connected : rooms.getRooms()) {
+                if (!connected.isChamber()) {
+                    place(halls.get((int) (Math.random() * halls.size())), connected);
+                }
             }
         }
         

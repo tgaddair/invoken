@@ -24,6 +24,7 @@ import com.eldritch.invoken.util.GameTransition;
 import com.eldritch.invoken.util.MusicManager;
 import com.eldritch.invoken.util.SoundManager;
 import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableList;
 
 public class MenuScreen extends AbstractScreen {
     private final GameTransition gameState = new GameTransition() {
@@ -166,10 +167,10 @@ public class MenuScreen extends AbstractScreen {
         camera.update();
 
         Random rand = new Random();
-        Locations.Location data = InvokenGame.LOCATION_READER.readAsset("WelcomeCenter");
-        LocationGenerator generator = new LocationGenerator(gameState, data.getBiome(),
+        // Locations.Location data = InvokenGame.LOCATION_READER.readAsset("WelcomeCenter");
+        LocationGenerator generator = new LocationGenerator(gameState, GameScreen.getBiome(),
                 rand.nextLong());
-        Level level = generator.generate(data);
+        Level level = generator.generate(ImmutableList.<Locations.Location> of());
         Player player = level.createDummyPlayer();
 
         // init camera position
