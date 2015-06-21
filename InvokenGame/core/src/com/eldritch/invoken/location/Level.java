@@ -169,7 +169,7 @@ public class Level {
 
         // create territory table
         assignTerritory(map.getRooms(), data.getLocationList());
-//        assignLocations(map.getRooms(), data.getLocationList());
+        // assignLocations(map.getRooms(), data.getLocationList());
 
         // find layers we care about
         CollisionLayer collision = null;
@@ -1222,8 +1222,8 @@ public class Level {
 
         // Item weapon = Item.fromProto(InvokenGame.ITEM_READER.readAsset("RailGun"));
         // Item weapon = Item.fromProto(InvokenGame.ITEM_READER.readAsset("Shotgun"));
-        // Item weapon = Item.fromProto(InvokenGame.ITEM_READER.readAsset("DamagedPistol"));
-        Item weapon = Item.fromProto(InvokenGame.ITEM_READER.readAsset("AssaultRifle"));
+        Item weapon = Item.fromProto(InvokenGame.ITEM_READER.readAsset("DamagedPistol"));
+        // Item weapon = Item.fromProto(InvokenGame.ITEM_READER.readAsset("AssaultRifle"));
         inv.addItem(weapon);
         inv.equip(weapon);
 

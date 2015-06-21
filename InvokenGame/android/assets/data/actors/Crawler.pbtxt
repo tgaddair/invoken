@@ -2,10 +2,10 @@ params {
   id: "Crawler"
   name: "Crawler"
   species: BEAST
-  level: 5
+  level: 1
   skill {
     discipline: WARFARE
-    level: 11
+    level: 10
   }
   skill {
     discipline: AUTOMATA
@@ -13,7 +13,7 @@ params {
   }
   skill {
     discipline: SUBTERFUGE
-    level: 13
+    level: 10
   }
   skill {
     discipline: CHARISMA
