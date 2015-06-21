@@ -273,7 +273,7 @@ public class AgentInfo {
      * hp = warfare + level * 0.1 * warfare
      */
     public float getBaseHealth() {
-        return getWarfare() + getLevel() * 0.05f * getWarfare();
+        return 0.5f * getWarfare() + getLevel() * 0.05f * getWarfare();
     }
 
     public void setMaxHealth(float maxHealth) {
