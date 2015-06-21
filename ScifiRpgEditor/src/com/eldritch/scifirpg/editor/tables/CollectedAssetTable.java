@@ -75,26 +75,18 @@ public abstract class CollectedAssetTable<T extends Message> extends IdentifiedA
     }
 
     protected void importAssets(String suffix, Set<String> ids) {
-        PathMatcher matcher = FileSystems.getDefault().getPathMatcher(
-                String.format("glob:*.{%s}", suffix));
+        if (ids.contains(getAssetDirectory())) {
+            // already added
+            return;
+        }
 
         String directoryName = getTopAssetDirectory() + "/" + getAssetDirectory();
-        File dir = new File(directoryName);
-        for (File assetFile : dir.listFiles()) {
-            String id = assetFile.getName().substring(0, assetFile.getName().lastIndexOf("."));
-            if (ids.contains(id)) {
-                // already added
-                continue;
-            }
-
-            Path path = Paths.get(assetFile.getName());
-            if (matcher.matches(path)) {
-                List<T> assets = deserialize(assetFile);
-                for (T asset : assets) {
-                    addAsset(asset);
-                    ids.add(id);
-                }
-            }
+        File assetFile = new File(directoryName + "/" + getAssetDirectory() + "." + suffix);
+        
+        List<T> assets = deserialize(assetFile);
+        for (T asset : assets) {
+            addAsset(asset);
+            ids.add(getAssetDirectory());
         }
     }
     
