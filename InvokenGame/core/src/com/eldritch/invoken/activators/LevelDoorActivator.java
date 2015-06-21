@@ -1,16 +1,11 @@
 package com.eldritch.invoken.activators;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Body;
-import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.gfx.Light;
 import com.eldritch.invoken.gfx.Light.StaticLight;
@@ -18,30 +13,26 @@ import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.location.NaturalVector2;
 import com.eldritch.invoken.screens.GameScreen;
 import com.eldritch.invoken.util.Settings;
-import com.eldritch.invoken.util.SoundManager.SoundEffect;
-import com.google.common.base.Strings;
 
-public class LevelDoorActivator extends ClickActivator implements ProximityActivator {
+public class LevelDoorActivator extends ClickActivator {
     private static final TextureRegion[] regions = GameScreen.getMergedRegion(
-            "sprite/activators/level-door.png", 80, 56);
-
-    private final ProximityCache proximityCache = new ProximityCache(3);
+            "sprite/activators/level-door-trim.png", 96, 64);
+    private static final NaturalVector2 offset = NaturalVector2.of(1, 1);
 
     private final Vector2 center;
     private final Animation animation;
-    private final boolean down;
+    private final int increment;
 
     private boolean open = false;
 
     private final Light light;
-    private final List<Body> bodies = new ArrayList<Body>();
 
     private boolean activating = false;
     private float stateTime = 0;
 
-    public LevelDoorActivator(int x, int y, boolean down) {
-        super(NaturalVector2.of(x, y), 2, 1);
-        this.down = down;
+    public LevelDoorActivator(int x, int y, int increment) {
+        super(NaturalVector2.of(x + offset.x, y + offset.y), 3, 2);
+        this.increment = increment;
 
         final float magnitude = 0.1f;
         animation = new Animation(0.05f, regions);
@@ -52,28 +43,14 @@ public class LevelDoorActivator extends ClickActivator implements ProximityActiv
     }
 
     @Override
-    public boolean inProximity(Agent agent) {
-        return proximityCache.inProximity(center, agent);
+    public void activate(Agent agent, Level level) {
+        if (!activating) {
+            activating = true;
+        }
     }
 
     @Override
     public void update(float delta, Level level) {
-        // if a single agent is in the proximity, then open the door, otherwise close it
-        boolean shouldOpen = false;
-        for (Agent agent : level.getActiveEntities()) {
-            if (inProximity(agent)) {
-                shouldOpen = true;
-                break;
-            }
-        }
-
-        // only change the state of the door if it differs from the current state
-        // must click to unlock
-        if (shouldOpen != open) {
-            setOpened(shouldOpen, level);
-        }
-        
-        // when the animation finishes and the door is open, handle the event
         if (activating) {
             stateTime += delta;
             if (animation.isAnimationFinished(stateTime)) {
@@ -82,42 +59,16 @@ public class LevelDoorActivator extends ClickActivator implements ProximityActiv
                 PlayMode mode = animation.getPlayMode();
                 animation
                         .setPlayMode(mode == PlayMode.NORMAL ? PlayMode.REVERSED : PlayMode.NORMAL);
-                
+                open = !open;
                 if (open) {
                     transition(level);
                 }
             }
         }
     }
-    
-    
+
     private void transition(Level level) {
-        if (down) {
-            // increment level
-            level.transition(1);
-        } else {
-            // decrement level
-            level.transition(-1);
-        }
-    }
-
-    @Override
-    public void activate(Agent agent, Level level) {
-        setOpened(!open, level);
-    }
-
-    private synchronized void setOpened(boolean opened, Level level) {
-        if (activating) {
-            // cannot interrupt
-            return;
-        }
-
-        activating = true;
-        open = opened;
-        for (Body body : bodies) {
-            body.setActive(!opened);
-        }
-        InvokenGame.SOUND_MANAGER.playAtPoint(SoundEffect.DOOR_OPEN, getPosition());
+        level.transition(increment);
     }
 
     private void setColor() {
@@ -136,8 +87,8 @@ public class LevelDoorActivator extends ClickActivator implements ProximityActiv
 
         Batch batch = renderer.getBatch();
         batch.begin();
-        batch.draw(frame, position.x, position.y, frame.getRegionWidth() * Settings.SCALE,
-                frame.getRegionHeight() * Settings.SCALE);
+        batch.draw(frame, position.x + 0.5f, position.y, frame.getRegionWidth()
+                * Settings.SCALE, frame.getRegionHeight() * Settings.SCALE);
         batch.end();
     }
 

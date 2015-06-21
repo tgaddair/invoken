@@ -63,6 +63,7 @@ message ControlPoint {
 	repeated string available_key = 6;
 
 	optional bool origin = 7 [default = false];
+	optional bool exit = 15 [default = false];
 	optional bool closed = 11 [default = false];
 	optional bool access = 13 [default = false];
 

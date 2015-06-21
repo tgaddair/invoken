@@ -153,6 +153,7 @@ public class LocationGenerator {
         List<ControlPoint> controlPoints = new ArrayList<>();
         controlPoints.add(ControlPointGenerator.generateOrigin(floor));
         controlPoints.add(ControlPointGenerator.generate(17, 20));
+        controlPoints.add(ControlPointGenerator.generateExit(floor));
 
         RoomGenerator bsp = RoomGenerator.from(territory, controlPoints, seed);
         NaturalVector2.init(bsp.getWidth(), bsp.getHeight());
