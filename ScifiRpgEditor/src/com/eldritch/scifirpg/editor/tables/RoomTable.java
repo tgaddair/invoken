@@ -13,6 +13,7 @@ import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -76,6 +77,7 @@ public class RoomTable extends MajorAssetTable<Room> {
         private final JTextField idField = new JTextField();
         private final JComboBox<Size> sizeBox = new JComboBox<Size>(Size.values());
         private final FurnitureTable furnitureTable = new FurnitureTable();
+        private final JCheckBox uniqueCheck = new JCheckBox();
 
         public RoomEditorPanel(RoomTable owner, JFrame frame, Optional<Room> prev) {
             super(owner, frame, prev);
@@ -92,6 +94,9 @@ public class RoomTable extends MajorAssetTable<Room> {
             builder.append("Size:", sizeBox);
             builder.nextLine();
 
+            builder.append("Unique:", uniqueCheck);
+            builder.nextLine();
+
             builder.appendRow("fill:p:grow");
             builder.append("Furniture:", new AssetTablePanel(furnitureTable));
             builder.nextLine();
@@ -105,6 +110,7 @@ public class RoomTable extends MajorAssetTable<Room> {
                 Room room = prev.get();
                 idField.setText(room.getId());
                 sizeBox.setSelectedItem(room.getSize());
+                uniqueCheck.setSelected(room.getUnique());
                 for (Furniture f : room.getFurnitureList()) {
                     furnitureTable.addAsset(f);
                 }
@@ -117,7 +123,7 @@ public class RoomTable extends MajorAssetTable<Room> {
         @Override
         public Room createAsset() {
             return Room.newBuilder().setId(idField.getText())
-                    .setSize((Size) sizeBox.getSelectedItem())
+                    .setSize((Size) sizeBox.getSelectedItem()).setUnique(uniqueCheck.isSelected())
                     .addAllFurniture(furnitureTable.getAssets()).build();
         }
     }
@@ -187,10 +193,10 @@ public class RoomTable extends MajorAssetTable<Room> {
                     getAssets((Type) typeBox.getSelectedItem()).toArray(new String[0])));
             builder.append("Asset:", assetBox);
             builder.nextLine();
-            
+
             builder.append("Min:", minField);
             builder.nextLine();
-            
+
             builder.append("Max:", maxField);
             builder.nextLine();
 

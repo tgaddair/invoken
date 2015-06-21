@@ -111,6 +111,7 @@ message Room {
 	repeated Furniture furniture = 2;
 	optional Size size = 3;
 	optional Type type = 4 [default = NONE];
+	optional bool unique = 5 [default = false];
 }
 
 enum Biome {
