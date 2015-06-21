@@ -17,6 +17,7 @@ import com.eldritch.invoken.util.ItemMarshaller;
 import com.eldritch.invoken.util.LocationMarshaller;
 import com.eldritch.invoken.util.MusicManager;
 import com.eldritch.invoken.util.RoomMarshaller;
+import com.eldritch.invoken.util.RoomSelector;
 import com.eldritch.invoken.util.Settings;
 import com.eldritch.invoken.util.SoundManager;
 import com.eldritch.invoken.util.TerminalMarshaller;
@@ -24,15 +25,16 @@ import com.eldritch.invoken.util.TerminalMarshaller;
 public class InvokenGame extends Game {
 	public static final String LOG = InvokenGame.class.getSimpleName();
 	
-	public final static ActorMarshaller ACTOR_READER = new ActorMarshaller();
-	public final static ItemMarshaller ITEM_READER = new ItemMarshaller();
-	public final static FactionMarshaller FACTION_READER = new FactionMarshaller();
-	public final static LocationMarshaller LOCATION_READER = new LocationMarshaller();
-	public final static RoomMarshaller ROOM_READER = new RoomMarshaller();
-	public final static ContainerMarshaller CONTAINER_READER = new ContainerMarshaller();
-	public final static TerminalMarshaller TERMINAL_READER = new TerminalMarshaller();
+	public static final ActorMarshaller ACTOR_READER = new ActorMarshaller();
+	public static final ItemMarshaller ITEM_READER = new ItemMarshaller();
+	public static final FactionMarshaller FACTION_READER = new FactionMarshaller();
+	public static final LocationMarshaller LOCATION_READER = new LocationMarshaller();
+	public static final RoomMarshaller ROOM_READER = new RoomMarshaller();
+	public static final ContainerMarshaller CONTAINER_READER = new ContainerMarshaller();
+	public static final TerminalMarshaller TERMINAL_READER = new TerminalMarshaller();
 	
-	public final static EncounterSelector ENCOUNTER_SELECTOR = new EncounterSelector();
+	public static final EncounterSelector ENCOUNTER_SELECTOR = new EncounterSelector();
+	public static final RoomSelector ROOM_SELECTOR = new RoomSelector();
 	
 	public static MusicManager MUSIC_MANAGER;
 	public static SoundManager SOUND_MANAGER;
@@ -53,6 +55,7 @@ public class InvokenGame extends Game {
 		Gdx.app.log(InvokenGame.LOG, "Creating game on " + Gdx.app.getType());
 		
 		ENCOUNTER_SELECTOR.load();
+		ROOM_SELECTOR.load();
 		
 		MUSIC_MANAGER = new MusicManager();
 		SOUND_MANAGER = new SoundManager();

@@ -5,3 +5,4 @@ furniture {
   asset_id: "TutorialIntro"
 }
 size: MEDIUM
+unique: true

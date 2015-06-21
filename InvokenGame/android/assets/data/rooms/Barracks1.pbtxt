@@ -17,3 +17,4 @@ furniture {
   max: 4
 }
 size: LARGE
+unique: true

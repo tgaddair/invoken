@@ -1,7 +1,16 @@
 package com.eldritch.invoken.util;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.FileSystems;
+import java.nio.file.Path;
+import java.nio.file.PathMatcher;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
 import com.badlogic.gdx.Gdx;
@@ -26,6 +35,30 @@ public abstract class AssetMarshaller<T extends Message> {
                     }
                 }
             });
+
+    public List<T> readAll() {
+        List<T> results = new ArrayList<>();
+        Set<String> ids = new HashSet<>();
+        PathMatcher matcher = FileSystems.getDefault().getPathMatcher("glob:*.{pbtxt,dat}");
+
+        String directoryName = getTopAssetDirectory() + "/" + getAssetDirectory();
+        File dir = new File(directoryName);
+        for (File assetFile : dir.listFiles()) {
+            String id = assetFile.getName().substring(0, assetFile.getName().lastIndexOf("."));
+            if (ids.contains(id)) {
+                // already added
+                continue;
+            }
+
+            Path path = Paths.get(assetFile.getName());
+            if (matcher.matches(path)) {
+                results.add(readAsset(id));
+                ids.add(id);
+            }
+        }
+        
+        return results;
+    }
 
     public T readAsset(String assetId) {
         try {

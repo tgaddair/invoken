@@ -55,6 +55,7 @@ import com.eldritch.invoken.proto.Locations.ControlPoint;
 import com.eldritch.invoken.proto.Locations.Encounter;
 import com.eldritch.invoken.proto.Locations.Encounter.ActorParams.ActorScenario;
 import com.eldritch.invoken.proto.Locations.Room;
+import com.eldritch.invoken.proto.Locations.Territory;
 import com.eldritch.invoken.screens.GameScreen;
 import com.eldritch.invoken.util.GameTransition;
 import com.eldritch.invoken.util.Settings;
@@ -145,8 +146,15 @@ public class LocationGenerator {
         System.out.println("seed: " + seed);
         this.rand = new Random(seed);
 
-        RoomGenerator bsp = RoomGenerator.from(proto.getTerritoryList(),
-                proto.getControlPointList(), seed);
+        // territory
+        List<Territory> territory = new ArrayList<>();
+
+        // control points, both generic and from locations
+        List<ControlPoint> controlPoints = new ArrayList<>();
+        controlPoints.add(ControlPointGenerator.generateOrigin());
+        controlPoints.add(ControlPointGenerator.generate(17, 20));
+
+        RoomGenerator bsp = RoomGenerator.from(territory, controlPoints, seed);
         NaturalVector2.init(bsp.getWidth(), bsp.getHeight());
 
         bsp.generateSegments();
@@ -209,8 +217,7 @@ public class LocationGenerator {
         save(rooms.getGrid(), "connected-rooms");
 
         InvokenGame.log("Claiming Territory");
-        TerritoryGenerator territoryGen = new TerritoryGenerator(bsp, rooms,
-                proto.getTerritoryList());
+        TerritoryGenerator territoryGen = new TerritoryGenerator(bsp, rooms, territory);
         territoryGen.claim();
 
         // load hallways

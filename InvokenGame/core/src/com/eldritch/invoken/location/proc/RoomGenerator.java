@@ -87,7 +87,7 @@ public class RoomGenerator extends BspGenerator {
             }
         }
     }
-    
+
     public Room getRoom(String id) {
         return roomCache.lookupRoom(id);
     }
@@ -359,7 +359,7 @@ public class RoomGenerator extends BspGenerator {
                 // heavy penalty for crossing territory
                 cost *= 10;
                 cost += 1000;
-                
+
                 if (compoundPairs[x2][y2] != null) {
                     CompoundPair cp = compoundPairs[x2][y2];
                     if (cp.c1 != compounds[x1][y1] || cp.c2 != compounds[x2][y2]) {
@@ -399,7 +399,7 @@ public class RoomGenerator extends BspGenerator {
             return cost;
         }
     }
-    
+
     @Override
     protected void addPath(int x, int y, int x2, int y2, List<NaturalVector2> path) {
         super.addPath(x, y, x2, y2, path);
@@ -407,15 +407,15 @@ public class RoomGenerator extends BspGenerator {
             compoundPairs[point.x][point.y] = new CompoundPair(x, y, x2, y2);
         }
     }
-    
+
     private class CompoundPair {
         final Compound c1;
         final Compound c2;
-        
+
         public CompoundPair(int x1, int y1, int x2, int y2) {
             this(compoundIndex[x1][y1], compoundIndex[x2][y2]);
         }
-        
+
         public CompoundPair(Compound c1, Compound c2) {
             this.c1 = c1;
             this.c2 = c2;
@@ -464,28 +464,16 @@ public class RoomGenerator extends BspGenerator {
         // InvokenGame.log("Place: " + encounter.getId());
         int count = 0;
         while (count < 1000) {
-            if (cp.getRoomIdList().isEmpty()) {
-                int width = range(MinRoomSize, MaxRoomSize);
-                int height = range(MinRoomSize, MaxRoomSize);
+            for (Room room : getRooms(cp)) {
+                RoomType type = RoomDecorator.get(room.getSize());
+
+                int width = range(type);
+                int height = range(type);
                 Rectangle rect = getRectangle(bounds, width, height);
                 if (canPlace(rect, bounds)) {
                     place(rect);
-                    controlRooms.put(rect, new ControlRoom(cp, Room.getDefaultInstance(), rect));
+                    controlRooms.put(rect, new ControlRoom(cp, room, rect));
                     return rect;
-                }
-            } else {
-                for (String roomId : cp.getRoomIdList()) {
-                    Room room = roomCache.lookupRoom(roomId);
-                    RoomType type = RoomDecorator.get(room.getSize());
-
-                    int width = range(type);
-                    int height = range(type);
-                    Rectangle rect = getRectangle(bounds, width, height);
-                    if (canPlace(rect, bounds)) {
-                        place(rect);
-                        controlRooms.put(rect, new ControlRoom(cp, room, rect));
-                        return rect;
-                    }
                 }
             }
             count++;
@@ -493,6 +481,18 @@ public class RoomGenerator extends BspGenerator {
 
         // TODO: get first available
         throw new IllegalStateException("Unable to place: " + cp.getId());
+    }
+
+    private List<Room> getRooms(ControlPoint cp) {
+        List<Room> results = new ArrayList<>();
+        if (!cp.getRoomIdList().isEmpty()) {
+            for (String roomId : cp.getRoomIdList()) {
+                results.add(roomCache.lookupRoom(roomId));
+            }
+        } else {
+            results.addAll(InvokenGame.ROOM_SELECTOR.getGenericRooms());
+        }
+        return results;
     }
 
     protected boolean canPlace(Rectangle rect, Rectangle bounds) {
@@ -734,7 +734,8 @@ public class RoomGenerator extends BspGenerator {
             List<Encounter> available = new ArrayList<>();
             for (Encounter encounter : encounters) {
                 if (matchesFaction(encounter, rooms)) {
-                    if (encounter.getControlPointIdList().contains(cp.getId())) {
+                    if (encounter.getControlPointIdList().isEmpty()
+                            || encounter.getControlPointIdList().contains(cp.getId())) {
                         total += encounter.getWeight();
                         available.add(encounter);
                     }

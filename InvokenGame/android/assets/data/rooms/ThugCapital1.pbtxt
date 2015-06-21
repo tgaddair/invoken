@@ -47,3 +47,4 @@ furniture {
   type: TMX
 }
 size: LARGE
+unique: true

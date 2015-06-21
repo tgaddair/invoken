@@ -22,3 +22,4 @@ furniture {
   type: ACTIVATOR
 }
 size: MEDIUM
+unique: true
