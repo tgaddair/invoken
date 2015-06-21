@@ -27,7 +27,7 @@ public abstract class ProjectileSpawn extends BasicEffect {
     @Override
     protected void update(float delta) {
     }
-    
+
     protected final void doSpawn(HandledProjectile projectile) {
         target.getLocation().addEntity(projectile);
         target.getInventory().useAmmunition(1);
@@ -39,7 +39,7 @@ public abstract class ProjectileSpawn extends BasicEffect {
 
         // add cooldown to weapon
         RangedWeapon weapon = target.getInventory().getRangedWeapon();
-        target.getInventory().setCooldown(weapon, weapon.getCooldown());
+        // target.getInventory().setCooldown(weapon, weapon.getCooldown());
 
         // alert all enemies in range if the weapon is not silenced
         for (Agent neighbor : target.getNeighbors()) {
@@ -104,7 +104,7 @@ public abstract class ProjectileSpawn extends BasicEffect {
         private final ProjectileGenerator generator;
         private final int limit;
         private final float delay;
-        
+
         private int count = 0;
         private float elapsed = 0;
 

@@ -17,9 +17,8 @@ public class AgentInventory extends Inventory {
     // equipment
     private final Consumable[] consumables = new Consumable[2];
     private Outfit outfit;
-    private RangedWeapon rangedWeapon;
+    private RangedWeaponState rangedWeapon = new RangedWeaponState(null, null);
     private MeleeWeapon meleeWeapon;
-    private Ammunition ammunition;
 
     public AgentInventory(AgentInfo info) {
         super(new ArrayList<InventoryItem>());
@@ -32,7 +31,7 @@ public class AgentInventory extends Inventory {
 
     public void update(float delta) {
         if (hasRangedWeapon()) {
-            ItemState state = getState(rangedWeapon.getId());
+            ItemState state = getState(rangedWeapon.getWeapon().getId());
             if (state.getCooldown() > 0) {
                 state.cooldown(delta);
             }
@@ -41,7 +40,7 @@ public class AgentInventory extends Inventory {
 
     public boolean canUseRangedWeapon() {
         // return hasRangedWeapon() && !isCooling(rangedWeapon);
-        return hasRangedWeapon() && getAmmunitionCount() > 0;
+        return hasRangedWeapon() && getClip() > 0 && getAmmunitionCount() > 0;
     }
 
     public void setCooldown(Item item, float cooldown) {
@@ -103,40 +102,43 @@ public class AgentInventory extends Inventory {
     }
 
     public boolean hasRangedWeapon() {
-        return rangedWeapon != null;
+        return rangedWeapon.getWeapon() != null;
+    }
+    
+    public void reloadWeapon() {
+        rangedWeapon.reload();
     }
     
     public void useAmmunition(int x) {
-        if (ammunition != null) {
-            getState(ammunition.getId()).remove(x);
-        }
+        rangedWeapon.useAmmunition(x);
     }
-
+    
     public int getAmmunitionCount() {
-        if (ammunition == null) {
-            return 0;
-        }
-        return getState(ammunition.getId()).getCount();
+        return rangedWeapon.getAmmunitionCount();
+    }
+    
+    public int getClip() {
+        return rangedWeapon.getClip();
     }
 
     public RangedWeapon getRangedWeapon() {
-        return rangedWeapon;
+        return rangedWeapon.getWeapon();
     }
 
     public void setRangedWeapon(RangedWeapon weapon) {
-        this.rangedWeapon = weapon;
+        Ammunition ammunition = null;
         if (weapon != null) {
             for (ItemState state : getItems()) {
                 if (state.getItem() instanceof Ammunition) {
                     Ammunition current = (Ammunition) state.getItem();
                     if (current.getType() == weapon.getType()) {
-                        this.ammunition = current;
+                        ammunition = current;
                     }
                 }
             }
-        } else {
-            ammunition = null;
         }
+        
+        rangedWeapon = new RangedWeaponState(weapon, ammunition);
     }
 
     public boolean hasMeleeWeapon() {
@@ -167,5 +169,48 @@ public class AgentInventory extends Inventory {
     protected void handleRemove(Item item) {
         item.unequipFrom(this);
         super.handleRemove(item);
+    }
+    
+    private class RangedWeaponState {
+        private final RangedWeapon weapon;
+        private Ammunition ammunition;
+        private int clip;
+        
+        public RangedWeaponState(RangedWeapon weapon, Ammunition ammunition) {
+            this.weapon = weapon;
+            this.ammunition = ammunition;
+            reload();
+        }
+        
+        public RangedWeapon getWeapon() {
+            return weapon;
+        }
+        
+        public void reload() {
+            if (weapon != null) {
+                clip = Math.min(weapon.getClipSize(), getAmmunitionCount());
+                setCooldown(weapon, weapon.getCooldown());
+            } else {
+                clip = 0;
+            }
+        }
+        
+        public void useAmmunition(int x) {
+            if (ammunition != null) {
+                clip = Math.max(clip - x, 0);
+                getState(ammunition.getId()).remove(x);
+            }
+        }
+
+        public int getAmmunitionCount() {
+            if (ammunition == null) {
+                return 0;
+            }
+            return getState(ammunition.getId()).getCount();
+        }
+        
+        public int getClip() {
+            return clip;
+        }
     }
 }

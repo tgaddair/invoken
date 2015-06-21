@@ -401,6 +401,8 @@ public abstract class RangedWeapon extends Item {
 
     public abstract ProjectileSpawn getProjectileSpawn(Agent owner);
     
+    public abstract int getClipSize();
+    
     protected HandledBullet getPrimaryProjectile(Agent owner) {
         switch (primary) {
             case THERMAL:
@@ -428,6 +430,11 @@ public abstract class RangedWeapon extends Item {
         @Override
         public ProjectileSpawn getProjectileSpawn(Agent owner) {
             return new SingleProjectileSpawn(owner, getPrimaryProjectile(owner));
+        }
+
+        @Override
+        public int getClipSize() {
+            return 7;
         }
     }
     
@@ -468,6 +475,11 @@ public abstract class RangedWeapon extends Item {
         public float getCooldown() {
             return 0.5f;
         }
+
+        @Override
+        public int getClipSize() {
+            return 15;
+        }
     }
 
     public static class Rifle extends RangedWeapon {
@@ -488,6 +500,11 @@ public abstract class RangedWeapon extends Item {
         @Override
         public ProjectileSpawn getProjectileSpawn(Agent owner) {
             return new SingleProjectileSpawn(owner, getPrimaryProjectile(owner));
+        }
+
+        @Override
+        public int getClipSize() {
+            return 3;
         }
     }
 
@@ -517,6 +534,11 @@ public abstract class RangedWeapon extends Item {
                 builder.add(new ShotgunPellet(owner, theta, PELLET_SCALE));
             }
             return new FixedProjectileSpawn(owner, builder.build());
+        }
+
+        @Override
+        public int getClipSize() {
+            return 4;
         }
     }
 

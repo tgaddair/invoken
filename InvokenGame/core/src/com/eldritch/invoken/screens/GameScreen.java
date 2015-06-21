@@ -365,9 +365,10 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         batch.begin();
 
         if (player.getInventory().hasRangedWeapon()) {
+            int clip = player.getInventory().getClip();
             int ammunition = player.getInventory().getAmmunitionCount();
-            font.draw(batch, String.format("Ammunition: %d", ammunition), 10, getHeight()
-                    - (30 + 20 * i++));
+            font.draw(batch, String.format("Ammunition: %d / %d", clip, ammunition - clip), 10,
+                    getHeight() - (30 + 20 * i++));
         }
 
         Agent target = player.getTarget();
@@ -536,11 +537,14 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
             case Keys.F:
                 player.toggleLastAugmentation();
                 return true;
-            case Keys.R:
+            case Keys.Q:
                 player.getInventory().consume(0);
                 return true;
-            case Keys.T:
+            case Keys.E:
                 player.getInventory().consume(1);
+                return true;
+            case Keys.R:
+                player.getInventory().reloadWeapon();
                 return true;
             case Keys.TAB:
                 showMinimap = false;
