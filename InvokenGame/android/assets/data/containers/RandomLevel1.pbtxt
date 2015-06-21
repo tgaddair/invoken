@@ -2,25 +2,54 @@ id: "RandomLevel1"
 item {
   item_id: "Stimpak"
   count: 3
-  drop_chance: 1.0
+  drop_chance: 0.5
+  variance: 2
 }
 item {
   item_id: "Shotgun"
   count: 1
-  drop_chance: 1.0
+  drop_chance: 0.1
+  variance: 0
 }
 item {
   item_id: "Biocell"
   count: 3
-  drop_chance: 1.0
+  drop_chance: 0.35
+  variance: 2
 }
 item {
   item_id: "DamagedPistol"
   count: 1
-  drop_chance: 1.0
+  drop_chance: 0.2
+  variance: 0
 }
 item {
   item_id: "AssaultRifle"
   count: 1
-  drop_chance: 1.0
+  drop_chance: 0.1
+  variance: 0
+}
+item {
+  item_id: "AssaultBullet"
+  count: 15
+  drop_chance: 0.5
+  variance: 5
+}
+item {
+  item_id: "ShotgunShell"
+  count: 15
+  drop_chance: 0.35
+  variance: 5
+}
+item {
+  item_id: "PistolBullet"
+  count: 20
+  drop_chance: 0.65
+  variance: 5
+}
+item {
+  item_id: "RifleBullet"
+  count: 10
+  drop_chance: 0.25
+  variance: 5
 }

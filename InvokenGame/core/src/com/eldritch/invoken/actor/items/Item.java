@@ -110,6 +110,8 @@ public abstract class Item {
                 return new Credential(item);
             case FRAGMENT:
                 return Fragment.getInstance(item);
+            case AMMUNITION:
+                return new Ammunition(item);
             case OTHER:
             default:
                 throw new IllegalArgumentException("Unrecognized Item: " + item.getType());

@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.concurrent.ExecutionException;
 
 import com.eldritch.invoken.InvokenGame;
@@ -17,26 +18,47 @@ import com.google.common.cache.LoadingCache;
 import com.google.common.collect.Maps;
 
 public class Inventory {
-    private static final LoadingCache<String, Inventory> LOADER = CacheBuilder.newBuilder()
-            .build(new CacheLoader<String, Inventory>() {
+    private static final LoadingCache<String, Inventory> LOADER = CacheBuilder.newBuilder().build(
+            new CacheLoader<String, Inventory>() {
                 public Inventory load(String id) {
                     Container proto = InvokenGame.CONTAINER_READER.readAsset(id);
                     return new Inventory(proto.getItemList());
                 }
             });
-    
+
     private final Map<String, ItemState> items = new HashMap<>();
-    
+    private final Random rand = new Random();
+
     public Inventory(List<InventoryItem> items) {
         for (InventoryItem item : items) {
             add(item);
         }
     }
-    
-    public void add(InventoryItem item) {
-        items.put(item.getItemId(), new Inventory.ItemState(item));
+
+    public void add(InventoryItem proto) {
+        // possibly add some number of the given item
+        boolean hasItem = true;
+        if (proto.getDropChance() < 1) {
+            // roll to see if we have any of the item in this inventory
+            hasItem = rand.nextDouble() < proto.getDropChance();
+        }
+
+        if (hasItem) {
+            // add plus or minus a fraction of the possible variation
+            int count = proto.getCount();
+            if (proto.getVariance() > 0) {
+                int delta = (int) (rand.nextFloat() * 2 * proto.getVariance() - proto.getVariance());
+                count += delta;
+            }
+
+            // add the item if we end up with a positive count
+            if (count > 0) {
+                Item item = Item.fromProto(InvokenGame.ITEM_READER.readAsset(proto.getItemId()));
+                items.put(proto.getItemId(), new Inventory.ItemState(item, count));
+            }
+        }
     }
-    
+
     public boolean hasItem(Item item) {
         return getItemCount(item) > 0;
     }
@@ -51,15 +73,15 @@ public class Inventory {
         }
         return items.get(itemId).getCount();
     }
-    
+
     public boolean hasItem(String id) {
         return items.containsKey(id);
     }
-    
+
     public Item getItem(String id) {
         return items.get(id).item;
     }
-    
+
     protected ItemState getState(String id) {
         return items.get(id);
     }
@@ -67,7 +89,7 @@ public class Inventory {
     public Collection<ItemState> getItems() {
         return items.values();
     }
-    
+
     public Map<Item, Integer> getItemCounts(Type type) {
         Map<Item, Integer> map = Maps.newHashMap();
         for (ItemState item : items.values()) {
@@ -93,11 +115,11 @@ public class Inventory {
     public void removeItem(Item item) {
         removeItem(item.getId(), 1);
     }
-    
+
     public int removeItem(Item item, int count) {
         return removeItem(item.getId(), count);
     }
-    
+
     /**
      * Remove the requested number of instances of the given item from the actor's inventory. If the
      * number requested is greater than or equal to the number available, or if count == -1, then we
@@ -122,11 +144,11 @@ public class Inventory {
             return count;
         }
     }
-    
+
     protected void handleRemove(Item item) {
         items.remove(item.getId());
     }
-    
+
     public static class ItemState {
         private final Item item;
         private int count;
@@ -158,24 +180,24 @@ public class Inventory {
         public int getCount() {
             return count;
         }
-        
+
         public void setCooldown(float cooldown) {
             this.cooldown = cooldown;
         }
-        
+
         public float getCooldown() {
             return cooldown;
         }
-        
+
         public void cooldown(float delta) {
             cooldown -= delta;
         }
-        
+
         public InventoryItem toProto() {
             return InventoryItem.newBuilder().setItemId(item.getId()).setCount(count).build();
         }
     }
-    
+
     public static Inventory from(String id) {
         try {
             return LOADER.get(id);
