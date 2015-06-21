@@ -151,7 +151,7 @@ public class LocationGenerator {
 
         // control points, both generic and from locations
         List<ControlPoint> controlPoints = new ArrayList<>();
-        controlPoints.add(ControlPointGenerator.generateOrigin());
+        controlPoints.add(ControlPointGenerator.generateOrigin(floor));
         controlPoints.add(ControlPointGenerator.generate(17, 20));
 
         RoomGenerator bsp = RoomGenerator.from(territory, controlPoints, seed);

@@ -490,7 +490,7 @@ public class RoomGenerator extends BspGenerator {
                 results.add(roomCache.lookupRoom(roomId));
             }
         } else {
-            results.addAll(InvokenGame.ROOM_SELECTOR.getGenericRooms());
+            results.addAll(InvokenGame.ROOM_SELECTOR.getGenericRooms(getRandom()));
         }
         return results;
     }
@@ -726,6 +726,14 @@ public class RoomGenerator extends BspGenerator {
             restricted.height -= 1;
             return restricted;
         }
+        
+        private boolean matchesPoint(Encounter encounter, ControlPoint cp) {
+            if (encounter.getControlPointIdList().isEmpty()) {
+                return !cp.getOrigin();
+            } else {
+                return encounter.getControlPointIdList().contains(cp.getId());
+            }
+        }
 
         public Optional<Encounter> chooseEncounter(Collection<Encounter> encounters,
                 ConnectedRoomManager rooms) {
@@ -734,8 +742,7 @@ public class RoomGenerator extends BspGenerator {
             List<Encounter> available = new ArrayList<>();
             for (Encounter encounter : encounters) {
                 if (matchesFaction(encounter, rooms)) {
-                    if (encounter.getControlPointIdList().isEmpty()
-                            || encounter.getControlPointIdList().contains(cp.getId())) {
+                    if (matchesPoint(encounter, cp)) {
                         total += encounter.getWeight();
                         available.add(encounter);
                     }

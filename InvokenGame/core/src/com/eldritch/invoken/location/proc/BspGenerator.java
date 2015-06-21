@@ -77,6 +77,10 @@ public class BspGenerator {
     protected int getSize(int rooms, int min) {
         return Math.max((int) (rooms * ROOM_SPARSITY), min);
     }
+    
+    public Random getRandom() {
+        return rand;
+    }
 
     public double random() {
         return rand.nextDouble();
