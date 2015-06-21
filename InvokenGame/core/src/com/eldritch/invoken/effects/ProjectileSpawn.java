@@ -27,6 +27,11 @@ public abstract class ProjectileSpawn extends BasicEffect {
     @Override
     protected void update(float delta) {
     }
+    
+    protected final void doSpawn(HandledProjectile projectile) {
+        target.getLocation().addEntity(projectile);
+        target.getInventory().useAmmunition(1);
+    }
 
     protected final void afterSpawn() {
         // add camera shake
@@ -65,9 +70,8 @@ public abstract class ProjectileSpawn extends BasicEffect {
         @Override
         protected void doApply() {
             // add projectiles to scene
-            Level level = target.getLocation();
             for (HandledProjectile projectile : bullets) {
-                level.addEntity(projectile);
+                doSpawn(projectile);
             }
 
             afterSpawn();
@@ -136,7 +140,7 @@ public abstract class ProjectileSpawn extends BasicEffect {
         private void spawn() {
             if (count < limit) {
                 HandledProjectile bullet = generator.generate(target);
-                target.getLocation().addEntity(bullet);
+                doSpawn(bullet);
                 count++;
                 afterSpawn();
             }

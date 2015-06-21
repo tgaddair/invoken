@@ -1220,6 +1220,19 @@ public class Level {
         inv.addItem(outfit);
         inv.equip(outfit);
 
+        Item biocell = Item.fromProto(InvokenGame.ITEM_READER.readAsset("Biocell"));
+        inv.addItem(biocell, 3);
+        biocell.mapTo(inv, 0);
+
+        Item stimpak = Item.fromProto(InvokenGame.ITEM_READER.readAsset("Stimpak"));
+        inv.addItem(stimpak, 3);
+        stimpak.mapTo(inv, 1);
+
+        // player.getInfo().getInventory().addItem(Fragment.getInstance(), 1000);
+        
+        Item bullet = Item.fromProto(InvokenGame.ITEM_READER.readAsset("PistolBullet"));
+        inv.addItem(bullet, 10);
+        
         // Item weapon = Item.fromProto(InvokenGame.ITEM_READER.readAsset("RailGun"));
         // Item weapon = Item.fromProto(InvokenGame.ITEM_READER.readAsset("Shotgun"));
         Item weapon = Item.fromProto(InvokenGame.ITEM_READER.readAsset("DamagedPistol"));
@@ -1230,16 +1243,6 @@ public class Level {
         Item melee = Item.fromProto(InvokenGame.ITEM_READER.readAsset("Hammer"));
         inv.addItem(melee);
         inv.equip(melee);
-
-        Item biocell = Item.fromProto(InvokenGame.ITEM_READER.readAsset("Biocell"));
-        inv.addItem(biocell, 3);
-        biocell.mapTo(inv, 0);
-
-        Item stimpak = Item.fromProto(InvokenGame.ITEM_READER.readAsset("Stimpak"));
-        inv.addItem(stimpak, 3);
-        stimpak.mapTo(inv, 1);
-
-        // player.getInfo().getInventory().addItem(Fragment.getInstance(), 1000);
 
         return player;
     }

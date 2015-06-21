@@ -28,6 +28,7 @@ import com.eldritch.invoken.actor.AgentInfo;
 import com.eldritch.invoken.actor.PreparedAugmentations;
 import com.eldritch.invoken.actor.Profession;
 import com.eldritch.invoken.actor.ai.NpcThreatMonitor.ThreatLevel;
+import com.eldritch.invoken.actor.items.RangedWeapon;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Npc;
 import com.eldritch.invoken.actor.type.Player;
@@ -360,6 +361,15 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         // }
         // }
 
+        int i = 0;
+        batch.begin();
+
+        if (player.getInventory().hasRangedWeapon()) {
+            int ammunition = player.getInventory().getAmmunitionCount();
+            font.draw(batch, String.format("Ammunition: %d", ammunition), 10, getHeight()
+                    - (30 + 20 * i++));
+        }
+
         Agent target = player.getTarget();
         if (target != null) {
             float health = target.getInfo().getHealth();
@@ -371,8 +381,6 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
             // String trespass = target.getLocation().isTrespasser(target) ? (target.getLocation()
             // .isOnFrontier(target) ? "Frontier" : "Trespass") : "Clear";
 
-            int i = 0;
-            batch.begin();
             font.draw(batch, String.format("Health: %.0f", health), 10, getHeight()
                     - (30 + 20 * i++));
             font.draw(batch, String.format("Energy: %.0f", energy), 10, getHeight()
@@ -440,9 +448,9 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
             font.draw(batch, String.format("Radioactive: %.2f",
                     info.getStatusEffect(DamageType.RADIOACTIVE)), 10, getHeight()
                     - (30 + 20 * i++));
-
-            batch.end();
         }
+
+        batch.end();
     }
 
     private void drawStats(Agent agent) {

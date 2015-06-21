@@ -6,12 +6,10 @@ import java.util.Map;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
-import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.actor.items.RangedWeapon;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.actor.type.Agent.Direction;
-import com.eldritch.invoken.actor.type.HandledProjectile;
 import com.eldritch.invoken.effects.HoldingWeapon;
 import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.screens.GameScreen;
@@ -71,10 +69,7 @@ public class FireWeapon extends ProjectileAugmentation {
 
     @Override
     public int getCost(Agent owner) {
-        if (!owner.getInventory().hasRangedWeapon()) {
-            return 0;
-        }
-        return owner.getInventory().getRangedWeapon().getBaseCost();
+        return 0;
     }
     
     @Override
