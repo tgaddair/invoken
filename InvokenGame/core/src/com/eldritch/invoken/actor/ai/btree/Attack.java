@@ -356,6 +356,7 @@ public class Attack extends Sequence<Npc> {
 
         @Override
         public void doFor(Npc npc) {
+            System.out.println(npc.getInfo().getName() + " thrust");
             Agent target = npc.getTarget();
             direction.set(target.getPosition()).sub(npc.getPosition()).nor();
             npc.dodge(direction);
