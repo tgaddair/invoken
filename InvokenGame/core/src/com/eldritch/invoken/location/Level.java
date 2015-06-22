@@ -1231,7 +1231,7 @@ public class Level {
         // player.getInfo().getInventory().addItem(Fragment.getInstance(), 1000);
         
         Item bullet = Item.fromProto(InvokenGame.ITEM_READER.readAsset("PistolBullet"));
-        inv.addItem(bullet, 10);
+        inv.addItem(bullet, 25);
         
         // Item weapon = Item.fromProto(InvokenGame.ITEM_READER.readAsset("RailGun"));
         // Item weapon = Item.fromProto(InvokenGame.ITEM_READER.readAsset("Shotgun"));
