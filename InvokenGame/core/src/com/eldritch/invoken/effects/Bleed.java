@@ -6,6 +6,7 @@ import java.util.List;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.actor.type.Agent;
+import com.eldritch.invoken.gfx.Splash;
 import com.eldritch.invoken.screens.GameScreen;
 import com.eldritch.invoken.util.Damage;
 
@@ -18,6 +19,9 @@ public class Bleed extends AnimatedEffect {
 		animations.add(GameScreen.getMergedRegion("sprite/effects/bleed4.png", 48, 48));
 		animations.add(GameScreen.getMergedRegion("sprite/effects/bleed5.png", 48, 48));
 	}
+	
+	private static final TextureRegion SPLASH_REGION = new TextureRegion(
+            GameScreen.getTexture("sprite/effects/blood-splatter.png"));
 	
 	private final Damage damage;
 	private final Vector2 knockback;
@@ -44,6 +48,7 @@ public class Bleed extends AnimatedEffect {
             target.stop();
             target.applyForce(knockback);
         }
+        target.getLocation().addEntity(new Splash(SPLASH_REGION, target.getPosition().cpy(), 3));
     }
 	
 	@Override

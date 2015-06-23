@@ -2,19 +2,16 @@ package com.eldritch.invoken.actor.aug;
 
 import java.util.List;
 
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.actor.type.HandledBullet;
 import com.eldritch.invoken.actor.type.HandledProjectile;
-import com.eldritch.invoken.actor.type.TemporaryEntity;
 import com.eldritch.invoken.effects.Bleed;
 import com.eldritch.invoken.effects.Stunned;
+import com.eldritch.invoken.gfx.Splash;
 import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.proto.Effects.DamageType;
 import com.eldritch.invoken.screens.GameScreen;
@@ -30,6 +27,9 @@ public class Acid extends ProjectileAugmentation {
     private static final int BASE_COST = 20;
     private static final float SPREAD_DEGREES = 5f;
     private static final float PELLET_SCALE = 0.35f;
+    
+    private static final TextureRegion SPLASH_REGION = new TextureRegion(
+            GameScreen.getTexture("sprite/effects/toxic-splash.png"));
 
     private static class Holder {
         private static final Acid INSTANCE = new Acid();
@@ -124,7 +124,7 @@ public class Acid extends ProjectileAugmentation {
         
         @Override
         protected void onFinish() {
-            getOwner().getLocation().addEntity(new Splash(getPosition().cpy(), 3));
+            getOwner().getLocation().addEntity(new Splash(SPLASH_REGION, getPosition().cpy(), 3));
         }
     }
 
@@ -135,59 +135,5 @@ public class Acid extends ProjectileAugmentation {
             builder.add(new AcidPellet(owner, theta, PELLET_SCALE));
         }
         return builder.build();
-    }
-    
-    private static class Splash implements TemporaryEntity {
-        private static final TextureRegion SPLASH_REGION = new TextureRegion(
-                GameScreen.getTexture("sprite/effects/toxic-splash.png"));
-        
-        private final Vector2 position;
-        private final float duration;
-        private float elapsed = 0;
-        
-        public Splash(Vector2 position, float duration) {
-            this.position = position;
-            this.duration = duration;
-        }
-        
-        @Override
-        public void update(float delta, Level level) {
-            elapsed += delta;
-        }
-
-        @Override
-        public void render(float delta, OrthogonalTiledMapRenderer renderer) {
-            final float width = SPLASH_REGION.getRegionWidth() * Settings.SCALE;
-            final float height = SPLASH_REGION.getRegionHeight() * Settings.SCALE;
-            
-            Batch batch = renderer.getBatch();
-            batch.begin();
-            
-            float alpha = MathUtils.lerp(1f, 0f, elapsed / duration);
-            batch.setColor(1, 1, 1, alpha);
-            batch.draw(SPLASH_REGION, position.x, position.y, width, height);
-            
-            batch.setColor(1, 1, 1, 1);
-            batch.end();
-        }
-
-        @Override
-        public float getZ() {
-            return Float.POSITIVE_INFINITY;
-        }
-
-        @Override
-        public Vector2 getPosition() {
-            return position;
-        }
-
-        @Override
-        public boolean isFinished() {
-            return elapsed > duration;
-        }
-
-        @Override
-        public void dispose() {
-        }
     }
 }

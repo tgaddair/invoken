@@ -1684,7 +1684,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
 
     @Override
     public float getZ() {
-        return isAlive() ? super.getZ() : Float.POSITIVE_INFINITY;
+        return isAlive() ? super.getZ() : super.getZ() + 1000;
     }
 
     protected void setLocation(Level level, float x, float y) {
