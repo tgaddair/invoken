@@ -6,7 +6,6 @@ import java.util.Map;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.eldritch.invoken.actor.type.Agent.Direction;
 import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.proto.Actors.NonPlayerActor;
 import com.eldritch.invoken.proto.Effects.DamageType;
@@ -119,6 +118,11 @@ public class Beast extends Npc {
         public Crawler(NonPlayerActor data, float x, float y, String asset, Level level) {
             super(data, x, y, Settings.SCALE * PX, Settings.SCALE * PX, MAX_VELOCITY,
                     getAnimations(asset), level);
+        }
+        
+        @Override
+        public float getDensity() {
+            return 1;
         }
         
         @Override

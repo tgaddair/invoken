@@ -6,7 +6,7 @@ droppable: false
 hidden: true
 damage_modifier {
   damage: PHYSICAL
-  magnitude: 10
+  magnitude: 20
 }
 type: MELEE_WEAPON
 asset: ""
