@@ -2,6 +2,7 @@ package com.eldritch.invoken.actor;
 
 import java.util.ArrayList;
 
+import com.badlogic.gdx.math.MathUtils;
 import com.eldritch.invoken.actor.items.Ammunition;
 import com.eldritch.invoken.actor.items.Consumable;
 import com.eldritch.invoken.actor.items.Item;
@@ -35,12 +36,13 @@ public class AgentInventory extends Inventory {
             if (state.getCooldown() > 0) {
                 state.cooldown(delta);
             }
+            rangedWeapon.update(delta);
         }
     }
 
     public boolean canUseRangedWeapon() {
         // return hasRangedWeapon() && !isCooling(rangedWeapon);
-        return hasRangedWeapon() && getClip() > 0 && getAmmunitionCount() > 0;
+        return hasRangedWeapon() && getClip() > 0 && getAmmunitionCount() > 0 && !isReloading();
     }
 
     public void setCooldown(Item item, float cooldown) {
@@ -103,6 +105,14 @@ public class AgentInventory extends Inventory {
 
     public boolean hasRangedWeapon() {
         return rangedWeapon.getWeapon() != null;
+    }
+    
+    public float getReloadFraction() {
+        return rangedWeapon.getReloadFraction();
+    }
+    
+    public boolean isReloading() {
+        return rangedWeapon.reloading;
     }
     
     public void reloadWeapon() {
@@ -176,6 +186,9 @@ public class AgentInventory extends Inventory {
         private Ammunition ammunition;
         private int clip;
         
+        private boolean reloading = false;
+        private float reloadElapsed = 0;
+        
         public RangedWeaponState(RangedWeapon weapon, Ammunition ammunition) {
             this.weapon = weapon;
             this.ammunition = ammunition;
@@ -186,13 +199,29 @@ public class AgentInventory extends Inventory {
             return weapon;
         }
         
+        public void update(float delta) {
+            if (reloading) {
+                reloadElapsed += delta;
+                if (getReloadFraction() >= 1) {
+                    reloading = false;
+                    reloadElapsed = 0;
+                }
+            }
+        }
+        
+        public float getReloadFraction() {
+            return reloadElapsed / (weapon.getCooldown() * 2);
+        }
+        
         public void reload() {
             if (weapon != null) {
                 clip = Math.min(weapon.getClipSize(), getAmmunitionCount());
-                setCooldown(weapon, weapon.getCooldown());
+                reloading = true;
             } else {
                 clip = 0;
+                reloading = false;
             }
+            reloadElapsed = 0;
         }
         
         public void useAmmunition(int x) {

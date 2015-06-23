@@ -9,6 +9,7 @@ import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.proto.Augmentations.AugmentationProto;
 import com.eldritch.invoken.screens.GameScreen;
+import com.eldritch.invoken.util.SoundManager.SoundEffect;
 import com.google.common.base.Optional;
 
 public abstract class Augmentation {
@@ -108,6 +109,10 @@ public abstract class Augmentation {
 
     public Texture getIcon() {
         return icon;
+    }
+    
+    public SoundEffect getFailureSound() {
+        return SoundEffect.INVALID;
     }
 
     public boolean castsOnSelf() {

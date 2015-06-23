@@ -11,6 +11,7 @@ import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -28,6 +29,7 @@ import com.eldritch.invoken.actor.AgentInfo;
 import com.eldritch.invoken.actor.PreparedAugmentations;
 import com.eldritch.invoken.actor.Profession;
 import com.eldritch.invoken.actor.ai.NpcThreatMonitor.ThreatLevel;
+import com.eldritch.invoken.actor.aug.Augmentation;
 import com.eldritch.invoken.actor.items.RangedWeapon;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Npc;
@@ -365,10 +367,25 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         batch.begin();
 
         if (player.getInventory().hasRangedWeapon()) {
-            int clip = player.getInventory().getClip();
-            int ammunition = player.getInventory().getAmmunitionCount();
-            font.draw(batch, String.format("Ammunition: %d / %d", clip, ammunition - clip), 10,
-                    getHeight() - (30 + 20 * i++));
+            if (!player.getInventory().isReloading()) {
+                int clip = player.getInventory().getClip();
+                int ammunition = player.getInventory().getAmmunitionCount();
+                if (clip == 0) {
+                    font.setColor(Color.RED);
+                }
+                font.draw(batch, String.format("Ammunition: %d / %d", clip, ammunition - clip), 10,
+                        getHeight() - (30 + 20 * i++));
+                if (clip == 0) {
+                    font.setColor(Color.WHITE);
+                }
+            } else {
+                int reloadPercent = (int) (player.getInventory().getReloadFraction() * 100);
+                
+                font.setColor(Color.BLUE);
+                font.draw(batch, String.format("Reloading: %d%%", reloadPercent), 10,
+                        getHeight() - (30 + 20 * i++));
+                font.setColor(Color.WHITE);
+            }
         }
 
         Agent target = player.getTarget();
@@ -629,7 +646,10 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
                         .getAugmentations()
                         .useActiveAugmentation(new Vector2(world.x, world.y), button, tacticalPause);
                 if (!success) {
-                    InvokenGame.SOUND_MANAGER.play(SoundEffect.INVALID, 2);
+                    Augmentation active = player.getInfo().getAugmentations()
+                            .getActiveAugmentation(button);
+                    InvokenGame.SOUND_MANAGER.play(active.getFailureSound(), 2);
+                    toast("No Ammunition!");
                 }
                 return true;
             }
