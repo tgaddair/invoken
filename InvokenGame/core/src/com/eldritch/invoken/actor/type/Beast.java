@@ -147,6 +147,11 @@ public class Beast extends Npc {
         protected short getCategoryBits() {
             return Settings.BIT_LOW_AGENT;
         }
+        
+        @Override
+        protected SoundEffect getDeathSound() {
+            return SoundEffect.CRAWLER_DEATH;
+        }
 
         private static Map<Activity, Map<Direction, Animation>> getAnimations(String assetPath) {
             Map<Activity, Map<Direction, Animation>> animations = new HashMap<Activity, Map<Direction, Animation>>();

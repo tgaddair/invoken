@@ -51,6 +51,11 @@ public class SoundManager implements Disposable {
         BUFF(WAV, "buff"),
         GHOST_DEATH(OGG, "ghost-death"),
         HUMAN_DEATH(WAV, "human-death-00", "human-death-01", "human-death-02"),
+        
+        // Crawler
+        CRAWLER_ATTACK(WAV, "crawler/attack"),
+        CRAWLER_DEATH(WAV, "crawler/death"),
+        
         INVENTORY_OFF(OGG, "inventory-off"),
         INVENTORY_ON(OGG, "inventory-on-00", "inventory-on-01"),
         INVALID(WAV, "invalid");
