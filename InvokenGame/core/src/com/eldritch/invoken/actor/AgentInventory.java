@@ -3,6 +3,7 @@ package com.eldritch.invoken.actor;
 import java.util.ArrayList;
 
 import com.badlogic.gdx.math.MathUtils;
+import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.actor.items.Ammunition;
 import com.eldritch.invoken.actor.items.Consumable;
 import com.eldritch.invoken.actor.items.Item;
@@ -11,6 +12,7 @@ import com.eldritch.invoken.actor.items.Outfit;
 import com.eldritch.invoken.actor.items.RangedWeapon;
 import com.eldritch.invoken.proto.Actors.InventoryItem;
 import com.eldritch.invoken.state.Inventory;
+import com.eldritch.invoken.util.SoundManager.SoundEffect;
 
 public class AgentInventory extends Inventory {
     private final AgentInfo info;
@@ -106,27 +108,27 @@ public class AgentInventory extends Inventory {
     public boolean hasRangedWeapon() {
         return rangedWeapon.getWeapon() != null;
     }
-    
+
     public float getReloadFraction() {
         return rangedWeapon.getReloadFraction();
     }
-    
+
     public boolean isReloading() {
         return rangedWeapon.reloading;
     }
-    
+
     public void reloadWeapon() {
         rangedWeapon.reload();
     }
-    
+
     public void useAmmunition(int x) {
         rangedWeapon.useAmmunition(x);
     }
-    
+
     public int getAmmunitionCount() {
         return rangedWeapon.getAmmunitionCount();
     }
-    
+
     public int getClip() {
         return rangedWeapon.getClip();
     }
@@ -147,7 +149,7 @@ public class AgentInventory extends Inventory {
                 }
             }
         }
-        
+
         rangedWeapon = new RangedWeaponState(weapon, ammunition);
     }
 
@@ -180,42 +182,50 @@ public class AgentInventory extends Inventory {
         item.unequipFrom(this);
         super.handleRemove(item);
     }
-    
+
     private class RangedWeaponState {
         private final RangedWeapon weapon;
         private Ammunition ammunition;
         private int clip;
-        
+
         private boolean reloading = false;
         private float reloadElapsed = 0;
-        
+
         public RangedWeaponState(RangedWeapon weapon, Ammunition ammunition) {
             this.weapon = weapon;
             this.ammunition = ammunition;
-            reload();
+            if (weapon != null) {
+                resetClip();
+            }
         }
-        
+
         public RangedWeapon getWeapon() {
             return weapon;
         }
-        
+
         public void update(float delta) {
             if (reloading) {
                 reloadElapsed += delta;
                 if (getReloadFraction() >= 1) {
                     reloading = false;
                     reloadElapsed = 0;
+                    InvokenGame.SOUND_MANAGER.playAtPoint(SoundEffect.RANGED_WEAPON_RELOAD_END,
+                            info.getAgent().getPosition());
                 }
             }
         }
-        
+
         public float getReloadFraction() {
             return reloadElapsed / (weapon.getCooldown() * 2);
         }
-        
+
         public void reload() {
             if (weapon != null) {
-                clip = Math.min(weapon.getClipSize(), getAmmunitionCount());
+                if (reloading == false) {
+                    InvokenGame.SOUND_MANAGER.playAtPoint(SoundEffect.RANGED_WEAPON_RELOAD_START,
+                            info.getAgent().getPosition());
+                }
+                resetClip();
                 reloading = true;
             } else {
                 clip = 0;
@@ -224,6 +234,10 @@ public class AgentInventory extends Inventory {
             reloadElapsed = 0;
         }
         
+        private void resetClip() {
+            clip = Math.min(weapon.getClipSize(), getAmmunitionCount());
+        }
+
         public void useAmmunition(int x) {
             if (ammunition != null) {
                 clip = Math.max(clip - x, 0);
@@ -237,7 +251,7 @@ public class AgentInventory extends Inventory {
             }
             return getState(ammunition.getId()).getCount();
         }
-        
+
         public int getClip() {
             return clip;
         }

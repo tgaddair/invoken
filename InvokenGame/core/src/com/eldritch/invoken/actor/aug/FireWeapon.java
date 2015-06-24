@@ -14,6 +14,7 @@ import com.eldritch.invoken.effects.HoldingWeapon;
 import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.screens.GameScreen;
 import com.eldritch.invoken.util.Heuristics;
+import com.eldritch.invoken.util.SoundManager.SoundEffect;
 
 public class FireWeapon extends ProjectileAugmentation {
     private static final float ALERT_RADIUS = 10;
@@ -80,6 +81,11 @@ public class FireWeapon extends ProjectileAugmentation {
         
         float idealDst = owner.getInventory().getRangedWeapon().getIdealDistance();
         return Heuristics.randomizedDistanceScore(owner.dst2(target), idealDst * idealDst);
+    }
+    
+    @Override
+    public SoundEffect getFailureSound() {
+        return SoundEffect.RANGED_WEAPON_DRY;
     }
 
     public class FireAction extends AnimatedAction {
