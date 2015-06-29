@@ -267,8 +267,10 @@ public class Player extends SteeringAgent {
         builder.setY(getPosition().y);
 
         // location
-        builder.setSeed(getLocation().getSeed());
-        builder.setLocation(getLocation().getId());
+        Level level = getLocation();
+        builder.setSeed(level.getSeed());
+        builder.setRegion(level.getRegion());
+        builder.setFloor(level.getFloor());
 
         // equipped items
         AgentInventory inventory = info.getInventory();

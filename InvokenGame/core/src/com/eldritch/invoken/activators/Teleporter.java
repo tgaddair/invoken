@@ -42,7 +42,7 @@ public class Teleporter extends ClickActivator implements ProximityActivator {
     }
     
     @Override
-    protected boolean canActivate(Agent agent, float x, float y) {
+    protected boolean canActivate(Agent agent) {
         return inProximity(agent);
     }
 

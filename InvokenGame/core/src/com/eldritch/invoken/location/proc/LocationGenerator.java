@@ -121,10 +121,6 @@ public class LocationGenerator {
                 + asset));
     }
 
-    public Level generate(List<Locations.Location> protos) {
-        return generate(protos, 0);
-    }
-
     public Level generate(List<Locations.Location> protos, int floor) {
         System.out.println("global seed: " + globalSeed);
 

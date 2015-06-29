@@ -170,7 +170,7 @@ public class MenuScreen extends AbstractScreen {
         // Locations.Location data = InvokenGame.LOCATION_READER.readAsset("WelcomeCenter");
         LocationGenerator generator = new LocationGenerator(gameState, GameScreen.getBiome(),
                 rand.nextLong());
-        Level level = generator.generate(ImmutableList.<Locations.Location> of());
+        Level level = generator.generate(ImmutableList.<Locations.Location>of(), 0);
         Player player = level.createDummyPlayer();
 
         // init camera position

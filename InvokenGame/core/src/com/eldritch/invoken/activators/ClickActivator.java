@@ -43,7 +43,7 @@ public abstract class ClickActivator extends BasicActivator {
 	    Vector2 position = getPosition();
 		boolean clicked = x >= position.x && x <= position.x + width && y >= position.y
                 && y <= position.y + height;
-        if (clicked && canActivate(agent, x, y)) {
+        if (clicked && canActivate(agent)) {
             // first, attempt to handle the click event with a handler
             if (!agent.handle(this)) {
                 // could not handle, so delegate to the activation mechanism
@@ -53,7 +53,7 @@ public abstract class ClickActivator extends BasicActivator {
         return clicked;
 	}
 	
-	protected boolean canActivate(Agent agent, float x, float y) {
+	protected boolean canActivate(Agent agent) {
 	    return agent.getPosition().dst2(getPosition()) < 6;
 	}
 }

@@ -274,6 +274,14 @@ public class Level {
     public String getMusicId() {
         return locations.get(currentCell).getMusic();
     }
+    
+    public String getRegion() {
+    	return data.getRegion();
+    }
+    
+    public int getFloor() {
+    	return data.getLevel();
+    }
 
     public String getId() {
         if (!locations.containsKey(currentCell)) {

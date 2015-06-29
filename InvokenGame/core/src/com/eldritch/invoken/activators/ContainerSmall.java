@@ -2,6 +2,7 @@ package com.eldritch.invoken.activators;
 
 import java.util.ArrayList;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -31,6 +32,7 @@ public class ContainerSmall extends ClickActivator implements Lootable {
     private float stateTime = 0;
     private Agent agent = null;
     private boolean open = false;
+    private boolean canActivate = false;
     
     public ContainerSmall(NaturalVector2 position) {
         this(position, new Inventory(new ArrayList<InventoryItem>()));
@@ -58,6 +60,7 @@ public class ContainerSmall extends ClickActivator implements Lootable {
     @Override
     public void update(float delta, Level level) {
         if (activating) {
+        	canActivate = false;
             stateTime += delta;
             if (animation.isAnimationFinished(stateTime)) {
                 activating = false;
@@ -71,6 +74,8 @@ public class ContainerSmall extends ClickActivator implements Lootable {
                     agent.beginLooting(this);
                 }
             }
+        } else {
+        	canActivate = canActivate(level.getPlayer());
         }
     }
 
@@ -81,8 +86,12 @@ public class ContainerSmall extends ClickActivator implements Lootable {
 
         Batch batch = renderer.getBatch();
         batch.begin();
+        if (!canActivate) {
+        	batch.setColor(Color.GRAY);
+        }
         batch.draw(frame, position.x, position.y, frame.getRegionWidth() * Settings.SCALE,
                 frame.getRegionHeight() * Settings.SCALE);
+        batch.setColor(Color.WHITE);
         batch.end();
     }
 

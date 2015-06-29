@@ -70,7 +70,7 @@ public class ProximityMine extends ClickActivator implements ProximityActivator,
     }
     
     @Override
-    protected boolean canActivate(Agent agent, float x, float y) {
+    protected boolean canActivate(Agent agent) {
         return !detonation.isActive() && agent == detonation.damage.getSource();
     }
 

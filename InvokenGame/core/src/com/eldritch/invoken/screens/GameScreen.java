@@ -166,7 +166,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
             // Locations.Location data = InvokenGame.LOCATION_READER.readAsset(state.getLocation());
             LocationGenerator generator = new LocationGenerator(gameState, getBiome(),
                     state.getSeed());
-            level = generator.generate(ImmutableList.<Locations.Location> of());
+            level = generator.generate(ImmutableList.<Locations.Location>of(), state.getFloor());
             onLoad(level, Optional.of(state));
 
             // load from disk
@@ -187,7 +187,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
             // InvokenGame.LOCATION_READER.readAsset("DebugArena");
             LocationGenerator generator = new LocationGenerator(gameState, getBiome(),
                     rand.nextLong());
-            level = generator.generate(ImmutableList.<Locations.Location> of());
+            level = generator.generate(ImmutableList.<Locations.Location> of(), 0);
             onLoad(level, Optional.<PlayerActor> absent());
 
             // create a new player
@@ -235,7 +235,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         // announce the new location
         toaster = new Toaster(getSkin());
         stage.addActor(toaster.getContainer());
-        toast(level.getName());
+        toast(level.getRegion() + ", Floor " + level.getFloor());
 
         // music settings
         InvokenGame.MUSIC_MANAGER.setEnabled(!Settings.MUTE);
@@ -609,6 +609,9 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
                 // loadLocation("WelcomeCenterLevel3", Optional.<String> absent(), level
                 // .getPlayer().serialize());
                 return true;
+            case Keys.L:
+            	game.setScreen(new GameScreen(game, "PlayerDebug"));
+            	return true;
             default:
                 return false;
         }
@@ -896,9 +899,14 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
             corpseBuilder.setFragments(player.getLastFragments());
             builder.setCorpse(corpseBuilder.build());
 
+            // Set the location and position info from the previous save.
             PlayerActor last = previous.get();
             builder.setX(last.getX());
             builder.setY(last.getY());
+            builder.setSeed(last.getSeed());
+            builder.setRegion(last.getRegion());
+            builder.setFloor(last.getFloor());
+            
             builder.addAllVisitedRooms(player.getLocation().getVisitedIndices());
 
             data = builder.build();
