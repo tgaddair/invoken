@@ -293,10 +293,12 @@ public class Attack extends Sequence<Npc> {
             // when our target is aiming at us, then dodge with some probability
             float danger = getDanger(npc);
             if (danger > 0) {
+            	float stealth = npc.getInfo().getStealthModifier();
+            	
                 // average about a second of waiting before dodging
                 // if this routine is called once every STEP seconds, then we want to act after
                 // 1 / STEP invocations
-                return Math.random() * danger > Npc.STEP;
+                return Math.random() * danger * stealth > Npc.STEP;
             }
             return false;
         }

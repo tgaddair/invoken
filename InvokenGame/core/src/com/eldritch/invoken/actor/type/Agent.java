@@ -380,7 +380,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     }
 
     public float getDensity() {
-        return 1;
+        return 0.75f;
     }
 
     public void setRgb(float r, float g, float b) {

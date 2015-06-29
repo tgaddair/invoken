@@ -7,6 +7,43 @@ encounter {
   actor_params {
     description: ""
     actor_scenario {
+      actor_id: "Crawler"
+      essential: false
+      blocking: false
+      min: 1
+      max: 3
+      alive: true
+    }
+    no_detect: false
+    no_flee: false
+  }
+  faction_id: ""
+  min_level: 0
+}
+encounter {
+  id: "Empty0"
+  title: "Empty 0"
+  type: ACTOR
+  weight: 1.0
+  unique: false
+  actor_params {
+    description: ""
+    no_detect: false
+    no_flee: false
+  }
+  faction_id: ""
+  min_level: 0
+  max_level: 5
+}
+encounter {
+  id: "Crawlers2"
+  title: "Crawlers2"
+  type: ACTOR
+  weight: 1.0
+  unique: false
+  actor_params {
+    description: ""
+    actor_scenario {
       actor_id: "AcidCrawler"
       essential: false
       blocking: false
@@ -26,7 +63,7 @@ encounter {
     no_flee: false
   }
   faction_id: ""
-  min_level: 0
+  min_level: 2
 }
 encounter {
   id: "MeleeThugs1"

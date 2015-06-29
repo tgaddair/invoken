@@ -30,7 +30,6 @@ import com.eldritch.invoken.actor.PreparedAugmentations;
 import com.eldritch.invoken.actor.Profession;
 import com.eldritch.invoken.actor.ai.NpcThreatMonitor.ThreatLevel;
 import com.eldritch.invoken.actor.aug.Augmentation;
-import com.eldritch.invoken.actor.items.RangedWeapon;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Npc;
 import com.eldritch.invoken.actor.type.Player;
@@ -521,9 +520,11 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
     public boolean keyDown(int keycode) {
         switch (keycode) {
             case Keys.SPACE:
-            case Keys.SHIFT_LEFT:
-                // player.holdPosition(true);
+            	// player.holdPosition(true);
                 shiftDown(true);
+                return true;
+            case Keys.SHIFT_LEFT:
+            	player.setAiming(true);
                 return true;
             case Keys.TAB:
                 // show minimap
@@ -574,9 +575,11 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
             case Keys.SPACE:
                 // tacticalPause = !tacticalPause;
                 // return true;
-            case Keys.SHIFT_LEFT:
-                // player.holdPosition(false);
+            	// player.holdPosition(false);
                 shiftDown(false);
+                return true;
+            case Keys.SHIFT_LEFT:
+            	player.setAiming(false);
                 return true;
             case Keys.BACKSPACE:
                 if (tacticalPause) {

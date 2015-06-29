@@ -8,7 +8,6 @@ import java.util.Set;
 
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.proto.Actors.ActorParams;
-import com.sun.istack.internal.Nullable;
 
 public class FactionManager {
     private final Map<Faction, FactionStatus> factions = new HashMap<Faction, FactionStatus>();
@@ -71,7 +70,6 @@ public class FactionManager {
         return factions.keySet();
     }
     
-    @Nullable
     public Faction getDominantFaction() {
         Entry<Faction, FactionStatus> best = null;
         for (Entry<Faction, FactionStatus> entry : factions.entrySet()) {
