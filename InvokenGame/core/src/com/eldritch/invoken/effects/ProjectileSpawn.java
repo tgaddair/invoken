@@ -7,7 +7,6 @@ import com.eldritch.invoken.actor.aug.FireWeapon;
 import com.eldritch.invoken.actor.items.RangedWeapon;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.HandledProjectile;
-import com.eldritch.invoken.location.Level;
 import com.google.common.collect.ImmutableList;
 
 /**
@@ -69,10 +68,11 @@ public abstract class ProjectileSpawn extends BasicEffect {
 
         @Override
         protected void doApply() {
-            // add projectiles to scene
+            // add projectiles to scene, all bullets together cost 1 unit of ammo
             for (HandledProjectile projectile : bullets) {
-                doSpawn(projectile);
+                target.getLocation().addEntity(projectile);
             }
+            target.getInventory().useAmmunition(1);
 
             afterSpawn();
             applied = true;
