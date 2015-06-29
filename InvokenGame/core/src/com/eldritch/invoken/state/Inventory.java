@@ -18,11 +18,10 @@ import com.google.common.cache.LoadingCache;
 import com.google.common.collect.Maps;
 
 public class Inventory {
-    private static final LoadingCache<String, Inventory> LOADER = CacheBuilder.newBuilder().build(
-            new CacheLoader<String, Inventory>() {
-                public Inventory load(String id) {
-                    Container proto = InvokenGame.CONTAINER_READER.readAsset(id);
-                    return new Inventory(proto.getItemList());
+    private static final LoadingCache<String, Container> CONTAINER_LOADER = CacheBuilder.newBuilder().build(
+            new CacheLoader<String, Container>() {
+                public Container load(String id) {
+                    return InvokenGame.CONTAINER_READER.readAsset(id);
                 }
             });
 
@@ -200,7 +199,8 @@ public class Inventory {
 
     public static Inventory from(String id) {
         try {
-            return LOADER.get(id);
+            Container container = CONTAINER_LOADER.get(id);
+            return new Inventory(container.getItemList());
         } catch (ExecutionException ex) {
             InvokenGame.error("Failed to load container: " + id, ex);
             return null;
