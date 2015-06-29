@@ -354,6 +354,8 @@ public class RoomGenerator extends BspGenerator {
             int cost = 0;
             if (room != null) {
                 cost += getCost(room);
+                cost += 100 * room.getCenterXDistance(x2);
+                cost += 100 * room.getCenterYDistance(y2);
             }
             if (compounds[x1][y1] != compounds[x2][y2]) {
                 // heavy penalty for crossing territory
@@ -712,6 +714,19 @@ public class RoomGenerator extends BspGenerator {
 
         public Room getRoom() {
             return room;
+        }
+        
+        public int getCenterXDistance(int x) {
+        	return Math.abs((int) (bounds.x + bounds.width / 2) - x);
+        }
+        
+        public int getCenterYDistance(int y) {
+        	return Math.abs((int) (bounds.y + bounds.height / 2) - y);
+        }
+        
+        public boolean isCorner(int x, int y) {
+        	return (x == bounds.x || x == (int) (bounds.x + bounds.width - 1))
+        			&& (y == bounds.y || y == (int) (bounds.y + bounds.height - 1));
         }
 
         public Rectangle getBounds() {
