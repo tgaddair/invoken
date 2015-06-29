@@ -1,6 +1,7 @@
 **/bin
 **/src-gen
 **/.settings
+**/.classpath
 android/gen/
 **/android/bin/
 
