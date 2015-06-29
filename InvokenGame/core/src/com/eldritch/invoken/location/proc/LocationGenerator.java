@@ -58,6 +58,7 @@ import com.eldritch.invoken.proto.Locations.Room;
 import com.eldritch.invoken.proto.Locations.Territory;
 import com.eldritch.invoken.screens.GameScreen;
 import com.eldritch.invoken.util.GameTransition;
+import com.eldritch.invoken.util.Heuristics;
 import com.eldritch.invoken.util.Settings;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableBiMap;
@@ -910,17 +911,13 @@ public class LocationGenerator {
     public int getCount(Encounter encounter, ActorScenario scenario) {
         // the greater the delta, the greater the chance of getting a higher count
         int delta = encounter.getMinLevel() - floor;
-        float target = rand.nextFloat() * sigmoid(delta);
+        float target = rand.nextFloat() * Heuristics.sigmoid(delta);
         
         // fit the target between the min and the max
         float count = target * (scenario.getMax() - scenario.getMin()) + scenario.getMin();
         return Math.round(count);
     }
     
-    private static float sigmoid(float x) {
-        return (float) (1f / (1f + Math.exp(-x)));
-    }
-
     public static void sortByWeight(List<Encounter> encounters) {
         // unique encounters appear first, then ordered by descending weight
         Collections.sort(encounters, new Comparator<Encounter>() {

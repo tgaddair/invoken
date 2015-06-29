@@ -19,4 +19,8 @@ public class Heuristics {
     public static float getDesperation(Agent agent) {
         return agent.getInfo().getEnergyPercent() * (1.0f - agent.getInfo().getHealthPercent());
     }
+    
+    public static float sigmoid(float x) {
+        return (float) (1f / (1f + Math.exp(-x)));
+    }
 }

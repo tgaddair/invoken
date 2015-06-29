@@ -476,7 +476,7 @@ public class Level {
     public List<Integer> getVisitedIndices() {
         return map.getRooms().getIndices(visitedRooms);
     }
-
+    
     public void render(float delta, OrthographicCamera camera, TextureRegion selector,
             boolean paused) {
         // update the world simulation
@@ -492,7 +492,8 @@ public class Level {
             losFocus.set(player.getFocusPoint()).sub(position).scl(fraction);
             offset.set(losFocus).scl(.5f);
         } else {
-            offset.set(Vector2.Zero);
+            offset.set(player.getVelocity());
+            offset.clamp(0, 5);
         }
 
         // let the camera follow the player
