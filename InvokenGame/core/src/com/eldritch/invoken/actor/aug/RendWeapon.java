@@ -90,7 +90,7 @@ public class RendWeapon extends Augmentation {
             strike.add(owner.getForwardVector().scl(radius));
 
             Vector2 center = getCenter(owner.getPosition(), target, range);
-            owner.addEffect(new Slash(owner, center, range));
+            owner.addEffect(new Slash(owner, center, range * 0.75f));
             InvokenGame.SOUND_MANAGER.playAtPoint(SoundEffect.MELEE_SWING, owner.getPosition());
 
             for (Agent neighbor : owner.getNeighbors()) {
@@ -136,6 +136,6 @@ public class RendWeapon extends Augmentation {
     }
 
     private static float getRange(MeleeWeapon weapon) {
-        return 3 * weapon.getRange() / 4;
+        return weapon.getRange();
     }
 }

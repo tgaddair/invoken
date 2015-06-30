@@ -378,6 +378,10 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     public GameCamera getCamera() {
         return camera;
     }
+    
+    public float getAttackSpeed() {
+        return 1;
+    }
 
     public float getDensity() {
         return 0.75f;

@@ -239,6 +239,11 @@ public class Player extends SteeringAgent {
         }
         return false;
     }
+    
+    @Override
+    public float getAttackSpeed() {
+        return 2;
+    }
 
     @Override
     public void recoil() {

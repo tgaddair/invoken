@@ -9,6 +9,7 @@ import com.eldritch.invoken.location.Level;
 
 public abstract class AnimatedAction extends AugmentationAction {
 	final Activity activity;
+	final float timeScale;
 	float elapsed = 0;
 	float stateTime = 0;
 	boolean applied = false;
@@ -16,10 +17,15 @@ public abstract class AnimatedAction extends AugmentationAction {
 	boolean canApply = false;
 	float holdTime = 0;
 	
-	public AnimatedAction(Agent actor, Activity activity, Augmentation aug) {
-	    super(actor, aug);
-		this.activity = activity;
-		applied = false;
+	public AnimatedAction(Agent agent, Activity activity, Augmentation aug) {
+	    this(agent, activity, agent.getAttackSpeed(), aug);
+	}
+	
+	public AnimatedAction(Agent agent, Activity activity, float timeScale, Augmentation aug) {
+	    super(agent, aug);
+        this.activity = activity;
+        this.timeScale = timeScale;
+        applied = false;
 	}
 	
 	@Override
@@ -31,7 +37,7 @@ public abstract class AnimatedAction extends AugmentationAction {
 		        canApply = true;
 		    }
 		} else {
-	        stateTime += delta * getOwner().getInfo().getEfficacy();
+	        stateTime += delta * getOwner().getInfo().getEfficacy() * timeScale;
 		}
 		
 		if (!applied && canApply()) {
