@@ -88,7 +88,7 @@ public enum Profession {
 		@Override
 		public List<Augmentation> getStartingAugmentations() {
 			return ImmutableList.<Augmentation>of(
-					FireWeapon.getInstance(),
+					RendWeapon.getInstance(),
 					Drain.getInstance(),
 					Mirror.getInstance(),
 					Barrier.getInstance());

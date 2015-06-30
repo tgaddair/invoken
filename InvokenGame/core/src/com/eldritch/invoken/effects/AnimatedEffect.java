@@ -11,6 +11,7 @@ public abstract class AnimatedEffect extends BasicEffect {
 	private final float width;
 	private final float height;
 	private final Vector2 offset;
+	private final float theta;
 	private Animation animation;
 	
 	public AnimatedEffect(Agent actor, TextureRegion[] region) {
@@ -18,18 +19,20 @@ public abstract class AnimatedEffect extends BasicEffect {
 	}
 	
 	public AnimatedEffect(Agent actor, TextureRegion[] region, Vector2 offset) {
-		this(actor, region, offset, Animation.PlayMode.NORMAL);
+		this(actor, region, offset, 0, Animation.PlayMode.NORMAL, 0.1f);
 	}
 	
 	public AnimatedEffect(Agent actor, TextureRegion[] region, Animation.PlayMode playMode) {
-		this(actor, region, Vector2.Zero, playMode);
+		this(actor, region, Vector2.Zero, 0, playMode, 0.1f);
 	}
 	
-	public AnimatedEffect(Agent actor, TextureRegion[] region, Vector2 offset, Animation.PlayMode playMode) {
+	public AnimatedEffect(Agent actor, TextureRegion[] region, Vector2 offset, float theta,
+			Animation.PlayMode playMode, float frameDuration) {
 	    super(actor);
 	    this.offset = offset;
+	    this.theta = theta;
 		
-		animation = new Animation(0.1f, region);
+		animation = new Animation(frameDuration, region);
 		animation.setPlayMode(playMode);
 		
 		width = 1 / 32f * region[0].getRegionWidth();
@@ -47,7 +50,12 @@ public abstract class AnimatedEffect extends BasicEffect {
 		
 		Batch batch = renderer.getBatch();
 		batch.begin();
-		batch.draw(frame, position.x - width / 2 - offset.x, position.y - height / 2 - offset.y, width, height);
+		batch.draw(frame, 
+				position.x - width / 2 - offset.x, position.y - height / 2 - offset.y, // position
+                width / 2, height / 2, // origin
+                width, height, // size
+                1f, 1f, // scale
+                theta);
 		batch.end();
 	}
 	

@@ -797,6 +797,14 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         }
         return merged;
     }
+    
+    public static TextureRegion[] getMergedRegion(String... assets) {
+    	TextureRegion[] merged = new TextureRegion[assets.length];
+    	for (int i = 0; i < merged.length; i++) {
+    		merged[i] = new TextureRegion(getTexture(assets[i]));
+    	}
+    	return merged;
+    }
 
     public static Texture getTexture(String assetName) {
         if (!textureManager.isLoaded(assetName, Texture.class)) {
