@@ -71,6 +71,7 @@ public class RendWeapon extends Augmentation {
         public RendAction(Agent actor, Vector2 target) {
             super(actor, Activity.Swipe, RendWeapon.this);
             this.target = target;
+            owner.setDirection(owner.getRelativeDirection(target));
 
             MeleeWeapon weapon = actor.getInventory().getMeleeWeapon();
             this.damage = Damage.from(actor, DamageType.PHYSICAL, (int) weapon.getDamage());
@@ -83,7 +84,7 @@ public class RendWeapon extends Augmentation {
             strike.add(owner.getForwardVector().scl(weapon.getRange() / 2));
 
             Vector2 center = getCenter(owner.getPosition(), target, weapon.getRange());
-            owner.addEffect(new Slash(owner, strike));
+            owner.addEffect(new Slash(owner, center));
 
             // update agent to fact the direction of their strike
             owner.setDirection(owner.getRelativeDirection(center));
