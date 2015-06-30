@@ -121,6 +121,12 @@ public class RendWeapon extends Augmentation {
             }
         }
 
+        // @Override
+        // protected float getHoldSeconds() {
+        // TODO: this can be used as a tell for some enemy types
+        // return owner.getAttackSpeed() < 2 ? 1 : 0;
+        // }
+
         @Override
         public Vector2 getPosition() {
             return target;
