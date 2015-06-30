@@ -13,8 +13,8 @@ import com.eldritch.invoken.util.Heuristics;
 import com.eldritch.invoken.util.SoundManager.SoundEffect;
 
 public class Detonate extends Augmentation {
-    private static final float RANGE = 2f;
-    private static final float DURATION = 2f;
+    private static final float RANGE = 3f;
+    private static final float DURATION = 1f;
     private static final int DAMAGE_SCALE = 100;
 
     private static class Holder {
@@ -62,11 +62,11 @@ public class Detonate extends Augmentation {
 
     @Override
     public float quality(Agent owner, Agent target, Level level) {
-        if (!target.isAlive()) {
+        float r = RANGE;
+        if (!target.isAlive() || owner.dst2(target) < r * r) {
             return 0;
         }
 
-        float r = RANGE;
         return Heuristics.randomizedDistanceScore(owner.dst2(target), r * r);
     }
 
@@ -115,6 +115,8 @@ public class Detonate extends Augmentation {
 
         @Override
         protected void update(float delta) {
+            float r = getStateTime() / DURATION;
+            target.setRgb(r, 0, 0);
         }
     }
     

@@ -59,6 +59,9 @@ public class Detonation implements TemporaryEntity {
     @Override
     public void update(float delta, Level level) {
         elapsed += delta;
+        if (!active) {
+            detonate();
+        }
     }
 
     @Override

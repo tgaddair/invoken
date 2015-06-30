@@ -161,6 +161,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     private final LineOfSightHandler losHandler = new LineOfSightHandler();
     private final TargetingHandler targetingHandler = new TargetingHandler();
 
+    private final Color DEFAULT_COLOR = new Color(1, 1, 1, 1);
     private final Color color = new Color(1, 1, 1, 1);
 
     private short lastMask;
@@ -1583,7 +1584,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
 
         // apply color
         Batch batch = renderer.getBatch();
-        if (isCloaked()) {
+        if (!color.equals(DEFAULT_COLOR)) {
             batch.setColor(color);
         }
 
@@ -1607,7 +1608,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         }
 
         // restore original color
-        if (isCloaked()) {
+        if (!color.equals(DEFAULT_COLOR)) {
             batch.setColor(Color.WHITE);
         }
 
