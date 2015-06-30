@@ -590,7 +590,7 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
                 for (CoverPoint coverPoint : getLocation().getActiveCover()) {
                     Vector2 position = coverPoint.getPosition();
                     if (!getLocation()
-                            .hasLineOfSight(getHide().getTarget().getPosition(), position)) {
+                            .hasLineOfSight(Npc.this, getHide().getTarget().getPosition(), position)) {
                         boolean los = hasLineOfSight(position);
                         float distance = position.dst2(getPosition());
                         if (target.getPosition().dst2(position) < distance) {

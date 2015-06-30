@@ -494,7 +494,7 @@ public class Level {
         if (player.isAiming()) {
             // get direction to focus
             float fraction = 1;
-            if (!hasLineOfSight(player.getCamera().getPosition(), player.getFocusPoint())) {
+            if (!hasLineOfSight(player, player.getCamera().getPosition(), player.getFocusPoint())) {
                 fraction = losHandler.getFraction();
             }
             losFocus.set(player.getFocusPoint()).sub(position).scl(fraction);
@@ -1056,8 +1056,8 @@ public class Level {
         return false;
     }
 
-    public boolean hasLineOfSight(Vector2 origin, Vector2 target) {
-        losHandler.reset();
+    public boolean hasLineOfSight(Agent source, Vector2 origin, Vector2 target) {
+        losHandler.reset(source);
         return rayCast(origin, target);
     }
 
@@ -1462,6 +1462,7 @@ public class Level {
         private final short mask = Settings.BIT_SHOOTABLE;
         private boolean lineOfSight = true;
         private float fraction = 1;
+        private Agent source = null;
 
         public boolean hasLineOfSight() {
             return lineOfSight;
@@ -1471,9 +1472,10 @@ public class Level {
             return fraction;
         }
 
-        public void reset() {
+        public void reset(Agent source) {
             lineOfSight = true;
             fraction = 1;
+            this.source = source;
         }
 
         @Override
@@ -1497,8 +1499,14 @@ public class Level {
 
             // check that the fixture belongs to another agent
             if (fixture.getUserData() != null && fixture.getUserData() instanceof Agent) {
-                // cannot be obstructed by an agent
-                return false;
+            	// cannot obstruct ourselves
+            	Agent agent = (Agent) fixture.getUserData();
+            	if (agent == source) {
+            		return false;
+            	}
+            	
+                // obstructed by living agents
+                return agent.isAlive();
             }
 
             // whatever it is, it's in the way

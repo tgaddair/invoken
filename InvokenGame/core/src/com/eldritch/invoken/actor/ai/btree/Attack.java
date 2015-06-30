@@ -255,7 +255,7 @@ public class Attack extends Sequence<Npc> {
     private static class HasCover extends BooleanTask {
         @Override
         protected boolean check(Npc npc) {
-            return !npc.getLocation().hasLineOfSight(npc.getPosition(),
+            return !npc.getLocation().hasLineOfSight(npc, npc.getPosition(),
                     npc.getLastSeen().getPosition())
                     && npc.getCover() != null
                     && npc.getCover().getPosition().dst2(npc.getPosition()) < 1;
