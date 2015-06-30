@@ -16,11 +16,11 @@ public class Slash extends AnimatedEffect {
 				format("slash01"), format("slash02"), format("slash03"), format("slash04")));
 	}
 	
-	public Slash(Agent target, Vector2 strike) {
-		super(target, randomAnimation(),
-				new Vector2(target.getPosition().x - strike.x, target.getPosition().y - strike.y).nor(),
+	public Slash(Agent target, Vector2 strike, float r) {
+		super(target, strike, randomAnimation(),
+				Vector2.Zero,
 				strike.cpy().sub(target.getPosition()).angle(),
-				Animation.PlayMode.NORMAL, 0.035f);
+				Animation.PlayMode.NORMAL, 0.035f, r, r);
 		;
 	}
 	
