@@ -7,12 +7,14 @@ import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.HandledBullet;
 import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.effects.Draining;
+import com.eldritch.invoken.gfx.AnimatedEntity;
 import com.eldritch.invoken.location.Bullet;
 import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.proto.Effects.DamageType;
 import com.eldritch.invoken.screens.GameScreen;
 import com.eldritch.invoken.util.Damage;
 import com.eldritch.invoken.util.Heuristics;
+import com.eldritch.invoken.util.Utils;
 
 public class Drain extends ProjectileAugmentation {
     private static final int DAMAGE_SCALE = 25;
@@ -39,13 +41,13 @@ public class Drain extends ProjectileAugmentation {
     public int getCost(Agent owner) {
         return BASE_COST;
     }
-    
+
     @Override
     public float quality(Agent owner, Agent target, Level level) {
         if (!target.isAlive()) {
             return 0;
         }
-        
+
         float idealDst = 3f;
         return Heuristics.randomizedDistanceScore(owner.dst2(target), idealDst * idealDst);
     }
@@ -71,21 +73,24 @@ public class Drain extends ProjectileAugmentation {
     }
 
     public static class DrainBullet extends HandledBullet {
+        private static final TextureRegion[] SPLASH_REGIONS = GameScreen.getMergedRegion(
+                "sprite/effects/drain1.png", 120, 120);
+
+        private static final float BULLET_SIZE = 1.5f;
+        private static final float SPLASH_SIZE = 4f;
         private static final float MAX_SEEK_DST2 = 25f;
         private static final float ADJUSTMENT_STEP = 0.05f;
         private static final float V_SCALE = 2.5f;
         private static final float V_MAX = 12f;
 
-        private static final TextureRegion[] regions = GameScreen.getRegions(
-                "sprite/effects/drain-attack.png", 32, 32)[0];
+        private static final TextureRegion region = new TextureRegion(
+                GameScreen.getTexture("sprite/effects/infect.png"));
         private final Vector2 adjustment = new Vector2();
-        private final Animation animation;
         private float lastAdjustment = 0;
 
         public DrainBullet(Agent owner) {
-            super(owner, regions[0], V_MAX, Damage.from(owner, DamageType.VIRAL, getBaseDamage(owner)));
-            animation = new Animation(0.1f, regions);
-            animation.setPlayMode(Animation.PlayMode.LOOP_PINGPONG);
+            super(owner, region, BULLET_SIZE, V_MAX, Damage.from(owner, DamageType.VIRAL,
+                    getBaseDamage(owner)));
         }
 
         @Override
@@ -102,7 +107,8 @@ public class Drain extends ProjectileAugmentation {
                 Bullet bullet = getBullet();
                 Agent nearest = getNearestNeighbor(bullet.getPosition());
                 if (nearest != null) {
-                    // adjust the velocity of the bullet to seek the nearest target
+                    // adjust the velocity of the bullet to seek the nearest
+                    // target
                     adjustment.set(nearest.getPosition()).sub(bullet.getPosition());
                     bullet.setVelocity(adjustment.add(bullet.getVelocity().scl(V_SCALE)
                             .clamp(0, V_MAX)));
@@ -132,9 +138,17 @@ public class Drain extends ProjectileAugmentation {
 
         @Override
         protected TextureRegion getTexture(float stateTime) {
-            return animation.getKeyFrame(stateTime);
+            return region;
         }
-        
+
+        @Override
+        protected void onFinish() {
+            Vector2 size = Utils.getSize(SPLASH_REGIONS[0], SPLASH_SIZE);
+            getOwner().getLocation().addEntity(
+                    new AnimatedEntity(SPLASH_REGIONS, getPosition().cpy().add(0, size.y / 4),
+                            size, 0.025f));
+        }
+
         private static int getBaseDamage(Agent owner) {
             return (int) (DAMAGE_SCALE * owner.getInfo().getExecuteModifier());
         }
