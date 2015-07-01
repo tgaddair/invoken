@@ -9,6 +9,7 @@ import com.eldritch.invoken.effects.SummonEnergy;
 import com.eldritch.invoken.gfx.AnimatedEntity;
 import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.screens.GameScreen;
+import com.eldritch.invoken.util.Callback;
 
 public class Resurrect extends Augmentation {
     private static final TextureRegion[] SPLASH_REGIONS = GameScreen.getMergedRegion(
@@ -86,9 +87,15 @@ public class Resurrect extends Augmentation {
         @Override
         public void apply(Level level) {
             if (!target.isAlive()) {
-                level.addEntity(new AnimatedEntity(SPLASH_REGIONS, target.getPosition(),
-                        new Vector2(SPLASH_SIZE, SPLASH_SIZE), 0.1f));
-                target.addEffect(new Resurrected(owner, target, BASE_COST));
+                AnimatedEntity entity = new AnimatedEntity(SPLASH_REGIONS, target.getPosition(),
+                        new Vector2(SPLASH_SIZE, SPLASH_SIZE), 0.1f);
+                entity.withCallback(new Callback() {
+                    @Override
+                    public void call() {
+                        target.addEffect(new Resurrected(owner, target, BASE_COST));
+                    }
+                });
+                level.addEntity(entity);
             }
         }
 
