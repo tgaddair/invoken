@@ -18,6 +18,7 @@ import com.eldritch.invoken.actor.aug.Augmentation;
 import com.eldritch.invoken.actor.aug.Barrier;
 import com.eldritch.invoken.actor.aug.Cloak;
 import com.eldritch.invoken.actor.aug.Crack;
+import com.eldritch.invoken.actor.aug.Discharge;
 import com.eldritch.invoken.actor.aug.Empathy;
 import com.eldritch.invoken.actor.aug.Frenzy;
 import com.eldritch.invoken.actor.aug.Drain;
@@ -178,7 +179,7 @@ public enum Profession {
 		public List<Augmentation> getStartingAugmentations() {
 			return ImmutableList.<Augmentation>of(
 					Drain.getInstance(), 
-					Infect.getInstance(),
+					Discharge.getInstance(),
 					Resurrect.getInstance());
 		}
 		
