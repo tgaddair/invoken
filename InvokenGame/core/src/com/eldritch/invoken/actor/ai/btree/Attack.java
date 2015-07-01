@@ -355,13 +355,9 @@ public class Attack extends Sequence<Npc> {
     }
 
     private static class Thrust extends SuccessTask {
-        private final Vector2 direction = new Vector2();
-
         @Override
         public void doFor(Npc npc) {
-            Agent target = npc.getTarget();
-            direction.set(target.getPosition()).sub(npc.getPosition()).nor();
-            npc.dodge(direction);
+            npc.thrust(npc.getTarget());
         }
     }
 

@@ -13,7 +13,7 @@ import com.eldritch.invoken.util.Heuristics;
 import com.eldritch.invoken.util.SoundManager.SoundEffect;
 
 public class Detonate extends Augmentation {
-    private static final float RANGE = 3f;
+    private static final float RANGE = 2.5f;
     private static final float DURATION = 1f;
     private static final int DAMAGE_SCALE = 100;
 
@@ -63,21 +63,25 @@ public class Detonate extends Augmentation {
     @Override
     public float quality(Agent owner, Agent target, Level level) {
         float r = RANGE;
-        if (!target.isAlive() || owner.dst2(target) < r * r) {
+        if (!target.isAlive() || owner.dst2(target) > r * r) {
             return 0;
         }
 
-        return Heuristics.randomizedDistanceScore(owner.dst2(target), r * r);
+        return Heuristics.randomizedDistanceScore(owner.dst2(target), 0);
     }
 
     public class DetonateAction extends AnimatedAction {
+        private final Vector2 target;
+        
         public DetonateAction(Agent actor, Vector2 target) {
-            super(actor, Activity.Cast, Detonate.this);
+            super(actor, Activity.Cast, 2f, Detonate.this);
+            this.target = target;
         }
 
         @Override
         public void apply(Level level) {
             Damage damage = Damage.from(owner, DamageType.PHYSICAL, getBaseDamage(owner));
+            owner.thrust(target);
             owner.addEffect(new DetonateEffect(owner, damage));
             InvokenGame.SOUND_MANAGER.playAtPoint(SoundEffect.BUFF, owner.getPosition());
         }
@@ -85,6 +89,11 @@ public class Detonate extends Augmentation {
         @Override
         public Vector2 getPosition() {
             return owner.getPosition();
+        }
+        
+        @Override
+        protected float getHoldSeconds() {
+            return 0.5f;
         }
     }
 

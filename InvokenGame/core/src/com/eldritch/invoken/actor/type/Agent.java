@@ -160,6 +160,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     private final Set<ProjectileHandler> projectileHandlers = new HashSet<ProjectileHandler>();
     private final LineOfSightHandler losHandler = new LineOfSightHandler();
     private final TargetingHandler targetingHandler = new TargetingHandler();
+    private final Vector2 tempV = new Vector2();
 
     private final Color DEFAULT_COLOR = new Color(1, 1, 1, 1);
     private final Color color = new Color(1, 1, 1, 1);
@@ -316,6 +317,15 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
             info.expend(DODGE_COST);
             InvokenGame.SOUND_MANAGER.playAtPoint(SoundEffect.SWISH, getPosition());
         }
+    }
+    
+    public void thrust(Locatable target) {
+        thrust(target.getPosition());
+    }
+    
+    public void thrust(Vector2 target) {
+        tempV.set(target).sub(getPosition()).nor();
+        dodge(tempV);
     }
 
     public float getBaseSpeed() {
