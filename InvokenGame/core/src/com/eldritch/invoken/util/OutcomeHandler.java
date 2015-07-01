@@ -90,4 +90,16 @@ public abstract class OutcomeHandler {
     protected abstract Agent getSource();
 
     protected abstract String getId(Response response);
+    
+    public static class DefaultOutcomeHandler extends OutcomeHandler {
+        @Override
+        protected Agent getSource() {
+            return null;
+        }
+
+        @Override
+        protected String getId(Response response) {
+            return null;
+        }
+    }
 }

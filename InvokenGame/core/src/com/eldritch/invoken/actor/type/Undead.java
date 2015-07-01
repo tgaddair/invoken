@@ -9,8 +9,8 @@ public class Undead extends HumanNpc {
     public static float MAX_VELOCITY = 15f;
     public static float MAX_ACCELERATION = 10f;
     
-    public Undead(NonPlayerActor data, float x, float y, String asset, Level level) {
-        super(data, x, y, MAX_VELOCITY, asset, level);
+    public Undead(NonPlayerActor data, float x, float y, String defaultAsset, Level level) {
+        super(data, x, y, MAX_VELOCITY, getAsset(data, defaultAsset), level);
         setMaxLinearAcceleration(MAX_ACCELERATION);
     }
     
@@ -25,5 +25,12 @@ public class Undead extends HumanNpc {
     @Override
     protected SoundEffect getDeathSound() {
         return SoundEffect.GHOST_DEATH;
+    }
+    
+    private static String getAsset(NonPlayerActor data, String defaultAsset) {
+        if (data.getParams().hasBodyType()) {
+            return String.format("sprite/characters/%s.png", data.getParams().getBodyType());
+        }
+        return defaultAsset;
     }
 }

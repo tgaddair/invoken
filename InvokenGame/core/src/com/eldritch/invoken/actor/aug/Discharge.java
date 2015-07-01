@@ -59,7 +59,7 @@ public class Discharge extends ProjectileAugmentation {
             return 0;
         }
 
-        float idealDst = 3f;
+        float idealDst = 2f;
         return Heuristics.randomizedDistanceScore(owner.dst2(target), idealDst * idealDst);
     }
 

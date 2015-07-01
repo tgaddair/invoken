@@ -8,6 +8,7 @@ import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.actor.AgentInventory;
 import com.eldritch.invoken.actor.ConversationHandler;
+import com.eldritch.invoken.actor.ConversationHandler.DefaultConversationHandler;
 import com.eldritch.invoken.actor.PreparedAugmentations;
 import com.eldritch.invoken.actor.Profession;
 import com.eldritch.invoken.actor.aug.Augmentation;
@@ -259,7 +260,7 @@ public class Player extends SteeringAgent {
     @Override
     public ConversationHandler getDialogueHandler() {
         // not implemented
-        return null;
+        return new DefaultConversationHandler();
     }
 
     public PlayerActor serialize() {
