@@ -1,6 +1,5 @@
 package com.eldritch.invoken.actor.aug;
 
-import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.actor.type.Agent;
@@ -17,6 +16,9 @@ import com.eldritch.invoken.util.Heuristics;
 import com.eldritch.invoken.util.Utils;
 
 public class Drain extends ProjectileAugmentation {
+    public static final TextureRegion[] SPLASH_REGIONS = GameScreen.getMergedRegion(
+            "sprite/effects/drain1.png", 120, 120);
+    
     private static final int DAMAGE_SCALE = 25;
     private static final int BASE_COST = 10;
 
@@ -73,9 +75,6 @@ public class Drain extends ProjectileAugmentation {
     }
 
     public static class DrainBullet extends HandledBullet {
-        private static final TextureRegion[] SPLASH_REGIONS = GameScreen.getMergedRegion(
-                "sprite/effects/drain1.png", 120, 120);
-
         private static final float BULLET_SIZE = 1.5f;
         private static final float SPLASH_SIZE = 4f;
         private static final float MAX_SEEK_DST2 = 25f;
