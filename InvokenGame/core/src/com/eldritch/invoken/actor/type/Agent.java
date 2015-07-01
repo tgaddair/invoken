@@ -1267,6 +1267,11 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         if (!isAlive()) {
             return;
         }
+        
+        // scale down friendly fire
+        if (isAlly(source)) {
+            magnitude *= 0.1f;
+        }
 
         if (!getThreat().hasEnemies()) {
             // we're not in combat with anyone, so this is considered assault

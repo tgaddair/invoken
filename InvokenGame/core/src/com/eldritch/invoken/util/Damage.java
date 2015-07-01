@@ -53,6 +53,10 @@ public class Damage {
     
     private ReifiedDamage getDamage(Agent defender) {
         float scale = getBaseScale(defender);
+        if (attacker.isAlly(defender)) {
+            // scale down friendly fire
+            scale *= 0.1f;
+        }
         if (!reified.containsKey(defender)) {
             ReifiedDamage damage = new ReifiedDamage();
             float attackMod = attacker.getInfo().getAttackModifier();
