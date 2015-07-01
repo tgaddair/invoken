@@ -16,6 +16,7 @@ public abstract class AnimatedAction extends AugmentationAction {
 	
 	boolean canApply = false;
 	float holdTime = 0;
+	float postHoldTime = 0;
 	
 	public AnimatedAction(Agent agent, Activity activity, Augmentation aug) {
 	    this(agent, activity, agent.getAttackSpeed(), aug);
@@ -36,8 +37,10 @@ public abstract class AnimatedAction extends AugmentationAction {
 		    if (holdTime > getHoldSeconds()) {
 		        canApply = true;
 		    }
-		} else {
+		} else if (!isAnimationFinished()) {
 	        stateTime += delta * getOwner().getInfo().getEfficacy() * timeScale;
+		} else {
+		    postHoldTime += delta;
 		}
 		
 		if (!applied && canApply()) {
@@ -47,6 +50,10 @@ public abstract class AnimatedAction extends AugmentationAction {
 	}
 	
 	protected float getHoldSeconds() {
+	    return 0;
+	}
+	
+	protected float getPostHoldSeconds() {
 	    return 0;
 	}
 	
@@ -73,14 +80,18 @@ public abstract class AnimatedAction extends AugmentationAction {
 	public Activity getActivity() {
 		return activity;
 	}
-
+	
 	@Override
 	public boolean isFinished() {
-		return owner.getAnimation(activity).isAnimationFinished(stateTime);
+		return isAnimationFinished() && postHoldTime > getPostHoldSeconds();
 	}
 	
 	@Override
 	public boolean isAnimated() {
 		return true;
+	}
+	
+	private boolean isAnimationFinished() {
+	    return owner.getAnimation(activity).isAnimationFinished(stateTime);
 	}
 }

@@ -128,6 +128,11 @@ public class RendWeapon extends Augmentation {
         // }
 
         @Override
+        public float getPostHoldSeconds() {
+            return 0.2f;
+        }
+        
+        @Override
         public Vector2 getPosition() {
             return target;
         }
