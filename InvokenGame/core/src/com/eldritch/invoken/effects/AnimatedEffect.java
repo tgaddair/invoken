@@ -27,7 +27,12 @@ public abstract class AnimatedEffect extends BasicEffect {
 
     public AnimatedEffect(Agent actor, TextureRegion[] region, Vector2 offset, float width,
             float height) {
-        this(actor, actor.getRenderPosition(), region, offset, 0, Animation.PlayMode.NORMAL, 0.1f,
+        this(actor, region, offset, width, height, 0.1f);
+    }
+    
+    public AnimatedEffect(Agent actor, TextureRegion[] region, Vector2 offset, float width,
+            float height, float frameDuration) {
+        this(actor, actor.getRenderPosition(), region, offset, 0, Animation.PlayMode.NORMAL, frameDuration,
                 width, height);
     }
 

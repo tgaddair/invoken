@@ -1,9 +1,5 @@
 package com.eldritch.invoken.actor.aug;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.InvokenGame;
@@ -13,19 +9,26 @@ import com.eldritch.invoken.actor.type.HandledBullet;
 import com.eldritch.invoken.effects.AnimatedEffect;
 import com.eldritch.invoken.effects.Bleed;
 import com.eldritch.invoken.effects.Stunned;
+import com.eldritch.invoken.gfx.AnimatedEntity;
 import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.proto.Effects.DamageType;
 import com.eldritch.invoken.screens.GameScreen;
 import com.eldritch.invoken.util.Damage;
 import com.eldritch.invoken.util.Heuristics;
 import com.eldritch.invoken.util.SoundManager.SoundEffect;
+import com.eldritch.invoken.util.Utils;
 
 public class Discharge extends ProjectileAugmentation {
+    private static final TextureRegion[] DISINTEGRATE_REGIONS = GameScreen
+            .getMergedRegion(getDisintegrateAssets());
+
     private static final TextureRegion BOLT_TEXTURE = new TextureRegion(
             GameScreen.getTexture("sprite/effects/bolt.png"));
 
-    private static final int DAMAGE_SCALE = 25;
-    private static final int BASE_COST = 10;
+    private static final float DISINTEGRATE_SIZE = 1f;
+    private static final float BOLT_SIZE = 2.5f;
+    private static final int DAMAGE_SCALE = 35;
+    private static final int BASE_COST = 25;
     private static final float BULLET_VELOCITY = 15;
 
     private static class Holder {
@@ -67,7 +70,7 @@ public class Discharge extends ProjectileAugmentation {
         public DischargeAction(Agent actor, Vector2 target) {
             super(actor, Activity.Swipe, Discharge.this);
             this.target = target;
-            
+
             // charge the attack
             ChargeBolt charge = new ChargeBolt(owner);
             owner.addEffect(charge);
@@ -87,7 +90,7 @@ public class Discharge extends ProjectileAugmentation {
         public Vector2 getPosition() {
             return target;
         }
-        
+
         @Override
         public float getHoldSeconds() {
             return holdDuration;
@@ -96,7 +99,7 @@ public class Discharge extends ProjectileAugmentation {
 
     public static class DischargeBolt extends HandledBullet {
         public DischargeBolt(Agent owner, float theta) {
-            super(owner, BOLT_TEXTURE, 2f, BULLET_VELOCITY * 0.5f, Damage.from(owner,
+            super(owner, BOLT_TEXTURE, BOLT_SIZE, BULLET_VELOCITY * 0.5f, Damage.from(owner,
                     DamageType.RADIOACTIVE, getBaseDamage(owner)));
             rotate(theta);
         }
@@ -113,6 +116,13 @@ public class Discharge extends ProjectileAugmentation {
             return BOLT_TEXTURE;
         }
 
+        @Override
+        protected void onFinish() {
+            getOwner().getLocation().addEntity(
+                    new AnimatedEntity(DISINTEGRATE_REGIONS, getPosition().cpy(), Utils.getSize(
+                            DISINTEGRATE_REGIONS[0], DISINTEGRATE_SIZE), 0.1f));
+        }
+
         private static int getBaseDamage(Agent owner) {
             return (int) (DAMAGE_SCALE * owner.getInfo().getExecuteModifier());
         }
@@ -122,7 +132,7 @@ public class Discharge extends ProjectileAugmentation {
         private static final TextureRegion[] regions = GameScreen.getMergedRegion(getAssets());
 
         public ChargeBolt(Agent target) {
-            super(target, regions, target.getForwardVector().scl(-1), 1, 1);
+            super(target, regions, target.getForwardVector().scl(-1), 1, 1, 0.05f);
         }
 
         @Override
@@ -144,5 +154,18 @@ public class Discharge extends ProjectileAugmentation {
         private static String format(int i) {
             return "sprite/effects/charge/charge" + i + ".png";
         }
+    }
+
+    private static String[] getDisintegrateAssets() {
+        String[] assets = new String[11];
+        for (int i = 0; i <= 9; i++) {
+            assets[i] = format("0" + i);
+        }
+        assets[10] = format("10");
+        return assets;
+    }
+
+    private static String format(String i) {
+        return "sprite/effects/disintegrate/disintegrate" + i + ".png";
     }
 }
