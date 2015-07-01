@@ -248,7 +248,12 @@ public class Attack extends Sequence<Npc> {
     private static class DesiresCover extends BooleanTask {
         @Override
         protected boolean check(Npc npc) {
-            return npc.getInventory().hasRangedWeapon() && npc.hasTarget();
+            if (!npc.hasTarget()) {
+                return false;
+            }
+            
+            // ranged attackers desire cover
+            return npc.isCloaked() || npc.getInventory().hasRangedWeapon();
         }
     }
 

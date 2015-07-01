@@ -39,6 +39,11 @@ public class Cloaked extends BasicEffect {
             return;
         }
 
+        // drain(delta);
+
+    }
+
+    private void drain(float delta) {
         // drains continuously while moving
         float c = cost * delta;
         if (c <= target.getInfo().getEnergy()) {

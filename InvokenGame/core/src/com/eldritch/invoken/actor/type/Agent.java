@@ -1085,6 +1085,20 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     public boolean canKeepTarget(Agent other) {
         return isNear(other);
     }
+    
+    public boolean inFieldOfView(Agent other) {
+        // field of view: compute angle between character-character and forward vectors
+        Vector2 a = getForwardVector();
+        Vector2 b = other.position.cpy().sub(position).nor();
+        double theta = Math.atan2(a.x * b.y - a.y * b.x, a.x * b.x + a.y * b.y);
+        return Math.abs(theta) <= getFieldOfView();
+    }
+
+    public double getFieldOfView() {
+        // default FOV is 90 degrees to each side, giving 180 degrees of total peripheral vision
+        // scale this down when calm
+        return Math.PI / 2f;
+    }
 
     public boolean hasVisibilityTo(Agent other) {
         return hasLineOfSight(other) && visibleNeighbors.contains(other);
@@ -1391,18 +1405,6 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
             float scale = isAiming() ? 1f : 2f;
             info.restore(delta * scale);
         }
-        
-        // cloaking
-        if (isCloaked()) {
-            float maxDst2 = 5 * 5;
-            float dst2 = dst2(getLocation().getPlayer());
-            if (getLocation().getPlayer() == this || dst2 > maxDst2) {
-                setAlpha(getCloakAlpha());
-            } else {
-                float a = MathUtils.lerp(getCloakAlpha(), 1f, 1f - dst2 / maxDst2);
-                setAlpha(a);
-            }
-        }
 
         // update inventory
         info.getInventory().update(delta);
@@ -1588,9 +1590,22 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
 
     @Override
     public void render(float delta, OrthogonalTiledMapRenderer renderer) {
+        // cloaking
+        if (isCloaked()) {
+            float maxDst2 = 5 * 5;
+            float dst2 = dst2(getLocation().getPlayer());
+            if (getLocation().getPlayer() == this || dst2 > maxDst2) {
+                setAlpha(getCloakAlpha());
+            } else {
+                float a = MathUtils.lerp(getCloakAlpha(), 1f, 1f - dst2 / maxDst2);
+                setAlpha(a);
+            }
+        }
+        
+        // render character
         render(renderer);
 
-        // render all unfinished effects
+        // render all active unfinished effects
         for (Effect effect : effects) {
             if (!effect.isFinished()) {
                 effect.render(delta, renderer);

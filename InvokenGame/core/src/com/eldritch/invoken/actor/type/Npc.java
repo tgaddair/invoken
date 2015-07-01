@@ -498,20 +498,11 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
     public NavigatedSteerable getLastSeen() {
         return lastSeen;
     }
-
-    public boolean inFieldOfView(Agent other) {
-        // field of view: compute angle between character-character and forward vectors
-        Vector2 a = getForwardVector();
-        Vector2 b = other.position.cpy().sub(position).nor();
-        double theta = Math.atan2(a.x * b.y - a.y * b.x, a.x * b.x + a.y * b.y);
-        return Math.abs(theta) <= getFieldOfView();
-    }
-
+    
+    @Override
     public double getFieldOfView() {
-        // default FOV is 90 degrees to each side, giving 180 degrees of total peripheral vision
-        // scale this down when calm
         float scale = threat.getAwareness();
-        return (Math.PI / 2f) * scale;
+        return super.getFieldOfView() * scale;
     }
 
     public Behavior getBehavior() {
