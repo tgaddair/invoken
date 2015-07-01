@@ -17,6 +17,7 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -407,6 +408,9 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     }
 
     public float dst2(Locatable other) {
+        if (other == this) {
+            return 0;
+        }
         if (!distanceCache.containsKey(other)) {
             distanceCache.put(other, getPosition().dst2(other.getPosition()));
         }
@@ -1386,6 +1390,18 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         if (!isStunted()) {
             float scale = isAiming() ? 1f : 2f;
             info.restore(delta * scale);
+        }
+        
+        // cloaking
+        if (isCloaked()) {
+            float maxDst2 = 5 * 5;
+            float dst2 = dst2(getLocation().getPlayer());
+            if (getLocation().getPlayer() == this || dst2 > maxDst2) {
+                setAlpha(getCloakAlpha());
+            } else {
+                float a = MathUtils.lerp(getCloakAlpha(), 1f, 1f - dst2 / maxDst2);
+                setAlpha(a);
+            }
         }
 
         // update inventory

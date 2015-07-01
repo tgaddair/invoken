@@ -223,7 +223,7 @@ public class Player extends SteeringAgent {
 
     @Override
     public float getCloakAlpha() {
-        // player should be able to see themself on screen even when invisible
+        // players should be able to see themselves on screen even when invisible
         return 0.1f;
     }
 
