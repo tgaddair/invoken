@@ -21,7 +21,6 @@ public class Slash extends AnimatedEffect {
 				Vector2.Zero,
 				strike.cpy().sub(target.getPosition()).angle(),
 				Animation.PlayMode.NORMAL, 0.035f, r, r);
-		;
 	}
 	
 	@Override

@@ -1,11 +1,16 @@
 package com.eldritch.invoken.actor.aug;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.actor.type.HandledBullet;
+import com.eldritch.invoken.effects.AnimatedEffect;
 import com.eldritch.invoken.effects.Bleed;
 import com.eldritch.invoken.effects.Stunned;
 import com.eldritch.invoken.location.Level;
@@ -65,8 +70,9 @@ public class Discharge extends ProjectileAugmentation {
 
         @Override
         public void apply(Level level) {
+            owner.addEffect(new ChargeBolt(owner));
             for (int i = 0; i < 8; i++) {
-                float theta = (float) (Math.PI / 4) * i;
+                float theta = 45f * i;
                 DischargeBolt bullet = new DischargeBolt(owner, theta);
                 level.addEntity(bullet);
             }
@@ -80,7 +86,7 @@ public class Discharge extends ProjectileAugmentation {
 
     public static class DischargeBolt extends HandledBullet {
         public DischargeBolt(Agent owner, float theta) {
-            super(owner, BOLT_TEXTURE, 1f, BULLET_VELOCITY * 0.5f, Damage.from(owner,
+            super(owner, BOLT_TEXTURE, 2f, BULLET_VELOCITY * 0.5f, Damage.from(owner,
                     DamageType.RADIOACTIVE, getBaseDamage(owner)));
             rotate(theta);
         }
@@ -99,6 +105,34 @@ public class Discharge extends ProjectileAugmentation {
 
         private static int getBaseDamage(Agent owner) {
             return (int) (DAMAGE_SCALE * owner.getInfo().getExecuteModifier());
+        }
+    }
+
+    public static class ChargeBolt extends AnimatedEffect {
+        private static final TextureRegion[] regions = GameScreen.getMergedRegion(getAssets());
+
+        public ChargeBolt(Agent target) {
+            super(target, regions, target.getForwardVector().scl(-1), 1, 1);
+        }
+
+        @Override
+        protected void doApply() {
+        }
+
+        @Override
+        public void dispel() {
+        }
+
+        private static String[] getAssets() {
+            String[] assets = new String[19];
+            for (int i = 0; i < 19; i++) {
+                assets[i] = format(i + 1);
+            }
+            return assets;
+        }
+
+        private static String format(int i) {
+            return "sprite/effects/charge/charge" + i + ".png";
         }
     }
 }
