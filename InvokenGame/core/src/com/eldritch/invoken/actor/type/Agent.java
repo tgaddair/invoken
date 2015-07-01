@@ -1592,7 +1592,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     public void render(float delta, OrthogonalTiledMapRenderer renderer) {
         // cloaking
         if (isCloaked()) {
-            float maxDst2 = 5 * 5;
+            float maxDst2 = Cloak.MAX_DST2;
             float dst2 = dst2(getLocation().getPlayer());
             if (getLocation().getPlayer() == this || dst2 > maxDst2) {
                 setAlpha(getCloakAlpha());

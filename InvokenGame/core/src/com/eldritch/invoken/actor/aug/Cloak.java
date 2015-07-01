@@ -7,6 +7,7 @@ import com.eldritch.invoken.effects.Cloaked;
 import com.eldritch.invoken.location.Level;
 
 public class Cloak extends Augmentation {
+    public static final float MAX_DST2 = 5 * 5;
     private static final int BASE_COST = 3;
     
 	private static class Holder {
