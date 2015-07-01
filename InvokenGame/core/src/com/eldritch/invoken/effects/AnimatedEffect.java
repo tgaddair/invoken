@@ -50,6 +50,10 @@ public abstract class AnimatedEffect extends BasicEffect {
         this.width = width;
         this.height = height;
     }
+    
+    public float getDuration() {
+        return animation.getAnimationDuration();
+    }
 
     @Override
     public void update(float delta) {

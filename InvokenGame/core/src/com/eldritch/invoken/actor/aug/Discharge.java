@@ -42,7 +42,7 @@ public class Discharge extends ProjectileAugmentation {
 
     @Override
     public Action getAction(Agent owner, Vector2 target) {
-        return new DrainAction(owner, target);
+        return new DischargeAction(owner, target);
     }
 
     @Override
@@ -60,17 +60,22 @@ public class Discharge extends ProjectileAugmentation {
         return Heuristics.randomizedDistanceScore(owner.dst2(target), idealDst * idealDst);
     }
 
-    public class DrainAction extends AnimatedAction {
+    public class DischargeAction extends AnimatedAction {
         private final Vector2 target;
+        private final float holdDuration;
 
-        public DrainAction(Agent actor, Vector2 target) {
+        public DischargeAction(Agent actor, Vector2 target) {
             super(actor, Activity.Swipe, Discharge.this);
             this.target = target;
+            
+            // charge the attack
+            ChargeBolt charge = new ChargeBolt(owner);
+            owner.addEffect(charge);
+            holdDuration = charge.getDuration();
         }
 
         @Override
         public void apply(Level level) {
-            owner.addEffect(new ChargeBolt(owner));
             for (int i = 0; i < 8; i++) {
                 float theta = 45f * i;
                 DischargeBolt bullet = new DischargeBolt(owner, theta);
@@ -81,6 +86,11 @@ public class Discharge extends ProjectileAugmentation {
         @Override
         public Vector2 getPosition() {
             return target;
+        }
+        
+        @Override
+        public float getHoldSeconds() {
+            return holdDuration;
         }
     }
 
