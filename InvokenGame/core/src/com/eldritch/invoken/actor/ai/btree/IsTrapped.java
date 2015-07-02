@@ -7,7 +7,7 @@ import com.eldritch.invoken.location.NaturalVector2;
 public class IsTrapped extends BooleanTask {
     @Override
     protected boolean check(Npc npc) {
-        return isTrapped(npc);
+        return npc.getInventory().hasMeleeWeapon() && isTrapped(npc);
     }
 
     public static boolean isTrapped(Agent agent) {
