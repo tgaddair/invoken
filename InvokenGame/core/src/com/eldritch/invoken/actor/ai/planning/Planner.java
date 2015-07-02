@@ -51,6 +51,7 @@ public class Planner {
 
     public static Planner from(Npc npc) {
         List<Desire> desires = new ArrayList<>();
+        desires.add(new Buff(npc));
         desires.add(new Meander(npc));
         
         if (npc.isGuard()) {
