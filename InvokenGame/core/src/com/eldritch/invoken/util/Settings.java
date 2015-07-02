@@ -47,7 +47,7 @@ public class Settings {
 	public static final boolean ENABLE_FOG = false;
 	
 	// debug settings
-	public static final boolean GOD_MODE = false;
+	public static final boolean GOD_MODE = true;
 	public static final boolean DEBUG_DRAW = false;
 	public static final boolean DEBUG_LIGHTS = false;
 	public static final boolean DEBUG_COVER = false;
@@ -67,7 +67,7 @@ public class Settings {
 	// hash code: 257920894
 	// seed: -509684375158687360
 	
-	public static DebugGraph DRAW_GRAPH = DebugGraph.Disposition;
+	public static DebugGraph DRAW_GRAPH = DebugGraph.LOS;
 	public enum DebugGraph {
 	    None, Disposition, Enemies, LOS, Visible
 	}

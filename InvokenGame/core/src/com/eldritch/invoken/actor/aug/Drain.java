@@ -79,8 +79,8 @@ public class Drain extends ProjectileAugmentation {
         private static final float SPLASH_SIZE = 4f;
         private static final float MAX_SEEK_DST2 = 25f;
         private static final float ADJUSTMENT_STEP = 0.05f;
-        private static final float V_SCALE = 2.5f;
-        private static final float V_MAX = 12f;
+        private static final float V_SCALE = 5f;
+        private static final float V_MAX = 15f;
 
         private static final TextureRegion region = new TextureRegion(
                 GameScreen.getTexture("sprite/effects/infect.png"));
