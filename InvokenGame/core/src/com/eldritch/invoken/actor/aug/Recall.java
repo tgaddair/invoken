@@ -66,6 +66,10 @@ public class Recall extends Augmentation {
                     // too far to merit recall
                     return 0;
                 }
+                if (target.inFieldOfView(owner.getMark().toVector2())) {
+                    // the target can see our mark, so no point in recalling
+                    return 0;
+                }
                 
                 float score = Heuristics.randomizedDistanceScore(dst2, 0);
                 return score;

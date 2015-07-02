@@ -1108,9 +1108,13 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     }
     
     public boolean inFieldOfView(Agent other) {
+        return inFieldOfView(other.position);
+    }
+    
+    public boolean inFieldOfView(Vector2 otherPosition) {
         // field of view: compute angle between character-character and forward vectors
         Vector2 a = getForwardVector();
-        Vector2 b = other.position.cpy().sub(position).nor();
+        Vector2 b = tempV.set(otherPosition).sub(position).nor();
         double theta = Math.atan2(a.x * b.y - a.y * b.x, a.x * b.x + a.y * b.y);
         return Math.abs(theta) <= getFieldOfView();
     }
