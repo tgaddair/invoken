@@ -134,15 +134,15 @@ public class ItemTable extends MajorAssetTable<Item> {
             builder.append("Covers:", coversCheck);
             builder.nextLine();
 
-            builder.appendRow("fill:120dlu");
+            builder.appendRow("fill:40dlu");
             builder.append("Effects:", new AssetTablePanel(effectTable));
             builder.nextLine();
 
-            builder.appendRow("fill:120dlu");
+            builder.appendRow("fill:40dlu");
             builder.append("Requirements:", new AssetTablePanel(requirementTable));
             builder.nextLine();
 
-            builder.appendRow("fill:120dlu");
+            builder.appendRow("fill:40dlu");
             builder.append("Damage Mods:", new AssetTablePanel(damageModTable));
             builder.nextLine();
 
