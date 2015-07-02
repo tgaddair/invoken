@@ -40,17 +40,18 @@ public class Patrol extends AbstractDesire {
     @Override
     public void activeUpdate(float delta) {
         if (destination == null) {
-            setDestination(delta);
+            setDestination();
         } else {
-            if (destination != null) {
-                updateDestination(delta);
-            }
+            updateDestination(delta);
         }
     }
 
     @Override
     public float getValue() {
-        return 0.5f;
+        if (owner.hasSquad() && owner.getSquad().getLeader() == owner) {
+            return 0.5f;
+        }
+        return 0f;
     }
 
     private void updateDestination(float delta) {
@@ -58,11 +59,11 @@ public class Patrol extends AbstractDesire {
         NaturalVector2 current = owner.getNaturalPosition();
         if (destination == current || current.mdst(destination.getNaturalPosition()) < MIN_MDST
                 || elapsed > DURATION) {
-            setDestination(delta);
+            setDestination();
         }
     }
 
-    private void setDestination(float delta) {
+    private void setDestination() {
         // navigate towards this agent as part of a routine patrol
         setDestination(patrolPoints.get(index));
         index = (index + 1) % patrolPoints.size();
@@ -76,11 +77,12 @@ public class Patrol extends AbstractDesire {
 
     @Override
     public boolean act() {
-        if (destination != null) {
-            owner.getLastSeen().setPosition(destination);
-            Pursue.act(owner);
-            return true;
+        if (destination == null) {
+            setDestination();
         }
-        return false;
+        
+        owner.getLastSeen().setPosition(destination);
+        Pursue.act(owner);
+        return true;
     }
 }

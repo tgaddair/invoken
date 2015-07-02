@@ -14,8 +14,8 @@ public class Planner {
 
     private Planner(Npc owner, List<Desire> desires) {
         this.owner = owner;
-        this.desires.add(new Loiter(owner));
         this.desires.addAll(desires);
+        this.desires.add(new Loiter(owner));
         active = getGreatestDesire();
     }
     
@@ -52,7 +52,6 @@ public class Planner {
     public static Planner from(Npc npc) {
         List<Desire> desires = new ArrayList<>();
         desires.add(new Buff(npc));
-        desires.add(new Meander(npc));
         
         if (npc.isGuard()) {
             desires.add(new Guard(npc));
@@ -62,10 +61,10 @@ public class Planner {
             desires.add(new Hunt(npc));
         }
         
-        if (npc.hasSquad() && npc.getSquad().getLeader() == npc) {
-            desires.add(new Patrol(npc));
-        }
+        // TODO: check actor scenario for the Patrol routine
+        desires.add(new Patrol(npc));
         
+        desires.add(new Meander(npc));
         return new Planner(npc, desires);
     }
 }
