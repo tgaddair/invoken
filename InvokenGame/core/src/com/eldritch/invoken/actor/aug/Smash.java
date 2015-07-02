@@ -8,7 +8,7 @@ import com.eldritch.invoken.actor.items.MeleeWeapon;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.effects.Bleed;
-import com.eldritch.invoken.effects.Slash;
+import com.eldritch.invoken.effects.Stunned;
 import com.eldritch.invoken.gfx.AnimatedEntity;
 import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.proto.Effects.DamageType;
@@ -22,7 +22,7 @@ import com.eldritch.invoken.util.SoundManager.SoundEffect;
 public class Smash extends Augmentation {
     private static final TextureRegion[] SMOKE_REGIONS = GameScreen.getMergedRegion(
             "sprite/effects/smoke-ring.png", 128, 128);
-    
+
     private static class Holder {
         private static final Smash INSTANCE = new Smash();
     }
@@ -74,7 +74,6 @@ public class Smash extends Augmentation {
     public class SmashAction extends AnimatedAction {
         private final Vector2 strike = new Vector2();
         private final Vector2 target;
-        private final Damage damage;
 
         public SmashAction(Agent actor, Vector2 target) {
             super(actor, Activity.Swipe, Smash.this);
@@ -84,7 +83,6 @@ public class Smash extends Augmentation {
             owner.setDirection(owner.getRelativeDirection(target));
 
             MeleeWeapon weapon = actor.getInventory().getMeleeWeapon();
-            this.damage = Damage.from(actor, DamageType.PHYSICAL, (int) weapon.getDamage());
         }
 
         @Override
@@ -97,11 +95,20 @@ public class Smash extends Augmentation {
 
             Vector2 center = getCenter(owner.getPosition(), target, range);
             owner.getLocation().addEntity(
-                    new AnimatedEntity(SMOKE_REGIONS, center, new Vector2(range * 1.5f, range * 1.5f), 0.05f));
+                    new AnimatedEntity(SMOKE_REGIONS, center, new Vector2(range * 1.5f,
+                            range * 1.5f), 0.05f));
             InvokenGame.SOUND_MANAGER.playAtPoint(SoundEffect.MELEE_SWING, owner.getPosition());
 
+            Vector2 direction = new Vector2();
             for (Agent neighbor : owner.getNeighbors()) {
                 if (neighbor.inRange(center, radius)) {
+                    float scale = Heuristics.distanceScore(center.dst2(neighbor.getPosition()), 0);
+                    direction.set(neighbor.getPosition()).sub(owner.getPosition()).nor().scl(scale);
+                    neighbor.applyForce(direction.scl(500));
+                    neighbor.addEffect(new Stunned(owner, neighbor, 0.2f));
+
+                    Damage damage = Damage.from(owner, DamageType.PHYSICAL,
+                            (int) (weapon.getDamage() * scale));
                     neighbor.addEffect(new Bleed(neighbor, damage));
                     InvokenGame.SOUND_MANAGER.playAtPoint(SoundEffect.MELEE_HIT,
                             neighbor.getPosition());
