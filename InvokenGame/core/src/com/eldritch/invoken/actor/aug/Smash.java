@@ -1,5 +1,6 @@
 package com.eldritch.invoken.actor.aug;
 
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.InvokenGame;
@@ -8,25 +9,30 @@ import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.effects.Bleed;
 import com.eldritch.invoken.effects.Slash;
+import com.eldritch.invoken.gfx.AnimatedEntity;
 import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.proto.Effects.DamageType;
+import com.eldritch.invoken.screens.GameScreen;
 import com.eldritch.invoken.ui.DebugEntityRenderer;
 import com.eldritch.invoken.util.Damage;
 import com.eldritch.invoken.util.Heuristics;
 import com.eldritch.invoken.util.Settings;
 import com.eldritch.invoken.util.SoundManager.SoundEffect;
 
-public class RendWeapon extends Augmentation {
+public class Smash extends Augmentation {
+    private static final TextureRegion[] SMOKE_REGIONS = GameScreen.getMergedRegion(
+            "sprite/effects/smoke-ring.png", 128, 128);
+    
     private static class Holder {
-        private static final RendWeapon INSTANCE = new RendWeapon();
+        private static final Smash INSTANCE = new Smash();
     }
 
-    public static RendWeapon getInstance() {
+    public static Smash getInstance() {
         return Holder.INSTANCE;
     }
 
-    private RendWeapon() {
-        super("rend");
+    private Smash() {
+        super(false);
     }
 
     @Override
@@ -36,7 +42,7 @@ public class RendWeapon extends Augmentation {
 
     @Override
     public Action getAction(Agent owner, Vector2 target) {
-        return new RendAction(owner, target);
+        return new SmashAction(owner, target);
     }
 
     @Override
@@ -65,13 +71,13 @@ public class RendWeapon extends Augmentation {
                 owner.dst2(target), weapon.getRange()) : 0;
     }
 
-    public class RendAction extends AnimatedAction {
+    public class SmashAction extends AnimatedAction {
         private final Vector2 strike = new Vector2();
         private final Vector2 target;
         private final Damage damage;
 
-        public RendAction(Agent actor, Vector2 target) {
-            super(actor, Activity.Swipe, RendWeapon.this);
+        public SmashAction(Agent actor, Vector2 target) {
+            super(actor, Activity.Swipe, Smash.this);
             this.target = target;
 
             // update agent to fact the direction of their strike
@@ -90,7 +96,8 @@ public class RendWeapon extends Augmentation {
             strike.add(owner.getForwardVector().scl(radius));
 
             Vector2 center = getCenter(owner.getPosition(), target, range);
-            owner.addEffect(new Slash(owner, center, range * 0.75f));
+            owner.getLocation().addEntity(
+                    new AnimatedEntity(SMOKE_REGIONS, center, new Vector2(range * 1.5f, range * 1.5f), 0.05f));
             InvokenGame.SOUND_MANAGER.playAtPoint(SoundEffect.MELEE_SWING, owner.getPosition());
 
             for (Agent neighbor : owner.getNeighbors()) {
@@ -129,7 +136,7 @@ public class RendWeapon extends Augmentation {
 
         @Override
         public float getPostHoldSeconds() {
-            return 0.2f;
+            return 0.5f;
         }
 
         @Override
