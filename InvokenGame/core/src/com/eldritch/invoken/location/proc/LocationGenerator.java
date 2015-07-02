@@ -120,6 +120,10 @@ public class LocationGenerator {
         return new NormalMappedTile(atlas.findRegion(biome + asset), normalAtlas.findRegion(biome
                 + asset));
     }
+    
+    public Level generate() {
+        return generate(ImmutableList.<Locations.Location> of(), Settings.START_FLOOR);
+    }
 
     public Level generate(List<Locations.Location> protos, int floor) {
         System.out.println("global seed: " + globalSeed);

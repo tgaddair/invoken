@@ -187,7 +187,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
             // InvokenGame.LOCATION_READER.readAsset("DebugArena");
             LocationGenerator generator = new LocationGenerator(gameState, getBiome(),
                     rand.nextLong());
-            level = generator.generate(ImmutableList.<Locations.Location> of(), 0);
+            level = generator.generate();
             onLoad(level, Optional.<PlayerActor> absent());
 
             // create a new player
