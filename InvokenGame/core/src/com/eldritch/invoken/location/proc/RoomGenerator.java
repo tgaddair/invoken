@@ -23,7 +23,9 @@ import com.eldritch.invoken.location.NaturalVector2;
 import com.eldritch.invoken.location.proc.RoomDecorator.RoomType;
 import com.eldritch.invoken.proto.Locations.ControlPoint;
 import com.eldritch.invoken.proto.Locations.Encounter;
+import com.eldritch.invoken.proto.Locations.Encounter.ActorParams.ActorScenario;
 import com.eldritch.invoken.proto.Locations.Room;
+import com.eldritch.invoken.proto.Locations.Room.Size;
 import com.eldritch.invoken.proto.Locations.Territory;
 import com.eldritch.invoken.util.Pair;
 import com.google.common.base.Optional;
@@ -742,6 +744,20 @@ public class RoomGenerator extends BspGenerator {
             return restricted;
         }
         
+        private boolean matchesRoom(Encounter encounter, Room room) {
+            int agentCount = 0;
+            for (ActorScenario scenario : encounter.getActorParams().getActorScenarioList()) {
+                agentCount += scenario.getMin();
+            }
+            
+            if (agentCount > 3) {
+                return room.getSize() == Size.LARGE;
+            } else if (agentCount > 1) {
+                return room.getSize() != Size.SMALL;
+            }
+            return true;
+        }
+        
         private boolean matchesPoint(Encounter encounter, ControlPoint cp) {
             if (encounter.getControlPointIdList().isEmpty()) {
                 return !cp.getOrigin();
@@ -757,7 +773,7 @@ public class RoomGenerator extends BspGenerator {
             List<Encounter> available = new ArrayList<>();
             for (Encounter encounter : encounters) {
                 if (matchesFaction(encounter, rooms)) {
-                    if (matchesPoint(encounter, cp)) {
+                    if (matchesRoom(encounter, room) && matchesPoint(encounter, cp)) {
                         total += encounter.getWeight();
                         available.add(encounter);
                     }
