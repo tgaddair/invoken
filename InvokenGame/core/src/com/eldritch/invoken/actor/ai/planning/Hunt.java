@@ -6,6 +6,7 @@ import com.eldritch.invoken.actor.ai.planning.Desire.AbstractDesire;
 import com.eldritch.invoken.actor.aug.Ping;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Npc;
+import com.eldritch.invoken.actor.util.Locatable;
 
 public class Hunt extends AbstractDesire {
     private static final float DURATION = 5f;
@@ -31,7 +32,7 @@ public class Hunt extends AbstractDesire {
             elapsed = 0;
         }
 
-        Agent target = owner.getLastSeen().getTarget();
+        Agent target = getTarget();
         if (target != null && owner.isEnemy(target)) {
             Pursue.act(owner);
             return true;
@@ -45,7 +46,15 @@ public class Hunt extends AbstractDesire {
     }
     
     private Agent getPrey() {
-        return owner.getLastSeen().getTarget();
+        return getTarget();
+    }
+    
+    private Agent getTarget() {
+        Locatable lastSeen = owner.getLastSeen().getTarget();
+        if (lastSeen != null && lastSeen instanceof Agent) {
+            return (Agent) lastSeen;
+        }
+        return null;
     }
 
     private boolean ping() {

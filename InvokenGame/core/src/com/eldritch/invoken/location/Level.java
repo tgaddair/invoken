@@ -53,7 +53,7 @@ import com.eldritch.invoken.actor.factions.Faction;
 import com.eldritch.invoken.actor.items.Item;
 import com.eldritch.invoken.actor.pathfinding.PathManager;
 import com.eldritch.invoken.actor.type.Agent;
-import com.eldritch.invoken.actor.type.CoverPoint;
+import com.eldritch.invoken.actor.type.FixedPoint;
 import com.eldritch.invoken.actor.type.DummyPlayer;
 import com.eldritch.invoken.actor.type.InanimateEntity;
 import com.eldritch.invoken.actor.type.Npc;
@@ -119,7 +119,7 @@ public class Level {
     private final List<SecurityCamera> securityCameras = new ArrayList<>();
     private final Set<NaturalVector2> activeTiles = new HashSet<>();
     private final Set<NaturalVector2> filledTiles = new HashSet<>();
-    private final List<CoverPoint> activeCover = new ArrayList<>();
+    private final List<FixedPoint> activeCover = new ArrayList<>();
     private final LightManager lightManager;
     private final NormalMapShader normalMapShader;
     private final OverlayLightMasker lightMasker;
@@ -239,6 +239,10 @@ public class Level {
 
     public Player getPlayer() {
         return player;
+    }
+    
+    public Set<ConnectedRoom> getRooms() {
+        return map.getRooms().getRooms();
     }
 
     public void addMarker(String marker, int count) {
@@ -829,14 +833,14 @@ public class Level {
 
     private void resetActiveCover() {
         activeCover.clear();
-        for (CoverPoint point : map.getCover()) {
+        for (FixedPoint point : map.getCover()) {
             if (activeTiles.contains(getCellPosition(point.getPosition()))) {
                 activeCover.add(point);
             }
         }
     }
 
-    public List<CoverPoint> getActiveCover() {
+    public List<FixedPoint> getActiveCover() {
         return activeCover;
     }
 

@@ -5,7 +5,6 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
-import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.actor.pathfinding.LocationGraphPath;
 import com.eldritch.invoken.actor.pathfinding.LocationNode;
 import com.eldritch.invoken.actor.pathfinding.PathManager;
@@ -20,7 +19,7 @@ public class NavigatedSteerable extends BasicSteerable implements Locatable {
     private final Agent npc;
     private final PathManager pathManager;
     private final Vector2 lastSeen = new Vector2();
-    private Agent target = null;
+    private Locatable target = null;
     private boolean arrived = false; // done navigating
 
     // path state
@@ -102,15 +101,15 @@ public class NavigatedSteerable extends BasicSteerable implements Locatable {
         return lastSeen;
     }
 
-    public void locate(Agent target) {
+    public void locate(Locatable target) {
         setPosition(target, true);
     }
 
-    public void setPosition(Agent target) {
+    public void setPosition(Locatable target) {
         setPosition(target, false);
     }
 
-    public void setPosition(Agent target, boolean invalidate) {
+    public void setPosition(Locatable target, boolean invalidate) {
         if (target != this.target || invalidate) {
             // invalidate the path
             resetPath();
@@ -162,7 +161,7 @@ public class NavigatedSteerable extends BasicSteerable implements Locatable {
         return super.getPosition();
     }
 
-    public Agent getTarget() {
+    public Locatable getTarget() {
         return target;
     }
 

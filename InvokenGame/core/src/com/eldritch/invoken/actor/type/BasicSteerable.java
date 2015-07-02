@@ -3,8 +3,7 @@ package com.eldritch.invoken.actor.type;
 import com.badlogic.gdx.ai.steer.Steerable;
 import com.badlogic.gdx.math.Vector2;
 
-public class BasicSteerable implements Steerable<Vector2> {
-    private final Vector2 position = new Vector2();
+public class BasicSteerable extends BasicLocatable implements Steerable<Vector2> {
     private final Vector2 velocity = new Vector2();
     private boolean tagged = false;
     
@@ -13,7 +12,7 @@ public class BasicSteerable implements Steerable<Vector2> {
     }
     
     public BasicSteerable(Vector2 position) {
-        this.position.set(position);
+        super(position);
     }
     
     public void setPosition(Vector2 position) {
@@ -54,11 +53,6 @@ public class BasicSteerable implements Steerable<Vector2> {
 
     @Override
     public void setMaxAngularAcceleration(float maxAngularAcceleration) {
-    }
-
-    @Override
-    public Vector2 getPosition() {
-        return position;
     }
 
     @Override

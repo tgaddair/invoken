@@ -33,7 +33,7 @@ import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.InvokenGame;
-import com.eldritch.invoken.actor.type.CoverPoint;
+import com.eldritch.invoken.actor.type.FixedPoint;
 import com.eldritch.invoken.gfx.Light;
 import com.eldritch.invoken.gfx.NormalMappedTile;
 import com.eldritch.invoken.location.ConnectedRoom;
@@ -278,8 +278,8 @@ public class LocationGenerator {
         return level;
     }
 
-    private List<CoverPoint> getCover(LocationLayer base, CollisionLayer collision) {
-        List<CoverPoint> cover = new ArrayList<CoverPoint>();
+    private List<FixedPoint> getCover(LocationLayer base, CollisionLayer collision) {
+        List<FixedPoint> cover = new ArrayList<FixedPoint>();
         for (int x = 0; x < collision.getWidth(); x++) {
             for (int y = 0; y < collision.getHeight(); y++) {
                 if (collision.getCell(x, y) != null) {
@@ -292,7 +292,7 @@ public class LocationGenerator {
                                         && hasOpenNeighbor(x, y, dx, dy, base, collision)) {
                                     // now check the points along the perpendicular from the
                                     // collision tile
-                                    cover.add(new CoverPoint(new Vector2(x + dx + 0.5f, y + dy
+                                    cover.add(new FixedPoint(new Vector2(x + dx + 0.5f, y + dy
                                             + 0.5f)));
                                 }
                             }

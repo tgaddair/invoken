@@ -62,6 +62,10 @@ public class Planner {
             desires.add(new Hunt(npc));
         }
         
+        if (npc.hasSquad() && npc.getSquad().getLeader() == npc) {
+            desires.add(new Patrol(npc));
+        }
+        
         return new Planner(npc, desires);
     }
 }

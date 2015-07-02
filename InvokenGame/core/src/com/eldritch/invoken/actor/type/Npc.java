@@ -56,6 +56,7 @@ import com.eldritch.invoken.actor.ai.btree.SquadTactics;
 import com.eldritch.invoken.actor.ai.planning.Planner;
 import com.eldritch.invoken.actor.aug.Augmentation;
 import com.eldritch.invoken.actor.items.Fragment;
+import com.eldritch.invoken.actor.util.Locatable;
 import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.proto.Actors.ActorParams.Species;
 import com.eldritch.invoken.proto.Actors.DialogueTree.Choice;
@@ -88,7 +89,7 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
 
     // AI controllers
     private final BehaviorTree<Npc> behaviorTree;
-    private CoverPoint cover = null;
+    private FixedPoint cover = null;
     private final NpcThreatMonitor threat;
     private final FatigueMonitor fatigue;
     private final IntimidationMonitor intimidation;
@@ -170,7 +171,7 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
         return squad.get();
     }
 
-    public CoverPoint getCover() {
+    public FixedPoint getCover() {
         return cover;
     }
 
@@ -467,7 +468,7 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
     }
     
     @Override
-    public void locate(Agent other) {
+    public void locate(Locatable other) {
         lastSeen.locate(other);
     }
 
@@ -574,11 +575,11 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
             int count = 0;
             if (getHide().getTarget() != null && !getLocation().getActiveCover().isEmpty()) {
                 Steerable<Vector2> target = getHide().getTarget();
-                CoverPoint bestCover = null;
+                FixedPoint bestCover = null;
                 boolean bestLos = false;
                 float bestDistance = Float.POSITIVE_INFINITY;
 
-                for (CoverPoint coverPoint : getLocation().getActiveCover()) {
+                for (FixedPoint coverPoint : getLocation().getActiveCover()) {
                     Vector2 position = coverPoint.getPosition();
                     if (!getLocation()
                             .hasLineOfSight(Npc.this, getHide().getTarget().getPosition(), position)) {

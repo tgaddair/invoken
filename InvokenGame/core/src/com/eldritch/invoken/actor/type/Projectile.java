@@ -26,7 +26,7 @@ public abstract class Projectile extends CollisionEntity implements AgentHandler
     }
 
     public Projectile(Agent owner, float width, float height, float speed, Damage damage) {
-        super(width, height);
+        super(owner.getWeaponSentry().getPosition(), width, height);
         this.speed = speed;
         this.damage = damage;
         
@@ -78,7 +78,6 @@ public abstract class Projectile extends CollisionEntity implements AgentHandler
         stateTime = 0;
 
         WeaponSentry sentry = source.getWeaponSentry();
-        position.set(sentry.getPosition());
         owner = source;
         velocity.set(sentry.getDirection());
         velocity.scl(speed);

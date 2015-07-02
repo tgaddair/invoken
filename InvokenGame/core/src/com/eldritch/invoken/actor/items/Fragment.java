@@ -79,8 +79,7 @@ public class Fragment extends Item {
         private boolean finished = false;
 
         public FragmentEntity(Vector2 position, int quanitity, float r) {
-            super(r, r);
-            this.position.set(position);
+            super(position, r, r);
             this.quantity = quanitity;
         }
 

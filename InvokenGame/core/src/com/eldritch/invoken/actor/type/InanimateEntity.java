@@ -40,12 +40,11 @@ public abstract class InanimateEntity extends CollisionEntity implements Drawabl
     private float radius = 0;
 
     public InanimateEntity(TiledMapTileLayer layer, NaturalVector2 position, BodyType bodyType) {
-        super(getWidth(layer, false), getHeight(layer, false));
+        super(position.toVector2(), getWidth(layer, false), getHeight(layer, false));
         this.layer = layer;
         this.offset = Vector2.Zero;
         this.zOff = getOffset(layer, false).y;
         this.bodyType = bodyType;
-        this.position.set(position.x, position.y);
     }
 
     public void addCollisionLayer(TiledMapTileLayer collisionLayer) {

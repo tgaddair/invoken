@@ -3,18 +3,16 @@ package com.eldritch.invoken.actor.type;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.eldritch.invoken.actor.Entity;
-import com.eldritch.invoken.actor.util.Locatable;
 import com.eldritch.invoken.location.Level;
-import com.eldritch.invoken.location.NaturalVector2;
 
-public abstract class CollisionEntity implements Entity, Locatable {
-    protected final Vector2 position = new Vector2();
+public abstract class CollisionEntity extends BasicLocatable implements Entity {
     protected final Vector2 velocity = new Vector2();
     protected final Vector2 heading = new Vector2();
     private final float width;
     private final float height;
     
-    public CollisionEntity(float width, float height) {
+    public CollisionEntity(Vector2 position, float width, float height) {
+        super(position);
         this.width = width;
         this.height = height;
     }
@@ -48,16 +46,8 @@ public abstract class CollisionEntity implements Entity, Locatable {
         return getPosition().y;
     }
     
-    public Vector2 getPosition() {
-        return position;
-    }
-    
     public Vector2 getVelocity() {
         return velocity;
-    }
-    
-    public NaturalVector2 getNaturalPosition() {
-        return NaturalVector2.of((int) getPosition().x, (int) getPosition().y);
     }
     
     protected void updateHeading() {

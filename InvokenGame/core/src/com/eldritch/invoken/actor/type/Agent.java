@@ -121,7 +121,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     private final MotionTracker motionTracker = new MotionTracker(this);
     private final List<Agent> neighbors = new ArrayList<>();
     private final Set<Agent> visibleNeighbors = new HashSet<>();
-    private final Map<Agent, Boolean> lineOfSightCache = new HashMap<>();
+    private final Map<Locatable, Boolean> lineOfSightCache = new HashMap<>();
     private final Map<Locatable, Float> distanceCache = new HashMap<>();
     private final LinkedList<Action> actions = new LinkedList<>();
     private final List<Effect> effects = new LinkedList<>();
@@ -189,8 +189,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
 
     public Agent(float x, float y, float width, float height, Level level,
             Map<Activity, Map<Direction, Animation>> animations) {
-        super(width, height);
-        setPosition(x, y);
+        super(new Vector2(x, y), width, height);
         this.animations = animations;
 
         radius = getBodyRadius();
@@ -1067,7 +1066,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
 
     public abstract ThreatMonitor<?> getThreat();
 
-    public void locate(Agent other) {
+    public void locate(Locatable other) {
     }
 
     public void setTarget(Agent target) {
@@ -1130,8 +1129,14 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         return Math.PI / 2f;
     }
 
-    public boolean hasVisibilityTo(Agent other) {
-        return hasLineOfSight(other) && visibleNeighbors.contains(other);
+    public boolean hasVisibilityTo(Locatable other) {
+        if (other instanceof Agent) {
+            Agent agent = (Agent) other;
+            if (!visibleNeighbors.contains(agent)) {
+                return false;
+            }
+        }
+        return hasLineOfSight(other);
     }
 
     public boolean isVisible(Agent other) {
@@ -1169,10 +1174,10 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         return hasLineOfSight(other);
     }
 
-    public boolean hasLineOfSight(Agent other) {
+    public boolean hasLineOfSight(Locatable other) {
         if (!lineOfSightCache.containsKey(other)) {
             losHandler.reset(other);
-            lineOfSightCache.put(other, rayCast(other.body.getPosition()));
+            lineOfSightCache.put(other, rayCast(other.getPhysicalPosition()));
         }
         return lineOfSightCache.get(other);
     }
@@ -1782,6 +1787,16 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         body = createBody(x, y, level.getWorld());
         position.set(x, y);
     }
+    
+    @Override
+    public Vector2 getPhysicalPosition() {
+        return body.getPosition();
+    }
+
+    @Override
+    public Iterable<Fixture> getFixtures() {
+        return body.getFixtureList();
+    }
 
     public abstract boolean canSpeak();
 
@@ -1875,15 +1890,15 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     private class LineOfSightHandler implements RayCastCallback {
         private final short mask = Settings.BIT_SHOOTABLE;
         private boolean lineOfSight = true;
-        private Agent target = null;
+        private Locatable target = null;
 
         public boolean hasLineOfSight() {
             return lineOfSight;
         }
 
-        public void reset(Agent agent) {
+        public void reset(Locatable other) {
             lineOfSight = true;
-            target = agent;
+            target = other;
         }
 
         @Override
@@ -1912,7 +1927,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
             }
 
             if (target != null) {
-                for (Fixture f : target.body.getFixtureList()) {
+                for (Fixture f : target.getFixtures()) {
                     if (fixture == f) {
                         // it's not an obstruction if it's the thing we're
                         // aiming at

@@ -14,7 +14,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.eldritch.invoken.actor.ai.NpcThreatMonitor;
 import com.eldritch.invoken.actor.type.Agent;
-import com.eldritch.invoken.actor.type.CoverPoint;
+import com.eldritch.invoken.actor.type.FixedPoint;
 import com.eldritch.invoken.actor.type.Npc;
 
 public class DebugEntityRenderer {
@@ -126,12 +126,12 @@ public class DebugEntityRenderer {
 		sr.end();
 	}
 
-	public void renderCover(Agent target, List<CoverPoint> coverPoints,
+	public void renderCover(Agent target, List<FixedPoint> coverPoints,
 			OrthographicCamera camera) {
 		sr.setProjectionMatrix(camera.combined);
 		sr.begin(ShapeType.Line);
 		sr.setColor(Color.WHITE);
-		for (CoverPoint point : coverPoints) {
+		for (FixedPoint point : coverPoints) {
 			Vector2 position = point.getPosition();
 			if (target != null) {
 				sr.setColor(target.getLocation().hasLineOfSight(target,
