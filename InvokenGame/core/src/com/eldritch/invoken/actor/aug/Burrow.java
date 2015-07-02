@@ -1,13 +1,20 @@
 package com.eldritch.invoken.actor.aug;
 
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.effects.BasicEffect;
+import com.eldritch.invoken.gfx.AnimatedEntity;
 import com.eldritch.invoken.location.Level;
+import com.eldritch.invoken.screens.GameScreen;
 import com.eldritch.invoken.util.Heuristics;
 
 public class Burrow extends Augmentation {
+    private static final TextureRegion[] DUST_REGIONS = GameScreen.getMergedRegion(
+            "sprite/effects/dust.png", 128, 128);
+    private static final float DUST_SIZE = 1.5f;
+
     private static class Holder {
         private static final Burrow INSTANCE = new Burrow();
     }
@@ -70,6 +77,7 @@ public class Burrow extends Augmentation {
         public void apply(Level level) {
             owner.toggleOn(Burrow.class);
             owner.addEffect(new Burrowed(owner));
+            addDust(owner);
         }
 
         @Override
@@ -86,6 +94,7 @@ public class Burrow extends Augmentation {
         @Override
         public void apply(Level level) {
             owner.toggleOff(Burrow.class);
+            addDust(owner);
         }
 
         @Override
@@ -117,4 +126,10 @@ public class Burrow extends Augmentation {
         }
     }
 
+    private static void addDust(Agent owner) {
+        Level level = owner.getLocation();
+        AnimatedEntity anim = new AnimatedEntity(DUST_REGIONS, owner.getPosition().cpy(),
+                new Vector2(DUST_SIZE, DUST_SIZE), 0.05f);
+        level.addEntity(anim);
+    }
 }
