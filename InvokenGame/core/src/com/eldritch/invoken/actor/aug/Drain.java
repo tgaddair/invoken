@@ -122,7 +122,7 @@ public class Drain extends ProjectileAugmentation {
             float bestDistance = MAX_SEEK_DST2;
             Agent nearest = null;
             for (Agent neighbor : getOwner().getNeighbors()) {
-                if (!neighbor.isAlive() || !getOwner().getThreat().hasEnemy(neighbor)) {
+                if (!neighbor.isAlive() || !getOwner().isEnemy(neighbor)) {
                     continue;
                 }
 

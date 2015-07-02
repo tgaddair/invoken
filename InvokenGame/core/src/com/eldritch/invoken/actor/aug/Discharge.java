@@ -59,8 +59,17 @@ public class Discharge extends ProjectileAugmentation {
             return 0;
         }
 
-        float idealDst = 1f;
-        return Heuristics.randomizedDistanceScore(owner.dst2(target), idealDst * idealDst);
+        float penalty = 1f;
+        final float maxDst = 2f;
+        for (Agent neighbor : owner.getVisibleNeighbors()) {
+            if (owner.isAlly(neighbor) && owner.dst2(neighbor) < maxDst * maxDst) {
+                penalty *= 0.25f;
+            }
+        }
+
+        final float idealDst = 1f;
+        float score = Heuristics.randomizedDistanceScore(owner.dst2(target), idealDst * idealDst);
+        return score * penalty;
     }
 
     public class DischargeAction extends AnimatedAction {
