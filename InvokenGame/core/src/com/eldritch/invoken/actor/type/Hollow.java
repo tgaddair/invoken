@@ -6,7 +6,6 @@ import java.util.Map;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.eldritch.invoken.actor.type.Agent.Direction;
 import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.proto.Actors.NonPlayerActor;
 import com.eldritch.invoken.proto.Effects.DamageType;
@@ -69,6 +68,7 @@ public class Hollow extends Npc {
     public static class Golem extends Hollow {
         private static final int PX = 96;
         private static final int ATTACK_PX = 144;
+        private static final float SCALE = 0.85f;
 
         public Golem(NonPlayerActor data, float x, float y, String asset, Level level) {
             super(data, x, y, 2.5f, 2.5f, MAX_VELOCITY, getAnimations(asset), level);
@@ -76,8 +76,8 @@ public class Hollow extends Npc {
         
         @Override
         protected void draw(Batch batch, TextureRegion frame, Direction direction) {
-            float width = frame.getRegionWidth() * Settings.SCALE;
-            float height = frame.getRegionHeight() * Settings.SCALE;
+            float width = frame.getRegionWidth() * Settings.SCALE * SCALE;
+            float height = frame.getRegionHeight() * Settings.SCALE * SCALE;
             batch.draw(frame, position.x - width / 2, position.y - height / 2, width, height);
         }
         
