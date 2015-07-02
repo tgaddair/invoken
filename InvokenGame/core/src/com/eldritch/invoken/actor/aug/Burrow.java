@@ -13,7 +13,7 @@ import com.eldritch.invoken.util.Heuristics;
 public class Burrow extends Augmentation {
     private static final TextureRegion[] DUST_REGIONS = GameScreen.getMergedRegion(
             "sprite/effects/dust.png", 128, 128);
-    private static final float DUST_SIZE = 1.5f;
+    private static final float DUST_SIZE = 4.5f;
 
     private static class Holder {
         private static final Burrow INSTANCE = new Burrow();
@@ -59,6 +59,9 @@ public class Burrow extends Augmentation {
     @Override
     public float quality(Agent owner, Agent target, Level level) {
         if (owner.isToggled(Burrow.class)) {
+            if (owner.dst2(target) > 3 * 3) {
+                return 0f;
+            }
             return Heuristics.randomizedDistanceScore(owner.dst2(target), 0);
         } else {
             if (!target.isAlive()) {
@@ -77,7 +80,6 @@ public class Burrow extends Augmentation {
         public void apply(Level level) {
             owner.toggleOn(Burrow.class);
             owner.addEffect(new Burrowed(owner));
-            addDust(owner);
         }
 
         @Override
@@ -94,7 +96,6 @@ public class Burrow extends Augmentation {
         @Override
         public void apply(Level level) {
             owner.toggleOff(Burrow.class);
-            addDust(owner);
         }
 
         @Override
@@ -115,10 +116,14 @@ public class Burrow extends Augmentation {
 
         @Override
         public void dispel() {
+            target.getBody().setActive(true);
+            addDust(target);
         }
 
         @Override
         protected void doApply() {
+            target.getBody().setActive(false);
+            addDust(target);
         }
 
         @Override
