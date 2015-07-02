@@ -6,6 +6,7 @@ import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.effects.BasicEffect;
 import com.eldritch.invoken.effects.Jaunting;
+import com.eldritch.invoken.effects.Teleported;
 import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.location.NaturalVector2;
 

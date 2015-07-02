@@ -30,6 +30,7 @@ import com.eldritch.invoken.actor.aug.Mirror;
 import com.eldritch.invoken.actor.aug.Observe;
 import com.eldritch.invoken.actor.aug.Paralyze;
 import com.eldritch.invoken.actor.aug.Ping;
+import com.eldritch.invoken.actor.aug.Recall;
 import com.eldritch.invoken.actor.aug.RendWeapon;
 import com.eldritch.invoken.actor.aug.Resurrect;
 import com.eldritch.invoken.actor.aug.Scramble;
@@ -268,7 +269,10 @@ public enum Profession {
 		
 		@Override
 		public List<Augmentation> getStartingAugmentations() {
-			return ImmutableList.<Augmentation>of(FireWeapon.getInstance(), Trap.getInstance());
+			return ImmutableList.<Augmentation>of(
+			        FireWeapon.getInstance(),
+			        Trap.getInstance(),
+			        Recall.getInstance());
 		}
 
         @Override
