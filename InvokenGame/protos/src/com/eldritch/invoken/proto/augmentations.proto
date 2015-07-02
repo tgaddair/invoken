@@ -38,4 +38,5 @@ enum AugmentationProto {
 	Web = 27;
 	CrawlerParalyze = 28;
 	Smash = 32;
+	Burrow = 33;
 }
