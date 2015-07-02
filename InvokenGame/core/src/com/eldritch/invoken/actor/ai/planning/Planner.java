@@ -63,6 +63,7 @@ public class Planner {
         
         // TODO: check actor scenario for the Patrol routine
         desires.add(new Patrol(npc));
+        desires.add(new Follow(npc));
         
         desires.add(new Meander(npc));
         return new Planner(npc, desires);
