@@ -22,9 +22,12 @@ import com.eldritch.invoken.proto.Locations.Room.Furniture;
 public class RoomDecorator {
     // threshold of furniture to open ground in room, past which we need to stop adding furniture
     public static final double MAX_FURNITURE = 0.5;
+    
+    public static final int MIN_ROOM_SIZE = 8;
+    public static final int MAX_ROOM_SIZE = 20;
 
     enum RoomType {
-        SMALL(0, 9), MEDIUM(10, 12), LARGE(12, Integer.MAX_VALUE);
+        SMALL(0, 10), MEDIUM(11, 15), LARGE(16, Integer.MAX_VALUE);
 
         private final int min;
         private final int max;

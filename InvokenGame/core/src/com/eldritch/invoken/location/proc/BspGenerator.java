@@ -21,9 +21,6 @@ public class BspGenerator {
     // 4 -> lots of corridors
     private static final float ROOM_SPARSITY = 4.5f;
 
-    public static final int MinRoomSize = 7;
-    public static final int MaxRoomSize = 15;
-
     private final Random rand;
     private CellType[][] map;
     private final int Width;
@@ -125,8 +122,8 @@ public class BspGenerator {
         while (placed < RoomCount) {
             // choose to place a rectangle room, or a templated room
             // if (btrial()) {
-            int width = range(MinRoomSize, MaxRoomSize) + 2;
-            int height = range(MinRoomSize, MaxRoomSize) + 2;
+            int width = range(RoomDecorator.MIN_ROOM_SIZE, RoomDecorator.MAX_ROOM_SIZE) + 2;
+            int height = range(RoomDecorator.MIN_ROOM_SIZE, RoomDecorator.MAX_ROOM_SIZE) + 2;
             if (PlaceRectRoom(bounds, width, height) != null)
                 placed++;
             // } else {

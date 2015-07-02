@@ -546,8 +546,8 @@ public class RoomGenerator extends BspGenerator {
         int count = 0;
         while (count < 1000) {
             if (cp.getRoomIdList().isEmpty()) {
-                int width = range(MinRoomSize, MaxRoomSize);
-                int height = range(MinRoomSize, MaxRoomSize);
+                int width = range(RoomDecorator.MIN_ROOM_SIZE, RoomDecorator.MAX_ROOM_SIZE);
+                int height = range(RoomDecorator.MIN_ROOM_SIZE, RoomDecorator.MAX_ROOM_SIZE);
                 Rectangle rect = randomRect(followed, dx, dy, width, height);
                 if (canPlace(rect, bounds)) {
                     place(rect);
@@ -585,8 +585,8 @@ public class RoomGenerator extends BspGenerator {
     }
 
     private int range(RoomType type) {
-        int min = Math.max(type.getMin(), MinRoomSize);
-        int max = Math.min(type.getMax(), MaxRoomSize);
+        int min = Math.max(type.getMin(), RoomDecorator.MIN_ROOM_SIZE);
+        int max = Math.min(type.getMax(), RoomDecorator.MAX_ROOM_SIZE);
         return range(min, max);
     }
 
