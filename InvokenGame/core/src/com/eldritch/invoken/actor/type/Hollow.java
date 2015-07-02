@@ -4,8 +4,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.eldritch.invoken.actor.type.Agent.Activity;
+import com.eldritch.invoken.actor.type.Agent.Direction;
 import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.proto.Actors.NonPlayerActor;
 import com.eldritch.invoken.proto.Effects.DamageType;
@@ -70,7 +71,19 @@ public class Hollow extends Npc {
         private static final int ATTACK_PX = 144;
 
         public Golem(NonPlayerActor data, float x, float y, String asset, Level level) {
-            super(data, x, y, 3, 3, MAX_VELOCITY, getAnimations(asset), level);
+            super(data, x, y, 2.5f, 2.5f, MAX_VELOCITY, getAnimations(asset), level);
+        }
+        
+        @Override
+        protected void draw(Batch batch, TextureRegion frame, Direction direction) {
+            float width = frame.getRegionWidth() * Settings.SCALE;
+            float height = frame.getRegionHeight() * Settings.SCALE;
+            batch.draw(frame, position.x - width / 2, position.y - height / 2, width, height);
+        }
+        
+        @Override
+        public float getAttackSpeed() {
+            return 1f;
         }
 
         @Override
