@@ -14,6 +14,8 @@ public class Burrow extends Augmentation {
     private static final TextureRegion[] DUST_REGIONS = GameScreen.getMergedRegion(
             "sprite/effects/dust.png", 128, 128);
     private static final float DUST_SIZE = 4.5f;
+    
+    private static final float MINDST = 4;
 
     private static class Holder {
         private static final Burrow INSTANCE = new Burrow();
@@ -59,7 +61,7 @@ public class Burrow extends Augmentation {
     @Override
     public float quality(Agent owner, Agent target, Level level) {
         if (owner.isToggled(Burrow.class)) {
-            if (owner.dst2(target) > 3 * 3) {
+            if (owner.dst2(target) > MINDST * MINDST) {
                 return 0f;
             }
             return Heuristics.randomizedDistanceScore(owner.dst2(target), 0);
