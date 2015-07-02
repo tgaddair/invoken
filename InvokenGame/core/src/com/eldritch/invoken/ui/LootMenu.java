@@ -11,6 +11,7 @@ import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.actor.items.Item;
 import com.eldritch.invoken.actor.type.Player;
 import com.eldritch.invoken.actor.util.Lootable;
+import com.eldritch.invoken.proto.Items;
 import com.eldritch.invoken.state.Inventory.ItemState;
 import com.eldritch.invoken.util.DefaultInputListener;
 import com.eldritch.invoken.util.Settings;
@@ -63,7 +64,10 @@ public class LootMenu {
 	public void setup(Player player, Lootable looting) {
 		table.clear();
 		for (ItemState item : looting.getInventory().getItems()) {
-			addItemButton(item, player, looting);
+		    Items.Item data = item.getItem().getData();
+		    if (data.getDroppable() && !data.getHidden()) {
+		        addItemButton(item, player, looting);
+		    }
 		}
 	}
 	
