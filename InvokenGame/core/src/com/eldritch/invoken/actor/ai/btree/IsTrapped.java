@@ -1,5 +1,6 @@
 package com.eldritch.invoken.actor.ai.btree;
 
+import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Npc;
 import com.eldritch.invoken.location.NaturalVector2;
 
@@ -9,10 +10,10 @@ public class IsTrapped extends BooleanTask {
         return isTrapped(npc);
     }
 
-    public static boolean isTrapped(Npc npc) {
+    public static boolean isTrapped(Agent agent) {
         // check our surrounding cells
         int obstacles = 0;
-        NaturalVector2 current = npc.getNaturalPosition();
+        NaturalVector2 current = agent.getNaturalPosition();
         for (int dx = -1; dx <= 1; dx++) {
             for (int dy = -1; dy <= 1; dy++) {
                 if (dx == 0 && dy == 0) {
@@ -20,7 +21,7 @@ public class IsTrapped extends BooleanTask {
                 }
 
                 // 3 obstacles means we're trapped
-                if (npc.getLocation().isObstacle(current.x + dx, current.y + dy)) {
+                if (agent.getLocation().isObstacle(current.x + dx, current.y + dy)) {
                     obstacles++;
                 }
             }

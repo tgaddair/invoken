@@ -1,6 +1,7 @@
 package com.eldritch.invoken.actor.aug;
 
 import com.badlogic.gdx.math.Vector2;
+import com.eldritch.invoken.actor.ai.btree.IsTrapped;
 import com.eldritch.invoken.actor.items.MeleeWeapon;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Agent.Activity;
@@ -8,6 +9,7 @@ import com.eldritch.invoken.effects.BasicEffect;
 import com.eldritch.invoken.effects.Teleported;
 import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.location.NaturalVector2;
+import com.eldritch.invoken.util.Heuristics;
 
 public class Recall extends Augmentation {
     private static class Holder {
@@ -53,11 +55,24 @@ public class Recall extends Augmentation {
 
     @Override
     public float quality(Agent owner, Agent target, Level level) {
-        if (owner.getInventory().hasMeleeWeapon()) {
-            MeleeWeapon weapon = owner.getInventory().getMeleeWeapon();
-            return owner.dst2(target) > weapon.getRange() ? 2 : 0;
+        if (!owner.hasMark()) {
+            // quality of placing mark
+            return IsTrapped.isTrapped(owner) ? 0 : 2;
+        } else {
+            // quality of recalling
+            if (IsTrapped.isTrapped(owner)) {
+                float dst2 = owner.dst2(target);
+                if (dst2 > 5 * 5) {
+                    // too far to merit recall
+                    return 0;
+                }
+                
+                float score = Heuristics.randomizedDistanceScore(dst2, 0);
+                return score;
+            }
+            
+            return 0;
         }
-        return 0;
     }
 
     public class MarkAction extends AnimatedAction {
