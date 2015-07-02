@@ -102,6 +102,7 @@ public class Recall extends Augmentation {
 	    public Marked(Agent owner, NaturalVector2 mark) {
 	        super(owner);
 	        this.mark = mark;
+	        owner.setMark(mark);
 	    }
 
 	    @Override
@@ -116,7 +117,6 @@ public class Recall extends Augmentation {
 	    
 	    @Override
 	    protected void doApply() {
-	        target.setMark(mark);
 	    }
 
 	    @Override

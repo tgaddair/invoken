@@ -23,7 +23,7 @@ public class Teleported extends BasicEffect {
 	
 	@Override
     protected void doApply() {
-		target.setPosition(destination.x, destination.y);
+		target.teleport(destination.toVector2());
 		applied = true;
     }
 

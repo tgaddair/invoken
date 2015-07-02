@@ -769,6 +769,10 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         }
         return false;
     }
+    
+    public void teleport(Vector2 position) {
+        getBody().setTransform(position, 0);
+    }
 
     public void setPosition(float x, float y) {
         position.set(x, y);
