@@ -46,7 +46,7 @@ public class Drain extends ProjectileAugmentation {
 
     @Override
     public float quality(Agent owner, Agent target, Level level) {
-        if (!target.isAlive()) {
+        if (!target.isAlive() || target == owner) {
             return 0;
         }
 

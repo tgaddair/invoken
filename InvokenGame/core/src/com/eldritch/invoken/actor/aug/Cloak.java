@@ -44,24 +44,25 @@ public class Cloak extends Augmentation {
     
     @Override
     public int getCost(Agent owner) {
-        return owner.isCloaked() ? 0 : BASE_COST;
+        return !owner.isCloaked() ? BASE_COST : 0;
     }
     
     @Override
     public float quality(Agent owner, Agent target, Level level) {
-        float dst2 = owner.dst2(target);
-        if (owner.isCloaked()) {
-            if (dst2 > 70) {
-                return 10f;
-            }
-            return -1f;
-        }
-        
-        float score = 0f;
-        if (dst2 < 50 && dst2 > 5) {
-            score = 10f;
-        }
-        return score;
+//        float dst2 = owner.dst2(target);
+//        if (owner.isCloaked()) {
+//            if (dst2 > 70) {
+//                return 10f;
+//            }
+//            return -1f;
+//        }
+//        
+//        float score = 0f;
+//        if (dst2 < 50 && dst2 > 5) {
+//            score = 10f;
+//        }
+//        return score;
+        return !owner.isCloaked() ? 10 : 0;
     }
     
     public class CloakAction extends AnimatedAction {

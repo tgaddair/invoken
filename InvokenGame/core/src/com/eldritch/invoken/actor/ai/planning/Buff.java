@@ -20,7 +20,7 @@ public class Buff extends AbstractDesire {
     private final BehaviorTree<Npc> tree;
     private boolean active = false;
     private boolean done = false;
-    
+
     public Buff(Npc owner) {
         super(owner);
         tree = new BehaviorTree<Npc>(createBehavior(), owner);
@@ -28,9 +28,11 @@ public class Buff extends AbstractDesire {
 
     @Override
     public boolean act() {
-        // active will be flipped to true if all the preconditions on the tree are satisfied
+        // active will be flipped to true if all the preconditions on the tree
+        // are satisfied
         active = false;
         tree.step();
+        done = true;
         return active;
     }
 
@@ -44,7 +46,7 @@ public class Buff extends AbstractDesire {
         sequence.addChild(new BuffTask());
         return sequence;
     }
-    
+
     private static class BuffTask extends SuccessTask {
         @Override
         protected void doFor(Npc npc) {
@@ -53,8 +55,7 @@ public class Buff extends AbstractDesire {
             PreparedAugmentations prepared = npc.getInfo().getAugmentations();
             for (Augmentation aug : prepared.getAugmentations()) {
                 if (aug.hasEnergy(npc)
-                        && aug.isValidWithAiming(npc, aug.getBestTarget(npc, npc,
-                                tmpTarget))) {
+                        && aug.isValidWithAiming(npc, aug.getBestTarget(npc, npc, tmpTarget))) {
                     float quality = aug.quality(npc, npc, level);
                     if (quality > 0) {
                         prepared.prepare(aug);

@@ -17,13 +17,13 @@ public class Cloaked extends BasicEffect {
     @Override
     protected void doApply() {
         target.setCloaked(true);
-        target.setStunted(true); // cannot regain energy
+        // target.setStunted(true); // cannot regain energy
     }
 
     @Override
     public void dispel() {
         target.setCloaked(false);
-        target.setStunted(false);
+        // target.setStunted(false);
         target.getInfo().getAugmentations().removeSelfAugmentation(aug);
     }
 

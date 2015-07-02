@@ -131,7 +131,8 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     private Agent followed = null;
 
     // hostilities: agents with negative reaction who have attacked us
-    private final Set<Agent> assaulters = new HashSet<>(); // assaulters attack those who have
+    private final Set<Agent> assaulters = new HashSet<>(); // assaulters attack
+                                                           // those who have
                                                            // no enemies
     private final Map<Agent, Float> relations = new HashMap<>();
 
@@ -208,7 +209,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     public Body getBody() {
         return body;
     }
-    
+
     protected short getCategoryBits() {
         return Settings.BIT_AGENT;
     }
@@ -299,7 +300,8 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         targetingHandler.reset();
 
         if (source.equals(target)) {
-            // if we don't do this check explicitly, we can get the following error:
+            // if we don't do this check explicitly, we can get the following
+            // error:
             // Expression: r.LengthSquared() > 0.0f
             return false;
         }
@@ -320,11 +322,11 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
             InvokenGame.SOUND_MANAGER.playAtPoint(SoundEffect.SWISH, getPosition());
         }
     }
-    
+
     public void thrust(Locatable target) {
         thrust(target.getPosition());
     }
-    
+
     public void thrust(Vector2 target) {
         tempV.set(target).sub(getPosition()).nor();
         dodge(tempV);
@@ -391,7 +393,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     public GameCamera getCamera() {
         return camera;
     }
-    
+
     public float getAttackSpeed() {
         return 1;
     }
@@ -471,7 +473,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     }
 
     protected float damage(float value) {
-        setCloaked(false); // damage breaks cloaking
+        // setCloaked(false); // damage breaks cloaking
         return info.damage(value);
     }
 
@@ -570,19 +572,19 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     }
 
     protected abstract void handleConfusion(boolean confused);
-    
+
     public boolean hasMark() {
         return mark.isPresent();
     }
-    
+
     public NaturalVector2 getMark() {
         return mark.get();
     }
-    
+
     public void setMark(NaturalVector2 point) {
         mark = Optional.of(point);
     }
-    
+
     public void resetMark() {
         mark = Optional.absent();
     }
@@ -624,7 +626,8 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
 
     public void addFollower(Agent follower) {
         if (isFollowing(follower)) {
-            // bidirectional following relationships can produce nasty side effects like infinite
+            // bidirectional following relationships can produce nasty side
+            // effects like infinite
             // loops, so this case must be explicitly disallowed
             follower.removeFollower(this);
         }
@@ -769,7 +772,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         }
         return false;
     }
-    
+
     public void teleport(Vector2 position) {
         getBody().setTransform(position, 0);
     }
@@ -1106,13 +1109,14 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     public boolean canKeepTarget(Agent other) {
         return isNear(other);
     }
-    
+
     public boolean inFieldOfView(Agent other) {
         return inFieldOfView(other.position);
     }
-    
+
     public boolean inFieldOfView(Vector2 otherPosition) {
-        // field of view: compute angle between character-character and forward vectors
+        // field of view: compute angle between character-character and forward
+        // vectors
         Vector2 a = getForwardVector();
         Vector2 b = tempV.set(otherPosition).sub(position).nor();
         double theta = Math.atan2(a.x * b.y - a.y * b.x, a.x * b.x + a.y * b.y);
@@ -1120,7 +1124,8 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     }
 
     public double getFieldOfView() {
-        // default FOV is 90 degrees to each side, giving 180 degrees of total peripheral vision
+        // default FOV is 90 degrees to each side, giving 180 degrees of total
+        // peripheral vision
         // scale this down when calm
         return Math.PI / 2f;
     }
@@ -1133,15 +1138,19 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         if (other.isVisible()) {
             return true;
         } else {
-            // perception is [0, 1], scaling how far we can be from an invisible target for us to
+            // perception is [0, 1], scaling how far we can be from an invisible
+            // target for us to
             // detect it
             float visibility = getVisibility();
 
-            // confer a penalty to visibility based on the target's deception, but not too great
-            // so that given two equal deception skills, it's easier to perceive than deceive
+            // confer a penalty to visibility based on the target's deception,
+            // but not too great
+            // so that given two equal deception skills, it's easier to perceive
+            // than deceive
             visibility *= 1.0f - (other.info.getDeception() * 0.1f);
 
-            // at worst, you should be able to detect someone right in front of you
+            // at worst, you should be able to detect someone right in front of
+            // you
             visibility = Math.max(visibility, 1.0f);
 
             return dst2(other) < visibility * visibility;
@@ -1184,7 +1193,8 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
 
     private boolean rayCast(Vector2 source, Vector2 target) {
         if (source.equals(target)) {
-            // if we don't do this check explicitly, we can get the following error:
+            // if we don't do this check explicitly, we can get the following
+            // error:
             // Expression: r.LengthSquared() > 0.0f
             return true;
         }
@@ -1226,8 +1236,10 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         InvokenGame.SOUND_MANAGER.playAtPoint(getDeathSound(), getPosition(), 3f);
     }
 
-    // add fragment temporary entities to the world in a radial pattern around the agent
-    // for players, we must also assign the fragments to the nearest unique neighbor (if possible)
+    // add fragment temporary entities to the world in a radial pattern around
+    // the agent
+    // for players, we must also assign the fragments to the nearest unique
+    // neighbor (if possible)
     // for persistence
     protected void releaseFragments() {
         int total = info.getInventory().getItemCount((Fragment.getInstance()));
@@ -1247,7 +1259,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
             }
         }
     }
-    
+
     private void resetCollisionMask() {
         setCollisionMask(lastMask);
     }
@@ -1292,7 +1304,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         if (!isAlive()) {
             return;
         }
-        
+
         // scale down friendly fire
         if (isAlly(source)) {
             magnitude *= 0.1f;
@@ -1427,7 +1439,8 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
             }
         }
 
-        // TODO: if we changed our natural position, then alert all neighbors to our presence
+        // TODO: if we changed our natural position, then alert all neighbors to
+        // our presence
         // if they pass a detection check
 
         // restore energy in proportion to elapsed time
@@ -1466,7 +1479,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
                     action = actions.poll();
                     if (action != null) {
                         // any action breaks cloaking
-                        setCloaked(false);
+                        // setCloaked(false);
                         action.update(delta, level);
                     }
                 }
@@ -1577,18 +1590,18 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     public Vector2 getForwardVector() {
         Vector2 result = new Vector2();
         switch (direction) {
-            case Left:
-                result.set(-1, 0);
-                break;
-            case Right:
-                result.set(1, 0);
-                break;
-            case Down:
-                result.set(0, -1);
-                break;
-            case Up:
-                result.set(0, 1);
-                break;
+        case Left:
+            result.set(-1, 0);
+            break;
+        case Right:
+            result.set(1, 0);
+            break;
+        case Down:
+            result.set(0, -1);
+            break;
+        case Up:
+            result.set(0, 1);
+            break;
         }
         return result;
     }
@@ -1631,7 +1644,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
                 setAlpha(a);
             }
         }
-        
+
         // render character
         render(renderer);
 
@@ -1670,7 +1683,8 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
             }
 
             if (isCloaked()) {
-                // blending results in invisible outfits unless we increase the alpha
+                // blending results in invisible outfits unless we increase the
+                // alpha
                 batch.setColor(color.r, color.g, color.b, Math.min(color.a * 5, 1));
             }
             outfit.render(this, activity, stateTime, renderer);
@@ -1828,12 +1842,14 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
                     targeting = agent;
                     return 1;
                 } else {
-                    // cannot be obstructed by the body of a dead agent -> continue
+                    // cannot be obstructed by the body of a dead agent ->
+                    // continue
                     return -1;
                 }
             }
 
-            // whatever it is, it's not a target and it's in the way -> terminate
+            // whatever it is, it's not a target and it's in the way ->
+            // terminate
             return 0;
         }
     };
@@ -1898,7 +1914,8 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
             if (target != null) {
                 for (Fixture f : target.body.getFixtureList()) {
                     if (fixture == f) {
-                        // it's not an obstruction if it's the thing we're aiming at
+                        // it's not an obstruction if it's the thing we're
+                        // aiming at
                         return false;
                     }
                 }
@@ -1927,7 +1944,8 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         protected final Vector2 direction = new Vector2(1, 0);
         protected final Vector2 tmp = new Vector2();
 
-        // offset relative to the center of the agent so the gun appears at roughly hip level,
+        // offset relative to the center of the agent so the gun appears at
+        // roughly hip level,
         // not at the face
         protected final Vector2 offset = new Vector2(0, 0.25f);
 
@@ -2032,8 +2050,8 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     }
 
     /**
-     * Rotates towards the focus point, but does not immediately set itself there for a smoother
-     * effect.
+     * Rotates towards the focus point, but does not immediately set itself
+     * there for a smoother effect.
      */
     public class RotatingWeaponSentry extends WeaponSentry {
         private final Vector2 destination = new Vector2();

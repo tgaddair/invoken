@@ -96,13 +96,16 @@ public class Recall extends Augmentation {
     }
 
     public class RecallAction extends AnimatedAction {
+        private final NaturalVector2 mark;
+        
         public RecallAction(Agent owner) {
             super(owner, Activity.Swipe, Recall.this);
+            this.mark = owner.getMark();
         }
 
         @Override
         public void apply(Level level) {
-            owner.addEffect(new Teleported(owner, owner.getMark()));
+            owner.addEffect(new Teleported(owner, mark));
             owner.resetMark();
         }
 
