@@ -8,9 +8,7 @@ public class IsIntimidated extends BooleanTask {
     protected boolean check(Npc npc) {
         // either we've been facing down our enemy for too long or we're really
         // close
-        if (npc.getInventory().hasRangedWeapon()) {
-            return npc.getIntimidation().isExpended() || isInDanger(npc);
-        } else if (npc.getInventory().hasMeleeWeapon()) {
+        if (npc.getInventory().hasMeleeWeapon()) {
             // melee attackers are not intimidated unless cloaked
             if (npc.hasTarget() && npc.isCloaked()) {
                 // hide when our target has line of sight
@@ -19,8 +17,7 @@ public class IsIntimidated extends BooleanTask {
             }
             return false;
         } else {
-            // unarmed attackers are always intimidated
-            return true;
+            return npc.getIntimidation().isExpended() || isInDanger(npc);
         }
     }
 
@@ -32,8 +29,15 @@ public class IsIntimidated extends BooleanTask {
     }
 
     private boolean isTooClose(Npc npc) {
-        float r = npc.getInventory().getRangedWeapon().getIdealDistance();
+        float r = getIdealDistance(npc);
         return npc.dst2(npc.getTarget()) < r * r;
+    }
+    
+    private float getIdealDistance(Npc npc) {
+        if (npc.getInventory().hasRangedWeapon()) {
+            return npc.getInventory().getRangedWeapon().getIdealDistance();
+        }
+        return 3;
     }
 
     private boolean isTargeted(Npc npc) {

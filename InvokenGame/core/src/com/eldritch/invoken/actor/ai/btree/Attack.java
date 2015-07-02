@@ -253,7 +253,7 @@ public class Attack extends Sequence<Npc> {
             }
             
             // ranged attackers desire cover
-            return npc.isCloaked() || npc.getInventory().hasRangedWeapon();
+            return npc.isCloaked() || !npc.getInventory().hasMeleeWeapon();
         }
     }
 
