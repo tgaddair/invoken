@@ -24,6 +24,9 @@ enum AugmentationProto {
 	Ping = 20;
 	Empathy = 24;
 	Pacify = 25;
+	Discharge = 29;
+	Recall = 30;
+	Trap = 31;
 
 	// NPC only
 	Charge = 17;
@@ -31,4 +34,8 @@ enum AugmentationProto {
 	Ram = 21;
 	Leech = 22;
 	Acid = 23;
+	Detonate = 26;
+	Web = 27;
+	CrawlerParalyze = 28;
+	Smash = 32;
 }

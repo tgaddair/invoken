@@ -215,7 +215,8 @@ message PlayerActor {
 
 	// location generation
 	optional int64 seed = 25;
-	optional string location = 26;
+	optional string region = 26;
+	optional int32 floor = 31;
 	optional PlayerActor corpse = 27;
 	optional int32 fragments = 28;
 
