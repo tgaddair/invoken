@@ -5,20 +5,24 @@ import java.util.Map;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.proto.Actors.NonPlayerActor;
 import com.eldritch.invoken.proto.Effects.DamageType;
 import com.eldritch.invoken.screens.GameScreen;
+import com.eldritch.invoken.util.AnimationUtils;
+import com.eldritch.invoken.util.Settings;
 import com.eldritch.invoken.util.SoundManager.SoundEffect;
+import com.google.common.base.Strings;
 
 public class Hollow extends Npc {
     public static float MAX_VELOCITY = 3f;
-    public static int PX = 96;
 
-    public Hollow(NonPlayerActor data, float x, float y, String asset, Level level) {
-        super(data, x, y, 1 / 32f * PX, 1 / 32f * PX, MAX_VELOCITY, getAllAnimations(asset), level);
+    private Hollow(NonPlayerActor data, float x, float y, float width, float height,
+            float velocity, Map<Activity, Map<Direction, Animation>> animations, Level level) {
+        super(data, x, y, width, height, velocity, animations, level);
     }
-    
+
     @Override
     public float getDamageScale(DamageType damage) {
         switch (damage) {
@@ -29,49 +33,92 @@ public class Hollow extends Npc {
                 return 1;
         }
     }
-    
+
     @Override
     protected SoundEffect getDeathSound() {
         return SoundEffect.GHOST_DEATH;
     }
 
-    public static Map<Activity, Map<Direction, Animation>> getAllAnimations(String assetName) {
-        Map<Activity, Map<Direction, Animation>> animations = new HashMap<Activity, Map<Direction, Animation>>();
-
-        TextureRegion[][] regions = GameScreen.getRegions(assetName + "-walk.png", PX, PX);
-        animations.put(Activity.Cast, getAnimations(regions));
-        animations.put(Activity.Thrust, getAnimations(regions));
-        animations.put(Activity.Explore, getAnimations(regions));
-        animations.put(Activity.Combat, getAnimations(regions));
-        
-        regions = GameScreen.getRegions(assetName + "-attack.png", PX, 144);
-        animations.put(Activity.Swipe, getAnimations(regions));
-
-        regions = GameScreen.getRegions(assetName + "-death.png", PX, PX);
-        animations.put(Activity.Death, getAnimations(regions, Animation.PlayMode.NORMAL, false));
-
-        return animations;
+    private static String getAssetPath(String asset) {
+        return "sprite/characters/hollow/" + asset;
     }
 
-    public static Map<Direction, Animation> getAnimations(TextureRegion[][] regions) {
-        return getAnimations(regions, Animation.PlayMode.LOOP_PINGPONG, true);
+    private static String getAsset(NonPlayerActor data) {
+        return !Strings.isNullOrEmpty(data.getParams().getBodyType()) ? data.getParams()
+                .getBodyType() : "hollow";
     }
 
-    public static Map<Direction, Animation> getAnimations(TextureRegion[][] regions,
-            Animation.PlayMode playMode, boolean increment) {
-        Map<Direction, Animation> animations = new HashMap<Direction, Animation>();
+    public static Hollow from(NonPlayerActor data, float x, float y, Level level) {
+        String asset = getAsset(data);
 
-        // up, left, down, right
-        int index = 0;
-        for (Direction d : Direction.values()) {
-            Animation anim = new Animation(0.15f, regions[index]);
-            anim.setPlayMode(playMode);
-            animations.put(d, anim);
-            if (increment) {
-                index++;
-            }
+        String base = asset;
+        int index = asset.indexOf("/");
+        if (index >= 0) {
+            base = asset.substring(0, index);
         }
 
-        return animations;
+        switch (base) {
+            case "golem":
+                return new Golem(data, x, y, getAssetPath(asset), level);
+            default:
+                return new Humanoid(data, x, y, getAssetPath(asset), level);
+        }
+    }
+
+    public static class Golem extends Hollow {
+        private static final int PX = 96;
+        private static final int ATTACK_PX = 144;
+
+        public Golem(NonPlayerActor data, float x, float y, String asset, Level level) {
+            super(data, x, y, 3, 3, MAX_VELOCITY, getAnimations(asset), level);
+        }
+
+        @Override
+        public float getDensity() {
+            return 25f;
+        }
+
+        @Override
+        protected float getBodyRadius() {
+            return 0.4f;
+        }
+
+        @Override
+        protected float getCombatWander() {
+            return 0.5f;
+        }
+
+        @Override
+        public float getDefaultAcceleration() {
+            return 25 * getDensity();
+        }
+
+        private static Map<Activity, Map<Direction, Animation>> getAnimations(String assetName) {
+            Map<Activity, Map<Direction, Animation>> animations = new HashMap<Activity, Map<Direction, Animation>>();
+
+            TextureRegion[][] regions = GameScreen.getRegions(assetName + "-walk.png", PX, PX);
+            animations.put(Activity.Idle, AnimationUtils.getAnimations(regions));
+            animations.put(Activity.Explore, AnimationUtils.getAnimations(regions));
+            
+            regions = GameScreen.getRegions(assetName + "-attack.png", PX, ATTACK_PX);
+            animations.put(Activity.Cast, AnimationUtils.getAnimations(regions));
+            animations.put(Activity.Thrust, AnimationUtils.getAnimations(regions));
+            animations.put(Activity.Swipe, AnimationUtils.getAnimations(regions));
+            animations.put(Activity.Combat, AnimationUtils.getAnimations(regions));
+
+            regions = GameScreen.getRegions(assetName + "-death.png", PX, PX);
+            animations.put(Activity.Death, AnimationUtils.getFixedAnimation(regions));
+
+            return animations;
+        }
+    }
+
+    public static class Humanoid extends Hollow {
+        private static final int PX = 64;
+
+        public Humanoid(NonPlayerActor data, float x, float y, String asset, Level level) {
+            super(data, x, y, Settings.SCALE * PX, Settings.SCALE * PX, MAX_VELOCITY,
+                    AnimationUtils.getHumanAnimations(asset + ".png"), level);
+        }
     }
 }

@@ -6,13 +6,6 @@ import java.util.Map;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
-import com.eldritch.invoken.actor.type.Agent.Activity;
-import com.eldritch.invoken.actor.type.Agent.Direction;
-import com.eldritch.invoken.actor.type.Beast.Crawler;
-import com.eldritch.invoken.actor.type.Beast.DefaultBeast;
-import com.eldritch.invoken.actor.type.Beast.Dragon;
-import com.eldritch.invoken.actor.type.Beast.Parasite;
 import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.proto.Actors.NonPlayerActor;
 import com.eldritch.invoken.proto.Effects.DamageType;
@@ -25,7 +18,7 @@ import com.google.common.base.Strings;
 public class Automaton extends Npc {
     public static float MAX_VELOCITY = 4f;
 
-    public Automaton(NonPlayerActor data, float x, float y, float width, float height,
+    private Automaton(NonPlayerActor data, float x, float y, float width, float height,
             float velocity, Map<Activity, Map<Direction, Animation>> animations, Level level) {
         super(data, x, y, width, height, velocity, animations, level);
     }

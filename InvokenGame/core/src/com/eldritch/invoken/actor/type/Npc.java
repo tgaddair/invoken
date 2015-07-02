@@ -628,7 +628,7 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
             case BEAST:
                 return Beast.from(data, x, y, level);
             case HOLLOW:
-                return new Hollow(data, x, y, "sprite/characters/hollow/golem", level);
+                return Hollow.from(data, x, y, level);
             default:
                 throw new IllegalArgumentException("unrecognized species: " + species);
         }
