@@ -46,6 +46,7 @@ public class Planner {
                 greatest = desire;
             }
         }
+        System.out.println("greatest: " + greatest);
         return greatest;
     }
 

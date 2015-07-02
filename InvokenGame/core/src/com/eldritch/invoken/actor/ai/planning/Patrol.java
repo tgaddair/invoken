@@ -49,7 +49,7 @@ public class Patrol extends AbstractDesire {
     @Override
     public float getValue() {
         if (owner.hasSquad() && owner.getSquad().getLeader() == owner) {
-            return 0.5f;
+            return 1f;
         }
         return 0f;
     }
