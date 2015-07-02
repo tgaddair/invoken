@@ -141,6 +141,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     private int stunted = 0;
     private int crimes = 0;
     private boolean sprinting = false;
+    private Optional<NaturalVector2> mark = Optional.absent();
 
     private float freezing = 0;
     private float lastAction = 0;
@@ -569,6 +570,22 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     }
 
     protected abstract void handleConfusion(boolean confused);
+    
+    public boolean hasMark() {
+        return mark.isPresent();
+    }
+    
+    public NaturalVector2 getMark() {
+        return mark.get();
+    }
+    
+    public void setMark(NaturalVector2 point) {
+        mark = Optional.of(point);
+    }
+    
+    public void resetMark() {
+        mark = Optional.absent();
+    }
 
     public boolean isParalyzed() {
         return paralyzed > 0;
