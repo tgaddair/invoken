@@ -58,6 +58,7 @@ public class Attack extends Sequence<Npc> {
         Sequence<Npc> hideSequence = new Sequence<>();
         hideSequence.addChild(new DesiresCover());
         hideSequence.addChild(new IsIntimidated());
+        hideSequence.addChild(new Invert<>(new IsTrapped()));
         hideSequence.addChild(new Invert<>(new HasCover()));
         hideSequence.addChild(new SeekCover());
 
