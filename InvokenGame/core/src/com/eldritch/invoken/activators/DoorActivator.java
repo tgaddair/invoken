@@ -1,7 +1,9 @@
 package com.eldritch.invoken.activators;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
@@ -15,6 +17,7 @@ import com.eldritch.invoken.actor.items.Item;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.gfx.Light;
 import com.eldritch.invoken.gfx.Light.StaticLight;
+import com.eldritch.invoken.location.ConnectedRoom;
 import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.location.NaturalVector2;
 import com.eldritch.invoken.proto.Locations.ControlPoint;
@@ -41,6 +44,7 @@ public class DoorActivator extends ClickActivator implements ProximityActivator,
 
     private final Vector2 center;
     private final LockInfo lock;
+    private final ConnectedRoom room;
     private final Animation unlockedAnimation;
     private final Animation lockedAnimation;
 
@@ -49,23 +53,25 @@ public class DoorActivator extends ClickActivator implements ProximityActivator,
 
     private final Light light;
     private final List<Body> bodies = new ArrayList<Body>();
+    private final Set<Agent> lastProximityAgents = new HashSet<>();
 
     private boolean activating = false;
     private float stateTime = 0;
 
-    public static DoorActivator createFront(int x, int y, LockInfo lock) {
-        return new DoorActivator(x, y, lock, true);
+    public static DoorActivator createFront(int x, int y, LockInfo lock, ConnectedRoom room) {
+        return new DoorActivator(x, y, lock, room, true);
     }
 
-    public static DoorActivator createSide(int x, int y, LockInfo lock) {
-        return new DoorActivator(x, y, lock, false);
+    public static DoorActivator createSide(int x, int y, LockInfo lock, ConnectedRoom room) {
+        return new DoorActivator(x, y, lock, room, false);
     }
 
-    public DoorActivator(int x, int y, LockInfo lock, boolean front) {
+    public DoorActivator(int x, int y, LockInfo lock, ConnectedRoom room, boolean front) {
         super(NaturalVector2.of(x, y), 2, 2);
         this.lock = lock;
+        this.room = room;
         this.front = front;
-        
+
         final float magnitude = 0.1f;
         if (front) {
             unlockedAnimation = new Animation(0.05f, frontRegions);
@@ -82,7 +88,7 @@ public class DoorActivator extends ClickActivator implements ProximityActivator,
             center = new Vector2(x + 0.5f, y - 1);
             this.light = new StaticLight(center.cpy().add(0.5f, 1.5f), magnitude, false);
         }
-        
+
         setColor();
     }
 
@@ -93,20 +99,31 @@ public class DoorActivator extends ClickActivator implements ProximityActivator,
 
     @Override
     public void update(float delta, Level level) {
-        // if a single agent is in the proximity, then open the door, otherwise close it
+        // if a single agent is in the proximity, then open the door, otherwise
+        // close it
+        Set<Agent> proximityAgents = new HashSet<>();
         boolean shouldOpen = false;
         for (Agent agent : level.getActiveEntities()) {
             if (inProximity(agent)) {
                 shouldOpen = true;
+                proximityAgents.add(agent);
                 break;
             }
         }
 
-        // only change the state of the door if it differs from the current state
+        // only change the state of the door if it differs from the current
+        // state
         // must click to unlock
         if (shouldOpen != open && !lock.isLocked()) {
             setOpened(shouldOpen, level);
+            if (!open) {
+                lastProximityAgents.removeAll(proximityAgents);
+                onClose(lastProximityAgents, level);
+            }
         }
+
+        lastProximityAgents.clear();
+        lastProximityAgents.addAll(proximityAgents);
     }
 
     @Override
@@ -134,10 +151,21 @@ public class DoorActivator extends ClickActivator implements ProximityActivator,
         for (Body body : bodies) {
             body.setActive(!opened);
         }
+
         setLightWalls(level, !opened);
         InvokenGame.SOUND_MANAGER.playAtPoint(SoundEffect.DOOR_OPEN, getPosition());
     }
-    
+
+    private void onClose(Set<Agent> triggerAgents, Level level) {
+        for (Agent agent : triggerAgents) {
+            // characters that lack this door's credentials trigger a lock in
+            if (!lock.canUnlock(agent)) {
+                setLocked(true);
+                break;
+            }
+        }
+    }
+
     private void setColor() {
         if (lock.isLocked()) {
             light.setColor(1, 0, 0, 1f);
@@ -151,7 +179,8 @@ public class DoorActivator extends ClickActivator implements ProximityActivator,
         float x = (int) position.x;
         float y = (int) position.y;
         if (front) {
-            // add two columns for the front to prevent the flood fill from going around the bottom
+            // add two columns for the front to prevent the flood fill from
+            // going around the bottom
             level.setLightWalls((int) x - 1, (int) y + 1, (int) x + SIZE + 1, (int) y + 1, value);
         } else {
             level.setLightWalls((int) x, (int) y, (int) x, (int) y + SIZE, value);
@@ -212,8 +241,12 @@ public class DoorActivator extends ClickActivator implements ProximityActivator,
     @Override
     public void crack(Agent source) {
         // unlock
-        lock.setLocked(false);
+        setLocked(false);
         // location.alertTo(agent);
+    }
+
+    private void setLocked(boolean locked) {
+        lock.setLocked(locked);
         setColor();
     }
 
@@ -221,7 +254,7 @@ public class DoorActivator extends ClickActivator implements ProximityActivator,
     public float getStrength() {
         return lock.isLocked() ? lock.getStrength() : 0;
     }
-    
+
     @Override
     public boolean isCracked() {
         return !lock.isLocked();
