@@ -59,6 +59,7 @@ public class DoorActivator extends ClickActivator implements ProximityActivator,
 
     private boolean activating = false;
     private boolean finished = false;
+    private Optional<Boolean> lockChange = Optional.absent();
     private float stateTime = 0;
 
     public static DoorActivator createFront(int x, int y, LockInfo lock) {
@@ -92,7 +93,6 @@ public class DoorActivator extends ClickActivator implements ProximityActivator,
         }
 
         setColor();
-
         lock.room.addDoor(this);
     }
 
@@ -117,6 +117,9 @@ public class DoorActivator extends ClickActivator implements ProximityActivator,
 
         if (finished) {
             postActivation(level);
+            if (lockChange.isPresent()) {
+                applyLocked(lockChange.get());
+            }
         }
 
         // only change the state of the door if it differs from the current
@@ -228,13 +231,12 @@ public class DoorActivator extends ClickActivator implements ProximityActivator,
                 finished = true;
                 activating = false;
                 stateTime = 0;
-                PlayMode mode = animation.getPlayMode();
-                
+
                 // set animations
-                lockedAnimation.setPlayMode(mode == PlayMode.NORMAL ? PlayMode.REVERSED
-                        : PlayMode.NORMAL);
-                unlockedAnimation.setPlayMode(mode == PlayMode.NORMAL ? PlayMode.REVERSED
-                        : PlayMode.NORMAL);
+                PlayMode lastMode = animation.getPlayMode();
+                PlayMode mode = lastMode == PlayMode.NORMAL ? PlayMode.REVERSED : PlayMode.NORMAL;
+                lockedAnimation.setPlayMode(mode);
+                unlockedAnimation.setPlayMode(mode);
             }
         }
 
@@ -265,6 +267,10 @@ public class DoorActivator extends ClickActivator implements ProximityActivator,
     }
 
     public void setLocked(boolean locked) {
+        lockChange = Optional.of(locked);
+    }
+    
+    private void applyLocked(boolean locked) {
         lock.setLocked(locked);
         setColor();
     }
