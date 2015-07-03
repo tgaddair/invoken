@@ -262,7 +262,7 @@ public class DoorActivator extends ClickActivator implements ProximityActivator,
     @Override
     public void crack(Agent source) {
         // unlock
-        setLocked(false);
+        applyLocked(false);
         // location.alertTo(agent);
     }
 
