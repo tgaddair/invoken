@@ -92,7 +92,7 @@ public class DoorActivator extends ClickActivator implements ProximityActivator,
         }
 
         setColor();
-        
+
         lock.room.addDoor(this);
     }
 
@@ -172,8 +172,7 @@ public class DoorActivator extends ClickActivator implements ProximityActivator,
     private void onClose(Set<Agent> triggerAgents, Level level) {
         for (Agent agent : triggerAgents) {
             // characters that lack this door's credentials trigger a lock in
-            if (!lock.canUnlock(agent)
-                    && lock.getRoom().contains(agent.getNaturalPosition())
+            if (!lock.canUnlock(agent) && lock.getRoom().contains(agent.getNaturalPosition())
                     && lock.getRoom().hasHostileResident(agent)) {
                 lock.getRoom().setLocked(true);
                 break;
@@ -230,8 +229,12 @@ public class DoorActivator extends ClickActivator implements ProximityActivator,
                 activating = false;
                 stateTime = 0;
                 PlayMode mode = animation.getPlayMode();
-                animation
-                        .setPlayMode(mode == PlayMode.NORMAL ? PlayMode.REVERSED : PlayMode.NORMAL);
+                
+                // set animations
+                lockedAnimation.setPlayMode(mode == PlayMode.NORMAL ? PlayMode.REVERSED
+                        : PlayMode.NORMAL);
+                unlockedAnimation.setPlayMode(mode == PlayMode.NORMAL ? PlayMode.REVERSED
+                        : PlayMode.NORMAL);
             }
         }
 
@@ -300,7 +303,7 @@ public class DoorActivator extends ClickActivator implements ProximityActivator,
             this.strength = strength;
             locked = uniqueKey || strength > 1;
         }
-        
+
         public ConnectedRoom getRoom() {
             return room;
         }
