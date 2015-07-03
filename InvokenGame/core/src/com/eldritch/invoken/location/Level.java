@@ -1116,6 +1116,12 @@ public class Level {
                 Npc npc = createTestNpc(agent.getPosition(), scenario.getActorId());
                 addActor(npc);
                 npcs.add(npc);
+                
+                if (agent.hasRoom()) {
+                    // give the NPC the key
+                    ConnectedRoom room = agent.getRoom();
+                    npc.getInventory().addItem(room.getKey());
+                }
             }
         }
         
