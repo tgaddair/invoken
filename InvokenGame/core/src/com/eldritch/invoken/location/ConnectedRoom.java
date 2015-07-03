@@ -33,6 +33,10 @@ public class ConnectedRoom {
 		this.key = Credential.from(hashCode(), room);
 	}
 	
+	public boolean contains(NaturalVector2 point) {
+	    return points.contains(point);
+	}
+	
 	public Item getKey() {
 	    return key;
 	}

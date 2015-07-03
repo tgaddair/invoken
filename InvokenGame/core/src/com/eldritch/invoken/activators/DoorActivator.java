@@ -171,7 +171,7 @@ public class DoorActivator extends ClickActivator implements ProximityActivator,
         for (Agent agent : triggerAgents) {
             // characters that lack this door's credentials trigger a lock in
             if (!lock.canUnlock(agent)
-                    && lock.room.getPoints().contains(agent.getNaturalPosition())) {
+                    && lock.getRoom().contains(agent.getNaturalPosition())) {
                 setLocked(true);
                 break;
             }
@@ -296,6 +296,10 @@ public class DoorActivator extends ClickActivator implements ProximityActivator,
             // 10 -> requires key
             this.strength = strength;
             locked = uniqueKey || strength > 1;
+        }
+        
+        public ConnectedRoom getRoom() {
+            return room;
         }
 
         public Item getKey() {
