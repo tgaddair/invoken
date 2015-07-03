@@ -84,8 +84,10 @@ public abstract class AoeProjectile extends Projectile {
 	}
 	
 	private void detonate() {
-		onDetonate();
-		detonated = true;
+	    if (!detonated) {
+	        onDetonate();
+	        detonated = true;
+	    }
 	}
 	
 	protected abstract void onDetonate();
