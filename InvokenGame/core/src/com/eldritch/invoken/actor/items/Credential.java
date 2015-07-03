@@ -34,9 +34,15 @@ public class Credential extends Item {
     }
 
     public static Credential from(int id, Room data) {
+        String prefix = !Strings.isNullOrEmpty(data.getId()) ? data.getId() : String.valueOf(id);
+        
         Items.Item.Builder builder = Items.Item.newBuilder();
         builder.setId(String.valueOf(id));
-        builder.setName(!Strings.isNullOrEmpty(data.getId()) ? data.getId() : String.valueOf(id));
+        builder.setName(prefix + " Credentials");
+        builder.setType(Items.Item.Type.CREDENTIAL);
+        builder.setDescription("");
+        builder.setValue(0);
+        builder.setDroppable(true);
         return new Credential(builder.build());
     }
 }
