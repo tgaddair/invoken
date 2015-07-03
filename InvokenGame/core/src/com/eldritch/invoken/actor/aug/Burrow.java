@@ -61,7 +61,7 @@ public class Burrow extends Augmentation {
     @Override
     public float quality(Agent owner, Agent target, Level level) {
         if (owner.isToggled(Burrow.class)) {
-            if (owner.dst2(target) > MINDST * MINDST) {
+            if (owner.dst2(target) > MINDST * MINDST || !owner.hasVisibilityTo(target)) {
                 return 0f;
             }
             return Heuristics.randomizedDistanceScore(owner.dst2(target), 0);

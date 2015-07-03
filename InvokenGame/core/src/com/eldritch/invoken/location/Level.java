@@ -20,8 +20,6 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.maps.MapLayer;
-import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
 import com.badlogic.gdx.math.Intersector;
@@ -67,13 +65,11 @@ import com.eldritch.invoken.gfx.NormalMapShader;
 import com.eldritch.invoken.gfx.OrthogonalShadedTiledMapRenderer;
 import com.eldritch.invoken.gfx.OverlayLightMasker;
 import com.eldritch.invoken.location.EncounterDescription.AgentDescription;
-import com.eldritch.invoken.location.layer.EncounterLayer;
 import com.eldritch.invoken.location.layer.LocationLayer.CollisionLayer;
 import com.eldritch.invoken.location.layer.LocationMap;
 import com.eldritch.invoken.location.proc.LocationGenerator;
 import com.eldritch.invoken.proto.Actors.PlayerActor;
 import com.eldritch.invoken.proto.Locations;
-import com.eldritch.invoken.proto.Locations.Encounter;
 import com.eldritch.invoken.proto.Locations.Encounter.ActorParams.ActorScenario;
 import com.eldritch.invoken.proto.Locations.Location;
 import com.eldritch.invoken.ui.AgentStatusRenderer;
@@ -81,7 +77,6 @@ import com.eldritch.invoken.ui.DebugEntityRenderer;
 import com.eldritch.invoken.util.GameTransition;
 import com.eldritch.invoken.util.Settings;
 import com.google.common.base.Optional;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 public class Level {
@@ -1124,10 +1119,11 @@ public class Level {
                     room.addResident(npc);
                 }
             }
+            
+            // create squads
+            createSquads(npcs);
+            npcs.clear();
         }
-        
-        // create squads
-        createSquads(npcs);
     }
 
     private void createSquads(List<Npc> npcs) {
