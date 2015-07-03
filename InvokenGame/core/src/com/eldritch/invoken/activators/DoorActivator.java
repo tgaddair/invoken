@@ -171,7 +171,8 @@ public class DoorActivator extends ClickActivator implements ProximityActivator,
         for (Agent agent : triggerAgents) {
             // characters that lack this door's credentials trigger a lock in
             if (!lock.canUnlock(agent)
-                    && lock.getRoom().contains(agent.getNaturalPosition())) {
+                    && lock.getRoom().contains(agent.getNaturalPosition())
+                    && lock.getRoom().hasResident()) {
                 setLocked(true);
                 break;
             }

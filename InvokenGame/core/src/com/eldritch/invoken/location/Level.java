@@ -1121,6 +1121,7 @@ public class Level {
                     // give the NPC the key
                     ConnectedRoom room = agent.getRoom();
                     npc.getInventory().addItem(room.getKey());
+                    room.addResident(npc);
                 }
             }
         }

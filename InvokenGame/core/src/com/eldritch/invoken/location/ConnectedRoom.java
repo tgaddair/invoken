@@ -1,11 +1,13 @@
 package com.eldritch.invoken.location;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
 import com.eldritch.invoken.actor.items.Credential;
 import com.eldritch.invoken.actor.items.Item;
+import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.proto.Locations.Room;
 import com.google.common.base.Optional;
 import com.google.common.collect.Sets;
@@ -18,6 +20,7 @@ public class ConnectedRoom {
 	private final Set<ConnectedRoom> neighbors = new LinkedHashSet<ConnectedRoom>();
 	private final Set<NaturalVector2> points = new LinkedHashSet<NaturalVector2>();
 	private final Set<NaturalVector2> chokePoints = new LinkedHashSet<NaturalVector2>();
+	private final Set<Agent> residents = new HashSet<>();
 	private final Room room;
 	private final Type type;
 	private final NaturalVector2 center;
@@ -31,6 +34,22 @@ public class ConnectedRoom {
 		this.points.addAll(points);
 		center = calculateCenter();
 		this.key = Credential.from(hashCode(), room);
+	}
+	
+	public boolean hasResident() {
+	    boolean found = false;
+	    for (Agent agent : residents) {
+	        if (contains(agent.getNaturalPosition())) {
+	            // resident is in this room
+	            found = true;
+	            break;
+	        }
+	    }
+	    return found;
+	}
+	
+	public void addResident(Agent resident) {
+	    residents.add(resident);
 	}
 	
 	public boolean contains(NaturalVector2 point) {
