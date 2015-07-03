@@ -1,10 +1,10 @@
 package com.eldritch.invoken.location;
 
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import com.eldritch.invoken.activators.DoorActivator;
 import com.eldritch.invoken.actor.items.Credential;
 import com.eldritch.invoken.actor.items.Item;
 import com.eldritch.invoken.actor.type.Agent;
@@ -20,7 +20,8 @@ public class ConnectedRoom {
 	private final Set<ConnectedRoom> neighbors = new LinkedHashSet<ConnectedRoom>();
 	private final Set<NaturalVector2> points = new LinkedHashSet<NaturalVector2>();
 	private final Set<NaturalVector2> chokePoints = new LinkedHashSet<NaturalVector2>();
-	private final Set<Agent> residents = new HashSet<>();
+	private final Set<Agent> residents = new LinkedHashSet<>();
+	private final Set<DoorActivator> doors = new LinkedHashSet<>();
 	private final Room room;
 	private final Type type;
 	private final NaturalVector2 center;
@@ -34,6 +35,16 @@ public class ConnectedRoom {
 		this.points.addAll(points);
 		center = calculateCenter();
 		this.key = Credential.from(hashCode(), room);
+	}
+	
+	public void addDoor(DoorActivator door) {
+	    doors.add(door);
+	}
+	
+	public void setLocked(boolean locked) {
+	    for (DoorActivator door : doors) {
+	        door.setLocked(locked);
+	    }
 	}
 	
 	public boolean hasResident() {

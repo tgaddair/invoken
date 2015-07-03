@@ -92,6 +92,8 @@ public class DoorActivator extends ClickActivator implements ProximityActivator,
         }
 
         setColor();
+        
+        lock.room.addDoor(this);
     }
 
     @Override
@@ -173,7 +175,7 @@ public class DoorActivator extends ClickActivator implements ProximityActivator,
             if (!lock.canUnlock(agent)
                     && lock.getRoom().contains(agent.getNaturalPosition())
                     && lock.getRoom().hasHostileResident(agent)) {
-                setLocked(true);
+                lock.getRoom().setLocked(true);
                 break;
             }
         }
@@ -259,7 +261,7 @@ public class DoorActivator extends ClickActivator implements ProximityActivator,
         // location.alertTo(agent);
     }
 
-    private void setLocked(boolean locked) {
+    public void setLocked(boolean locked) {
         lock.setLocked(locked);
         setColor();
     }
