@@ -54,8 +54,11 @@ public class DoorActivator extends ClickActivator implements ProximityActivator,
     private final Light light;
     private final List<Body> bodies = new ArrayList<Body>();
     private final Set<Agent> lastProximityAgents = new HashSet<>();
+    private final Set<Agent> proximityAgents = new HashSet<>();
+    private final Set<Agent> triggerAgents = new HashSet<>();
 
     private boolean activating = false;
+    private boolean finished = false;
     private float stateTime = 0;
 
     public static DoorActivator createFront(int x, int y, LockInfo lock) {
@@ -100,7 +103,7 @@ public class DoorActivator extends ClickActivator implements ProximityActivator,
     public void update(float delta, Level level) {
         // if a single agent is in the proximity, then open the door, otherwise
         // close it
-        Set<Agent> proximityAgents = new HashSet<>();
+        proximityAgents.clear();
         boolean shouldOpen = false;
         for (Agent agent : level.getActiveEntities()) {
             if (inProximity(agent)) {
@@ -110,15 +113,16 @@ public class DoorActivator extends ClickActivator implements ProximityActivator,
             }
         }
 
+        if (finished) {
+            postActivation(level);
+        }
+
         // only change the state of the door if it differs from the current
-        // state
-        // must click to unlock
+        // state must click to unlock
         if (shouldOpen != open && !lock.isLocked()) {
+            lastProximityAgents.removeAll(proximityAgents);
+            triggerAgents.addAll(lastProximityAgents);
             setOpened(shouldOpen, level);
-            if (!open) {
-                lastProximityAgents.removeAll(proximityAgents);
-                onClose(lastProximityAgents, level);
-            }
         }
 
         lastProximityAgents.clear();
@@ -155,10 +159,19 @@ public class DoorActivator extends ClickActivator implements ProximityActivator,
         InvokenGame.SOUND_MANAGER.playAtPoint(SoundEffect.DOOR_OPEN, getPosition());
     }
 
+    private void postActivation(Level level) {
+        finished = false;
+        if (!open) {
+            onClose(triggerAgents, level);
+            triggerAgents.clear();
+        }
+    }
+
     private void onClose(Set<Agent> triggerAgents, Level level) {
         for (Agent agent : triggerAgents) {
             // characters that lack this door's credentials trigger a lock in
-            if (!lock.canUnlock(agent)) {
+            if (!lock.canUnlock(agent)
+                    && lock.room.getPoints().contains(agent.getNaturalPosition())) {
                 setLocked(true);
                 break;
             }
@@ -210,6 +223,7 @@ public class DoorActivator extends ClickActivator implements ProximityActivator,
         if (activating) {
             stateTime += delta;
             if (animation.isAnimationFinished(stateTime)) {
+                finished = true;
                 activating = false;
                 stateTime = 0;
                 PlayMode mode = animation.getPlayMode();
