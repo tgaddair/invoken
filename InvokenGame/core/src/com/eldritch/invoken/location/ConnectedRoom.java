@@ -4,6 +4,9 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import com.eldritch.invoken.actor.items.Credential;
+import com.eldritch.invoken.actor.items.Item;
+import com.eldritch.invoken.proto.Locations.Room;
 import com.google.common.base.Optional;
 import com.google.common.collect.Sets;
 
@@ -15,15 +18,23 @@ public class ConnectedRoom {
 	private final Set<ConnectedRoom> neighbors = new LinkedHashSet<ConnectedRoom>();
 	private final Set<NaturalVector2> points = new LinkedHashSet<NaturalVector2>();
 	private final Set<NaturalVector2> chokePoints = new LinkedHashSet<NaturalVector2>();
+	private final Room room;
 	private final Type type;
 	private final NaturalVector2 center;
+	private final Item key;
 	
 	private Optional<String> faction = Optional.absent();
 	
-	public ConnectedRoom(Type type, Collection<NaturalVector2> points) {
+	public ConnectedRoom(Room room, Type type, Collection<NaturalVector2> points) {
+	    this.room = room;
 		this.type = type;
 		this.points.addAll(points);
 		center = calculateCenter();
+		this.key = Credential.from(hashCode(), room);
+	}
+	
+	public Item getKey() {
+	    return key;
 	}
 	
 	public boolean isChamber() {

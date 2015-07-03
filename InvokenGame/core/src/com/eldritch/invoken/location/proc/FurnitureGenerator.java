@@ -65,6 +65,7 @@ public abstract class FurnitureGenerator {
             List<Activator> activators) {
         for (Entry<ControlRoom, ConnectedRoom> room : rooms.getChambers()) {
             ControlPoint metadata = room.getKey().getControlPoint();
+            ConnectedRoom connectedRoom = room.getValue();
             for (NaturalVector2 point : room.getValue().getAllPoints()) {
                 int x = point.x;
                 int y = point.y;
@@ -76,13 +77,13 @@ public abstract class FurnitureGenerator {
 
                 if (base.isGround(x, y) && base.isGround(x + 1, y) && isLowerGap(x, y, base)) {
                     DoorActivator activator = DoorActivator.createFront(x, y,
-                            LockInfo.from(metadata));
+                            LockInfo.from(metadata, connectedRoom));
                     activators.add(activator);
                     mark(x, y);
                 } else if (base.isGround(x, y - 1) && base.isGround(x + 1, y - 1)
                         && isUpperGap(x, y - 1, base)) {
                     DoorActivator activator = DoorActivator.createFront(x, y - 1,
-                            LockInfo.from(metadata));
+                            LockInfo.from(metadata, connectedRoom));
                     activators.add(activator);
                     mark(x, y - 1);
                 }
@@ -99,7 +100,7 @@ public abstract class FurnitureGenerator {
 
                 if (base.isGround(x, y - 1) && isSideGap(x, y - 1, base)) {
                     DoorActivator activator = DoorActivator.createSide(x, y,
-                            LockInfo.from(metadata));
+                            LockInfo.from(metadata, connectedRoom));
                     activators.add(activator);
                     mark(x, y);
                 }

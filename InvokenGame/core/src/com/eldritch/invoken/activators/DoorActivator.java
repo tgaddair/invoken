@@ -25,6 +25,7 @@ import com.eldritch.invoken.screens.GameScreen;
 import com.eldritch.invoken.state.Inventory;
 import com.eldritch.invoken.util.Settings;
 import com.eldritch.invoken.util.SoundManager.SoundEffect;
+import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 
 public class DoorActivator extends ClickActivator implements ProximityActivator, Crackable {
@@ -44,7 +45,6 @@ public class DoorActivator extends ClickActivator implements ProximityActivator,
 
     private final Vector2 center;
     private final LockInfo lock;
-    private final ConnectedRoom room;
     private final Animation unlockedAnimation;
     private final Animation lockedAnimation;
 
@@ -58,18 +58,17 @@ public class DoorActivator extends ClickActivator implements ProximityActivator,
     private boolean activating = false;
     private float stateTime = 0;
 
-    public static DoorActivator createFront(int x, int y, LockInfo lock, ConnectedRoom room) {
-        return new DoorActivator(x, y, lock, room, true);
+    public static DoorActivator createFront(int x, int y, LockInfo lock) {
+        return new DoorActivator(x, y, lock, true);
     }
 
-    public static DoorActivator createSide(int x, int y, LockInfo lock, ConnectedRoom room) {
-        return new DoorActivator(x, y, lock, room, false);
+    public static DoorActivator createSide(int x, int y, LockInfo lock) {
+        return new DoorActivator(x, y, lock, false);
     }
 
-    public DoorActivator(int x, int y, LockInfo lock, ConnectedRoom room, boolean front) {
+    public DoorActivator(int x, int y, LockInfo lock, boolean front) {
         super(NaturalVector2.of(x, y), 2, 2);
         this.lock = lock;
-        this.room = room;
         this.front = front;
 
         final float magnitude = 0.1f;
@@ -261,13 +260,15 @@ public class DoorActivator extends ClickActivator implements ProximityActivator,
     }
 
     public static class LockInfo {
-        private final Item key;
+        private final Optional<Item> key;
         private final int strength;
+        private final ConnectedRoom room;
         private boolean locked;
 
-        public LockInfo(String keyId, int strength) {
-            this.key = !Strings.isNullOrEmpty(keyId) ? Item.fromProto(InvokenGame.ITEM_READER
-                    .readAsset(keyId)) : null;
+        public LockInfo(String keyId, int strength, ConnectedRoom room) {
+            this.key = Optional.fromNullable(!Strings.isNullOrEmpty(keyId) ? Item
+                    .fromProto(InvokenGame.ITEM_READER.readAsset(keyId)) : room.getKey());
+            this.room = room;
 
             // strength key:
             // 0 -> open
@@ -279,7 +280,7 @@ public class DoorActivator extends ClickActivator implements ProximityActivator,
         }
 
         public Item getKey() {
-            return key;
+            return key.get();
         }
 
         public int getStrength() {
@@ -299,11 +300,11 @@ public class DoorActivator extends ClickActivator implements ProximityActivator,
         }
 
         public boolean hasKey(Inventory inventory) {
-            return inventory.hasItem(key);
+            return !key.isPresent() || inventory.hasItem(key.get());
         }
 
-        public static LockInfo from(ControlPoint controlPoint) {
-            return new LockInfo(controlPoint.getRequiredKey(), controlPoint.getLockStrength());
+        public static LockInfo from(ControlPoint controlPoint, ConnectedRoom room) {
+            return new LockInfo(controlPoint.getRequiredKey(), controlPoint.getLockStrength(), room);
         }
     }
 }
