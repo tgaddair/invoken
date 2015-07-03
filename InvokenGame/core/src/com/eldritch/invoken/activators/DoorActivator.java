@@ -115,11 +115,13 @@ public class DoorActivator extends ClickActivator implements ProximityActivator,
             }
         }
 
-        if (finished) {
-            postActivation(level);
-            if (lockChange.isPresent()) {
+        if (!activating) {
+            if (!open && lockChange.isPresent()) {
                 applyLocked(lockChange.get());
             }
+        }
+        if (finished) {
+            postActivation(level);
         }
 
         // only change the state of the door if it differs from the current
@@ -262,7 +264,7 @@ public class DoorActivator extends ClickActivator implements ProximityActivator,
     @Override
     public void crack(Agent source) {
         // unlock
-        applyLocked(false);
+        setLocked(false);
         // location.alertTo(agent);
     }
 

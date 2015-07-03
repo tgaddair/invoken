@@ -59,7 +59,7 @@ public class ConnectedRoom {
 	
 	public boolean hasHostileResident(Agent other) {
 	    for (Agent agent : residents) {
-            if (contains(agent.getNaturalPosition()) && agent.isEnemy(other)) {
+            if (agent.isAlive() && contains(agent.getNaturalPosition()) && agent.isEnemy(other)) {
                 // resident is in this room and hostile to other
                 return true;
             }
