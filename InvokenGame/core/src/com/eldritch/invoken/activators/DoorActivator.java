@@ -266,8 +266,13 @@ public class DoorActivator extends ClickActivator implements ProximityActivator,
         private boolean locked;
 
         public LockInfo(String keyId, int strength, ConnectedRoom room) {
-            this.key = Optional.fromNullable(!Strings.isNullOrEmpty(keyId) ? Item
-                    .fromProto(InvokenGame.ITEM_READER.readAsset(keyId)) : room.getKey());
+            boolean uniqueKey = false;
+            if (!Strings.isNullOrEmpty(keyId)) {
+                this.key = Optional.of(Item.fromProto(InvokenGame.ITEM_READER.readAsset(keyId)));
+                uniqueKey = true;
+            } else {
+                this.key = Optional.of(room.getKey());
+            }
             this.room = room;
 
             // strength key:
@@ -276,7 +281,7 @@ public class DoorActivator extends ClickActivator implements ProximityActivator,
             // 2+ -> locked
             // 10 -> requires key
             this.strength = strength;
-            locked = key != null || strength > 1;
+            locked = uniqueKey || strength > 1;
         }
 
         public Item getKey() {
