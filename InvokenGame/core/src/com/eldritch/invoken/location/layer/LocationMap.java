@@ -25,6 +25,7 @@ import com.eldritch.invoken.gfx.Light.LightDescription;
 import com.eldritch.invoken.gfx.Light.StaticLight;
 import com.eldritch.invoken.gfx.NormalMapShader;
 import com.eldritch.invoken.location.ConnectedRoomManager;
+import com.eldritch.invoken.location.EncounterDescription;
 import com.eldritch.invoken.location.NaturalVector2;
 import com.eldritch.invoken.location.layer.LocationLayer.CollisionLayer;
 import com.eldritch.invoken.util.Constants;
@@ -43,6 +44,7 @@ public class LocationMap extends TiledMap {
     private final int width;
     private final int height;
     private Set<NaturalVector2> activeTiles = null;
+    private final List<EncounterDescription> encounters = new ArrayList<>();
     private final List<Activator> activators = new ArrayList<>();
     private final List<InanimateEntity> entities = new ArrayList<>();
     private final List<Light> lights = new ArrayList<>();
@@ -68,6 +70,14 @@ public class LocationMap extends TiledMap {
 
     public boolean isWall(int x, int y) {
         return typeMap[x][y] == Type.Wall;
+    }
+    
+    public void addEncounter(EncounterDescription encounter) {
+        encounters.add(encounter);
+    }
+    
+    public List<EncounterDescription> getEncounters() {
+        return encounters;
     }
 
     public void setRooms(ConnectedRoomManager rooms) {

@@ -66,6 +66,7 @@ import com.eldritch.invoken.gfx.LightManager;
 import com.eldritch.invoken.gfx.NormalMapShader;
 import com.eldritch.invoken.gfx.OrthogonalShadedTiledMapRenderer;
 import com.eldritch.invoken.gfx.OverlayLightMasker;
+import com.eldritch.invoken.location.EncounterDescription.AgentDescription;
 import com.eldritch.invoken.location.layer.EncounterLayer;
 import com.eldritch.invoken.location.layer.LocationLayer.CollisionLayer;
 import com.eldritch.invoken.location.layer.LocationMap;
@@ -1105,34 +1106,21 @@ public class Level {
         return Npc.create(InvokenGame.ACTOR_READER.readAsset(id), x, y, this);
     }
 
-    public void addEntities(Locations.Level data, TiledMap map) {
+    public void addEntities(Locations.Level data, LocationMap map) {
         // find spawn nodes
-        for (MapLayer layer : map.getLayers()) {
-            if (layer instanceof EncounterLayer) {
-                EncounterLayer encounterLayer = (EncounterLayer) layer;
-                Encounter encounter = encounterLayer.encounter;
-                List<Npc> npcs = Lists.newArrayList();
-                if (encounter.getType() == Encounter.Type.ACTOR) {
-                    // create NPCs
-                    LinkedList<Vector2> spawnNodes = getSpawnNodes(encounterLayer);
-                    for (ActorScenario scenario : encounter.getActorParams().getActorScenarioList()) {
-                        int min = scenario.getMin();
-                        int max = scenario.getMax();
-                        int count = (int) (Math.random() * (max - min + 1) + min);
-                        for (int i = 0; i < count; i++) {
-                            if (!spawnNodes.isEmpty()) {
-                                Npc npc = createTestNpc(spawnNodes.poll(), scenario.getActorId());
-                                addActor(npc);
-                                npcs.add(npc);
-                            }
-                        }
-                    }
-                }
-
-                // create squads
-                createSquads(npcs);
+        List<Npc> npcs = new ArrayList<>();
+        for (EncounterDescription encounter : map.getEncounters()) {
+            // create NPCs
+            for (AgentDescription agent : encounter.getAgents()) {
+                ActorScenario scenario = agent.getScenario();
+                Npc npc = createTestNpc(agent.getPosition(), scenario.getActorId());
+                addActor(npc);
+                npcs.add(npc);
             }
         }
+        
+        // create squads
+        createSquads(npcs);
     }
 
     private void createSquads(List<Npc> npcs) {

@@ -38,6 +38,8 @@ import com.eldritch.invoken.gfx.Light;
 import com.eldritch.invoken.gfx.NormalMappedTile;
 import com.eldritch.invoken.location.ConnectedRoom;
 import com.eldritch.invoken.location.ConnectedRoomManager;
+import com.eldritch.invoken.location.EncounterDescription;
+import com.eldritch.invoken.location.EncounterDescription.AgentDescription;
 import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.location.NaturalVector2;
 import com.eldritch.invoken.location.ConnectedRoom.Type;
@@ -904,6 +906,8 @@ public class LocationGenerator {
         layer.setVisible(false);
         layer.setOpacity(1.0f);
         layer.setName("encounter-" + bounds.getX() + "-" + bounds.getY());
+        
+        EncounterDescription encounterDescription = new EncounterDescription();
 
         // enemy placement can be non-deterministic between loads
         Collections.shuffle(freeSpaces);
@@ -913,8 +917,13 @@ public class LocationGenerator {
             for (int i = 0; i < count; i++) {
                 NaturalVector2 position = it.hasNext() ? it.next() : getPoint(bounds, base, layer);
                 addCell(layer, collider, position.x, position.y);
+                
+                ConnectedRoom room = rooms.getRoom(position.x, position.y);
+                AgentDescription agentDescription = new AgentDescription(scenario, position, room);
+                encounterDescription.addAgent(agentDescription);
             }
         }
+        map.addEncounter(encounterDescription);
         layers.add(layer);
     }
 
