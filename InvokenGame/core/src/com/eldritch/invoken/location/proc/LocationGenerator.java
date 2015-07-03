@@ -901,12 +901,7 @@ public class LocationGenerator {
     private void createLayer(Rectangle bounds, Encounter encounter,
             List<NaturalVector2> freeSpaces, ConnectedRoomManager rooms, LocationLayer base,
             LocationLayer collision, LocationMap map, List<LocationLayer> layers) {
-        LocationLayer layer = new EncounterLayer(encounter, base.getWidth(), base.getHeight(), PX,
-                PX, map);
-        layer.setVisible(false);
-        layer.setOpacity(1.0f);
-        layer.setName("encounter-" + bounds.getX() + "-" + bounds.getY());
-        
+        Set<NaturalVector2> used = new HashSet<>();
         EncounterDescription encounterDescription = new EncounterDescription();
 
         // enemy placement can be non-deterministic between loads
@@ -915,16 +910,14 @@ public class LocationGenerator {
         for (ActorScenario scenario : encounter.getActorParams().getActorScenarioList()) {
             int count = getCount(encounter, scenario);
             for (int i = 0; i < count; i++) {
-                NaturalVector2 position = it.hasNext() ? it.next() : getPoint(bounds, base, layer);
-                addCell(layer, collider, position.x, position.y);
-                
+                NaturalVector2 position = it.hasNext() ? it.next() : getPoint(bounds, base, used);
                 ConnectedRoom room = rooms.getRoom(position.x, position.y);
                 AgentDescription agentDescription = new AgentDescription(scenario, position, room);
                 encounterDescription.addAgent(agentDescription);
+                used.add(position);
             }
         }
         map.addEncounter(encounterDescription);
-        layers.add(layer);
     }
 
     public int getCount(Encounter encounter, ActorScenario scenario) {
@@ -992,17 +985,17 @@ public class LocationGenerator {
         }
     }
 
-    public NaturalVector2 getPoint(Rectangle rect, LocationLayer base, LocationLayer layer) {
+    public NaturalVector2 getPoint(Rectangle rect, LocationLayer base, Set<NaturalVector2> used) {
         int left = (int) rect.x * SCALE;
         int right = (int) (left + rect.width * SCALE);
         int top = (int) rect.y * SCALE;
         int bottom = (int) (top + rect.height * SCALE);
         NaturalVector2 seed = NaturalVector2.of(randomNumber(left + 1, right - 2),
                 randomNumber(top + 1, bottom - 2));
-        return getPoint(rect, base, layer, seed);
+        return getPoint(rect, base, used, seed);
     }
 
-    public NaturalVector2 getPoint(Rectangle rect, LocationLayer base, LocationLayer layer,
+    public NaturalVector2 getPoint(Rectangle rect, LocationLayer base, Set<NaturalVector2> used,
             NaturalVector2 seed) {
         Set<NaturalVector2> visited = new LinkedHashSet<NaturalVector2>();
         LinkedList<NaturalVector2> queue = new LinkedList<NaturalVector2>();
@@ -1011,7 +1004,7 @@ public class LocationGenerator {
         visited.add(seed);
         while (!queue.isEmpty()) {
             NaturalVector2 point = queue.remove();
-            if (base.isGround(point.x, point.y) && !layer.hasCell(point.x, point.y)) {
+            if (base.isGround(point.x, point.y) && !used.contains(point)) {
                 // valid point: ground and no pre-existing spawn nodes
                 return point;
             }

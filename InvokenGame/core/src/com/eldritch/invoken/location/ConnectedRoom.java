@@ -37,15 +37,23 @@ public class ConnectedRoom {
 	}
 	
 	public boolean hasResident() {
-	    boolean found = false;
 	    for (Agent agent : residents) {
 	        if (contains(agent.getNaturalPosition())) {
 	            // resident is in this room
-	            found = true;
-	            break;
+	            return true;
 	        }
 	    }
-	    return found;
+	    return false;
+	}
+	
+	public boolean hasHostileResident(Agent other) {
+	    for (Agent agent : residents) {
+            if (contains(agent.getNaturalPosition()) && agent.isEnemy(other)) {
+                // resident is in this room and hostile to other
+                return true;
+            }
+        }
+        return false;
 	}
 	
 	public void addResident(Agent resident) {
