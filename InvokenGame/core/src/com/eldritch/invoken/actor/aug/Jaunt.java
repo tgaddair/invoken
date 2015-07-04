@@ -32,7 +32,17 @@ public class Jaunt extends Augmentation {
 
 	@Override
 	public Action getAction(Agent owner, Agent target) {
-		return new JauntAction(owner, target.getPosition());
+	    Vector2 position;
+        if (target == null || owner == target) {
+            if (owner.isAiming()) {
+                position = owner.getFocusPoint();
+            } else {
+                position = owner.getForwardVector().scl(5f).add(owner.getPosition());
+            }
+        } else {
+            position = target.getPosition();
+        }
+		return new JauntAction(owner, position);
 	}
 	
 	@Override

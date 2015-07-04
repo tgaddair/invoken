@@ -15,8 +15,6 @@ import com.google.common.base.Optional;
 public abstract class Augmentation {
     private final Texture icon;
     private final Type type;
-    private int slots;
-    private int uses;
     
     public enum Type {
         Active, Self, Instant
