@@ -20,9 +20,6 @@ import com.eldritch.invoken.util.Settings;
 import com.eldritch.invoken.util.SoundManager.SoundEffect;
 
 public class Smash extends Augmentation {
-    private static final TextureRegion[] SMOKE_REGIONS = GameScreen.getMergedRegion(
-            "sprite/effects/smoke-ring.png", 128, 128);
-
     private static class Holder {
         private static final Smash INSTANCE = new Smash();
     }
@@ -72,7 +69,7 @@ public class Smash extends Augmentation {
     }
 
     public class SmashAction extends AnimatedAction {
-        private final Vector2 strike = new Vector2();
+        private final Vector2 direction = new Vector2();
         private final Vector2 target;
 
         public SmashAction(Agent actor, Vector2 target) {
@@ -81,8 +78,6 @@ public class Smash extends Augmentation {
 
             // update agent to fact the direction of their strike
             owner.setDirection(owner.getRelativeDirection(target));
-
-            MeleeWeapon weapon = actor.getInventory().getMeleeWeapon();
         }
 
         @Override
@@ -90,16 +85,11 @@ public class Smash extends Augmentation {
             MeleeWeapon weapon = owner.getInventory().getMeleeWeapon();
             float range = getRange(weapon);
             float radius = range / 2;
-            strike.set(owner.getPosition());
-            strike.add(owner.getForwardVector().scl(radius));
 
             Vector2 center = getCenter(owner.getPosition(), target, range);
-            owner.getLocation().addEntity(
-                    new AnimatedEntity(SMOKE_REGIONS, center, new Vector2(range * 1.5f,
-                            range * 1.5f), 0.05f));
+            owner.getLocation().addEntity(AnimatedEntity.createSmokeRing(center, range));
             InvokenGame.SOUND_MANAGER.playAtPoint(SoundEffect.MELEE_SWING, owner.getPosition());
 
-            Vector2 direction = new Vector2();
             for (Agent neighbor : owner.getNeighbors()) {
                 if (neighbor.inRange(center, radius)) {
                     float scale = Heuristics.distanceScore(center.dst2(neighbor.getPosition()), 0);

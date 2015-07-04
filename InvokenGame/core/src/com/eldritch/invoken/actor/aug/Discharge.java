@@ -16,16 +16,11 @@ import com.eldritch.invoken.screens.GameScreen;
 import com.eldritch.invoken.util.Damage;
 import com.eldritch.invoken.util.Heuristics;
 import com.eldritch.invoken.util.SoundManager.SoundEffect;
-import com.eldritch.invoken.util.Utils;
 
 public class Discharge extends ProjectileAugmentation {
-    private static final TextureRegion[] DISINTEGRATE_REGIONS = GameScreen
-            .getMergedRegion(getDisintegrateAssets());
-
     private static final TextureRegion BOLT_TEXTURE = new TextureRegion(
             GameScreen.getTexture("sprite/effects/bolt.png"));
 
-    private static final float DISINTEGRATE_SIZE = 1f;
     private static final float BOLT_SIZE = 2.5f;
     private static final int DAMAGE_SCALE = 35;
     private static final int BASE_COST = 25;
@@ -116,9 +111,7 @@ public class Discharge extends ProjectileAugmentation {
 
         @Override
         protected void onFinish() {
-            getOwner().getLocation().addEntity(
-                    new AnimatedEntity(DISINTEGRATE_REGIONS, getPosition().cpy(), Utils.getSize(
-                            DISINTEGRATE_REGIONS[0], DISINTEGRATE_SIZE), 0.1f));
+            getOwner().getLocation().addEntity(AnimatedEntity.createDisintegrate(getPosition()));
         }
 
         private static int getBaseDamage(Agent owner) {
@@ -126,16 +119,5 @@ public class Discharge extends ProjectileAugmentation {
         }
     }
 
-    private static String[] getDisintegrateAssets() {
-        String[] assets = new String[11];
-        for (int i = 0; i <= 9; i++) {
-            assets[i] = format("0" + i);
-        }
-        assets[10] = format("10");
-        return assets;
-    }
-
-    private static String format(String i) {
-        return "sprite/effects/disintegrate/disintegrate" + i + ".png";
-    }
+    
 }
