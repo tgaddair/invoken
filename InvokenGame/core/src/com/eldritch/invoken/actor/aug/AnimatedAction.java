@@ -6,7 +6,6 @@ import com.eldritch.invoken.actor.aug.Augmentation.AugmentationAction;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.effects.AnimatedEffect;
-import com.eldritch.invoken.effects.SummonEnergy;
 import com.eldritch.invoken.location.Level;
 import com.google.common.base.Optional;
 

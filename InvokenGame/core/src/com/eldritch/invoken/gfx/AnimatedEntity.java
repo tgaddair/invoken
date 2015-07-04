@@ -79,7 +79,7 @@ public class AnimatedEntity implements TemporaryEntity {
     }
 
     public static AnimatedEntity createDisintegrate(Vector2 position) {
-        return new AnimatedEntity(DISINTEGRATE_REGIONS, position.cpy(), Utils.getSize(
+        return new AnimatedEntity(DISINTEGRATE_REGIONS, position, Utils.getSize(
                 DISINTEGRATE_REGIONS[0], DISINTEGRATE_SIZE), 0.1f);
     }
 

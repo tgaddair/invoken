@@ -124,7 +124,7 @@ public class RendWeapon extends Augmentation {
         @Override
         protected float getHoldSeconds() {
             // this can be used as a tell for some enemy types
-            return owner.getAttackSpeed() >= 2 ? 0 : 1f / owner.getAttackSpeed();
+            return owner.getHoldSeconds();
         }
 
         @Override

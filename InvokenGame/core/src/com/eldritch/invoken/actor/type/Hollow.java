@@ -85,6 +85,11 @@ public class Hollow extends Npc {
         public float getAttackSpeed() {
             return 1f;
         }
+        
+        @Override
+        public float getHoldSeconds() {
+            return 1f;
+        }
 
         @Override
         public float getDensity() {

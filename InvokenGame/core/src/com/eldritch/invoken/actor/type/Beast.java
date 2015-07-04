@@ -126,6 +126,11 @@ public class Beast extends Npc {
         }
         
         @Override
+        public float getHoldSeconds() {
+            return 0.25f;
+        }
+        
+        @Override
         protected void draw(Batch batch, TextureRegion frame, Direction direction) {
             float width = getWidth();
             float height = getHeight();

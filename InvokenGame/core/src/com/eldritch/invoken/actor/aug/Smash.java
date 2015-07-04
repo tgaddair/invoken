@@ -1,6 +1,5 @@
 package com.eldritch.invoken.actor.aug;
 
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.InvokenGame;
@@ -12,7 +11,6 @@ import com.eldritch.invoken.effects.Stunned;
 import com.eldritch.invoken.gfx.AnimatedEntity;
 import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.proto.Effects.DamageType;
-import com.eldritch.invoken.screens.GameScreen;
 import com.eldritch.invoken.ui.DebugEntityRenderer;
 import com.eldritch.invoken.util.Damage;
 import com.eldritch.invoken.util.Heuristics;
@@ -128,7 +126,7 @@ public class Smash extends Augmentation {
         @Override
         protected float getHoldSeconds() {
             // this can be used as a tell for some enemy types
-            return owner.getAttackSpeed() >= 2 ? 0 : 1f / owner.getAttackSpeed();
+            return owner.getHoldSeconds();
         }
 
         @Override

@@ -38,7 +38,7 @@ public class Jaunting extends BasicEffect {
                 float scale = Heuristics.distanceScore(center.dst2(neighbor.getPosition()), 0);
                 direction.set(neighbor.getPosition()).sub(owner.getPosition()).nor().scl(scale);
                 neighbor.applyForce(direction.scl(500));
-                neighbor.addEffect(new Stunned(owner, neighbor, 0.2f));
+                neighbor.addEffect(new Stunned(owner, neighbor, 1f));
                 level.addEntity(AnimatedEntity.createDisintegrate(neighbor.getPosition()));
 
                 InvokenGame.SOUND_MANAGER.playAtPoint(SoundEffect.MELEE_HIT,
