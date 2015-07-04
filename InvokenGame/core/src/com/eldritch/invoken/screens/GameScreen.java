@@ -79,7 +79,8 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
     private final LootMenu loot;
 
     private final String playerName;
-    private Profession profession = null; // TODO: this will become a proto containing play info
+    private Profession profession = null; // TODO: this will become a proto
+                                          // containing play info
     private String locationName;
 
     private ActionBar actionBar;
@@ -163,10 +164,11 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
             PlayerActor state = load(playerName);
 
             // load the location
-            // Locations.Location data = InvokenGame.LOCATION_READER.readAsset(state.getLocation());
+            // Locations.Location data =
+            // InvokenGame.LOCATION_READER.readAsset(state.getLocation());
             LocationGenerator generator = new LocationGenerator(gameState, getBiome(),
                     state.getSeed());
-            level = generator.generate(ImmutableList.<Locations.Location>of(), state.getFloor());
+            level = generator.generate(ImmutableList.<Locations.Location> of(), state.getFloor());
             onLoad(level, Optional.of(state));
 
             // load from disk
@@ -178,7 +180,8 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
             }
         } else {
             Random rand = new Random();
-            // Locations.Location data = InvokenGame.LOCATION_READER.readAsset(locationName);
+            // Locations.Location data =
+            // InvokenGame.LOCATION_READER.readAsset(locationName);
             // InvokenGame.LOCATION_READER.readAsset("DebugPlayground");
             // InvokenGame.LOCATION_READER.readAsset("CentralProcessing");
             // InvokenGame.LOCATION_READER.readAsset("WelcomeCenterLevel2");
@@ -379,10 +382,10 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
                 }
             } else {
                 int reloadPercent = (int) (player.getInventory().getReloadFraction() * 100);
-                
+
                 font.setColor(Color.BLUE);
-                font.draw(batch, String.format("Reloading: %d%%", reloadPercent), 10,
-                        getHeight() - (30 + 20 * i++));
+                font.draw(batch, String.format("Reloading: %d%%", reloadPercent), 10, getHeight()
+                        - (30 + 20 * i++));
                 font.setColor(Color.WHITE);
             }
         }
@@ -395,7 +398,8 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
             float freezing = target.getFreezing();
             int enemies = target.getThreat().getEnemyCount();
             float visibility = target.getVisibility();
-            // String trespass = target.getLocation().isTrespasser(target) ? (target.getLocation()
+            // String trespass = target.getLocation().isTrespasser(target) ?
+            // (target.getLocation()
             // .isOnFrontier(target) ? "Frontier" : "Trespass") : "Clear";
 
             font.draw(batch, String.format("Health: %.0f", health), 10, getHeight()
@@ -403,24 +407,31 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
             font.draw(batch, String.format("Energy: %.0f", energy), 10, getHeight()
                     - (30 + 20 * i++));
             font.draw(batch, String.format("Level: %d", level), 10, getHeight() - (30 + 20 * i++));
-            // font.draw(batch, String.format("Freezing: %.2f", freezing), 10, getHeight()
+            // font.draw(batch, String.format("Freezing: %.2f", freezing), 10,
+            // getHeight()
             // - (30 + 20 * i++));
             font.draw(batch, String.format("Enemies: %d", enemies), 10, getHeight()
                     - (30 + 20 * i++));
-            // font.draw(batch, String.format("Visibility: %.2f", visibility), 10, getHeight()
+            // font.draw(batch, String.format("Visibility: %.2f", visibility),
+            // 10, getHeight()
             // - (30 + 20 * i++));
 
             AgentInfo info = target.getInfo();
-            // font.draw(batch, String.format("Warfare: %d", info.getWarfare()), 10, getHeight()
+            // font.draw(batch, String.format("Warfare: %d", info.getWarfare()),
+            // 10, getHeight()
             // - (30 + 20 * i++));
-            // font.draw(batch, String.format("Automata: %d", info.getAutomata()), 10, getHeight()
+            // font.draw(batch, String.format("Automata: %d",
+            // info.getAutomata()), 10, getHeight()
             // - (30 + 20 * i++));
-            // font.draw(batch, String.format("Subterfuge: %d", info.getSubterfuge()), 10,
+            // font.draw(batch, String.format("Subterfuge: %d",
+            // info.getSubterfuge()), 10,
             // getHeight()
             // - (30 + 20 * i++));
-            // font.draw(batch, String.format("Charisma: %d", info.getCharisma()), 10, getHeight()
+            // font.draw(batch, String.format("Charisma: %d",
+            // info.getCharisma()), 10, getHeight()
             // - (30 + 20 * i++));
-            // font.draw(batch, String.format("Trespass: %s", trespass), 10, getHeight()
+            // font.draw(batch, String.format("Trespass: %s", trespass), 10,
+            // getHeight()
             // - (30 + 20 * i++));
 
             if (target instanceof Npc) {
@@ -438,18 +449,24 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
                         .getLeader() == npc ? "leader" : "member") : "no"), 10, getHeight()
                         - (30 + 20 * i++));
 
-                // font.draw(batch, "Graph: " + Settings.DRAW_GRAPH, 10, getHeight() - (30 + 20 *
+                // font.draw(batch, "Graph: " + Settings.DRAW_GRAPH, 10,
+                // getHeight() - (30 + 20 *
                 // i++));
                 font.draw(batch, "Task: " + task, 10, getHeight() - (30 + 20 * i++));
-                // font.draw(batch, "Threat: " + threat, 10, getHeight() - (30 + 20 * i++));
-                // font.draw(batch, String.format("Aiming: %s", npc.isAiming()), 10, getHeight()
+                // font.draw(batch, "Threat: " + threat, 10, getHeight() - (30 +
+                // 20 * i++));
+                // font.draw(batch, String.format("Aiming: %s", npc.isAiming()),
+                // 10, getHeight()
                 // - (30 + 20 * i++));
-                // font.draw(batch, String.format("Sighted: %s", npc.hasSights()), 10, getHeight()
+                // font.draw(batch, String.format("Sighted: %s",
+                // npc.hasSights()), 10, getHeight()
                 // - (30 + 20 * i++));
-                // font.draw(batch, String.format("Fatigued: %s (%.2f)", fatigued, fatigue), 10,
+                // font.draw(batch, String.format("Fatigued: %s (%.2f)",
+                // fatigued, fatigue), 10,
                 // getHeight() - (30 + 20 * i++));
                 // font.draw(batch,
-                // String.format("Intimidated: %s (%.2f)", intimidated, intimidation), 10,
+                // String.format("Intimidated: %s (%.2f)", intimidated,
+                // intimidation), 10,
                 // getHeight() - (30 + 20 * i++));
                 font.draw(batch, String.format("Target: %s", targetName), 10, getHeight()
                         - (30 + 20 * i++));
@@ -520,11 +537,11 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
     public boolean keyDown(int keycode) {
         switch (keycode) {
             case Keys.SPACE:
-            	// player.holdPosition(true);
+                // player.holdPosition(true);
                 shiftDown(true);
                 return true;
             case Keys.SHIFT_LEFT:
-            	player.setAiming(true);
+                player.setAiming(true);
                 return true;
             case Keys.TAB:
                 // show minimap
@@ -575,11 +592,11 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
             case Keys.SPACE:
                 // tacticalPause = !tacticalPause;
                 // return true;
-            	// player.holdPosition(false);
+                // player.holdPosition(false);
                 shiftDown(false);
                 return true;
             case Keys.SHIFT_LEFT:
-            	player.setAiming(false);
+                player.setAiming(false);
                 return true;
             case Keys.BACKSPACE:
                 if (tacticalPause) {
@@ -598,20 +615,23 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
                 SCREEN_GRAB = true;
                 return true;
             case Keys.NUMPAD_0:
-                // loadLocation("WelcomeCenterLevel2", Optional.<String> absent(), level
+                // loadLocation("WelcomeCenterLevel2", Optional.<String>
+                // absent(), level
                 // .getPlayer().serialize());
                 return true;
             case Keys.NUMPAD_1:
-                // loadLocation("Tutorial", Optional.<String> absent(), level.getPlayer()
+                // loadLocation("Tutorial", Optional.<String> absent(),
+                // level.getPlayer()
                 // .serialize());
                 return true;
             case Keys.NUMPAD_2:
-                // loadLocation("WelcomeCenterLevel3", Optional.<String> absent(), level
+                // loadLocation("WelcomeCenterLevel3", Optional.<String>
+                // absent(), level
                 // .getPlayer().serialize());
                 return true;
             case Keys.L:
-            	game.setScreen(new GameScreen(game, "PlayerDebug"));
-            	return true;
+                game.setScreen(new GameScreen(game, "PlayerDebug"));
+                return true;
             default:
                 return false;
         }
@@ -645,15 +665,13 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 
         // when the player is aiming, the only option is to use the augmentation
         // TODO: if not enough energy to use the aug, then consume an aug cell
+        PreparedAugmentations pa = player.getInfo().getAugmentations();
         if (player.isAiming()) {
-            if (player.getInfo().getAugmentations().hasActiveAugmentation(button)) {
-                boolean success = player
-                        .getInfo()
-                        .getAugmentations()
-                        .useActiveAugmentation(new Vector2(world.x, world.y), button, tacticalPause);
+            if (pa.hasActiveAugmentation(button)) {
+                boolean success = pa.useActiveAugmentation(new Vector2(world.x, world.y), button,
+                        tacticalPause);
                 if (!success) {
-                    Augmentation active = player.getInfo().getAugmentations()
-                            .getActiveAugmentation(button);
+                    Augmentation active = pa.getActiveAugmentation(button);
                     InvokenGame.SOUND_MANAGER.play(active.getFailureSound(), 2);
                     toast("No Ammunition!");
                 }
@@ -667,13 +685,14 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         // handle entity selection
         boolean selection = false;
         for (Agent entity : level.getActiveEntities()) {
-            if (entity.contains(world.x, world.y)) { // && player.canTarget(entity, location)) {
+            if (entity.contains(world.x, world.y)) { // &&
+                                                     // player.canTarget(entity,
+                                                     // location)) {
                 selection = true;
-                if (player.getInfo().getAugmentations().hasActiveAugmentation(button)
-                        && player.getInfo().getAugmentations().getActiveAugmentation(button)
-                                .isValid(player) && player.select(entity, level)) {
-                    player.getInfo().getAugmentations()
-                            .useActiveAugmentation(button, tacticalPause);
+                if (pa.hasActiveAugmentation(button)
+                        && pa.getActiveAugmentation(button).isValid(player)
+                        && player.select(entity, level)) {
+                    pa.useActiveAugmentation(button, tacticalPause);
                 } else if (player.getTarget() != entity) {
                     // initial selection -> set target
                     player.select(entity, level);
@@ -713,10 +732,8 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
             // // move to destination
             // player.moveToFixedTarget(world.x, world.y);
             // }
-            if (player.getInfo().getAugmentations().hasActiveAugmentation(button)) {
-                player.getInfo()
-                        .getAugmentations()
-                        .useActiveAugmentation(new Vector2(world.x, world.y), button, tacticalPause);
+            if (pa.hasActiveAugmentation(button)) {
+                pa.useActiveAugmentation(new Vector2(world.x, world.y), button, tacticalPause);
             }
             selection = true;
         }
@@ -739,7 +756,8 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         // always stop moving when no longer being dragged
         player.setMoving(false);
 
-        // handle the release of a sustained active augmentation, like the shield
+        // handle the release of a sustained active augmentation, like the
+        // shield
         PreparedAugmentations prepared = player.getInfo().getAugmentations();
         if (prepared.hasActiveAugmentation(button)) {
             prepared.release(button);
@@ -797,13 +815,13 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         }
         return merged;
     }
-    
+
     public static TextureRegion[] getMergedRegion(String... assets) {
-    	TextureRegion[] merged = new TextureRegion[assets.length];
-    	for (int i = 0; i < merged.length; i++) {
-    		merged[i] = new TextureRegion(getTexture(assets[i]));
-    	}
-    	return merged;
+        TextureRegion[] merged = new TextureRegion[assets.length];
+        for (int i = 0; i < merged.length; i++) {
+            merged[i] = new TextureRegion(getTexture(assets[i]));
+        }
+        return merged;
     }
 
     public static Texture getTexture(String assetName) {
@@ -824,14 +842,17 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         }
     }
 
-    // private void loadLocation(String locationName, Optional<String> encounterName, PlayerActor
+    // private void loadLocation(String locationName, Optional<String>
+    // encounterName, PlayerActor
     // state) {
     // // dispose of the current location
     // level.dispose();
     //
     // // load the location
-    // Locations.Location data = InvokenGame.LOCATION_READER.readAsset(locationName);
-    // LocationGenerator generator = new LocationGenerator(gameState, data.getBiome(),
+    // Locations.Location data =
+    // InvokenGame.LOCATION_READER.readAsset(locationName);
+    // LocationGenerator generator = new LocationGenerator(gameState,
+    // data.getBiome(),
     // state.getSeed());
     // level = generator.generate(data, encounterName);
     // level.spawnPlayer(player);
@@ -857,7 +878,8 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         level.dispose();
 
         // load the location
-        // Locations.Location data = InvokenGame.LOCATION_READER.readAsset(locationName);
+        // Locations.Location data =
+        // InvokenGame.LOCATION_READER.readAsset(locationName);
         LocationGenerator generator = new LocationGenerator(gameState, getBiome(), state.getSeed());
         level = generator.generate(ImmutableList.<Locations.Location> of(), floor);
         level.spawnPlayer(player);
@@ -914,7 +936,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
             builder.setSeed(last.getSeed());
             builder.setRegion(last.getRegion());
             builder.setFloor(last.getFloor());
-            
+
             builder.addAllVisitedRooms(player.getLocation().getVisitedIndices());
 
             data = builder.build();

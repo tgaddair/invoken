@@ -22,12 +22,22 @@ public class ThrowGrenade extends Augmentation {
     }
 
     private ThrowGrenade() {
-        super("throw");
+        super("throw", false, true);
     }
 
     @Override
     public Action getAction(Agent owner, Agent target) {
-        return getAction(owner, target.getPosition());
+        Vector2 position;
+        if (target == null || owner == target) {
+            if (owner.isAiming()) {
+                position = owner.getFocusPoint();
+            } else {
+                position = owner.getForwardVector().scl(5f).add(owner.getPosition());
+            }
+        } else {
+            position = target.getPosition();
+        }
+        return getAction(owner, position);
     }
 
     @Override
@@ -37,7 +47,7 @@ public class ThrowGrenade extends Augmentation {
 
     @Override
     public boolean isValid(Agent owner, Agent target) {
-        return target != null && target != owner;
+        return true;
     }
 
     @Override
@@ -84,9 +94,13 @@ public class ThrowGrenade extends Augmentation {
         private static final TextureRegion[] explosionRegions = GameScreen.getMergedRegion(
                 "sprite/effects/explosion.png", 256, 256);
 
+        private static final int SPEED = 10;
+        private static final int DAMAGE = 50;
+        private static final int RADIUS = 3;
+
         public Grenade(Agent owner, Vector2 target) {
-            super(owner, target, texture, explosionRegions, 5, Damage.from(owner,
-                    DamageType.THERMAL, 50), 3);
+            super(owner, target, texture, explosionRegions, SPEED, Damage.from(owner,
+                    DamageType.THERMAL, DAMAGE), RADIUS);
         }
 
         @Override

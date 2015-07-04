@@ -15,6 +15,7 @@ import com.google.common.base.Optional;
 public abstract class Augmentation {
     private final Texture icon;
     private final boolean self;
+    private final boolean instant;
     private int slots;
     private int uses;
 
@@ -23,22 +24,26 @@ public abstract class Augmentation {
     }
 
     public Augmentation(Optional<String> asset) {
-        this(asset, false);
+        this(asset, false, false);
     }
 
     public Augmentation(boolean self) {
-        this.icon = null;
-        this.self = self;
+        this(Optional.<String>absent(), self, false);
     }
 
     public Augmentation(String asset, boolean self) {
-        this(Optional.of(asset), self);
+        this(asset, self, false);
+    }
+    
+    public Augmentation(String asset, boolean self, boolean instant) {
+        this(Optional.of(asset), self, instant);
     }
 
-    public Augmentation(Optional<String> asset, boolean self) {
+    public Augmentation(Optional<String> asset, boolean self, boolean instant) {
         this.icon = asset.isPresent() ? GameScreen.getTexture("icon/" + asset.get() + ".png")
                 : null;
         this.self = self;
+        this.instant = instant;
     }
 
     public boolean hasEnergy(Agent agent) {
@@ -117,6 +122,10 @@ public abstract class Augmentation {
 
     public boolean castsOnSelf() {
         return self;
+    }
+    
+    public boolean isInstant() {
+        return instant;
     }
 
     public boolean isAimed() {

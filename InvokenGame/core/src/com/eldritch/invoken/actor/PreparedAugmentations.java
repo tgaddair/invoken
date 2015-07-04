@@ -95,6 +95,9 @@ public class PreparedAugmentations {
 	}
 	
 	public void toggleActiveAugmentation(Augmentation aug, int slot) {
+	    if (aug.isInstant()) {
+	        use(aug);
+	    }
 		if (aug.castsOnSelf()) {
 	        boolean used = use(aug);
 	        if (activeSelfAugmentations.contains(aug)) {

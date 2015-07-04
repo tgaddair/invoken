@@ -1458,9 +1458,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         info.getInventory().update(delta);
 
         updateHeading();
-        if (aiming) {
-            weaponSentry.update(delta);
-        }
+        weaponSentry.update(delta);
 
         // apply all active effects, remove any that are finished
         Iterator<Effect> it = effects.iterator();
@@ -1982,18 +1980,19 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         }
 
         public void update(float delta) {
-            Vector2 origin = getRenderPosition();
-            direction.set(getFocusPoint()).sub(origin).nor();
-            updatePosition();
-            clear();
+            if (Agent.this.isAiming()) {
+                Vector2 origin = getRenderPosition();
+                direction.set(getFocusPoint()).sub(origin).nor();
+                updatePosition();
+                clear();
+            } else {
+                rotateTowards(delta, getForwardVector());
+                updatePosition();
+            }
         }
 
         @Override
         public void update(float delta, Level level) {
-            if (!Agent.this.aiming) {
-                rotateTowards(delta, getForwardVector());
-                updatePosition();
-            }
         }
 
         private void updatePosition() {
