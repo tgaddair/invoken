@@ -12,7 +12,7 @@ public class Paralyzed extends AnimatedEffect {
 		super(target, GameScreen.getRegions("sprite/effects/paralyzed.png", 48, 48)[0],
 				Animation.PlayMode.LOOP);
 		this.agent = agent;
-		this.duration = duration * agent.getExecuteScale(target);
+		this.duration = duration * getDurationScale(agent, target);
 	}
 
 	@Override
@@ -28,5 +28,9 @@ public class Paralyzed extends AnimatedEffect {
 	@Override
 	public void dispel() {
 		getTarget().setParalyzed(agent, false);
+	}
+	
+	protected float getDurationScale(Agent agent, Agent target) {
+	    return agent.getExecuteScale(target);
 	}
 }

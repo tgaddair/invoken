@@ -15,4 +15,9 @@ public class Stunned extends Paralyzed {
     @Override
     public void render(float delta, OrthogonalTiledMapRenderer renderer) {
     }
+    
+    @Override
+    protected float getDurationScale(Agent agent, Agent target) {
+        return 1f;
+    }
 }
