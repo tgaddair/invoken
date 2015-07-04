@@ -2,6 +2,7 @@ package com.eldritch.invoken.actor.aug;
 
 import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.actor.ai.btree.IsTrapped;
+import com.eldritch.invoken.actor.aug.Augmentation.ActiveAugmentation;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.effects.BasicEffect;
@@ -10,7 +11,7 @@ import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.location.NaturalVector2;
 import com.eldritch.invoken.util.Heuristics;
 
-public class Recall extends Augmentation {
+public class Recall extends ActiveAugmentation {
     private static class Holder {
         private static final Recall INSTANCE = new Recall();
     }
@@ -20,7 +21,7 @@ public class Recall extends Augmentation {
     }
 
     private Recall() {
-        super("recall", false);
+        super("recall");
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.eldritch.invoken.actor.aug;
 
 import com.badlogic.gdx.math.Vector2;
+import com.eldritch.invoken.actor.aug.Augmentation.SelfAugmentation;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.effects.Cloaked;
@@ -10,7 +11,7 @@ import com.eldritch.invoken.location.Level;
  * Charisma check against nearby Beast types.  If the check is successful, then the Beast is
  * deemed passive (will not attack). 
  */
-public class Pacify extends Augmentation {
+public class Pacify extends SelfAugmentation {
     private static final int BASE_COST = 3;
     
 	private static class Holder {
@@ -22,7 +23,7 @@ public class Pacify extends Augmentation {
 	}
 	
     private Pacify() {
-        super("cloak", true);
+        super("cloak");
     }
     
     @Override

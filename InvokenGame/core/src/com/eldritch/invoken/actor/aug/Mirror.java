@@ -1,12 +1,13 @@
 package com.eldritch.invoken.actor.aug;
 
 import com.badlogic.gdx.math.Vector2;
+import com.eldritch.invoken.actor.aug.Augmentation.SelfAugmentation;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.effects.Mirroring;
 import com.eldritch.invoken.location.Level;
 
-public class Mirror extends Augmentation {
+public class Mirror extends SelfAugmentation {
 	private static class Holder {
         private static final Mirror INSTANCE = new Mirror();
 	}
@@ -16,7 +17,7 @@ public class Mirror extends Augmentation {
 	}
 	
     private Mirror() {
-        super("mirror", true);
+        super("mirror");
     }
     
     @Override

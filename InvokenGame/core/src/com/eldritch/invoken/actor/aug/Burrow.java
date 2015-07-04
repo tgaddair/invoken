@@ -2,6 +2,7 @@ package com.eldritch.invoken.actor.aug;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
+import com.eldritch.invoken.actor.aug.Augmentation.ActiveAugmentation;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.effects.BasicEffect;
@@ -9,8 +10,9 @@ import com.eldritch.invoken.gfx.AnimatedEntity;
 import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.screens.GameScreen;
 import com.eldritch.invoken.util.Heuristics;
+import com.google.common.base.Optional;
 
-public class Burrow extends Augmentation {
+public class Burrow extends ActiveAugmentation {
     private static final TextureRegion[] DUST_REGIONS = GameScreen.getMergedRegion(
             "sprite/effects/dust.png", 128, 128);
     private static final float DUST_SIZE = 4.5f;
@@ -26,7 +28,7 @@ public class Burrow extends Augmentation {
     }
 
     private Burrow() {
-        super(false);
+        super(Optional.<String>absent());
     }
 
     @Override

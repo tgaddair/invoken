@@ -2,6 +2,7 @@ package com.eldritch.invoken.actor.aug;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
+import com.eldritch.invoken.actor.aug.Augmentation.ActiveAugmentation;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.effects.Resurrected;
@@ -11,7 +12,7 @@ import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.screens.GameScreen;
 import com.eldritch.invoken.util.Callback;
 
-public class Resurrect extends Augmentation {
+public class Resurrect extends ActiveAugmentation {
     private static final TextureRegion[] SPLASH_REGIONS = GameScreen.getMergedRegion(
             "sprite/effects/envelop.png", 128, 128);
     private static final float SPLASH_SIZE = 2f;

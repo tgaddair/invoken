@@ -1,12 +1,13 @@
 package com.eldritch.invoken.actor.aug;
 
 import com.badlogic.gdx.math.Vector2;
+import com.eldritch.invoken.actor.aug.Augmentation.ActiveAugmentation;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.effects.Shield;
 import com.eldritch.invoken.location.Level;
 
-public class Barrier extends Augmentation {
+public class Barrier extends ActiveAugmentation {
     private static class Holder {
         private static final Barrier INSTANCE = new Barrier();
     }
@@ -16,7 +17,7 @@ public class Barrier extends Augmentation {
     }
 
     private Barrier() {
-        super("barrier", false);
+        super("barrier");
     }
 
     @Override

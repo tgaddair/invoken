@@ -2,12 +2,13 @@ package com.eldritch.invoken.actor.aug;
 
 import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.actor.Species;
+import com.eldritch.invoken.actor.aug.Augmentation.ActiveAugmentation;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.effects.Scrambled;
 import com.eldritch.invoken.location.Level;
 
-public class Scramble extends Augmentation {
+public class Scramble extends ActiveAugmentation {
 	private static class Holder {
         private static final Scramble INSTANCE = new Scramble();
 	}
@@ -17,7 +18,7 @@ public class Scramble extends Augmentation {
 	}
 	
     private Scramble() {
-        super("scramble", false);
+        super("scramble");
     }
     
 	@Override

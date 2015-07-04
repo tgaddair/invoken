@@ -95,30 +95,23 @@ public class PreparedAugmentations {
     }
 
     public void toggleActiveAugmentation(Augmentation aug, int slot) {
-        switch (aug.getType()) {
-            case Active:
-                if (activeAugmentations.get(slot) == aug) {
-                    // already active in this slot
-                    setInactive(slot);
-                } else {
-                    setActive(aug, slot);
-                }
-                break;
-            case Self:
-                boolean used = use(aug);
-                if (activeSelfAugmentations.contains(aug)) {
-                    activeSelfAugmentations.remove(aug);
-                } else if (used) {
-                    activeSelfAugmentations.add(aug);
-                }
-                break;
-            case Instant:
-                use(aug);
-                break;
-            default:
-                throw new IllegalArgumentException("Unrecognized augmentation type: "
-                        + aug.getType());
-        }
+        aug.prepare(this, slot);
+    }
+    
+    public boolean isActiveOnSelf(Augmentation aug) {
+        return activeSelfAugmentations.contains(aug);
+    }
+    
+    public void addActiveOnSelf(Augmentation aug) {
+        activeSelfAugmentations.add(aug);
+    }
+    
+    public void removeActiveOnSelf(Augmentation aug) {
+        activeSelfAugmentations.remove(aug);
+    }
+    
+    public boolean isActive(Augmentation aug, int slot) {
+        return activeAugmentations.get(slot) == aug;
     }
 
     public void setActive(Augmentation aug, int slot) {

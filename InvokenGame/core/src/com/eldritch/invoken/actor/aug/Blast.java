@@ -2,6 +2,7 @@ package com.eldritch.invoken.actor.aug;
 
 import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.InvokenGame;
+import com.eldritch.invoken.actor.aug.Augmentation.ActiveAugmentation;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.effects.Bleed;
@@ -11,8 +12,9 @@ import com.eldritch.invoken.proto.Effects.DamageType;
 import com.eldritch.invoken.util.Damage;
 import com.eldritch.invoken.util.Heuristics;
 import com.eldritch.invoken.util.SoundManager.SoundEffect;
+import com.google.common.base.Optional;
 
-public class Blast extends Augmentation {
+public class Blast extends ActiveAugmentation {
     private static final float RANGE = 3;
     private static final int COST = 2;
     private static final int DAMAGE_SCALE = 25;
@@ -26,7 +28,7 @@ public class Blast extends Augmentation {
     }
 
     private Blast() {
-        super(false);
+        super(Optional.<String>absent());
     }
 
     @Override

@@ -6,6 +6,7 @@ import com.badlogic.gdx.physics.box2d.Joint;
 import com.badlogic.gdx.physics.box2d.joints.WeldJointDef;
 import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.actor.AgentHandler;
+import com.eldritch.invoken.actor.aug.Augmentation.ActiveAugmentation;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.effects.BasicEffect;
@@ -16,8 +17,9 @@ import com.eldritch.invoken.util.Damage;
 import com.eldritch.invoken.util.Heuristics;
 import com.eldritch.invoken.util.Settings;
 import com.eldritch.invoken.util.SoundManager.SoundEffect;
+import com.google.common.base.Optional;
 
-public class Leech extends Augmentation {
+public class Leech extends ActiveAugmentation {
     private static final float RANGE2 = 2;
     private static final float DURATION = 10f;
     private static final float MIN_V2 = 175f;
@@ -32,7 +34,7 @@ public class Leech extends Augmentation {
     }
 
     private Leech() {
-        super(false);
+        super(Optional.<String>absent());
     }
 
     @Override

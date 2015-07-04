@@ -1,12 +1,13 @@
 package com.eldritch.invoken.actor.aug;
 
 import com.badlogic.gdx.math.Vector2;
+import com.eldritch.invoken.actor.aug.Augmentation.SelfAugmentation;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.effects.Cloaked;
 import com.eldritch.invoken.location.Level;
 
-public class Cloak extends Augmentation {
+public class Cloak extends SelfAugmentation {
     public static final float MAX_DST2 = 5 * 5;
     private static final int BASE_COST = 3;
     
@@ -19,7 +20,7 @@ public class Cloak extends Augmentation {
 	}
 	
     private Cloak() {
-        super("cloak", true);
+        super("cloak");
     }
     
     @Override

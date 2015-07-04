@@ -5,6 +5,7 @@ import java.util.Set;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
+import com.eldritch.invoken.actor.aug.Augmentation.ActiveAugmentation;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.actor.type.AoeProjectile;
@@ -14,7 +15,7 @@ import com.eldritch.invoken.proto.Effects.DamageType;
 import com.eldritch.invoken.screens.GameScreen;
 import com.eldritch.invoken.util.Damage;
 
-public class Infect extends Augmentation {
+public class Infect extends ActiveAugmentation {
     private static final int DAMAGE_SCALE = 25;
     private static final float DURATION = 5;
     private static final int BASE_COST = 20;

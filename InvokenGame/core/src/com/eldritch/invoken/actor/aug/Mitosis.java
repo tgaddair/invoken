@@ -2,13 +2,15 @@ package com.eldritch.invoken.actor.aug;
 
 import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.InvokenGame;
+import com.eldritch.invoken.actor.aug.Augmentation.ActiveAugmentation;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.actor.type.Npc;
 import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.util.SoundManager.SoundEffect;
+import com.google.common.base.Optional;
 
-public class Mitosis extends Augmentation {
+public class Mitosis extends ActiveAugmentation {
     private static class Holder {
         private static final Mitosis INSTANCE = new Mitosis();
     }
@@ -18,7 +20,7 @@ public class Mitosis extends Augmentation {
     }
 
     private Mitosis() {
-        super(false);
+        super(Optional.<String>absent());
     }
 
     @Override

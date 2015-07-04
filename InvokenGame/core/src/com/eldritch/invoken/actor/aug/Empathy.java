@@ -1,12 +1,13 @@
 package com.eldritch.invoken.actor.aug;
 
 import com.badlogic.gdx.math.Vector2;
+import com.eldritch.invoken.actor.aug.Augmentation.ActiveAugmentation;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.effects.ActivatedEffect;
 import com.eldritch.invoken.location.Level;
 
-public class Empathy extends Augmentation {
+public class Empathy extends ActiveAugmentation {
 	private static class Holder {
         private static final Empathy INSTANCE = new Empathy();
 	}
@@ -16,7 +17,7 @@ public class Empathy extends Augmentation {
 	}
 	
     private Empathy() {
-        super("observe", false);
+        super("observe");
     }
     
     @Override

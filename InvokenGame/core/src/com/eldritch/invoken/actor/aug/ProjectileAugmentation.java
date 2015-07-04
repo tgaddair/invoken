@@ -1,11 +1,12 @@
 package com.eldritch.invoken.actor.aug;
 
 import com.badlogic.gdx.math.Vector2;
+import com.eldritch.invoken.actor.aug.Augmentation.ActiveAugmentation;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.location.Level;
 import com.google.common.base.Optional;
 
-public abstract class ProjectileAugmentation extends Augmentation {
+public abstract class ProjectileAugmentation extends ActiveAugmentation {
     public ProjectileAugmentation(String asset) {
         super(asset);
     }

@@ -6,6 +6,7 @@ import java.util.Set;
 import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.actor.AgentHandler;
+import com.eldritch.invoken.actor.aug.Augmentation.ActiveAugmentation;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.effects.BasicEffect;
@@ -16,8 +17,9 @@ import com.eldritch.invoken.util.Damage;
 import com.eldritch.invoken.util.Heuristics;
 import com.eldritch.invoken.util.Settings;
 import com.eldritch.invoken.util.SoundManager.SoundEffect;
+import com.google.common.base.Optional;
 
-public class Ram extends Augmentation {
+public class Ram extends ActiveAugmentation {
     private static final float RANGE = 5;
     private static final float DURATION = 1f;
     private static final float MAGNITUDE = 1500f;
@@ -32,7 +34,7 @@ public class Ram extends Augmentation {
     }
 
     private Ram() {
-        super(false);
+        super(Optional.<String>absent());
     }
 
     @Override

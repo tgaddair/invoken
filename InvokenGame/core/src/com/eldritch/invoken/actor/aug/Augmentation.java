@@ -5,6 +5,7 @@ import java.lang.reflect.InvocationTargetException;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.InvokenGame;
+import com.eldritch.invoken.actor.PreparedAugmentations;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.proto.Augmentations.AugmentationProto;
@@ -14,40 +15,10 @@ import com.google.common.base.Optional;
 
 public abstract class Augmentation {
     private final Texture icon;
-    private final Type type;
-    
-    public enum Type {
-        Active, Self, Instant
-    }
-
-    public Augmentation(String asset) {
-        this(Optional.of(asset));
-    }
 
     public Augmentation(Optional<String> asset) {
-        this(asset, Type.Active);
-    }
-
-    public Augmentation(boolean self) {
-        this(Optional.<String>absent(), self);
-    }
-
-    public Augmentation(String asset, boolean self) {
-        this(Optional.of(asset), self);
-    }
-    
-    public Augmentation(Optional<String> asset, boolean self) {
-        this(asset, self ? Type.Self : Type.Active);
-    }
-    
-    public Augmentation(String asset, Type type) {
-        this(Optional.of(asset), type);
-    }
-
-    public Augmentation(Optional<String> asset, Type type) {
         this.icon = asset.isPresent() ? GameScreen.getTexture("icon/" + asset.get() + ".png")
                 : null;
-        this.type = type;
     }
 
     public boolean hasEnergy(Agent agent) {
@@ -123,19 +94,7 @@ public abstract class Augmentation {
     public SoundEffect getFailureSound() {
         return SoundEffect.INVALID;
     }
-
-    public boolean castsOnSelf() {
-        return type == Type.Self;
-    }
     
-    public boolean isInstant() {
-        return type == Type.Instant;
-    }
-    
-    public Type getType() {
-        return type;
-    }
-
     public boolean isAimed() {
         return false;
     }
@@ -163,6 +122,8 @@ public abstract class Augmentation {
     public Action getBestAction(Agent owner, Agent target) {
         return getAction(owner, target);
     }
+    
+    public abstract void prepare(PreparedAugmentations prepared, int slot);
 
     public abstract boolean isValid(Agent owner, Agent target);
 
@@ -269,6 +230,61 @@ public abstract class Augmentation {
 
         private enum Type {
             NONE, AGENT, LOCATION
+        }
+    }
+    
+    public abstract static class ActiveAugmentation extends Augmentation {
+        public ActiveAugmentation(String asset) {
+            this(Optional.of(asset));
+        }
+
+        public ActiveAugmentation(Optional<String> asset) {
+            super(asset);
+        }
+        
+        @Override
+        public void prepare(PreparedAugmentations prepared, int slot) {
+            if (prepared.isActive(this, slot)) {
+                // already active in this slot
+                prepared.setInactive(slot);
+            } else {
+                prepared.setActive(this, slot);
+            }
+        }
+    }
+    
+    public abstract static class SelfAugmentation extends Augmentation {
+        public SelfAugmentation(String asset) {
+            this(Optional.of(asset));
+        }
+
+        public SelfAugmentation(Optional<String> asset) {
+            super(asset);
+        }
+        
+        @Override
+        public void prepare(PreparedAugmentations prepared, int slot) {
+            boolean used = prepared.use(this);
+            if (prepared.isActiveOnSelf(this)) {
+                prepared.removeActiveOnSelf(this);
+            } else if (used) {
+                prepared.addActiveOnSelf(this);
+            }
+        }
+    }
+    
+    public abstract static class InstantAugmentation extends Augmentation {
+        public InstantAugmentation(String asset) {
+            this(Optional.of(asset));
+        }
+
+        public InstantAugmentation(Optional<String> asset) {
+            super(asset);
+        }
+        
+        @Override
+        public void prepare(PreparedAugmentations prepared, int slot) {
+            prepared.use(this);
         }
     }
 }

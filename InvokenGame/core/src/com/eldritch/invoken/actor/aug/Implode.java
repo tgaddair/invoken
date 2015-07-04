@@ -1,12 +1,13 @@
 package com.eldritch.invoken.actor.aug;
 
 import com.badlogic.gdx.math.Vector2;
+import com.eldritch.invoken.actor.aug.Augmentation.ActiveAugmentation;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.effects.Imploding;
 import com.eldritch.invoken.location.Level;
 
-public class Implode extends Augmentation {
+public class Implode extends ActiveAugmentation {
 	private static final float RADIUS = 3;
 	private static final float DURATION = 3;
 	private static final float MAGNITUDE = 1000;
@@ -20,7 +21,7 @@ public class Implode extends Augmentation {
 	}
 	
     private Implode() {
-        super("implode", false);
+        super("implode");
     }
     
 	@Override

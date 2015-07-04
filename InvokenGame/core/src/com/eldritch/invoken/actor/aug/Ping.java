@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.InvokenGame;
+import com.eldritch.invoken.actor.aug.Augmentation.SelfAugmentation;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.actor.type.TemporaryEntity;
@@ -13,7 +14,7 @@ import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.screens.GameScreen;
 import com.eldritch.invoken.util.SoundManager.SoundEffect;
 
-public class Ping extends Augmentation {
+public class Ping extends SelfAugmentation {
     private static final int COST = 10;
     
 	private static class Holder {
@@ -25,7 +26,7 @@ public class Ping extends Augmentation {
 	}
 	
     private Ping() {
-        super("ping", true);
+        super("ping");
     }
     
 	@Override

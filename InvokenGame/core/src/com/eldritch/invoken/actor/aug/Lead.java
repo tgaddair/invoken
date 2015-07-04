@@ -1,6 +1,7 @@
 package com.eldritch.invoken.actor.aug;
 
 import com.badlogic.gdx.math.Vector2;
+import com.eldritch.invoken.actor.aug.Augmentation.SelfAugmentation;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.effects.BasicEffect;
@@ -12,7 +13,7 @@ import com.eldritch.invoken.location.Level;
  * from their planned destination.  Cost is reduced as disposition towards the invocator increases.
  * Only effective on non-hostiles.
  */
-public class Lead extends Augmentation {
+public class Lead extends SelfAugmentation {
     private static final int BASE_COST = 3;
     
 	private static class Holder {
@@ -24,7 +25,7 @@ public class Lead extends Augmentation {
 	}
 	
     private Lead() {
-        super("lead", true);
+        super("lead");
     }
     
     @Override

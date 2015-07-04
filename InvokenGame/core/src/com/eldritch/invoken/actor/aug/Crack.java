@@ -1,12 +1,13 @@
 package com.eldritch.invoken.actor.aug;
 
 import com.badlogic.gdx.math.Vector2;
+import com.eldritch.invoken.actor.aug.Augmentation.SelfAugmentation;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.effects.Cracking;
 import com.eldritch.invoken.location.Level;
 
-public class Crack extends Augmentation {
+public class Crack extends SelfAugmentation {
     private static final int BASE_COST = 5;
     
 	private static class Holder {
@@ -18,7 +19,7 @@ public class Crack extends Augmentation {
 	}
 	
     private Crack() {
-        super("crack", true);
+        super("crack");
     }
     
     @Override

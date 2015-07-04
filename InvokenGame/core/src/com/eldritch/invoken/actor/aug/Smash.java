@@ -3,6 +3,7 @@ package com.eldritch.invoken.actor.aug;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.InvokenGame;
+import com.eldritch.invoken.actor.aug.Augmentation.ActiveAugmentation;
 import com.eldritch.invoken.actor.items.MeleeWeapon;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Agent.Activity;
@@ -16,8 +17,9 @@ import com.eldritch.invoken.util.Damage;
 import com.eldritch.invoken.util.Heuristics;
 import com.eldritch.invoken.util.Settings;
 import com.eldritch.invoken.util.SoundManager.SoundEffect;
+import com.google.common.base.Optional;
 
-public class Smash extends Augmentation {
+public class Smash extends ActiveAugmentation {
     private static class Holder {
         private static final Smash INSTANCE = new Smash();
     }
@@ -27,7 +29,7 @@ public class Smash extends Augmentation {
     }
 
     private Smash() {
-        super(false);
+        super(Optional.<String>absent());
     }
 
     @Override

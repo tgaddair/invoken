@@ -2,6 +2,7 @@ package com.eldritch.invoken.actor.aug;
 
 import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.activators.ProximityMine;
+import com.eldritch.invoken.actor.aug.Augmentation.ActiveAugmentation;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.effects.DamagedEnergy;
@@ -11,7 +12,7 @@ import com.eldritch.invoken.proto.Effects.DamageType;
 import com.eldritch.invoken.util.Condition;
 import com.eldritch.invoken.util.Damage;
 
-public class Trap extends Augmentation {
+public class Trap extends ActiveAugmentation {
     private static final int DAMAGE_SCALE = 100;
     private static final float MAX_DST2 = 1.5f;
     private static final int COST = 10;
@@ -25,7 +26,7 @@ public class Trap extends Augmentation {
 	}
 	
     private Trap() {
-        super("trap", false);
+        super("trap");
     }
     
 	@Override

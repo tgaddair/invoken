@@ -2,6 +2,7 @@ package com.eldritch.invoken.actor.aug;
 
 import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.InvokenGame;
+import com.eldritch.invoken.actor.aug.Augmentation.ActiveAugmentation;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.effects.BasicEffect;
@@ -9,8 +10,9 @@ import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.util.GenericDialogue;
 import com.eldritch.invoken.util.Heuristics;
 import com.eldritch.invoken.util.SoundManager.SoundEffect;
+import com.google.common.base.Optional;
 
-public class Charge extends Augmentation {
+public class Charge extends ActiveAugmentation {
     private static final float CHARGE_RANGE = 5;
     private static final float V_DELTA = 5f;
     private static final float A_DELTA = 5f;
@@ -25,7 +27,7 @@ public class Charge extends Augmentation {
     }
 
     private Charge() {
-        super(false);
+        super(Optional.<String>absent());
     }
 
     @Override

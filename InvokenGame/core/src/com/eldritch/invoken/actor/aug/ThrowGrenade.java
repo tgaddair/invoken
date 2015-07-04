@@ -2,6 +2,7 @@ package com.eldritch.invoken.actor.aug;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
+import com.eldritch.invoken.actor.aug.Augmentation.InstantAugmentation;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.actor.type.AoeProjectile;
@@ -12,7 +13,7 @@ import com.eldritch.invoken.proto.Effects.DamageType;
 import com.eldritch.invoken.screens.GameScreen;
 import com.eldritch.invoken.util.Damage;
 
-public class ThrowGrenade extends Augmentation {
+public class ThrowGrenade extends InstantAugmentation {
     private static class Holder {
         private static final ThrowGrenade INSTANCE = new ThrowGrenade();
     }
@@ -22,7 +23,7 @@ public class ThrowGrenade extends Augmentation {
     }
 
     private ThrowGrenade() {
-        super("throw", Type.Instant);
+        super("throw");
     }
 
     @Override

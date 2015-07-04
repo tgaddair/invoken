@@ -1,13 +1,14 @@
 package com.eldritch.invoken.actor.aug;
 
 import com.badlogic.gdx.math.Vector2;
+import com.eldritch.invoken.actor.aug.Augmentation.InstantAugmentation;
 import com.eldritch.invoken.actor.items.MeleeWeapon;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.effects.Jaunting;
 import com.eldritch.invoken.location.Level;
 
-public class Jaunt extends Augmentation {
+public class Jaunt extends InstantAugmentation {
 	private static class Holder {
         private static final Jaunt INSTANCE = new Jaunt();
 	}
@@ -17,7 +18,7 @@ public class Jaunt extends Augmentation {
 	}
 	
     private Jaunt() {
-        super("jaunt", Type.Instant);
+        super("jaunt");
     }
     
 	@Override
