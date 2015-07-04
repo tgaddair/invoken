@@ -22,7 +22,7 @@ public class ThrowGrenade extends Augmentation {
     }
 
     private ThrowGrenade() {
-        super("throw", false, true);
+        super("throw", Type.Instant);
     }
 
     @Override

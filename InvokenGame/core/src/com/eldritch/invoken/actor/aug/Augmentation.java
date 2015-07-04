@@ -14,36 +14,42 @@ import com.google.common.base.Optional;
 
 public abstract class Augmentation {
     private final Texture icon;
-    private final boolean self;
-    private final boolean instant;
+    private final Type type;
     private int slots;
     private int uses;
+    
+    public enum Type {
+        Active, Self, Instant
+    }
 
     public Augmentation(String asset) {
         this(Optional.of(asset));
     }
 
     public Augmentation(Optional<String> asset) {
-        this(asset, false, false);
+        this(asset, Type.Active);
     }
 
     public Augmentation(boolean self) {
-        this(Optional.<String>absent(), self, false);
+        this(Optional.<String>absent(), self);
     }
 
     public Augmentation(String asset, boolean self) {
-        this(asset, self, false);
+        this(Optional.of(asset), self);
     }
     
-    public Augmentation(String asset, boolean self, boolean instant) {
-        this(Optional.of(asset), self, instant);
+    public Augmentation(Optional<String> asset, boolean self) {
+        this(asset, self ? Type.Self : Type.Active);
+    }
+    
+    public Augmentation(String asset, Type type) {
+        this(Optional.of(asset), type);
     }
 
-    public Augmentation(Optional<String> asset, boolean self, boolean instant) {
+    public Augmentation(Optional<String> asset, Type type) {
         this.icon = asset.isPresent() ? GameScreen.getTexture("icon/" + asset.get() + ".png")
                 : null;
-        this.self = self;
-        this.instant = instant;
+        this.type = type;
     }
 
     public boolean hasEnergy(Agent agent) {
@@ -121,11 +127,15 @@ public abstract class Augmentation {
     }
 
     public boolean castsOnSelf() {
-        return self;
+        return type == Type.Self;
     }
     
     public boolean isInstant() {
-        return instant;
+        return type == Type.Instant;
+    }
+    
+    public Type getType() {
+        return type;
     }
 
     public boolean isAimed() {

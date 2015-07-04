@@ -17,7 +17,7 @@ public class Jaunt extends Augmentation {
 	}
 	
     private Jaunt() {
-        super("jaunt", false);
+        super("jaunt", Type.Instant);
     }
     
 	@Override
