@@ -17,6 +17,7 @@ import com.eldritch.invoken.util.AnimationUtils;
 
 public class Shield extends BasicEffect {
     private static final float V_PENALTY = 5;
+    private static final float ENERGY_COST = 20f;
 
     private final Augmentation aug;
     private final Map<Activity, Map<Direction, Animation>> animations = AnimationUtils
@@ -31,7 +32,7 @@ public class Shield extends BasicEffect {
     @Override
     public void doApply() {
         target.addProjectileHandler(handler);
-        target.setStunted(true); // cannot regain energy when shielded
+        target.getInfo().changeMaxEnergy(-ENERGY_COST);
         target.addVelocityPenalty(V_PENALTY); // shielding slows down the caster
     }
 
@@ -39,7 +40,7 @@ public class Shield extends BasicEffect {
     public void dispel() {
         target.removeProjectileHandler(handler);
         target.getInfo().getAugmentations().removeSelfAugmentation(aug);
-        target.setStunted(false);
+        target.getInfo().changeMaxEnergy(ENERGY_COST);
         target.addVelocityPenalty(-V_PENALTY);
     }
 
