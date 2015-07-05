@@ -200,7 +200,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         body = createBody(x, y, level.getWorld());
     }
 
-    protected float getBodyRadius() {
+    public float getBodyRadius() {
         return Math.max(getWidth(), getHeight()) / 5;
     }
 
@@ -1978,8 +1978,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         protected final Vector2 tmp = new Vector2();
 
         // offset relative to the center of the agent so the gun appears at
-        // roughly hip level,
-        // not at the face
+        // roughly hip level, not at the face
         protected final Vector2 offset = new Vector2(0, 0.25f);
 
         public boolean hasLineOfSight(Agent target) {

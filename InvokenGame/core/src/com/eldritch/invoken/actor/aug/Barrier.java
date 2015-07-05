@@ -5,6 +5,7 @@ import com.eldritch.invoken.actor.aug.Augmentation.SelfAugmentation;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.effects.Shield;
+import com.eldritch.invoken.effects.Shield.FixedShield;
 import com.eldritch.invoken.location.Level;
 
 public class Barrier extends SelfAugmentation {
@@ -86,7 +87,7 @@ public class Barrier extends SelfAugmentation {
         @Override
         public void apply(Level level) {
             if (owner.toggle(Shield.class)) {
-                owner.addEffect(new Shield(owner, Barrier.this));
+                owner.addEffect(new FixedShield(owner, Barrier.this));
             }
         }
 

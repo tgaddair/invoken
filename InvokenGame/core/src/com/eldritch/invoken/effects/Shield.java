@@ -1,5 +1,6 @@
 package com.eldritch.invoken.effects;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
@@ -7,15 +8,23 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
+import com.badlogic.gdx.physics.box2d.CircleShape;
+import com.badlogic.gdx.physics.box2d.Filter;
+import com.badlogic.gdx.physics.box2d.Fixture;
+import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.eldritch.invoken.actor.aug.Augmentation;
 import com.eldritch.invoken.actor.type.Agent;
-import com.eldritch.invoken.actor.type.HandledProjectile;
 import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.actor.type.Agent.Direction;
+import com.eldritch.invoken.actor.type.HandledProjectile;
 import com.eldritch.invoken.actor.type.HandledProjectile.ProjectileHandler;
 import com.eldritch.invoken.util.AnimationUtils;
+import com.eldritch.invoken.util.Settings;
 
-public class Shield extends BasicEffect {
+public abstract class Shield extends BasicEffect {
     private static final float V_PENALTY = 5;
     private static final float ENERGY_COST = 20f;
 
@@ -34,6 +43,7 @@ public class Shield extends BasicEffect {
         target.addProjectileHandler(handler);
         target.getInfo().changeMaxEnergy(-ENERGY_COST);
         target.addVelocityPenalty(V_PENALTY); // shielding slows down the caster
+        createHandlers(target);
     }
 
     @Override
@@ -42,6 +52,7 @@ public class Shield extends BasicEffect {
         target.getInfo().getAugmentations().removeSelfAugmentation(aug);
         target.getInfo().changeMaxEnergy(ENERGY_COST);
         target.addVelocityPenalty(-V_PENALTY);
+        destroyHandlers();
     }
 
     @Override
@@ -50,15 +61,11 @@ public class Shield extends BasicEffect {
     }
 
     @Override
-    protected void update(float delta) {
-    }
-
-    @Override
     public void render(float delta, OrthogonalTiledMapRenderer renderer) {
         Vector2 position = target.getRenderPosition();
         float width = target.getWidth();
         float height = target.getHeight();
-        
+
         Animation animation = animations.get(target.getLastActivity()).get(target.getDirection());
         TextureRegion frame = animation.getKeyFrame(target.getLastStateTime());
 
@@ -87,6 +94,120 @@ public class Shield extends BasicEffect {
                 return true;
             }
             return false;
+        }
+    }
+    
+    protected abstract void createHandlers(Agent owner);
+    
+    protected abstract void destroyHandlers();
+    
+    public static class FixedShield extends Shield {
+        private final Map<Direction, Fixture> fixtures = new HashMap<>();
+        private Direction lastDirection;
+
+        public FixedShield(Agent actor, Augmentation aug) {
+            super(actor, aug);
+        }
+        
+        @Override
+        protected void update(float delta) {
+            Direction direction = target.getDirection();
+            if (direction != lastDirection) {
+                lastDirection = direction;
+            }
+        }
+
+        @Override
+        protected void createHandlers(Agent owner) {
+            float radius = owner.getBodyRadius();
+            fixtures.put(Direction.Right, createFixture(owner, new Vector2(radius, 0)));
+            fixtures.put(Direction.Up, createFixture(owner, new Vector2(0, radius)));
+            fixtures.put(Direction.Left, createFixture(owner, new Vector2(-radius, 0)));
+            fixtures.put(Direction.Down, createFixture(owner, new Vector2(0, -radius)));
+        }
+
+        @Override
+        protected void destroyHandlers() {
+            for (Fixture fixture : fixtures.values()) {
+                target.getBody().destroyFixture(fixture);
+            }
+        }
+        
+        private Fixture createFixture(Agent owner, Vector2 position) {
+            float radius = owner.getBodyRadius();
+            CircleShape shape = new CircleShape();
+            shape.setPosition(position);
+            shape.setRadius(radius);
+
+            FixtureDef fixtureDef = new FixtureDef();
+            fixtureDef.shape = shape;
+            fixtureDef.isSensor = true;
+            fixtureDef.filter.groupIndex = 0;
+
+            Body body = owner.getBody();
+            Fixture fixture = body.createFixture(fixtureDef);
+            // fixture.setUserData(this); // allow callbacks to owning Agent
+
+            // collision filters
+            Filter filter = fixture.getFilterData();
+            filter.categoryBits = Settings.BIT_NOTHING; // hits nothing
+            filter.maskBits = Settings.BIT_BULLET; // hit by bullets
+            fixture.setFilterData(filter);
+
+            shape.dispose();
+            return fixture;
+        }
+    }
+    
+    public static class RotatingShield extends Shield {
+        private Body body;
+        
+        public RotatingShield(Agent actor, Augmentation aug) {
+            super(actor, aug);
+        }
+        
+        @Override
+        protected void update(float delta) {
+            body.setTransform(target.getWeaponSentry().getPosition(), 0);
+        }
+
+        @Override
+        protected void createHandlers(Agent owner) {
+            body = createBody(target);
+        }
+
+        @Override
+        protected void destroyHandlers() {
+            target.getLocation().getWorld().destroyBody(body);
+        }
+        
+        private Body createBody(Agent owner) {
+            float radius = owner.getBodyRadius();
+            CircleShape shape = new CircleShape();
+            shape.setPosition(new Vector2(0, 0));
+            shape.setRadius(radius);
+
+            BodyDef bodyDef = new BodyDef();
+            bodyDef.position.set(owner.getBody().getPosition());
+            bodyDef.type = BodyType.DynamicBody;
+            Body body = owner.getLocation().getWorld().createBody(bodyDef);
+
+            FixtureDef fixtureDef = new FixtureDef();
+            fixtureDef.shape = shape;
+            fixtureDef.isSensor = true;
+            fixtureDef.filter.groupIndex = 0;
+
+            Fixture fixture = body.createFixture(fixtureDef);
+            // fixture.setUserData(this); // allow callbacks to owning Agent
+
+            // collision filters
+            Filter filter = fixture.getFilterData();
+            filter.categoryBits = Settings.BIT_NOTHING; // hits nothing
+            filter.maskBits = Settings.BIT_BULLET; // hit by bullets
+            fixture.setFilterData(filter);
+
+            shape.dispose();
+            return body;
         }
     }
 }

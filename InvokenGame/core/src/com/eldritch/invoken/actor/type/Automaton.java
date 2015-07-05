@@ -130,7 +130,7 @@ public class Automaton extends Npc {
         }
 
         @Override
-        protected float getBodyRadius() {
+        public float getBodyRadius() {
             return 0.4f;
         }
 
