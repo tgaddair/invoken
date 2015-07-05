@@ -62,7 +62,7 @@ public enum Profession {
 					FireWeapon.getInstance(),
 					Jaunt.getInstance(),
 					ThrowGrenade.getInstance(),
-					Implode.getInstance());
+					Barrier.getInstance());
 		}
 		
 		@Override

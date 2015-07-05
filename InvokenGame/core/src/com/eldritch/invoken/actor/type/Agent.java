@@ -117,6 +117,9 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     Direction direction = Direction.Down;
     private final Map<Activity, Map<Direction, Animation>> animations;
     float stateTime = 0;
+    
+    private Activity lastActivity = activity;
+    private float lastStateTime = stateTime;
 
     private final MotionTracker motionTracker = new MotionTracker(this);
     private final List<Agent> neighbors = new ArrayList<>();
@@ -1669,13 +1672,13 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     }
 
     public void render(OrthogonalTiledMapRenderer renderer) {
-        Activity activity = this.activity;
-        float stateTime = this.stateTime;
+        this.lastActivity = this.activity;
+        this.lastStateTime = this.stateTime;
         if (isAlive() && actionInProgress()) {
-            stateTime = action.getStateTime();
-            activity = action.getActivity();
-        } else if (motionTracker.isStanding() && activity == Activity.Explore) {
-            stateTime = 0;
+            lastStateTime = action.getStateTime();
+            lastActivity = action.getActivity();
+        } else if (motionTracker.isStanding() && lastActivity == Activity.Explore) {
+            lastStateTime = 0;
         }
 
         // apply color
@@ -1691,7 +1694,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
                 // draw the actor, depending on the current velocity
                 // on the x-axis, draw the actor facing either right
                 // or left
-                render(activity, direction, stateTime, renderer);
+                render(lastActivity, direction, lastStateTime, renderer);
             }
 
             if (isCloaked()) {
@@ -1699,9 +1702,9 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
                 // alpha
                 batch.setColor(color.r, color.g, color.b, Math.min(color.a * 5, 1));
             }
-            outfit.render(this, activity, stateTime, renderer);
+            outfit.render(this, lastActivity, lastStateTime, renderer);
         } else {
-            render(activity, direction, stateTime, renderer);
+            render(lastActivity, direction, lastStateTime, renderer);
         }
 
         // restore original color
@@ -1730,6 +1733,14 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         float width = getWidth();
         float height = getHeight();
         batch.draw(frame, position.x - width / 2, position.y - height / 2, width, height);
+    }
+    
+    public Activity getLastActivity() {
+        return lastActivity;
+    }
+    
+    public float getLastStateTime() {
+        return lastStateTime;
     }
 
     public Rectangle getLargeBoundingBox(Rectangle rect) {

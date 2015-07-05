@@ -555,15 +555,19 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
     public boolean keyUp(int keycode) {
         switch (keycode) {
             case Keys.NUM_1:
+            case Keys.Z:
                 player.getInfo().getAugmentations().toggleActiveAugmentation(0);
                 return true;
             case Keys.NUM_2:
+            case Keys.X:
                 player.getInfo().getAugmentations().toggleActiveAugmentation(1);
                 return true;
             case Keys.NUM_3:
+            case Keys.C:
                 player.getInfo().getAugmentations().toggleActiveAugmentation(2);
                 return true;
             case Keys.NUM_4:
+            case Keys.V:
                 player.getInfo().getAugmentations().toggleActiveAugmentation(3);
                 return true;
             case Keys.I:
