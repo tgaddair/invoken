@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
@@ -34,7 +35,8 @@ public abstract class Shield extends BasicEffect {
     private final Augmentation aug;
     private final Map<Activity, Map<Direction, Animation>> animations = AnimationUtils
             .getHumanAnimations("sprite/effects/shield.png");
-//    private final ProjectileHandler handler = new ShieldProjectileHandler();
+
+    // private final ProjectileHandler handler = new ShieldProjectileHandler();
 
     public Shield(Agent actor, Augmentation aug) {
         super(actor);
@@ -43,7 +45,7 @@ public abstract class Shield extends BasicEffect {
 
     @Override
     public void doApply() {
-//        target.addProjectileHandler(handler);
+        // target.addProjectileHandler(handler);
         target.getInfo().changeMaxEnergy(-ENERGY_COST);
         target.addVelocityPenalty(V_PENALTY); // shielding slows down the caster
         createHandlers(target);
@@ -51,7 +53,7 @@ public abstract class Shield extends BasicEffect {
 
     @Override
     public void dispel() {
-//        target.removeProjectileHandler(handler);
+        // target.removeProjectileHandler(handler);
         target.getInfo().getAugmentations().removeSelfAugmentation(aug);
         target.getInfo().changeMaxEnergy(ENERGY_COST);
         target.addVelocityPenalty(-V_PENALTY);
@@ -101,16 +103,25 @@ public abstract class Shield extends BasicEffect {
             Direction direction = target.getDirection();
             if (direction != lastDirection) {
                 lastDirection = direction;
+                for (Entry<Direction, Body> entry : bodies.entrySet()) {
+                    short categoryBits = entry.getKey() == direction ? Settings.BIT_SHIELD
+                            : Settings.BIT_NOTHING;
+                    for (Fixture fixture : entry.getValue().getFixtureList()) {
+                        Filter filter = fixture.getFilterData();
+                        filter.categoryBits = categoryBits;
+                        fixture.setFilterData(filter);
+                    }
+                }
             }
         }
 
         @Override
         protected void createHandlers(Agent owner) {
             float r = owner.getBodyRadius();
-//            bodies.put(Direction.Right, createBody(owner, Direction.Right, new Vector2(r, 0)));
+            bodies.put(Direction.Right, createBody(owner, Direction.Right, new Vector2(r, 0)));
             bodies.put(Direction.Up, createBody(owner, Direction.Up, new Vector2(0, r)));
-//            bodies.put(Direction.Left, createBody(owner, Direction.Left, new Vector2(-r, 0)));
-//            bodies.put(Direction.Down, createBody(owner, Direction.Down, new Vector2(0, -r)));
+            bodies.put(Direction.Left, createBody(owner, Direction.Left, new Vector2(-r, 0)));
+            bodies.put(Direction.Down, createBody(owner, Direction.Down, new Vector2(0, -r)));
         }
 
         @Override
@@ -133,7 +144,7 @@ public abstract class Shield extends BasicEffect {
             fixtureDef.friction = 0.5f;
             fixtureDef.restitution = 0.1f;
             fixtureDef.filter.groupIndex = 0;
-            
+
             BodyDef bodyDef = new BodyDef();
             bodyDef.position.set(owner.getBody().getPosition());
             bodyDef.type = BodyType.DynamicBody;
@@ -147,14 +158,14 @@ public abstract class Shield extends BasicEffect {
             filter.categoryBits = Settings.BIT_SHIELD; // hits nothing
             filter.maskBits = Settings.BIT_BULLET; // hit by bullets
             fixture.setFilterData(filter);
-            
+
             // weld the new body to the agent body
             weld(owner.getBody(), body);
 
             shape.dispose();
             return body;
         }
-        
+
         private void weld(Body bodyA, Body bodyB) {
             WeldJointDef def = new WeldJointDef();
 
@@ -171,7 +182,7 @@ public abstract class Shield extends BasicEffect {
 
             joints.add(target.getLocation().getWorld().createJoint(def));
         }
-        
+
         private void unweld() {
             for (Joint joint : joints) {
                 target.getLocation().getWorld().destroyJoint(joint);
@@ -180,7 +191,7 @@ public abstract class Shield extends BasicEffect {
 
         private class FixedShieldHandler implements AgentHandler {
             private final Direction direction;
-            
+
             public FixedShieldHandler(Agent owner, Direction direction) {
                 this.direction = direction;
             }
@@ -195,7 +206,7 @@ public abstract class Shield extends BasicEffect {
             public boolean handle(Object userData) {
                 return false;
             }
-            
+
             @Override
             public short getCollisionMask() {
                 return Settings.BIT_ANYTHING;
