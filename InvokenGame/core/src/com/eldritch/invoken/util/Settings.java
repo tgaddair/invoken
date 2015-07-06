@@ -47,7 +47,7 @@ public class Settings {
 	public static final boolean ENABLE_FOG = false;
 	
 	// debug settings
-	public static final boolean GOD_MODE = false;
+	public static final boolean GOD_MODE = true;
 	public static final boolean DEBUG_DRAW = true;
 	public static final boolean DEBUG_LIGHTS = false;
 	public static final boolean DEBUG_COVER = false;

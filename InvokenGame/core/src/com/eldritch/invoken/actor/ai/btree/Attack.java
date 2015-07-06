@@ -12,6 +12,7 @@ import com.badlogic.gdx.ai.btree.decorator.Invert;
 import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.actor.aug.Augmentation;
 import com.eldritch.invoken.actor.aug.Augmentation.Target;
+import com.eldritch.invoken.actor.aug.FireWeapon;
 import com.eldritch.invoken.actor.items.RangedWeapon;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Npc;
@@ -235,6 +236,9 @@ public class Attack extends Sequence<Npc> {
 
         private boolean use(Npc npc) {
             Augmentation chosen = npc.getChosen();
+            if (chosen instanceof FireWeapon) {
+                System.out.println("fire weapon");
+            }
             npc.getInfo().getAugmentations().use(chosen, npc.getTactics().getTarget());
             npc.setChosen(null);
             return true;

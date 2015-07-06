@@ -21,6 +21,8 @@ import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.actor.type.Agent.Direction;
 import com.eldritch.invoken.actor.type.HandledProjectile;
 import com.eldritch.invoken.actor.type.HandledProjectile.ProjectileHandler;
+import com.eldritch.invoken.actor.util.BulletHandler;
+import com.eldritch.invoken.location.Bullet;
 import com.eldritch.invoken.util.AnimationUtils;
 import com.eldritch.invoken.util.Settings;
 
@@ -96,11 +98,11 @@ public abstract class Shield extends BasicEffect {
             return false;
         }
     }
-    
+
     protected abstract void createHandlers(Agent owner);
-    
+
     protected abstract void destroyHandlers();
-    
+
     public static class FixedShield extends Shield {
         private final Map<Direction, Fixture> fixtures = new HashMap<>();
         private Direction lastDirection;
@@ -108,7 +110,7 @@ public abstract class Shield extends BasicEffect {
         public FixedShield(Agent actor, Augmentation aug) {
             super(actor, aug);
         }
-        
+
         @Override
         protected void update(float delta) {
             Direction direction = target.getDirection();
@@ -119,11 +121,11 @@ public abstract class Shield extends BasicEffect {
 
         @Override
         protected void createHandlers(Agent owner) {
-            float radius = owner.getBodyRadius();
-            fixtures.put(Direction.Right, createFixture(owner, new Vector2(radius, 0)));
-            fixtures.put(Direction.Up, createFixture(owner, new Vector2(0, radius)));
-            fixtures.put(Direction.Left, createFixture(owner, new Vector2(-radius, 0)));
-            fixtures.put(Direction.Down, createFixture(owner, new Vector2(0, -radius)));
+            float r = owner.getBodyRadius();
+            fixtures.put(Direction.Right, createFixture(owner, Direction.Right, new Vector2(r, 0)));
+            fixtures.put(Direction.Up, createFixture(owner, Direction.Up, new Vector2(0, r)));
+            fixtures.put(Direction.Left, createFixture(owner, Direction.Left, new Vector2(-r, 0)));
+            fixtures.put(Direction.Down, createFixture(owner, Direction.Down, new Vector2(0, -r)));
         }
 
         @Override
@@ -132,8 +134,8 @@ public abstract class Shield extends BasicEffect {
                 target.getBody().destroyFixture(fixture);
             }
         }
-        
-        private Fixture createFixture(Agent owner, Vector2 position) {
+
+        private Fixture createFixture(Agent owner, Direction direction, Vector2 position) {
             float radius = owner.getBodyRadius();
             CircleShape shape = new CircleShape();
             shape.setPosition(position);
@@ -146,7 +148,7 @@ public abstract class Shield extends BasicEffect {
 
             Body body = owner.getBody();
             Fixture fixture = body.createFixture(fixtureDef);
-            // fixture.setUserData(this); // allow callbacks to owning Agent
+            fixture.setUserData(new FixedShieldHandler(direction));
 
             // collision filters
             Filter filter = fixture.getFilterData();
@@ -157,15 +159,29 @@ public abstract class Shield extends BasicEffect {
             shape.dispose();
             return fixture;
         }
+
+        private class FixedShieldHandler implements BulletHandler {
+            private final Direction direction;
+            
+            public FixedShieldHandler(Direction direction) {
+                this.direction = direction;
+            }
+            
+            @Override
+            public boolean handle(Bullet bullet) {
+                System.out.println("direction: " + direction);
+                return true;
+            }
+        }
     }
-    
+
     public static class RotatingShield extends Shield {
         private Body body;
-        
+
         public RotatingShield(Agent actor, Augmentation aug) {
             super(actor, aug);
         }
-        
+
         @Override
         protected void update(float delta) {
             body.setTransform(target.getWeaponSentry().getPosition(), 0);
@@ -180,7 +196,7 @@ public abstract class Shield extends BasicEffect {
         protected void destroyHandlers() {
             target.getLocation().getWorld().destroyBody(body);
         }
-        
+
         private Body createBody(Agent owner) {
             float radius = owner.getBodyRadius();
             CircleShape shape = new CircleShape();

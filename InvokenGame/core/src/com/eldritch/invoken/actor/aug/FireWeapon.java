@@ -57,6 +57,11 @@ public class FireWeapon extends ProjectileAugmentation {
     public boolean isValid(Agent owner) {
         return super.isValid(owner) && owner.getInventory().canUseRangedWeapon();
     }
+    
+    @Override
+    public boolean isValidWithAiming(Agent owner, Agent target) {
+        return super.isValidWithAiming(owner, target) && owner.getInventory().canUseRangedWeapon();
+    }
 
     @Override
     public boolean isValid(Agent owner, Vector2 target) {
