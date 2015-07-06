@@ -33,7 +33,7 @@ public abstract class Shield extends BasicEffect {
     private final Augmentation aug;
     private final Map<Activity, Map<Direction, Animation>> animations = AnimationUtils
             .getHumanAnimations("sprite/effects/shield.png");
-    private final ProjectileHandler handler = new ShieldProjectileHandler();
+//    private final ProjectileHandler handler = new ShieldProjectileHandler();
 
     public Shield(Agent actor, Augmentation aug) {
         super(actor);
@@ -42,7 +42,7 @@ public abstract class Shield extends BasicEffect {
 
     @Override
     public void doApply() {
-        target.addProjectileHandler(handler);
+//        target.addProjectileHandler(handler);
         target.getInfo().changeMaxEnergy(-ENERGY_COST);
         target.addVelocityPenalty(V_PENALTY); // shielding slows down the caster
         createHandlers(target);
@@ -50,7 +50,7 @@ public abstract class Shield extends BasicEffect {
 
     @Override
     public void dispel() {
-        target.removeProjectileHandler(handler);
+//        target.removeProjectileHandler(handler);
         target.getInfo().getAugmentations().removeSelfAugmentation(aug);
         target.getInfo().changeMaxEnergy(ENERGY_COST);
         target.addVelocityPenalty(-V_PENALTY);
@@ -80,23 +80,6 @@ public abstract class Shield extends BasicEffect {
                 1f, 1f, // scale
                 0); // direction
         batch.end();
-    }
-
-    private class ShieldProjectileHandler implements ProjectileHandler {
-        @Override
-        public boolean handle(HandledProjectile projectile) {
-            float damage = projectile.getDamage().get(target);
-            if (damage > 0) {
-                target.getInfo().expend(damage);
-                if (target.getInfo().getEnergy() < damage) {
-                    target.toggleOff(Shield.class);
-                }
-
-                projectile.cancel();
-                return true;
-            }
-            return false;
-        }
     }
 
     protected abstract void createHandlers(Agent owner);

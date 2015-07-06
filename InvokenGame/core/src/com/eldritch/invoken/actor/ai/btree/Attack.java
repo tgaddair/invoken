@@ -10,6 +10,7 @@ import com.badlogic.gdx.ai.btree.branch.Sequence;
 import com.badlogic.gdx.ai.btree.decorator.AlwaysSucceed;
 import com.badlogic.gdx.ai.btree.decorator.Invert;
 import com.badlogic.gdx.math.Vector2;
+import com.eldritch.invoken.actor.AgentInventory;
 import com.eldritch.invoken.actor.aug.Augmentation;
 import com.eldritch.invoken.actor.aug.Augmentation.Target;
 import com.eldritch.invoken.actor.aug.FireWeapon;
@@ -61,6 +62,7 @@ public class Attack extends Sequence<Npc> {
         hideSequence.addChild(new IsIntimidated());
         hideSequence.addChild(new Invert<>(new IsTrapped()));
         hideSequence.addChild(new Invert<>(new HasCover()));
+        hideSequence.addChild(new Reload());
         hideSequence.addChild(new SeekCover());
 
         Sequence<Npc> pursueSequence = new Sequence<>();
@@ -236,9 +238,6 @@ public class Attack extends Sequence<Npc> {
 
         private boolean use(Npc npc) {
             Augmentation chosen = npc.getChosen();
-            if (chosen instanceof FireWeapon) {
-                System.out.println("fire weapon");
-            }
             npc.getInfo().getAugmentations().use(chosen, npc.getTactics().getTarget());
             npc.setChosen(null);
             return true;
@@ -269,6 +268,18 @@ public class Attack extends Sequence<Npc> {
                     npc.getLastSeen().getPosition())
                     && npc.getCover() != null
                     && npc.getCover().getPosition().dst2(npc.getPosition()) < 1;
+        }
+    }
+    
+    private static class Reload extends SuccessTask {
+        @Override
+        public void doFor(Npc npc) {
+            AgentInventory inv = npc.getInventory();
+            if (inv.hasRangedWeapon()) {
+                if (inv.getClip() == 0 && inv.getAmmunitionCount() > 0 && !inv.isReloading()) {
+                    inv.reloadWeapon();
+                }
+            }
         }
     }
 
