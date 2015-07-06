@@ -33,6 +33,7 @@ public class Attack extends Sequence<Npc> {
         // if we have a chosen augmentation, then continue to hold aim until we use it
         Sequence<Npc> useAugSequence = new Sequence<>();
         useAugSequence.addChild(new HasChosen());
+        useAugSequence.addChild(new AcquireTarget());
         useAugSequence.addChild(new TakeAim());
         useAugSequence.addChild(new HasSights());
         useAugSequence.addChild(new AlwaysSucceed<>(thrustSequence));
@@ -200,6 +201,15 @@ public class Attack extends Sequence<Npc> {
         @Override
         protected Task<Npc> copyTo(Task<Npc> task) {
             return task;
+        }
+    }
+    
+    private static class AcquireTarget extends SuccessTask {
+        @Override
+        public void doFor(Npc npc) {
+            if (npc.getTactics().getTarget().isValid() && npc.getTactics().getTarget().isAgent()) {
+                npc.setTarget(npc.getTactics().getTarget().getAgent());
+            }
         }
     }
 
