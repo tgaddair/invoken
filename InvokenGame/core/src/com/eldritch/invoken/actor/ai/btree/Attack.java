@@ -221,7 +221,13 @@ public class Attack extends Sequence<Npc> {
                 // don't need to aim this aug, so we have sights
                 return true;
             }
-            return npc.isAimingAt(npc.getTarget());
+            
+            Target target = npc.getTactics().getTarget();
+            if (target.isAgent()) {
+                return npc.isAimingAt(target.getAgent());
+            } else {
+                return npc.hasLineOfSight(target.getLocation());
+            }
         }
     }
 

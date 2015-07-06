@@ -1,6 +1,8 @@
 package com.eldritch.invoken.effects;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
@@ -11,18 +13,17 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
+import com.badlogic.gdx.physics.box2d.joints.WeldJointDef;
 import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.Filter;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.badlogic.gdx.physics.box2d.Joint;
+import com.eldritch.invoken.actor.AgentHandler;
 import com.eldritch.invoken.actor.aug.Augmentation;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.actor.type.Agent.Direction;
-import com.eldritch.invoken.actor.type.HandledProjectile;
-import com.eldritch.invoken.actor.type.HandledProjectile.ProjectileHandler;
-import com.eldritch.invoken.actor.util.BulletHandler;
-import com.eldritch.invoken.location.Bullet;
 import com.eldritch.invoken.util.AnimationUtils;
 import com.eldritch.invoken.util.Settings;
 
@@ -87,7 +88,8 @@ public abstract class Shield extends BasicEffect {
     protected abstract void destroyHandlers();
 
     public static class FixedShield extends Shield {
-        private final Map<Direction, Fixture> fixtures = new HashMap<>();
+        private final Map<Direction, Body> bodies = new HashMap<>();
+        private final List<Joint> joints = new ArrayList<>();
         private Direction lastDirection;
 
         public FixedShield(Agent actor, Augmentation aug) {
@@ -105,20 +107,21 @@ public abstract class Shield extends BasicEffect {
         @Override
         protected void createHandlers(Agent owner) {
             float r = owner.getBodyRadius();
-            fixtures.put(Direction.Right, createFixture(owner, Direction.Right, new Vector2(r, 0)));
-            fixtures.put(Direction.Up, createFixture(owner, Direction.Up, new Vector2(0, r)));
-            fixtures.put(Direction.Left, createFixture(owner, Direction.Left, new Vector2(-r, 0)));
-            fixtures.put(Direction.Down, createFixture(owner, Direction.Down, new Vector2(0, -r)));
+            bodies.put(Direction.Right, createBody(owner, Direction.Right, new Vector2(r, 0)));
+            bodies.put(Direction.Up, createBody(owner, Direction.Up, new Vector2(0, r)));
+            bodies.put(Direction.Left, createBody(owner, Direction.Left, new Vector2(-r, 0)));
+            bodies.put(Direction.Down, createBody(owner, Direction.Down, new Vector2(0, -r)));
         }
 
         @Override
         protected void destroyHandlers() {
-            for (Fixture fixture : fixtures.values()) {
-                target.getBody().destroyFixture(fixture);
+            unweld();
+            for (Body body : bodies.values()) {
+                target.getLocation().getWorld().destroyBody(body);
             }
         }
 
-        private Fixture createFixture(Agent owner, Direction direction, Vector2 position) {
+        private Body createBody(Agent owner, Direction direction, Vector2 position) {
             float radius = owner.getBodyRadius();
             CircleShape shape = new CircleShape();
             shape.setPosition(position);
@@ -126,34 +129,76 @@ public abstract class Shield extends BasicEffect {
 
             FixtureDef fixtureDef = new FixtureDef();
             fixtureDef.shape = shape;
-            fixtureDef.isSensor = true;
+            fixtureDef.density = 0.5f;
+            fixtureDef.friction = 0.5f;
+            fixtureDef.restitution = 0.1f;
             fixtureDef.filter.groupIndex = 0;
+            
+            BodyDef bodyDef = new BodyDef();
+            bodyDef.position.set(owner.getBody().getPosition());
+            bodyDef.type = BodyType.DynamicBody;
+            Body body = owner.getLocation().getWorld().createBody(bodyDef);
 
-            Body body = owner.getBody();
             Fixture fixture = body.createFixture(fixtureDef);
-            fixture.setUserData(new FixedShieldHandler(direction));
+            fixture.setUserData(new FixedShieldHandler(owner, direction));
 
             // collision filters
             Filter filter = fixture.getFilterData();
-            filter.categoryBits = Settings.BIT_NOTHING; // hits nothing
+            filter.categoryBits = Settings.BIT_DEFAULT; // hits nothing
             filter.maskBits = Settings.BIT_BULLET; // hit by bullets
             fixture.setFilterData(filter);
+            
+            // weld the new body to the agent body
+            weld(owner.getBody(), body);
 
             shape.dispose();
-            return fixture;
+            return body;
+        }
+        
+        private void weld(Body bodyA, Body bodyB) {
+            WeldJointDef def = new WeldJointDef();
+
+            def.collideConnected = false;
+            Vector2 worldCoordsAnchorPoint = bodyA.getWorldPoint(new Vector2(0.0f, 0.0f));
+
+            def.bodyA = bodyA;
+            def.bodyB = bodyB;
+
+            def.localAnchorA.set(def.bodyA.getLocalPoint(worldCoordsAnchorPoint));
+            def.referenceAngle = def.bodyB.getAngle() - def.bodyA.getAngle();
+
+            def.initialize(def.bodyA, def.bodyB, worldCoordsAnchorPoint);
+
+            joints.add(target.getLocation().getWorld().createJoint(def));
+        }
+        
+        private void unweld() {
+            for (Joint joint : joints) {
+                target.getLocation().getWorld().destroyJoint(joint);
+            }
         }
 
-        private class FixedShieldHandler implements BulletHandler {
+        private class FixedShieldHandler implements AgentHandler {
             private final Direction direction;
             
-            public FixedShieldHandler(Direction direction) {
+            public FixedShieldHandler(Agent owner, Direction direction) {
                 this.direction = direction;
+            }
+
+            @Override
+            public boolean handle(Agent agent) {
+                System.out.println("handle shield");
+                return true;
+            }
+
+            @Override
+            public boolean handle(Object userData) {
+                return false;
             }
             
             @Override
-            public boolean handle(Bullet bullet) {
-                System.out.println("direction: " + direction);
-                return true;
+            public short getCollisionMask() {
+                return Settings.BIT_ANYTHING;
             }
         }
     }

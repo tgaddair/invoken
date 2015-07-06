@@ -7,7 +7,6 @@ import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.Manifold;
 import com.eldritch.invoken.actor.AgentHandler;
 import com.eldritch.invoken.actor.type.Agent;
-import com.eldritch.invoken.actor.util.BulletHandler;
 
 public class LocationContactListener implements ContactListener {
     @Override
@@ -50,11 +49,6 @@ public class LocationContactListener implements ContactListener {
             return;
         }
 
-        if (handler instanceof BulletHandler) {
-            System.out.println("bullet handler");
-            BulletHandler bulletHandler = (BulletHandler) handler;
-            handle(bulletHandler, handled);
-        }
         if (handler instanceof AgentHandler) {
             AgentHandler agentHandler = (AgentHandler) handler;
             handle(agentHandler, handled);
@@ -64,13 +58,6 @@ public class LocationContactListener implements ContactListener {
                 // delegate collisions
                 handle(agent.getCollisionDelegate(), handled);
             }
-        }
-    }
-    
-    private void handle(BulletHandler bulletHandler, Object handled) {
-        if (handled != null && handled instanceof Bullet) {
-            Bullet bullet = (Bullet) handled;
-            bulletHandler.handle(bullet);
         }
     }
     

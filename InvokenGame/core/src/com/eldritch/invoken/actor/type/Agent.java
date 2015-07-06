@@ -244,6 +244,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
 
         body.setLinearDamping(DAMPING);
         body.setAngularDamping(10);
+        body.setFixedRotation(true);
 
         circleShape.dispose();
         return body;
@@ -292,7 +293,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         }
         return true;
     }
-
+    
     public RayTarget getTargeting(Vector2 source, Vector2 target) {
         targetCast(source, target);
         return new RayTarget(targetingHandler.getTargeting(), targetingHandler.getFraction());
