@@ -2089,7 +2089,6 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
      */
     public class RotatingWeaponSentry extends WeaponSentry {
         private final Vector2 destination = new Vector2();
-        private float elapsed = 0;
         private float theta = 0;
 
         @Override
@@ -2098,11 +2097,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
             destination.set(getFocusPoint()).sub(origin).nor();
 
             // move direction towards destination
-            elapsed += delta;
-            if (elapsed > 0.5) {
-                theta = getTheta(destination);
-                elapsed = 0;
-            }
+            theta = getTheta(destination);
             rotate(delta, theta, ROTATION_SCALE);
 
             position.set(origin.x + direction.x, origin.y + direction.y).sub(offset);

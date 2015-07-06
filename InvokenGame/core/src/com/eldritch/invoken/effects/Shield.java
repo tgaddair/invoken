@@ -107,10 +107,10 @@ public abstract class Shield extends BasicEffect {
         @Override
         protected void createHandlers(Agent owner) {
             float r = owner.getBodyRadius();
-            bodies.put(Direction.Right, createBody(owner, Direction.Right, new Vector2(r, 0)));
+//            bodies.put(Direction.Right, createBody(owner, Direction.Right, new Vector2(r, 0)));
             bodies.put(Direction.Up, createBody(owner, Direction.Up, new Vector2(0, r)));
-            bodies.put(Direction.Left, createBody(owner, Direction.Left, new Vector2(-r, 0)));
-            bodies.put(Direction.Down, createBody(owner, Direction.Down, new Vector2(0, -r)));
+//            bodies.put(Direction.Left, createBody(owner, Direction.Left, new Vector2(-r, 0)));
+//            bodies.put(Direction.Down, createBody(owner, Direction.Down, new Vector2(0, -r)));
         }
 
         @Override
@@ -144,7 +144,7 @@ public abstract class Shield extends BasicEffect {
 
             // collision filters
             Filter filter = fixture.getFilterData();
-            filter.categoryBits = Settings.BIT_DEFAULT; // hits nothing
+            filter.categoryBits = Settings.BIT_AGENT; // hits nothing
             filter.maskBits = Settings.BIT_BULLET; // hit by bullets
             fixture.setFilterData(filter);
             
