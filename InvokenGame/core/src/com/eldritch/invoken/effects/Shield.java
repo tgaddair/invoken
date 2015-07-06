@@ -144,7 +144,7 @@ public abstract class Shield extends BasicEffect {
 
             // collision filters
             Filter filter = fixture.getFilterData();
-            filter.categoryBits = Settings.BIT_AGENT; // hits nothing
+            filter.categoryBits = Settings.BIT_SHIELD; // hits nothing
             filter.maskBits = Settings.BIT_BULLET; // hit by bullets
             fixture.setFilterData(filter);
             
@@ -246,7 +246,7 @@ public abstract class Shield extends BasicEffect {
 
             // collision filters
             Filter filter = fixture.getFilterData();
-            filter.categoryBits = Settings.BIT_NOTHING; // hits nothing
+            filter.categoryBits = Settings.BIT_SHIELD; // hits nothing
             filter.maskBits = Settings.BIT_BULLET; // hit by bullets
             fixture.setFilterData(filter);
 

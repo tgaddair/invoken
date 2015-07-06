@@ -37,9 +37,11 @@ public class Settings {
 	public static final short BIT_BULLET = 0x0020;
 	public static final short BIT_LOW_AGENT = 0x0040;
 	public static final short BIT_PERIMETER = 0x0080;
+	public static final short BIT_SHIELD = 0x0100;
 	public static final short BIT_STATIC = BIT_WALL | BIT_OBSTACLE | BIT_SHORT_OBSTACLE;
 	public static final short BIT_HIGH_SHOOTABLE = BIT_AGENT | BIT_WALL | BIT_OBSTACLE;
-	public static final short BIT_SHOOTABLE = BIT_HIGH_SHOOTABLE | BIT_LOW_AGENT;
+	public static final short BIT_TARGETABLE = BIT_HIGH_SHOOTABLE | BIT_LOW_AGENT;
+	public static final short BIT_SHOOTABLE = BIT_TARGETABLE | BIT_SHIELD;
 	public static final short BIT_PHYSICAL = BIT_SHOOTABLE | BIT_SHORT_OBSTACLE;  // can walk into
 	public static final short BIT_ANYTHING = BIT_DEFAULT | BIT_PHYSICAL | BIT_BULLET;  // everything
 	

@@ -1822,7 +1822,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     protected abstract void takeAction(float delta, Level screen);
 
     private class TargetingHandler implements RayCastCallback {
-        private final short mask = Settings.BIT_SHOOTABLE;
+        private final short mask = Settings.BIT_TARGETABLE;
         private Agent targeting = null;
         private float fraction = 1;
 
@@ -1907,7 +1907,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     }
 
     private class LineOfSightHandler implements RayCastCallback {
-        private final short mask = Settings.BIT_SHOOTABLE;
+        private final short mask = Settings.BIT_TARGETABLE;
         private boolean lineOfSight = true;
         private Locatable target = null;
 

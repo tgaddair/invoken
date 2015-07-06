@@ -1454,7 +1454,7 @@ public class Level {
     }
 
     private class LineOfSightHandler implements RayCastCallback {
-        private final short mask = Settings.BIT_SHOOTABLE;
+        private final short mask = Settings.BIT_TARGETABLE;
         private boolean lineOfSight = true;
         private float fraction = 1;
         private Agent source = null;
