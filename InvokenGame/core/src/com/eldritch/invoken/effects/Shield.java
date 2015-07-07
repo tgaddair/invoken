@@ -68,7 +68,7 @@ public abstract class Shield extends BasicEffect {
 
     @Override
     public boolean isFinished() {
-        return !getTarget().isToggled(Shield.class);
+        return !getTarget().isToggled(Shield.class) || strength <= 0;
     }
 
     @Override
@@ -97,7 +97,7 @@ public abstract class Shield extends BasicEffect {
         strength = Math.max(strength - magnitude, 0);
         float fraction = strength / MAX_DAMAGE;
         color.set(color.r, color.g * fraction, color.b * fraction,
-                MathUtils.lerp(0.75f, 1f, fraction));
+                MathUtils.lerp(0.9f, 1f, fraction));
     }
 
     protected abstract void createHandlers(Agent owner);
