@@ -17,6 +17,7 @@ import com.eldritch.invoken.actor.items.RangedWeapon;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Npc;
 import com.eldritch.invoken.location.Level;
+import com.eldritch.invoken.util.GenericDialogue;
 import com.eldritch.invoken.util.Heuristics;
 
 public class Attack extends Sequence<Npc> {
@@ -317,6 +318,7 @@ public class Attack extends Sequence<Npc> {
             if (inv.hasRangedWeapon()) {
                 if (inv.getClip() == 0 && inv.getAmmunitionCount() > 0 && !inv.isReloading()) {
                     inv.reloadWeapon();
+                    npc.announce(GenericDialogue.reloading(npc));
                 }
             }
         }

@@ -53,6 +53,10 @@ public class GenericDialogue {
         return "Thank you.";
     }
     
+    public static String reloading(Agent speaker) {
+        return "Reloading!";
+    }
+    
     private static String sample(List<String> list) {
         int index = (int) (Math.random() * list.size());
         return list.get(index);
