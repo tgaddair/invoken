@@ -33,7 +33,7 @@ import com.eldritch.invoken.util.Settings;
 
 public abstract class Shield extends BasicEffect {
     private static final float MAX_DAMAGE = 100f;
-    private static final float V_PENALTY = 3;
+    private static final float V_PENALTY = 1;
     private static final float ENERGY_COST = 20f;
 
     private final Augmentation aug;

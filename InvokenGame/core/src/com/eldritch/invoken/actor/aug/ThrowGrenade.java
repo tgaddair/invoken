@@ -14,6 +14,8 @@ import com.eldritch.invoken.screens.GameScreen;
 import com.eldritch.invoken.util.Damage;
 
 public class ThrowGrenade extends InstantAugmentation {
+    private static final int BASE_COST = 20;
+    
     private static class Holder {
         private static final ThrowGrenade INSTANCE = new ThrowGrenade();
     }
@@ -58,7 +60,7 @@ public class ThrowGrenade extends InstantAugmentation {
 
     @Override
     public int getCost(Agent owner) {
-        return 1;
+        return BASE_COST;
     }
 
     @Override

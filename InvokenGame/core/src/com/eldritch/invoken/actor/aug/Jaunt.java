@@ -9,6 +9,8 @@ import com.eldritch.invoken.effects.Jaunting;
 import com.eldritch.invoken.location.Level;
 
 public class Jaunt extends InstantAugmentation {
+    private static final int BASE_COST = 25;
+    
 	private static class Holder {
         private static final Jaunt INSTANCE = new Jaunt();
 	}
@@ -53,7 +55,7 @@ public class Jaunt extends InstantAugmentation {
 	
 	@Override
     public int getCost(Agent owner) {
-        return 2;
+        return BASE_COST;
     }
 	
     @Override

@@ -42,7 +42,7 @@ public class Credential extends Item {
         builder.setType(Items.Item.Type.CREDENTIAL);
         builder.setDescription("");
         builder.setValue(0);
-        builder.setDroppable(true);
+        builder.setDroppable(false);
         return new Credential(builder.build());
     }
 }
