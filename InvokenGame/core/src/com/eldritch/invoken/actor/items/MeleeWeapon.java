@@ -10,20 +10,26 @@ import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.actor.type.Agent.Direction;
 import com.eldritch.invoken.proto.Items;
 import com.eldritch.invoken.proto.Items.Item.DamageMod;
+import com.eldritch.invoken.util.AnimationUtils;
 import com.google.common.base.Strings;
 
 public class MeleeWeapon extends Item {
-	private final Map<Direction, Animation> animations = new HashMap<Direction, Animation>();
+    private final Map<Direction, Animation> animations = new HashMap<Direction, Animation>();
     private final float damage;
     private final float range;
     private final boolean visible;
-    
+
     public MeleeWeapon(Items.Item item) {
-        super(item, 192);
+        super(item, Human.getWidth(), Human.getHeight());
         if (!Strings.isNullOrEmpty(item.getAsset())) {
-		    animations.putAll(Human.getAnimations(item.getAsset(), 192));
-		}
-        
+            if (item.getAsset().contains("full")) {
+                animations.putAll(AnimationUtils.getHumanAnimations(item.getAsset()).get(
+                        Activity.Swipe));
+            } else {
+                animations.putAll(Human.getAnimations(item.getAsset(), 192));
+            }
+        }
+
         // calculate damage magnitude
         float damageSum = 0;
         for (DamageMod mod : item.getDamageModifierList()) {
@@ -33,45 +39,44 @@ public class MeleeWeapon extends Item {
         this.range = (float) item.getRange();
         this.visible = !item.getHidden();
     }
-    
+
     @Override
     public boolean isEquipped(AgentInventory inventory) {
         return inventory.getMeleeWeapon() == this;
     }
-    
+
     @Override
     public void equipFrom(AgentInventory inventory) {
         inventory.setMeleeWeapon(this);
     }
-    
+
     @Override
     public void unequipFrom(AgentInventory inventory) {
         if (inventory.getMeleeWeapon() == this) {
             inventory.setMeleeWeapon(null);
         }
     }
-    
+
     @Override
     protected Animation getAnimation(Activity activity, Direction direction) {
-    	return animations.get(direction);
+        return animations.get(direction);
     }
-    
+
     public float getRange() {
         return range;
     }
-    
+
     public float getDamage() {
         return damage;
     }
-    
+
     public boolean isVisible() {
-    	return visible;
+        return visible;
     }
-    
+
     @Override
     public String toString() {
-        StringBuilder result = new StringBuilder(String.format("%s\n"
-                + "Range: %.2f\n",
+        StringBuilder result = new StringBuilder(String.format("%s\n" + "Range: %.2f\n",
                 super.toString(), data.getRange()));
         result.append("Damage:");
         for (DamageMod mod : data.getDamageModifierList()) {

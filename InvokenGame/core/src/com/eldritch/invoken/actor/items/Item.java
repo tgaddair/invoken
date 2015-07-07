@@ -18,30 +18,30 @@ public abstract class Item {
     private final float height;
 
     public Item(Items.Item data, int px) {
-        this(data, px, px);
+        this(data, px * Settings.SCALE, px * Settings.SCALE);
     }
 
     public Item(Items.Item data, TextureRegion region) {
-        this(data, region != null ? region.getRegionWidth() : 0, region != null ? region
-                .getRegionHeight() : 0);
+        this(data, region != null ? region.getRegionWidth() * Settings.SCALE : 0,
+                region != null ? region.getRegionHeight() * Settings.SCALE : 0);
     }
 
-    public Item(Items.Item data, int width, int height) {
+    public Item(Items.Item data, float width, float height) {
         this.data = data;
-        this.width = Settings.SCALE * width;
-        this.height = Settings.SCALE * height;
+        this.width = width;
+        this.height = height;
     }
-    
+
     public void equipIfBetter(AgentInventory inventory) {
         equipFrom(inventory);
     }
 
     public abstract boolean isEquipped(AgentInventory inventory);
-    
+
     public abstract void equipFrom(AgentInventory inventory);
 
     public abstract void unequipFrom(AgentInventory inventory);
-    
+
     public boolean mapTo(AgentInventory inventory, int index) {
         return false;
     }
