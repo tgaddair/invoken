@@ -21,6 +21,11 @@ public class Consumable extends Item {
         super(data, 0);
         effects = EffectFactory.from(data.getEffectList());
     }
+    
+    @Override
+    public void equipIfBetter(AgentInventory inventory) {
+        // do not equip
+    }
 
     @Override
     public boolean isEquipped(AgentInventory inventory) {

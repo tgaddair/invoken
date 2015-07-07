@@ -10,6 +10,7 @@ import com.eldritch.invoken.effects.Bleed;
 import com.eldritch.invoken.effects.Stunned;
 import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.proto.Effects.DamageType;
+import com.eldritch.invoken.proto.Items.Item.RangedWeaponType;
 import com.eldritch.invoken.screens.GameScreen;
 import com.eldritch.invoken.util.Damage;
 
@@ -42,20 +43,24 @@ public class ThrowGrenade extends InstantAugmentation {
         }
         return getAction(owner, position);
     }
-
+    
     @Override
     public Action getAction(Agent owner, Vector2 target) {
         return new ThrowAction(owner, target);
     }
+    
+    public boolean isValid(Agent owner) {
+        return owner.getInventory().hasAmmunition(RangedWeaponType.GRENADE);
+    }
 
     @Override
     public boolean isValid(Agent owner, Agent target) {
-        return true;
+        return isValid(owner);
     }
 
     @Override
     public boolean isValid(Agent owner, Vector2 target) {
-        return true;
+        return isValid(owner);
     }
 
     @Override
