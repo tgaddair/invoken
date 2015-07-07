@@ -1323,13 +1323,13 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
             assaulters.add(source);
         }
 
-        changeRelationScaled(source, -magnitude);
+        changeRelationScaled(source, -magnitude, 0.1f);
     }
     
-    public float changeRelationScaled(Agent target, float delta) {
+    public float changeRelationScaled(Agent target, float delta, float scale) {
         if (delta < 0 && isAlly(target)) {
             // scale down friendly fire
-            delta *= 0.1f;
+            delta *= scale;
         }
         return changeRelation(target, delta);
     }

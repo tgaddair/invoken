@@ -69,7 +69,7 @@ public class Investigate extends Sequence<Npc> {
     private static class LowerRelation extends SuccessTask {
         @Override
         protected void doFor(Npc npc) {
-            npc.changeRelationScaled(npc.getTarget(), INVESTIGATION_PENALTY);
+            npc.changeRelationScaled(npc.getTarget(), INVESTIGATION_PENALTY, 0);
             if (!npc.isEnemy(npc.getTarget())) {
                 // express our disapproval
 //                npc.announce(GenericDialogue.forSuspiciousActivity(npc, npc.getTarget()));
