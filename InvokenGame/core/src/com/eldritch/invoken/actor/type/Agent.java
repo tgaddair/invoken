@@ -865,7 +865,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
      * Begin dialogue with oneself.
      */
     public void announce(String banter) {
-        if (!canSpeak()) {
+        if (!canSpeak() || !isAlive()) {
             return;
         }
 
