@@ -95,6 +95,10 @@ public abstract class Augmentation {
         return SoundEffect.INVALID;
     }
     
+    public String getLabel(Agent owner) {
+        return "";
+    }
+    
     public boolean isAimed() {
         return false;
     }

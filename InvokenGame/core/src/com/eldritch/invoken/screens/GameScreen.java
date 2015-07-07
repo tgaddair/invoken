@@ -87,7 +87,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
     private InventoryMenu inventoryMenu;
 
     private Table statusTable;
-    private StatusBar<Agent> playerHealth;
+//    private StatusBar<Agent> playerHealth;
     private StatusBar<Agent> energyBar;
     private final List<HudElement> hud = new ArrayList<HudElement>();
 
@@ -208,10 +208,10 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 
         // create HUD elements
         Skin skin = getSkin();
-        actionBar = new ActionBar(player);
+        actionBar = new ActionBar(player, skin);
         energyBar = new StatusBar<Agent>(player, new EnergyCalculator(), skin);
         inventoryMenu = new InventoryMenu(player, skin);
-        playerHealth = new StatusBar<Agent>(player, new HealthCalculator(), skin);
+//        playerHealth = new StatusBar<Agent>(player, new HealthCalculator(), skin);
         selectedHealth = new HealthBar(skin);
         hud.add(new FragmentCounter(skin));
         hud.add(new UploadMenu(player, skin));
@@ -223,7 +223,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         statusTable.bottom();
         statusTable.left();
 
-        statusTable.add(playerHealth).expand().bottom().left();
+//        statusTable.add(playerHealth).expand().bottom().left();
         statusTable.add(energyBar).expand().bottom().right();
 
         stage.addActor(actionBar.getTable());
@@ -284,7 +284,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         // update UI menus
         actionBar.update();
         energyBar.update();
-        playerHealth.update();
+//        playerHealth.update();
         selectedHealth.update(player, player.getTarget(), camera);
         dialogue.update(delta, player, camera);
         loot.update(player);

@@ -73,6 +73,13 @@ public class ThrowGrenade extends InstantAugmentation {
     public float quality(Agent owner, Agent target, Level level) {
         return owner.getWeaponSentry().hasLineOfSight(target) ? 1 : 0;
     }
+    
+    @Override
+    public String getLabel(Agent owner) {
+        Ammunition ammo = owner.getInventory().getAmmunition(RangedWeaponType.GRENADE);
+        int count = owner.getInventory().getItemCount(ammo);
+        return count > 0 ? String.valueOf(count) : "";
+    }
 
     public class ThrowAction extends AnimatedAction {
         private final Vector2 target;

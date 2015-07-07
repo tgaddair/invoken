@@ -3,9 +3,15 @@ package com.eldritch.invoken.ui;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Stack;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
+import com.badlogic.gdx.scenes.scene2d.utils.Align;
 import com.eldritch.invoken.actor.PreparedAugmentations;
 import com.eldritch.invoken.actor.PreparedAugmentations.AugmentationListener;
 import com.eldritch.invoken.actor.aug.Augmentation;
@@ -14,13 +20,16 @@ import com.eldritch.invoken.util.DefaultInputListener;
 import com.eldritch.invoken.util.Settings;
 
 public class ActionBar implements AugmentationListener {
-    private final Map<Augmentation, Image> images = new HashMap<Augmentation, Image>();
+    private final Map<Augmentation, Label> labels = new HashMap<>();
+    private final Map<Augmentation, Image> images = new HashMap<>();
     private final PreparedAugmentations augmentations;
     private final Table container;
     private final Player player;
+    private final Skin skin;
     
-    public ActionBar(Player player) {
+    public ActionBar(Player player, Skin skin) {
         this.player = player;
+        this.skin = skin;
         augmentations = player.getInfo().getAugmentations();
         augmentations.addListener(this);
         
@@ -32,11 +41,16 @@ public class ActionBar implements AugmentationListener {
     
     public void update() {
         for (Augmentation aug : augmentations.getAugmentations()) {
-            float a = aug.isValid(player) && aug.hasEnergy(player) ? 1 : 0.25f;
-            if (augmentations.isActive(aug)) {
-                images.get(aug).setColor(1, 0, 0, a);
-            } else {
-                images.get(aug).setColor(1, 1, 1, a);
+            if (images.containsKey(aug)) {
+                float a = aug.isValid(player) && aug.hasEnergy(player) ? 1 : 0.25f;
+                if (augmentations.isActive(aug)) {
+                    images.get(aug).setColor(1, 0, 0, a);
+                } else {
+                    images.get(aug).setColor(1, 1, 1, a);
+                }
+            }
+            if (labels.containsKey(aug)) {
+                labels.get(aug).setText(aug.getLabel(player));
             }
         }
     }
@@ -53,6 +67,8 @@ public class ActionBar implements AugmentationListener {
     @Override
     public void onClear() {
         container.clear();
+        labels.clear();
+        images.clear();
         refresh();
     }
     
@@ -68,14 +84,25 @@ public class ActionBar implements AugmentationListener {
     }
     
     private void add(final Augmentation aug) {
+        LabelStyle labelStyle = skin.get("toast", LabelStyle.class);
+        Label label = new Label("", labelStyle);
+        label.setAlignment(Align.bottomRight, Align.left);
+        label.setColor(Color.GREEN);
+        labels.put(aug, label);
+        
         Image image = new Image(aug.getIcon());
-        image.addListener(new DefaultInputListener() {
+        images.put(aug, image);
+        
+        Stack stack = new Stack();
+        stack.addActor(image);
+        stack.addActor(label);
+        stack.addListener(new DefaultInputListener() {
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 augmentations.toggleActiveAugmentation(aug, button);
             }
         });
-        images.put(aug, image);
-        container.add(image).padLeft(10).padRight(10).padBottom(10);
+        
+        container.add(stack).padLeft(10).padRight(10).padBottom(10);
     }
 }

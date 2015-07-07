@@ -92,6 +92,14 @@ public class FireWeapon extends ProjectileAugmentation {
     public SoundEffect getFailureSound() {
         return SoundEffect.RANGED_WEAPON_DRY;
     }
+    
+    @Override
+    public String getLabel(Agent owner) {
+        int clip = owner.getInventory().getClip();
+//        int ammunition = owner.getInventory().getAmmunitionCount();
+//        return String.format("%d / %d", clip, ammunition - clip);
+        return clip > 0 ? String.valueOf(clip) : "";
+    }
 
     public class FireAction extends AnimatedAction {
         private final Vector2 target;
