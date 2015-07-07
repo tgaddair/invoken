@@ -97,7 +97,7 @@ public abstract class Item {
     public static Item fromProto(Items.Item item) {
         switch (item.getType()) {
             case MELEE_WEAPON:
-                return new MeleeWeapon(item);
+                return MeleeWeapon.from(item);
             case RANGED_WEAPON:
                 return RangedWeapon.from(item);
             case HEAVY_WEAPON:

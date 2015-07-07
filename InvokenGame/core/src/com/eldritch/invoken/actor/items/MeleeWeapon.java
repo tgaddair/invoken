@@ -11,6 +11,7 @@ import com.eldritch.invoken.actor.type.Agent.Direction;
 import com.eldritch.invoken.proto.Items;
 import com.eldritch.invoken.proto.Items.Item.DamageMod;
 import com.eldritch.invoken.util.AnimationUtils;
+import com.eldritch.invoken.util.Settings;
 import com.google.common.base.Strings;
 
 public class MeleeWeapon extends Item {
@@ -18,17 +19,10 @@ public class MeleeWeapon extends Item {
     private final float damage;
     private final float range;
     private final boolean visible;
-
-    public MeleeWeapon(Items.Item item) {
-        super(item, Human.getWidth(), Human.getHeight());
-        if (!Strings.isNullOrEmpty(item.getAsset())) {
-            if (item.getAsset().contains("full")) {
-                animations.putAll(AnimationUtils.getHumanAnimations(item.getAsset()).get(
-                        Activity.Swipe));
-            } else {
-                animations.putAll(Human.getAnimations(item.getAsset(), 192));
-            }
-        }
+    
+    private MeleeWeapon(Items.Item item, Map<Direction, Animation> animations, float width, float height) {
+        super(item, width, height);
+        this.animations.putAll(animations);
 
         // calculate damage magnitude
         float damageSum = 0;
@@ -83,5 +77,26 @@ public class MeleeWeapon extends Item {
             result.append(String.format("\n  %s: %d", mod.getDamage(), mod.getMagnitude()));
         }
         return result.toString();
+    }
+    
+    public static MeleeWeapon from(Items.Item item) {
+        Map<Direction, Animation> animations = new HashMap<Direction, Animation>();
+        float width = 0;
+        float height = 0;
+        if (!Strings.isNullOrEmpty(item.getAsset())) {
+            if (item.getAsset().contains("full")) {
+                animations.putAll(AnimationUtils.getHumanAnimations(item.getAsset()).get(
+                        Activity.Swipe));
+                width = Human.getWidth();
+                height = Human.getHeight();
+            } else {
+                final int size = 192;
+                animations.putAll(Human.getAnimations(item.getAsset(), size));
+                width = size * Settings.SCALE;
+                height = size * Settings.SCALE;
+            }
+        }
+        
+        return new MeleeWeapon(item, animations, width, height);
     }
 }

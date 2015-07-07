@@ -9,6 +9,7 @@ import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.actor.type.Agent.Direction;
 import com.eldritch.invoken.screens.GameScreen;
 import com.eldritch.invoken.util.AnimationUtils;
+import com.eldritch.invoken.util.Settings;
 
 public class Human {
     public static float MAX_VELOCITY = 8f;
@@ -20,11 +21,11 @@ public class Human {
     
     
     public static float getWidth() {
-        return 1 / 32f * PX;
+        return Settings.SCALE * PX;
     }
     
     public static float getHeight() {
-        return 1 / 32f * PX;
+        return Settings.SCALE * PX;
     }
     
     public static Animation getAnimation(String assetName) {
