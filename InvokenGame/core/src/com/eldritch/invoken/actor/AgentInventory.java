@@ -57,6 +57,14 @@ public class AgentInventory extends Inventory {
     public boolean isCooling(Item item) {
         return getState(item.getId()).getCooldown() > 0;
     }
+    
+    public Consumable[] getConsumables() {
+        return consumables;
+    }
+    
+    public int getConsumableCount() {
+        return consumables.length;
+    }
 
     public boolean hasConsumable(int index) {
         return index < consumables.length && consumables[index] != null;

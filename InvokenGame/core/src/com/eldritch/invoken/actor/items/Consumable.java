@@ -2,6 +2,7 @@ package com.eldritch.invoken.actor.items;
 
 import java.util.List;
 
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.actor.AgentInventory;
@@ -12,16 +13,24 @@ import com.eldritch.invoken.effects.Effect;
 import com.eldritch.invoken.effects.EffectFactory;
 import com.eldritch.invoken.effects.EffectFactory.EffectGenerator;
 import com.eldritch.invoken.proto.Items;
+import com.eldritch.invoken.screens.GameScreen;
 import com.eldritch.invoken.util.SoundManager.SoundEffect;
 
 public class Consumable extends Item {
     private final List<EffectGenerator> effects;
-    
+    private final Texture icon;
+
     public Consumable(Items.Item data) {
         super(data, 0);
         effects = EffectFactory.from(data.getEffectList());
+        String asset = data.hasAsset() ? data.getAsset() : "default";
+        this.icon = GameScreen.getTexture("icon/consumable/" + asset + ".png");
     }
-    
+
+    public Texture getIcon() {
+        return icon;
+    }
+
     @Override
     public void equipIfBetter(AgentInventory inventory) {
         // do not equip
@@ -32,11 +41,11 @@ public class Consumable extends Item {
         // cannot be equipped
         return false;
     }
-    
+
     @Override
     public void addFrom(AgentInventory inventory) {
     }
-    
+
     @Override
     public void equipFrom(AgentInventory inventory) {
         // consume
@@ -49,7 +58,7 @@ public class Consumable extends Item {
     public void unequipFrom(AgentInventory inventory) {
         // does nothing
     }
-    
+
     @Override
     public boolean mapTo(AgentInventory inventory, int index) {
         inventory.setConsumable(index, this);

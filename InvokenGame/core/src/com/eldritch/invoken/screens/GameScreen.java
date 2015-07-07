@@ -40,6 +40,7 @@ import com.eldritch.invoken.proto.Effects.DamageType;
 import com.eldritch.invoken.proto.Locations;
 import com.eldritch.invoken.proto.Locations.Biome;
 import com.eldritch.invoken.ui.ActionBar;
+import com.eldritch.invoken.ui.ConsumableBar;
 import com.eldritch.invoken.ui.DesireMenu;
 import com.eldritch.invoken.ui.DialogueMenu;
 import com.eldritch.invoken.ui.FragmentCounter;
@@ -50,7 +51,6 @@ import com.eldritch.invoken.ui.LootMenu;
 import com.eldritch.invoken.ui.Minimap;
 import com.eldritch.invoken.ui.StatusBar;
 import com.eldritch.invoken.ui.StatusBar.EnergyCalculator;
-import com.eldritch.invoken.ui.StatusBar.HealthCalculator;
 import com.eldritch.invoken.ui.Toaster;
 import com.eldritch.invoken.ui.Toaster.Message;
 import com.eldritch.invoken.ui.UploadMenu;
@@ -216,6 +216,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         hud.add(new FragmentCounter(skin));
         hud.add(new UploadMenu(player, skin));
         hud.add(new DesireMenu(player, skin));
+        hud.add(new ConsumableBar(player, skin));
 
         statusTable = new Table(getSkin());
         statusTable.setHeight(Settings.MENU_VIEWPORT_HEIGHT / 2);
