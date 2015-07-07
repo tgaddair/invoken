@@ -3,6 +3,7 @@ package com.eldritch.invoken.actor.aug;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.actor.aug.Augmentation.InstantAugmentation;
+import com.eldritch.invoken.actor.items.Ammunition;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.actor.type.AoeProjectile;
@@ -88,6 +89,10 @@ public class ThrowGrenade extends InstantAugmentation {
 
             Grenade bullet = new Grenade(owner, target);
             level.addEntity(bullet);
+            
+            // remove one grenade
+            Ammunition grenade = owner.getInventory().getAmmunition(RangedWeaponType.GRENADE);
+            owner.getInventory().removeItem(grenade, 1);
         }
 
         @Override
