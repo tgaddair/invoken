@@ -156,7 +156,6 @@ public class RoomGenerator extends BspGenerator {
             ControlPoint cp = elem.first;
             int count = elem.second;
             for (int i = 0; i < count; i++) {
-                System.out.println("placing: " + cp.getId());
                 place(cp, cost, unbuilt);
             }
         }

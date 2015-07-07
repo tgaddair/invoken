@@ -356,8 +356,8 @@ public class BspGenerator {
             NaturalVector2 prev = currentPath.get(i - 1);
             NaturalVector2 point = currentPath.get(i);
             
-            int width = prev.y != point.y ? size : 1;
-            int height = prev.x != point.x ? size : 1;
+            int width = prev.y != point.y ? size : size / 2;
+            int height = prev.x != point.x ? size : size / 2;
             Set(point.x - width / 2, point.y - height / 2, width, height, CellType.Floor, untype);
         }
     }
