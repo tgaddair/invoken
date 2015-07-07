@@ -76,6 +76,10 @@ public class ThrowGrenade extends InstantAugmentation {
     
     @Override
     public String getLabel(Agent owner) {
+        if (!owner.getInventory().hasAmmunition(RangedWeaponType.GRENADE)) {
+            return "";
+        }
+        
         Ammunition ammo = owner.getInventory().getAmmunition(RangedWeaponType.GRENADE);
         int count = owner.getInventory().getItemCount(ammo);
         return count > 0 ? String.valueOf(count) : "";
