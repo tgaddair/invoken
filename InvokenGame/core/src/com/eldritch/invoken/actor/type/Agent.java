@@ -49,6 +49,7 @@ import com.eldritch.invoken.actor.items.Outfit;
 import com.eldritch.invoken.actor.items.RangedWeapon;
 import com.eldritch.invoken.actor.type.HandledProjectile.ProjectileHandler;
 import com.eldritch.invoken.actor.util.ActivationHandler;
+import com.eldritch.invoken.actor.util.AgentListener;
 import com.eldritch.invoken.actor.util.Announcement;
 import com.eldritch.invoken.actor.util.Announcement.BanterAnnouncement;
 import com.eldritch.invoken.actor.util.Announcement.BasicAnnouncement;
@@ -129,6 +130,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     private final LinkedList<Action> actions = new LinkedList<>();
     private final List<Effect> effects = new LinkedList<>();
     private final Set<ActivationHandler> activationHandlers = new HashSet<>();
+    private final List<AgentListener> listeners = new ArrayList<>();
     private Action action = null;
 
     private Agent followed = null;
@@ -248,6 +250,10 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
 
         circleShape.dispose();
         return body;
+    }
+    
+    public void addListener(AgentListener listener) {
+        listeners.add(listener);
     }
 
     public boolean hasCollisionDelegate() {
@@ -1247,6 +1253,10 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         releaseFragments();
         announcements.clear();
         InvokenGame.SOUND_MANAGER.playAtPoint(getDeathSound(), getPosition(), 3f);
+        
+        for (AgentListener listener : listeners) {
+            listener.onDeath();
+        }
     }
 
     // add fragment temporary entities to the world in a radial pattern around

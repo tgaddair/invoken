@@ -33,7 +33,7 @@ import com.eldritch.invoken.util.Settings;
 
 public abstract class Shield extends BasicEffect {
     private static final float MAX_DAMAGE = 100f;
-    private static final float V_PENALTY = 5;
+    private static final float V_PENALTY = 3;
     private static final float ENERGY_COST = 20f;
 
     private final Augmentation aug;
@@ -63,6 +63,7 @@ public abstract class Shield extends BasicEffect {
         target.getInfo().getAugmentations().removeSelfAugmentation(aug);
         target.getInfo().changeMaxEnergy(ENERGY_COST);
         target.addVelocityPenalty(-V_PENALTY);
+        target.toggleOff(Shield.class);
         destroyHandlers();
     }
 

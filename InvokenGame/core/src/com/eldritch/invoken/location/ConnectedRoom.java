@@ -47,6 +47,10 @@ public class ConnectedRoom {
 	    }
 	}
 	
+	public Iterable<Agent> getResidents() {
+	    return residents;
+	}
+	
 	public boolean hasResident() {
 	    for (Agent agent : residents) {
 	        if (contains(agent.getNaturalPosition())) {

@@ -15,6 +15,7 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.actor.items.Item;
 import com.eldritch.invoken.actor.type.Agent;
+import com.eldritch.invoken.actor.util.AgentListener;
 import com.eldritch.invoken.gfx.Light;
 import com.eldritch.invoken.gfx.Light.StaticLight;
 import com.eldritch.invoken.location.ConnectedRoom;
@@ -28,7 +29,8 @@ import com.eldritch.invoken.util.SoundManager.SoundEffect;
 import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 
-public class DoorActivator extends ClickActivator implements ProximityActivator, Crackable {
+public class DoorActivator extends ClickActivator implements ProximityActivator, Crackable,
+        AgentListener {
     private static final TextureRegion[] frontRegions = GameScreen.getMergedRegion(
             "sprite/activators/blast-door-short.png", 64, 64);
     private static final TextureRegion[] frontRegionsLocked = GameScreen.getMergedRegion(
@@ -56,6 +58,7 @@ public class DoorActivator extends ClickActivator implements ProximityActivator,
     private final Set<Agent> lastProximityAgents = new HashSet<>();
     private final Set<Agent> proximityAgents = new HashSet<>();
     private final Set<Agent> triggerAgents = new HashSet<>();
+    private final Set<Agent> residents = new HashSet<>();
 
     private boolean activating = false;
     private boolean finished = false;
@@ -93,6 +96,7 @@ public class DoorActivator extends ClickActivator implements ProximityActivator,
         }
 
         setColor();
+
         lock.room.addDoor(this);
     }
 
@@ -128,6 +132,7 @@ public class DoorActivator extends ClickActivator implements ProximityActivator,
         // state must click to unlock
         if (shouldOpen != open && !lock.isLocked()) {
             lastProximityAgents.removeAll(proximityAgents);
+            triggerAgents.clear();
             triggerAgents.addAll(lastProximityAgents);
             setOpened(shouldOpen, level);
         }
@@ -170,7 +175,6 @@ public class DoorActivator extends ClickActivator implements ProximityActivator,
         finished = false;
         if (!open) {
             onClose(triggerAgents, level);
-            triggerAgents.clear();
         }
     }
 
@@ -180,9 +184,39 @@ public class DoorActivator extends ClickActivator implements ProximityActivator,
             if (!lock.canUnlock(agent) && lock.getRoom().contains(agent.getNaturalPosition())
                     && lock.getRoom().hasHostileResident(agent)) {
                 lock.getRoom().setLocked(true);
+                for (Agent resident : lock.getRoom().getResidents()) {
+                    if (!residents.contains(resident)) {
+                        resident.addListener(this);
+                        residents.add(resident);
+                    }
+                }
                 break;
             }
         }
+    }
+    
+    @Override
+    public void onCellChange() {
+    }
+
+    @Override
+    public void onDeath() {
+        onResidentDeath();
+    }
+
+    private void onResidentDeath() {
+        if (!hasHostileResident()) {
+            lock.getRoom().setLocked(false);
+        }
+    }
+
+    private boolean hasHostileResident() {
+        for (Agent agent : triggerAgents) {
+            if (lock.getRoom().hasHostileResident(agent)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void setColor() {
@@ -271,7 +305,7 @@ public class DoorActivator extends ClickActivator implements ProximityActivator,
     public void setLocked(boolean locked) {
         lockChange = Optional.of(locked);
     }
-    
+
     private void applyLocked(boolean locked) {
         lock.setLocked(locked);
         setColor();
