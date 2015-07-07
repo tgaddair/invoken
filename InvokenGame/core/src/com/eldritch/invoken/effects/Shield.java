@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -25,19 +26,23 @@ import com.eldritch.invoken.actor.aug.Augmentation;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.actor.type.Agent.Direction;
+import com.eldritch.invoken.location.Bullet;
 import com.eldritch.invoken.util.AnimationUtils;
 import com.eldritch.invoken.util.Settings;
 
 public abstract class Shield extends BasicEffect {
+    private static final float MAX_DAMAGE = 100f;
     private static final float V_PENALTY = 5;
     private static final float ENERGY_COST = 20f;
 
     private final Augmentation aug;
     private final Map<Activity, Map<Direction, Animation>> animations = AnimationUtils
             .getHumanAnimations("sprite/effects/shield.png");
-
+    private final Color color = new Color(Color.WHITE);
     // private final ProjectileHandler handler = new ShieldProjectileHandler();
-
+    
+    private float strength = MAX_DAMAGE;
+    
     public Shield(Agent actor, Augmentation aug) {
         super(actor);
         this.aug = aug;
@@ -76,13 +81,21 @@ public abstract class Shield extends BasicEffect {
 
         Batch batch = renderer.getBatch();
         batch.begin();
+        batch.setColor(color);
         batch.draw(frame, // frame
                 position.x - width / 2, position.y - height / 2, // position
                 width / 2, height / 2, // origin
                 width, height, // size
                 1f, 1f, // scale
                 0); // direction
+        batch.setColor(Color.WHITE);
         batch.end();
+    }
+    
+    protected void damage(float magnitude) {
+        strength = Math.max(strength - magnitude, 0);
+        float fraction = strength / MAX_DAMAGE;
+        color.set(color.r, color.g * fraction, color.b * fraction, fraction);
     }
 
     protected abstract void createHandlers(Agent owner);
@@ -190,20 +203,21 @@ public abstract class Shield extends BasicEffect {
         }
 
         private class FixedShieldHandler implements AgentHandler {
-            private final Direction direction;
-
             public FixedShieldHandler(Agent owner, Direction direction) {
-                this.direction = direction;
             }
 
             @Override
             public boolean handle(Agent agent) {
-                System.out.println("handle shield");
-                return true;
+                return false;
             }
 
             @Override
             public boolean handle(Object userData) {
+                if (userData instanceof Bullet) {
+                    Bullet bullet = (Bullet) userData;
+                    damage(10);
+                    return true;
+                }
                 return false;
             }
 

@@ -13,7 +13,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.actor.AgentInventory;
 import com.eldritch.invoken.actor.aug.Augmentation;
 import com.eldritch.invoken.actor.aug.Augmentation.Target;
-import com.eldritch.invoken.actor.aug.FireWeapon;
 import com.eldritch.invoken.actor.items.RangedWeapon;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Npc;
@@ -207,8 +206,12 @@ public class Attack extends Sequence<Npc> {
     private static class AcquireTarget extends SuccessTask {
         @Override
         public void doFor(Npc npc) {
-            if (npc.getTactics().getTarget().isValid() && npc.getTactics().getTarget().isAgent()) {
-                npc.setTarget(npc.getTactics().getTarget().getAgent());
+            Target target = npc.getTactics().getTarget();
+            if (target.isValid() && target.isAgent()) {
+                if (npc.getInfo().getName().equals(target.getAgent().getInfo().getName())) {
+                    System.out.println(npc.getInfo().getName() + " -> " + target.getAgent().getInfo().getName());
+                }
+                npc.setTarget(target.getAgent());
             }
         }
     }
