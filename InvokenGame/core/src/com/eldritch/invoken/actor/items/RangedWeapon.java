@@ -138,6 +138,10 @@ public abstract class RangedWeapon extends Item {
             equipFrom(inventory);
         }
     }
+    
+    @Override
+    public void addFrom(AgentInventory inventory) {
+    }
 
     @Override
     public boolean isEquipped(AgentInventory inventory) {

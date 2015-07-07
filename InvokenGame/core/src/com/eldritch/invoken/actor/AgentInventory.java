@@ -1,8 +1,9 @@
 package com.eldritch.invoken.actor;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
-import com.badlogic.gdx.math.MathUtils;
 import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.actor.items.Ammunition;
 import com.eldritch.invoken.actor.items.Consumable;
@@ -11,6 +12,7 @@ import com.eldritch.invoken.actor.items.MeleeWeapon;
 import com.eldritch.invoken.actor.items.Outfit;
 import com.eldritch.invoken.actor.items.RangedWeapon;
 import com.eldritch.invoken.proto.Actors.InventoryItem;
+import com.eldritch.invoken.proto.Items.Item.RangedWeaponType;
 import com.eldritch.invoken.state.Inventory;
 import com.eldritch.invoken.util.SoundManager.SoundEffect;
 
@@ -19,6 +21,7 @@ public class AgentInventory extends Inventory {
 
     // equipment
     private final Consumable[] consumables = new Consumable[2];
+    private final Map<RangedWeaponType, Ammunition> ammunition = new HashMap<>();
     private Outfit outfit;
     private RangedWeaponState rangedWeapon = new RangedWeaponState(null, null);
     private MeleeWeapon meleeWeapon;
@@ -85,6 +88,22 @@ public class AgentInventory extends Inventory {
             return true;
         }
         return false;
+    }
+    
+    public boolean hasAmmunition(RangedWeaponType type) {
+        return ammunition.containsKey(type);
+    }
+    
+    public Ammunition getAmmunition(RangedWeaponType type) {
+        return ammunition.get(type);
+    }
+    
+    public void setAmmunition(RangedWeaponType type, Ammunition ammo) {
+        ammunition.put(type, ammo);
+    }
+    
+    public void removeAmmunition(RangedWeaponType type) {
+        ammunition.remove(type);
     }
 
     public boolean hasOutfit() {
@@ -175,6 +194,11 @@ public class AgentInventory extends Inventory {
 
     public void unequip(Item item) {
         item.unequipFrom(this);
+    }
+    
+    @Override
+    protected void handleAdd(Item item, int count) {
+        item.addFrom(this);
     }
 
     @Override

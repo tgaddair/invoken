@@ -109,6 +109,10 @@ public class Inventory {
         } else {
             items.get(item.getId()).add(count);
         }
+        handleAdd(item, count);
+    }
+    
+    protected void handleAdd(Item item, int count) {
     }
 
     public void removeItem(Item item) {

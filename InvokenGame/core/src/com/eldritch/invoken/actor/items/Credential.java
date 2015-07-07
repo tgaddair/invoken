@@ -18,6 +18,10 @@ public class Credential extends Item {
         // cannot be equipped
         return false;
     }
+    
+    @Override
+    public void addFrom(AgentInventory inventory) {
+    }
 
     @Override
     public void equipFrom(AgentInventory inventory) {

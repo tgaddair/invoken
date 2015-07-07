@@ -52,6 +52,10 @@ public class Outfit extends Item {
     public boolean isEquipped(AgentInventory inventory) {
         return inventory.getOutfit() == this;
     }
+    
+    @Override
+    public void addFrom(AgentInventory inventory) {
+    }
 
     @Override
     public void equipFrom(AgentInventory inventory) {

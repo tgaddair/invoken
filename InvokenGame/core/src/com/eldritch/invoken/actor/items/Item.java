@@ -37,6 +37,8 @@ public abstract class Item {
     }
 
     public abstract boolean isEquipped(AgentInventory inventory);
+    
+    public abstract void addFrom(AgentInventory inventory);
 
     public abstract void equipFrom(AgentInventory inventory);
 

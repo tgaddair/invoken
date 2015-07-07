@@ -29,6 +29,10 @@ public class Consumable extends Item {
     }
     
     @Override
+    public void addFrom(AgentInventory inventory) {
+    }
+    
+    @Override
     public void equipFrom(AgentInventory inventory) {
         // consume
         inventory.removeItem(this);

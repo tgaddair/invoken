@@ -18,16 +18,25 @@ public class Ammunition extends Item {
 
     @Override
     public boolean isEquipped(AgentInventory inventory) {
-        // cannot be equipped
-        return false;
+        RangedWeaponType type = getType();
+        return inventory.hasAmmunition(type) && inventory.getAmmunition(type) == this;
+    }
+    
+    @Override
+    public void addFrom(AgentInventory inventory) {
+        if (!inventory.hasAmmunition(getType())) {
+            equipFrom(inventory);
+        }
     }
 
     @Override
     public void equipFrom(AgentInventory inventory) {
+        inventory.setAmmunition(getType(), this);
     }
 
     @Override
     public void unequipFrom(AgentInventory inventory) {
+        inventory.removeAmmunition(getType());
     }
 
     @Override

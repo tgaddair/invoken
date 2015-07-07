@@ -38,6 +38,10 @@ public class MeleeWeapon extends Item {
     public boolean isEquipped(AgentInventory inventory) {
         return inventory.getMeleeWeapon() == this;
     }
+    
+    @Override
+    public void addFrom(AgentInventory inventory) {
+    }
 
     @Override
     public void equipFrom(AgentInventory inventory) {
