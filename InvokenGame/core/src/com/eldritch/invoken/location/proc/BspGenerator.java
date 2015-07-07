@@ -29,7 +29,7 @@ public class BspGenerator {
     int RoomCount;
 
     public int Grid = 16;
-    public int Padding = 4;
+    public int Padding = 8;
 
     public List<Rectangle> Rooms = new ArrayList<Rectangle>();
     private List<NaturalVector2> currentPath = new ArrayList<NaturalVector2>();
