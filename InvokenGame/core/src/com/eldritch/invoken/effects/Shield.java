@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
@@ -40,9 +41,9 @@ public abstract class Shield extends BasicEffect {
             .getHumanAnimations("sprite/effects/shield.png");
     private final Color color = new Color(Color.WHITE);
     // private final ProjectileHandler handler = new ShieldProjectileHandler();
-    
+
     private float strength = MAX_DAMAGE;
-    
+
     public Shield(Agent actor, Augmentation aug) {
         super(actor);
         this.aug = aug;
@@ -91,11 +92,12 @@ public abstract class Shield extends BasicEffect {
         batch.setColor(Color.WHITE);
         batch.end();
     }
-    
+
     protected void damage(float magnitude) {
         strength = Math.max(strength - magnitude, 0);
         float fraction = strength / MAX_DAMAGE;
-        color.set(color.r, color.g * fraction, color.b * fraction, fraction);
+        color.set(color.r, color.g * fraction, color.b * fraction,
+                MathUtils.lerp(0.75f, 1f, fraction));
     }
 
     protected abstract void createHandlers(Agent owner);
