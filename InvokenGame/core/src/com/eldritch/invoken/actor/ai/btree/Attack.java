@@ -40,6 +40,7 @@ public class Attack extends Sequence<Npc> {
         useAugSequence.addChild(new LowerAim());
 
         Sequence<Npc> chooseAugSequence = new Sequence<>();
+        chooseAugSequence.addChild(new ChooseWeapon());
         chooseAugSequence.addChild(new ChooseAugmentation());
         chooseAugSequence.addChild(new TakeAim());
 
@@ -137,6 +138,18 @@ public class Attack extends Sequence<Npc> {
         @Override
         protected boolean check(Npc npc) {
             return npc.hasChosen();
+        }
+    }
+    
+    private static class ChooseWeapon extends SuccessTask {
+        @Override
+        public void doFor(Npc npc) {
+            AgentInventory inv = npc.getInventory();
+            if (inv.hasRangedWeapon()) {
+                if (inv.getAmmunitionCount() <= 0) {
+                    inv.unequip(inv.getRangedWeapon());
+                }
+            }
         }
     }
 

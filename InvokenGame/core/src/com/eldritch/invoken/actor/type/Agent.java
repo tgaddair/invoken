@@ -1323,7 +1323,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
             assaulters.add(source);
         }
 
-        changeRelationScaled(source, -magnitude, 0.1f);
+        changeRelationScaled(source, -magnitude, 0.01f);
     }
     
     public float changeRelationScaled(Agent target, float delta, float scale) {
