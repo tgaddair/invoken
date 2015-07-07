@@ -8,7 +8,9 @@ public class IsIntimidated extends BooleanTask {
     protected boolean check(Npc npc) {
         // either we've been facing down our enemy for too long or we're really
         // close
-        if (npc.getInventory().hasMeleeWeapon()) {
+        if (npc.getInventory().hasRangedWeapon()) {
+            return npc.getIntimidation().isExpended() || isInDanger(npc);
+        } else if (npc.getInventory().hasMeleeWeapon()) {
             // melee attackers are not intimidated unless cloaked
             if (npc.hasTarget() && npc.isCloaked()) {
                 // hide when our target has line of sight

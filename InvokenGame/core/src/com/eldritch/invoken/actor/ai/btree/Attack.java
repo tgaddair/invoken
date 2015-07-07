@@ -29,7 +29,8 @@ public class Attack extends Sequence<Npc> {
         thrustSequence.addChild(new ShouldThrust());
         thrustSequence.addChild(new Thrust());
 
-        // if we have a chosen augmentation, then continue to hold aim until we use it
+        // if we have a chosen augmentation, then continue to hold aim until we
+        // use it
         Sequence<Npc> useAugSequence = new Sequence<>();
         useAugSequence.addChild(new HasChosen());
         useAugSequence.addChild(new AcquireTarget());
@@ -44,12 +45,16 @@ public class Attack extends Sequence<Npc> {
         chooseAugSequence.addChild(new ChooseAugmentation());
         chooseAugSequence.addChild(new TakeAim());
 
-        // attempt to use the augmentation, if we cannot use the augmentation then we
+        // attempt to use the augmentation, if we cannot use the augmentation
+        // then we
         // fail over to evading the target
         Selector<Npc> augSelector = new Selector<>();
         augSelector.addChild(useAugSequence);
         augSelector.addChild(chooseAugSequence);
-        augSelector.addChild(new AlwaysSucceed<>(new LowerAim())); // failed to choose aug, so lower
+        augSelector.addChild(new AlwaysSucceed<>(new LowerAim())); // failed to
+                                                                   // choose
+                                                                   // aug, so
+                                                                   // lower
                                                                    // our aim
 
         Sequence<Npc> dodgeSequence = new Sequence<>();
@@ -57,7 +62,8 @@ public class Attack extends Sequence<Npc> {
         dodgeSequence.addChild(new LowerAim());
         dodgeSequence.addChild(new Dodge());
 
-        // hide if we have line of sight to our last seen, otherwise we idle in defensive posture
+        // hide if we have line of sight to our last seen, otherwise we idle in
+        // defensive posture
         Sequence<Npc> hideSequence = new Sequence<>();
         hideSequence.addChild(new DesiresCover());
         hideSequence.addChild(new IsIntimidated());
@@ -140,7 +146,7 @@ public class Attack extends Sequence<Npc> {
             return npc.hasChosen();
         }
     }
-    
+
     private static class ChooseWeapon extends SuccessTask {
         @Override
         public void doFor(Npc npc) {
@@ -180,13 +186,13 @@ public class Attack extends Sequence<Npc> {
             if (!npc.hasPendingAction() && !npc.actionInProgress()) {
                 // choose the aug with the highest situational quality score
                 Augmentation chosen = null;
-                
+
                 // sometimes we don't want to choose an aug
                 float bestQuality = (float) (Math.random() * Heuristics.getDesperation(npc));
                 for (Augmentation aug : npc.getInfo().getAugmentations().getAugmentations()) {
                     if (aug.hasEnergy(npc)
-                            && aug.isValidWithAiming(npc, aug.getBestTarget(npc, npc.getTarget(),
-                                    tmpTarget))) {
+                            && aug.isValidWithAiming(npc,
+                                    aug.getBestTarget(npc, npc.getTarget(), tmpTarget))) {
                         float quality = aug.quality(npc, npc.getTarget(), level);
                         if (quality > bestQuality) {
                             chosen = aug;
@@ -195,10 +201,13 @@ public class Attack extends Sequence<Npc> {
                         }
                     }
                 }
-                
-                // TODO: incorporate other signals besides "quality" into our decision-making
-                // process.  specifically, think about choices in terms of "risk" and "reward" and
-                // how an individual's preferences change based on their attributes
+
+                // TODO: incorporate other signals besides "quality" into our
+                // decision-making
+                // process. specifically, think about choices in terms of "risk"
+                // and "reward" and
+                // how an individual's preferences change based on their
+                // attributes
 
                 // if an aug was chosen, then go ahead and use it
                 if (chosen != null) {
@@ -215,7 +224,7 @@ public class Attack extends Sequence<Npc> {
             return task;
         }
     }
-    
+
     private static class AcquireTarget extends SuccessTask {
         @Override
         public void doFor(Npc npc) {
@@ -244,7 +253,7 @@ public class Attack extends Sequence<Npc> {
                 // don't need to aim this aug, so we have sights
                 return true;
             }
-            
+
             Target target = npc.getTactics().getTarget();
             if (target.isAgent()) {
                 return npc.isAimingAt(target.getAgent());
@@ -284,9 +293,10 @@ public class Attack extends Sequence<Npc> {
             if (!npc.hasTarget()) {
                 return false;
             }
-            
+
             // ranged attackers desire cover
-            return npc.isCloaked() || !npc.getInventory().hasMeleeWeapon();
+            return npc.isCloaked() || npc.getInventory().hasRangedWeapon()
+                    || !npc.getInventory().hasMeleeWeapon();
         }
     }
 
@@ -299,7 +309,7 @@ public class Attack extends Sequence<Npc> {
                     && npc.getCover().getPosition().dst2(npc.getPosition()) < 1;
         }
     }
-    
+
     private static class Reload extends SuccessTask {
         @Override
         public void doFor(Npc npc) {
@@ -343,13 +353,14 @@ public class Attack extends Sequence<Npc> {
             // when our target is aiming at us, then dodge with some probability
             float stealth = npc.getInfo().getStealthModifier();
             if (stealth > 0.7) {
-	            float danger = getDanger(npc);
-	            if (danger > 0) {
-	                // average about a second of waiting before dodging
-	                // if this routine is called once every STEP seconds, then we want to act after
-	                // 1 / STEP invocations
-	                return Math.random() * danger * stealth > Npc.STEP;
-	            }
+                float danger = getDanger(npc);
+                if (danger > 0) {
+                    // average about a second of waiting before dodging
+                    // if this routine is called once every STEP seconds, then
+                    // we want to act after
+                    // 1 / STEP invocations
+                    return Math.random() * danger * stealth > Npc.STEP;
+                }
             }
             return false;
         }
@@ -389,7 +400,7 @@ public class Attack extends Sequence<Npc> {
                 // randomly dodge left or right
                 direction.rotate90((int) Math.signum(Math.random() - 0.5));
             }
-            
+
             npc.dodge(direction);
         }
     }
