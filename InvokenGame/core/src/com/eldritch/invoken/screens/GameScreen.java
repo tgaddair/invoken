@@ -970,5 +970,10 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         public void transition(String region, int level, PlayerActor state) {
             loadLocation(level, state);
         }
+        
+        @Override
+        public Skin getSkin() {
+            return GameScreen.this.getSkin();
+        }
     }
 }

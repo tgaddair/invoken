@@ -33,6 +33,10 @@ public class HealthBar extends ProgressBar {
             return;
         }
 
+        update(agent, camera);
+    }
+    
+    public void update(Agent agent, Camera camera) {
         if (this.agent != agent) {
             this.agent = agent;
             setRange(0, agent.getInfo().getBaseHealth());

@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.utils.async.AsyncExecutor;
@@ -18,13 +19,11 @@ import com.eldritch.invoken.actor.type.Player;
 import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.location.proc.LocationGenerator;
 import com.eldritch.invoken.proto.Actors.PlayerActor;
-import com.eldritch.invoken.proto.Locations;
 import com.eldritch.invoken.util.DefaultInputListener;
 import com.eldritch.invoken.util.GameTransition;
 import com.eldritch.invoken.util.MusicManager;
 import com.eldritch.invoken.util.SoundManager;
 import com.google.common.base.Optional;
-import com.google.common.collect.ImmutableList;
 
 public class MenuScreen extends AbstractScreen {
     private final GameTransition gameState = new GameTransition() {
@@ -37,6 +36,11 @@ public class MenuScreen extends AbstractScreen {
         @Override
         public void transition(String region, int level, PlayerActor state) {
             // do nothing
+        }
+
+        @Override
+        public Skin getSkin() {
+            return MenuScreen.this.getSkin();
         }
     };
     private OrthographicCamera camera;

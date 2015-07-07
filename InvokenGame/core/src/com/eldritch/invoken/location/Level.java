@@ -74,6 +74,7 @@ import com.eldritch.invoken.proto.Locations.Encounter.ActorParams.ActorScenario;
 import com.eldritch.invoken.proto.Locations.Location;
 import com.eldritch.invoken.ui.AgentStatusRenderer;
 import com.eldritch.invoken.ui.DebugEntityRenderer;
+import com.eldritch.invoken.ui.HealthBar;
 import com.eldritch.invoken.util.GameTransition;
 import com.eldritch.invoken.util.Settings;
 import com.google.common.base.Optional;
@@ -105,6 +106,7 @@ public class Level {
     private final Map<Agent, Float> elapsed = new HashMap<>();
     private final List<Agent> activeEntities = new ArrayList<>();
     private final Map<String, Integer> markers = new HashMap<>();
+    private final Map<Agent, HealthBar> healthBars = new HashMap<>();
     private int inactiveIndex = 0;
 
     private final List<Drawable> drawables = new ArrayList<>();
@@ -450,9 +452,10 @@ public class Level {
         return ids.get(id);
     }
 
-    private void addActor(Agent actor) {
-        entities.add(actor);
-        ids.put(actor.getInfo().getId(), actor);
+    private void addActor(Agent agent) {
+        entities.add(agent);
+        ids.put(agent.getInfo().getId(), agent);
+        healthBars.put(agent, new HealthBar(state.getSkin()));
     }
 
     public World getWorld() {
@@ -657,6 +660,15 @@ public class Level {
         // render the drawables
         for (Drawable drawable : drawables) {
             drawable.render(delta, renderer);
+        }
+        
+        // draw overlay info
+        for (Agent agent : activeEntities) {
+            if (agent.getInfo().getHealthPercent() < 1) {
+                HealthBar healthBar = healthBars.get(agent);
+                healthBar.update(agent, camera);
+                healthBar.draw();
+            }
         }
 
         // draw targeting reticle
