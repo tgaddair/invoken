@@ -26,6 +26,7 @@ message Item {
 		RIFLE = 1;
 		SHOTGUN = 2;
 		ASSAULT = 3;
+		GRENADE = 4;
 	}
 
 	message Requirement {
