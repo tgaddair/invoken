@@ -208,9 +208,6 @@ public class Attack extends Sequence<Npc> {
         public void doFor(Npc npc) {
             Target target = npc.getTactics().getTarget();
             if (target.isValid() && target.isAgent()) {
-                if (npc.getInfo().getName().equals(target.getAgent().getInfo().getName())) {
-                    System.out.println(npc.getInfo().getName() + " -> " + target.getAgent().getInfo().getName());
-                }
                 npc.setTarget(target.getAgent());
             }
         }

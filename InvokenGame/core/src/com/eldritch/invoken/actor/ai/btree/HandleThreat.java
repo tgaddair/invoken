@@ -81,7 +81,7 @@ public class HandleThreat extends Selector<Npc> {
         @Override
         protected void doFor(Npc npc) {
             Agent target = npc.getThreat().getThreatener();
-            npc.changeRelation(target, DURESS_PENALTY);
+            npc.changeRelationScaled(target, DURESS_PENALTY);
             if (npc.isEnemy(target)) {
                 // begin hostility
                 npc.announce(GenericDialogue.forHostility(npc, target));

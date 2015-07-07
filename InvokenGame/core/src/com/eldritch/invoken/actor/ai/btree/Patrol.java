@@ -41,7 +41,7 @@ public class Patrol extends Selector<Npc> {
                     // TODO: count this as a faction offense and confront them
                     // for now, just attack
                     // TODO: this should only accrue once for each crime
-                    npc.changeRelation(neighbor, -10);
+                    npc.changeRelationScaled(neighbor, -10);
                     npc.announce(GenericDialogue.forCrime(npc, neighbor));
                     crime = true;
                 }
@@ -97,7 +97,7 @@ public class Patrol extends Selector<Npc> {
             if (level.isOnFrontier(neighbor)) {
                 npc.announce(GenericDialogue.forFrontier(npc, neighbor));
             } else {
-                npc.changeRelation(neighbor, -10);
+                npc.changeRelationScaled(neighbor, -10);
                 npc.announce(GenericDialogue.forCrime(npc, neighbor));
             }
             return true;

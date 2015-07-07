@@ -1318,17 +1318,20 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
             return;
         }
 
-        // scale down friendly fire
-        if (isAlly(source)) {
-            magnitude *= 0.1f;
-        }
-
         if (!getThreat().hasEnemies()) {
             // we're not in combat with anyone, so this is considered assault
             assaulters.add(source);
         }
 
-        changeRelation(source, -magnitude);
+        changeRelationScaled(source, -magnitude);
+    }
+    
+    public float changeRelationScaled(Agent target, float delta) {
+        if (delta < 0 && isAlly(target)) {
+            // scale down friendly fire
+            delta *= 0.1f;
+        }
+        return changeRelation(target, delta);
     }
 
     public float changeRelation(Agent target, float delta) {
@@ -1395,10 +1398,13 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         if (!getThreat().hasEnemy(agent) && isEnemy(agent)) {
             // unfriendly, so mark them as an enemy
             getThreat().addEnemy(agent);
+            if (getInfo().getName().equals(agent.getInfo().getName())) {
+                System.out.println("is enemy: " + isEnemy(agent));
+            }
 
             if (assaultedBy(agent)) {
                 // they attacked us, mark them as an assaulter
-                // assault carriers a severe penalty for ranking factions
+                // assault carries a severe penalty for ranking factions
                 changeFactionRelations(agent, ASSAULT_PENALTY);
             }
 
