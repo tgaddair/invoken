@@ -225,6 +225,12 @@ message Encounter {
 	optional int32 min_level = 20 [default = 0];
 	optional int32 max_level = 21;
 
+	// sampling probability is maximal at the target level
+	optional int32 target_level = 23;
+
+	// sampling probability decays by (distance * variance)
+	optional double variance = 24 [default = 0.1];
+
 	// DEPRECATED
 	optional bool origin_DEPRECATED = 7 [default = false];
 	repeated string room_id_DEPRECATED = 13;
