@@ -9,6 +9,7 @@ import java.util.Map.Entry;
 import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.actor.items.RangedWeapon;
 import com.eldritch.invoken.actor.type.Agent;
+import com.eldritch.invoken.proto.Effects;
 import com.eldritch.invoken.proto.Effects.DamageType;
 import com.eldritch.invoken.proto.Items.Item.DamageMod;
 import com.google.common.collect.ImmutableList;
@@ -29,6 +30,15 @@ public class Damage {
     
     public Agent getSource() {
         return attacker;
+    }
+    
+    public float getDamageOf(Effects.DamageType type) {
+        for (DamageMod mod : components) {
+            if (mod.getDamage() == type) {
+                return mod.getMagnitude();
+            }
+        }
+        return 0;
     }
 
     public float getMagnitude() {

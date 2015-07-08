@@ -56,6 +56,7 @@ import com.eldritch.invoken.actor.type.DummyPlayer;
 import com.eldritch.invoken.actor.type.InanimateEntity;
 import com.eldritch.invoken.actor.type.Npc;
 import com.eldritch.invoken.actor.type.Player;
+import com.eldritch.invoken.actor.type.Projectile;
 import com.eldritch.invoken.actor.type.TemporaryEntity;
 import com.eldritch.invoken.gfx.FogMaskManager;
 import com.eldritch.invoken.gfx.FogOfWarMasker;
@@ -216,9 +217,10 @@ public class Level {
         PointLight.setContactFilter(category, group, mask);
     }
 
-    public Bullet obtainBullet(AgentHandler handler, Vector2 position, Vector2 velocity) {
+    public Bullet obtainBullet(Projectile projectile, Vector2 position,
+            Vector2 velocity) {
         Bullet bullet = bulletPool.obtain();
-        bullet.setup(handler, position, velocity);
+        bullet.setup(projectile, position, velocity);
         return bullet;
     }
 

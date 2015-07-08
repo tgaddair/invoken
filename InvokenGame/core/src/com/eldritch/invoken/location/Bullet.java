@@ -11,18 +11,21 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.eldritch.invoken.actor.AgentHandler;
 import com.eldritch.invoken.actor.type.Agent;
+import com.eldritch.invoken.actor.type.Projectile;
+import com.eldritch.invoken.util.Damage;
 import com.eldritch.invoken.util.Settings;
 
 public class Bullet implements AgentHandler {
     private final Body body;
-    private AgentHandler delegate;
+    private Projectile delegate;
 
     public Bullet(World world) {
         this.body = createBody(world);
     }
 
-    public void setup(AgentHandler handler, Vector2 position, Vector2 velocity) {
-        delegate = handler;
+    public void setup(Projectile projectile, Vector2 position,
+            Vector2 velocity) {
+        delegate = projectile;
         body.setTransform(position, 0);
         body.setLinearVelocity(velocity);
         body.setActive(true);
@@ -30,11 +33,15 @@ public class Bullet implements AgentHandler {
         // collision filters
         for (Fixture fixture : body.getFixtureList()) {
             Filter filter = fixture.getFilterData();
-            if (filter.maskBits != handler.getCollisionMask()) {
-                filter.maskBits = handler.getCollisionMask();
+            if (filter.maskBits != delegate.getCollisionMask()) {
+                filter.maskBits = delegate.getCollisionMask();
                 fixture.setFilterData(filter);
             }
         }
+    }
+    
+    public Damage getDamage() {
+        return delegate.getDamage();
     }
 
     public void setActive(boolean active) {

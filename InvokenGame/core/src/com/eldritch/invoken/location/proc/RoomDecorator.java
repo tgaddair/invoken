@@ -132,8 +132,9 @@ public class RoomDecorator {
 
             // some furniture is required for the room to be valid
             if (furniture.hasMin() && placed < furniture.getMin()) {
-                throw new IllegalStateException(String.format("Placed: %d of %s, required: %d",
-                        placed, furniture.getId(), furniture.getMin()));
+                throw new IllegalStateException(String.format(
+                        "Room decorator placed: %d of furniture %s, required: %d", placed,
+                        furniture.getId(), furniture.getMin()));
             }
         }
     }

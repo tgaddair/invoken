@@ -2,6 +2,7 @@ package com.eldritch.invoken.activators;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.eldritch.invoken.actor.AgentHandler;
+import com.eldritch.invoken.actor.BulletHandler;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.InanimateEntity;
 import com.eldritch.invoken.effects.Detonation;
@@ -26,39 +27,26 @@ public class ExplosiveCannister extends CollisionActivator {
 
     @Override
     protected AgentHandler getCollisionHandler(InanimateEntity entity) {
-        return new BulletHandler(entity);
+        return new ExplosiveCannisterHandler(entity);
     }
 
-    private class BulletHandler implements AgentHandler {
+    private class ExplosiveCannisterHandler extends BulletHandler {
         private final InanimateEntity entity;
 
-        public BulletHandler(InanimateEntity entity) {
+        public ExplosiveCannisterHandler(InanimateEntity entity) {
             this.entity = entity;
         }
 
         @Override
-        public boolean handle(Agent agent) {
-            return false;
-        }
+        public boolean handle(Bullet bullet) {
+            Level level = getLevel();
+            Damage damage = Damage.from(level.getPlayer(), DamageType.PHYSICAL, BASE_DAMAGE);
+            Detonation detonation = new Detonation(damage, entity.getPosition().cpy(), RANGE,
+                    explosionRegions);
+            level.addEntity(detonation);
 
-        @Override
-        public boolean handle(Object userData) {
-            if (userData instanceof Bullet) {
-                Level level = getLevel();
-                Damage damage = Damage.from(level.getPlayer(), DamageType.PHYSICAL, BASE_DAMAGE);
-                Detonation detonation = new Detonation(damage, entity.getPosition().cpy(), RANGE,
-                        explosionRegions);
-                level.addEntity(detonation);
-
-                finish();
-                return true;
-            }
-            return false;
-        }
-
-        @Override
-        public short getCollisionMask() {
-            return Settings.BIT_ANYTHING;
+            finish();
+            return true;
         }
     }
 }

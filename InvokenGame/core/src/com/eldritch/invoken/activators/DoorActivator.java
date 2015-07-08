@@ -12,18 +12,27 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.Fixture;
 import com.eldritch.invoken.InvokenGame;
+import com.eldritch.invoken.actor.BulletHandler;
 import com.eldritch.invoken.actor.items.Item;
 import com.eldritch.invoken.actor.type.Agent;
+import com.eldritch.invoken.actor.type.InanimateEntity;
 import com.eldritch.invoken.actor.util.AgentListener;
+import com.eldritch.invoken.effects.Detonation;
 import com.eldritch.invoken.gfx.Light;
 import com.eldritch.invoken.gfx.Light.StaticLight;
+import com.eldritch.invoken.location.Bullet;
 import com.eldritch.invoken.location.ConnectedRoom;
 import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.location.NaturalVector2;
+import com.eldritch.invoken.location.Wall;
+import com.eldritch.invoken.proto.Effects;
+import com.eldritch.invoken.proto.Effects.DamageType;
 import com.eldritch.invoken.proto.Locations.ControlPoint;
 import com.eldritch.invoken.screens.GameScreen;
 import com.eldritch.invoken.state.Inventory;
+import com.eldritch.invoken.util.Damage;
 import com.eldritch.invoken.util.Settings;
 import com.eldritch.invoken.util.SoundManager.SoundEffect;
 import com.google.common.base.Optional;
@@ -54,13 +63,15 @@ public class DoorActivator extends ClickActivator implements ProximityActivator,
     private boolean open = false;
 
     private final Light light;
-    private final List<Body> bodies = new ArrayList<Body>();
+    private final List<Body> bodies = new ArrayList<>();
     private final Set<Agent> lastProximityAgents = new HashSet<>();
     private final Set<Agent> proximityAgents = new HashSet<>();
     private final Set<Agent> triggerAgents = new HashSet<>();
     private final Set<Agent> residents = new HashSet<>();
 
+    private Level level = null;
     private boolean activating = false;
+    private boolean broken = false;
     private boolean finished = false;
     private Optional<Boolean> lockChange = Optional.absent();
     private float stateTime = 0;
@@ -156,26 +167,32 @@ public class DoorActivator extends ClickActivator implements ProximityActivator,
     }
 
     private synchronized void setOpened(boolean opened, Level level) {
-        if (activating) {
+        if (activating || broken) {
             // cannot interrupt
             return;
         }
 
         activating = true;
         open = opened;
-        for (Body body : bodies) {
-            body.setActive(!opened);
-        }
-
-        setLightWalls(level, !opened);
         InvokenGame.SOUND_MANAGER.playAtPoint(SoundEffect.DOOR_OPEN, getPosition());
     }
 
     private void postActivation(Level level) {
         finished = false;
-        if (!open) {
+        
+        for (Body body : bodies) {
+            body.setActive(!open);
+        }
+        setLightWalls(level, !open);
+        
+        if (open) {
+            onOpen();
+        } else {
             onClose(triggerAgents, level);
         }
+    }
+    
+    private void onOpen() {
     }
 
     private void onClose(Set<Agent> triggerAgents, Level level) {
@@ -242,6 +259,7 @@ public class DoorActivator extends ClickActivator implements ProximityActivator,
 
     @Override
     public void register(Level level) {
+        this.level = level;
         Vector2 position = getPosition();
         float x = (int) position.x;
         float y = (int) position.y;
@@ -256,6 +274,13 @@ public class DoorActivator extends ClickActivator implements ProximityActivator,
         }
         setLightWalls(level, true);
         level.addLight(light);
+        
+        // set the appropriate handler
+        for (Body body : bodies) {
+            for (Fixture fixture : body.getFixtureList()) {
+                fixture.setUserData(new DoorBulletHandler());
+            }
+        }
     }
 
     @Override
@@ -300,6 +325,12 @@ public class DoorActivator extends ClickActivator implements ProximityActivator,
         // unlock
         setLocked(false);
         // location.alertTo(agent);
+    }
+    
+    public void destroy() {
+        setLocked(false);
+        setOpened(true, level);
+        broken = true;
     }
 
     public void setLocked(boolean locked) {
@@ -376,6 +407,20 @@ public class DoorActivator extends ClickActivator implements ProximityActivator,
 
         public static LockInfo from(ControlPoint controlPoint, ConnectedRoom room) {
             return new LockInfo(controlPoint.getRequiredKey(), controlPoint.getLockStrength(), room);
+        }
+    }
+    
+    private class DoorBulletHandler extends BulletHandler {
+        private float health = 100f;
+        
+        @Override
+        public boolean handle(Bullet bullet) {
+            Damage damage = bullet.getDamage();
+            health -= damage.getDamageOf(DamageType.PHYSICAL);
+            if (health <= 0) {
+                destroy();
+            }
+            return true;
         }
     }
 }

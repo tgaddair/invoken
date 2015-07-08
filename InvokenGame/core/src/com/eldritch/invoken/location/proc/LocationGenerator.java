@@ -43,7 +43,6 @@ import com.eldritch.invoken.location.EncounterDescription.AgentDescription;
 import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.location.NaturalVector2;
 import com.eldritch.invoken.location.ConnectedRoom.Type;
-import com.eldritch.invoken.location.layer.EncounterLayer;
 import com.eldritch.invoken.location.layer.LocationCell;
 import com.eldritch.invoken.location.layer.LocationLayer;
 import com.eldritch.invoken.location.layer.LocationMap;
