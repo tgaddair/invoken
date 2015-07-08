@@ -308,7 +308,9 @@ public class Player extends SteeringAgent {
         
         // consumables
         for (Consumable consumable : inventory.getConsumables()) {
-            builder.addConsumableId(consumable.getId());
+            if (consumable != null) {
+                builder.addConsumableId(consumable.getId());
+            }
         }
 
         // carry over previous state
