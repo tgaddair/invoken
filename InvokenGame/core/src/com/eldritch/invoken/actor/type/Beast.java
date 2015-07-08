@@ -9,11 +9,13 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.eldritch.invoken.actor.aug.Augmentation;
 import com.eldritch.invoken.actor.type.Agent.Direction;
+import com.eldritch.invoken.effects.Detonation;
 import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.proto.Actors.NonPlayerActor;
 import com.eldritch.invoken.proto.Effects.DamageType;
 import com.eldritch.invoken.screens.GameScreen;
 import com.eldritch.invoken.util.AnimationUtils;
+import com.eldritch.invoken.util.Damage;
 import com.eldritch.invoken.util.Settings;
 import com.eldritch.invoken.util.AnimationUtils.AnimationBuilder;
 import com.eldritch.invoken.util.SoundManager.SoundEffect;
@@ -298,6 +300,11 @@ public class Beast extends Npc {
     }
     
     public static class Wisp extends Beast {
+        private static final TextureRegion[] explosionRegions = GameScreen.getMergedRegion(
+                "sprite/effects/purple-explosion.png", 256, 256);
+
+        private static final float RANGE = 2f;
+        private static final int BASE_DAMAGE = 100;
         private static final int PX = 64;
 
         public Wisp(NonPlayerActor data, float x, float y, String asset, Level level) {
@@ -308,7 +315,18 @@ public class Beast extends Npc {
 
         @Override
         public float getDensity() {
-            return 5f;
+            return 1f;
+        }
+        
+        @Override
+        public void onDeath() {
+            super.onDeath();
+            
+            // explode
+            Damage damage = Damage.from(this, DamageType.PHYSICAL, BASE_DAMAGE);
+            Detonation detonation = new Detonation(damage, getPosition().cpy(), RANGE,
+                    explosionRegions);
+            getLocation().addEntity(detonation);
         }
 
         private static Map<Activity, Map<Direction, Animation>> getAnimations(String assetPath) {
