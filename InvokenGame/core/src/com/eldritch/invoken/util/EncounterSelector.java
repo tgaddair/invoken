@@ -13,6 +13,21 @@ import com.google.protobuf.TextFormat;
 
 public class EncounterSelector extends AssetSelector<Encounter> {
     private final static String ENCOUNTERS = "encounters";
+    
+    public double getWeight(Encounter encounter, int level) {
+        double weight = encounter.getWeight();
+        if (!encounter.hasTargetLevel()) {
+            return weight;
+        }
+        
+        int dst = Math.abs(encounter.getTargetLevel() - level);
+        if (dst == 0) {
+            return weight;
+        }
+        
+        double penalty = encounter.getVariance() / dst;
+        return weight * penalty;
+    }
 
     @Override
     protected void loadInto(Map<Integer, Set<Encounter>> levelToEncounter,

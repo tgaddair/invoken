@@ -98,6 +98,10 @@ public class AgentInventory extends Inventory {
         return false;
     }
     
+    public Iterable<Ammunition> getAmmunition() {
+        return ammunition.values();
+    }
+    
     public boolean hasAmmunition(RangedWeaponType type) {
         return ammunition.containsKey(type);
     }

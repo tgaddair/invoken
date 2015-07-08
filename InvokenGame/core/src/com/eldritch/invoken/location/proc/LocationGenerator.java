@@ -243,7 +243,8 @@ public class LocationGenerator {
 
         InvokenGame.log("Creating Spawn Layers");
         List<Encounter> encounters = InvokenGame.ENCOUNTER_SELECTOR.select(floor);
-        for (LocationLayer layer : createSpawnLayers(base, collision, bsp, map, rooms, encounters)) {
+        for (LocationLayer layer : createSpawnLayers(base, collision, bsp, map, rooms, floor,
+                encounters)) {
             map.getLayers().add(layer);
         }
 
@@ -830,7 +831,7 @@ public class LocationGenerator {
     }
 
     private List<LocationLayer> createSpawnLayers(LocationLayer base, LocationLayer collision,
-            RoomGenerator generator, LocationMap map, ConnectedRoomManager rooms,
+            RoomGenerator generator, LocationMap map, ConnectedRoomManager rooms, int level,
             List<Encounter> encounterList) {
         Set<Encounter> encounters = new LinkedHashSet<>(encounterList);
         List<LocationLayer> layers = new ArrayList<LocationLayer>();
@@ -866,7 +867,7 @@ public class LocationGenerator {
             }
 
             // generate encounter layers
-            Optional<Encounter> encounter = controlRoom.chooseEncounter(encounters, rooms);
+            Optional<Encounter> encounter = controlRoom.chooseEncounter(level, encounters, rooms);
             if (encounter.isPresent()) {
                 createLayer(bounds, encounter.get(), freeSpaces, rooms, base, collision, map,
                         layers);

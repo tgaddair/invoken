@@ -783,15 +783,17 @@ public class RoomGenerator extends BspGenerator {
             }
         }
 
-        public Optional<Encounter> chooseEncounter(Collection<Encounter> encounters,
+        public Optional<Encounter> chooseEncounter(int level, Collection<Encounter> encounters,
                 ConnectedRoomManager rooms) {
+            com.eldritch.invoken.util.EncounterSelector selector = InvokenGame.ENCOUNTER_SELECTOR;
+            
             // find all the available encounters for the given control point
             double total = 0;
             List<Encounter> available = new ArrayList<>();
             for (Encounter encounter : encounters) {
                 if (matchesFaction(encounter, rooms)) {
                     if (matchesRoom(encounter, room) && matchesPoint(encounter, cp)) {
-                        total += encounter.getWeight();
+                        total += selector.getWeight(encounter, level);
                         available.add(encounter);
                     }
                 }
@@ -804,7 +806,7 @@ public class RoomGenerator extends BspGenerator {
             double target = Math.random() * total;
             double sum = 0;
             for (Encounter encounter : available) {
-                sum += encounter.getWeight();
+                sum += selector.getWeight(encounter, level);
                 if (sum >= target) {
                     return Optional.of(encounter);
                 }

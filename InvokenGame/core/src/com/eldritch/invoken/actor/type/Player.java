@@ -12,7 +12,10 @@ import com.eldritch.invoken.actor.ConversationHandler.DefaultConversationHandler
 import com.eldritch.invoken.actor.PreparedAugmentations;
 import com.eldritch.invoken.actor.Profession;
 import com.eldritch.invoken.actor.aug.Augmentation;
+import com.eldritch.invoken.actor.items.Ammunition;
+import com.eldritch.invoken.actor.items.Consumable;
 import com.eldritch.invoken.actor.items.Fragment;
+import com.eldritch.invoken.actor.items.Item;
 import com.eldritch.invoken.actor.util.ThreatMonitor;
 import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.proto.Actors.PlayerActor;
@@ -55,6 +58,16 @@ public class Player extends SteeringAgent {
         for (ItemState item : info.getInventory().getItems()) {
             if (equipped.contains(item.getItem().getId())) {
                 info.getInventory().equip(item.getItem());
+            }
+        }
+        
+        // map consumable bar
+        AgentInventory inv = info.getInventory();
+        for (int i = 0; i < data.getConsumableIdCount(); i++) {
+            String id = data.getConsumableId(i);
+            if (inv.hasItem(id)) {
+                Item item = inv.getItem(id);
+                item.mapTo(inv, i);
             }
         }
 
@@ -288,6 +301,14 @@ public class Player extends SteeringAgent {
         }
         if (inventory.hasRangedWeapon()) {
             builder.addEquippedItemId(inventory.getRangedWeapon().getId());
+        }
+        for (Ammunition ammo : inventory.getAmmunition()) {
+            builder.addEquippedItemId(ammo.getId());
+        }
+        
+        // consumables
+        for (Consumable consumable : inventory.getConsumables()) {
+            builder.addConsumableId(consumable.getId());
         }
 
         // carry over previous state
