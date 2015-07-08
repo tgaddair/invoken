@@ -1503,7 +1503,9 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         Iterator<DodgeHandler> dodgeIt = dodgeHandlers.iterator();
         while (dodgeIt.hasNext()) {
             DodgeHandler handler = dodgeIt.next();
-            if (handler.isFinished()) {
+            if (!handler.isFinished()) {
+                handler.update(delta);
+            } else {
                 dodgeIt.remove();
             }
         }

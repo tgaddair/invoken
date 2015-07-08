@@ -1,16 +1,14 @@
 package com.eldritch.invoken.actor.aug;
 
 import com.badlogic.gdx.math.Vector2;
-import com.eldritch.invoken.actor.aug.Augmentation.InstantAugmentation;
+import com.eldritch.invoken.actor.aug.Augmentation.SelfAugmentation;
 import com.eldritch.invoken.actor.items.MeleeWeapon;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.effects.Jaunting;
 import com.eldritch.invoken.location.Level;
 
-public class Jaunt extends InstantAugmentation {
-    private static final int BASE_COST = 25;
-    
+public class Jaunt extends SelfAugmentation {
 	private static class Holder {
         private static final Jaunt INSTANCE = new Jaunt();
 	}
@@ -21,6 +19,11 @@ public class Jaunt extends InstantAugmentation {
 	
     private Jaunt() {
         super("jaunt");
+    }
+    
+    @Override
+    public void release(Agent owner) {
+        owner.toggleOff(Jaunt.class);
     }
     
 	@Override
@@ -55,7 +58,7 @@ public class Jaunt extends InstantAugmentation {
 	
 	@Override
     public int getCost(Agent owner) {
-        return BASE_COST;
+        return owner.isToggled(Jaunt.class) ? 0 : 1;
     }
 	
     @Override
@@ -77,7 +80,9 @@ public class Jaunt extends InstantAugmentation {
 
 		@Override
 		public void apply(Level level) {
-			owner.addEffect(new Jaunting(owner, target));
+		    if (owner.toggle(Jaunt.class)) {
+		        owner.addEffect(new Jaunting(owner, target));
+		    }
 		}
 		
 		@Override

@@ -6,11 +6,15 @@ import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.util.SoundManager.SoundEffect;
 
 public interface DodgeHandler {
+    void update(float delta);
+    
     boolean canDodge();
     
     void dodge(Vector2 direction);
     
     boolean isFinished();
+    
+    void onDodgeComplete();
     
     public abstract static class AbstractDodgeHandler implements DodgeHandler {
         private final Vector2 tmp = new Vector2();
@@ -18,10 +22,28 @@ public interface DodgeHandler {
         private final float scale;
         private final float cost;
         
+        private boolean dodging = false;
+        private float elapsed = 0;
+        
         public AbstractDodgeHandler(Agent agent, float scale, float cost) {
             this.agent = agent;
             this.scale = scale;
             this.cost = cost;
+        }
+        
+        @Override
+        public void update(float delta) {
+            if (dodging) {
+                elapsed += delta;
+                if (agent.getVelocity().len2() < 1) {
+                    dodging = false;
+                    elapsed = 0;
+                    onDodgeComplete();
+                } else if (elapsed > 0) {
+                    dodging = false;
+                    elapsed = 0;
+                }
+            }
         }
         
         @Override
@@ -36,6 +58,7 @@ public interface DodgeHandler {
                 agent.applyForce(tmp.set(direction).scl(scale * s));
                 agent.getInfo().expend(cost);
                 InvokenGame.SOUND_MANAGER.playAtPoint(SoundEffect.SWISH, agent.getPosition());
+                dodging = true;
             }
         }
     }
@@ -52,6 +75,10 @@ public interface DodgeHandler {
         public boolean isFinished() {
             // never remove
             return false;
+        }
+
+        @Override
+        public void onDodgeComplete() {
         }
     }
 }
