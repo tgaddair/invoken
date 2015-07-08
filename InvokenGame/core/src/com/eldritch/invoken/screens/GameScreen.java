@@ -87,7 +87,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
     private InventoryMenu inventoryMenu;
 
     private Table statusTable;
-//    private StatusBar<Agent> playerHealth;
+    // private StatusBar<Agent> playerHealth;
     private StatusBar<Agent> energyBar;
     private final List<HudElement> hud = new ArrayList<HudElement>();
 
@@ -206,40 +206,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         camera.position.y = level.scale(position.y, camera.zoom);
         level.setCamera(camera);
 
-        // create HUD elements
-        Skin skin = getSkin();
-        actionBar = new ActionBar(player, skin);
-        energyBar = new StatusBar<Agent>(player, new EnergyCalculator(), skin);
-        inventoryMenu = new InventoryMenu(player, skin);
-//        playerHealth = new StatusBar<Agent>(player, new HealthCalculator(), skin);
-        selectedHealth = new HealthBar(skin);
-        hud.add(new FragmentCounter(skin));
-        hud.add(new UploadMenu(player, skin));
-        hud.add(new DesireMenu(player, skin));
-        hud.add(new ConsumableBar(player, skin));
-
-        statusTable = new Table(getSkin());
-        statusTable.setHeight(Settings.MENU_VIEWPORT_HEIGHT / 2);
-        statusTable.setWidth(Settings.MENU_VIEWPORT_WIDTH);
-        statusTable.bottom();
-        statusTable.left();
-
-//        statusTable.add(playerHealth).expand().bottom().left();
-        statusTable.add(energyBar).expand().bottom().right();
-
-        stage.addActor(actionBar.getTable());
-        stage.addActor(statusTable);
-        for (HudElement element : hud) {
-            stage.addActor(element.getContainer());
-        }
-        stage.addActor(dialogue.getTable());
-        stage.addActor(inventoryMenu.getTable());
-        stage.addActor(loot.getTable());
-
-        // announce the new location
-        toaster = new Toaster(getSkin());
-        stage.addActor(toaster.getContainer());
-        toast(level.getRegion() + ", Floor " + level.getFloor());
+        refreshHud();
 
         // music settings
         InvokenGame.MUSIC_MANAGER.setEnabled(!Settings.MUTE);
@@ -254,6 +221,47 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         // start
         Gdx.input.setInputProcessor(this);
         Gdx.app.log(InvokenGame.LOG, "start");
+    }
+
+    private void refreshHud() {
+        hud.clear();
+        stage.clear();
+        
+        // create HUD elements
+        Skin skin = getSkin();
+        actionBar = new ActionBar(player, skin);
+        energyBar = new StatusBar<Agent>(player, new EnergyCalculator(), skin);
+        inventoryMenu = new InventoryMenu(player, skin);
+        // playerHealth = new StatusBar<Agent>(player, new HealthCalculator(),
+        // skin);
+        selectedHealth = new HealthBar(skin);
+        hud.add(new FragmentCounter(skin));
+        hud.add(new UploadMenu(player, skin));
+        hud.add(new DesireMenu(player, skin));
+        hud.add(new ConsumableBar(player, skin));
+
+        statusTable = new Table(getSkin());
+        statusTable.setHeight(Settings.MENU_VIEWPORT_HEIGHT / 2);
+        statusTable.setWidth(Settings.MENU_VIEWPORT_WIDTH);
+        statusTable.bottom();
+        statusTable.left();
+
+        // statusTable.add(playerHealth).expand().bottom().left();
+        statusTable.add(energyBar).expand().bottom().right();
+
+        stage.addActor(actionBar.getTable());
+        stage.addActor(statusTable);
+        for (HudElement element : hud) {
+            stage.addActor(element.getContainer());
+        }
+        stage.addActor(dialogue.getTable());
+        stage.addActor(inventoryMenu.getTable());
+        stage.addActor(loot.getTable());
+        
+        // announce the new location
+        toaster = new Toaster(getSkin());
+        stage.addActor(toaster.getContainer());
+        toast(level.getRegion() + ", Floor " + level.getFloor());
     }
 
     @Override
@@ -285,7 +293,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         // update UI menus
         actionBar.update();
         energyBar.update();
-//        playerHealth.update();
+        // playerHealth.update();
         selectedHealth.update(player, player.getTarget(), camera);
         dialogue.update(delta, player, camera);
         loot.update(player);
@@ -898,11 +906,8 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         camera.position.x = level.scale(position.x, camera.zoom);
         camera.position.y = level.scale(position.y, camera.zoom);
         level.setCamera(camera);
-
-        // announce the new location
-        toaster = new Toaster(getSkin());
-        stage.addActor(toaster.getContainer());
-        toast(level.getName());
+        
+        refreshHud();
     }
 
     private void onLoad(Level level, Optional<PlayerActor> state) {
@@ -971,7 +976,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         public void transition(String region, int level, PlayerActor state) {
             loadLocation(level, state);
         }
-        
+
         @Override
         public Skin getSkin() {
             return GameScreen.this.getSkin();
