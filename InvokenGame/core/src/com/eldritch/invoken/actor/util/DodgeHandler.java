@@ -39,7 +39,7 @@ public interface DodgeHandler {
                     dodging = false;
                     elapsed = 0;
                     onDodgeComplete();
-                } else if (elapsed > 0) {
+                } else if (elapsed > 1) {
                     dodging = false;
                     elapsed = 0;
                 }
