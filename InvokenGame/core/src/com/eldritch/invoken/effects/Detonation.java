@@ -15,7 +15,7 @@ public class Detonation implements TemporaryEntity {
     private static final TextureRegion[] explosionRegions = GameScreen.getMergedRegion(
             "sprite/effects/explosion.png", 256, 256);
     
-    private final Animation explosion = new Animation(0.1f, explosionRegions);
+    private final Animation explosion;
     final Damage damage;
     private final Vector2 position;
     private final float radius;
@@ -25,9 +25,14 @@ public class Detonation implements TemporaryEntity {
     private boolean canceled = false;
     
     public Detonation(Damage damage, Vector2 position, float radius) {
+        this(damage, position, radius, explosionRegions);
+    }
+    
+    public Detonation(Damage damage, Vector2 position, float radius, TextureRegion[] regions) {
         this.damage = damage;
         this.position = position;
         this.radius = radius;
+        this.explosion = new Animation(0.1f, regions);
     }
     
     public void detonate() {

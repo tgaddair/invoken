@@ -24,11 +24,9 @@ public class ConsumableBar implements HudElement {
     private final Map<Consumable, Image> images = new HashMap<>();
     private final AgentInventory inv;
     private final Table container;
-    private final Player player;
     private final Skin skin;
     
     public ConsumableBar(Player player, Skin skin) {
-        this.player = player;
         this.skin = skin;
         this.inv = player.getInventory();
         
@@ -72,7 +70,9 @@ public class ConsumableBar implements HudElement {
     
     private void refresh() {
         for (Consumable consumable : inv.getConsumables()) {
-            add(consumable);
+            if (consumable != null) {
+                add(consumable);
+            }
         }
     }
     
