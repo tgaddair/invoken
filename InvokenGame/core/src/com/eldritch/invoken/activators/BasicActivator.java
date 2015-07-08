@@ -40,4 +40,13 @@ public abstract class BasicActivator extends BasicLocatable implements Activator
     public float getZ() {
         return position.y;
     }
+    
+    @Override
+    public boolean isFinished() {
+        return false;
+    }
+    
+    @Override
+    public void dispose() {
+    }
 }

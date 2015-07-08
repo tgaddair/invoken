@@ -17,4 +17,8 @@ public interface Activator extends Drawable {
     void register(Level level);
     
     void register(List<InanimateEntity> entities);
+    
+    boolean isFinished();
+    
+    void dispose();
 }

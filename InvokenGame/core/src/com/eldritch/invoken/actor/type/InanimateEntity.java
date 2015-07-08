@@ -39,6 +39,7 @@ public abstract class InanimateEntity extends CollisionEntity implements Drawabl
     private Vector2 offset;
     private Body body;
     private float radius = 0;
+    private boolean finished = false;
 
     public InanimateEntity(TiledMapTileLayer layer, NaturalVector2 position, BodyType bodyType) {
         super(position.toVector2(), getWidth(layer, false), getHeight(layer, false));
@@ -72,7 +73,7 @@ public abstract class InanimateEntity extends CollisionEntity implements Drawabl
         if (radius > 0) {
             body = createBody(level.getWorld());
             for (InanimateEntityListener listener : listeners) {
-                listener.onBodyCreation(body);
+                listener.onBodyCreation(this, body);
             }
         }
         level.addLights(lights);
@@ -107,6 +108,18 @@ public abstract class InanimateEntity extends CollisionEntity implements Drawabl
     @Override
     public float getZ() {
         return body != null ? body.getPosition().y : super.getPosition().y + zOff;
+    }
+    
+    public void finish() {
+        this.finished = true;
+    }
+    
+    public boolean isFinished() {
+        return finished;
+    }
+    
+    public void dispose(Level level) {
+        level.getWorld().destroyBody(body);
     }
 
     private Body createBody(World world) {
@@ -236,6 +249,6 @@ public abstract class InanimateEntity extends CollisionEntity implements Drawabl
     }
     
     public interface InanimateEntityListener {
-        void onBodyCreation(Body body);
+        void onBodyCreation(InanimateEntity entity, Body body);
     }
 }

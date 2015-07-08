@@ -26,7 +26,7 @@ public class ExplosiveCannister extends CollisionActivator {
         public boolean handle(Object userData) {
             if (userData instanceof Bullet) {
                 Bullet bullet = (Bullet) userData;
-                System.out.println("bullet!");
+                finish();
                 return true;
             }
             return false;

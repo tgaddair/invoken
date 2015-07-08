@@ -238,7 +238,7 @@ public class Level {
     public Player getPlayer() {
         return player;
     }
-    
+
     public Set<ConnectedRoom> getRooms() {
         return map.getRooms().getRooms();
     }
@@ -276,13 +276,13 @@ public class Level {
     public String getMusicId() {
         return locations.get(currentCell).getMusic();
     }
-    
+
     public String getRegion() {
-    	return data.getRegion();
+        return data.getRegion();
     }
-    
+
     public int getFloor() {
-    	return data.getLevel();
+        return data.getLevel();
     }
 
     public String getId() {
@@ -487,7 +487,7 @@ public class Level {
     public List<Integer> getVisitedIndices() {
         return map.getRooms().getIndices(visitedRooms);
     }
-    
+
     public void render(float delta, OrthographicCamera camera, TextureRegion selector,
             boolean paused) {
         // update the world simulation
@@ -563,9 +563,33 @@ public class Level {
                 actor.update(delta, this);
             }
 
-            // update the activators
-            for (Activator activator : activators) {
-                activator.update(delta, this);
+            // update all activators
+            {
+                Iterator<Activator> it = activators.iterator();
+                while (it.hasNext()) {
+                    Activator entity = it.next();
+                    entity.update(delta, this);
+                    if (entity.isFinished()) {
+                        entity.dispose();
+                        it.remove();
+                        drawables.remove(entity); // TODO: could be more
+                                                  // efficient
+                    }
+                }
+            }
+
+            // check all inanimate entities
+            {
+                Iterator<InanimateEntity> it = objects.iterator();
+                while (it.hasNext()) {
+                    InanimateEntity entity = it.next();
+                    if (entity.isFinished()) {
+                        entity.dispose(this);
+                        it.remove();
+                        drawables.remove(entity); // TODO: could be more
+                                                  // efficient
+                    }
+                }
             }
 
             // add pending
@@ -577,14 +601,17 @@ public class Level {
             }
 
             // update all temporary entities
-            Iterator<TemporaryEntity> it = tempEntities.iterator();
-            while (it.hasNext()) {
-                TemporaryEntity entity = it.next();
-                entity.update(delta, this);
-                if (entity.isFinished()) {
-                    entity.dispose();
-                    it.remove();
-                    drawables.remove(entity); // TODO: could be more efficient
+            {
+                Iterator<TemporaryEntity> it = tempEntities.iterator();
+                while (it.hasNext()) {
+                    TemporaryEntity entity = it.next();
+                    entity.update(delta, this);
+                    if (entity.isFinished()) {
+                        entity.dispose();
+                        it.remove();
+                        drawables.remove(entity); // TODO: could be more
+                                                  // efficient
+                    }
                 }
             }
         }
@@ -661,7 +688,7 @@ public class Level {
         for (Drawable drawable : drawables) {
             drawable.render(delta, renderer);
         }
-        
+
         // draw overlay info
         for (Agent agent : activeEntities) {
             if (agent.getInfo().getHealthPercent() < 1) {
@@ -923,7 +950,8 @@ public class Level {
 
         // connected rooms fill
         // ConnectedRoom[][] rooms = map.getRooms();
-        // if (rooms[origin.x][origin.y] != currentRoom && rooms[origin.x][origin.y] != null) {
+        // if (rooms[origin.x][origin.y] != currentRoom &&
+        // rooms[origin.x][origin.y] != null) {
         // currentRoom = rooms[origin.x][origin.y];
         //
         // filledTiles.clear();
@@ -1123,7 +1151,7 @@ public class Level {
                 Npc npc = createTestNpc(agent.getPosition(), scenario.getActorId());
                 addActor(npc);
                 npcs.add(npc);
-                
+
                 if (agent.hasRoom()) {
                     // give the NPC the key
                     ConnectedRoom room = agent.getRoom();
@@ -1131,7 +1159,7 @@ public class Level {
                     room.addResident(npc);
                 }
             }
-            
+
             // create squads
             createSquads(npcs);
             npcs.clear();
@@ -1151,7 +1179,8 @@ public class Level {
             }
         }
 
-        // for every clique, we need to group the NPCs together into a squad and define a leader
+        // for every clique, we need to group the NPCs together into a squad and
+        // define a leader
         for (Entry<Faction, List<Npc>> entry : cliques.entrySet()) {
             Squad squad = new Squad(entry.getKey(), entry.getValue());
             for (Npc npc : entry.getValue()) {
@@ -1197,7 +1226,8 @@ public class Level {
         Player player = new Player(proto, x, y, this);
         addActor(player);
 
-        // PointLight light = new PointLight(rayHandler, LightManager.RAYS_PER_BALL, null,
+        // PointLight light = new PointLight(rayHandler,
+        // LightManager.RAYS_PER_BALL, null,
         // LightManager.LIGHT_DISTANCE * 3, 0, 0);
         // light.attachToBody(player.getBody(), 0, 0);
 
@@ -1226,7 +1256,8 @@ public class Level {
         Player player = new Player(profession, Settings.START_LEVEL, x, y, this,
                 "sprite/characters/light-blue-hair.png");
 
-        // 3 is the "standard" rank at which members of the same faction should become allies
+        // 3 is the "standard" rank at which members of the same faction should
+        // become allies
         // i.e. 30 rep
         Faction playerFaction = Faction.of("_PlayerFaction");
         player.getInfo().addFaction(playerFaction, 3, 0);
@@ -1244,18 +1275,22 @@ public class Level {
         inv.addItem(stimpak, 3);
         stimpak.mapTo(inv, 1);
 
-        // player.getInfo().getInventory().addItem(Fragment.getInstance(), 1000);
-        
+        // player.getInfo().getInventory().addItem(Fragment.getInstance(),
+        // 1000);
+
         Item bullet = Item.fromProto(InvokenGame.ITEM_READER.readAsset("PistolBullet"));
         inv.addItem(bullet, 50);
-        
+
         Item grenade = Item.fromProto(InvokenGame.ITEM_READER.readAsset("FragmentationGrenade"));
         inv.addItem(grenade, 3);
-        
-        // Item weapon = Item.fromProto(InvokenGame.ITEM_READER.readAsset("RailGun"));
-        // Item weapon = Item.fromProto(InvokenGame.ITEM_READER.readAsset("Shotgun"));
+
+        // Item weapon =
+        // Item.fromProto(InvokenGame.ITEM_READER.readAsset("RailGun"));
+        // Item weapon =
+        // Item.fromProto(InvokenGame.ITEM_READER.readAsset("Shotgun"));
         Item weapon = Item.fromProto(InvokenGame.ITEM_READER.readAsset("DamagedPistol"));
-        // Item weapon = Item.fromProto(InvokenGame.ITEM_READER.readAsset("AssaultRifle"));
+        // Item weapon =
+        // Item.fromProto(InvokenGame.ITEM_READER.readAsset("AssaultRifle"));
         inv.addItem(weapon);
         inv.equip(weapon);
 
@@ -1509,12 +1544,12 @@ public class Level {
 
             // check that the fixture belongs to another agent
             if (fixture.getUserData() != null && fixture.getUserData() instanceof Agent) {
-            	// cannot obstruct ourselves
-            	Agent agent = (Agent) fixture.getUserData();
-            	if (agent == source) {
-            		return false;
-            	}
-            	
+                // cannot obstruct ourselves
+                Agent agent = (Agent) fixture.getUserData();
+                if (agent == source) {
+                    return false;
+                }
+
                 // obstructed by living agents
                 return agent.isAlive();
             }

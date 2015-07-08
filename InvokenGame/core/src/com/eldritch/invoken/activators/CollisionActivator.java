@@ -1,5 +1,6 @@
 package com.eldritch.invoken.activators;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.badlogic.gdx.physics.box2d.Body;
@@ -14,6 +15,9 @@ import com.eldritch.invoken.location.NaturalVector2;
 import com.eldritch.invoken.util.Settings;
 
 public abstract class CollisionActivator extends BasicActivator implements InanimateEntityListener {
+    private final List<InanimateEntity> entities = new ArrayList<>();
+    private boolean finished = false;
+    
 	public CollisionActivator(NaturalVector2 position) {
 	    super(position);
 	}
@@ -34,12 +38,29 @@ public abstract class CollisionActivator extends BasicActivator implements Inani
     }
 	
 	@Override
-	public void onBodyCreation(Body body) {
+	public void onBodyCreation(InanimateEntity entity, Body body) {
 	    for (Fixture fixture : body.getFixtureList()) {
 	        Filter filter = fixture.getFilterData();
 	        filter.categoryBits = Settings.BIT_OBSTACLE;
 	        fixture.setFilterData(filter);
 	        fixture.setUserData(getCollisionHandler());
+	    }
+	    entities.add(entity);
+	}
+	
+	protected void finish() {
+	    this.finished = true;
+	}
+	
+	@Override
+    public boolean isFinished() {
+        return finished;
+    }
+	
+	@Override
+	public void dispose() {
+	    for (InanimateEntity entity : entities) {
+	        entity.finish();
 	    }
 	}
 	
