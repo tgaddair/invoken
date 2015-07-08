@@ -247,20 +247,25 @@ public class DoorActivator extends ClickActivator implements Crackable,
         Vector2 position = getPosition();
         float x = (int) position.x;
         float y = (int) position.y;
+        
+        Vector2 offset = new Vector2();
         if (front) {
             bodies.add(level.createEdge(x, y, x + SIZE, y));
             bodies.add(level.createEdge(x, y + 1, x + SIZE, y + 1));
+            offset.set(1f, 0);
         } else {
             x += 0.2f;
             y -= 1;
             bodies.add(level.createEdge(x + 0.2f, y, x + 0.2f, y + SIZE));
             bodies.add(level.createEdge(x + 0.5f, y, x + 0.5f, y + SIZE));
+            offset.set(0.5f, 0);
         }
+        
         setLightWalls(level, true);
         level.addLight(light);
         
         // set the appropriate handler
-        sensor = createSensor(level);
+        sensor = createSensor(level, offset);
         for (Body body : bodies) {
             for (Fixture fixture : body.getFixtureList()) {
                 fixture.setUserData(new DoorBulletHandler());
@@ -268,10 +273,10 @@ public class DoorActivator extends ClickActivator implements Crackable,
         }
     }
     
-    private Body createSensor(Level level) {
+    private Body createSensor(Level level, Vector2 offset) {
         float radius = SIZE;
         CircleShape shape = new CircleShape();
-        shape.setPosition(new Vector2());
+        shape.setPosition(offset);
         shape.setRadius(radius);
 
         FixtureDef fixtureDef = new FixtureDef();
@@ -444,10 +449,10 @@ public class DoorActivator extends ClickActivator implements Crackable,
     private class ProximityHandler extends DefaultAgentHandler {
         @Override
         public boolean handle(Agent agent) {
-            if (proximityAgents.isEmpty()) {
+            proximityAgents.add(agent);
+            if (proximityAgents.size() == 1) {
                 trigger(true, agent, agent.getLocation());
             }
-            proximityAgents.add(agent);
             return true;
         }
         
