@@ -229,12 +229,12 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 
         stage.addActor(actionBar.getTable());
         stage.addActor(statusTable);
-        stage.addActor(dialogue.getTable());
-        stage.addActor(inventoryMenu.getTable());
-        stage.addActor(loot.getTable());
         for (HudElement element : hud) {
             stage.addActor(element.getContainer());
         }
+        stage.addActor(dialogue.getTable());
+        stage.addActor(inventoryMenu.getTable());
+        stage.addActor(loot.getTable());
 
         // announce the new location
         toaster = new Toaster(getSkin());
