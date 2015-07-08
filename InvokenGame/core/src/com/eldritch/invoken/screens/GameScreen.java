@@ -226,7 +226,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
     private void refreshHud() {
         hud.clear();
         stage.clear();
-        
+
         // create HUD elements
         Skin skin = getSkin();
         actionBar = new ActionBar(player, skin);
@@ -257,7 +257,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         stage.addActor(dialogue.getTable());
         stage.addActor(inventoryMenu.getTable());
         stage.addActor(loot.getTable());
-        
+
         // announce the new location
         toaster = new Toaster(getSkin());
         stage.addActor(toaster.getContainer());
@@ -411,11 +411,13 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
             // (target.getLocation()
             // .isOnFrontier(target) ? "Frontier" : "Trespass") : "Clear";
 
+            font.draw(batch, String.format("Floor: %d", target.getLocation().getFloor()), 10,
+                    getHeight() - (30 + 20 * i++));
+            font.draw(batch, String.format("Level: %d", level), 10, getHeight() - (30 + 20 * i++));
             font.draw(batch, String.format("Health: %.0f", health), 10, getHeight()
                     - (30 + 20 * i++));
             font.draw(batch, String.format("Energy: %.0f", energy), 10, getHeight()
                     - (30 + 20 * i++));
-            font.draw(batch, String.format("Level: %d", level), 10, getHeight() - (30 + 20 * i++));
             // font.draw(batch, String.format("Freezing: %.2f", freezing), 10,
             // getHeight()
             // - (30 + 20 * i++));
@@ -906,7 +908,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         camera.position.x = level.scale(position.x, camera.zoom);
         camera.position.y = level.scale(position.y, camera.zoom);
         level.setCamera(camera);
-        
+
         refreshHud();
     }
 

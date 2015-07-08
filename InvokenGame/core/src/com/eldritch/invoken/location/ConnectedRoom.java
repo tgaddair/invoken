@@ -37,6 +37,10 @@ public class ConnectedRoom {
 		this.key = Credential.from(hashCode(), room);
 	}
 	
+	public Room getInfo() {
+	    return room;
+	}
+	
 	public void addDoor(DoorActivator door) {
 	    doors.add(door);
 	}

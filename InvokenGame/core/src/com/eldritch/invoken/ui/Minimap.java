@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Pixmap.Blending;
 import com.badlogic.gdx.graphics.Pixmap.Format;
@@ -15,6 +16,7 @@ import com.eldritch.invoken.location.ConnectedRoomManager;
 import com.eldritch.invoken.location.NaturalVector2;
 import com.eldritch.invoken.location.layer.LocationMap;
 import com.eldritch.invoken.proto.Actors.PlayerActor;
+import com.eldritch.invoken.proto.Locations.ControlPoint;
 import com.eldritch.invoken.util.Settings;
 import com.google.common.base.Optional;
 
@@ -23,6 +25,7 @@ public class Minimap {
     private final Pixmap pixmap;
     private final Texture backTexture;
     private final Set<ConnectedRoom> visited = new HashSet<>();
+    private final Color color = new Color();
     
     private Texture texture;
     private int lastColor;
@@ -104,7 +107,20 @@ public class Minimap {
     }
     
     private void visit(ConnectedRoom room) {
-        pixmap.setColor(0, 0, 1, 0.5f);
+        float a = 0.5f;
+        color.set(0, 0, 1, a);
+        
+        ConnectedRoomManager rooms = map.getRooms();
+        if (room.isChamber()) {
+            ControlPoint cp = rooms.getControlRoom(room).getControlPoint();
+            if (cp.getOrigin()) {
+                color.set(1, 0, 1, a);
+            } else if (cp.getExit()) {
+                color.set(0, 1, 1, a);
+            }
+        }
+        
+        pixmap.setColor(color);
         for (NaturalVector2 point : room.getPoints()) {
             pixmap.drawPixel(point.x, pixmap.getHeight() - point.y - 1);
         }

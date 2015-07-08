@@ -1279,7 +1279,7 @@ public class Level {
         // 1000);
 
         Item bullet = Item.fromProto(InvokenGame.ITEM_READER.readAsset("PistolBullet"));
-        inv.addItem(bullet, 50);
+        inv.addItem(bullet, 25);
 
         Item grenade = Item.fromProto(InvokenGame.ITEM_READER.readAsset("FragmentationGrenade"));
         inv.addItem(grenade, 3);
