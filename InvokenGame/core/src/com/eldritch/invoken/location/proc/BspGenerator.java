@@ -106,6 +106,7 @@ public class BspGenerator {
         // dig stuff
         PlaceRooms();
         PlaceTunnels();
+        PostProcess();
     }
 
     private void FillMap(CellType type) {
@@ -153,6 +154,9 @@ public class BspGenerator {
             prev = next;
             InvokenGame.log(String.format("Pathfound %d/%d", count, Rooms.size()));
         }
+    }
+    
+    protected void PostProcess() {
     }
 
     protected float getRandomX(Rectangle bounds, int width) {
@@ -352,12 +356,21 @@ public class BspGenerator {
 
     protected void addPath(int x, int y, int x2, int y2, List<NaturalVector2> currentPath,
             int size, CellType untype) {
+        boolean lastVertical = false;
         for (int i = 1; i < currentPath.size(); i++) {
             NaturalVector2 prev = currentPath.get(i - 1);
             NaturalVector2 point = currentPath.get(i);
             
             int width = prev.y != point.y ? size : size / 2;
             int height = prev.x != point.x ? size : size / 2;
+            
+            boolean vertical = prev.y != point.y;
+            if (lastVertical != vertical) {
+                width = size;
+                height = size;
+            }
+            lastVertical = vertical;
+            
             Set(point.x - width / 2, point.y - height / 2, width, height, CellType.Floor, untype);
         }
     }

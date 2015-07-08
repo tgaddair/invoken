@@ -17,7 +17,7 @@ public class ExplosiveCannister extends CollisionActivator {
     private static final TextureRegion[] explosionRegions = GameScreen.getMergedRegion(
             "sprite/effects/blue-explosion.png", 256, 256);
 
-    private static final float RANGE = 1.5f;
+    private static final float RANGE = 2f;
     private static final int BASE_DAMAGE = 100;
 
     public ExplosiveCannister(NaturalVector2 position) {
