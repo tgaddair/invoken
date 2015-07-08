@@ -19,29 +19,29 @@ import com.google.protobuf.Message;
 import com.google.protobuf.TextFormat;
 
 public class EncounterTable extends CollectedAssetTable<Encounter> {
-	private static final long serialVersionUID = 1L;
-	private static final String[] COLUMN_NAMES = { 
-		"ID", "Title", "Level", "Weight", "Unique" };
-	
-	public EncounterTable() {
-		super(COLUMN_NAMES, "Encounter");
-	}
+    private static final long serialVersionUID = 1L;
+    private static final String[] COLUMN_NAMES = { "ID", "Title", "Level", "Weight", "Unique" };
 
-	@Override
-	protected JPanel getEditorPanel(Optional<Encounter> prev, JFrame frame) {
-		return new EncounterEditorPanel(this, frame, prev);
-	}
-	
-	@Override
-	protected Object[] getDisplayFields(Encounter asset) {
-		return new Object[]{asset.getId(), asset.getTitle(), asset.getMinLevel(),
-				asset.getWeight(), asset.getUnique()};
-	}
+    public EncounterTable() {
+        super(COLUMN_NAMES, "Encounter");
+    }
 
-	@Override
-	protected String getAssetId(Encounter asset) {
-		return asset.getId();
-	}
+    @Override
+    protected JPanel getEditorPanel(Optional<Encounter> prev, JFrame frame) {
+        return new EncounterEditorPanel(this, frame, prev);
+    }
+
+    @Override
+    protected Object[] getDisplayFields(Encounter asset) {
+        return new Object[] { asset.getId(), asset.getTitle(),
+                asset.hasTargetLevel() ? asset.getTargetLevel() : asset.getMinLevel(),
+                asset.getWeight(), asset.getUnique() };
+    }
+
+    @Override
+    protected String getAssetId(Encounter asset) {
+        return asset.getId();
+    }
 
     @Override
     protected Message collect(List<Encounter> assets) {
@@ -49,7 +49,9 @@ public class EncounterTable extends CollectedAssetTable<Encounter> {
         Collections.sort(sorted, new Comparator<Encounter>() {
             @Override
             public int compare(Encounter e1, Encounter e2) {
-                return Integer.compare(e1.getMinLevel(), e2.getMinLevel());
+                int level1 = e1.hasTargetLevel() ? e1.getTargetLevel() : e1.getMinLevel();
+                int level2 = e2.hasTargetLevel() ? e2.getTargetLevel() : e2.getMinLevel();
+                return Integer.compare(level1, level2);
             }
         });
         return EncounterCollection.newBuilder().addAllEncounter(sorted).build();

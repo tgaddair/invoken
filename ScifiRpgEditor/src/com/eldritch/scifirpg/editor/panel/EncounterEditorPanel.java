@@ -56,12 +56,15 @@ public class EncounterEditorPanel extends AssetEditorPanel<Encounter, EncounterT
 
     private final JTextField idField = new JTextField();
     private final JTextField titleField = new JTextField();
-    
+
     private final JTextField minLevelField = new JTextField();
     private final JTextField maxLevelField = new JTextField();
-    
-    // private final JComboBox<Type> typeBox = new JComboBox<Type>(Type.values());
-    
+    private final JTextField targetLevelField = new JTextField();
+    private final JTextField varianceField = new JTextField();
+
+    // private final JComboBox<Type> typeBox = new
+    // JComboBox<Type>(Type.values());
+
     private final JTextField weightField = new JTextField();
     private final JCheckBox uniqueCheck = new JCheckBox();
 
@@ -91,11 +94,17 @@ public class EncounterEditorPanel extends AssetEditorPanel<Encounter, EncounterT
 
         builder.append("ID:", idField);
         builder.nextLine();
-        
+
         builder.append("Min Level:", minLevelField);
         builder.nextLine();
-        
+
         builder.append("Max Level:", maxLevelField);
+        builder.nextLine();
+
+        builder.append("Target Level:", targetLevelField);
+        builder.nextLine();
+
+        builder.append("Variance:", varianceField);
         builder.nextLine();
 
         // typeBox.addItemListener(this);
@@ -155,12 +164,20 @@ public class EncounterEditorPanel extends AssetEditorPanel<Encounter, EncounterT
             Encounter asset = prev.get();
             idField.setText(asset.getId());
             titleField.setText(asset.getTitle());
-            
+
             minLevelField.setText(String.valueOf(asset.getMinLevel()));
             if (asset.hasMaxLevel()) {
                 maxLevelField.setText(String.valueOf(asset.getMaxLevel()));
             }
-            
+            if (asset.hasTargetLevel()) {
+                targetLevelField.setText(String.valueOf(asset.getTargetLevel()));
+            }
+            if (asset.hasVariance()) {
+                varianceField.setText(String.valueOf(asset.getVariance()));
+            } else {
+                varianceField.setText(String.valueOf(Encounter.getDefaultInstance().getVariance()));
+            }
+
             weightField.setText(String.valueOf(asset.getWeight()));
             uniqueCheck.setSelected(asset.getUnique());
 
@@ -200,9 +217,13 @@ public class EncounterEditorPanel extends AssetEditorPanel<Encounter, EncounterT
                 .addAllRoomId(roomTable.getAssetIds())
                 .setFactionId((String) factionBox.getSelectedItem())
                 .setActorParams(actorPanel.getParams())
-                .setMinLevel(Integer.parseInt(minLevelField.getText()));
+                .setMinLevel(Integer.parseInt(minLevelField.getText()))
+                .setVariance(Double.parseDouble(varianceField.getText()));
         if (!maxLevelField.getText().isEmpty()) {
             encounter.setMaxLevel(Integer.parseInt(maxLevelField.getText()));
+        }
+        if (!targetLevelField.getText().isEmpty()) {
+            encounter.setTargetLevel(Integer.parseInt(targetLevelField.getText()));
         }
         return encounter.build();
     }
