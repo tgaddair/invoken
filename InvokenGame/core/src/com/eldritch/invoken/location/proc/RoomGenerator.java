@@ -53,7 +53,8 @@ public class RoomGenerator extends BspGenerator {
                 continue;
             }
 
-            // allocate a rectangular region of the space for the compound, based on the amount of
+            // allocate a rectangular region of the space for the compound,
+            // based on the amount of
             // control required
             int size = getSize(territory.getControl(), 75);
             Rectangle bounds = new Rectangle( //
@@ -199,19 +200,19 @@ public class RoomGenerator extends BspGenerator {
     }
 
     private ControlNode sample(ControlNode current, List<ControlNode> sample) {
-        return sample.get((int) (random() * sample.size()));
+        // return sample.get((int) (random() * sample.size()));
 
-        // ControlNode closest = null;
-        // int bestDistance = Integer.MAX_VALUE;
-        // for (ControlNode node : sample) {
-        // int distance = (int) (Math.abs(current.getBounds().x - node.getBounds().x) + Math
-        // .abs(current.getBounds().y - node.getBounds().y));
-        // if (distance < bestDistance) {
-        // closest = node;
-        // bestDistance = distance;
-        // }
-        // }
-        // return closest;
+        ControlNode closest = null;
+        int bestDistance = Integer.MAX_VALUE;
+        for (ControlNode node : sample) {
+            int distance = (int) (Math.abs(current.getBounds().x - node.getBounds().x) + Math
+                    .abs(current.getBounds().y - node.getBounds().y));
+            if (distance < bestDistance) {
+                closest = node;
+                bestDistance = distance;
+            }
+        }
+        return closest;
     }
 
     @Override
@@ -219,11 +220,15 @@ public class RoomGenerator extends BspGenerator {
         // save("no-tunnels");
         int connections = 0;
 
-        // first, generate the dependency graph from all the encounter-room pairs
+        // first, generate the dependency graph from all the encounter-room
+        // pairs
         ControlNode origin = generateDependencyGraph(controlRooms.values());
 
-        LinkedList<ControlNode> unlocked = new LinkedList<ControlNode>(); // can place
-        List<ControlNode> connectedSample = new ArrayList<ControlNode>(); // can connect to
+        LinkedList<ControlNode> unlocked = new LinkedList<ControlNode>(); // can
+                                                                          // place
+        List<ControlNode> connectedSample = new ArrayList<ControlNode>(); // can
+                                                                          // connect
+                                                                          // to
         Set<ControlNode> connected = new LinkedHashSet<ControlNode>();
 
         // draw from a separate well for connecting rooms in compounds
@@ -232,7 +237,8 @@ public class RoomGenerator extends BspGenerator {
             compoundSample.put(compound.territory.getFactionId(), new ArrayList<ControlNode>());
         }
 
-        // seed the routine so we can connect to the origin, and we connected from a child
+        // seed the routine so we can connect to the origin, and we connected
+        // from a child
         connections++;
         connected.add(origin);
         if (!origin.cp.getClosed()) {
@@ -276,7 +282,8 @@ public class RoomGenerator extends BspGenerator {
                         }
                     }
 
-                    // add this node to the connected set, and maybe add its children if all its
+                    // add this node to the connected set, and maybe add its
+                    // children if all its
                     // keys
                     // are also in the connected set
                     if (!current.cp.getAccess() || connectedSample.isEmpty()) {
@@ -292,7 +299,8 @@ public class RoomGenerator extends BspGenerator {
                     continue;
                 }
 
-                // iterate over all dependencies and check that they've already been placed
+                // iterate over all dependencies and check that they've already
+                // been placed
                 boolean canConnect = true;
                 for (ControlNode key : lock.keys) {
                     if (!connected.contains(key)) {
@@ -313,7 +321,8 @@ public class RoomGenerator extends BspGenerator {
                 .checkState(connections == controlRooms.size(), String.format(
                         "expected %d connection, found %d", controlRooms.size(), connections));
 
-        // now that we're done placing tunnels, we need to reconstruct the walls around our
+        // now that we're done placing tunnels, we need to reconstruct the walls
+        // around our
         // encounter rooms, if they're supposed to be locked
         // rebuildWalls();
     }
@@ -328,13 +337,15 @@ public class RoomGenerator extends BspGenerator {
             for (ControlRoom room : list) {
                 Rectangle bounds = room.getBounds();
 
-                // boundary of the chamber, the stone border goes 1 unit out of the bounds
+                // boundary of the chamber, the stone border goes 1 unit out of
+                // the bounds
                 int startX = (int) bounds.x - 1;
                 int endX = (int) (bounds.x + bounds.width);
                 int startY = (int) bounds.y - 1;
                 int endY = (int) (bounds.y + bounds.height);
 
-                // the endpoints are exclusive, as a rectangle at (0, 0) with size
+                // the endpoints are exclusive, as a rectangle at (0, 0) with
+                // size
                 // (1, 1) should cover
                 // only rooms[0][0], not rooms[1][1]
                 for (int x = startX; x <= endX; x++) {
@@ -366,13 +377,15 @@ public class RoomGenerator extends BspGenerator {
                 if (compoundPairs[x2][y2] != null) {
                     CompoundPair cp = compoundPairs[x2][y2];
                     if (cp.c1 != compounds[x1][y1] || cp.c2 != compounds[x2][y2]) {
-                        // crossing a hall that connects different territory types, which we really
+                        // crossing a hall that connects different territory
+                        // types, which we really
                         // want to avoid
                         cost += 2000;
                     }
                 }
 
-                // when crossing territory, it's actually more expensive to touch floor tiles
+                // when crossing territory, it's actually more expensive to
+                // touch floor tiles
                 if (compounds[x2][y2] != null && getType(x2, y2) != CellType.Wall) {
                     cost += 500;
                 }
@@ -383,7 +396,8 @@ public class RoomGenerator extends BspGenerator {
         private int getCost(ControlRoom room) {
             int cost = 0;
 
-            // origin should be somewhat costly to pass through to reduce traffic
+            // origin should be somewhat costly to pass through to reduce
+            // traffic
             ControlPoint cp = room.getControlPoint();
             if (cp.getOrigin()) {
                 cost += 250;
@@ -445,9 +459,11 @@ public class RoomGenerator extends BspGenerator {
         }
     }
 
-    // private Rectangle placeFollowers(ControlPoint cp, Rectangle origin, CostMatrix cost,
+    // private Rectangle placeFollowers(ControlPoint cp, Rectangle origin,
+    // CostMatrix cost,
     // Rectangle bounds) {
-    // Rectangle rect = origin == null ? place(cp, bounds) : placeFollower(cp, origin, bounds);
+    // Rectangle rect = origin == null ? place(cp, bounds) : placeFollower(cp,
+    // origin, bounds);
     //
     // // following
     // if (follows.containsKey(cp.getId())) {
@@ -521,7 +537,8 @@ public class RoomGenerator extends BspGenerator {
     private boolean isClear(int x, int y, Rectangle bounds) {
         Compound c = compoundIndex[x][y];
         if (c != null) {
-            // reference the same bounds pointer, then they are the same compound
+            // reference the same bounds pointer, then they are the same
+            // compound
             if (bounds != c.getBounds()) {
                 return false;
             }
@@ -573,7 +590,8 @@ public class RoomGenerator extends BspGenerator {
 
             count++;
             if (count % 10 == 0) {
-                // widen the placement area to allow for more spacing if we can't find anything
+                // widen the placement area to allow for more spacing if we
+                // can't find anything
                 // within the desired area
                 dx++;
                 dy++;
@@ -716,18 +734,18 @@ public class RoomGenerator extends BspGenerator {
         public Room getRoom() {
             return room;
         }
-        
+
         public int getCenterXDistance(int x) {
-        	return Math.abs((int) (bounds.x + bounds.width / 2) - x);
+            return Math.abs((int) (bounds.x + bounds.width / 2) - x);
         }
-        
+
         public int getCenterYDistance(int y) {
-        	return Math.abs((int) (bounds.y + bounds.height / 2) - y);
+            return Math.abs((int) (bounds.y + bounds.height / 2) - y);
         }
-        
+
         public boolean isCorner(int x, int y) {
-        	return (x == bounds.x || x == (int) (bounds.x + bounds.width - 1))
-        			&& (y == bounds.y || y == (int) (bounds.y + bounds.height - 1));
+            return (x == bounds.x || x == (int) (bounds.x + bounds.width - 1))
+                    && (y == bounds.y || y == (int) (bounds.y + bounds.height - 1));
         }
 
         public Rectangle getBounds() {
@@ -742,13 +760,13 @@ public class RoomGenerator extends BspGenerator {
             restricted.height -= 1;
             return restricted;
         }
-        
+
         private boolean matchesRoom(Encounter encounter, Room room) {
             int agentCount = 0;
             for (ActorScenario scenario : encounter.getActorParams().getActorScenarioList()) {
                 agentCount += scenario.getMin();
             }
-            
+
             if (agentCount > 3) {
                 return room.getSize() == Size.LARGE;
             } else if (agentCount > 1) {
@@ -756,7 +774,7 @@ public class RoomGenerator extends BspGenerator {
             }
             return true;
         }
-        
+
         private boolean matchesPoint(Encounter encounter, ControlPoint cp) {
             if (encounter.getControlPointIdList().isEmpty()) {
                 return !cp.getOrigin();
