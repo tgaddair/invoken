@@ -20,9 +20,10 @@ import com.eldritch.invoken.proto.Locations.Room;
 import com.eldritch.invoken.proto.Locations.Room.Furniture;
 
 public class RoomDecorator {
-    // threshold of furniture to open ground in room, past which we need to stop adding furniture
+    // threshold of furniture to open ground in room, past which we need to stop
+    // adding furniture
     public static final double MAX_FURNITURE = 0.5;
-    
+
     public static final int MIN_ROOM_SIZE = 8;
     public static final int MAX_ROOM_SIZE = 20;
 
@@ -68,7 +69,7 @@ public class RoomDecorator {
         for (Entry<ControlRoom, ConnectedRoom> room : rooms.getChambers()) {
             place(room.getKey(), room.getValue());
         }
-        
+
         // halls
         if (!halls.isEmpty()) {
             for (ConnectedRoom connected : rooms.getRooms()) {
@@ -77,7 +78,7 @@ public class RoomDecorator {
                 }
             }
         }
-        
+
         // remove collision points used during procedural generation
         for (MapLayer layer : map.getLayers()) {
             if (layer instanceof CollisionLayer) {
@@ -94,21 +95,23 @@ public class RoomDecorator {
         // decrease bounds by 1 in each direction to prevent placing on border
         Rectangle bounds = encounter.getRestrictedBounds();
         double area = bounds.area();
-        
+
         place(room, connected, area);
     }
-    
+
     private void place(Room room, ConnectedRoom connected) {
         place(room, connected, connected.getAllPoints().size());
     }
-    
+
     private void place(Room room, ConnectedRoom connected, double area) {
         int coveredTiles = 0; // running count of covered tiles
         List<Furniture> availableFurniture = new ArrayList<Furniture>(room.getFurnitureList());
         Collections.shuffle(availableFurniture, rand);
         for (Furniture furniture : availableFurniture) {
+            int placed = 0;
             for (int i = 0; i < furniture.getMax(); i++) {
-                // calculate the percentage of furniture coverage to ground tiles adding this piece
+                // calculate the percentage of furniture coverage to ground
+                // tiles adding this piece
                 // of furniture would cost us
                 PlaceableFurniture placeable = FurnitureLoader.load(furniture);
                 int cost = placeable.getCost();
@@ -118,14 +121,20 @@ public class RoomDecorator {
                 if (coverage < MAX_FURNITURE) {
                     NaturalVector2 position = placeable.findPosition(connected, map, rand);
                     if (position != null) {
-                        // found a place to put the furniture, so merge it into the map
+                        // found a place to put the furniture, so merge it into
+                        // the map
                         placeable.place(position, map);
                         coveredTiles += cost;
+                        placed++;
                     }
                 }
             }
-            
-            // TODO: throw an exception if we're below the min
+
+            // some furniture is required for the room to be valid
+            if (furniture.hasMin() && placed < furniture.getMin()) {
+                throw new IllegalStateException(String.format("Placed: %d of %s, required: %d",
+                        placed, furniture.getId(), furniture.getMin()));
+            }
         }
     }
 
