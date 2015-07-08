@@ -1,9 +1,11 @@
 package com.eldritch.invoken.activators;
 
 import java.lang.reflect.Constructor;
+import java.util.List;
 import java.util.Random;
 
 import com.eldritch.invoken.InvokenGame;
+import com.eldritch.invoken.actor.type.InanimateEntity;
 import com.eldritch.invoken.location.ConnectedRoom;
 import com.eldritch.invoken.location.NaturalVector2;
 import com.eldritch.invoken.location.layer.LocationMap;
@@ -31,9 +33,12 @@ public class PlaceableActivator implements PlaceableFurniture {
 	}
 
 	@Override
-	public void place(NaturalVector2 position, LocationMap map) {
-		tiles.place(position, map);
-		map.add(load(data.getId(), position, map));
+	public List<InanimateEntity> place(NaturalVector2 position, LocationMap map) {
+		List<InanimateEntity> entities = tiles.place(position, map);
+		Activator activator = load(data.getId(), position, map);
+		activator.register(entities);
+		map.add(activator);
+		return entities;
 	}
 	
 	protected Activator load(String name, NaturalVector2 position, LocationMap map) {

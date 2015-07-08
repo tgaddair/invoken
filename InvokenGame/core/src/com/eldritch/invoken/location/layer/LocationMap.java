@@ -28,6 +28,7 @@ import com.eldritch.invoken.location.ConnectedRoomManager;
 import com.eldritch.invoken.location.EncounterDescription;
 import com.eldritch.invoken.location.NaturalVector2;
 import com.eldritch.invoken.location.layer.LocationLayer.CollisionLayer;
+import com.eldritch.invoken.location.proc.TmxPlaceableFurniture;
 import com.eldritch.invoken.util.Constants;
 import com.eldritch.invoken.util.Settings;
 
@@ -198,7 +199,7 @@ public class LocationMap extends TiledMap {
         return map;
     }
 
-    public void merge(TiledMap map, NaturalVector2 offset) {
+    public List<InanimateEntity> merge(TiledMap map, NaturalVector2 offset) {
         List<InanimateEntity> inanimates = new ArrayList<>();
         List<TiledMapTileLayer> collisions = new ArrayList<>();
         List<LightDescription> lights = new ArrayList<>();
@@ -220,7 +221,7 @@ public class LocationMap extends TiledMap {
             }
 
             if (layer.getName().startsWith(Constants.STATICS)) {
-                // add dynamic entities separately
+                // add static entities separately
                 InanimateEntity entity = new StaticEntity(layer, offset);
                 inanimates.add(entity);
                 addEntity(entity);
@@ -285,5 +286,7 @@ public class LocationMap extends TiledMap {
                         + bounds.y + 0.5f), light));
             }
         }
+        
+        return inanimates;
     }
 }

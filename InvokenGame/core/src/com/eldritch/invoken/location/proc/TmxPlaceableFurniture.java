@@ -12,6 +12,7 @@ import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
+import com.eldritch.invoken.actor.type.InanimateEntity;
 import com.eldritch.invoken.location.ConnectedRoom;
 import com.eldritch.invoken.location.NaturalVector2;
 import com.eldritch.invoken.location.layer.LocationLayer;
@@ -63,8 +64,11 @@ public class TmxPlaceableFurniture implements PlaceableFurniture {
     }
 
     @Override
-    public void place(NaturalVector2 position, LocationMap map) {
-        map.merge(tiles, position);
+    public List<InanimateEntity> place(NaturalVector2 position, LocationMap map) {
+        return map.merge(tiles, position);
+    }
+    
+    public void register(InanimateEntity entity) {
     }
 
     private boolean compatible(Map<String, LocationLayer> presentLayers, TiledMap furniture, int x,

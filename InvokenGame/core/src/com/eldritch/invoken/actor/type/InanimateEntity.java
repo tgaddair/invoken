@@ -29,6 +29,7 @@ import com.eldritch.invoken.util.Constants;
 import com.eldritch.invoken.util.Settings;
 
 public abstract class InanimateEntity extends CollisionEntity implements Drawable, Registered {
+    private final List<InanimateEntityListener> listeners = new ArrayList<>();
     private final List<Light> lights = new ArrayList<>();
     private final TiledMapTileLayer layer;
     private final BodyType bodyType;
@@ -45,6 +46,10 @@ public abstract class InanimateEntity extends CollisionEntity implements Drawabl
         this.offset = Vector2.Zero;
         this.zOff = getOffset(layer, false).y;
         this.bodyType = bodyType;
+    }
+    
+    public void addListener(InanimateEntityListener listener) {
+        listeners.add(listener);
     }
 
     public void addCollisionLayer(TiledMapTileLayer collisionLayer) {
@@ -66,6 +71,9 @@ public abstract class InanimateEntity extends CollisionEntity implements Drawabl
     public void register(Level level) {
         if (radius > 0) {
             body = createBody(level.getWorld());
+            for (InanimateEntityListener listener : listeners) {
+                listener.onBodyCreation(body);
+            }
         }
         level.addLights(lights);
     }
@@ -225,5 +233,9 @@ public abstract class InanimateEntity extends CollisionEntity implements Drawabl
         public StaticEntity(TiledMapTileLayer layer, NaturalVector2 position) {
             super(layer, position, BodyType.StaticBody);
         }
+    }
+    
+    public interface InanimateEntityListener {
+        void onBodyCreation(Body body);
     }
 }

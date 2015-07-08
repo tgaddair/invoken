@@ -1,6 +1,7 @@
 package com.eldritch.invoken.location.proc;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ExecutionException;
@@ -11,6 +12,7 @@ import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.activators.PlaceableActivator;
 import com.eldritch.invoken.activators.PlaceableContainer;
 import com.eldritch.invoken.activators.PlaceableTerminal;
+import com.eldritch.invoken.actor.type.InanimateEntity;
 import com.eldritch.invoken.location.ConnectedRoom;
 import com.eldritch.invoken.location.NaturalVector2;
 import com.eldritch.invoken.location.layer.LocationMap;
@@ -37,7 +39,7 @@ public abstract class FurnitureLoader {
     	
     	NaturalVector2 findPosition(ConnectedRoom room, LocationMap map, Random rand);
     	
-    	void place(NaturalVector2 position, LocationMap map);
+    	List<InanimateEntity> place(NaturalVector2 position, LocationMap map);
     }
     
     public static class TmxFurnitureLoader extends FurnitureLoader {
