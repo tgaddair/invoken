@@ -1,22 +1,10 @@
 package com.eldritch.invoken.location;
 
-import com.eldritch.invoken.actor.AgentHandler;
-import com.eldritch.invoken.actor.type.Agent;
-import com.eldritch.invoken.util.Settings;
+import com.eldritch.invoken.actor.AgentHandler.DefaultAgentHandler;
 
 
-public class Wall implements AgentHandler {
+public class Wall extends DefaultAgentHandler {
     private Wall() {}
-    
-    @Override
-    public boolean handle(Agent agent) {
-        return false;
-    }
-
-    @Override
-    public boolean handle(Object userData) {
-        return false;
-    }
     
     private static class Holder {
         private static final Wall INSTANCE = new Wall();
@@ -24,10 +12,5 @@ public class Wall implements AgentHandler {
 
     public static Wall getInstance() {
         return Holder.INSTANCE;
-    }
-
-    @Override
-    public short getCollisionMask() {
-        return Settings.BIT_ANYTHING;
     }
 }

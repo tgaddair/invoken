@@ -31,6 +31,8 @@ public class LocationContactListener implements ContactListener {
             return;
         }
 
+        checkHandleEnd(fa, fb);
+        checkHandleEnd(fb, fa);
     }
 
     @Override
@@ -71,6 +73,39 @@ public class LocationContactListener implements ContactListener {
         } else {
             // generic handler
             agentHandler.handle(handled);
+        }
+    }
+    
+    private void checkHandleEnd(Fixture fa, Fixture fb) {
+        Object handler = fa.getUserData();
+        Object handled = fb.getUserData();
+        if (handler == null) {
+            // cannot handle without a handler
+            return;
+        }
+
+        if (handler instanceof AgentHandler) {
+            AgentHandler agentHandler = (AgentHandler) handler;
+            handleEnd(agentHandler, handled);
+        } else if (handler instanceof Agent) {
+            Agent agent = (Agent) handler;
+            if (agent.hasCollisionDelegate()) {
+                // delegate collisions
+                handleEnd(agent.getCollisionDelegate(), handled);
+            }
+        }
+    }
+    
+    private void handleEnd(AgentHandler agentHandler, Object handled) {
+        if (handled != null && handled instanceof Agent) {
+            Agent agent = (Agent) handled;
+            if (agent.isAlive()) {
+                // only collide with living agents
+                agentHandler.handleEnd(agent);
+            }
+        } else {
+            // generic handler
+            agentHandler.handleEnd(handled);
         }
     }
 }

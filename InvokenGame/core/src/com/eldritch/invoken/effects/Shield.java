@@ -16,13 +16,13 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
-import com.badlogic.gdx.physics.box2d.joints.WeldJointDef;
 import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.Filter;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.Joint;
-import com.eldritch.invoken.actor.AgentHandler;
+import com.badlogic.gdx.physics.box2d.joints.WeldJointDef;
+import com.eldritch.invoken.actor.BulletHandler;
 import com.eldritch.invoken.actor.aug.Augmentation;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Agent.Activity;
@@ -205,28 +205,14 @@ public abstract class Shield extends BasicEffect {
             }
         }
 
-        private class FixedShieldHandler implements AgentHandler {
+        private class FixedShieldHandler extends BulletHandler {
             public FixedShieldHandler(Agent owner, Direction direction) {
             }
 
             @Override
-            public boolean handle(Agent agent) {
-                return false;
-            }
-
-            @Override
-            public boolean handle(Object userData) {
-                if (userData instanceof Bullet) {
-                    Bullet bullet = (Bullet) userData;
-                    damage(10);
-                    return true;
-                }
-                return false;
-            }
-
-            @Override
-            public short getCollisionMask() {
-                return Settings.BIT_ANYTHING;
+            public boolean handle(Bullet bullet) {
+                damage(bullet.getDamage().getMagnitude());
+                return true;
             }
         }
     }

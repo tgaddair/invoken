@@ -12,22 +12,24 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
+import com.badlogic.gdx.physics.box2d.CircleShape;
+import com.badlogic.gdx.physics.box2d.Filter;
 import com.badlogic.gdx.physics.box2d.Fixture;
+import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.eldritch.invoken.InvokenGame;
+import com.eldritch.invoken.actor.AgentHandler.DefaultAgentHandler;
 import com.eldritch.invoken.actor.BulletHandler;
 import com.eldritch.invoken.actor.items.Item;
 import com.eldritch.invoken.actor.type.Agent;
-import com.eldritch.invoken.actor.type.InanimateEntity;
 import com.eldritch.invoken.actor.util.AgentListener;
-import com.eldritch.invoken.effects.Detonation;
 import com.eldritch.invoken.gfx.Light;
 import com.eldritch.invoken.gfx.Light.StaticLight;
 import com.eldritch.invoken.location.Bullet;
 import com.eldritch.invoken.location.ConnectedRoom;
 import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.location.NaturalVector2;
-import com.eldritch.invoken.location.Wall;
-import com.eldritch.invoken.proto.Effects;
 import com.eldritch.invoken.proto.Effects.DamageType;
 import com.eldritch.invoken.proto.Locations.ControlPoint;
 import com.eldritch.invoken.screens.GameScreen;
@@ -38,7 +40,7 @@ import com.eldritch.invoken.util.SoundManager.SoundEffect;
 import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 
-public class DoorActivator extends ClickActivator implements ProximityActivator, Crackable,
+public class DoorActivator extends ClickActivator implements Crackable,
         AgentListener {
     private static final TextureRegion[] frontRegions = GameScreen.getMergedRegion(
             "sprite/activators/blast-door-short.png", 64, 64);
@@ -48,8 +50,6 @@ public class DoorActivator extends ClickActivator implements ProximityActivator,
             "sprite/activators/blast-door-side.png", 64, 64);
     private static final TextureRegion[] sideRegionsLocked = GameScreen.getMergedRegion(
             "sprite/activators/blast-door-side-locked.png", 64, 64);
-
-    private final ProximityCache proximityCache = new ProximityCache(3);
 
     // for bounding area
     private static final int SIZE = 2;
@@ -68,6 +68,7 @@ public class DoorActivator extends ClickActivator implements ProximityActivator,
     private final Set<Agent> proximityAgents = new HashSet<>();
     private final Set<Agent> triggerAgents = new HashSet<>();
     private final Set<Agent> residents = new HashSet<>();
+    private Body sensor;
 
     private Level level = null;
     private boolean activating = false;
@@ -112,24 +113,7 @@ public class DoorActivator extends ClickActivator implements ProximityActivator,
     }
 
     @Override
-    public boolean inProximity(Agent agent) {
-        return proximityCache.inProximity(center, agent);
-    }
-
-    @Override
     public void update(float delta, Level level) {
-        // if a single agent is in the proximity, then open the door, otherwise
-        // close it
-        proximityAgents.clear();
-        boolean shouldOpen = false;
-        for (Agent agent : level.getActiveEntities()) {
-            if (inProximity(agent)) {
-                shouldOpen = true;
-                proximityAgents.add(agent);
-                break;
-            }
-        }
-
         if (!activating) {
             if (!open && lockChange.isPresent()) {
                 applyLocked(lockChange.get());
@@ -138,18 +122,6 @@ public class DoorActivator extends ClickActivator implements ProximityActivator,
         if (finished) {
             postActivation(level);
         }
-
-        // only change the state of the door if it differs from the current
-        // state must click to unlock
-        if (shouldOpen != open && !lock.isLocked()) {
-            lastProximityAgents.removeAll(proximityAgents);
-            triggerAgents.clear();
-            triggerAgents.addAll(lastProximityAgents);
-            setOpened(shouldOpen, level);
-        }
-
-        lastProximityAgents.clear();
-        lastProximityAgents.addAll(proximityAgents);
     }
 
     @Override
@@ -164,6 +136,18 @@ public class DoorActivator extends ClickActivator implements ProximityActivator,
         }
 
         setOpened(!open, level);
+    }
+    
+    private void trigger(boolean open, Agent agent, Level level) {
+        if (!lock.isLocked()) {
+            lastProximityAgents.removeAll(proximityAgents);
+            triggerAgents.clear();
+            triggerAgents.addAll(lastProximityAgents);
+            setOpened(open, level);
+        }
+        
+        lastProximityAgents.clear();
+        lastProximityAgents.addAll(proximityAgents);
     }
 
     private synchronized void setOpened(boolean opened, Level level) {
@@ -276,11 +260,44 @@ public class DoorActivator extends ClickActivator implements ProximityActivator,
         level.addLight(light);
         
         // set the appropriate handler
+        sensor = createSensor(level);
         for (Body body : bodies) {
             for (Fixture fixture : body.getFixtureList()) {
                 fixture.setUserData(new DoorBulletHandler());
             }
         }
+    }
+    
+    private Body createSensor(Level level) {
+        float radius = SIZE;
+        CircleShape shape = new CircleShape();
+        shape.setPosition(new Vector2());
+        shape.setRadius(radius);
+
+        FixtureDef fixtureDef = new FixtureDef();
+        fixtureDef.isSensor = true;
+        fixtureDef.shape = shape;
+        fixtureDef.density = 0.5f;
+        fixtureDef.friction = 0.5f;
+        fixtureDef.restitution = 0.1f;
+        fixtureDef.filter.groupIndex = 0;
+
+        BodyDef bodyDef = new BodyDef();
+        bodyDef.position.set(getPosition());
+        bodyDef.type = BodyType.StaticBody;
+        Body body = level.getWorld().createBody(bodyDef);
+
+        Fixture fixture = body.createFixture(fixtureDef);
+        fixture.setUserData(new ProximityHandler());
+
+        // collision filters
+        Filter filter = fixture.getFilterData();
+        filter.categoryBits = Settings.BIT_DEFAULT; // hits anything
+        filter.maskBits = Settings.BIT_AGENT; // hit by agents
+        fixture.setFilterData(filter);
+
+        shape.dispose();
+        return body;
     }
 
     @Override
@@ -419,6 +436,26 @@ public class DoorActivator extends ClickActivator implements ProximityActivator,
             health -= damage.getDamageOf(DamageType.PHYSICAL);
             if (health <= 0) {
                 destroy();
+            }
+            return true;
+        }
+    }
+    
+    private class ProximityHandler extends DefaultAgentHandler {
+        @Override
+        public boolean handle(Agent agent) {
+            if (proximityAgents.isEmpty()) {
+                trigger(true, agent, agent.getLocation());
+            }
+            proximityAgents.add(agent);
+            return true;
+        }
+        
+        @Override
+        public boolean handleEnd(Agent agent) {
+            proximityAgents.remove(agent);
+            if (proximityAgents.isEmpty()) {
+                trigger(false, agent, agent.getLocation());
             }
             return true;
         }

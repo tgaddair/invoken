@@ -96,6 +96,16 @@ public class Bullet implements AgentHandler {
     public boolean handle(Object userData) {
         return delegate.handle(userData);
     }
+    
+    @Override
+    public boolean handleEnd(Agent agent) {
+        return delegate.handleEnd(agent);
+    }
+
+    @Override
+    public boolean handleEnd(Object userData) {
+        return delegate.handleEnd(userData);
+    }
 
     @Override
     public short getCollisionMask() {

@@ -5,7 +5,7 @@ import java.util.Set;
 
 import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.InvokenGame;
-import com.eldritch.invoken.actor.AgentHandler;
+import com.eldritch.invoken.actor.AgentHandler.DefaultAgentHandler;
 import com.eldritch.invoken.actor.aug.Augmentation.ActiveAugmentation;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Agent.Activity;
@@ -15,7 +15,6 @@ import com.eldritch.invoken.location.Wall;
 import com.eldritch.invoken.proto.Effects.DamageType;
 import com.eldritch.invoken.util.Damage;
 import com.eldritch.invoken.util.Heuristics;
-import com.eldritch.invoken.util.Settings;
 import com.eldritch.invoken.util.SoundManager.SoundEffect;
 import com.google.common.base.Optional;
 
@@ -148,7 +147,7 @@ public class Ram extends ActiveAugmentation {
         }
     }
 
-    private static class RamHandler implements AgentHandler {
+    private static class RamHandler extends DefaultAgentHandler {
         private final Set<Agent> damaged = new HashSet<>();
         private final Damage damage;
         private final Vector2 force;
@@ -180,11 +179,6 @@ public class Ram extends ActiveAugmentation {
                 return true;
             }
             return false;
-        }
-        
-        @Override
-        public short getCollisionMask() {
-            return Settings.BIT_ANYTHING;
         }
     }
 }

@@ -57,6 +57,16 @@ public abstract class Projectile extends CollisionEntity implements AgentHandler
     }
     
     @Override
+    public boolean handleEnd(Agent agent) {
+        return false;
+    }
+
+    @Override
+    public boolean handleEnd(Object userData) {
+        return false;
+    }
+    
+    @Override
     public short getCollisionMask() {
         return Settings.BIT_SHOOTABLE;
     }
