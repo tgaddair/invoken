@@ -99,7 +99,7 @@ public class AnimationUtils {
 
     public static Map<Direction, Animation> getAnimations(TextureRegion[][] regions,
             Animation.PlayMode playMode, int offset, boolean directions) {
-        Map<Direction, Animation> animations = new HashMap<Direction, Animation>();
+        Map<Direction, Animation> animations = new HashMap<>();
 
         // up, left, down, right
         int index = 0;

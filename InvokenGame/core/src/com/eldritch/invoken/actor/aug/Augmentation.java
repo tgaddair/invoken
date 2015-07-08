@@ -81,6 +81,7 @@ public abstract class Augmentation {
 
     private boolean invoke(Agent owner, Action action) {
         if (hasEnergy(owner)) {
+            InvokenGame.log(String.format("%s uses %s", owner.getInfo().getName(), getName()));
             owner.addAction(action);
             return true;
         }
@@ -140,6 +141,10 @@ public abstract class Augmentation {
     public abstract Action getAction(Agent owner, Agent target);
 
     public abstract Action getAction(Agent owner, Vector2 target);
+    
+    public String getName() {
+        return getClass().getSimpleName();
+    }
 
     public AugmentationProto toProto() {
         return AugmentationProto.valueOf(getClass().getSimpleName());

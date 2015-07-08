@@ -94,7 +94,7 @@ public class AgentInfo {
         }
 
         // add default augmentations if not otherwise specified
-        if (knownAugmentations.isEmpty()) {
+        if (knownAugmentations.isEmpty() && hasProfession()) {
             for (Augmentation aug : profession.getStartingAugmentations()) {
                 addAugmentation(aug);
             }
@@ -147,6 +147,10 @@ public class AgentInfo {
 
     public String getName() {
         return name;
+    }
+    
+    public boolean hasProfession() {
+        return species == Species.Human || species == Species.Undead;
     }
 
     public Species getSpecies() {

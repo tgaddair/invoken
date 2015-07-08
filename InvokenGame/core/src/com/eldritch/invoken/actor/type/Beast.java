@@ -4,8 +4,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.eldritch.invoken.actor.aug.Augmentation;
+import com.eldritch.invoken.actor.type.Agent.Direction;
 import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.proto.Actors.NonPlayerActor;
 import com.eldritch.invoken.proto.Effects.DamageType;
@@ -83,6 +86,8 @@ public class Beast extends Npc {
                 return new Dragon(data, x, y, getAssetPath(asset), level);
             case "parasite":
                 return new Parasite(data, x, y, getAssetPath(asset), level);
+            case "wisp":
+                return new Wisp(data, x, y, getAssetPath(asset), level);
             default:
                 return new DefaultBeast(data, x, y, getAssetPath(asset), level);
         }
@@ -288,6 +293,48 @@ public class Beast extends Npc {
             animations.put(Activity.Swipe, AnimationUtils.getAnimations(attackRegions));
             animations.put(Activity.Combat, AnimationUtils.getAnimations(moveRegions));
             animations.put(Activity.Death, AnimationUtils.getFixedAnimation(moveRegions));
+            return animations;
+        }
+    }
+    
+    public static class Wisp extends Beast {
+        private static final int PX = 64;
+
+        public Wisp(NonPlayerActor data, float x, float y, String asset, Level level) {
+            super(data, x, y, Settings.SCALE * PX, Settings.SCALE * PX, MAX_VELOCITY,
+                    getAnimations(asset), level);
+            setCollisionMask((short) (Settings.BIT_PERIMETER | Settings.BIT_BULLET));
+        }
+
+        @Override
+        public float getDensity() {
+            return 5f;
+        }
+
+        private static Map<Activity, Map<Direction, Animation>> getAnimations(String assetPath) {
+            Map<Activity, Map<Direction, Animation>> animations = new HashMap<Activity, Map<Direction, Animation>>();
+
+            TextureRegion[] moveRegions = GameScreen.getMergedRegion(assetPath + ".png", PX, PX);
+            Animation anim = new Animation(0.15f, moveRegions);
+            anim.setPlayMode(PlayMode.LOOP_PINGPONG);
+            
+            Animation deathAnim = new Animation(0.15f, moveRegions);
+            deathAnim.setPlayMode(PlayMode.REVERSED);
+            
+            Map<Direction, Animation> anims = new HashMap<>();
+            Map<Direction, Animation> deathAnims = new HashMap<>();
+            for (Direction d : Direction.values()) {
+                anims.put(d, anim);
+                deathAnims.put(d, deathAnim);
+            }
+            
+            animations.put(Activity.Cast, anims);
+            animations.put(Activity.Thrust, anims);
+            animations.put(Activity.Idle, anims);
+            animations.put(Activity.Explore, anims);
+            animations.put(Activity.Swipe, anims);
+            animations.put(Activity.Combat, anims);
+            animations.put(Activity.Death, deathAnims);
             return animations;
         }
     }
