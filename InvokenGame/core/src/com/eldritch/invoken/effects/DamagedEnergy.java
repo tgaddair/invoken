@@ -1,6 +1,7 @@
 package com.eldritch.invoken.effects;
 
 import com.eldritch.invoken.actor.type.Agent;
+import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.util.Condition;
 
 public class DamagedEnergy extends BasicEffect {
@@ -30,5 +31,10 @@ public class DamagedEnergy extends BasicEffect {
 
     @Override
     protected void update(float delta) {
+    }
+    
+    @Override
+    public void reset(Level level) {
+        endCondition.onReset(level);
     }
 }

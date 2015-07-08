@@ -77,9 +77,16 @@ public class Trap extends ActiveAugmentation {
 		    
 		    // having a proximity mine imposes an energy cost on the invocator
 		    getOwner().addEffect(new DamagedEnergy(getOwner(), COST, new Condition() {
+		        private boolean finished = false;
+		        
                 @Override
                 public boolean satisfied() {
-                    return mine.isFinished();
+                    return mine.isFinished() || finished;
+                }
+
+                @Override
+                public void onReset(Level level) {
+                    finished = true;
                 }
 		    }));
 		}
