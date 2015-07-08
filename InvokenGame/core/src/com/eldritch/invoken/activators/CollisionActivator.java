@@ -16,10 +16,15 @@ import com.eldritch.invoken.util.Settings;
 
 public abstract class CollisionActivator extends BasicActivator implements InanimateEntityListener {
     private final List<InanimateEntity> entities = new ArrayList<>();
+    private Level level = null;
     private boolean finished = false;
     
 	public CollisionActivator(NaturalVector2 position) {
 	    super(position);
+	}
+	
+	public Level getLevel() {
+	    return level;
 	}
 	
 	@Override
@@ -29,6 +34,11 @@ public abstract class CollisionActivator extends BasicActivator implements Inani
 	@Override
     public void activate(Agent agent, Level level) {
     }
+	
+	@Override
+	public void register(Level level) {
+	    this.level = level;
+	}
 	
 	@Override
     public void register(List<InanimateEntity> entities) {
@@ -43,7 +53,7 @@ public abstract class CollisionActivator extends BasicActivator implements Inani
 	        Filter filter = fixture.getFilterData();
 	        filter.categoryBits = Settings.BIT_OBSTACLE;
 	        fixture.setFilterData(filter);
-	        fixture.setUserData(getCollisionHandler());
+	        fixture.setUserData(getCollisionHandler(entity));
 	    }
 	    entities.add(entity);
 	}
@@ -64,5 +74,5 @@ public abstract class CollisionActivator extends BasicActivator implements Inani
 	    }
 	}
 	
-	protected abstract AgentHandler getCollisionHandler();
+	protected abstract AgentHandler getCollisionHandler(InanimateEntity entity);
 }
