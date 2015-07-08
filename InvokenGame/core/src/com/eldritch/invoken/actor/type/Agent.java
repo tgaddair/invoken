@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.Stack;
 
 import com.badlogic.gdx.ai.steer.Steerable;
 import com.badlogic.gdx.assets.AssetManager;
@@ -54,6 +55,8 @@ import com.eldritch.invoken.actor.util.Announcement;
 import com.eldritch.invoken.actor.util.Announcement.BanterAnnouncement;
 import com.eldritch.invoken.actor.util.Announcement.BasicAnnouncement;
 import com.eldritch.invoken.actor.util.Announcement.ResponseAnnouncement;
+import com.eldritch.invoken.actor.util.DodgeHandler;
+import com.eldritch.invoken.actor.util.DodgeHandler.DefaultDodgeHandler;
 import com.eldritch.invoken.actor.util.Interactable;
 import com.eldritch.invoken.actor.util.Locatable;
 import com.eldritch.invoken.actor.util.Lootable;
@@ -84,9 +87,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     public static final int ASSAULT_PENALTY = -25;
     public static final float AIMING_V_PENALTY = 5;
 
-    public static final float DODGE_SCALE = 500f;
     public static final float SPRINT_SCALE = 0.75f;
-    public static final float DODGE_COST = 10f;
     public static final float SPRINT_COST = 5f;
 
     private static final float ROTATION_SCALE = 4.5f;
@@ -130,6 +131,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     private final LinkedList<Action> actions = new LinkedList<>();
     private final List<Effect> effects = new LinkedList<>();
     private final Set<ActivationHandler> activationHandlers = new HashSet<>();
+    private final Stack<DodgeHandler> dodgeHandlers = new Stack<>();
     private final List<AgentListener> listeners = new ArrayList<>();
     private Action action = null;
 
@@ -200,6 +202,8 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         radius = getBodyRadius();
         this.level = level;
         body = createBody(x, y, level.getWorld());
+        
+        dodgeHandlers.add(new DefaultDodgeHandler(this));
     }
     
     public float getBodyRadius() {
@@ -318,18 +322,17 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         level.getWorld().rayCast(targetingHandler, source, target);
         return true;
     }
+    
+    public void setDodgeHandler(DodgeHandler handler) {
+        dodgeHandlers.push(handler);
+    }
 
     public boolean canDodge() {
-        return info.getEnergy() > DODGE_COST;
+        return dodgeHandlers.peek().canDodge();
     }
 
     public void dodge(Vector2 direction) {
-        if (canDodge()) {
-            float s = getMaxLinearSpeed() / getBaseSpeed();
-            applyForce(direction.cpy().scl(DODGE_SCALE * s));
-            info.expend(DODGE_COST);
-            InvokenGame.SOUND_MANAGER.playAtPoint(SoundEffect.SWISH, getPosition());
-        }
+        dodgeHandlers.peek().dodge(direction);
     }
 
     public void thrust(Locatable target) {
@@ -1493,6 +1496,15 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
             } else {
                 effect.dispel();
                 it.remove();
+            }
+        }
+        
+        // remove inactive dodge handlers
+        Iterator<DodgeHandler> dodgeIt = dodgeHandlers.iterator();
+        while (dodgeIt.hasNext()) {
+            DodgeHandler handler = dodgeIt.next();
+            if (handler.isFinished()) {
+                dodgeIt.remove();
             }
         }
 
