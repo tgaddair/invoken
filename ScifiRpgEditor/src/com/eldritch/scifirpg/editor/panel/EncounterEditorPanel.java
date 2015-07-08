@@ -174,8 +174,6 @@ public class EncounterEditorPanel extends AssetEditorPanel<Encounter, EncounterT
             }
             if (asset.hasVariance()) {
                 varianceField.setText(String.valueOf(asset.getVariance()));
-            } else {
-                varianceField.setText(String.valueOf(Encounter.getDefaultInstance().getVariance()));
             }
 
             weightField.setText(String.valueOf(asset.getWeight()));
@@ -217,13 +215,15 @@ public class EncounterEditorPanel extends AssetEditorPanel<Encounter, EncounterT
                 .addAllRoomId(roomTable.getAssetIds())
                 .setFactionId((String) factionBox.getSelectedItem())
                 .setActorParams(actorPanel.getParams())
-                .setMinLevel(Integer.parseInt(minLevelField.getText()))
-                .setVariance(Double.parseDouble(varianceField.getText()));
+                .setMinLevel(Integer.parseInt(minLevelField.getText()));
         if (!maxLevelField.getText().isEmpty()) {
             encounter.setMaxLevel(Integer.parseInt(maxLevelField.getText()));
         }
         if (!targetLevelField.getText().isEmpty()) {
             encounter.setTargetLevel(Integer.parseInt(targetLevelField.getText()));
+        }
+        if (!varianceField.getText().isEmpty()) {
+            encounter.setVariance(Double.parseDouble(varianceField.getText()));
         }
         return encounter.build();
     }
