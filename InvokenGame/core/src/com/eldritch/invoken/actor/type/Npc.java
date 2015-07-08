@@ -28,6 +28,7 @@ import com.badlogic.gdx.ai.steer.limiters.LinearAccelerationLimiter;
 import com.badlogic.gdx.ai.steer.limiters.NullLimiter;
 import com.badlogic.gdx.ai.steer.utils.rays.RayConfigurationBase;
 import com.badlogic.gdx.ai.utils.Ray;
+import com.badlogic.gdx.ai.utils.RaycastCollisionDetector;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -56,6 +57,7 @@ import com.eldritch.invoken.actor.ai.btree.SquadTactics;
 import com.eldritch.invoken.actor.ai.planning.Planner;
 import com.eldritch.invoken.actor.aug.Augmentation;
 import com.eldritch.invoken.actor.items.Fragment;
+import com.eldritch.invoken.actor.type.NavigatedSteerable.AStarNavigatedSteerable;
 import com.eldritch.invoken.actor.util.Locatable;
 import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.proto.Actors.ActorParams.Species;
@@ -104,6 +106,7 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
     private boolean canAttack = true;
 
     private final Map<SteeringMode, SteeringBehavior<Vector2>> behaviors;
+    private final RaycastCollisionDetector<Vector2> collisionDetector;
     RayConfigurationBase<Vector2> rayConfiguration;
 
     // behaviors that need to be updated periodically
@@ -137,9 +140,10 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
         }
 
         // pathfinding
-        lastSeen = new NavigatedSteerable(this, level);
+        lastSeen = createSteerable(level);
 
         // steering behaviors
+        collisionDetector = createCollisionDetector(level);
         behaviors = getSteeringBehaviors(level);
         setBehavior(behaviors.get(SteeringMode.Default));
 
@@ -157,6 +161,14 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
         
         // post init
         setWeaponSentry(new RotatingWeaponSentry());
+    }
+    
+    protected NavigatedSteerable createSteerable(Level level) {
+        return new AStarNavigatedSteerable(this, level);
+    }
+    
+    protected RaycastCollisionDetector<Vector2> createCollisionDetector(Level level) {
+        return new Box2dRaycastCollisionDetector(level.getWorld());
     }
     
     public void setSquad(Squad squad) {
@@ -641,7 +653,7 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
         rayConfiguration = new AdaptiveRayWithWhiskersConfiguration<Vector2>(this, 3, 1,
                 35 * MathUtils.degreesToRadians);
         RaycastObstacleAvoidance<Vector2> obstacleAvoidance = new RaycastObstacleAvoidance<Vector2>(
-                this, rayConfiguration, new Box2dRaycastCollisionDetector(level.getWorld()), 1f);
+                this, rayConfiguration, collisionDetector, 1f);
 
         // ally proximity
         // TODO: move this to Location, have a set of "squads" managed at a higher level with a

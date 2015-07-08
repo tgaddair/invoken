@@ -7,6 +7,7 @@ import com.badlogic.gdx.ai.steer.limiters.LinearAccelerationLimiter;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.actor.Profession;
+import com.eldritch.invoken.actor.type.NavigatedSteerable.AStarNavigatedSteerable;
 import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.util.Settings;
 
@@ -21,7 +22,7 @@ public class DummyPlayer extends Player {
     public DummyPlayer(Profession profession, int level, float x, float y, Level location,
             String body) {
         super(profession, level, x, y, location, body);
-        lastSeen = new NavigatedSteerable(this, location);
+        lastSeen = new AStarNavigatedSteerable(this, location);
 
         pursue = new Pursue<Vector2>(this, this).setLimiter(new LinearAccelerationLimiter(7));
         setBehavior(pursue);

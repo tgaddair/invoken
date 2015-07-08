@@ -11,50 +11,51 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.eldritch.invoken.actor.type.Agent;
 
 public class Box2dRaycastCollisionDetector implements RaycastCollisionDetector<Vector2> {
-	private final World world;
-	private final Box2dRaycastCallback callback;
+    private final World world;
+    private final Box2dRaycastCallback callback;
 
-	public Box2dRaycastCollisionDetector(World world) {
-		this(world, new Box2dRaycastCallback());
-	}
+    public Box2dRaycastCollisionDetector(World world) {
+        this(world, new Box2dRaycastCallback());
+    }
 
-	public Box2dRaycastCollisionDetector(World world, Box2dRaycastCallback callback) {
-		this.world = world;
-		this.callback = callback;
-	}
+    public Box2dRaycastCollisionDetector(World world, Box2dRaycastCallback callback) {
+        this.world = world;
+        this.callback = callback;
+    }
 
-	@Override
-	public boolean findCollision(Collision<Vector2> outputCollision, Ray<Vector2> inputRay) {
-		callback.collided = false;
-		if (!inputRay.start.epsilonEquals(inputRay.end, MathUtils.FLOAT_ROUNDING_ERROR)) {
-			callback.outputCollision = outputCollision;
-			world.rayCast(callback, inputRay.start, inputRay.end);
-		}
-		return callback.collided;
-	}
-	
-	@Override
-	public boolean collides(Ray<Vector2> inputRay) {
-		return findCollision(null, inputRay);
-	}
+    @Override
+    public boolean findCollision(Collision<Vector2> outputCollision, Ray<Vector2> inputRay) {
+        callback.collided = false;
+        if (!inputRay.start.epsilonEquals(inputRay.end, MathUtils.FLOAT_ROUNDING_ERROR)) {
+            callback.outputCollision = outputCollision;
+            world.rayCast(callback, inputRay.start, inputRay.end);
+        }
+        return callback.collided;
+    }
 
-	public static class Box2dRaycastCallback implements RayCastCallback {
-		public Collision<Vector2> outputCollision;
-		public boolean collided;
+    @Override
+    public boolean collides(Ray<Vector2> inputRay) {
+        return findCollision(null, inputRay);
+    }
 
-		@Override
-		public float reportRayFixture(Fixture fixture, Vector2 point, Vector2 normal, float fraction) {
-		    if (!isObstruction(fixture)) {
-		        // no collision
-		        return 0;
-		    }
-		    
-			if (outputCollision != null) outputCollision.set(point, normal);
-			collided = true;
-			return fraction;
-		}
-		
-		private boolean isObstruction(Fixture fixture) {
+    public static class Box2dRaycastCallback implements RayCastCallback {
+        public Collision<Vector2> outputCollision;
+        public boolean collided;
+
+        @Override
+        public float reportRayFixture(Fixture fixture, Vector2 point, Vector2 normal, float fraction) {
+            if (!isObstruction(fixture)) {
+                // no collision
+                return 0;
+            }
+
+            if (outputCollision != null)
+                outputCollision.set(point, normal);
+            collided = true;
+            return fraction;
+        }
+
+        private boolean isObstruction(Fixture fixture) {
             // check that the fixture belongs to another agent
             if (fixture.getUserData() != null && fixture.getUserData() instanceof Agent) {
                 Agent agent = (Agent) fixture.getUserData();
@@ -63,9 +64,9 @@ public class Box2dRaycastCollisionDetector implements RaycastCollisionDetector<V
                     return false;
                 }
             }
-            
+
             // whatever it is, it's in the way
             return true;
         }
-	}
+    }
 }

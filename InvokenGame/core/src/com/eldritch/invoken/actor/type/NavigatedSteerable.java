@@ -12,12 +12,11 @@ import com.eldritch.invoken.actor.util.Locatable;
 import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.location.NaturalVector2;
 
-public class NavigatedSteerable extends BasicSteerable implements Locatable {
+public abstract class NavigatedSteerable extends BasicSteerable implements Locatable {
     private static final float MIN_DIST = 1f;
     private static final float WAIT_SECONDS = 3f;
 
     private final Agent npc;
-    private final PathManager pathManager;
     private final Vector2 lastSeen = new Vector2();
     private Locatable target = null;
     private boolean arrived = false; // done navigating
@@ -29,7 +28,6 @@ public class NavigatedSteerable extends BasicSteerable implements Locatable {
 
     public NavigatedSteerable(Agent npc, Level level) {
         this.npc = npc;
-        pathManager = level.getPathManager();
     }
 
     public void update(float delta) {
@@ -96,6 +94,10 @@ public class NavigatedSteerable extends BasicSteerable implements Locatable {
 
         sr.end();
     }
+    
+    public void setLastLocation(Vector2 location) {
+        lastSeen.set(location);
+    }
 
     public Vector2 getLastLocation() {
         return lastSeen;
@@ -124,7 +126,7 @@ public class NavigatedSteerable extends BasicSteerable implements Locatable {
         updatePath();
     }
 
-    private void updatePath() {
+    protected void updatePath() {
         if (target == null) {
             // no path possible
             return;
@@ -170,43 +172,90 @@ public class NavigatedSteerable extends BasicSteerable implements Locatable {
         pathAge = 0;
         pathIndex = 0;
     }
-
-    private void computePath(NaturalVector2 destination) {
-        NaturalVector2 a = getNearestGround(npc.getNaturalPosition());
-        NaturalVector2 b = getNearestGround(destination);
-        if (a == null || b == null) {
-            // no path possible
-            return;
-        }
-
-        path = pathManager.getPath(a, b);
-        // if (path == null) {
-        // InvokenGame.logfmt("Failed to find path: %s -> %s", npc.getNaturalPosition(),
-        // destination);
-        // }
+    
+    protected void setPath(LocationGraphPath path) {
+        this.path = path;
     }
+    
+    protected Agent getOwner() {
+        return npc;
+    }
+    
+    protected abstract void computePath(NaturalVector2 destination);
 
-    private NaturalVector2 getNearestGround(NaturalVector2 position) {
-        if (pathManager.getGraph().isGround(position.x, position.y)) {
-            // ideally, the nearest ground is the position itself
-            return position;
+    public static class AStarNavigatedSteerable extends NavigatedSteerable {
+        private final PathManager pathManager;
+
+        public AStarNavigatedSteerable(Agent npc, Level level) {
+            super(npc, level);
+            pathManager = level.getPathManager();
+        }
+        
+        @Override
+        protected void computePath(NaturalVector2 destination) {
+            NaturalVector2 a = getNearestGround(getOwner().getNaturalPosition());
+            NaturalVector2 b = getNearestGround(destination);
+            if (a == null || b == null) {
+                // no path possible
+                return;
+            }
+
+            setPath(pathManager.getPath(a, b));
+            // if (path == null) {
+            // InvokenGame.logfmt("Failed to find path: %s -> %s", npc.getNaturalPosition(),
+            // destination);
+            // }
         }
 
-        for (int dx = 0; dx <= 1; dx++) {
-            for (int dy = 0; dy <= 1; dy++) {
-                if (dx == 0 && dy == 0) {
-                    continue;
-                }
+        private NaturalVector2 getNearestGround(NaturalVector2 position) {
+            if (pathManager.getGraph().isGround(position.x, position.y)) {
+                // ideally, the nearest ground is the position itself
+                return position;
+            }
 
-                NaturalVector2 neighbor = NaturalVector2.of(position.x + dx, position.y + dy);
-                if (pathManager.getGraph().isGround(neighbor.x, neighbor.y)) {
-                    return neighbor;
+            for (int dx = 0; dx <= 1; dx++) {
+                for (int dy = 0; dy <= 1; dy++) {
+                    if (dx == 0 && dy == 0) {
+                        continue;
+                    }
+
+                    NaturalVector2 neighbor = NaturalVector2.of(position.x + dx, position.y + dy);
+                    if (pathManager.getGraph().isGround(neighbor.x, neighbor.y)) {
+                        return neighbor;
+                    }
                 }
             }
+
+            // still haven't found any ground
+            // for now, an error
+            return null;
+        }
+    }
+    
+    public static class BasicNavigatedSteerable extends NavigatedSteerable {
+        public BasicNavigatedSteerable(Agent npc, Level level) {
+            super(npc, level);
         }
 
-        // still haven't found any ground
-        // for now, an error
-        return null;
+        @Override
+        protected void computePath(NaturalVector2 destination) {
+        }
+        
+        @Override
+        protected void updatePath() {
+            Locatable target = getTarget();
+            if (target == null) {
+                // no path possible
+                return;
+            }
+            
+            if (getOwner().hasVisibilityTo(target)) {
+                // we don't need pathfinding if we have line of sight
+                setLastLocation(target.getPosition());
+                setPosition(target.getPosition());
+            } else {
+                setPosition(getLastLocation());
+            }
+        }
     }
 }

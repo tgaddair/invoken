@@ -3,21 +3,24 @@ package com.eldritch.invoken.actor.type;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.badlogic.gdx.ai.utils.Collision;
+import com.badlogic.gdx.ai.utils.Ray;
+import com.badlogic.gdx.ai.utils.RaycastCollisionDetector;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.eldritch.invoken.actor.aug.Augmentation;
-import com.eldritch.invoken.actor.type.Agent.Direction;
+import com.badlogic.gdx.math.Vector2;
+import com.eldritch.invoken.actor.type.NavigatedSteerable.BasicNavigatedSteerable;
 import com.eldritch.invoken.effects.Detonation;
 import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.proto.Actors.NonPlayerActor;
 import com.eldritch.invoken.proto.Effects.DamageType;
 import com.eldritch.invoken.screens.GameScreen;
 import com.eldritch.invoken.util.AnimationUtils;
+import com.eldritch.invoken.util.AnimationUtils.AnimationBuilder;
 import com.eldritch.invoken.util.Damage;
 import com.eldritch.invoken.util.Settings;
-import com.eldritch.invoken.util.AnimationUtils.AnimationBuilder;
 import com.eldritch.invoken.util.SoundManager.SoundEffect;
 import com.google.common.base.Strings;
 
@@ -126,17 +129,17 @@ public class Beast extends Npc {
             super(data, x, y, Settings.SCALE * PX, Settings.SCALE * PX, MAX_VELOCITY,
                     getAnimations(asset), level);
         }
-        
+
         @Override
         public float getDensity() {
             return 1;
         }
-        
+
         @Override
         public float getHoldSeconds() {
             return 0.25f;
         }
-        
+
         @Override
         protected void draw(Batch batch, TextureRegion frame, Direction direction) {
             float width = getWidth();
@@ -159,7 +162,7 @@ public class Beast extends Npc {
         protected short getCategoryBits() {
             return Settings.BIT_LOW_AGENT;
         }
-        
+
         @Override
         protected SoundEffect getDeathSound() {
             return SoundEffect.CRAWLER_DEATH;
@@ -226,7 +229,8 @@ public class Beast extends Npc {
             if (direction != lastDirection) {
                 lastDirection = direction;
 
-                // only change our direction if we are explicitly facing a different x direction
+                // only change our direction if we are explicitly facing a
+                // different x direction
                 // otherwise, keep the current horizontal heading
                 if (direction == Direction.Right) {
                     flipX = true;
@@ -243,7 +247,8 @@ public class Beast extends Npc {
                     1f, 1f, // scale
                     0, // rotation
                     frame.getRegionX(), frame.getRegionY(), // srcX, srcY
-                    frame.getRegionWidth(), frame.getRegionHeight(), // srcWidth, srcHeight
+                    frame.getRegionWidth(), frame.getRegionHeight(), // srcWidth,
+                                                                     // srcHeight
                     flipX, false); // flipX, flipY
         }
 
@@ -298,7 +303,7 @@ public class Beast extends Npc {
             return animations;
         }
     }
-    
+
     public static class Wisp extends Beast {
         private static final TextureRegion[] explosionRegions = GameScreen.getMergedRegion(
                 "sprite/effects/purple-explosion.png", 256, 256);
@@ -314,14 +319,35 @@ public class Beast extends Npc {
         }
 
         @Override
+        protected NavigatedSteerable createSteerable(Level level) {
+            return new BasicNavigatedSteerable(this, level);
+        }
+
+        @Override
+        protected RaycastCollisionDetector<Vector2> createCollisionDetector(Level level) {
+            return new RaycastCollisionDetector<Vector2>() {
+                @Override
+                public boolean collides(Ray<Vector2> ray) {
+                    return false;
+                }
+
+                @Override
+                public boolean findCollision(Collision<Vector2> outputCollision,
+                        Ray<Vector2> inputRay) {
+                    return false;
+                }
+            };
+        }
+
+        @Override
         public float getDensity() {
             return 1f;
         }
-        
+
         @Override
         public void onDeath() {
             super.onDeath();
-            
+
             // explode
             Damage damage = Damage.from(this, DamageType.PHYSICAL, BASE_DAMAGE);
             Detonation detonation = new Detonation(damage, getPosition().cpy(), RANGE,
@@ -335,17 +361,17 @@ public class Beast extends Npc {
             TextureRegion[] moveRegions = GameScreen.getMergedRegion(assetPath + ".png", PX, PX);
             Animation anim = new Animation(0.15f, moveRegions);
             anim.setPlayMode(PlayMode.LOOP_PINGPONG);
-            
+
             Animation deathAnim = new Animation(0.15f, moveRegions);
             deathAnim.setPlayMode(PlayMode.REVERSED);
-            
+
             Map<Direction, Animation> anims = new HashMap<>();
             Map<Direction, Animation> deathAnims = new HashMap<>();
             for (Direction d : Direction.values()) {
                 anims.put(d, anim);
                 deathAnims.put(d, deathAnim);
             }
-            
+
             animations.put(Activity.Cast, anims);
             animations.put(Activity.Thrust, anims);
             animations.put(Activity.Idle, anims);
