@@ -86,15 +86,20 @@ public class ActionBar implements AugmentationListener {
     private void add(final Augmentation aug) {
         LabelStyle labelStyle = skin.get("toast", LabelStyle.class);
         Label label = new Label("", labelStyle);
-        label.setAlignment(Align.bottomRight, Align.left);
+        label.setAlignment(Align.bottomRight, Align.right);
         label.setColor(Color.GREEN);
         labels.put(aug, label);
+        
+//        Label keyLabel = new Label("Z", labelStyle);
+//        keyLabel.setAlignment(Align.bottomLeft, Align.left);
+//        keyLabel.setColor(Color.CYAN);
         
         Image image = new Image(aug.getIcon());
         images.put(aug, image);
         
         Stack stack = new Stack();
         stack.addActor(image);
+//        stack.addActor(keyLabel);
         stack.addActor(label);
         stack.addListener(new DefaultInputListener() {
             @Override

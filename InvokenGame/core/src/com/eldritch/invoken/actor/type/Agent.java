@@ -201,7 +201,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         this.level = level;
         body = createBody(x, y, level.getWorld());
     }
-
+    
     public float getBodyRadius() {
         return Math.max(getWidth(), getHeight()) / 5;
     }
@@ -1821,6 +1821,9 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         this.level = level;
         body = createBody(x, y, level.getWorld());
         position.set(x, y);
+        for (Effect effect : effects) {
+            effect.reset(level);
+        }
     }
     
     @Override

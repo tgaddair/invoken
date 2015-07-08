@@ -2,6 +2,7 @@ package com.eldritch.invoken.effects;
 
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.eldritch.invoken.actor.type.Agent;
+import com.eldritch.invoken.location.Level;
 
 public abstract class BasicEffect implements Effect {
     protected final Agent target;
@@ -25,6 +26,10 @@ public abstract class BasicEffect implements Effect {
     
     @Override
     public void render(float delta, OrthogonalTiledMapRenderer renderer) {
+    }
+    
+    @Override
+    public void reset(Level level) {
     }
     
     protected Agent getTarget() {

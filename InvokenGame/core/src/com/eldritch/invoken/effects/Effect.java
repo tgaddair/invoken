@@ -1,6 +1,7 @@
 package com.eldritch.invoken.effects;
 
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import com.eldritch.invoken.location.Level;
 
 public interface Effect {
 	boolean isFinished();
@@ -10,4 +11,6 @@ public interface Effect {
 	void dispel();
 	
 	void render(float delta, OrthogonalTiledMapRenderer renderer);
+	
+	void reset(Level level);
 }

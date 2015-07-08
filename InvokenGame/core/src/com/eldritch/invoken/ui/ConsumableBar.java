@@ -25,17 +25,17 @@ public class ConsumableBar implements HudElement {
     private final AgentInventory inv;
     private final Table container;
     private final Skin skin;
-    
+
     public ConsumableBar(Player player, Skin skin) {
         this.skin = skin;
         this.inv = player.getInventory();
-        
+
         container = new Table();
         resize(Settings.MENU_VIEWPORT_WIDTH, Settings.MENU_VIEWPORT_HEIGHT);
         container.bottom().left();
         refresh();
     }
-    
+
     @Override
     public void update(float delta, Level level) {
         for (Consumable consumable : inv.getConsumables()) {
@@ -50,12 +50,12 @@ public class ConsumableBar implements HudElement {
             }
         }
     }
-    
+
     public void resize(int width, int height) {
         container.setHeight(height / 2);
         container.setWidth(width);
     }
-    
+
     @Override
     public Table getContainer() {
         return container;
@@ -67,7 +67,7 @@ public class ConsumableBar implements HudElement {
         images.clear();
         refresh();
     }
-    
+
     private void refresh() {
         for (Consumable consumable : inv.getConsumables()) {
             if (consumable != null) {
@@ -75,19 +75,24 @@ public class ConsumableBar implements HudElement {
             }
         }
     }
-    
+
     private void add(final Consumable consumable) {
         LabelStyle labelStyle = skin.get("toast", LabelStyle.class);
         Label label = new Label("", labelStyle);
         label.setAlignment(Align.topRight, Align.left);
         label.setColor(Color.GREEN);
         labels.put(consumable, label);
-        
+
+        // Label keyLabel = new Label("Z", labelStyle);
+        // keyLabel.setAlignment(Align.topLeft, Align.left);
+        // keyLabel.setColor(Color.CYAN);
+
         Image image = new Image(consumable.getIcon());
         images.put(consumable, image);
-        
+
         Stack stack = new Stack();
         stack.addActor(image);
+        // stack.addActor(keyLabel);
         stack.addActor(label);
         stack.addListener(new DefaultInputListener() {
             @Override
@@ -95,7 +100,7 @@ public class ConsumableBar implements HudElement {
                 inv.equip(consumable);
             }
         });
-        
+
         container.add(stack).padLeft(10).padRight(10).padBottom(10);
         container.row();
     }

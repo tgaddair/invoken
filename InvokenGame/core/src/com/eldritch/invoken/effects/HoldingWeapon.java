@@ -1,6 +1,7 @@
 package com.eldritch.invoken.effects;
 
 import com.eldritch.invoken.actor.type.Agent;
+import com.eldritch.invoken.location.Level;
 
 public class HoldingWeapon extends BasicEffect {
     public HoldingWeapon(Agent agent) {
@@ -23,5 +24,10 @@ public class HoldingWeapon extends BasicEffect {
 
     @Override
     protected void update(float delta) {
+    }
+    
+    @Override
+    public void reset(Level level) {
+        doApply();
     }
 }

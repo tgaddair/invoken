@@ -95,6 +95,10 @@ public class FireWeapon extends ProjectileAugmentation {
     
     @Override
     public String getLabel(Agent owner) {
+        if (owner.getInventory().isReloading()) {
+            return "-";
+        }
+        
         int clip = owner.getInventory().getClip();
 //        int ammunition = owner.getInventory().getAmmunitionCount();
 //        return String.format("%d / %d", clip, ammunition - clip);

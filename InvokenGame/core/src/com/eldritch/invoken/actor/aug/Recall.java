@@ -152,6 +152,11 @@ public class Recall extends ActiveAugmentation {
         private float getEnergy(float mdst) {
             return 1f * mdst;
         }
+        
+        @Override
+        public void reset(Level level) {
+            dispel();
+        }
     }
 
 }
