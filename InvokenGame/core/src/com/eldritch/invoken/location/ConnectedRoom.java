@@ -42,6 +42,11 @@ public class ConnectedRoom {
 	    return room;
 	}
 	
+	public int getLockStrength() {
+	    // [1, 9]
+	    return Math.max(Math.min(room.getValue() / 10, 9), 1);
+	}
+	
 	public double getLockChance() {
 	    int value = room.getValue();
 	    return Heuristics.sigmoid(value / 25f) - 0.25f;

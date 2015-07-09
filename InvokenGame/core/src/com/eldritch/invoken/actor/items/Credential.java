@@ -9,7 +9,7 @@ import com.eldritch.invoken.proto.Locations.Room;
 import com.google.common.base.Strings;
 
 public class Credential extends Item {
-    public Credential(Items.Item data) {
+    private Credential(Items.Item data) {
         super(data, 0);
     }
 
@@ -35,6 +35,10 @@ public class Credential extends Item {
     protected Animation getAnimation(Activity activity, Direction direction) {
         // not animated
         return null;
+    }
+    
+    public static Credential from(Items.Item data) {
+        return new Credential(data);
     }
 
     public static Credential from(int id, Room data) {

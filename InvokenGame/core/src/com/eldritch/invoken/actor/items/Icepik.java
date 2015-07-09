@@ -15,14 +15,19 @@ public class Icepik extends Item {
     private static final LoadingCache<Integer, Icepik> piksByStrength = CacheBuilder.newBuilder()
             .build(new CacheLoader<Integer, Icepik>() {
                 public Icepik load(Integer strength) {
-                    Items.Item.Builder builder = Items.Item.newBuilder();
-                    builder.setId("Icepik" + strength);
-                    builder.setName("Icepik " + strength);
-                    builder.setType(Items.Item.Type.CREDENTIAL);
-                    builder.setDescription("");
-                    builder.setValue(0);
-                    builder.setDroppable(true);
-                    return new Icepik(builder.build(), strength);
+                    String id = "Icepik" + strength;
+                    Items.Item data = InvokenGame.ITEM_READER.readAsset(id);
+                    if (data == null) {
+                        Items.Item.Builder builder = Items.Item.newBuilder();
+                        builder.setId(id);
+                        builder.setName("Icepik " + strength);
+                        builder.setType(Items.Item.Type.CREDENTIAL);
+                        builder.setDescription("");
+                        builder.setValue(0);
+                        builder.setDroppable(true);
+                        data = builder.build();
+                    }
+                    return new Icepik(data, strength);
                 }
             });
     
@@ -36,11 +41,13 @@ public class Icepik extends Item {
     public int getRequiredCount(Agent agent) {
         int ability = agent.getInfo().getSubterfuge() / 10;
         int difficulty = strength;
-        if (ability > difficulty) {
+        if (ability >= difficulty) {
             return 1;
         }
         
-        return difficulty - ability + 1;
+        // required piks scales with the square of the difference
+        int delta = difficulty - ability + 1;
+        return delta * delta;
     }
     
     public int getStrength() {
@@ -69,6 +76,16 @@ public class Icepik extends Item {
     protected Animation getAnimation(Activity activity, Direction direction) {
         // not animated
         return null;
+    }
+    
+    public static Icepik from(Items.Item data) {
+        int strength = Integer.valueOf(data.getId().replaceAll("^[A-Za-z]+", ""));
+        Icepik pik = piksByStrength.getIfPresent(strength);
+        if (pik == null) {
+            pik = new Icepik(data, strength);
+            piksByStrength.put(strength, pik);
+        }
+        return pik;
     }
 
     public static Icepik from(int strength) {

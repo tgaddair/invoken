@@ -109,7 +109,9 @@ public abstract class Item {
                 return new Consumable(item);
             case ACCESSORY:
             case CREDENTIAL:
-                return new Credential(item);
+                return Credential.from(item);
+            case ICEPIK:
+                return Icepik.from(item);
             case FRAGMENT:
                 return Fragment.getInstance(item);
             case AMMUNITION:
