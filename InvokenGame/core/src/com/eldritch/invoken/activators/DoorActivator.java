@@ -1,8 +1,10 @@
 package com.eldritch.invoken.activators;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import com.badlogic.gdx.graphics.Color;
@@ -385,23 +387,16 @@ public class DoorActivator extends ClickActivator implements Crackable, Damageab
     }
 
     private boolean canPick(Agent agent) {
-        Icepik item = Icepik.from(lock.getStrength());
-        if (agent.getInventory().hasItem(item)) {
-            int piks = agent.getInventory().getItemCount(item);
-            int required = item.getRequiredCount(agent);
-            if (piks >= required) {
-                return true;
-            }
-        }
-        return false;
+        int piks = lock.getAvailablePiks(agent);
+        int required = lock.getRequiredPiks(agent);
+        return piks >= required;
     }
 
     private void pick(Agent agent) {
         Icepik item = Icepik.from(lock.getStrength());
-        int required = item.getRequiredCount(agent);
+        int required = lock.getRequiredPiks(agent);
         agent.getInventory().removeItem(item, required);
         setLocked(false);
-
     }
 
     @Override
@@ -534,6 +529,19 @@ public class DoorActivator extends ClickActivator implements Crackable, Damageab
 
         private boolean shouldLock() {
             return strength > 1;
+        }
+        
+        public int getAvailablePiks(Agent agent) {
+            Icepik item = Icepik.from(getStrength());
+            if (agent.getInventory().hasItem(item)) {
+                return agent.getInventory().getItemCount(item);
+            }
+            return 0;
+        }
+        
+        public int getRequiredPiks(Agent agent) {
+            Icepik item = Icepik.from(getStrength());
+            return item.getRequiredCount(agent);
         }
 
         public static LockInfo from(ControlPoint controlPoint, ConnectedRoom room) {
