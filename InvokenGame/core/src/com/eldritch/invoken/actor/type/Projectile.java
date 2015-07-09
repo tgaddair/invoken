@@ -34,7 +34,7 @@ public abstract class Projectile extends CollisionEntity implements AgentHandler
         setup(owner);
 
         Level level = owner.getLocation();
-        bullet = level.obtainBullet(this, position, velocity);
+        bullet = level.obtainBullet(this);
     }
     
     public Damage getDamage() {
