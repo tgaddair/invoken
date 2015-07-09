@@ -47,6 +47,7 @@ import com.eldritch.invoken.actor.Profession;
 import com.eldritch.invoken.actor.ai.Squad;
 import com.eldritch.invoken.actor.aug.Action;
 import com.eldritch.invoken.actor.factions.Faction;
+import com.eldritch.invoken.actor.items.Icepik;
 import com.eldritch.invoken.actor.items.Item;
 import com.eldritch.invoken.actor.pathfinding.PathManager;
 import com.eldritch.invoken.actor.type.Agent;
@@ -1292,6 +1293,9 @@ public class Level {
 
         Item grenade = Item.fromProto(InvokenGame.ITEM_READER.readAsset("FragmentationGrenade"));
         inv.addItem(grenade, 3);
+        
+        Item icepik = Icepik.from(1);
+        inv.addItem(icepik, 1);
 
         // Item weapon =
         // Item.fromProto(InvokenGame.ITEM_READER.readAsset("RailGun"));

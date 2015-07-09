@@ -3,6 +3,7 @@ package com.eldritch.invoken.actor.items;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.actor.AgentInventory;
+import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.actor.type.Agent.Direction;
 import com.eldritch.invoken.proto.Items;
@@ -30,6 +31,16 @@ public class Icepik extends Item {
     private Icepik(Items.Item data, int strength) {
         super(data, 0);
         this.strength = strength;
+    }
+    
+    public int getRequiredCount(Agent agent) {
+        int ability = agent.getInfo().getSubterfuge() / 10;
+        int difficulty = strength;
+        if (ability > difficulty) {
+            return 1;
+        }
+        
+        return difficulty - ability + 1;
     }
     
     public int getStrength() {
