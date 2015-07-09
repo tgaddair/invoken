@@ -18,6 +18,7 @@ import com.eldritch.invoken.actor.type.FixedPoint;
 import com.eldritch.invoken.actor.type.Npc;
 
 public class DebugEntityRenderer {
+    private static final Vector3 screen = new Vector3();
 	private final BitmapFont debugFont = new BitmapFont();
 	ShapeRenderer sr = new ShapeRenderer();
 	SpriteBatch batch = new SpriteBatch();
@@ -48,7 +49,7 @@ public class DebugEntityRenderer {
 					other.getPosition().x, other.getPosition().y);
 
 			// draw number
-			Vector3 screen = camera.project(new Vector3(
+			camera.project(screen.set(
 					(target.getPosition().x + other.getPosition().x) / 2f,
 					(target.getPosition().y + other.getPosition().y) / 2f, 0));
 			batch.begin();

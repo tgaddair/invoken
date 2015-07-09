@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
 import com.badlogic.gdx.graphics.g2d.Batch;
@@ -53,11 +54,13 @@ public class DoorActivator extends ClickActivator implements Crackable, Damageab
             "sprite/activators/blast-door-side.png", 64, 64);
     private static final TextureRegion[] sideRegionsLocked = GameScreen.getMergedRegion(
             "sprite/activators/blast-door-side-locked.png", 64, 64);
+    private static final Texture padlock = GameScreen.getTexture("icon/padlock.png");
 
     // for bounding area
     private static final int SIZE = 2;
 
     private final Vector2 center;
+    private final Vector2 renderOffset = new Vector2();
     private final LockInfo lock;
     private final Animation unlockedAnimation;
     private final Animation lockedAnimation;
@@ -264,12 +267,14 @@ public class DoorActivator extends ClickActivator implements Crackable, Damageab
             bodies.add(level.createEdge(x, y, x + SIZE, y));
             bodies.add(level.createEdge(x, y + 1, x + SIZE, y + 1));
             offset.set(1f, 0.5f);
+            renderOffset.set(1f, 0.5f);
         } else {
             x += 0.2f;
             y -= 1;
             bodies.add(level.createEdge(x + 0.2f, y, x + 0.2f, y + SIZE));
             bodies.add(level.createEdge(x + 0.5f, y, x + 0.5f, y + SIZE));
             offset.set(0.5f, 0f);
+            renderOffset.set(0.5f, 0.5f);
         }
         
         setLightWalls(level, true);
@@ -341,6 +346,11 @@ public class DoorActivator extends ClickActivator implements Crackable, Damageab
         batch.begin();
         batch.draw(frame, position.x, position.y, frame.getRegionWidth() * Settings.SCALE,
                 frame.getRegionHeight() * Settings.SCALE);
+        
+        // draw padlock
+        batch.draw(padlock, position.x + renderOffset.x, position.y + renderOffset.y, 0.5f, 0.5f);
+        
+        
         batch.end();
         
         if (bulletHandler.isDamaged() && !broken) {
