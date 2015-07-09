@@ -85,7 +85,13 @@ message Room {
 		}
 
 		optional string id = 1;
+		optional string name = 6;
 		optional Type type = 2;
+
+		// unitless relative magnitude of value, higher means more
+		// value affects affinity for patrol by NPCs, chance of being locked
+		// (with higher strength), and chance of spawning on a given floor
+		optional int32 value = 7 [default = 0];
 
 		// some pieces of furniture have custom behavior described by another asset proto
 		optional string asset_id = 3;
