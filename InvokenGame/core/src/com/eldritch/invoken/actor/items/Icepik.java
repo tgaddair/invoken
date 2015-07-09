@@ -16,8 +16,10 @@ public class Icepik extends Item {
             .build(new CacheLoader<Integer, Icepik>() {
                 public Icepik load(Integer strength) {
                     String id = "Icepik" + strength;
-                    Items.Item data = InvokenGame.ITEM_READER.readAsset(id);
-                    if (data == null) {
+                    Items.Item data;
+                    if (InvokenGame.ITEM_READER.hasAsset(id)) {
+                        data = InvokenGame.ITEM_READER.readAsset(id);
+                    } else {
                         Items.Item.Builder builder = Items.Item.newBuilder();
                         builder.setId(id);
                         builder.setName("Icepik " + strength);

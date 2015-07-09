@@ -56,8 +56,14 @@ public abstract class AssetMarshaller<T extends Message> {
                 ids.add(id);
             }
         }
-        
+
         return results;
+    }
+
+    public boolean hasAsset(String assetId) {
+        FileHandle text = Gdx.files.internal(getTextFilename(getAssetDirectory(), assetId));
+        FileHandle binary = Gdx.files.internal(getBinaryFilename(getAssetDirectory(), assetId));
+        return text.exists() || binary.exists();
     }
 
     public T readAsset(String assetId) {

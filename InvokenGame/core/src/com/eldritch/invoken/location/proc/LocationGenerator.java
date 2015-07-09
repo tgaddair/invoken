@@ -295,7 +295,7 @@ public class LocationGenerator {
             ConnectedRoom room = chamber.getValue();
             Room info = room.getInfo();
             if (info.getValue() > 0 && rand.nextDouble() < room.getLockChance()) {
-                room.lock(room.getLockStrength() + 1);
+                room.lock(room.getLockStrength());
             }
         }
     }
