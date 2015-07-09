@@ -50,7 +50,7 @@ public class Settings {
 	
 	// debug settings
 	public static final boolean GOD_MODE = false;
-	public static final boolean DEBUG_DRAW = false;
+	public static final boolean DEBUG_DRAW = true;
 	public static final boolean DEBUG_LIGHTS = false;
 	public static final boolean DEBUG_COVER = false;
 	public static final boolean DEBUG_PATHFINDING = false;

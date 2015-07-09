@@ -5,11 +5,22 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.CircleShape;
+import com.badlogic.gdx.physics.box2d.Filter;
+import com.badlogic.gdx.physics.box2d.Fixture;
+import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
+import com.eldritch.invoken.actor.AgentHandler.DelegateAgentHandler;
+import com.eldritch.invoken.actor.AgentHandler.ProjectileAgentHandler;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.TemporaryEntity;
 import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.screens.GameScreen;
 import com.eldritch.invoken.util.Damage;
+import com.eldritch.invoken.util.Settings;
 
 public class Detonation implements TemporaryEntity {
     private static final TextureRegion[] explosionRegions = GameScreen.getMergedRegion(
@@ -105,5 +116,44 @@ public class Detonation implements TemporaryEntity {
     
     public Agent getSource() {
         return damage.getSource();
+    }
+    
+    public static class AreaOfEffect extends ProjectileAgentHandler {
+        private final Body body;
+        
+        public AreaOfEffect(World world) {
+            this.body = createBody(world);
+        }
+        
+        @Override
+        public Body getBody() {
+            return body;
+        }
+        
+        private Body createBody(World world) {
+            BodyDef bodyDef = new BodyDef();
+            bodyDef.type = BodyType.StaticBody;
+            bodyDef.position.set(0, 0);
+            Body body = world.createBody(bodyDef);
+            body.setUserData(this);
+
+            CircleShape circle = new CircleShape();
+            circle.setRadius(2f);
+            FixtureDef fixtureDef = new FixtureDef();
+            fixtureDef.shape = circle;
+            fixtureDef.isSensor = true;
+
+            Fixture fixture = body.createFixture(fixtureDef);
+            fixture.setUserData(this);
+
+            Filter filter = fixture.getFilterData();
+            filter.categoryBits = Settings.BIT_BULLET;
+            filter.maskBits = Settings.BIT_SHOOTABLE;
+            fixture.setFilterData(filter);
+
+            circle.dispose();
+
+            return body;
+        }
     }
 }

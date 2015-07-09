@@ -51,6 +51,7 @@ import com.eldritch.invoken.actor.items.Icepik;
 import com.eldritch.invoken.actor.items.Item;
 import com.eldritch.invoken.actor.pathfinding.PathManager;
 import com.eldritch.invoken.actor.type.Agent;
+import com.eldritch.invoken.actor.type.AoeProjectile;
 import com.eldritch.invoken.actor.type.FixedPoint;
 import com.eldritch.invoken.actor.type.DummyPlayer;
 import com.eldritch.invoken.actor.type.InanimateEntity;
@@ -58,6 +59,7 @@ import com.eldritch.invoken.actor.type.Npc;
 import com.eldritch.invoken.actor.type.Player;
 import com.eldritch.invoken.actor.type.Projectile;
 import com.eldritch.invoken.actor.type.TemporaryEntity;
+import com.eldritch.invoken.effects.Detonation.AreaOfEffect;
 import com.eldritch.invoken.gfx.FogMaskManager;
 import com.eldritch.invoken.gfx.FogOfWarMasker;
 import com.eldritch.invoken.gfx.Light;
@@ -90,6 +92,7 @@ public class Level {
     };
 
     private final Pool<Bullet> bulletPool;
+    private final Pool<AreaOfEffect> aoePool;
     private final LineOfSightHandler losHandler = new LineOfSightHandler();
     private final Color actionsColor = new Color(1, 0, 0, 1);
 
@@ -197,6 +200,12 @@ public class Level {
                 return new Bullet(world);
             }
         };
+        aoePool = new Pool<AreaOfEffect>() {
+            @Override
+            protected AreaOfEffect newObject() {
+                return new AreaOfEffect(world);
+            }
+        };
         addWalls(world);
 
         // add encounters
@@ -217,16 +226,26 @@ public class Level {
         PointLight.setContactFilter(category, group, mask);
     }
 
-    public Bullet obtainBullet(Projectile projectile, Vector2 position,
-            Vector2 velocity) {
+    public Bullet obtainBullet(Projectile projectile) {
         Bullet bullet = bulletPool.obtain();
-        bullet.setup(projectile, position, velocity);
+        bullet.setup(projectile);
         return bullet;
     }
 
     public void freeBullet(Bullet bullet) {
         bullet.setActive(false);
         bulletPool.free(bullet);
+    }
+    
+    public AreaOfEffect obtainAreaOfEffect(AoeProjectile projectile) {
+        AreaOfEffect aoe = aoePool.obtain();
+        aoe.setup(projectile);
+        return aoe;
+    }
+    
+    public void freeAreaOfEffect(AreaOfEffect aoe) {
+        aoe.setActive(false);
+        aoePool.free(aoe);
     }
 
     public void transition(String locationName, Optional<String> encounterName) {
