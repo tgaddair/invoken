@@ -111,7 +111,11 @@ public class Minimap {
         color.set(0, 0, 1, a);
         
         ConnectedRoomManager rooms = map.getRooms();
-        if (room.isChamber()) {
+        if (Settings.DEBUG_CRITICAL_PATH) {
+            if (room.onCriticalPath()) {
+                color.set(0, 1, 0, a);
+            }
+        } else if (room.isChamber()) {
             ControlPoint cp = rooms.getControlRoom(room).getControlPoint();
             if (cp.getOrigin()) {
                 color.set(1, 0, 1, a);

@@ -56,6 +56,7 @@ public class Settings {
 	public static final boolean DEBUG_PATHFINDING = false;
 	public static final boolean DEBUG_STEALTH = false;
 	public static final boolean DEBUG_MAP = false;
+	public static final boolean DEBUG_CRITICAL_PATH = false;
 	public static final boolean SKIP_MENU = true;
 	public static final int START_LEVEL = 1;  // 1, 10, 25
 	public static final int START_FLOOR = 0;

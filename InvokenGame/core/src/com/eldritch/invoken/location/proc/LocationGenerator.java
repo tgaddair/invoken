@@ -267,8 +267,9 @@ public class LocationGenerator {
         // clutter
         InvokenGame.log("Adding Clutter");
         // map.getLayers().add(furnitureGenerator.generateClutter(base, map));
-        
+
         // lock doors
+        buildCriticalPath(rooms);
         lockDoors(rooms);
 
         // add cover points now that all collidable furniture has been placed
@@ -289,12 +290,66 @@ public class LocationGenerator {
 
         return level;
     }
-    
+
+    private static class ValuePath {
+        private final List<ConnectedRoom> rooms = new ArrayList<>();
+        private final int cost;
+
+        public ValuePath() {
+            this.cost = Integer.MAX_VALUE;
+        }
+
+        public ValuePath(List<ConnectedRoom> rooms, int cost) {
+            this.rooms.addAll(rooms);
+            this.cost = cost;
+        }
+    }
+
+    private void buildCriticalPath(ConnectedRoomManager rooms) {
+        Set<ConnectedRoom> visited = new HashSet<>();
+        for (Entry<ControlRoom, ConnectedRoom> chamber : rooms.getChambers()) {
+            if (chamber.getKey().getControlPoint().getOrigin()) {
+                ConnectedRoom room = chamber.getValue();
+                List<ConnectedRoom> active = new ArrayList<>();
+                active.add(room);
+                ValuePath best = exploreCriticalPath(rooms, room, active,
+                        room.getInfo().getValue(), visited);
+                for (ConnectedRoom criticalRooms : best.rooms) {
+                    criticalRooms.setCriticalPath(true);
+                }
+                break;
+            }
+        }
+    }
+
+    private ValuePath exploreCriticalPath(ConnectedRoomManager rooms, ConnectedRoom room,
+            List<ConnectedRoom> active, int cost, Set<ConnectedRoom> visited) {
+        if (room.isChamber() && rooms.getControlRoom(room).getControlPoint().getExit()) {
+            return new ValuePath(active, cost);
+        }
+
+        ValuePath bestPath = new ValuePath();
+        for (ConnectedRoom neighbor : room.getNeighbors()) {
+            if (!visited.contains(neighbor)) {
+                visited.add(neighbor);
+                active.add(neighbor);
+                ValuePath path = exploreCriticalPath(rooms, neighbor, active, cost
+                        + neighbor.getInfo().getValue(), visited);
+                active.remove(active.size() - 1);
+                if (path.cost < bestPath.cost) {
+                    bestPath = path;
+                }
+            }
+        }
+        return bestPath;
+    }
+
     private void lockDoors(ConnectedRoomManager rooms) {
         for (Entry<ControlRoom, ConnectedRoom> chamber : rooms.getChambers()) {
             ConnectedRoom room = chamber.getValue();
             Room info = room.getInfo();
-            if (info.getValue() > 0 && rand.nextDouble() < room.getLockChance()) {
+            if (!room.onCriticalPath() && info.getValue() > 0
+                    && rand.nextDouble() < room.getLockChance()) {
                 room.lock(room.getLockStrength());
             }
         }

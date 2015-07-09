@@ -51,7 +51,7 @@ public class HealthBar extends ProgressBar {
     }
 
     public void draw(Camera camera) {
-        if (isVisible()) {
+        if (isVisible() && entity != null) {
             entity.setHealthIndicator(worldPosition);
             Vector3 screen = camera.project(worldPosition);
             setPosition(screen.x, screen.y - 10);

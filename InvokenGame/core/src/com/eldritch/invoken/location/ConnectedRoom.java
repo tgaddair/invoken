@@ -29,6 +29,7 @@ public class ConnectedRoom {
 	private final Item key;
 	
 	private Optional<String> faction = Optional.absent();
+	private boolean criticalPath = false;
 	
 	public ConnectedRoom(Room room, Type type, Collection<NaturalVector2> points) {
 	    this.room = room;
@@ -36,6 +37,14 @@ public class ConnectedRoom {
 		this.points.addAll(points);
 		center = calculateCenter();
 		this.key = Credential.from(hashCode(), room);
+	}
+	
+	public void setCriticalPath(boolean criticalPath) {
+	    this.criticalPath = criticalPath;
+	}
+	
+	public boolean onCriticalPath() {
+	    return criticalPath;
 	}
 	
 	public Room getInfo() {
