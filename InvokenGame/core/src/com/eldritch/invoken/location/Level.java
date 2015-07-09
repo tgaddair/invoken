@@ -1295,7 +1295,7 @@ public class Level {
         inv.addItem(grenade, 3);
         
         Item icepik = Icepik.from(1);
-        inv.addItem(icepik, 1);
+        inv.addItem(icepik, 5);
 
         // Item weapon =
         // Item.fromProto(InvokenGame.ITEM_READER.readAsset("RailGun"));

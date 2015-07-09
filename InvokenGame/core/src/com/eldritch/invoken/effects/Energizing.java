@@ -26,7 +26,7 @@ public class Energizing extends BasicEffect {
 	@Override
     protected void doApply() {
 	    if (duration == 0) {
-	        target.getInfo().restore(magnitude);
+	        target.getInfo().changeFatigue(-magnitude);
 	        applied = true;
 	    }
     }

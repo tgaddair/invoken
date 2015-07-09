@@ -332,8 +332,10 @@ public class AgentInfo {
     }
 
     public float restore(float value) {
-        value *= BASE_ENERGY_RATE * getFatigueModifier();
-        float delta = Math.max(Math.min(value, getMaxEnergy() - energy), 0);
+//        value *= BASE_ENERGY_RATE * getFatigueModifier();
+        value *= BASE_ENERGY_RATE;
+        float maxEnergy = getMaxEnergy() * getFatigueModifier();
+        float delta = Math.max(Math.min(value, maxEnergy - energy), 0);
         energy += delta;
         return delta;
     }
@@ -347,7 +349,7 @@ public class AgentInfo {
     }
 
     public float getFatigueModifier() {
-        return 1f - Math.min(getFatigue() / 100f, 0.5f);
+        return 1f - Math.min(getFatigue() / 100f, 1f);
     }
 
     public float damage(float value) {
