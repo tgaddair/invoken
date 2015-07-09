@@ -252,13 +252,13 @@ public class DoorActivator extends ClickActivator implements Crackable,
         if (front) {
             bodies.add(level.createEdge(x, y, x + SIZE, y));
             bodies.add(level.createEdge(x, y + 1, x + SIZE, y + 1));
-            offset.set(1f, 0);
+            offset.set(1f, 0.5f);
         } else {
             x += 0.2f;
             y -= 1;
             bodies.add(level.createEdge(x + 0.2f, y, x + 0.2f, y + SIZE));
             bodies.add(level.createEdge(x + 0.5f, y, x + 0.5f, y + SIZE));
-            offset.set(0.5f, 0);
+            offset.set(0.5f, 0f);
         }
         
         setLightWalls(level, true);
@@ -274,7 +274,7 @@ public class DoorActivator extends ClickActivator implements Crackable,
     }
     
     private Body createSensor(Level level, Vector2 offset) {
-        float radius = SIZE;
+        float radius = 1.5f;
         CircleShape shape = new CircleShape();
         shape.setPosition(offset);
         shape.setRadius(radius);
