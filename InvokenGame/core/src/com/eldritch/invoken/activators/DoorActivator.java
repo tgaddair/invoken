@@ -119,9 +119,23 @@ public class DoorActivator extends ClickActivator implements Crackable,
                 applyLocked(lockChange.get());
             }
         }
+        
         if (finished) {
             postActivation(level);
         }
+        
+        // only change the state of the door if it differs from the current
+        // state must click to unlock
+        boolean shouldOpen = !proximityAgents.isEmpty();
+        if (shouldOpen != open && !lock.isLocked()) {
+            lastProximityAgents.removeAll(proximityAgents);
+            triggerAgents.clear();
+            triggerAgents.addAll(lastProximityAgents);
+            setOpened(shouldOpen, level);
+        }
+
+        lastProximityAgents.clear();
+        lastProximityAgents.addAll(proximityAgents);
     }
 
     @Override
@@ -136,18 +150,6 @@ public class DoorActivator extends ClickActivator implements Crackable,
         }
 
         setOpened(!open, level);
-    }
-    
-    private void trigger(boolean open, Agent agent, Level level) {
-        if (!lock.isLocked()) {
-            lastProximityAgents.removeAll(proximityAgents);
-            triggerAgents.clear();
-            triggerAgents.addAll(lastProximityAgents);
-            setOpened(open, level);
-        }
-        
-        lastProximityAgents.clear();
-        lastProximityAgents.addAll(proximityAgents);
     }
 
     private synchronized void setOpened(boolean opened, Level level) {
@@ -450,18 +452,12 @@ public class DoorActivator extends ClickActivator implements Crackable,
         @Override
         public boolean handle(Agent agent) {
             proximityAgents.add(agent);
-            if (proximityAgents.size() == 1) {
-                trigger(true, agent, agent.getLocation());
-            }
             return true;
         }
         
         @Override
         public boolean handleEnd(Agent agent) {
             proximityAgents.remove(agent);
-            if (proximityAgents.isEmpty()) {
-                trigger(false, agent, agent.getLocation());
-            }
             return true;
         }
     }
