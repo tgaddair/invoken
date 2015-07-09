@@ -29,6 +29,7 @@ import com.eldritch.invoken.actor.util.AgentListener;
 import com.eldritch.invoken.actor.util.Damageable;
 import com.eldritch.invoken.gfx.Light;
 import com.eldritch.invoken.gfx.Light.StaticLight;
+import com.eldritch.invoken.gfx.WorldText;
 import com.eldritch.invoken.location.Bullet;
 import com.eldritch.invoken.location.ConnectedRoom;
 import com.eldritch.invoken.location.Level;
@@ -61,6 +62,7 @@ public class DoorActivator extends ClickActivator implements Crackable, Damageab
 
     private final Vector2 center;
     private final Vector2 renderOffset = new Vector2();
+    private final WorldText lockText = new WorldText();
     private final LockInfo lock;
     private final Animation unlockedAnimation;
     private final Animation lockedAnimation;
@@ -348,10 +350,15 @@ public class DoorActivator extends ClickActivator implements Crackable, Damageab
                 frame.getRegionHeight() * Settings.SCALE);
         
         // draw padlock
-        batch.draw(padlock, position.x + renderOffset.x, position.y + renderOffset.y, 0.5f, 0.5f);
-        
-        
+        float w = 0.5f;
+        float h = 0.5f;
+        float x = position.x + renderOffset.x - w / 2f;
+        float y = position.y + renderOffset.y;
+        batch.draw(padlock, x, y, w, h);
         batch.end();
+        
+        // draw icepik requirements
+        lockText.render("1", level.getCamera(), x + w, y + h);
         
         if (bulletHandler.isDamaged() && !broken) {
             // update and render health
