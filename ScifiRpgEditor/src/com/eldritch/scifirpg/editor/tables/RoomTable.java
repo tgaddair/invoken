@@ -33,7 +33,7 @@ import com.jgoodies.forms.layout.FormLayout;
 
 public class RoomTable extends MajorAssetTable<Room> {
     private static final long serialVersionUID = 1L;
-    private static final String[] COLUMN_NAMES = { "ID", "Size" };
+    private static final String[] COLUMN_NAMES = { "ID", "Name", "Size", "Value" };
 
     public RoomTable() {
         super(COLUMN_NAMES, "Room");
@@ -46,7 +46,11 @@ public class RoomTable extends MajorAssetTable<Room> {
 
     @Override
     protected Object[] getDisplayFields(Room asset) {
-        return new Object[] { asset.getId(), asset.getSize().name() };
+        return new Object[] { 
+                asset.getId(),
+                asset.getName(),
+                asset.getSize().name(),
+                asset.getValue() };
     }
 
     @Override
@@ -75,9 +79,11 @@ public class RoomTable extends MajorAssetTable<Room> {
         private static final long serialVersionUID = 1L;
 
         private final JTextField idField = new JTextField();
+        private final JTextField nameField = new JTextField();
         private final JComboBox<Size> sizeBox = new JComboBox<Size>(Size.values());
         private final FurnitureTable furnitureTable = new FurnitureTable();
         private final JCheckBox uniqueCheck = new JCheckBox();
+        private final JTextField valueField = new JTextField();
 
         public RoomEditorPanel(RoomTable owner, JFrame frame, Optional<Room> prev) {
             super(owner, frame, prev);
@@ -87,14 +93,21 @@ public class RoomTable extends MajorAssetTable<Room> {
             builder.appendColumn("right:pref");
             builder.appendColumn("3dlu");
             builder.appendColumn("fill:max(pref; 100px)");
+            
+            nameField.addActionListener(new NameTypedListener(idField));
+            builder.append("Name:", nameField);
+            builder.nextLine();
 
             builder.append("ID:", idField);
             builder.nextLine();
-
+            
             builder.append("Size:", sizeBox);
             builder.nextLine();
 
             builder.append("Unique:", uniqueCheck);
+            builder.nextLine();
+            
+            builder.append("Value:", valueField);
             builder.nextLine();
 
             builder.appendRow("fill:p:grow");
@@ -108,9 +121,11 @@ public class RoomTable extends MajorAssetTable<Room> {
 
             if (prev.isPresent()) {
                 Room room = prev.get();
+                nameField.setText(room.getName());
                 idField.setText(room.getId());
                 sizeBox.setSelectedItem(room.getSize());
                 uniqueCheck.setSelected(room.getUnique());
+                valueField.setText(String.valueOf(room.getValue()));
                 for (Furniture f : room.getFurnitureList()) {
                     furnitureTable.addAsset(f);
                 }
@@ -122,8 +137,9 @@ public class RoomTable extends MajorAssetTable<Room> {
 
         @Override
         public Room createAsset() {
-            return Room.newBuilder().setId(idField.getText())
+            return Room.newBuilder().setId(idField.getText()).setName(nameField.getText())
                     .setSize((Size) sizeBox.getSelectedItem()).setUnique(uniqueCheck.isSelected())
+                    .setValue(Integer.valueOf(valueField.getText()))
                     .addAllFurniture(furnitureTable.getAssets()).build();
         }
     }
