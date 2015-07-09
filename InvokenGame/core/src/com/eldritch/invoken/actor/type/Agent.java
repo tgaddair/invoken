@@ -21,6 +21,7 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.CircleShape;
@@ -55,6 +56,7 @@ import com.eldritch.invoken.actor.util.Announcement;
 import com.eldritch.invoken.actor.util.Announcement.BanterAnnouncement;
 import com.eldritch.invoken.actor.util.Announcement.BasicAnnouncement;
 import com.eldritch.invoken.actor.util.Announcement.ResponseAnnouncement;
+import com.eldritch.invoken.actor.util.Damageable;
 import com.eldritch.invoken.actor.util.DodgeHandler;
 import com.eldritch.invoken.actor.util.DodgeHandler.DefaultDodgeHandler;
 import com.eldritch.invoken.actor.util.Interactable;
@@ -80,7 +82,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 public abstract class Agent extends CollisionEntity implements Steerable<Vector2>, Conversable,
-        Lootable, Interactable {
+        Lootable, Interactable, Damageable {
     public static final int MAX_DST2 = 150;
     public static final int INTERACT_RANGE = 5;
     public static final float UNMASK_RANGE = 10;
@@ -465,13 +467,27 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     public void kill() {
         info.setHealth(0);
     }
+    
+    @Override
+    public float getBaseHealth() {
+        return info.getBaseHealth();
+    }
 
+    @Override
+    public float getHealth() {
+        return info.getHealth();
+    }
+    
+    @Override
     public boolean isAlive() {
         return info.isAlive();
     }
-
-    public float getHealth() {
-        return info.getHealth();
+    
+    @Override
+    public void setHealthIndicator(Vector3 worldCoords) {
+        Vector2 position = getRenderPosition();
+        float h = getHeight() / 2;
+        worldCoords.set(position.x, position.y + h, 0);
     }
 
     public float damage(Damage damage) {

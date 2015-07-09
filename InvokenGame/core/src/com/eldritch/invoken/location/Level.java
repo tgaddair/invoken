@@ -483,6 +483,10 @@ public class Level {
     public void setCamera(OrthographicCamera camera) {
         this.camera = camera;
     }
+    
+    public OrthographicCamera getCamera() {
+        return camera;
+    }
 
     public void shiftView(Vector2 offset) {
         cameraV.x += offset.x;
@@ -698,8 +702,8 @@ public class Level {
         for (Agent agent : activeEntities) {
             if (agent.getInfo().getHealthPercent() < 1) {
                 HealthBar healthBar = healthBars.get(agent);
-                healthBar.update(agent, camera);
-                healthBar.draw();
+                healthBar.update(agent);
+                healthBar.draw(camera);
             }
         }
 

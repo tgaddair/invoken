@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
@@ -24,6 +25,7 @@ import com.eldritch.invoken.actor.BulletHandler;
 import com.eldritch.invoken.actor.items.Item;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.util.AgentListener;
+import com.eldritch.invoken.actor.util.Damageable;
 import com.eldritch.invoken.gfx.Light;
 import com.eldritch.invoken.gfx.Light.StaticLight;
 import com.eldritch.invoken.location.Bullet;
@@ -41,7 +43,7 @@ import com.eldritch.invoken.util.SoundManager.SoundEffect;
 import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 
-public class DoorActivator extends ClickActivator implements Crackable,
+public class DoorActivator extends ClickActivator implements Crackable, Damageable,
         AgentListener {
     private static final TextureRegion[] frontRegions = GameScreen.getMergedRegion(
             "sprite/activators/blast-door-short.png", 64, 64);
@@ -59,6 +61,8 @@ public class DoorActivator extends ClickActivator implements Crackable,
     private final LockInfo lock;
     private final Animation unlockedAnimation;
     private final Animation lockedAnimation;
+    
+    private final DoorBulletHandler bulletHandler;
 
     private final boolean front;
     private boolean open = false;
@@ -89,6 +93,7 @@ public class DoorActivator extends ClickActivator implements Crackable,
 
     public DoorActivator(int x, int y, LockInfo lock, boolean front) {
         super(NaturalVector2.of(x, y), 2, 2);
+        this.bulletHandler = new DoorBulletHandler();
         this.lock = lock;
         this.front = front;
 
@@ -274,7 +279,7 @@ public class DoorActivator extends ClickActivator implements Crackable,
         sensor = createSensor(level, offset);
         for (Body body : bodies) {
             for (Fixture fixture : body.getFixtureList()) {
-                fixture.setUserData(new DoorBulletHandler());
+                fixture.setUserData(bulletHandler);
             }
         }
     }
@@ -336,10 +341,35 @@ public class DoorActivator extends ClickActivator implements Crackable,
         batch.begin();
         batch.draw(frame, position.x, position.y, frame.getRegionWidth() * Settings.SCALE,
                 frame.getRegionHeight() * Settings.SCALE);
-        
-        // update and render health
-        
         batch.end();
+        
+        if (bulletHandler.isDamaged() && !broken) {
+            // update and render health
+            healthBar.update(this);
+            healthBar.draw(level.getCamera());
+        }
+    }
+    
+    @Override
+    public float getBaseHealth() {
+        return bulletHandler.getBaseStrength();
+    }
+
+    @Override
+    public float getHealth() {
+        return bulletHandler.getStrength();
+    }
+    
+    @Override
+    public boolean isAlive() {
+        return !broken;
+    }
+    
+    @Override
+    public void setHealthIndicator(Vector3 worldCoords) {
+        Vector2 position = getPosition();
+        float h = getHeight() - getHeight() / 10f;
+        worldCoords.set(position.x, position.y + h, 0);
     }
 
     @Override
@@ -458,7 +488,20 @@ public class DoorActivator extends ClickActivator implements Crackable,
     }
     
     private class DoorBulletHandler extends BulletHandler {
-        private float health = 100f;
+        private static final float BASE_HEALTH = 100f;
+        private float health = BASE_HEALTH;
+        
+        public boolean isDamaged() {
+            return getStrength() < getBaseStrength();
+        }
+        
+        public float getBaseStrength() {
+            return BASE_HEALTH;
+        }
+        
+        public float getStrength() {
+            return health;
+        }
         
         @Override
         public boolean handle(Bullet bullet) {

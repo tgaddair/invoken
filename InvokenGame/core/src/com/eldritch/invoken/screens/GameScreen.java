@@ -319,7 +319,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         level.render(delta, camera, selector, tacticalPause);
 
         // draw health bars
-        selectedHealth.draw();
+        selectedHealth.draw(camera);
         batch.begin();
         dialogue.draw(batch);
         // draw minimap
