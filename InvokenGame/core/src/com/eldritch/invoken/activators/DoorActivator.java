@@ -269,7 +269,7 @@ public class DoorActivator extends ClickActivator implements Crackable, Damageab
             bodies.add(level.createEdge(x, y, x + SIZE, y));
             bodies.add(level.createEdge(x, y + 1, x + SIZE, y + 1));
             offset.set(1f, 0.5f);
-            renderOffset.set(1f, 0.5f);
+            renderOffset.set(1f, 1f);
         } else {
             x += 0.2f;
             y -= 1;
@@ -348,17 +348,21 @@ public class DoorActivator extends ClickActivator implements Crackable, Damageab
         batch.begin();
         batch.draw(frame, position.x, position.y, frame.getRegionWidth() * Settings.SCALE,
                 frame.getRegionHeight() * Settings.SCALE);
-        
-        // draw padlock
-        float w = 0.5f;
-        float h = 0.5f;
-        float x = position.x + renderOffset.x - w / 2f;
-        float y = position.y + renderOffset.y;
-        batch.draw(padlock, x, y, w, h);
         batch.end();
         
-        // draw icepik requirements
-        lockText.render("1", level.getCamera(), x + w, y + h);
+        if (!broken && lock.isLocked() && proximityAgents.contains(level.getPlayer())) {
+            // draw padlock
+            float w = 0.5f;
+            float h = 0.5f;
+            float x = position.x + renderOffset.x - w / 2f;
+            float y = position.y + renderOffset.y;
+            batch.begin();
+            batch.draw(padlock, x, y, w, h);
+            batch.end();
+            
+            // draw icepik requirements
+            lockText.render("1", level.getCamera(), x + w, y + h);
+        }
         
         if (bulletHandler.isDamaged() && !broken) {
             // update and render health
