@@ -372,8 +372,7 @@ public class DoorActivator extends ClickActivator implements Crackable, Damageab
             batch.setColor(Color.WHITE);
 
             // draw icepik requirements
-            Icepik pick = Icepik.from(lock.getStrength());
-            lockText.render(String.valueOf(pick.getRequiredCount(level.getPlayer())),
+            lockText.render(String.valueOf(lock.getRequiredPiks(level.getPlayer())),
                     level.getCamera(), x + w, y + h);
         }
 
@@ -382,19 +381,6 @@ public class DoorActivator extends ClickActivator implements Crackable, Damageab
             healthBar.update(this);
             healthBar.draw(level.getCamera());
         }
-    }
-
-    private boolean canPick(Agent agent) {
-        int piks = lock.getAvailablePiks(agent);
-        int required = lock.getRequiredPiks(agent);
-        return piks >= required;
-    }
-
-    private void pick(Agent agent) {
-        Icepik item = Icepik.from(lock.getStrength());
-        int required = lock.getRequiredPiks(agent);
-        agent.getInventory().removeItem(item, required);
-        setLocked(false);
     }
 
     @Override
@@ -432,11 +418,25 @@ public class DoorActivator extends ClickActivator implements Crackable, Damageab
         lock.setStrength(strength);
         setLocked(true);
     }
+    
+    private boolean canPick(Agent agent) {
+        int piks = lock.getAvailablePiks(agent);
+        int required = lock.getRequiredPiks(agent);
+        System.out.println(piks + " -> " + required);
+        return piks >= required;
+    }
+
+    private void pick(Agent agent) {
+        Icepik item = Icepik.from(agent.getLocation());
+        int required = lock.getRequiredPiks(agent);
+        agent.getInventory().removeItem(item, required);
+        lock.getRoom().setLocked(false);
+    }
 
     @Override
     public void crack(Agent source) {
         // unlock
-        setLocked(false);
+        lock.getRoom().setLocked(false);
         // location.alertTo(agent);
     }
 
@@ -530,7 +530,7 @@ public class DoorActivator extends ClickActivator implements Crackable, Damageab
         }
         
         public int getAvailablePiks(Agent agent) {
-            Icepik item = Icepik.from(getStrength());
+            Icepik item = Icepik.from(agent.getLocation());
             if (agent.getInventory().hasItem(item)) {
                 return agent.getInventory().getItemCount(item);
             }
@@ -538,8 +538,15 @@ public class DoorActivator extends ClickActivator implements Crackable, Damageab
         }
         
         public int getRequiredPiks(Agent agent) {
-            Icepik item = Icepik.from(getStrength());
-            return item.getRequiredCount(agent);
+            int ability = agent.getInfo().getSubterfuge() / 10;
+            int difficulty = strength;
+            if (ability >= difficulty) {
+                return 1;
+            }
+            
+            // required piks scales with the square of the difference
+            int delta = difficulty - ability;
+            return delta * delta + 1;
         }
 
         public static LockInfo from(ControlPoint controlPoint, ConnectedRoom room) {

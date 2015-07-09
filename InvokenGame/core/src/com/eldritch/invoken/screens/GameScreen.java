@@ -727,8 +727,9 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         // handle activators
         for (Activator activator : level.getActivators()) {
             if (activator.click(player, level, world.x, world.y)) {
-                // allow multiple activators
+                // disallow multiple activators
                 selection = true;
+                break;
             }
         }
 

@@ -350,7 +350,7 @@ public class LocationGenerator {
             Room info = room.getInfo();
             if (!room.onCriticalPath() && info.getValue() > 0
                     && rand.nextDouble() < room.getLockChance()) {
-                room.lock(room.getLockStrength());
+                room.lock(room.getLockStrength() + 1);
             }
         }
     }
