@@ -51,6 +51,16 @@ public class ConnectedRoom {
 	    }
 	}
 	
+	public void lock(int strength) {
+	    for (DoorActivator door : doors) {
+	        door.lock(strength);
+	    }
+	}
+	
+	public Iterable<DoorActivator> getDoors() {
+	    return doors;
+	}
+	
 	public Iterable<Agent> getResidents() {
 	    return residents;
 	}

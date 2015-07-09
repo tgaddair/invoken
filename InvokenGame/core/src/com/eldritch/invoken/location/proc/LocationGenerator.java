@@ -15,6 +15,7 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Random;
 import java.util.Set;
 
@@ -266,6 +267,9 @@ public class LocationGenerator {
         // clutter
         InvokenGame.log("Adding Clutter");
         // map.getLayers().add(furnitureGenerator.generateClutter(base, map));
+        
+        // lock doors
+        lockDoors(rooms);
 
         // add cover points now that all collidable furniture has been placed
         map.addAllCover(getCover(base, collision));
@@ -284,6 +288,15 @@ public class LocationGenerator {
         // saveLayer(base);
 
         return level;
+    }
+    
+    private void lockDoors(ConnectedRoomManager rooms) {
+        for (Entry<ControlRoom, ConnectedRoom> chamber : rooms.getChambers()) {
+            ConnectedRoom room = chamber.getValue();
+            if (Math.random() < 0.5) {
+                room.lock(1);
+            }
+        }
     }
 
     private List<FixedPoint> getCover(LocationLayer base, CollisionLayer collision) {

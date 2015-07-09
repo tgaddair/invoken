@@ -34,6 +34,7 @@ import com.eldritch.invoken.proto.Effects.DamageType;
 import com.eldritch.invoken.proto.Locations.ControlPoint;
 import com.eldritch.invoken.screens.GameScreen;
 import com.eldritch.invoken.state.Inventory;
+import com.eldritch.invoken.ui.HealthBar;
 import com.eldritch.invoken.util.Damage;
 import com.eldritch.invoken.util.Settings;
 import com.eldritch.invoken.util.SoundManager.SoundEffect;
@@ -71,6 +72,7 @@ public class DoorActivator extends ClickActivator implements Crackable,
     private Body sensor;
 
     private Level level = null;
+    private HealthBar healthBar = null;
     private boolean activating = false;
     private boolean broken = false;
     private boolean finished = false;
@@ -246,6 +248,8 @@ public class DoorActivator extends ClickActivator implements Crackable,
     @Override
     public void register(Level level) {
         this.level = level;
+        this.healthBar = level.createHealthBar();
+        
         Vector2 position = getPosition();
         float x = (int) position.x;
         float y = (int) position.y;
@@ -332,6 +336,9 @@ public class DoorActivator extends ClickActivator implements Crackable,
         batch.begin();
         batch.draw(frame, position.x, position.y, frame.getRegionWidth() * Settings.SCALE,
                 frame.getRegionHeight() * Settings.SCALE);
+        
+        // update and render health
+        
         batch.end();
     }
 
@@ -342,6 +349,11 @@ public class DoorActivator extends ClickActivator implements Crackable,
             return Float.POSITIVE_INFINITY;
         }
         return getPosition().y;
+    }
+    
+    public void lock(int strength) {
+        lock.setStrength(strength);
+        setLocked(true);
     }
 
     @Override
@@ -378,8 +390,8 @@ public class DoorActivator extends ClickActivator implements Crackable,
 
     public static class LockInfo {
         private final Optional<Item> key;
-        private final int strength;
         private final ConnectedRoom room;
+        private int strength;
         private boolean locked;
 
         public LockInfo(String keyId, int strength, ConnectedRoom room) {
@@ -398,7 +410,7 @@ public class DoorActivator extends ClickActivator implements Crackable,
             // 2+ -> locked
             // 10 -> requires key
             this.strength = strength;
-            locked = uniqueKey || strength > 1;
+            locked = uniqueKey || shouldLock();
         }
 
         public ConnectedRoom getRoom() {
@@ -407,6 +419,13 @@ public class DoorActivator extends ClickActivator implements Crackable,
 
         public Item getKey() {
             return key.get();
+        }
+        
+        public void setStrength(int strength) {
+            this.strength = strength;
+            if (shouldLock()) {
+                locked = true;
+            }
         }
 
         public int getStrength() {
@@ -427,6 +446,10 @@ public class DoorActivator extends ClickActivator implements Crackable,
 
         public boolean hasKey(Inventory inventory) {
             return !key.isPresent() || inventory.hasItem(key.get());
+        }
+        
+        private boolean shouldLock() {
+            return strength > 1;
         }
 
         public static LockInfo from(ControlPoint controlPoint, ConnectedRoom room) {

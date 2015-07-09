@@ -41,7 +41,6 @@ import com.badlogic.gdx.utils.Pool;
 import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.activators.Activator;
 import com.eldritch.invoken.activators.SecurityCamera;
-import com.eldritch.invoken.actor.AgentHandler;
 import com.eldritch.invoken.actor.AgentInventory;
 import com.eldritch.invoken.actor.Drawable;
 import com.eldritch.invoken.actor.Profession;
@@ -452,6 +451,10 @@ public class Level {
 
     public Agent getAgentById(String id) {
         return ids.get(id);
+    }
+    
+    public HealthBar createHealthBar() {
+        return new HealthBar(state.getSkin());
     }
 
     private void addActor(Agent agent) {
