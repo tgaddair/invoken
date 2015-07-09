@@ -18,7 +18,7 @@ public class Credential extends Item {
         // cannot be equipped
         return false;
     }
-    
+
     @Override
     public void addFrom(AgentInventory inventory) {
     }
@@ -38,8 +38,9 @@ public class Credential extends Item {
     }
 
     public static Credential from(int id, Room data) {
-        String prefix = !Strings.isNullOrEmpty(data.getId()) ? data.getId() : String.valueOf(id);
-        
+        String prefix = !Strings.isNullOrEmpty(data.getName()) ? data.getName() : String
+                .valueOf(id);
+
         Items.Item.Builder builder = Items.Item.newBuilder();
         builder.setId(String.valueOf(id));
         builder.setName(prefix + " Credentials");

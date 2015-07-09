@@ -293,8 +293,9 @@ public class LocationGenerator {
     private void lockDoors(ConnectedRoomManager rooms) {
         for (Entry<ControlRoom, ConnectedRoom> chamber : rooms.getChambers()) {
             ConnectedRoom room = chamber.getValue();
-            if (Math.random() < 0.5) {
-//                room.lock(1);
+            Room info = room.getInfo();
+            if (info.getValue() > 0 && rand.nextDouble() < room.getLockChance()) {
+                room.lock(1);
             }
         }
     }

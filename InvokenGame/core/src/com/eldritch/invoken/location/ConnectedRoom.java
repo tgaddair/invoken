@@ -9,6 +9,7 @@ import com.eldritch.invoken.actor.items.Credential;
 import com.eldritch.invoken.actor.items.Item;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.proto.Locations.Room;
+import com.eldritch.invoken.util.Heuristics;
 import com.google.common.base.Optional;
 import com.google.common.collect.Sets;
 
@@ -39,6 +40,11 @@ public class ConnectedRoom {
 	
 	public Room getInfo() {
 	    return room;
+	}
+	
+	public double getLockChance() {
+	    int value = room.getValue();
+	    return Heuristics.sigmoid(value / 25f) - 0.25f;
 	}
 	
 	public void addDoor(DoorActivator door) {
