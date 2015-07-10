@@ -37,6 +37,7 @@ import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 
 public abstract class RangedWeapon extends Item {
+    private static final float BULLET_RECLAIM_CHANCE = 0.25f;
     private static final float BASE_COST = 5f;
     private static final float BULLET_VELOCITY = 25;
     private static final float EPS = 5f;
@@ -233,16 +234,24 @@ public abstract class RangedWeapon extends Item {
 
     public class RangedWeaponBullet extends HandledBullet {
         private final TextureRegion texture;
+        private final Ammunition ammo;
         
         public RangedWeaponBullet(Agent owner, TextureRegion texture) {
             super(owner, texture, BULLET_VELOCITY * 0.75f, Damage.from(owner, RangedWeapon.this));
             this.texture = texture;
+            
+            // with some prob, add the bullet to the inventory of the target
+            // note that this logic assumes that ammunition is removed after bullet application
+            ammo = owner.getInventory().getAmmunition(getType());
         }
 
         @Override
         protected void apply(Agent owner, Agent target) {
             target.addEffect(new Stunned(owner, target, 0.2f));
             target.addEffect(new Bleed(target, getDamage(), velocity.cpy().nor().scl(150)));
+            if (ammo != null && Math.random() < BULLET_RECLAIM_CHANCE) {
+                target.getInventory().addItem(ammo);
+            }
             InvokenGame.SOUND_MANAGER.playAtPoint(SoundEffect.HIT, target.getPosition());
         }
 
