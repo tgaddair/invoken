@@ -84,6 +84,8 @@ public class InventoryMenu {
         AgentInventory inventory = player.getInfo().getInventory();
         if (item.isEquipped(inventory)) {
             button.setStyle(skin.get("selected", TextButtonStyle.class));
+        } else if (!player.canEquip(item)) {
+            button.setStyle(skin.get("encrypted", TextButtonStyle.class));
         } else {
             button.setStyle(skin.get("choice", TextButtonStyle.class));
         }

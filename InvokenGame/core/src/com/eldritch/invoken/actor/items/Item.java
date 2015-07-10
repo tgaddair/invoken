@@ -11,7 +11,6 @@ import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.actor.type.Agent.Direction;
 import com.eldritch.invoken.proto.Items;
 import com.eldritch.invoken.util.Settings;
-import com.google.common.base.CaseFormat;
 
 public abstract class Item {
     protected final Items.Item data;
@@ -81,7 +80,7 @@ public abstract class Item {
 
     public String getName(Agent viewer) {
         if (isEncrypted() && !viewer.isIdentified(getId())) {
-            return "Unknown " + getTypeName();
+            return String.format("[ Unknown %s ]", getTypeName());
         }
         return getName();
     }

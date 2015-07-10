@@ -75,7 +75,8 @@ public class LootMenu {
 	
 	private void addItemButton(ItemState itemState, final Player player, final Lootable looting) {
 		final Item item = itemState.getItem();
-		TextButtonStyle buttonStyle = skin.get("choice", TextButtonStyle.class);
+		String styleName = player.canEquip(item) ? "choice" : "encrypted";
+		TextButtonStyle buttonStyle = skin.get(styleName, TextButtonStyle.class);
 		final TextButton itemButton = new TextButton(getText(item, itemState.getCount()), buttonStyle);
 		itemButton.addListener(new DefaultInputListener() {
 			@Override
