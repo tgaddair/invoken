@@ -452,7 +452,7 @@ public class Level {
     public Agent getAgentById(String id) {
         return ids.get(id);
     }
-    
+
     public HealthBar createHealthBar() {
         return new HealthBar(state.getSkin());
     }
@@ -483,7 +483,7 @@ public class Level {
     public void setCamera(OrthographicCamera camera) {
         this.camera = camera;
     }
-    
+
     public OrthographicCamera getCamera() {
         return camera;
     }
@@ -1287,21 +1287,22 @@ public class Level {
         // player.getInfo().getInventory().addItem(Fragment.getInstance(),
         // 1000);
 
-//        Item bullet = Item.fromProto(InvokenGame.ITEM_READER.readAsset("PistolBullet"));
-        Item bullet = Item.fromProto(InvokenGame.ITEM_READER.readAsset("ShotgunShell"));
+        Item bullet = Item.fromProto(InvokenGame.ITEM_READER.readAsset("PistolBullet"));
+        // Item bullet =
+        // Item.fromProto(InvokenGame.ITEM_READER.readAsset("ShotgunShell"));
         inv.addItem(bullet, 25);
 
         Item grenade = Item.fromProto(InvokenGame.ITEM_READER.readAsset("FragmentationGrenade"));
         inv.addItem(grenade, 3);
-        
+
         Item icepik = Icepik.from(1);
         inv.addItem(icepik, 5);
 
         // Item weapon =
         // Item.fromProto(InvokenGame.ITEM_READER.readAsset("RailGun"));
-         Item weapon =
-         Item.fromProto(InvokenGame.ITEM_READER.readAsset("Shotgun"));
-//        Item weapon = Item.fromProto(InvokenGame.ITEM_READER.readAsset("DamagedPistol"));
+        // Item weapon =
+        // Item.fromProto(InvokenGame.ITEM_READER.readAsset("Shotgun"));
+        Item weapon = Item.fromProto(InvokenGame.ITEM_READER.readAsset("DamagedPistol"));
         // Item weapon =
         // Item.fromProto(InvokenGame.ITEM_READER.readAsset("AssaultRifle"));
         inv.addItem(weapon);

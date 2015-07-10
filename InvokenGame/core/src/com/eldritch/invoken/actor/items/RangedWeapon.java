@@ -188,11 +188,23 @@ public abstract class RangedWeapon extends Item {
         return String.format("sprite/items/weapons/%s.png", asset);
     }
 
-    public class ShotgunPellet extends RangedWeaponBullet {
+    public class ShotgunPellet extends HandledBullet {
         public ShotgunPellet(Agent owner, float theta, float scale) {
-            super(owner, PELLET_TEXTURE, BULLET_VELOCITY * 0.5f, Damage.from(owner, RangedWeapon.this, owner
+            super(owner, texture, BULLET_VELOCITY * 0.5f, Damage.from(owner, RangedWeapon.this, owner
                     .getWeaponSentry().getPosition(), scale));
             rotate(theta);
+        }
+
+        @Override
+        protected void apply(Agent owner, Agent target) {
+            target.addEffect(new Stunned(owner, target, 0.2f));
+            target.addEffect(new Bleed(target, getDamage(), velocity.cpy().nor().scl(150)));
+            InvokenGame.SOUND_MANAGER.playAtPoint(SoundEffect.HIT, target.getPosition());
+        }
+
+        @Override
+        protected TextureRegion getTexture(float stateTime) {
+            return PELLET_TEXTURE;
         }
     }
     
@@ -225,11 +237,6 @@ public abstract class RangedWeapon extends Item {
         public RangedWeaponBullet(Agent owner, TextureRegion texture) {
             super(owner, texture, BULLET_VELOCITY * 0.75f, Damage.from(owner, RangedWeapon.this));
             this.texture = texture;
-        }
-        
-        public RangedWeaponBullet(Agent owner, TextureRegion region, float speed, Damage damage) {
-            super(owner, region, speed, damage);
-            this.texture = region;
         }
 
         @Override
