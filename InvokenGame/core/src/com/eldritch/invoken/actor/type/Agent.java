@@ -164,6 +164,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     private Lootable looting = null;
     private Conversable converser = null;
     private boolean uploading = false;
+    private boolean researching = false;
     private boolean forcedDialogue;
 
     private final LinkedList<Announcement> announcements = Lists.newLinkedList();
@@ -948,6 +949,14 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
 
     public void upload(boolean value) {
         this.uploading = value;
+    }
+    
+    public boolean isResearching() {
+        return researching;
+    }
+    
+    public void research(boolean value) {
+        this.researching = value;
     }
 
     public void beginInteraction(Interactable other) {

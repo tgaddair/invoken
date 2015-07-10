@@ -1,12 +1,10 @@
 package com.eldritch.invoken.activators;
 
-import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.actor.type.Agent;
-import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.location.NaturalVector2;
 
-public class ResearchStation extends ClickActivator {
+public class ResearchStation extends InteractableActivator {
     private static final int X = 1;
     private static final int Y = 1;
     private static final int WIDTH = 2;
@@ -22,17 +20,13 @@ public class ResearchStation extends ClickActivator {
     }
     
     @Override
-    public void activate(Agent agent, Level level) {
-        System.out.println("activate!");
+    protected void onBeginInteraction(Agent interactor) {
+        interactor.research(true);
     }
 
     @Override
-    public void register(Level level) {
-    }
-
-    @Override
-    public void render(float delta, OrthogonalTiledMapRenderer renderer) {
-        // delegated to layer
+    protected void onEndInteraction(Agent interactor) {
+        interactor.research(false);
     }
     
     @Override
