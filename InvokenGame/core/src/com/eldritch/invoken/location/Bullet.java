@@ -8,14 +8,24 @@ import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
-import com.eldritch.invoken.actor.AgentHandler.ProjectileAgentHandler;
+import com.eldritch.invoken.actor.AgentHandler.DamagingAgentHandler;
+import com.eldritch.invoken.actor.type.Projectile;
 import com.eldritch.invoken.util.Settings;
 
-public class Bullet extends ProjectileAgentHandler {
+public class Bullet extends DamagingAgentHandler {
     private final Body body;
 
     public Bullet(World world) {
         this.body = createBody(world);
+    }
+    
+    public void setup(Projectile projectile) {
+        Body body = getBody();
+        body.setTransform(projectile.getPosition(), 0);
+        body.setLinearVelocity(projectile.getVelocity());
+        body.setActive(true);
+        
+        setup(projectile, projectile.getDamage());
     }
     
     @Override

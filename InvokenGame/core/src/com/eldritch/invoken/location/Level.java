@@ -59,6 +59,7 @@ import com.eldritch.invoken.actor.type.Npc;
 import com.eldritch.invoken.actor.type.Player;
 import com.eldritch.invoken.actor.type.Projectile;
 import com.eldritch.invoken.actor.type.TemporaryEntity;
+import com.eldritch.invoken.effects.Detonation.AoeHandler;
 import com.eldritch.invoken.effects.Detonation.AreaOfEffect;
 import com.eldritch.invoken.gfx.FogMaskManager;
 import com.eldritch.invoken.gfx.FogOfWarMasker;
@@ -237,9 +238,9 @@ public class Level {
         bulletPool.free(bullet);
     }
     
-    public AreaOfEffect obtainAreaOfEffect(AoeProjectile projectile) {
+    public AreaOfEffect obtainAreaOfEffect(AoeHandler delegate) {
         AreaOfEffect aoe = aoePool.obtain();
-        aoe.setup(projectile);
+        aoe.setup(delegate);
         return aoe;
     }
     

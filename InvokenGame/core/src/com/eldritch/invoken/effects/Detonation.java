@@ -13,7 +13,8 @@ import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
-import com.eldritch.invoken.actor.AgentHandler.ProjectileAgentHandler;
+import com.eldritch.invoken.actor.AgentHandler.DamagingAgentHandler;
+import com.eldritch.invoken.actor.AgentHandler.DefaultAgentHandler;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.TemporaryEntity;
 import com.eldritch.invoken.location.Level;
@@ -30,6 +31,8 @@ public class Detonation implements TemporaryEntity {
     private final Vector2 position;
     private final float radius;
     
+    private Level level = null;
+    private AreaOfEffect aoe = null;
     private boolean active = false;
     private float elapsed = 0;
     private boolean canceled = false;
@@ -52,9 +55,7 @@ public class Detonation implements TemporaryEntity {
         }
         
         Level level = damage.getSource().getLocation();
-        for (Agent neighbor : level.getActiveEntities()) {
-            apply(neighbor);
-        }
+        apply(level);
         active = true;
     }
     
@@ -62,13 +63,9 @@ public class Detonation implements TemporaryEntity {
         canceled = true;
     }
 
-    private void apply(Agent agent) {
-        if (agent.inRange(position, radius)) {
-            Vector2 direction = agent.getPosition().cpy().sub(position).nor();
-            agent.applyForce(direction.scl(500));
-            agent.addEffect(new Stunned(damage.getSource(), agent, 0.2f));
-            agent.addEffect(new Bleed(agent, damage));
-        }
+    private void apply(Level level) {
+        this.level = level;
+        this.aoe = level.obtainAreaOfEffect(new AoeHandler(position, damage));
     }
     
     @Override
@@ -103,6 +100,7 @@ public class Detonation implements TemporaryEntity {
 
     @Override
     public void dispose() {
+        level.freeAreaOfEffect(aoe);
     }
     
     public boolean isActive() {
@@ -117,11 +115,42 @@ public class Detonation implements TemporaryEntity {
         return damage.getSource();
     }
     
-    public static class AreaOfEffect extends ProjectileAgentHandler {
+    public static class AoeHandler extends DefaultAgentHandler {
+        private final Vector2 center;
+        private final Damage damage;
+        
+        public AoeHandler(Vector2 center, Damage damage) {
+            this.center = center;
+            this.damage = damage;
+        }
+        
+        @Override
+        public boolean handle(Agent agent) {
+            Vector2 direction = agent.getPosition().cpy().sub(center).nor();
+            agent.applyForce(direction.scl(500));
+            agent.addEffect(new Stunned(damage.getSource(), agent, 0.2f));
+            agent.addEffect(new Bleed(agent, damage));
+            return false;
+        }
+        
+        public Damage getDamage() {
+            return damage;
+        }
+        
+        public Vector2 getCenter() {
+            return center;
+        }
+    }
+    
+    public static class AreaOfEffect extends DamagingAgentHandler {
         private final Body body;
         
         public AreaOfEffect(World world) {
             this.body = createBody(world);
+        }
+        
+        public void setup(AoeHandler delegate) {
+            setup(delegate, delegate.getDamage());
         }
         
         @Override

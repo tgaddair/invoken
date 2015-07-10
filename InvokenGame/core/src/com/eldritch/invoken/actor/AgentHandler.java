@@ -47,29 +47,26 @@ public interface AgentHandler {
         }
     }
     
-    public static abstract class ProjectileAgentHandler implements AgentHandler {
-        private Projectile projectile;
+    public static abstract class DamagingAgentHandler implements AgentHandler {
+        private AgentHandler delegate;
+        private Damage damage;
         
-        public void setup(Projectile projectile) {
-            this.projectile = projectile;
-            
-            Body body = getBody();
-            body.setTransform(projectile.getPosition(), 0);
-            body.setLinearVelocity(projectile.getVelocity());
-            body.setActive(true);
+        public void setup(AgentHandler delegate, Damage damage) {
+            this.delegate = delegate;
+            this.damage = damage;
             
             // collision filters
-            for (Fixture fixture : body.getFixtureList()) {
+            for (Fixture fixture : getBody().getFixtureList()) {
                 Filter filter = fixture.getFilterData();
-                if (filter.maskBits != projectile.getCollisionMask()) {
-                    filter.maskBits = projectile.getCollisionMask();
+                if (filter.maskBits != delegate.getCollisionMask()) {
+                    filter.maskBits = delegate.getCollisionMask();
                     fixture.setFilterData(filter);
                 }
             }
         }
         
         public Damage getDamage() {
-            return projectile.getDamage();
+            return damage;
         }
 
         public void setActive(boolean active) {
@@ -90,27 +87,27 @@ public interface AgentHandler {
         
         @Override
         public boolean handle(Agent agent) {
-            return projectile.handle(agent);
+            return delegate.handle(agent);
         }
 
         @Override
         public boolean handle(Object userData) {
-            return projectile.handle(userData);
+            return delegate.handle(userData);
         }
         
         @Override
         public boolean handleEnd(Agent agent) {
-            return projectile.handleEnd(agent);
+            return delegate.handleEnd(agent);
         }
 
         @Override
         public boolean handleEnd(Object userData) {
-            return projectile.handleEnd(userData);
+            return delegate.handleEnd(userData);
         }
 
         @Override
         public short getCollisionMask() {
-            return projectile.getCollisionMask();
+            return delegate.getCollisionMask();
         }
         
         public abstract Body getBody();
