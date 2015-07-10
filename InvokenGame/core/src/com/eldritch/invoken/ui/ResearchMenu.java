@@ -1,5 +1,11 @@
 package com.eldritch.invoken.ui;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -7,6 +13,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.eldritch.invoken.InvokenGame;
+import com.eldritch.invoken.actor.items.Fragment;
 import com.eldritch.invoken.actor.items.Item;
 import com.eldritch.invoken.actor.type.Player;
 import com.eldritch.invoken.location.Level;
@@ -17,6 +24,7 @@ import com.eldritch.invoken.util.Settings;
 import com.eldritch.invoken.util.SoundManager.SoundEffect;
 
 public class ResearchMenu implements HudElement {
+    private final Map<TextButton, Item> buttons = new HashMap<>();
 	private final Table container;
 	private final Table table;
 	private final Skin skin;
@@ -66,6 +74,7 @@ public class ResearchMenu implements HudElement {
 	}
 	
 	public void setup(Player player) {
+	    buttons.clear();
 		table.clear();
 		for (ItemState item : player.getInventory().getItems()) {
 		    if (!player.canEquip(item.getItem())) {
@@ -76,18 +85,42 @@ public class ResearchMenu implements HudElement {
 	
 	private void addItemButton(ItemState itemState, final Player player) {
 		final Item item = itemState.getItem();
-        TextButtonStyle buttonStyle = skin.get("encrypted", TextButtonStyle.class);
+		
+		String styleName = canAfford(player, item) ? "encrypted" : "invalid";
+        TextButtonStyle buttonStyle = skin.get(styleName, TextButtonStyle.class);
+        
 		final TextButton itemButton = new TextButton(getText(item), buttonStyle);
 		itemButton.addListener(new DefaultInputListener() {
 			@Override
 			public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-			    // identify
-			    player.identify(item.getId());
+			    if (canAfford(player, item)) {
+			        // identify
+			        player.identify(item.getId());
+			        player.getInventory().removeItem(Fragment.getInstance(), item.getValue());
+			    }
 			    
 			    // update button
-                if (player.canEquip(item)) {
+                if (player.isIdentified(item.getId())) {
                     itemButton.setText(item.getName(player));
                     itemButton.setStyle(skin.get("choice", TextButtonStyle.class));
+                }
+                
+                // update cost
+                for (Entry<TextButton, Item> entry : buttons.entrySet()) {
+                    Item otherItem = entry.getValue();
+                    if (entry.getKey() != itemButton) {
+                        String styleName;
+                        if (player.isIdentified(otherItem.getId())) {
+                            styleName = "choice";
+                        } else if (canAfford(player, otherItem)) {
+                            styleName = "encrypted";
+                        } else {
+                            styleName = "invalid";
+                        }
+                        
+                        TextButtonStyle buttonStyle = skin.get(styleName, TextButtonStyle.class);
+                        entry.getKey().setStyle(buttonStyle);
+                    }
                 }
 			    
 				InvokenGame.SOUND_MANAGER.play(SoundEffect.INVENTORY_ON, 2);
@@ -95,6 +128,14 @@ public class ResearchMenu implements HudElement {
 		});
 		table.row();
 		table.add(itemButton).expandX().fillX().padLeft(5).padRight(5).padBottom(5).padTop(5);
+		
+		buttons.put(itemButton, item);
+	}
+	
+	private boolean canAfford(Player player, Item item) {
+	    int cost = item.getValue();
+        int fragments = player.getInventory().getItemCount(Fragment.getInstance());
+        return fragments >= cost;
 	}
 	
 	private String getText(Item item) {

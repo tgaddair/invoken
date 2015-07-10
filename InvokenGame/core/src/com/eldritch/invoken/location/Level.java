@@ -47,6 +47,7 @@ import com.eldritch.invoken.actor.Profession;
 import com.eldritch.invoken.actor.ai.Squad;
 import com.eldritch.invoken.actor.aug.Action;
 import com.eldritch.invoken.actor.factions.Faction;
+import com.eldritch.invoken.actor.items.Fragment;
 import com.eldritch.invoken.actor.items.Icepik;
 import com.eldritch.invoken.actor.items.Item;
 import com.eldritch.invoken.actor.pathfinding.PathManager;
@@ -1284,8 +1285,7 @@ public class Level {
         inv.addItem(stimpak, 3);
         stimpak.mapTo(inv, 1);
 
-        // player.getInfo().getInventory().addItem(Fragment.getInstance(),
-        // 1000);
+        player.getInfo().getInventory().addItem(Fragment.getInstance(), 150);
 
         Item grenade = Item.fromProto(InvokenGame.ITEM_READER.readAsset("FragmentationGrenade"));
         inv.addItem(grenade, 3);
@@ -1296,7 +1296,7 @@ public class Level {
         Item melee = Item.fromProto(InvokenGame.ITEM_READER.readAsset("Hammer"));
         inv.addItem(melee);
         inv.equip(melee);
-        
+
         addItemsFor(player, player.getInfo().getLevel());
 
         return player;
@@ -1307,7 +1307,7 @@ public class Level {
         if (level < 10) {
             Item bullet = Item.fromProto(InvokenGame.ITEM_READER.readAsset("PistolBullet"));
             inv.addItem(bullet, 25);
-            
+
             Item weapon = Item.fromProto(InvokenGame.ITEM_READER.readAsset("DamagedPistol"));
             player.identify(weapon.getId());
             inv.addItem(weapon);
@@ -1315,7 +1315,7 @@ public class Level {
         } else if (level < 25) {
             Item bullet = Item.fromProto(InvokenGame.ITEM_READER.readAsset("ShotgunShell"));
             inv.addItem(bullet, 25);
-            
+
             Item weapon = Item.fromProto(InvokenGame.ITEM_READER.readAsset("Shotgun"));
             // Item weapon =
             // Item.fromProto(InvokenGame.ITEM_READER.readAsset("AssaultRifle"));
@@ -1325,7 +1325,7 @@ public class Level {
         } else {
             Item bullet = Item.fromProto(InvokenGame.ITEM_READER.readAsset("RifleBullet"));
             inv.addItem(bullet, 25);
-            
+
             Item weapon = Item.fromProto(InvokenGame.ITEM_READER.readAsset("RailGun"));
             player.identify(weapon.getId());
             inv.addItem(weapon);
