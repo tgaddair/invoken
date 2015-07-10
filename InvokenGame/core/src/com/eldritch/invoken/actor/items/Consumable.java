@@ -61,8 +61,11 @@ public class Consumable extends Item {
 
     @Override
     public boolean mapTo(AgentInventory inventory, int index) {
-        inventory.setConsumable(index, this);
-        return true;
+        if (inventory.getAgentInfo().getAgent().canEquip(this)) {
+            inventory.setConsumable(index, this);
+            return true;
+        }
+        return false;
     }
     
     @Override

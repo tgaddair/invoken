@@ -1274,26 +1274,31 @@ public class Level {
 
         AgentInventory inv = player.getInfo().getInventory();
         Item outfit = profession.getDefaultOutfit();
+        player.identify(outfit.getId());
         inv.addItem(outfit);
         inv.equip(outfit);
 
         Item biocell = Item.fromProto(InvokenGame.ITEM_READER.readAsset("Biocell"));
+        player.identify(biocell.getId());
         inv.addItem(biocell, 3);
         biocell.mapTo(inv, 0);
 
         Item stimpak = Item.fromProto(InvokenGame.ITEM_READER.readAsset("Stimpak"));
+        player.identify(stimpak.getId());
         inv.addItem(stimpak, 3);
         stimpak.mapTo(inv, 1);
 
         player.getInfo().getInventory().addItem(Fragment.getInstance(), 150);
 
         Item grenade = Item.fromProto(InvokenGame.ITEM_READER.readAsset("FragmentationGrenade"));
+        player.identify(grenade.getId());
         inv.addItem(grenade, 3);
 
         Item icepik = Icepik.from(1);
         inv.addItem(icepik, 5);
 
         Item melee = Item.fromProto(InvokenGame.ITEM_READER.readAsset("Hammer"));
+        player.identify(melee.getId());
         inv.addItem(melee);
         inv.equip(melee);
 
