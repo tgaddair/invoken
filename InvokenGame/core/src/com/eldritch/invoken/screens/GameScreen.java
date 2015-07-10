@@ -913,6 +913,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         level.setCamera(camera);
 
         refreshHud();
+        minimap = new Minimap(level.getMap(), level.getSeed(), Optional.of(state));
     }
 
     private void onLoad(Level level, Optional<PlayerActor> state) {
