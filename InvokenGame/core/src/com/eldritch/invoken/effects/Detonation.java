@@ -1,7 +1,5 @@
 package com.eldritch.invoken.effects;
 
-import java.util.ArrayList;
-
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;

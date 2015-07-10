@@ -8,6 +8,7 @@ import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.actor.type.AoeProjectile;
 import com.eldritch.invoken.effects.Bleed;
+import com.eldritch.invoken.effects.Detonation;
 import com.eldritch.invoken.effects.Stunned;
 import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.proto.Effects.DamageType;
@@ -129,21 +130,7 @@ public class ThrowGrenade extends InstantAugmentation {
 
         @Override
         protected void onDetonate() {
-            // friendly fire
-            detonateOn(getOwner());
-            for (Agent neighbor : getOwner().getNeighbors()) {
-                detonateOn(neighbor);
-            }
-        }
-
-        private void detonateOn(Agent agent) {
-            Agent owner = getOwner();
-            if (agent.inRange(getPosition(), getRadius())) {
-                Vector2 direction = agent.getPosition().cpy().sub(getPosition()).nor();
-                agent.applyForce(direction.scl(500));
-                agent.addEffect(new Stunned(owner, agent, 0.2f));
-                agent.addEffect(new Bleed(agent, getDamage()));
-            }
+            getOwner().getLocation().addEntity(new Detonation(getDamage(), getPosition(), RADIUS));
         }
 
         @Override
