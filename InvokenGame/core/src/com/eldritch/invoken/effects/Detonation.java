@@ -1,5 +1,7 @@
 package com.eldritch.invoken.effects;
 
+import java.util.ArrayList;
+
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -65,7 +67,7 @@ public class Detonation implements TemporaryEntity {
 
     private void apply(Level level) {
         this.level = level;
-        this.aoe = level.obtainAreaOfEffect(new AoeHandler(position, damage));
+        this.aoe = level.obtainAreaOfEffect(new AoeHandler(position, damage, radius));
     }
     
     @Override
@@ -118,10 +120,12 @@ public class Detonation implements TemporaryEntity {
     public static class AoeHandler extends DefaultAgentHandler {
         private final Vector2 center;
         private final Damage damage;
+        private final float radius;
         
-        public AoeHandler(Vector2 center, Damage damage) {
+        public AoeHandler(Vector2 center, Damage damage, float radius) {
             this.center = center;
             this.damage = damage;
+            this.radius = radius;
         }
         
         @Override
@@ -140,6 +144,10 @@ public class Detonation implements TemporaryEntity {
         public Vector2 getCenter() {
             return center;
         }
+        
+        public float getRadius() {
+            return radius;
+        }
     }
     
     public static class AreaOfEffect extends DamagingAgentHandler {
@@ -150,6 +158,13 @@ public class Detonation implements TemporaryEntity {
         }
         
         public void setup(AoeHandler delegate) {
+            for (Fixture fixture : body.getFixtureList()) {
+                fixture.getShape().setRadius(delegate.getRadius());
+            }
+            
+            body.setTransform(delegate.getCenter(), 0);
+            body.setActive(true);
+            
             setup(delegate, delegate.getDamage());
         }
         
@@ -164,9 +179,13 @@ public class Detonation implements TemporaryEntity {
             bodyDef.position.set(0, 0);
             Body body = world.createBody(bodyDef);
             body.setUserData(this);
-
+            createFixture(body, 1);
+            return body;
+        }
+        
+        private Fixture createFixture(Body body, float radius) {
             CircleShape circle = new CircleShape();
-            circle.setRadius(2f);
+            circle.setRadius(1f);
             FixtureDef fixtureDef = new FixtureDef();
             fixtureDef.shape = circle;
             fixtureDef.isSensor = true;
@@ -180,8 +199,7 @@ public class Detonation implements TemporaryEntity {
             fixture.setFilterData(filter);
 
             circle.dispose();
-
-            return body;
+            return fixture;
         }
     }
 }
