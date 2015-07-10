@@ -197,11 +197,15 @@ public class AgentInventory extends Inventory {
     }
 
     public void equipIfBetter(Item item) {
-        item.equipIfBetter(this);
+        if (info.getAgent().canEquip(item)) {
+            item.equipIfBetter(this);
+        }
     }
 
     public void equip(Item item) {
-        item.equipFrom(this);
+        if (info.getAgent().canEquip(item)) {
+            item.equipFrom(this);
+        }
     }
 
     public void unequip(Item item) {

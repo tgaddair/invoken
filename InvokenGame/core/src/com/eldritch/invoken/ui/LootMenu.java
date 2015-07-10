@@ -20,10 +20,12 @@ import com.eldritch.invoken.util.SoundManager.SoundEffect;
 public class LootMenu {
 	private final Table container;
 	private final Table table;
+	private final Player player;
 	private final Skin skin;
 	private boolean active = false;
 	
-	public LootMenu(Skin skin) {
+	public LootMenu(Player player, Skin skin) {
+	    this.player = player;
 		this.skin = skin;
 	    container = new Table(skin);
 	    resize(Settings.MENU_VIEWPORT_WIDTH, Settings.MENU_VIEWPORT_HEIGHT);
@@ -41,7 +43,7 @@ public class LootMenu {
 		return container;
 	}
 	
-	public void update(Player player) {
+	public void update() {
 		if (player.isLooting()) {
 			if (!active) {
 				container.setVisible(true);
@@ -99,7 +101,7 @@ public class LootMenu {
 	}
 	
 	private String getText(Item item, int count) {
-		return String.format("%s (%d)", item.getName(), count);
+		return String.format("%s (%d)", item.getName(player), count);
 	}
 	
 	private void exitMenu() {

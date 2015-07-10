@@ -115,6 +115,6 @@ public class InventoryMenu {
     }
     
     private String getText(Item item, int count) {
-        return String.format("%s (%d)", item.getName(), count);
+        return String.format("%s (%d)", item.getName(player), count);
     }
 }

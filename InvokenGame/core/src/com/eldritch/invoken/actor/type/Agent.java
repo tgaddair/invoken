@@ -47,6 +47,7 @@ import com.eldritch.invoken.actor.aug.Augmentation;
 import com.eldritch.invoken.actor.aug.Cloak;
 import com.eldritch.invoken.actor.factions.Faction;
 import com.eldritch.invoken.actor.items.Fragment;
+import com.eldritch.invoken.actor.items.Item;
 import com.eldritch.invoken.actor.items.Outfit;
 import com.eldritch.invoken.actor.items.RangedWeapon;
 import com.eldritch.invoken.actor.type.HandledProjectile.ProjectileHandler;
@@ -1823,6 +1824,17 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     public float getWeaponAccuracy() {
         // TODO separate weapon class
         return 0.65f;
+    }
+    
+    public boolean isIdentified(String itemId) {
+        return true;
+    }
+    
+    public void identify(String itemId) {
+    }
+    
+    public boolean canEquip(Item item) {
+        return true;
     }
 
     @Override

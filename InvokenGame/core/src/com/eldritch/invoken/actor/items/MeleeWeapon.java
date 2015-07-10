@@ -54,10 +54,20 @@ public class MeleeWeapon extends Item {
             inventory.setMeleeWeapon(null);
         }
     }
+    
+    @Override
+    public boolean isEncrypted() {
+        return true;
+    }
 
     @Override
     protected Animation getAnimation(Activity activity, Direction direction) {
         return animations.get(direction);
+    }
+    
+    @Override
+    public String getTypeName() {
+        return "Melee Weapon";
     }
 
     public float getRange() {

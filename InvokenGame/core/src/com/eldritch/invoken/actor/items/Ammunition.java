@@ -44,4 +44,9 @@ public class Ammunition extends Item {
         // not animated
         return null;
     }
+    
+    @Override
+    public String getTypeName() {
+        return "Ammunition";
+    }
 }

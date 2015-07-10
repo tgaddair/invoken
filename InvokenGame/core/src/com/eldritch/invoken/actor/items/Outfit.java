@@ -68,10 +68,20 @@ public class Outfit extends Item {
             inventory.setOutfit(null);
         }
     }
+    
+    @Override
+    public boolean isEncrypted() {
+        return true;
+    }
 
     @Override
     protected Animation getAnimation(Activity activity, Direction direction) {
         return animations.get(activity).get(direction);
+    }
+    
+    @Override
+    public String getTypeName() {
+        return "Outfit";
     }
 
     private static String getAssetPath(String basename) {

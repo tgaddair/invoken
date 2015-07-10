@@ -160,10 +160,20 @@ public abstract class RangedWeapon extends Item {
             inventory.setRangedWeapon(null);
         }
     }
+    
+    @Override
+    public boolean isEncrypted() {
+        return true;
+    }
 
     @Override
     protected Animation getAnimation(Activity activity, Direction direction) {
         return animations.get(direction);
+    }
+    
+    @Override
+    public String getTypeName() {
+        return "Ranged Weapon";
     }
 
     @Override

@@ -47,6 +47,11 @@ public class Fragment extends Item {
         // not animated
         return null;
     }
+    
+    @Override
+    public String getTypeName() {
+        return "Fragment";
+    }
 
     public static Fragment getInstance() {
         if (instance != null) {

@@ -11,6 +11,7 @@ import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.actor.type.Agent.Direction;
 import com.eldritch.invoken.proto.Items;
 import com.eldritch.invoken.util.Settings;
+import com.google.common.base.CaseFormat;
 
 public abstract class Item {
     protected final Items.Item data;
@@ -47,6 +48,10 @@ public abstract class Item {
     public boolean mapTo(AgentInventory inventory, int index) {
         return false;
     }
+    
+    public boolean isEncrypted() {
+        return false;
+    }
 
     public void render(Agent agent, Activity activity, float stateTime,
             OrthogonalTiledMapRenderer renderer) {
@@ -74,9 +79,18 @@ public abstract class Item {
         return data.getId();
     }
 
+    public String getName(Agent viewer) {
+        if (isEncrypted() && !viewer.isIdentified(getId())) {
+            return "Unknown " + getTypeName();
+        }
+        return getName();
+    }
+    
     public String getName() {
         return data.getName();
     }
+    
+    public abstract String getTypeName();
     
     public int getValue() {
         return data.getValue();

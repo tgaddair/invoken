@@ -1,6 +1,7 @@
 package com.eldritch.invoken.actor.type;
 
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import com.badlogic.gdx.Gdx;
@@ -31,6 +32,8 @@ public class Player extends SteeringAgent {
     private final ThreatMonitor<Player> threat;
     private final String bodyType;
     private final Optional<PlayerActor> priorState;
+    
+    private final Set<String> identifiedItems = new LinkedHashSet<>();
 
     private boolean holding = false;
     private boolean moving = false;
@@ -52,6 +55,11 @@ public class Player extends SteeringAgent {
         super(data.getParams(), true, x, y, Human.getWidth(), Human.getHeight(),
                 Human.MAX_VELOCITY, level, AnimationUtils.getHumanAnimations(data.getParams()
                         .getBodyType()));
+        
+        // identify items
+        for (String itemId : data.getIdentifiedItemList()) {
+            identifiedItems.add(itemId);
+        }
 
         // equip items
         Set<String> equipped = new HashSet<String>(data.getEquippedItemIdList());
@@ -83,6 +91,24 @@ public class Player extends SteeringAgent {
         for (String dialogue : data.getUniqueDialogueList()) {
             addDialogue(dialogue);
         }
+    }
+    
+    @Override
+    public boolean isIdentified(String itemId) {
+        return identifiedItems.contains(itemId);
+    }
+    
+    @Override
+    public void identify(String itemId) {
+        identifiedItems.add(itemId);
+    }
+    
+    @Override
+    public boolean canEquip(Item item) {
+        if (item.isEncrypted()) {
+            return isIdentified(item.getId());
+        }
+        return true;
     }
 
     public int getLastFragments() {
@@ -318,6 +344,9 @@ public class Player extends SteeringAgent {
             PlayerActor prior = priorState.get();
             builder.addAllVisitedRooms(prior.getVisitedRoomsList());
         }
+        
+        // identified items
+        builder.addAllIdentifiedItem(identifiedItems);
 
         // state markers
         builder.addAllUniqueDialogue(getUniqueDialogue());

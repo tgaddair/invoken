@@ -68,6 +68,11 @@ public class Icepik extends Item {
         return null;
     }
     
+    @Override
+    public String getTypeName() {
+        return "Icepik";
+    }
+    
     public static Icepik from(Items.Item data) {
         int strength = Integer.valueOf(data.getId().replaceAll("^[A-Za-z]+", ""));
         Icepik pik = piksByLevel.getIfPresent(strength);

@@ -37,6 +37,11 @@ public class Credential extends Item {
         return null;
     }
     
+    @Override
+    public String getTypeName() {
+        return "Credential";
+    }
+    
     public static Credential from(Items.Item data) {
         return new Credential(data);
     }

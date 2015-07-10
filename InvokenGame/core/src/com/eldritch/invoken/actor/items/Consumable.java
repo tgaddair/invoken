@@ -64,11 +64,21 @@ public class Consumable extends Item {
         inventory.setConsumable(index, this);
         return true;
     }
+    
+    @Override
+    public boolean isEncrypted() {
+        return true;
+    }
 
     @Override
     protected Animation getAnimation(Activity activity, Direction direction) {
         // not animated
         return null;
+    }
+    
+    @Override
+    public String getTypeName() {
+        return "Consumable";
     }
 
     private void apply(Agent target) {

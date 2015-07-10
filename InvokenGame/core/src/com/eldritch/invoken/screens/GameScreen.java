@@ -76,8 +76,8 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
     public static boolean SCREEN_GRAB = false;
 
     private final GameTransition gameState = new GameState();
-    private final DialogueMenu dialogue;
-    private final LootMenu loot;
+    private DialogueMenu dialogue;
+    private LootMenu loot;
 
     private final String playerName;
     private Profession profession = null; // TODO: this will become a proto
@@ -133,8 +133,6 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
     private GameScreen(InvokenGame game, String playerName, Profession profession,
             String locationName) {
         super(game);
-        dialogue = new DialogueMenu(getSkin());
-        loot = new LootMenu(getSkin());
         this.playerName = playerName;
         this.profession = profession;
         this.locationName = locationName;
@@ -230,6 +228,8 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 
         // create HUD elements
         Skin skin = getSkin();
+        dialogue = new DialogueMenu(skin);
+        loot = new LootMenu(player, skin);
         actionBar = new ActionBar(player, skin);
         energyBar = new StatusBar<Agent>(player, new EnergyCalculator(), skin);
         inventoryMenu = new InventoryMenu(player, skin);
@@ -242,7 +242,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         hud.add(new DesireMenu(player, skin));
         hud.add(new ConsumableBar(player, skin));
 
-        statusTable = new Table(getSkin());
+        statusTable = new Table(skin);
         statusTable.setHeight(Settings.MENU_VIEWPORT_HEIGHT / 2);
         statusTable.setWidth(Settings.MENU_VIEWPORT_WIDTH);
         statusTable.bottom();
@@ -298,7 +298,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         // playerHealth.update();
         selectedHealth.update(player, player.getTarget(), camera);
         dialogue.update(delta, player, camera);
-        loot.update(player);
+        loot.update();
         for (HudElement element : hud) {
             element.update(delta, level);
         }

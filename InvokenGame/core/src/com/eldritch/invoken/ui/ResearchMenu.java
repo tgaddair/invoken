@@ -90,7 +90,7 @@ public class ResearchMenu implements HudElement {
 	}
 	
 	private String getText(Item item) {
-		return String.format("%s (%d)", item.getName(), item.getValue());
+		return String.format("%s (%d)", item.getName(player), item.getValue());
 	}
 	
 	private void exitMenu() {

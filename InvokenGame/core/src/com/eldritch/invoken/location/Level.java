@@ -1309,6 +1309,7 @@ public class Level {
             inv.addItem(bullet, 25);
             
             Item weapon = Item.fromProto(InvokenGame.ITEM_READER.readAsset("DamagedPistol"));
+            player.identify(weapon.getId());
             inv.addItem(weapon);
             inv.equip(weapon);
         } else if (level < 25) {
@@ -1318,6 +1319,7 @@ public class Level {
             Item weapon = Item.fromProto(InvokenGame.ITEM_READER.readAsset("Shotgun"));
             // Item weapon =
             // Item.fromProto(InvokenGame.ITEM_READER.readAsset("AssaultRifle"));
+            player.identify(weapon.getId());
             inv.addItem(weapon);
             inv.equip(weapon);
         } else {
@@ -1325,6 +1327,7 @@ public class Level {
             inv.addItem(bullet, 25);
             
             Item weapon = Item.fromProto(InvokenGame.ITEM_READER.readAsset("RailGun"));
+            player.identify(weapon.getId());
             inv.addItem(weapon);
             inv.equip(weapon);
         }
