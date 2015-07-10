@@ -68,8 +68,7 @@ public class ResearchMenu implements HudElement {
 	public void setup(Player player) {
 		table.clear();
 		for (ItemState item : player.getInventory().getItems()) {
-		    Items.Item data = item.getItem().getData();
-		    if (data.getDroppable() && !data.getHidden()) {
+		    if (!player.canEquip(item.getItem())) {
 		        addItemButton(item, player);
 		    }
 		}
@@ -77,12 +76,20 @@ public class ResearchMenu implements HudElement {
 	
 	private void addItemButton(ItemState itemState, final Player player) {
 		final Item item = itemState.getItem();
-		String styleName = player.canEquip(item) ? "choice" : "encrypted";
-        TextButtonStyle buttonStyle = skin.get(styleName, TextButtonStyle.class);
+        TextButtonStyle buttonStyle = skin.get("encrypted", TextButtonStyle.class);
 		final TextButton itemButton = new TextButton(getText(item), buttonStyle);
 		itemButton.addListener(new DefaultInputListener() {
 			@Override
 			public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+			    // identify
+			    player.identify(item.getId());
+			    
+			    // update button
+                if (player.canEquip(item)) {
+                    itemButton.setText(item.getName(player));
+                    itemButton.setStyle(skin.get("choice", TextButtonStyle.class));
+                }
+			    
 				InvokenGame.SOUND_MANAGER.play(SoundEffect.INVENTORY_ON, 2);
 			}
 		});
