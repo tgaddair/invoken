@@ -1287,32 +1287,47 @@ public class Level {
         // player.getInfo().getInventory().addItem(Fragment.getInstance(),
         // 1000);
 
-        Item bullet = Item.fromProto(InvokenGame.ITEM_READER.readAsset("PistolBullet"));
-        // Item bullet =
-        // Item.fromProto(InvokenGame.ITEM_READER.readAsset("ShotgunShell"));
-        inv.addItem(bullet, 25);
-
         Item grenade = Item.fromProto(InvokenGame.ITEM_READER.readAsset("FragmentationGrenade"));
         inv.addItem(grenade, 3);
 
         Item icepik = Icepik.from(1);
         inv.addItem(icepik, 5);
 
-        // Item weapon =
-        // Item.fromProto(InvokenGame.ITEM_READER.readAsset("RailGun"));
-        // Item weapon =
-        // Item.fromProto(InvokenGame.ITEM_READER.readAsset("Shotgun"));
-        Item weapon = Item.fromProto(InvokenGame.ITEM_READER.readAsset("DamagedPistol"));
-        // Item weapon =
-        // Item.fromProto(InvokenGame.ITEM_READER.readAsset("AssaultRifle"));
-        inv.addItem(weapon);
-        inv.equip(weapon);
-
         Item melee = Item.fromProto(InvokenGame.ITEM_READER.readAsset("Hammer"));
         inv.addItem(melee);
         inv.equip(melee);
+        
+        addItemsFor(player, player.getInfo().getLevel());
 
         return player;
+    }
+
+    private void addItemsFor(Player player, int level) {
+        AgentInventory inv = player.getInventory();
+        if (level < 10) {
+            Item bullet = Item.fromProto(InvokenGame.ITEM_READER.readAsset("PistolBullet"));
+            inv.addItem(bullet, 25);
+            
+            Item weapon = Item.fromProto(InvokenGame.ITEM_READER.readAsset("DamagedPistol"));
+            inv.addItem(weapon);
+            inv.equip(weapon);
+        } else if (level < 25) {
+            Item bullet = Item.fromProto(InvokenGame.ITEM_READER.readAsset("ShotgunShell"));
+            inv.addItem(bullet, 25);
+            
+            Item weapon = Item.fromProto(InvokenGame.ITEM_READER.readAsset("Shotgun"));
+            // Item weapon =
+            // Item.fromProto(InvokenGame.ITEM_READER.readAsset("AssaultRifle"));
+            inv.addItem(weapon);
+            inv.equip(weapon);
+        } else {
+            Item bullet = Item.fromProto(InvokenGame.ITEM_READER.readAsset("RifleBullet"));
+            inv.addItem(bullet, 25);
+            
+            Item weapon = Item.fromProto(InvokenGame.ITEM_READER.readAsset("RailGun"));
+            inv.addItem(weapon);
+            inv.equip(weapon);
+        }
     }
 
     private interface ObstaclePredicate {
