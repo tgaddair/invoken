@@ -58,8 +58,6 @@ import com.eldritch.invoken.actor.type.Npc;
 import com.eldritch.invoken.actor.type.Player;
 import com.eldritch.invoken.actor.type.Projectile;
 import com.eldritch.invoken.actor.type.TemporaryEntity;
-import com.eldritch.invoken.effects.Detonation.AoeHandler;
-import com.eldritch.invoken.effects.Detonation.AreaOfEffect;
 import com.eldritch.invoken.gfx.FogMaskManager;
 import com.eldritch.invoken.gfx.FogOfWarMasker;
 import com.eldritch.invoken.gfx.Light;
@@ -92,7 +90,6 @@ public class Level {
     };
 
     private final Pool<Bullet> bulletPool;
-    private final Pool<AreaOfEffect> aoePool;
     private final LineOfSightHandler losHandler = new LineOfSightHandler();
     private final Color actionsColor = new Color(1, 0, 0, 1);
 
@@ -200,12 +197,6 @@ public class Level {
                 return new Bullet(world);
             }
         };
-        aoePool = new Pool<AreaOfEffect>() {
-            @Override
-            protected AreaOfEffect newObject() {
-                return new AreaOfEffect(world);
-            }
-        };
         addWalls(world);
 
         // add encounters
@@ -235,17 +226,6 @@ public class Level {
     public void freeBullet(Bullet bullet) {
         bullet.setActive(false);
         bulletPool.free(bullet);
-    }
-    
-    public AreaOfEffect obtainAreaOfEffect(AoeHandler delegate) {
-        AreaOfEffect aoe = aoePool.obtain();
-        aoe.setup(delegate);
-        return aoe;
-    }
-    
-    public void freeAreaOfEffect(AreaOfEffect aoe) {
-        aoe.setActive(false);
-        aoePool.free(aoe);
     }
 
     public void transition(String locationName, Optional<String> encounterName) {

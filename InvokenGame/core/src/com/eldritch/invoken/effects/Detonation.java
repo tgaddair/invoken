@@ -15,11 +15,13 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.eldritch.invoken.actor.AgentHandler.DamagingAgentHandler;
 import com.eldritch.invoken.actor.AgentHandler.DefaultAgentHandler;
+import com.eldritch.invoken.actor.DamageHandler;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.TemporaryEntity;
 import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.screens.GameScreen;
 import com.eldritch.invoken.util.Damage;
+import com.eldritch.invoken.util.Damager;
 import com.eldritch.invoken.util.Settings;
 
 public class Detonation implements TemporaryEntity {
@@ -65,7 +67,8 @@ public class Detonation implements TemporaryEntity {
 
     private void apply(Level level) {
         this.level = level;
-        this.aoe = level.obtainAreaOfEffect(new AoeHandler(position, damage, radius));
+        this.aoe = new AreaOfEffect(level.getWorld());
+        aoe.setup(new AoeHandler(position, damage, radius));
     }
     
     @Override
@@ -100,7 +103,7 @@ public class Detonation implements TemporaryEntity {
 
     @Override
     public void dispose() {
-        level.freeAreaOfEffect(aoe);
+        level.getWorld().destroyBody(aoe.getBody());
     }
     
     public boolean isActive() {
@@ -115,7 +118,7 @@ public class Detonation implements TemporaryEntity {
         return damage.getSource();
     }
     
-    public static class AoeHandler extends DefaultAgentHandler {
+    public static class AoeHandler extends DefaultAgentHandler implements Damager {
         private final Vector2 center;
         private final Damage damage;
         private final float radius;
@@ -135,6 +138,17 @@ public class Detonation implements TemporaryEntity {
             return false;
         }
         
+        @Override
+        public boolean handle(Object userData) {
+            if (userData instanceof DamageHandler) {
+                DamageHandler handler = (DamageHandler) userData;
+                handler.handle(this);
+                return true;
+            }
+            return false;
+        }
+        
+        @Override
         public Damage getDamage() {
             return damage;
         }
@@ -173,7 +187,7 @@ public class Detonation implements TemporaryEntity {
         
         private Body createBody(World world) {
             BodyDef bodyDef = new BodyDef();
-            bodyDef.type = BodyType.StaticBody;
+            bodyDef.type = BodyType.DynamicBody;
             bodyDef.position.set(0, 0);
             Body body = world.createBody(bodyDef);
             body.setUserData(this);
