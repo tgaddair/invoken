@@ -76,6 +76,10 @@ public class Detonation implements TemporaryEntity {
         elapsed += delta;
         if (!active) {
             detonate();
+        } else {
+            if (getProgress() > 0.5) {
+                aoe.getBody().setActive(false);
+            }
         }
     }
 
@@ -89,6 +93,10 @@ public class Detonation implements TemporaryEntity {
         batch.draw(explosion.getKeyFrame(elapsed), position.x - width / 2, position.y
                 - height / 2, width, height);
         batch.end();
+    }
+    
+    public float getProgress() {
+        return elapsed / explosion.getAnimationDuration();
     }
     
     @Override
@@ -118,7 +126,7 @@ public class Detonation implements TemporaryEntity {
         return damage.getSource();
     }
     
-    public static class AoeHandler extends DefaultAgentHandler implements Damager {
+    public class AoeHandler extends DefaultAgentHandler implements Damager {
         private final Vector2 center;
         private final Damage damage;
         private final float radius;
