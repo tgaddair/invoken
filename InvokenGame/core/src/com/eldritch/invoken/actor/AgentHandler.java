@@ -7,6 +7,7 @@ import com.badlogic.gdx.physics.box2d.Fixture;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Projectile;
 import com.eldritch.invoken.util.Damage;
+import com.eldritch.invoken.util.Damager;
 import com.eldritch.invoken.util.Settings;
 
 public interface AgentHandler {
@@ -47,7 +48,7 @@ public interface AgentHandler {
         }
     }
     
-    public static abstract class DamagingAgentHandler implements AgentHandler {
+    public static abstract class DamagingAgentHandler implements AgentHandler, Damager {
         private AgentHandler delegate;
         private Damage damage;
         

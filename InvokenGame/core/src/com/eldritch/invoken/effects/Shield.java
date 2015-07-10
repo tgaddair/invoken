@@ -22,13 +22,14 @@ import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.Joint;
 import com.badlogic.gdx.physics.box2d.joints.WeldJointDef;
-import com.eldritch.invoken.actor.BulletHandler;
+import com.eldritch.invoken.actor.DamageHandler;
 import com.eldritch.invoken.actor.aug.Augmentation;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.actor.type.Agent.Direction;
 import com.eldritch.invoken.location.Bullet;
 import com.eldritch.invoken.util.AnimationUtils;
+import com.eldritch.invoken.util.Damager;
 import com.eldritch.invoken.util.Settings;
 
 public abstract class Shield extends BasicEffect {
@@ -205,13 +206,13 @@ public abstract class Shield extends BasicEffect {
             }
         }
 
-        private class FixedShieldHandler extends BulletHandler {
+        private class FixedShieldHandler extends DamageHandler {
             public FixedShieldHandler(Agent owner, Direction direction) {
             }
 
             @Override
-            public boolean handle(Bullet bullet) {
-                damage(bullet.getDamage().getMagnitude());
+            public boolean handle(Damager damager) {
+                damage(damager.getDamage().getMagnitude());
                 return true;
             }
         }

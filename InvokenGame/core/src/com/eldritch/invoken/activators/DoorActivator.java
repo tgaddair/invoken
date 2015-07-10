@@ -23,7 +23,7 @@ import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.actor.AgentHandler.DefaultAgentHandler;
-import com.eldritch.invoken.actor.BulletHandler;
+import com.eldritch.invoken.actor.DamageHandler;
 import com.eldritch.invoken.actor.items.Icepik;
 import com.eldritch.invoken.actor.items.Item;
 import com.eldritch.invoken.actor.type.Agent;
@@ -32,7 +32,6 @@ import com.eldritch.invoken.actor.util.Damageable;
 import com.eldritch.invoken.gfx.Light;
 import com.eldritch.invoken.gfx.Light.StaticLight;
 import com.eldritch.invoken.gfx.WorldText;
-import com.eldritch.invoken.location.Bullet;
 import com.eldritch.invoken.location.ConnectedRoom;
 import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.location.NaturalVector2;
@@ -42,6 +41,7 @@ import com.eldritch.invoken.screens.GameScreen;
 import com.eldritch.invoken.state.Inventory;
 import com.eldritch.invoken.ui.HealthBar;
 import com.eldritch.invoken.util.Damage;
+import com.eldritch.invoken.util.Damager;
 import com.eldritch.invoken.util.Settings;
 import com.eldritch.invoken.util.SoundManager.SoundEffect;
 import com.google.common.base.Optional;
@@ -554,7 +554,7 @@ public class DoorActivator extends ClickActivator implements Crackable, Damageab
         }
     }
 
-    private class DoorBulletHandler extends BulletHandler {
+    private class DoorBulletHandler extends DamageHandler {
         private static final float BASE_HEALTH = 100f;
         private float health = BASE_HEALTH;
 
@@ -571,8 +571,8 @@ public class DoorActivator extends ClickActivator implements Crackable, Damageab
         }
 
         @Override
-        public boolean handle(Bullet bullet) {
-            Damage damage = bullet.getDamage();
+        public boolean handle(Damager damager) {
+            Damage damage = damager.getDamage();
             health -= damage.getDamageOf(DamageType.PHYSICAL);
             if (health <= 0) {
                 destroy();
