@@ -418,7 +418,7 @@ public class DoorActivator extends ClickActivator implements Crackable, Damageab
         lock.setStrength(strength);
         setLocked(true);
     }
-    
+
     private boolean canPick(Agent agent) {
         int piks = lock.getAvailablePiks(agent);
         int required = lock.getRequiredPiks(agent);
@@ -528,7 +528,7 @@ public class DoorActivator extends ClickActivator implements Crackable, Damageab
         private boolean shouldLock() {
             return strength > 1;
         }
-        
+
         public int getAvailablePiks(Agent agent) {
             Icepik item = Icepik.from(agent.getLocation());
             if (agent.getInventory().hasItem(item)) {
@@ -536,14 +536,14 @@ public class DoorActivator extends ClickActivator implements Crackable, Damageab
             }
             return 0;
         }
-        
+
         public int getRequiredPiks(Agent agent) {
             int ability = agent.getInfo().getSubterfuge() / 10;
             int difficulty = strength;
             if (ability >= difficulty) {
                 return 1;
             }
-            
+
             // required piks scales with the square of the difference
             int delta = difficulty - ability;
             return delta * delta + 1;
@@ -573,7 +573,8 @@ public class DoorActivator extends ClickActivator implements Crackable, Damageab
         @Override
         public boolean handle(Damager damager) {
             Damage damage = damager.getDamage();
-            health -= damage.getDamageOf(DamageType.PHYSICAL);
+            health -= damage.getDamageOf(DamageType.PHYSICAL)
+                    + damage.getDamageOf(DamageType.THERMAL);
             if (health <= 0) {
                 destroy();
             }
