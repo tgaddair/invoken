@@ -33,6 +33,10 @@ public class Inventory {
             add(item);
         }
     }
+    
+    public boolean isEmpty() {
+        return items.isEmpty();
+    }
 
     public void add(InventoryItem proto) {
         // possibly add some number of the given item

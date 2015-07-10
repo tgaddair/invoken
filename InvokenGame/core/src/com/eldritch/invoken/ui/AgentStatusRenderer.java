@@ -1,5 +1,6 @@
 package com.eldritch.invoken.ui;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
@@ -29,7 +30,14 @@ public class AgentStatusRenderer {
             }
         } else {
             if (player.canInteract(agent)) {
-                draw(batch, LOOT_ICON, position, i);
+                boolean empty = agent.getInventory().isEmpty();
+                if (empty) {
+                    batch.setColor(Color.GRAY);
+                    draw(batch, LOOT_ICON, position, i);
+                    batch.setColor(Color.WHITE);
+                } else {
+                    draw(batch, LOOT_ICON, position, i);
+                }
             }
         }
     }

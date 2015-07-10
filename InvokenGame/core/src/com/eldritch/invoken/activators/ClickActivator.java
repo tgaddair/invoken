@@ -2,6 +2,7 @@ package com.eldritch.invoken.activators;
 
 import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.actor.type.Agent;
+import com.eldritch.invoken.actor.type.Player;
 import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.location.NaturalVector2;
 
@@ -54,6 +55,10 @@ public abstract class ClickActivator extends BasicActivator {
 	}
 	
 	protected boolean canActivate(Agent agent) {
-	    return agent.getPosition().dst2(getPosition()) < 6;
+	    return agent.getPosition().dst2(getCenter()) < 6;
+	}
+	
+	protected Vector2 getCenter() {
+	    return getPosition();
 	}
 }
