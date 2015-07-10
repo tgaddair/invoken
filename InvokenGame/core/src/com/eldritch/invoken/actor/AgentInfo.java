@@ -27,6 +27,7 @@ import com.google.common.base.Functions;
 
 public class AgentInfo {
     private static final float BASE_ENERGY_RATE = 3f;
+    private static final float FATIGUE_INTERVAL = 5f;
     private static final float MASTERY_BONUS = 0.5f;
 
     private final Agent agent;
@@ -325,8 +326,8 @@ public class AgentInfo {
         float delta = Math.max(Math.min(value, energy), 0);
         energy -= delta;
 
-        // gain 1 point of fatigue for every 10 points of energy, scaled by one's automata skill
-        changeFatigue(delta / (10f * getExecuteModifier()));
+        // gain 1 point of fatigue for every X points of energy, scaled by one's automata skill
+        changeFatigue(delta / (FATIGUE_INTERVAL * getExecuteModifier()));
 
         return delta;
     }
