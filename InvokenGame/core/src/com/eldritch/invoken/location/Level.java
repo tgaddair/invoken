@@ -1287,7 +1287,8 @@ public class Level {
         // player.getInfo().getInventory().addItem(Fragment.getInstance(),
         // 1000);
 
-        Item bullet = Item.fromProto(InvokenGame.ITEM_READER.readAsset("PistolBullet"));
+//        Item bullet = Item.fromProto(InvokenGame.ITEM_READER.readAsset("PistolBullet"));
+        Item bullet = Item.fromProto(InvokenGame.ITEM_READER.readAsset("ShotgunShell"));
         inv.addItem(bullet, 25);
 
         Item grenade = Item.fromProto(InvokenGame.ITEM_READER.readAsset("FragmentationGrenade"));
@@ -1298,9 +1299,9 @@ public class Level {
 
         // Item weapon =
         // Item.fromProto(InvokenGame.ITEM_READER.readAsset("RailGun"));
-        // Item weapon =
-        // Item.fromProto(InvokenGame.ITEM_READER.readAsset("Shotgun"));
-        Item weapon = Item.fromProto(InvokenGame.ITEM_READER.readAsset("DamagedPistol"));
+         Item weapon =
+         Item.fromProto(InvokenGame.ITEM_READER.readAsset("Shotgun"));
+//        Item weapon = Item.fromProto(InvokenGame.ITEM_READER.readAsset("DamagedPistol"));
         // Item weapon =
         // Item.fromProto(InvokenGame.ITEM_READER.readAsset("AssaultRifle"));
         inv.addItem(weapon);
