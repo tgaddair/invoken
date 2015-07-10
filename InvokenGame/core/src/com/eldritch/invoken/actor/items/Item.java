@@ -77,6 +77,10 @@ public abstract class Item {
     public String getName() {
         return data.getName();
     }
+    
+    public int getValue() {
+        return data.getValue();
+    }
 
     public Items.Item getData() {
         return data;
