@@ -109,8 +109,8 @@ public abstract class Item {
 
     @Override
     public String toString() {
-        return String.format("Name: %s\n" + "Type: %s\n" + "Description: %s\n" + "Value: %d",
-                data.getName(), data.getType(), data.getDescription(), data.getValue());
+        return String.format("%s\n\n" + "%s\n\n" + "Category: %s\n" + "Value: %d",
+                data.getName(), data.getDescription(), getTypeName(), data.getValue());
     }
 
     public static Item fromProto(Items.Item item) {

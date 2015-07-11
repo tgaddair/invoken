@@ -330,14 +330,14 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         }
         batch.end();
 
-        // draw stats
-        drawStats();
-
         // render the HUD
         stage.act(delta);
         stage.draw();
-
-        drawFps();
+        
+        if (Settings.DEBUG_STATS) {
+            drawFps();
+            drawStats();
+        }
 
         // reset
         SCREEN_GRAB = false;

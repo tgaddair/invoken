@@ -11,7 +11,7 @@ import com.eldritch.invoken.location.Level;
 
 public class Jaunt extends SelfAugmentation {
     private static final String TOOLTIP = String.format("Jaunt\n\n"
-            + "Enhances the dodge maneuver with greater force and shockwave that stuns and "
+            + "Enhances the dodge maneuver with greater force and a shockwave that stuns and "
             + "knocks back surrounding entities for a short duration.\n\n"
             + "Mode: Sustained\n"
             + "Cost: %.0f energy", JauntHandler.DODGE_COST);
