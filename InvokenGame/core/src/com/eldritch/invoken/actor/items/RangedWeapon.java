@@ -178,8 +178,8 @@ public abstract class RangedWeapon extends Item {
 
     @Override
     public String toString() {
-        StringBuilder result = new StringBuilder(String.format("%s\n" + "Range: %.2f\n",
-                super.toString(), data.getRange()));
+        StringBuilder result = new StringBuilder(String.format("%s\n" + "Clip: %d\n",
+                super.toString(), getClipSize()));
         result.append("Damage:");
         for (DamageMod mod : data.getDamageModifierList()) {
             result.append(String.format("\n  %s: %d", mod.getDamage(), mod.getMagnitude()));
