@@ -79,16 +79,22 @@ public class InventoryMenu {
     private ScrollPane getPlayerView() {
         return new ScrollPane(new Image(player.getPortrait()));
     }
-
-    private void refreshButton(TextButton button, Item item) {
+    
+    private String getStyle(Item item) {
         AgentInventory inventory = player.getInfo().getInventory();
         if (item.isEquipped(inventory)) {
-            button.setStyle(skin.get("selected", TextButtonStyle.class));
+            return "selected";
+        } else if (!player.isIdentified(item)) {
+            return "encrypted";
         } else if (!player.canEquip(item)) {
-            button.setStyle(skin.get("encrypted", TextButtonStyle.class));
+            return "invalid";
         } else {
-            button.setStyle(skin.get("choice", TextButtonStyle.class));
+            return "choice";
         }
+    }
+
+    private void refreshButton(TextButton button, Item item) {
+        button.setStyle(skin.get(getStyle(item), TextButtonStyle.class));
     }
 
     private void addItemButton(ItemState itemState) {

@@ -104,11 +104,16 @@ public class Player extends SteeringAgent {
     }
     
     @Override
-    public boolean canEquip(Item item) {
+    public boolean isIdentified(Item item) {
         if (item.isEncrypted()) {
             return isIdentified(item.getId());
         }
         return true;
+    }
+    
+    @Override
+    public boolean canEquip(Item item) {
+        return isIdentified(item);
     }
 
     public int getLastFragments() {

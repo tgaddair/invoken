@@ -8,6 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.eldritch.invoken.InvokenGame;
+import com.eldritch.invoken.actor.AgentInventory;
 import com.eldritch.invoken.actor.items.Item;
 import com.eldritch.invoken.actor.type.Player;
 import com.eldritch.invoken.actor.util.Lootable;
@@ -74,9 +75,19 @@ public class LootMenu {
 		}
 	}
 	
+	private String getStyle(Item item, Player player) {
+        if (!player.isIdentified(item)) {
+            return "encrypted";
+        } else if (!player.canEquip(item)) {
+            return "invalid";
+        } else {
+            return "choice";
+        }
+    }
+	
 	private void addItemButton(ItemState itemState, final Player player, final Lootable looting) {
 		final Item item = itemState.getItem();
-		String styleName = player.canEquip(item) ? "choice" : "encrypted";
+		String styleName = getStyle(item, player);
 		TextButtonStyle buttonStyle = skin.get(styleName, TextButtonStyle.class);
 		final TextButton itemButton = new TextButton(getText(item, itemState.getCount()), buttonStyle);
 		itemButton.addListener(new DefaultInputListener() {

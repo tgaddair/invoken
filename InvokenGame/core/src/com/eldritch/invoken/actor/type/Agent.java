@@ -1833,6 +1833,10 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     public void identify(String itemId) {
     }
     
+    public boolean isIdentified(Item item) {
+        return true;
+    }
+    
     public boolean canEquip(Item item) {
         return true;
     }

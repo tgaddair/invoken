@@ -118,7 +118,7 @@ public abstract class Item {
     }
     
     public String getTooltipFor(Agent agent) {
-        if (!agent.canEquip(this)) {
+        if (!agent.isIdentified(this)) {
             return String.format("%s\n\n" + "%s\n\n" + "Value: %d",
                     "Unknown " + getTypeName(), UNKNOWN_TOOLTIP, data.getValue());
         }

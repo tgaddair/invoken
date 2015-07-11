@@ -75,7 +75,7 @@ public class ResearchMenu implements HudElement {
 	    buttons.clear();
 		table.clear();
 		for (ItemState item : player.getInventory().getItems()) {
-		    if (!player.canEquip(item.getItem())) {
+		    if (!player.isIdentified(item.getItem())) {
 		        addItemButton(item, player);
 		    }
 		}
