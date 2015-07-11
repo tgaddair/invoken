@@ -17,6 +17,12 @@ import com.eldritch.invoken.util.Damage;
 public class ThrowGrenade extends InstantAugmentation {
     private static final int BASE_COST = 20;
     
+    private static final String TOOLTIP = String.format("Grenade\n\n"
+            + "Throws a grenade in front of the user or in the aimed direction that detonates "
+            + "in a fiery explosion on impact or after a brief period of time has elapsed.\n\n"
+            + "Mode: Instant\n"
+            + "Cost: %d energy, 1 grenade", BASE_COST);
+    
     private static class Holder {
         private static final ThrowGrenade INSTANCE = new ThrowGrenade();
     }
@@ -71,6 +77,11 @@ public class ThrowGrenade extends InstantAugmentation {
     @Override
     public float quality(Agent owner, Agent target, Level level) {
         return owner.getWeaponSentry().hasLineOfSight(target) ? 1 : 0;
+    }
+    
+    @Override
+    public String getTooltip() {
+        return TOOLTIP;
     }
     
     @Override

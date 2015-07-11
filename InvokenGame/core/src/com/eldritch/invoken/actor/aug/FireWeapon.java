@@ -18,6 +18,12 @@ import com.eldritch.invoken.util.SoundManager.SoundEffect;
 
 public class FireWeapon extends ProjectileAugmentation {
     private static final float ALERT_RADIUS = 10;
+    
+    private static final String TOOLTIP = "Fire Weapon\n\n"
+            + "Fires a single round from the currently equipped ranged weapon when aimed.\n\n"
+            + "Mode: Activated\n"
+            + "Cost: 1 ammunition";
+            
 
     private static class Holder {
         private static final FireWeapon INSTANCE = new FireWeapon();
@@ -103,6 +109,11 @@ public class FireWeapon extends ProjectileAugmentation {
 //        int ammunition = owner.getInventory().getAmmunitionCount();
 //        return String.format("%d / %d", clip, ammunition - clip);
         return clip > 0 ? String.valueOf(clip) : "";
+    }
+    
+    @Override
+    public String getTooltip() {
+        return TOOLTIP;
     }
 
     public class FireAction extends AnimatedAction {

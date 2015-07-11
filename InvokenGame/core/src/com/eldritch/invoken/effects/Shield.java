@@ -27,7 +27,6 @@ import com.eldritch.invoken.actor.aug.Augmentation;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.actor.type.Agent.Direction;
-import com.eldritch.invoken.location.Bullet;
 import com.eldritch.invoken.util.AnimationUtils;
 import com.eldritch.invoken.util.Damager;
 import com.eldritch.invoken.util.Settings;

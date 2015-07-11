@@ -9,6 +9,12 @@ import com.eldritch.invoken.effects.Shield.FixedShield;
 import com.eldritch.invoken.location.Level;
 
 public class Barrier extends SelfAugmentation {
+    private static final String TOOLTIP = "Barrier\n\n"
+            + "Absorbs up to 100 damage from incoming projectiles in the direction "
+            + "the user is currently facing.  Sustained the shield reduces movement speed.\n\n"
+            + "Mode: Sustained\n"
+            + "Cost: 0";
+    
     private static class Holder {
         private static final Barrier INSTANCE = new Barrier();
     }
@@ -77,6 +83,11 @@ public class Barrier extends SelfAugmentation {
             // turn off the shield if not facing an enemy with a ranged weapon
             return 2;
         }
+    }
+    
+    @Override
+    public String getTooltip() {
+        return TOOLTIP;
     }
 
     public class ShieldAction extends AnimatedAction {

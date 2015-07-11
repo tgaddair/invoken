@@ -100,6 +100,10 @@ public abstract class Augmentation {
         return "";
     }
     
+    public String getTooltip() {
+        return getName();
+    }
+    
     public boolean isAimed() {
         return false;
     }

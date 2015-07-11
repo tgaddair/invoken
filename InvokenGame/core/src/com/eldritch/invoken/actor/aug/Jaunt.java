@@ -6,9 +6,16 @@ import com.eldritch.invoken.actor.items.MeleeWeapon;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.effects.Jaunting;
+import com.eldritch.invoken.effects.Jaunting.JauntHandler;
 import com.eldritch.invoken.location.Level;
 
 public class Jaunt extends SelfAugmentation {
+    private static final String TOOLTIP = String.format("Jaunt\n\n"
+            + "Enhances the dodge maneuver with greater force and shockwave that stuns and "
+            + "knocks back surrounding entities for a short duration.\n\n"
+            + "Mode: Sustained\n"
+            + "Cost: %.0f energy", JauntHandler.DODGE_COST);
+    
 	private static class Holder {
         private static final Jaunt INSTANCE = new Jaunt();
 	}
@@ -68,6 +75,11 @@ public class Jaunt extends SelfAugmentation {
             return owner.dst2(target) > weapon.getRange() ? 2 : 0;
         }
         return 0;
+    }
+    
+    @Override
+    public String getTooltip() {
+        return TOOLTIP;
     }
 	
 	public class JauntAction extends AnimatedAction {

@@ -18,6 +18,7 @@ import com.eldritch.invoken.actor.type.Player;
 import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.util.DefaultInputListener;
 import com.eldritch.invoken.util.Settings;
+import com.eldritch.invoken.util.Utils;
 
 public class ConsumableBar implements HudElement {
     private final Map<Consumable, Label> labels = new HashMap<>();
@@ -100,6 +101,7 @@ public class ConsumableBar implements HudElement {
                 inv.equip(consumable);
             }
         });
+        stack.addListener(Utils.createTooltip(consumable.toString(), skin));
 
         container.add(stack).padLeft(10).padRight(10).padBottom(10);
         container.row();

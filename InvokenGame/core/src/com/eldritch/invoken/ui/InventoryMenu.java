@@ -17,6 +17,7 @@ import com.eldritch.invoken.actor.type.Player;
 import com.eldritch.invoken.state.Inventory.ItemState;
 import com.eldritch.invoken.util.DefaultInputListener;
 import com.eldritch.invoken.util.Settings;
+import com.eldritch.invoken.util.Utils;
 import com.eldritch.invoken.util.SoundManager.SoundEffect;
 
 public class InventoryMenu {
@@ -111,6 +112,7 @@ public class InventoryMenu {
                 System.out.println(item.toString());
             }
         });
+        itemButton.addListener(Utils.createTooltip(item.toString(), skin));
         
         table.row();
         table.add(itemButton).expandX().fillX().padLeft(5).padRight(5).padBottom(5).padTop(5);

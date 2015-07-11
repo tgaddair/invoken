@@ -18,6 +18,7 @@ import com.eldritch.invoken.actor.aug.Augmentation;
 import com.eldritch.invoken.actor.type.Player;
 import com.eldritch.invoken.util.DefaultInputListener;
 import com.eldritch.invoken.util.Settings;
+import com.eldritch.invoken.util.Utils;
 
 public class ActionBar implements AugmentationListener {
     private final Map<Augmentation, Label> labels = new HashMap<>();
@@ -107,13 +108,7 @@ public class ActionBar implements AugmentationListener {
                 augmentations.toggleActiveAugmentation(aug, button);
             }
         });
-        
-        TooltipManager manager = new TooltipManager();
-        manager.setMaxWidth(500);
-        Tooltip tooltip = new Tooltip("This is a test of the tooltip system.  Look upon my works, ye mighty, and despair.", manager, skin);
-        tooltip.setInstant(true);
-        tooltip.setAlways(true);
-        stack.addListener(tooltip);
+        stack.addListener(Utils.createTooltip(aug.getTooltip(), skin));
         
         container.add(stack).padLeft(10).padRight(10).padBottom(10);
     }

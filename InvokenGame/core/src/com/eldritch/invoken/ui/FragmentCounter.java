@@ -8,6 +8,7 @@ import com.badlogic.gdx.utils.Align;
 import com.eldritch.invoken.actor.items.Fragment;
 import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.util.Settings;
+import com.eldritch.invoken.util.Utils;
 
 public class FragmentCounter implements HudElement {
     private static final float DELAY = 0.025f;
@@ -29,6 +30,7 @@ public class FragmentCounter implements HudElement {
         label.setAlignment(Align.center);
         label.setFontScale(1f);
         container.add(label).padRight(10f);
+        container.addListener(Utils.createTooltip(Fragment.getInstance().toString(), skin));
     }
     
     @Override
