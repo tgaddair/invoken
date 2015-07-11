@@ -108,7 +108,12 @@ public class ActionBar implements AugmentationListener {
             }
         });
         
-//        Tooltip tooltip = new Tooltip("test", skin);
+        TooltipManager manager = new TooltipManager();
+        manager.setMaxWidth(500);
+        Tooltip tooltip = new Tooltip("This is a test of the tooltip system.  Look upon my works, ye mighty, and despair.", manager, skin);
+        tooltip.setInstant(true);
+        tooltip.setAlways(true);
+        stack.addListener(tooltip);
         
         container.add(stack).padLeft(10).padRight(10).padBottom(10);
     }
