@@ -11,7 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Stack;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.utils.Align;
+import com.badlogic.gdx.utils.Align;
 import com.eldritch.invoken.actor.AgentInventory;
 import com.eldritch.invoken.actor.items.Consumable;
 import com.eldritch.invoken.actor.type.Player;
@@ -79,7 +79,7 @@ public class ConsumableBar implements HudElement {
     private void add(final Consumable consumable) {
         LabelStyle labelStyle = skin.get("toast", LabelStyle.class);
         Label label = new Label("", labelStyle);
-        label.setAlignment(Align.topRight, Align.left);
+        label.setAlignment(Align.topRight);
         label.setColor(Color.GREEN);
         labels.put(consumable, label);
 

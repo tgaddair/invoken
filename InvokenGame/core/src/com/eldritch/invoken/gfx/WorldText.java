@@ -12,7 +12,7 @@ public class WorldText {
     private final SpriteBatch batch = new SpriteBatch();
     
     public WorldText() {
-        font.setScale(1.5f);
+        font.getData().setScale(1.5f);
     }
 
     public void render(String text, Camera camera, float worldX, float worldY) {

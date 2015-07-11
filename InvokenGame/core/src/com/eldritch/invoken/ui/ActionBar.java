@@ -11,7 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Stack;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
-import com.badlogic.gdx.scenes.scene2d.utils.Align;
+import com.badlogic.gdx.utils.Align;
 import com.eldritch.invoken.actor.PreparedAugmentations;
 import com.eldritch.invoken.actor.PreparedAugmentations.AugmentationListener;
 import com.eldritch.invoken.actor.aug.Augmentation;
@@ -86,7 +86,7 @@ public class ActionBar implements AugmentationListener {
     private void add(final Augmentation aug) {
         LabelStyle labelStyle = skin.get("toast", LabelStyle.class);
         Label label = new Label("", labelStyle);
-        label.setAlignment(Align.bottomRight, Align.right);
+        label.setAlignment(Align.bottomRight);
         label.setColor(Color.GREEN);
         labels.put(aug, label);
         
@@ -107,6 +107,8 @@ public class ActionBar implements AugmentationListener {
                 augmentations.toggleActiveAugmentation(aug, button);
             }
         });
+        
+//        Tooltip tooltip = new Tooltip("test", skin);
         
         container.add(stack).padLeft(10).padRight(10).padBottom(10);
     }

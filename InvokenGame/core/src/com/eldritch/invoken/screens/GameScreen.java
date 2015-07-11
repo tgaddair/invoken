@@ -141,7 +141,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
     @Override
     public void show() {
         super.show();
-
+        
         // create an orthographic camera, shows us 10(w/h) x 10 units of the
         // world
         float w = Gdx.graphics.getWidth();
