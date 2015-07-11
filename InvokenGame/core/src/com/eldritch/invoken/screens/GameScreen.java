@@ -337,6 +337,10 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         if (Settings.DEBUG_STATS) {
             drawFps();
             drawStats();
+        } else {
+            batch.begin();
+            drawAmmunition(batch, 0);
+            batch.end();
         }
 
         // reset
@@ -368,6 +372,30 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         // font.draw(batch, "Zoom: " + camera.zoom, 10, getHeight() - 10);
         batch.end();
     }
+    
+    private void drawAmmunition(SpriteBatch batch, int i) {
+        if (player.getInventory().hasRangedWeapon()) {
+            if (!player.getInventory().isReloading()) {
+                int clip = player.getInventory().getClip();
+                int ammunition = player.getInventory().getAmmunitionCount();
+                if (clip == 0) {
+                    font.setColor(Color.RED);
+                }
+                font.draw(batch, String.format("Ammunition: %d / %d", clip, ammunition - clip), 10,
+                        getHeight() - (30 + 20 * i));
+                if (clip == 0) {
+                    font.setColor(Color.WHITE);
+                }
+            } else {
+                int reloadPercent = (int) (player.getInventory().getReloadFraction() * 100);
+
+                font.setColor(Color.BLUE);
+                font.draw(batch, String.format("Reloading: %d%%", reloadPercent), 10, getHeight()
+                        - (30 + 20 * i));
+                font.setColor(Color.WHITE);
+            }
+        }
+    }
 
     private void drawStats() {
         // for (Agent actor : location.getActors()) {
@@ -378,28 +406,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 
         int i = 0;
         batch.begin();
-
-        if (player.getInventory().hasRangedWeapon()) {
-            if (!player.getInventory().isReloading()) {
-                int clip = player.getInventory().getClip();
-                int ammunition = player.getInventory().getAmmunitionCount();
-                if (clip == 0) {
-                    font.setColor(Color.RED);
-                }
-                font.draw(batch, String.format("Ammunition: %d / %d", clip, ammunition - clip), 10,
-                        getHeight() - (30 + 20 * i++));
-                if (clip == 0) {
-                    font.setColor(Color.WHITE);
-                }
-            } else {
-                int reloadPercent = (int) (player.getInventory().getReloadFraction() * 100);
-
-                font.setColor(Color.BLUE);
-                font.draw(batch, String.format("Reloading: %d%%", reloadPercent), 10, getHeight()
-                        - (30 + 20 * i++));
-                font.setColor(Color.WHITE);
-            }
-        }
+        drawAmmunition(batch, i++);
 
         Agent target = player.getTarget();
         if (target != null) {
