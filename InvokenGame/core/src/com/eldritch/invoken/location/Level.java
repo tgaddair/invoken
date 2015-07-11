@@ -768,9 +768,10 @@ public class Level {
             // draw threat radii
             debugEntityRenderer.renderThreat(player.getTarget(), camera);
         }
-
-        // draw last seen
-        debugEntityRenderer.renderLastSeen(player.getTarget(), camera);
+        if (Settings.DEBUG_TARGETING) {
+            // draw last seen
+            debugEntityRenderer.renderLastSeen(player.getTarget(), camera);
+        }
     }
 
     private float getElapsed(Agent agent) {
