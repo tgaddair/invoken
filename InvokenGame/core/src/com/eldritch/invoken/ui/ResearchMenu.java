@@ -1,8 +1,6 @@
 package com.eldritch.invoken.ui;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -17,10 +15,10 @@ import com.eldritch.invoken.actor.items.Fragment;
 import com.eldritch.invoken.actor.items.Item;
 import com.eldritch.invoken.actor.type.Player;
 import com.eldritch.invoken.location.Level;
-import com.eldritch.invoken.proto.Items;
 import com.eldritch.invoken.state.Inventory.ItemState;
 import com.eldritch.invoken.util.DefaultInputListener;
 import com.eldritch.invoken.util.Settings;
+import com.eldritch.invoken.util.Utils;
 import com.eldritch.invoken.util.SoundManager.SoundEffect;
 
 public class ResearchMenu implements HudElement {
@@ -126,6 +124,8 @@ public class ResearchMenu implements HudElement {
 				InvokenGame.SOUND_MANAGER.play(SoundEffect.INVENTORY_ON, 2);
 			}
 		});
+		itemButton.addListener(Utils.createTooltip(item.getTooltipFor(player), skin));
+		
 		table.row();
 		table.add(itemButton).expandX().fillX().padLeft(5).padRight(5).padBottom(5).padTop(5);
 		

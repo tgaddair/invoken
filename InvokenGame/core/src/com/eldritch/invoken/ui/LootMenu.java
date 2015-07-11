@@ -15,6 +15,7 @@ import com.eldritch.invoken.proto.Items;
 import com.eldritch.invoken.state.Inventory.ItemState;
 import com.eldritch.invoken.util.DefaultInputListener;
 import com.eldritch.invoken.util.Settings;
+import com.eldritch.invoken.util.Utils;
 import com.eldritch.invoken.util.SoundManager.SoundEffect;
 
 public class LootMenu {
@@ -97,6 +98,8 @@ public class LootMenu {
 				InvokenGame.SOUND_MANAGER.play(SoundEffect.INVENTORY_ON, 2);
 			}
 		});
+		itemButton.addListener(Utils.createTooltip(item.getTooltipFor(player), skin));
+		
 		table.row();
 		table.add(itemButton).expandX().fillX().padLeft(5).padRight(5).padBottom(5).padTop(5);
 	}

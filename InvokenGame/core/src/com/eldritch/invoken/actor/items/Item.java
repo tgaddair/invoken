@@ -13,6 +13,10 @@ import com.eldritch.invoken.proto.Items;
 import com.eldritch.invoken.util.Settings;
 
 public abstract class Item {
+    private static final String UNKNOWN_TOOLTIP = 
+            "Visit a research station to identify encrypted items at the cost of the item's "
+            + "value in fragments.";
+    
     protected final Items.Item data;
     private final float width;
     private final float height;
@@ -111,6 +115,14 @@ public abstract class Item {
     public String toString() {
         return String.format("%s\n\n" + "%s\n\n" + "Category: %s\n" + "Value: %d",
                 data.getName(), data.getDescription(), getTypeName(), data.getValue());
+    }
+    
+    public String getTooltipFor(Agent agent) {
+        if (!agent.canEquip(this)) {
+            return String.format("%s\n\n" + "%s\n\n" + "Value: %d",
+                    "Unknown " + getTypeName(), UNKNOWN_TOOLTIP, data.getValue());
+        }
+        return toString();
     }
 
     public static Item fromProto(Items.Item item) {

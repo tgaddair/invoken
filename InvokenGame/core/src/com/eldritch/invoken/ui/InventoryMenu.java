@@ -112,7 +112,7 @@ public class InventoryMenu {
                 System.out.println(item.toString());
             }
         });
-        itemButton.addListener(Utils.createTooltip(item.toString(), skin));
+        itemButton.addListener(Utils.createTooltip(item.getTooltipFor(player), skin));
         
         table.row();
         table.add(itemButton).expandX().fillX().padLeft(5).padRight(5).padBottom(5).padTop(5);
