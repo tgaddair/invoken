@@ -64,6 +64,11 @@ public class Settings {
 	public static final int START_FLOOR = 0;
 	public static final Profession DEFAULT_PROFESSION = Profession.Centurion;
 	
+	// string constants
+	public static final String FIRST_ROOM = "ResearchFacility"; // "Bedroom";
+	public static final String ENTRANCE = "Entrance";
+	public static final String EXIT = "Exit";
+	
 //	public static final String FIRST_LOCATION = "Tutorial";
 	public static final String FIRST_REGION = "WelcomeCenter";
 //	public static final String FIRST_LOCATION = "WelcomeCenterLevel3";
