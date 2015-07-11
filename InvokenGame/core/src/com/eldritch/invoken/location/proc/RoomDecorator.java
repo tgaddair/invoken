@@ -2,6 +2,7 @@ package com.eldritch.invoken.location.proc;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map.Entry;
@@ -106,13 +107,22 @@ public class RoomDecorator {
     private void place(Room room, ConnectedRoom connected, double area) {
         int coveredTiles = 0; // running count of covered tiles
         List<Furniture> availableFurniture = new ArrayList<Furniture>(room.getFurnitureList());
+        
         Collections.shuffle(availableFurniture, rand);
+        Collections.sort(availableFurniture, new Comparator<Furniture>() {
+            @Override
+            public int compare(Furniture f1, Furniture f2) {
+                // descending by the number of required furniture pieces, otherwise stable in the
+                // shuffled ordering
+                return Integer.compare(f2.getMin(), f1.getMin());
+            }
+        });
+        
         for (Furniture furniture : availableFurniture) {
             int placed = 0;
             for (int i = 0; i < furniture.getMax(); i++) {
                 // calculate the percentage of furniture coverage to ground
-                // tiles adding this piece
-                // of furniture would cost us
+                // tiles adding this piece of furniture would cost us
                 PlaceableFurniture placeable = FurnitureLoader.load(furniture);
                 int cost = placeable.getCost();
                 double coverage = (coveredTiles + cost) / area;
