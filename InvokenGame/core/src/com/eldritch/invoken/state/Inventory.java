@@ -1,6 +1,5 @@
 package com.eldritch.invoken.state;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -89,7 +88,7 @@ public class Inventory {
         return items.get(id);
     }
 
-    public Collection<ItemState> getItems() {
+    public Iterable<ItemState> getItems() {
         return items.values();
     }
 
@@ -113,10 +112,10 @@ public class Inventory {
         } else {
             items.get(item.getId()).add(count);
         }
-        handleAdd(item, count);
+        onAdd(item, count);
     }
     
-    protected void handleAdd(Item item, int count) {
+    protected void onAdd(Item item, int count) {
     }
 
     public void removeItem(Item item) {
@@ -141,15 +140,23 @@ public class Inventory {
             return 0;
         }
 
+        ItemState state = items.get(itemId);
+        int removed;
         if (count >= available || count == -1) {
             // remove all and unequip
-            handleRemove(items.get(itemId).getItem());
-            return available;
+            handleRemove(state.getItem());
+            removed = available;
         } else {
             // decrement counters
-            items.get(itemId).remove(count);
-            return count;
+            state.remove(count);
+            removed = count;
         }
+        
+        onRemove(state.getItem(), removed);
+        return removed;
+    }
+    
+    protected void onRemove(Item item, int count) {
     }
 
     protected void handleRemove(Item item) {

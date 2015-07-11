@@ -93,6 +93,10 @@ public abstract class Item {
         return data.getName();
     }
     
+    public double getWeight() {
+        return data.getWeight();
+    }
+    
     public abstract String getTypeName();
     
     public int getValue() {
@@ -113,14 +117,14 @@ public abstract class Item {
 
     @Override
     public String toString() {
-        return String.format("%s\n\n" + "%s\n\n" + "Category: %s\n" + "Value: %d",
-                data.getName(), data.getDescription(), getTypeName(), data.getValue());
+        return String.format("%s\n\n" + "%s\n\n" + "Category: %s\n" + "Value: %d\n" + "Weight: %.1f",
+                data.getName(), data.getDescription(), getTypeName(), data.getValue(), getWeight());
     }
     
     public String getTooltipFor(Agent agent) {
         if (!agent.isIdentified(this)) {
-            return String.format("%s\n\n" + "%s\n\n" + "Value: %d",
-                    "Unknown " + getTypeName(), UNKNOWN_TOOLTIP, data.getValue());
+            return String.format("%s\n\n" + "%s\n\n" + "Value: %d\n" + "Weight: %.1f",
+                    "Unknown " + getTypeName(), UNKNOWN_TOOLTIP, data.getValue(), getWeight());
         }
         return toString();
     }

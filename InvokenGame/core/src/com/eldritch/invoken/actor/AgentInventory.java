@@ -25,6 +25,9 @@ public class AgentInventory extends Inventory {
     private Outfit outfit;
     private RangedWeaponState rangedWeapon = new RangedWeaponState(null, null);
     private MeleeWeapon meleeWeapon;
+    
+    // additional properties
+    private float weight = 0;
 
     public AgentInventory(AgentInfo info) {
         super(new ArrayList<InventoryItem>());
@@ -43,6 +46,10 @@ public class AgentInventory extends Inventory {
             }
             rangedWeapon.update(delta);
         }
+    }
+    
+    public float getWeight() {
+        return weight;
     }
 
     public boolean canUseRangedWeapon() {
@@ -128,11 +135,11 @@ public class AgentInventory extends Inventory {
 
     public void setOutfit(Outfit outfit) {
         if (this.outfit != null) {
-            info.getAgent().addVelocityPenalty(-this.outfit.getWeight());
+            info.getAgent().addVelocityPenalty(-this.outfit.getWeightPenalty());
         }
         this.outfit = outfit;
         if (outfit != null) {
-            info.getAgent().addVelocityPenalty(outfit.getWeight());
+            info.getAgent().addVelocityPenalty(outfit.getWeightPenalty());
         }
     }
 
@@ -213,8 +220,14 @@ public class AgentInventory extends Inventory {
     }
     
     @Override
-    protected void handleAdd(Item item, int count) {
+    protected void onAdd(Item item, int count) {
         item.addFrom(this);
+        weight += item.getWeight() * count;
+    }
+    
+    @Override
+    protected void onRemove(Item item, int count) {
+        weight -= item.getWeight() * count;
     }
 
     @Override

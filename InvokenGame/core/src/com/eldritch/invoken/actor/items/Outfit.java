@@ -44,10 +44,10 @@ public class Outfit extends Item {
         return defense;
     }
     
-    public float getWeight() {
-        return (float) data.getWeight();
+    public float getWeightPenalty() {
+        return (float) getWeight() / 10f;
     }
-
+    
     @Override
     public boolean isEquipped(AgentInventory inventory) {
         return inventory.getOutfit() == this;
