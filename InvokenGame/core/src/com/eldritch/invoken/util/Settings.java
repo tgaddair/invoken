@@ -70,8 +70,7 @@ public class Settings {
 	public static final String EXIT = "Exit";
 	
 //	public static final String FIRST_LOCATION = "Tutorial";
-	public static final String FIRST_REGION = "WelcomeCenter";
-//	public static final String FIRST_LOCATION = "WelcomeCenterLevel3";
+	public static final String FIRST_REGION = "Central Tower";
 	
 	// tutorial seed:
 	// global seed: -509684375407364354

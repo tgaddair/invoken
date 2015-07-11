@@ -82,7 +82,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
     private final String playerName;
     private Profession profession = null; // TODO: this will become a proto
                                           // containing play info
-    private String locationName;
+    private String regionName;
 
     private ActionBar actionBar;
     private InventoryMenu inventoryMenu;
@@ -135,7 +135,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         super(game);
         this.playerName = playerName;
         this.profession = profession;
-        this.locationName = locationName;
+        this.regionName = locationName;
     }
 
     @Override
@@ -263,7 +263,9 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         // announce the new location
         toaster = new Toaster(getSkin());
         stage.addActor(toaster.getContainer());
-        toast(level.getRegion() + ", Floor " + level.getFloor());
+        
+        String region = regionName;  // TODO: level.getRegion()
+        toast(region + ", Floor " + level.getFloor());
     }
 
     @Override
