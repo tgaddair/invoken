@@ -87,6 +87,8 @@ public class ResearchMenu implements HudElement {
 		String styleName = canAfford(player, item) ? "encrypted" : "invalid";
         TextButtonStyle buttonStyle = skin.get(styleName, TextButtonStyle.class);
         
+        final Tooltip tooltip = Utils.createTooltip(item.getTooltipFor(player), skin);
+        
 		final TextButton itemButton = new TextButton(getText(item), buttonStyle);
 		itemButton.addListener(new DefaultInputListener() {
 			@Override
@@ -101,6 +103,7 @@ public class ResearchMenu implements HudElement {
                 if (player.isIdentified(item.getId())) {
                     itemButton.setText(item.getName(player));
                     itemButton.setStyle(skin.get("choice", TextButtonStyle.class));
+                    tooltip.setText(item.getTooltipFor(player));
                 }
                 
                 // update cost
@@ -124,7 +127,7 @@ public class ResearchMenu implements HudElement {
 				InvokenGame.SOUND_MANAGER.play(SoundEffect.INVENTORY_ON, 2);
 			}
 		});
-		itemButton.addListener(Utils.createTooltip(item.getTooltipFor(player), skin));
+		itemButton.addListener(tooltip);
 		
 		table.row();
 		table.add(itemButton).expandX().fillX().padLeft(5).padRight(5).padBottom(5).padTop(5);

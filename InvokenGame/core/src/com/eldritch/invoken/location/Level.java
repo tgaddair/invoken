@@ -1318,6 +1318,9 @@ public class Level {
             player.identify(weapon.getId());
             inv.addItem(weapon);
             inv.equip(weapon);
+            
+            Item shotgun = Item.fromProto(InvokenGame.ITEM_READER.readAsset("Shotgun"));
+            inv.addItem(shotgun);
         } else if (level < 25) {
             Item bullet = Item.fromProto(InvokenGame.ITEM_READER.readAsset("ShotgunShell"));
             inv.addItem(bullet, 25);

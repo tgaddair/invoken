@@ -1,6 +1,5 @@
 package com.eldritch.invoken.ui;
 
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
@@ -21,8 +20,8 @@ import com.eldritch.invoken.util.Utils;
 import com.eldritch.invoken.util.SoundManager.SoundEffect;
 
 public class InventoryMenu {
-    private static final Color EQUIPPED_COLOR = new Color(0x7693E9FF);
-    
+    // private static final Color EQUIPPED_COLOR = new Color(0x7693E9FF);
+
     private final Window window;
     private final Table table;
     private final Skin skin;
@@ -72,15 +71,15 @@ public class InventoryMenu {
         }
         refreshPortrait();
     }
-    
+
     private void refreshPortrait() {
         splitPane.setFirstWidget(getPlayerView());
     }
-    
+
     private ScrollPane getPlayerView() {
         return new ScrollPane(new Image(player.getPortrait()));
     }
-    
+
     private void refreshButton(TextButton button, Item item) {
         AgentInventory inventory = player.getInfo().getInventory();
         if (item.isEquipped(inventory)) {
@@ -95,7 +94,8 @@ public class InventoryMenu {
     private void addItemButton(ItemState itemState) {
         final Item item = itemState.getItem();
         TextButtonStyle buttonStyle = skin.get("choice", TextButtonStyle.class);
-        final TextButton itemButton = new TextButton(getText(item, itemState.getCount()), buttonStyle);
+        final TextButton itemButton = new TextButton(getText(item, itemState.getCount()),
+                buttonStyle);
         refreshButton(itemButton, item);
         itemButton.addListener(new DefaultInputListener() {
             @Override
@@ -113,11 +113,11 @@ public class InventoryMenu {
             }
         });
         itemButton.addListener(Utils.createTooltip(item.getTooltipFor(player), skin));
-        
+
         table.row();
         table.add(itemButton).expandX().fillX().padLeft(5).padRight(5).padBottom(5).padTop(5);
     }
-    
+
     private String getText(Item item, int count) {
         return String.format("%s (%d)", item.getName(player), count);
     }

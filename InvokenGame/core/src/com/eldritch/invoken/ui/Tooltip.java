@@ -87,6 +87,22 @@ public class Tooltip extends InputListener {
         table.pack();
         table.pack();
     }
+    
+    public void setText(String text) {
+        label.setText(text);
+        label.setWrap(true);
+        label.setWidth(300);
+        label.validate();
+        
+        table.clear();
+        table.add(label).width(new Value() {
+            public float get (Actor context) {
+                return Math.min(manager.maxWidth, label.getGlyphLayout().width);
+            }
+        });
+        table.pack();
+        table.pack();
+    }
 
     public void setStyle (TooltipStyle style) {
         if (style == null) throw new IllegalArgumentException("style cannot be null.");
