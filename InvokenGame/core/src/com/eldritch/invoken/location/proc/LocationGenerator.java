@@ -213,7 +213,7 @@ public class LocationGenerator {
                 map);
 
         // add all the overlays
-        map.addOverlay(roof);
+//        map.addOverlay(roof);
         map.addOverlay(trimLayer);
         map.addOverlay(overlay);
         map.addOverlay(doorLayer);
@@ -721,7 +721,7 @@ public class LocationGenerator {
         layer.setName("overlay");
 
         TiledMapTile belowTrim = walls.getTile(WallTile.OverlayBelowTrim);
-        // belowTrim.setOffsetX(Settings.PX / 2);
+        // belowTrim.setOffsetY(Settings.PX / 2);
         for (int x = 0; x < base.getWidth(); x++) {
             for (int y = 0; y < base.getHeight(); y++) {
                 Cell cell = base.getCell(x, y);
