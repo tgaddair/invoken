@@ -199,7 +199,7 @@ public class DoorActivator extends ClickActivator implements Crackable, Damageab
     private void onClose(Set<Agent> triggerAgents, Level level) {
         for (Agent agent : triggerAgents) {
             // characters that lack this door's credentials trigger a lock in
-            if (!lock.canUnlock(agent) && lock.getRoom().contains(agent.getNaturalPosition())
+            if (canTrap(agent) && !lock.canUnlock(agent) && lock.getRoom().contains(agent.getNaturalPosition())
                     && lock.getRoom().hasHostileResident(agent)) {
                 lock.getRoom().setLocked(true);
                 for (Agent resident : lock.getRoom().getResidents()) {
@@ -211,6 +211,14 @@ public class DoorActivator extends ClickActivator implements Crackable, Damageab
                 break;
             }
         }
+    }
+    
+    private boolean canTrap(Agent agent) {
+        // for the purposes of immersion, we allow agents other than the main player to become
+        // "trapped" within a room just as the player would, but in order to prevent blocking
+        // the player's progress, only the player can be trapped in a room that lies on the
+        // critical path
+        return !lock.getRoom().onCriticalPath() || agent == agent.getLocation().getPlayer();
     }
 
     @Override
