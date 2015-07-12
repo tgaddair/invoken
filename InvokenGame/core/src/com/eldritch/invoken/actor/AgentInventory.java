@@ -334,7 +334,7 @@ public class AgentInventory extends Inventory {
         public void useAmmunition(int x) {
             if (ammunition != null) {
                 clip = Math.max(clip - x, 0);
-                getState(ammunition.getId()).remove(x);
+                removeItem(ammunition, x);
             }
         }
 

@@ -182,11 +182,11 @@ public class Inventory {
             return item;
         }
 
-        public void add(int c) {
+        private void add(int c) {
             count += c;
         }
 
-        public void remove(int c) {
+        private void remove(int c) {
             // Can't have negative count
             count = Math.max(count - c, 0);
         }
