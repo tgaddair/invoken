@@ -2,13 +2,17 @@ package com.eldritch.invoken.ui;
 
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.SplitPane;
+import com.badlogic.gdx.scenes.scene2d.ui.Stack;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
+import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
+import com.badlogic.gdx.utils.Align;
 import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.actor.AgentInventory;
 import com.eldritch.invoken.actor.items.Item;
@@ -73,7 +77,16 @@ public class InventoryMenu {
     }
 
     private void refreshPortrait() {
-        splitPane.setFirstWidget(getPlayerView());
+        Stack stack = new Stack();
+        stack.add(getPlayerView());
+        
+        String text = String.format("Weight: %.1f", player.getInventory().getWeight());
+        LabelStyle labelStyle = skin.get("response", LabelStyle.class);
+        Label label = new Label(text, labelStyle);
+        label.setAlignment(Align.topLeft);
+        stack.add(label);
+        
+        splitPane.setFirstWidget(stack);
     }
 
     private ScrollPane getPlayerView() {

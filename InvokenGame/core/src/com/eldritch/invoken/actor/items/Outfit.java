@@ -45,7 +45,7 @@ public class Outfit extends Item {
     }
     
     public float getWeightPenalty() {
-        return (float) getWeight() / 10f;
+        return (float) getWeight() / 25f;
     }
     
     @Override
