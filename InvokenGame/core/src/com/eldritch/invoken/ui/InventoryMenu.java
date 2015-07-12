@@ -81,14 +81,13 @@ public class InventoryMenu {
 		Stack stack = new Stack();
 		stack.add(getPlayerView());
 
-		double weight = player.getInventory().getWeight();
-		String weightValue = String.format("%.1f", weight);
-		if (player.getInventory().isBurdened()) {
-			weightValue = Utils.markupInvalid(weightValue);
-		}
+		AgentInventory inv = player.getInventory();
+		String weightValue = Utils.markupIfInvalid(
+				String.format("%.1f", inv.getWeight()), inv.isBurdened());
+		double maxWeight = inv.getMaxWeight();
+		String text = String
+				.format("Weight: %s / %.1f", weightValue, maxWeight);
 
-		double maxWeight = player.getInventory().getMaxWeight();
-		String text = String.format("Weight: %s / %.1f", weightValue, maxWeight);
 		LabelStyle labelStyle = skin.get("response", LabelStyle.class);
 		Label label = new Label(text, labelStyle);
 		label.setAlignment(Align.topLeft);

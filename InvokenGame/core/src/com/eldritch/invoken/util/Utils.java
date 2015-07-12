@@ -34,6 +34,10 @@ public class Utils {
         return tooltip;
     }
     
+    public static String markupIfInvalid(String text, boolean invalid) {
+    	return invalid ? markupInvalid(text) : text;
+    }
+    
     public static String markupInvalid(String text) {
     	return String.format("[RED]%s[WHITE]", text);
     }
