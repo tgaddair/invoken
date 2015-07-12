@@ -63,6 +63,10 @@ public class AgentInventory extends Inventory {
     public float getWeight() {
         return weight;
     }
+    
+    public float getMaxWeight() {
+        return MAX_WEIGHT;
+    }
 
     public boolean canUseRangedWeapon() {
         // return hasRangedWeapon() && !isCooling(rangedWeapon);

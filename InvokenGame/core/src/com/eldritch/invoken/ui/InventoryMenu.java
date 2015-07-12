@@ -79,20 +79,21 @@ public class InventoryMenu {
     private void refreshPortrait() {
         Stack stack = new Stack();
         stack.add(getPlayerView());
-        
-        String text = String.format("Weight: %.1f", player.getInventory().getWeight());
+
+        String text = String.format("Weight: %.1f / %.1f", player.getInventory().getWeight(),
+                player.getInventory().getMaxWeight());
         LabelStyle labelStyle = skin.get("response", LabelStyle.class);
         Label label = new Label(text, labelStyle);
         label.setAlignment(Align.topLeft);
         stack.add(label);
-        
+
         splitPane.setFirstWidget(stack);
     }
 
     private ScrollPane getPlayerView() {
         return new ScrollPane(new Image(player.getPortrait()));
     }
-    
+
     private String getStyle(Item item) {
         AgentInventory inventory = player.getInfo().getInventory();
         if (item.isEquipped(inventory)) {
