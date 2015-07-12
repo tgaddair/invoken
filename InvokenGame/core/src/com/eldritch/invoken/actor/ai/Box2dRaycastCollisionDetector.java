@@ -9,6 +9,7 @@ import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.RayCastCallback;
 import com.badlogic.gdx.physics.box2d.World;
 import com.eldritch.invoken.actor.type.Agent;
+import com.eldritch.invoken.util.Settings;
 
 public class Box2dRaycastCollisionDetector implements RaycastCollisionDetector<Vector2> {
     private final World world;
@@ -39,6 +40,7 @@ public class Box2dRaycastCollisionDetector implements RaycastCollisionDetector<V
     }
 
     public static class Box2dRaycastCallback implements RayCastCallback {
+        private final short mask = Settings.BIT_TARGETABLE;
         public Collision<Vector2> outputCollision;
         public boolean collided;
 
@@ -56,6 +58,12 @@ public class Box2dRaycastCollisionDetector implements RaycastCollisionDetector<V
         }
 
         private boolean isObstruction(Fixture fixture) {
+            short category = fixture.getFilterData().categoryBits;
+            if ((mask & category) == 0) {
+                // no common bits, so these items don't collide
+                return false;
+            }
+            
             // check that the fixture belongs to another agent
             if (fixture.getUserData() != null && fixture.getUserData() instanceof Agent) {
                 Agent agent = (Agent) fixture.getUserData();

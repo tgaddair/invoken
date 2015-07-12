@@ -318,7 +318,7 @@ public class DoorActivator extends ClickActivator implements Crackable, Damageab
 
         // collision filters
         Filter filter = fixture.getFilterData();
-        filter.categoryBits = Settings.BIT_DEFAULT; // hits anything
+        filter.categoryBits = Settings.BIT_INVISIBLE; // does not interrupt targeting
         filter.maskBits = Settings.BIT_AGENT; // hit by agents
         fixture.setFilterData(filter);
 
