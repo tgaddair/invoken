@@ -339,7 +339,7 @@ public class AgentInventory extends Inventory {
         }
 
         public int getAmmunitionCount() {
-            if (ammunition == null) {
+            if (ammunition == null || !hasItem(ammunition)) {
                 return 0;
             }
             return getState(ammunition.getId()).getCount();
