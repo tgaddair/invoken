@@ -1838,7 +1838,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     }
     
     public boolean canEquip(Item item) {
-        return true;
+        return info.satisfies(item.getData().getRequirementList());
     }
 
     @Override
