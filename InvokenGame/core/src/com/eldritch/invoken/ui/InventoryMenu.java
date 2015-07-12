@@ -83,7 +83,7 @@ public class InventoryMenu {
 
 		double weight = player.getInventory().getWeight();
 		String weightValue = String.format("%.1f", weight);
-		if (!player.getInventory().isBurdened()) {
+		if (player.getInventory().isBurdened()) {
 			weightValue = Utils.markupInvalid(weightValue);
 		}
 
