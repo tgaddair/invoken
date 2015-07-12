@@ -272,7 +272,7 @@ public class AgentInventory extends Inventory {
         }
     }
     
-    private boolean isBurdened() {
+    public boolean isBurdened() {
         return getWeight() / MAX_WEIGHT >= BURDEN_RATIO;
     }
 

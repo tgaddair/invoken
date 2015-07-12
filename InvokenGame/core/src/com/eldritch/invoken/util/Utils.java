@@ -34,5 +34,9 @@ public class Utils {
         return tooltip;
     }
     
+    public static String markupInvalid(String text) {
+    	return String.format("[RED]%s[WHITE]", text);
+    }
+    
     private Utils() {}
 }

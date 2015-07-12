@@ -154,7 +154,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 
         font = new BitmapFont();
         batch = new SpriteBatch();
-
+        
         // load the selector
         selector = new TextureRegion(new Texture("sprite/selection.png"));
 
@@ -225,9 +225,12 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
     private void refreshHud() {
         hud.clear();
         stage.clear();
+        
+        // enable markup in labels
+        Skin skin = getSkin();
+        skin.getFont("default-font").getData().markupEnabled = true;
 
         // create HUD elements
-        Skin skin = getSkin();
         dialogue = new DialogueMenu(skin);
         loot = new LootMenu(player, skin);
         actionBar = new ActionBar(player, skin);
