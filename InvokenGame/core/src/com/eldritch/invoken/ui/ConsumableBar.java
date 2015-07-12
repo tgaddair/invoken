@@ -23,12 +23,14 @@ import com.eldritch.invoken.util.Utils;
 public class ConsumableBar implements HudElement {
     private final Map<Consumable, Label> labels = new HashMap<>();
     private final Map<Consumable, Image> images = new HashMap<>();
+    private final Player player;
     private final AgentInventory inv;
     private final Table container;
     private final Skin skin;
 
     public ConsumableBar(Player player, Skin skin) {
         this.skin = skin;
+        this.player = player;
         this.inv = player.getInventory();
 
         container = new Table();
@@ -101,7 +103,7 @@ public class ConsumableBar implements HudElement {
                 inv.equip(consumable);
             }
         });
-        stack.addListener(Utils.createTooltip(consumable.toString(), skin));
+        stack.addListener(Utils.createTooltip(consumable.getTooltipFor(player), skin));
 
         container.add(stack).padLeft(10).padRight(10).padBottom(10);
         container.row();

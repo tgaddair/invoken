@@ -239,7 +239,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         // playerHealth = new StatusBar<Agent>(player, new HealthCalculator(),
         // skin);
         selectedHealth = new HealthBar(skin);
-        hud.add(new FragmentCounter(skin));
+        hud.add(new FragmentCounter(player, skin));
         hud.add(new UploadMenu(player, skin));
         hud.add(new ResearchMenu(player, skin));
         hud.add(new DesireMenu(player, skin));
