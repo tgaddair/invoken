@@ -68,8 +68,7 @@ public class LootMenu {
 	public void setup(Player player, Lootable looting) {
 		table.clear();
 		for (ItemState item : looting.getInventory().getItems()) {
-		    Items.Item data = item.getItem().getData();
-		    if (data.getDroppable() && !data.getHidden()) {
+		    if (item.getItem().canLoot()) {
 		        addItemButton(item, player, looting);
 		    }
 		}

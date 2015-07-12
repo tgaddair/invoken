@@ -563,6 +563,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
                 shiftDown(true);
                 return true;
             case Keys.SHIFT_LEFT:
+            case Keys.SHIFT_RIGHT:
                 player.setAiming(true);
                 return true;
             case Keys.TAB:

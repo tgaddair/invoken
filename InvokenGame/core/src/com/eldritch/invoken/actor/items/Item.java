@@ -52,6 +52,10 @@ public abstract class Item {
         return false;
     }
     
+    public boolean canLoot() {
+        return data.getDroppable() && !data.getHidden();
+    }
+    
     public boolean isEncrypted() {
         return false;
     }

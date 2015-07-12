@@ -2,7 +2,9 @@ package com.eldritch.invoken.actor;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.actor.items.Ammunition;
@@ -17,8 +19,9 @@ import com.eldritch.invoken.state.Inventory;
 import com.eldritch.invoken.util.SoundManager.SoundEffect;
 
 public class AgentInventory extends Inventory {
+    private final Set<Item> loot = new HashSet<>();
     private final AgentInfo info;
-
+    
     // equipment
     private final Consumable[] consumables = new Consumable[2];
     private final Map<RangedWeaponType, Ammunition> ammunition = new HashMap<>();
@@ -36,6 +39,11 @@ public class AgentInventory extends Inventory {
 
     public AgentInfo getAgentInfo() {
         return info;
+    }
+    
+    @Override
+    public boolean isEmpty() {
+        return super.isEmpty() || loot.isEmpty();
     }
 
     public void update(float delta) {
@@ -223,6 +231,9 @@ public class AgentInventory extends Inventory {
     protected void onAdd(Item item, int count) {
         item.addFrom(this);
         weight += item.getWeight() * count;
+        if (item.canLoot()) {
+            loot.add(item);
+        }
     }
     
     @Override
@@ -234,6 +245,9 @@ public class AgentInventory extends Inventory {
     protected void handleRemove(Item item) {
         item.unequipFrom(this);
         super.handleRemove(item);
+        if (item.canLoot()) {
+            loot.remove(item);
+        }
     }
 
     private class RangedWeaponState {
