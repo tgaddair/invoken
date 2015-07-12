@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.eldritch.invoken.actor.AgentInventory;
+import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.actor.type.Agent.Direction;
 import com.eldritch.invoken.actor.type.Human;
@@ -20,7 +21,7 @@ public class Outfit extends Item {
     public Outfit(com.eldritch.invoken.proto.Items.Item item) {
         super(item, Human.PX);
         animations = AnimationUtils.getHumanAnimations(getAssetPath(item.getAsset()));
-        
+
         float damageSum = 0;
         for (DamageMod mod : item.getDamageModifierList()) {
             damageSum += mod.getMagnitude();
@@ -32,27 +33,27 @@ public class Outfit extends Item {
     public boolean covers() {
         return getData().getCovers();
     }
-    
+
     public float getDefense(DamageType type) {
         if (!resistance.containsKey(type)) {
             return 0;
         }
         return resistance.get(type);
     }
-    
+
     public float getDefense() {
         return defense;
     }
-    
+
     public float getWeightPenalty() {
         return (float) getWeight() / 25f;
     }
-    
+
     @Override
     public boolean isEquipped(AgentInventory inventory) {
         return inventory.getOutfit() == this;
     }
-    
+
     @Override
     public void addFrom(AgentInventory inventory) {
     }
@@ -68,7 +69,7 @@ public class Outfit extends Item {
             inventory.setOutfit(null);
         }
     }
-    
+
     @Override
     public boolean isEncrypted() {
         return true;
@@ -78,7 +79,7 @@ public class Outfit extends Item {
     protected Animation getAnimation(Activity activity, Direction direction) {
         return animations.get(activity).get(direction);
     }
-    
+
     @Override
     public String getTypeName() {
         return "Outfit";
@@ -89,8 +90,8 @@ public class Outfit extends Item {
     }
 
     @Override
-    public String toString() {
-        StringBuilder result = new StringBuilder(String.format("%s\n", super.toString()));
+    public String getLabelString(Agent agent) {
+        StringBuilder result = new StringBuilder(String.format("%s\n", super.getLabelString(agent)));
         result.append("Resistance:");
         for (DamageMod mod : data.getDamageModifierList()) {
             result.append(String.format("\n  %s: %d", mod.getDamage(), mod.getMagnitude()));

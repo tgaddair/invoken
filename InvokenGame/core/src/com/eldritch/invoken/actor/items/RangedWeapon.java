@@ -128,18 +128,18 @@ public abstract class RangedWeapon extends Item {
     public float getCooldown() {
         return (float) getData().getCooldown();
     }
-    
+
     public boolean isAuto() {
         return false;
     }
-    
+
     @Override
     public void equipIfBetter(AgentInventory inventory) {
         if (!inventory.hasRangedWeapon() || inventory.getRangedWeapon().getDamage() < getDamage()) {
             equipFrom(inventory);
         }
     }
-    
+
     @Override
     public void addFrom(AgentInventory inventory) {
     }
@@ -160,7 +160,7 @@ public abstract class RangedWeapon extends Item {
             inventory.setRangedWeapon(null);
         }
     }
-    
+
     @Override
     public boolean isEncrypted() {
         return true;
@@ -170,16 +170,16 @@ public abstract class RangedWeapon extends Item {
     protected Animation getAnimation(Activity activity, Direction direction) {
         return animations.get(direction);
     }
-    
+
     @Override
     public String getTypeName() {
         return "Ranged Weapon";
     }
 
     @Override
-    public String toString() {
+    public String getLabelString(Agent agent) {
         StringBuilder result = new StringBuilder(String.format("%s\n" + "Clip: %d\n",
-                super.toString(), getClipSize()));
+                super.getLabelString(agent), getClipSize()));
         result.append("Damage:");
         for (DamageMod mod : data.getDamageModifierList()) {
             result.append(String.format("\n  %s: %d", mod.getDamage(), mod.getMagnitude()));
@@ -201,8 +201,8 @@ public abstract class RangedWeapon extends Item {
 
     public class ShotgunPellet extends HandledBullet {
         public ShotgunPellet(Agent owner, float theta, float scale) {
-            super(owner, texture, BULLET_VELOCITY * 0.5f, Damage.from(owner, RangedWeapon.this, owner
-                    .getWeaponSentry().getPosition(), scale));
+            super(owner, texture, BULLET_VELOCITY * 0.5f, Damage.from(owner, RangedWeapon.this,
+                    owner.getWeaponSentry().getPosition(), scale));
             rotate(theta);
         }
 
@@ -218,24 +218,24 @@ public abstract class RangedWeapon extends Item {
             return PELLET_TEXTURE;
         }
     }
-    
+
     public class RailBullet extends RangedWeaponBullet {
         private float scale = 1.0f;
-        
+
         public RailBullet(Agent owner) {
             super(owner, BULLET_TEXTURE);
         }
-        
+
         @Override
         public void apply(Agent target) {
             apply(getOwner(), target);
-            
+
             // rail guns shoot through enemies, but lose half their damage
             scale /= 2;
             getDamage().setBaseScale(scale);
         }
     }
-    
+
     public class PistolBullet extends RangedWeaponBullet {
         public PistolBullet(Agent owner) {
             super(owner, BULLET_TRAIL_TEXTURE);
@@ -245,11 +245,11 @@ public abstract class RangedWeapon extends Item {
     public class RangedWeaponBullet extends HandledBullet {
         private final TextureRegion texture;
         private final Ammunition ammo;
-        
+
         public RangedWeaponBullet(Agent owner, TextureRegion texture) {
             super(owner, texture, BULLET_VELOCITY * 0.75f, Damage.from(owner, RangedWeapon.this));
             this.texture = texture;
-            
+
             // with some prob, add the bullet to the inventory of the target
             // note that this logic assumes that ammunition is removed after bullet application
             ammo = owner.getInventory().getAmmunition(getType());
@@ -417,15 +417,15 @@ public abstract class RangedWeapon extends Item {
             // does nothing
         }
     }
-    
+
     public abstract float getIdealDistance();
 
     public abstract SoundEffect getSoundEffect();
 
     public abstract ProjectileSpawn getProjectileSpawn(Agent owner);
-    
+
     public abstract int getClipSize();
-    
+
     protected HandledBullet getPrimaryProjectile(Agent owner) {
         switch (primary) {
             case THERMAL:
@@ -434,12 +434,12 @@ public abstract class RangedWeapon extends Item {
                 return new PistolBullet(owner);
         }
     }
-    
+
     public static class Pistol extends RangedWeapon {
         public Pistol(Items.Item item) {
             super(item);
         }
-        
+
         @Override
         public float getIdealDistance() {
             return 4;
@@ -460,16 +460,16 @@ public abstract class RangedWeapon extends Item {
             return 7;
         }
     }
-    
+
     public static class AssaultRifle extends RangedWeapon {
         private static final float SPREAD_DEGREES = 5f;
         private static final int LIMIT = 3;
         private static final float DELAY = 0.15f;
-        
+
         public AssaultRifle(Items.Item item) {
             super(item);
         }
-        
+
         @Override
         public float getIdealDistance() {
             return 4;
@@ -493,7 +493,7 @@ public abstract class RangedWeapon extends Item {
             };
             return new DelayedProjectileSpawn(owner, generator, LIMIT, DELAY);
         }
-        
+
         @Override
         public float getCooldown() {
             return 0.5f;
@@ -509,7 +509,7 @@ public abstract class RangedWeapon extends Item {
         public Rifle(Items.Item item) {
             super(item);
         }
-        
+
         @Override
         public float getIdealDistance() {
             return 6;
@@ -534,11 +534,11 @@ public abstract class RangedWeapon extends Item {
     public static class Shotgun extends RangedWeapon {
         private static final float SPREAD_DEGREES = 10f;
         private static final float PELLET_SCALE = 0.35f;
-        
+
         public Shotgun(Items.Item item) {
             super(item);
         }
-        
+
         @Override
         public float getIdealDistance() {
             return 2;

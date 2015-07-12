@@ -20,6 +20,7 @@ public class BspGenerator {
     // 2 -> lots of big halls
     // 4 -> lots of corridors
     private static final float ROOM_SPARSITY = 4.5f;
+    private static final int MIN_SIZE = 120;
 
     private final Random rand;
     private CellType[][] map;
@@ -57,7 +58,7 @@ public class BspGenerator {
     public BspGenerator(int roomCount, long seed) {
         this.rand = new Random(seed);
         this.RoomCount = roomCount;
-        this.Width = getSize(RoomCount, 110);
+        this.Width = getSize(RoomCount, MIN_SIZE);
         this.Height = Width;
         map = new CellType[Width][Height];
         this.bounds = new Rectangle(0, 0, getWidth(), getHeight());

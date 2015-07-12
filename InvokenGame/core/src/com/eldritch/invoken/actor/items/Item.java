@@ -10,13 +10,14 @@ import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.actor.type.Agent.Direction;
 import com.eldritch.invoken.proto.Items;
+import com.eldritch.invoken.proto.Items.Item.Requirement;
 import com.eldritch.invoken.util.Settings;
+import com.eldritch.invoken.util.Utils;
 
 public abstract class Item {
-    private static final String UNKNOWN_TOOLTIP = 
-            "Visit a research station to identify encrypted items at the cost of the item's "
+    private static final String UNKNOWN_TOOLTIP = "Visit a research station to identify encrypted items at the cost of the item's "
             + "value in fragments.";
-    
+
     protected final Items.Item data;
     private final float width;
     private final float height;
@@ -41,7 +42,7 @@ public abstract class Item {
     }
 
     public abstract boolean isEquipped(AgentInventory inventory);
-    
+
     public abstract void addFrom(AgentInventory inventory);
 
     public abstract void equipFrom(AgentInventory inventory);
@@ -51,11 +52,11 @@ public abstract class Item {
     public boolean mapTo(AgentInventory inventory, int index) {
         return false;
     }
-    
+
     public boolean canLoot() {
         return data.getDroppable() && !data.getHidden();
     }
-    
+
     public boolean isEncrypted() {
         return false;
     }
@@ -92,17 +93,17 @@ public abstract class Item {
         }
         return getName();
     }
-    
+
     public String getName() {
         return data.getName();
     }
-    
+
     public double getWeight() {
         return data.getWeight();
     }
-    
+
     public abstract String getTypeName();
-    
+
     public int getValue() {
         return data.getValue();
     }
@@ -121,16 +122,44 @@ public abstract class Item {
 
     @Override
     public String toString() {
-        return String.format("%s\n\n" + "%s\n\n" + "Category: %s\n" + "Value: %d\n" + "Weight: %.1f",
-                data.getName(), data.getDescription(), getTypeName(), data.getValue(), getWeight());
+        return data.getName();
     }
-    
+
     public String getTooltipFor(Agent agent) {
         if (!agent.isIdentified(this)) {
-            return String.format("%s\n\n" + "%s\n\n" + "Value: %d\n" + "Weight: %.1f",
-                    "Unknown " + getTypeName(), UNKNOWN_TOOLTIP, data.getValue(), getWeight());
+            return String.format("%s\n\n" + "%s\n\n" + "Value: %d\n" + "Weight: %.1f", "Unknown "
+                    + getTypeName(), UNKNOWN_TOOLTIP, data.getValue(), getWeight());
         }
-        return toString();
+        return getLabelString(agent);
+    }
+
+    protected String getLabelString(Agent agent) {
+        return String.format("[CYAN]%s[WHITE]\n" + "%s" + "%s\n\n" + "Category: %s\n"
+                + "Value: %d\n" + "Weight: %.1f", data.getName(), getRequirementsString(agent),
+                data.getDescription(), getTypeName(), data.getValue(), getWeight());
+    }
+
+    protected String getRequirementsString(Agent agent) {
+        StringBuilder sb = new StringBuilder();
+        if (!data.getRequirementList().isEmpty()) {
+            boolean first = true;
+            sb.append("Requires: ");
+            for (Requirement req : data.getRequirementList()) {
+                if (!first) {
+                    sb.append(", ");
+                }
+                first = false;
+
+                String discipline = req.getDiscipline().name().substring(0, 1);
+                boolean invalid = !agent.getInfo().satisfies(req);
+                String reqValue = Utils.markupIfInvalid(
+                        String.format("%d %s", req.getValue(), discipline), invalid);
+                sb.append(reqValue);
+            }
+            sb.append("\n");
+        }
+        sb.append("\n");
+        return sb.toString();
     }
 
     public static Item fromProto(Items.Item item) {

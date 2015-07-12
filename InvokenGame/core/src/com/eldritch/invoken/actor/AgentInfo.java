@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -22,6 +23,7 @@ import com.eldritch.invoken.proto.Actors.NonPlayerActor;
 import com.eldritch.invoken.proto.Augmentations.AugmentationProto;
 import com.eldritch.invoken.proto.Disciplines.Discipline;
 import com.eldritch.invoken.proto.Effects.DamageType;
+import com.eldritch.invoken.proto.Items.Item.Requirement;
 import com.eldritch.invoken.state.Inventory.ItemState;
 import com.google.common.base.Functions;
 
@@ -380,6 +382,20 @@ public class AgentInfo {
         // status effect can never more than half something's effectiveness
         float effect = Math.min(statusEffects.get(damage), 50f);
         return 1f - effect / 100f;
+    }
+    
+    public boolean satisfies(List<Requirement> reqs) {
+    	for (Requirement req : reqs) {
+    		// must satisfy all requirements
+    		if (!satisfies(req)) {
+    			return false;
+    		}
+    	}
+    	return true;
+    }
+    
+    public boolean satisfies(Requirement req) {
+    	return getSkillLevel(req.getDiscipline()) >= req.getValue();
     }
 
     public int getSkillLevel(Discipline d) {

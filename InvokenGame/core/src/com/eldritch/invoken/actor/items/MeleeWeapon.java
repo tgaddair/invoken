@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.eldritch.invoken.actor.AgentInventory;
+import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Human;
 import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.actor.type.Agent.Direction;
@@ -83,9 +84,9 @@ public class MeleeWeapon extends Item {
     }
 
     @Override
-    public String toString() {
+    public String getLabelString(Agent agent) {
         StringBuilder result = new StringBuilder(String.format("%s\n" + "Range: %.2f\n",
-                super.toString(), data.getRange()));
+                super.getLabelString(agent), data.getRange()));
         result.append("Damage:");
         for (DamageMod mod : data.getDamageModifierList()) {
             result.append(String.format("\n  %s: %d", mod.getDamage(), mod.getMagnitude()));
