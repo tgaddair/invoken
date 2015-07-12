@@ -19,6 +19,10 @@ import com.eldritch.invoken.state.Inventory;
 import com.eldritch.invoken.util.SoundManager.SoundEffect;
 
 public class AgentInventory extends Inventory {
+    private static final float MAX_WEIGHT = 150f;
+    private static final float BURDEN_RATIO = 1f;
+    private static final float BURDEN_PENALTY = 5f;
+    
     private final Set<Item> loot = new HashSet<>();
     private final AgentInfo info;
     
@@ -230,7 +234,11 @@ public class AgentInventory extends Inventory {
     @Override
     protected void onAdd(Item item, int count) {
         item.addFrom(this);
+        
+        boolean wasBurdened = isBurdened();
         weight += item.getWeight() * count;
+        updateBurden(wasBurdened);
+        
         if (item.canLoot()) {
             loot.add(item);
         }
@@ -238,7 +246,9 @@ public class AgentInventory extends Inventory {
     
     @Override
     protected void onRemove(Item item, int count) {
+        boolean wasBurdened = isBurdened();
         weight -= item.getWeight() * count;
+        updateBurden(wasBurdened);
     }
 
     @Override
@@ -248,6 +258,18 @@ public class AgentInventory extends Inventory {
         if (item.canLoot()) {
             loot.remove(item);
         }
+    }
+    
+    private void updateBurden(boolean wasBurdened) {
+        boolean burdened = isBurdened();
+        if (burdened != wasBurdened) {
+            int sign = burdened ? 1 : -1;
+            info.getAgent().addVelocityPenalty(sign * BURDEN_PENALTY);
+        }
+    }
+    
+    private boolean isBurdened() {
+        return getWeight() / MAX_WEIGHT >= BURDEN_RATIO;
     }
 
     private class RangedWeaponState {
