@@ -422,7 +422,6 @@ public class DoorActivator extends ClickActivator implements Crackable, Damageab
     private boolean canPick(Agent agent) {
         int piks = lock.getAvailablePiks(agent);
         int required = lock.getRequiredPiks(agent);
-        System.out.println(piks + " -> " + required);
         return piks >= required;
     }
 
