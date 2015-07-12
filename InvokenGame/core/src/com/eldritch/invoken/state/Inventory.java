@@ -56,7 +56,7 @@ public class Inventory {
             // add the item if we end up with a positive count
             if (count > 0) {
                 Item item = Item.fromProto(InvokenGame.ITEM_READER.readAsset(proto.getItemId()));
-                items.put(proto.getItemId(), new Inventory.ItemState(item, count));
+                addItem(item, count);
             }
         }
     }
