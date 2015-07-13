@@ -225,6 +225,15 @@ public class LocationGenerator {
         ConnectedRoomManager rooms = createRooms(bsp.getEncounterRooms(), typeMap);
         map.setRooms(rooms);
         save(rooms.getGrid(), "connected-rooms");
+        
+
+        // create and lock doors
+        InvokenGame.log("Adding Doors");
+        IcarianFurnitureGenerator furnitureGenerator = new IcarianFurnitureGenerator(atlas, ground,
+                seed);
+        furnitureGenerator.createDoors(rooms, base, map.getActivators());
+        buildCriticalPath(rooms);
+        lockDoors(rooms);
 
         InvokenGame.log("Claiming Territory");
         TerritoryGenerator territoryGen = new TerritoryGenerator(bsp, rooms, territory);
@@ -247,16 +256,11 @@ public class LocationGenerator {
                 encounters)) {
             map.getLayers().add(layer);
         }
-
+        
         // add furniture
         // InvokenGame.log("Adding Furniture");
         // List<Activator> activators = new ArrayList<Activator>();
-        IcarianFurnitureGenerator furnitureGenerator = new IcarianFurnitureGenerator(atlas, ground,
-                seed);
 
-        // doors
-        InvokenGame.log("Adding Doors");
-        furnitureGenerator.createDoors(rooms, base, map.getActivators());
 
         // lights
         InvokenGame.log("Adding Lights");
@@ -267,10 +271,6 @@ public class LocationGenerator {
         // clutter
         InvokenGame.log("Adding Clutter");
         // map.getLayers().add(furnitureGenerator.generateClutter(base, map));
-
-        // lock doors
-        buildCriticalPath(rooms);
-        lockDoors(rooms);
 
         // add cover points now that all collidable furniture has been placed
         map.addAllCover(getCover(base, collision));
