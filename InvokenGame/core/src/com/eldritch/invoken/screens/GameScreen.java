@@ -82,8 +82,6 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
     private final String playerName;
     private Profession profession = null; // TODO: this will become a proto
                                           // containing play info
-    private String regionName;
-
     private ActionBar actionBar;
     private InventoryMenu inventoryMenu;
 
@@ -135,7 +133,6 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         super(game);
         this.playerName = playerName;
         this.profession = profession;
-        this.regionName = locationName;
     }
 
     @Override
@@ -267,8 +264,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         toaster = new Toaster(getSkin());
         stage.addActor(toaster.getContainer());
         
-        String region = regionName;  // TODO: level.getRegion()
-        toast(region + ", Floor " + level.getFloor());
+        toast(level.getFullName());
     }
 
     @Override
@@ -926,11 +922,11 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         level.setCamera(camera);
 
         refreshHud();
-        minimap = new Minimap(level.getMap(), level.getSeed(), Optional.of(state));
+        minimap = new Minimap(level, level.getSeed(), Optional.of(state));
     }
 
     private void onLoad(Level level, Optional<PlayerActor> state) {
-        minimap = new Minimap(level.getMap(), level.getSeed(), state);
+        minimap = new Minimap(level, level.getSeed(), state);
         if (level.hasMusic()) {
             InvokenGame.MUSIC_MANAGER.play(level.getMusicId());
         }

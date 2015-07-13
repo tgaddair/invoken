@@ -10,9 +10,11 @@ import com.badlogic.gdx.graphics.Pixmap.Blending;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.eldritch.invoken.actor.type.Player;
 import com.eldritch.invoken.location.ConnectedRoom;
 import com.eldritch.invoken.location.ConnectedRoomManager;
+import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.location.NaturalVector2;
 import com.eldritch.invoken.location.layer.LocationMap;
 import com.eldritch.invoken.proto.Actors.PlayerActor;
@@ -21,19 +23,24 @@ import com.eldritch.invoken.util.Settings;
 import com.google.common.base.Optional;
 
 public class Minimap {
+    private static final int PADDING = 10;
+    
+    private final Level level;
     private final LocationMap map;
     private final Pixmap pixmap;
     private final Texture backTexture;
     private final Set<ConnectedRoom> visited = new HashSet<>();
     private final Color color = new Color();
+    private final BitmapFont font = new BitmapFont();
     
     private Texture texture;
     private int lastColor;
     private NaturalVector2 lastPosition;
     private ConnectedRoom lastRoom;
 
-    public Minimap(LocationMap map, long seed, Optional<PlayerActor> state) {
-        this.map = map;
+    public Minimap(Level level, long seed, Optional<PlayerActor> state) {
+        this.level = level;
+        this.map = level.getMap();
         
         Pixmap backMap = new Pixmap(map.getWidth(), map.getHeight(), Format.RGBA8888);
         backMap.setColor(0, 0, 0, 0.75f);
@@ -101,9 +108,11 @@ public class Minimap {
     public void render(Batch batch, int width, int height) {
         // divide screen into fifths
         // we draw to the 2nd through 4th slices
-        int length = 3 * height / 5;
-        batch.draw(backTexture, height / 5, height / 5, length, length);
-        batch.draw(texture, height / 5, height / 5, length, length);
+        int origin = height / 5;
+        int length = 3 * origin;
+        batch.draw(backTexture, origin, origin, length, length);
+        batch.draw(texture, origin, origin, length, length);
+        font.draw(batch, level.getFullName(), origin + PADDING, origin + length - PADDING);
     }
     
     private void visit(ConnectedRoom room) {

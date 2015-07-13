@@ -276,6 +276,7 @@ public class LocationGenerator {
         map.addAllCover(getCover(base, collision));
 
         Locations.Level.Builder builder = Locations.Level.newBuilder();
+        builder.setRegion(Settings.FIRST_REGION);
         builder.setLevel(floor);
         builder.addAllLocation(protos);
 

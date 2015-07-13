@@ -278,6 +278,10 @@ public class Level {
     public String getMusicId() {
         return locations.get(currentCell).getMusic();
     }
+    
+    public String getFullName() {
+        return String.format("%s, Floor %d", getRegion(), getFloor());
+    }
 
     public String getRegion() {
         return data.getRegion();
