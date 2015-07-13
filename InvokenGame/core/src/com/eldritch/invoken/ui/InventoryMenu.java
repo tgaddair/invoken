@@ -1,5 +1,7 @@
 package com.eldritch.invoken.ui;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -127,15 +129,21 @@ public class InventoryMenu {
 			@Override
 			public void touchUp(InputEvent event, float x, float y,
 					int pointer, int button) {
-				AgentInventory inventory = player.getInfo().getInventory();
-				if (item.isEquipped(inventory)) {
-					inventory.unequip(item);
-					InvokenGame.SOUND_MANAGER
-							.play(SoundEffect.INVENTORY_OFF, 2);
-				} else {
-					inventory.equip(item);
-					InvokenGame.SOUND_MANAGER.play(SoundEffect.INVENTORY_ON, 2);
-				}
+			    AgentInventory inventory = player.getInfo().getInventory();
+			    if (Gdx.input.isKeyPressed(Keys.CONTROL_LEFT)) {
+			        // drop item
+			        inventory.removeItem(item, 1);
+			    } else {
+			        if (item.isEquipped(inventory)) {
+	                    inventory.unequip(item);
+	                    InvokenGame.SOUND_MANAGER
+	                            .play(SoundEffect.INVENTORY_OFF, 2);
+	                } else {
+	                    inventory.equip(item);
+	                    InvokenGame.SOUND_MANAGER.play(SoundEffect.INVENTORY_ON, 2);
+	                }
+			    }
+				
 				refresh();
 				System.out.println(item.toString());
 			}
