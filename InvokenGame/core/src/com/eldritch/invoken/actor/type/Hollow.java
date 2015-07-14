@@ -6,6 +6,7 @@ import java.util.Map;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.eldritch.invoken.actor.util.Locatable;
 import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.proto.Actors.NonPlayerActor;
 import com.eldritch.invoken.proto.Effects.DamageType;
@@ -137,6 +138,20 @@ public class Hollow extends Npc {
         public Humanoid(NonPlayerActor data, float x, float y, String asset, Level level) {
             super(data, x, y, Settings.SCALE * PX, Settings.SCALE * PX, MAX_VELOCITY,
                     AnimationUtils.getHumanAnimations(asset + ".png"), level);
+        }
+    }
+    
+    public static class Psion extends Hollow {
+        private static final int PX = 64;
+
+        public Psion(NonPlayerActor data, float x, float y, String asset, Level level) {
+            super(data, x, y, Settings.SCALE * PX, Settings.SCALE * PX, MAX_VELOCITY,
+                    AnimationUtils.getHumanAnimations(asset + ".png"), level);
+        }
+        
+        @Override
+        public boolean hasLineOfSight(Locatable other) {
+            return true;
         }
     }
 }

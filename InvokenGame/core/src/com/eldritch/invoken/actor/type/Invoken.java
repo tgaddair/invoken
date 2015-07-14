@@ -1,5 +1,6 @@
 package com.eldritch.invoken.actor.type;
 
+import com.eldritch.invoken.actor.util.Locatable;
 import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.proto.Actors.NonPlayerActor;
 import com.eldritch.invoken.proto.Effects.DamageType;
@@ -29,5 +30,10 @@ public class Invoken extends HumanNpc {
     @Override
     protected SoundEffect getDeathSound() {
         return SoundEffect.GHOST_DEATH;
+    }
+    
+    @Override
+    public boolean hasLineOfSight(Locatable other) {
+        return true;
     }
 }
