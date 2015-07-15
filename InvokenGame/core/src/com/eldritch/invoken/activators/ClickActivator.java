@@ -8,7 +8,6 @@ import com.eldritch.invoken.location.NaturalVector2;
 public abstract class ClickActivator extends ProximityActivator {
     private final int width;
     private final int height;
-    private final Vector2 center;
 
     public ClickActivator(NaturalVector2 position) {
         this(position, 1, 1);
@@ -19,14 +18,13 @@ public abstract class ClickActivator extends ProximityActivator {
     }
 
     public ClickActivator(float x, float y, int width, int height) {
-        this(x, y, width, height, new Vector2(x + width / 2, y + height / 2));
+        this(x, y, width, height, ProximityParams.of(x, y, width, height));
     }
     
-    public ClickActivator(float x, float y, int width, int height, Vector2 center) {
-        super(x, y, center, Vector2.Zero);
+    public ClickActivator(float x, float y, int width, int height, ProximityParams params) {
+        super(x, y, params);
         this.width = width;
         this.height = height;
-        this.center = center;
     }
 
     public float getWidth() {
@@ -59,9 +57,5 @@ public abstract class ClickActivator extends ProximityActivator {
     @Override
     protected boolean onProximityChange(boolean hasProximity, Level level) {
         return true;
-    }
-
-    protected Vector2 getCenter() {
-        return center;
     }
 }

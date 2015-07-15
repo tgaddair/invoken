@@ -19,7 +19,7 @@ public abstract class InteractableActivator extends ClickActivator implements In
     }
     
     public InteractableActivator(float x, float y, int width, int height, Vector2 center) {
-        super(x, y, width, height, center);
+        super(x, y, width, height, ProximityParams.of(center));
     }
 
     @Override

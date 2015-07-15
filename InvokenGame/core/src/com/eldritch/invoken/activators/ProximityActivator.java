@@ -20,22 +20,24 @@ import com.eldritch.invoken.util.Settings;
 public abstract class ProximityActivator extends BasicActivator {
     private final Vector2 center = new Vector2();
     private final Vector2 offset = new Vector2();
-    
+    private final float radius;
+
     private final Set<Agent> proximityAgents = new HashSet<>();
     private final Set<Agent> lastProximityAgents = new HashSet<>();
     private final Set<Agent> triggerAgents = new HashSet<>();
-    
+
     private Body sensor;
     private boolean proximityActive = false;
 
-    public ProximityActivator(NaturalVector2 position, Vector2 center, Vector2 offset) {
-        this(position.x, position.y, center, offset);
+    public ProximityActivator(NaturalVector2 position, ProximityParams params) {
+        this(position.x, position.y, params);
     }
 
-    public ProximityActivator(float x, float y, Vector2 center, Vector2 offset) {
+    public ProximityActivator(float x, float y, ProximityParams params) {
         super(x, y);
-        this.center.set(center);
-        this.offset.set(offset);
+        this.center.set(params.center);
+        this.offset.set(params.offset);
+        this.radius = params.radius;
     }
 
     @Override
@@ -47,7 +49,7 @@ public abstract class ProximityActivator extends BasicActivator {
             lastProximityAgents.removeAll(proximityAgents);
             triggerAgents.clear();
             triggerAgents.addAll(lastProximityAgents);
-            
+
             if (onProximityChange(hasProximity, level)) {
                 proximityActive = hasProximity;
             }
@@ -60,31 +62,34 @@ public abstract class ProximityActivator extends BasicActivator {
     @Override
     public void activate(Agent agent, Level level) {
     }
-    
+
     protected boolean shouldActivate(boolean hasProximity) {
         return hasProximity != proximityActive;
     }
-    
+
     public boolean hasProximity(Agent agent) {
         return proximityAgents.contains(agent);
     }
-    
+
     protected abstract boolean onProximityChange(boolean hasProximity, Level level);
     
+    public Vector2 getCenter() {
+        return center;
+    }
+
     protected Body getSensor() {
         return sensor;
     }
-    
+
     @Override
     public final void register(Level level) {
         sensor = createSensor(level, offset);
         postRegister(level);
     }
-    
+
     protected abstract void postRegister(Level level);
-    
+
     private Body createSensor(Level level, Vector2 offset) {
-        float radius = 1.5f;
         CircleShape shape = new CircleShape();
         shape.setPosition(offset);
         shape.setRadius(radius);
@@ -114,7 +119,7 @@ public abstract class ProximityActivator extends BasicActivator {
         shape.dispose();
         return body;
     }
-    
+
     private class ProximityHandler extends DefaultAgentHandler {
         @Override
         public boolean handle(Agent agent) {
@@ -126,6 +131,30 @@ public abstract class ProximityActivator extends BasicActivator {
         public boolean handleEnd(Agent agent) {
             proximityAgents.remove(agent);
             return true;
+        }
+    }
+
+    protected static class ProximityParams {
+        private final Vector2 center;
+        private final Vector2 offset;
+        private final float radius;
+
+        private ProximityParams(Vector2 center, Vector2 offset, float radius) {
+            this.center = center;
+            this.offset = offset;
+            this.radius = radius;
+        }
+
+        public static ProximityParams of(float x, float y, float width, float height) {
+            return of(new Vector2(x + width / 2, y + height / 2));
+        }
+        
+        public static ProximityParams of(Vector2 center) {
+            return of(center, Vector2.Zero, 1.5f);
+        }
+
+        public static ProximityParams of(Vector2 center, Vector2 offset, float radius) {
+            return new ProximityParams(center, offset, radius);
         }
     }
 }
