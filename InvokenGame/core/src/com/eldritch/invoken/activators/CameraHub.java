@@ -22,7 +22,7 @@ public class CameraHub extends ClickActivator {
 	}
 
 	@Override
-	public void register(Level level) {
+	public void postRegister(Level level) {
 	}
 
     @Override

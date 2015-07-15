@@ -89,7 +89,7 @@ public class Teleporter extends ClickActivator {
     }
     
     @Override
-    public void register(Level level) {
+    public void postRegister(Level level) {
         ConnectedRoomManager rooms = level.getConnections();
         ControlRoom encounter = rooms.getControlRoom(rooms.getRoom(origin.x, origin.y));
 //        if (encounter != null && encounter.getEncounter().hasSuccessor()) {

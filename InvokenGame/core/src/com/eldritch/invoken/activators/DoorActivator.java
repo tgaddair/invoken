@@ -267,7 +267,7 @@ public class DoorActivator extends ClickActivator implements Crackable, Damageab
     }
 
     @Override
-    public void register(Level level) {
+    public void postRegister(Level level) {
         this.level = level;
         this.healthBar = level.createHealthBar();
 

@@ -86,4 +86,8 @@ public class ProximityMine extends ClickActivator implements TemporaryEntity {
         Agent source = detonation.getSource();
         source.getLocation().removeActivator(this);
     }
+
+    @Override
+    protected void postRegister(Level level) {
+    }
 }

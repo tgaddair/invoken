@@ -76,9 +76,12 @@ public abstract class ProximityActivator extends BasicActivator {
     }
     
     @Override
-    public void register(Level level) {
-        sensor = createSensor(level, offset);;
+    public final void register(Level level) {
+        sensor = createSensor(level, offset);
+        postRegister(level);
     }
+    
+    protected abstract void postRegister(Level level);
     
     private Body createSensor(Level level, Vector2 offset) {
         float radius = 1.5f;

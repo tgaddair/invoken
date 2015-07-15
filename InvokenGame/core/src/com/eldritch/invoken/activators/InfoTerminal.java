@@ -33,7 +33,7 @@ public class InfoTerminal extends ClickActivator implements Conversable {
     }
 
     @Override
-    public void register(Level level) {
+    public void postRegister(Level level) {
     }
 
     @Override

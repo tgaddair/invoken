@@ -54,7 +54,7 @@ public class ContainerSmall extends ClickActivator implements Lootable {
     }
 
     @Override
-    public void register(Level level) {
+    public void postRegister(Level level) {
     }
     
     @Override

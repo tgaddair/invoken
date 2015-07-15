@@ -38,11 +38,6 @@ public abstract class ClickActivator extends ProximityActivator {
     }
 
     @Override
-    public void update(float delta, Level level) {
-        // does nothing
-    }
-
-    @Override
     public boolean click(Agent agent, Level level, float x, float y) {
         Vector2 position = getCenter();
         boolean clicked = x >= position.x - width / 2f && x <= position.x + width / 2f

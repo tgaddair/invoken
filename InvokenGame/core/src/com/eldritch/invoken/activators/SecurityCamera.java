@@ -23,7 +23,7 @@ public class SecurityCamera extends ClickActivator implements GameCamera {
 	}
 
 	@Override
-	public void register(Level level) {
+	public void postRegister(Level level) {
 		level.addSecurityCamera(this);
 	}
 	

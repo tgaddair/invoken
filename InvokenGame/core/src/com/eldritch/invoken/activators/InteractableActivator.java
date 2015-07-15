@@ -46,7 +46,7 @@ public abstract class InteractableActivator extends ClickActivator implements In
     }
     
     @Override
-    public void register(Level level) {
+    public void postRegister(Level level) {
     }
 
     @Override

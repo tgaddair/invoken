@@ -76,7 +76,7 @@ public class LevelDoorActivator extends ClickActivator {
     }
 
     @Override
-    public void register(Level level) {
+    public void postRegister(Level level) {
         level.addLight(light);
     }
 
