@@ -107,7 +107,7 @@ public abstract class ProximityActivator extends BasicActivator {
         fixtureDef.filter.groupIndex = 0;
 
         BodyDef bodyDef = new BodyDef();
-        bodyDef.position.set(getPosition());
+        bodyDef.position.set(center);
         bodyDef.type = BodyType.StaticBody;
         Body body = level.getWorld().createBody(bodyDef);
 

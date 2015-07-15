@@ -28,7 +28,6 @@ import com.eldritch.invoken.gfx.Light.StaticLight;
 import com.eldritch.invoken.gfx.WorldText;
 import com.eldritch.invoken.location.ConnectedRoom;
 import com.eldritch.invoken.location.Level;
-import com.eldritch.invoken.location.NaturalVector2;
 import com.eldritch.invoken.proto.Effects.DamageType;
 import com.eldritch.invoken.proto.Locations.ControlPoint;
 import com.eldritch.invoken.screens.GameScreen;
@@ -55,7 +54,6 @@ public class DoorActivator extends ClickActivator implements Crackable, Damageab
     // for bounding area
     private static final int SIZE = 2;
 
-    private final Vector2 center;
     private final Vector2 renderOffset = new Vector2();
     private final WorldText lockText = new WorldText();
     private final LockInfo lock;
@@ -80,15 +78,17 @@ public class DoorActivator extends ClickActivator implements Crackable, Damageab
     private float stateTime = 0;
 
     public static DoorActivator createFront(int x, int y, LockInfo lock) {
-        return new DoorActivator(x, y, lock, true);
+        Vector2 center = new Vector2(x + 1, y + 0.5f);
+        return new DoorActivator(x, y, center, lock, true);
     }
 
     public static DoorActivator createSide(int x, int y, LockInfo lock) {
-        return new DoorActivator(x, y, lock, false);
+        Vector2 center = new Vector2(x + 0.5f, y - 1);
+        return new DoorActivator(x, y, center, lock, false);
     }
 
-    public DoorActivator(int x, int y, LockInfo lock, boolean front) {
-        super(NaturalVector2.of(x, y), 2, 2);
+    public DoorActivator(int x, int y, Vector2 center, LockInfo lock, boolean front) {
+        super(x, y, 2, 2, ProximityParams.of(center));
         this.bulletHandler = new DoorBulletHandler();
         this.lock = lock;
         this.front = front;
@@ -99,14 +99,12 @@ public class DoorActivator extends ClickActivator implements Crackable, Damageab
             unlockedAnimation.setPlayMode(Animation.PlayMode.NORMAL);
             lockedAnimation = new Animation(0.05f, frontRegionsLocked);
             lockedAnimation.setPlayMode(Animation.PlayMode.NORMAL);
-            center = new Vector2(x + 1, y + 0.5f);
             this.light = new StaticLight(center.cpy().add(0.5f, 0.5f), magnitude, false);
         } else {
             unlockedAnimation = new Animation(0.05f, sideRegions);
             unlockedAnimation.setPlayMode(Animation.PlayMode.NORMAL);
             lockedAnimation = new Animation(0.05f, sideRegionsLocked);
             lockedAnimation.setPlayMode(Animation.PlayMode.NORMAL);
-            center = new Vector2(x + 0.5f, y - 1);
             this.light = new StaticLight(center.cpy().add(0.5f, 1.5f), magnitude, false);
         }
 
