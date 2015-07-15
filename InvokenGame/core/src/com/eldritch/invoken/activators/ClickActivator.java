@@ -1,11 +1,16 @@
 package com.eldritch.invoken.activators;
 
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.location.NaturalVector2;
 
 public abstract class ClickActivator extends ProximityActivator {
+    private final ShapeRenderer sr = new ShapeRenderer();
     private final int width;
     private final int height;
 
@@ -57,5 +62,14 @@ public abstract class ClickActivator extends ProximityActivator {
     @Override
     protected boolean onProximityChange(boolean hasProximity, Level level) {
         return true;
+    }
+    
+    public void renderClickArea(OrthographicCamera camera) {
+        sr.setProjectionMatrix(camera.combined);
+        sr.begin(ShapeType.Line);
+        sr.setColor(Color.CYAN);
+        Vector2 position = getCenter();
+        sr.rect(position.x - width / 2f, position.y - height / 2f, width, height);
+        sr.end();
     }
 }

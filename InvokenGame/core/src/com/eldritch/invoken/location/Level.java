@@ -40,6 +40,7 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
 import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.activators.Activator;
+import com.eldritch.invoken.activators.ClickActivator;
 import com.eldritch.invoken.activators.SecurityCamera;
 import com.eldritch.invoken.actor.AgentInventory;
 import com.eldritch.invoken.actor.Drawable;
@@ -775,6 +776,14 @@ public class Level {
         if (Settings.DEBUG_TARGETING) {
             // draw last seen
             debugEntityRenderer.renderLastSeen(player.getTarget(), camera);
+        }
+        if (Settings.DEBUG_CLICKS) {
+            for (Activator activator : activators) {
+                if (activator instanceof ClickActivator) {
+                    ClickActivator clickActivator = (ClickActivator) activator;
+                    clickActivator.renderClickArea(camera);
+                }
+            }
         }
     }
 
