@@ -15,14 +15,8 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.BodyDef;
-import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
-import com.badlogic.gdx.physics.box2d.CircleShape;
-import com.badlogic.gdx.physics.box2d.Filter;
 import com.badlogic.gdx.physics.box2d.Fixture;
-import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.eldritch.invoken.InvokenGame;
-import com.eldritch.invoken.actor.AgentHandler.DefaultAgentHandler;
 import com.eldritch.invoken.actor.DamageHandler;
 import com.eldritch.invoken.actor.items.Icepik;
 import com.eldritch.invoken.actor.items.Item;
@@ -75,11 +69,7 @@ public class DoorActivator extends ClickActivator implements Crackable, Damageab
 
     private final Light light;
     private final List<Body> bodies = new ArrayList<>();
-    private final Set<Agent> lastProximityAgents = new HashSet<>();
-    private final Set<Agent> proximityAgents = new HashSet<>();
-    private final Set<Agent> triggerAgents = new HashSet<>();
     private final Set<Agent> residents = new HashSet<>();
-    private Body sensor;
 
     private Level level = null;
     private HealthBar healthBar = null;
@@ -136,19 +126,20 @@ public class DoorActivator extends ClickActivator implements Crackable, Damageab
         if (finished) {
             postActivation(level);
         }
-
+        
         // only change the state of the door if it differs from the current
         // state must click to unlock
-        boolean shouldOpen = !proximityAgents.isEmpty();
-        if (shouldOpen != open && !lock.isLocked()) {
-            lastProximityAgents.removeAll(proximityAgents);
-            triggerAgents.clear();
-            triggerAgents.addAll(lastProximityAgents);
-            setOpened(shouldOpen, level);
-        }
-
-        lastProximityAgents.clear();
-        lastProximityAgents.addAll(proximityAgents);
+        super.update(delta, level);
+    }
+    
+    @Override
+    protected boolean shouldActivate(boolean hasProximity) {
+        return super.shouldActivate(hasProximity) && !lock.isLocked();
+    }
+    
+    @Override
+    protected boolean onProximityChange(boolean hasProximity, Level level) {
+        return setOpened(hasProximity, level);
     }
 
     @Override
@@ -167,15 +158,16 @@ public class DoorActivator extends ClickActivator implements Crackable, Damageab
         setOpened(!open, level);
     }
 
-    private synchronized void setOpened(boolean opened, Level level) {
+    private synchronized boolean setOpened(boolean opened, Level level) {
         if (activating || broken) {
             // cannot interrupt
-            return;
+            return false;
         }
 
         activating = true;
         open = opened;
         InvokenGame.SOUND_MANAGER.playAtPoint(SoundEffect.DOOR_OPEN, getPosition());
+        return true;
     }
 
     private void postActivation(Level level) {
@@ -189,14 +181,14 @@ public class DoorActivator extends ClickActivator implements Crackable, Damageab
         if (open) {
             onOpen();
         } else {
-            onClose(triggerAgents, level);
+            onClose(getTriggerAgents(), level);
         }
     }
 
     private void onOpen() {
     }
 
-    private void onClose(Set<Agent> triggerAgents, Level level) {
+    private void onClose(Iterable<Agent> triggerAgents, Level level) {
         for (Agent agent : triggerAgents) {
             // characters that lack this door's credentials trigger a lock in
             if (canTrap(agent) && !lock.canUnlock(agent) && lock.getRoom().contains(agent.getNaturalPosition())
@@ -237,7 +229,7 @@ public class DoorActivator extends ClickActivator implements Crackable, Damageab
     }
 
     private boolean hasHostileResident() {
-        for (Agent agent : triggerAgents) {
+        for (Agent agent : getTriggerAgents()) {
             if (lock.getRoom().hasHostileResident(agent)) {
                 return true;
             }
@@ -294,44 +286,11 @@ public class DoorActivator extends ClickActivator implements Crackable, Damageab
         level.addLight(light);
 
         // set the appropriate handler
-        sensor = createSensor(level, offset);
         for (Body body : bodies) {
             for (Fixture fixture : body.getFixtureList()) {
                 fixture.setUserData(bulletHandler);
             }
         }
-    }
-
-    private Body createSensor(Level level, Vector2 offset) {
-        float radius = 1.5f;
-        CircleShape shape = new CircleShape();
-        shape.setPosition(offset);
-        shape.setRadius(radius);
-
-        FixtureDef fixtureDef = new FixtureDef();
-        fixtureDef.isSensor = true;
-        fixtureDef.shape = shape;
-        fixtureDef.density = 0.5f;
-        fixtureDef.friction = 0.5f;
-        fixtureDef.restitution = 0.1f;
-        fixtureDef.filter.groupIndex = 0;
-
-        BodyDef bodyDef = new BodyDef();
-        bodyDef.position.set(getPosition());
-        bodyDef.type = BodyType.StaticBody;
-        Body body = level.getWorld().createBody(bodyDef);
-
-        Fixture fixture = body.createFixture(fixtureDef);
-        fixture.setUserData(new ProximityHandler());
-
-        // collision filters
-        Filter filter = fixture.getFilterData();
-        filter.categoryBits = Settings.BIT_INVISIBLE; // does not interrupt targeting
-        filter.maskBits = Settings.BIT_AGENT; // hit by agents
-        fixture.setFilterData(filter);
-
-        shape.dispose();
-        return body;
     }
 
     @Override
@@ -361,7 +320,7 @@ public class DoorActivator extends ClickActivator implements Crackable, Damageab
                 frame.getRegionHeight() * Settings.SCALE);
         batch.end();
 
-        if (!broken && lock.isLocked() && proximityAgents.contains(level.getPlayer())) {
+        if (!broken && lock.isLocked() && hasProximity(level.getPlayer())) {
             if (!canPick(level.getPlayer())) {
                 batch.setColor(Color.RED);
                 lockText.setColor(Color.RED);
@@ -585,20 +544,6 @@ public class DoorActivator extends ClickActivator implements Crackable, Damageab
             if (health <= 0) {
                 destroy();
             }
-            return true;
-        }
-    }
-
-    private class ProximityHandler extends DefaultAgentHandler {
-        @Override
-        public boolean handle(Agent agent) {
-            proximityAgents.add(agent);
-            return true;
-        }
-
-        @Override
-        public boolean handleEnd(Agent agent) {
-            proximityAgents.remove(agent);
             return true;
         }
     }

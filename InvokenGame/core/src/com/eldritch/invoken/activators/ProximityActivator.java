@@ -70,6 +70,10 @@ public abstract class ProximityActivator extends BasicActivator {
     public boolean hasProximity(Agent agent) {
         return proximityAgents.contains(agent);
     }
+    
+    protected Iterable<Agent> getTriggerAgents() {
+        return triggerAgents;
+    }
 
     protected abstract boolean onProximityChange(boolean hasProximity, Level level);
     
