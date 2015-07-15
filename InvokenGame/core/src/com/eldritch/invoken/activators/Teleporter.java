@@ -16,11 +16,10 @@ import com.eldritch.invoken.util.Settings;
 import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 
-public class Teleporter extends ClickActivator implements ProximityActivator {
+public class Teleporter extends ClickActivator {
     private static final TextureRegion[] regions = GameScreen.getMergedRegion(
             "sprite/activators/teleporter.png", 64, 64);
 
-    private final ProximityCache proximityCache = new ProximityCache(1);
     private final NaturalVector2 origin;
     private final Vector2 center;
     
@@ -43,12 +42,12 @@ public class Teleporter extends ClickActivator implements ProximityActivator {
     
     @Override
     protected boolean canActivate(Agent agent) {
-        return inProximity(agent);
+        return hasProximity(agent);
     }
 
     @Override
     public void update(float delta, Level level) {
-        canActivate = inProximity(level.getPlayer());
+        canActivate = hasProximity(level.getPlayer());
         
         // actually do the teleportation
         if (transitioned) {
@@ -87,11 +86,6 @@ public class Teleporter extends ClickActivator implements ProximityActivator {
     @Override
     public void activate(Agent agent, Level level) {
         activating = true;
-    }
-
-    @Override
-    public boolean inProximity(Agent agent) {
-        return proximityCache.inProximity(center, agent);
     }
     
     @Override

@@ -11,13 +11,12 @@ import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.screens.GameScreen;
 import com.eldritch.invoken.util.Damage;
 
-public class ProximityMine extends ClickActivator implements ProximityActivator, TemporaryEntity {
+public class ProximityMine extends ClickActivator implements TemporaryEntity {
     private static final Texture texture = GameScreen.getTexture(
             "sprite/activators/proximity-mine.png");
     
     private static final float RADIUS = 2f;
     
-    private final ProximityCache proximityCache = new ProximityCache(3);
     private final Vector2 center;
     private final Detonation detonation;
 
@@ -40,7 +39,7 @@ public class ProximityMine extends ClickActivator implements ProximityActivator,
                     continue;
                 }
                 
-                if (inProximity(agent)) {
+                if (hasProximity(agent)) {
                     detonation.detonate();
                     break;
                 }
@@ -69,11 +68,6 @@ public class ProximityMine extends ClickActivator implements ProximityActivator,
     @Override
     protected boolean canActivate(Agent agent) {
         return !detonation.isActive() && agent == detonation.getSource();
-    }
-
-    @Override
-    public boolean inProximity(Agent agent) {
-        return proximityCache.inProximity(center, agent);
     }
     
     @Override

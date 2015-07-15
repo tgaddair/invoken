@@ -5,7 +5,7 @@ import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.location.NaturalVector2;
 
-public abstract class ClickActivator extends BasicActivator {
+public abstract class ClickActivator extends ProximityActivator {
     private final int width;
     private final int height;
     private final Vector2 center;
@@ -23,7 +23,7 @@ public abstract class ClickActivator extends BasicActivator {
     }
     
     public ClickActivator(float x, float y, int width, int height, Vector2 center) {
-        super(x, y);
+        super(x, y, center, Vector2.Zero);
         this.width = width;
         this.height = height;
         this.center = center;
@@ -58,7 +58,12 @@ public abstract class ClickActivator extends BasicActivator {
     }
 
     protected boolean canActivate(Agent agent) {
-        return agent.getPosition().dst2(getCenter()) < 6;
+        return hasProximity(agent);
+    }
+    
+    @Override
+    protected boolean onProximityChange(boolean hasProximity, Level level) {
+        return true;
     }
 
     protected Vector2 getCenter() {
