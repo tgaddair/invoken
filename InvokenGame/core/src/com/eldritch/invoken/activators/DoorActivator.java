@@ -88,7 +88,7 @@ public class DoorActivator extends ClickActivator implements Crackable, Damageab
     }
 
     public DoorActivator(int x, int y, Vector2 center, LockInfo lock, boolean front) {
-        super(x, y, 2, 2, ProximityParams.of(center));
+        super(x, y, front ? 1 : 1, 2, ProximityParams.of(center));
         this.bulletHandler = new DoorBulletHandler();
         this.lock = lock;
         this.front = front;
@@ -244,7 +244,7 @@ public class DoorActivator extends ClickActivator implements Crackable, Damageab
     }
 
     private void setLightWalls(Level level, boolean value) {
-        Vector2 position = getPosition();
+        Vector2 position = getRenderPosition();
         float x = (int) position.x;
         float y = (int) position.y;
         if (front) {
@@ -261,7 +261,7 @@ public class DoorActivator extends ClickActivator implements Crackable, Damageab
         this.level = level;
         this.healthBar = level.createHealthBar();
 
-        Vector2 position = getPosition();
+        Vector2 position = getRenderPosition();
         float x = (int) position.x;
         float y = (int) position.y;
 
@@ -310,7 +310,7 @@ public class DoorActivator extends ClickActivator implements Crackable, Damageab
         }
 
         TextureRegion frame = animation.getKeyFrame(stateTime);
-        Vector2 position = getPosition();
+        Vector2 position = getRenderPosition();
 
         Batch batch = renderer.getBatch();
         batch.begin();

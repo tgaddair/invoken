@@ -11,6 +11,7 @@ import com.eldritch.invoken.location.NaturalVector2;
 
 public abstract class ClickActivator extends ProximityActivator {
     private final ShapeRenderer sr = new ShapeRenderer();
+    private final Vector2 clickPosition = new Vector2();
     private final int width;
     private final int height;
 
@@ -25,9 +26,15 @@ public abstract class ClickActivator extends ProximityActivator {
     public ClickActivator(float x, float y, int width, int height) {
         this(x, y, width, height, ProximityParams.of(x, y, width, height));
     }
-    
+
     public ClickActivator(float x, float y, int width, int height, ProximityParams params) {
+        this(x, y, width, height, Vector2.Zero, params);
+    }
+
+    public ClickActivator(float x, float y, int width, int height, Vector2 clickOffset,
+            ProximityParams params) {
         super(x, y, params);
+        this.clickPosition.set(x, y).add(clickOffset);
         this.width = width;
         this.height = height;
     }
@@ -42,9 +49,9 @@ public abstract class ClickActivator extends ProximityActivator {
 
     @Override
     public boolean click(Agent agent, Level level, float x, float y) {
-        Vector2 position = getCenter();
-        boolean clicked = x >= position.x - width / 2f && x <= position.x + width / 2f
-                && y >= position.y - height / 2f && y <= position.y + height / 2f;
+        Vector2 position = clickPosition;
+        boolean clicked = x >= position.x && x <= position.x + width && y >= position.y
+                && y <= position.y + height;
         if (clicked && canActivate(agent)) {
             // first, attempt to handle the click event with a handler
             if (!agent.handle(this)) {
@@ -58,18 +65,17 @@ public abstract class ClickActivator extends ProximityActivator {
     protected boolean canActivate(Agent agent) {
         return hasProximity(agent);
     }
-    
+
     @Override
     protected boolean onProximityChange(boolean hasProximity, Level level) {
         return true;
     }
-    
+
     public void renderClickArea(OrthographicCamera camera) {
         sr.setProjectionMatrix(camera.combined);
         sr.begin(ShapeType.Line);
         sr.setColor(Color.CYAN);
-        Vector2 position = getCenter();
-        sr.rect(position.x - width / 2f, position.y - height / 2f, width, height);
+        sr.rect(clickPosition.x, clickPosition.y, width, height);
         sr.end();
     }
 }

@@ -77,6 +77,15 @@ public abstract class ProximityActivator extends BasicActivator {
 
     protected abstract boolean onProximityChange(boolean hasProximity, Level level);
     
+    @Override
+    public Vector2 getPosition() {
+        return center;
+    }
+    
+    public Vector2 getRenderPosition() {
+        return position;
+    }
+    
     public Vector2 getCenter() {
         return center;
     }
