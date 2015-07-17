@@ -3,6 +3,10 @@ package com.eldritch.invoken.activators;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
@@ -16,11 +20,13 @@ import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.location.NaturalVector2;
 import com.eldritch.invoken.util.Settings;
+import com.google.common.base.Optional;
 
 public abstract class ProximityActivator extends BasicActivator {
     private final Vector2 center = new Vector2();
     private final Vector2 offset = new Vector2();
     private final float radius;
+    private final Optional<Indicator> indicator;
 
     private final Set<Agent> proximityAgents = new HashSet<>();
     private final Set<Agent> lastProximityAgents = new HashSet<>();
@@ -38,6 +44,7 @@ public abstract class ProximityActivator extends BasicActivator {
         this.center.set(params.center);
         this.offset.set(params.offset);
         this.radius = params.radius;
+        this.indicator = params.indicator;
     }
 
     @Override
@@ -58,6 +65,13 @@ public abstract class ProximityActivator extends BasicActivator {
         lastProximityAgents.clear();
         lastProximityAgents.addAll(proximityAgents);
     }
+    
+    @Override
+    public void render(float delta, OrthogonalTiledMapRenderer renderer) {
+        if (indicator.isPresent()) {
+            indicator.get().render(delta, renderer, this);
+        }
+    }
 
     @Override
     public void activate(Agent agent, Level level) {
@@ -70,22 +84,22 @@ public abstract class ProximityActivator extends BasicActivator {
     public boolean hasProximity(Agent agent) {
         return proximityAgents.contains(agent);
     }
-    
+
     protected Iterable<Agent> getTriggerAgents() {
         return triggerAgents;
     }
 
     protected abstract boolean onProximityChange(boolean hasProximity, Level level);
-    
+
     @Override
     public Vector2 getPosition() {
         return center;
     }
-    
+
     public Vector2 getRenderPosition() {
         return position;
     }
-    
+
     public Vector2 getCenter() {
         return center;
     }
@@ -97,6 +111,9 @@ public abstract class ProximityActivator extends BasicActivator {
     @Override
     public final void register(Level level) {
         sensor = createSensor(level, offset);
+        if (indicator.isPresent()) {
+            indicator.get().register(level);
+        }
         postRegister(level);
     }
 
@@ -151,23 +168,103 @@ public abstract class ProximityActivator extends BasicActivator {
         private final Vector2 center;
         private final Vector2 offset;
         private final float radius;
+        
+        private Optional<Indicator> indicator = Optional.absent();
 
         private ProximityParams(Vector2 center, Vector2 offset, float radius) {
             this.center = center;
             this.offset = offset;
             this.radius = radius;
         }
+        
+        public ProximityParams withIndicator(Indicator indicator) {
+            this.indicator = Optional.of(indicator);
+            return this;
+        }
 
         public static ProximityParams of(float x, float y, float width, float height) {
             return of(new Vector2(x + width / 2, y + height / 2));
         }
-        
+
         public static ProximityParams of(Vector2 center) {
             return of(center, Vector2.Zero, 1.5f);
         }
 
         public static ProximityParams of(Vector2 center, Vector2 offset, float radius) {
             return new ProximityParams(center, offset, radius);
+        }
+    }
+
+    public static class Indicator {
+        private static final float W = 0.5f;
+        private static final float H = 0.5f;
+
+        private final Texture texture;
+        private final Vector2 renderOffset = new Vector2();
+        
+        private Level level;
+
+        public Indicator(Texture texture) {
+            this(texture, Vector2.Zero);
+        }
+
+        public Indicator(Texture texture, Vector2 renderOffset) {
+            this.texture = texture;
+            this.renderOffset.set(renderOffset);
+        }
+        
+        public void register(Level level) {
+            this.level = level;
+        }
+        
+        public float getX(ProximityActivator owner) {
+            return owner.getRenderPosition().x + renderOffset.x - W / 2f;
+        }
+        
+        public float getY(ProximityActivator owner) {
+            return owner.getRenderPosition().y + renderOffset.y;
+        }
+        
+        public float getWidth() {
+            return W;
+        }
+        
+        public float getHeight() {
+            return H;
+        }
+        
+        public Level getLevel() {
+            return level;
+        }
+
+        public void render(float delta, OrthogonalTiledMapRenderer renderer,
+                ProximityActivator owner) {
+            if (isActive(level, owner)) {
+                preRender(delta, renderer, owner);
+                
+                float x = getX(owner);
+                float y = getY(owner);
+
+                Batch batch = renderer.getBatch();
+                batch.begin();
+                batch.draw(texture, x, y, W, H);
+                batch.end();
+                batch.setColor(Color.WHITE);
+                
+                postRender(delta, renderer, owner);
+            }
+        }
+        
+        protected void preRender(float delta, OrthogonalTiledMapRenderer renderer,
+                ProximityActivator owner) {
+        }
+        
+        protected void postRender(float delta, OrthogonalTiledMapRenderer renderer,
+                ProximityActivator owner) {
+        }
+        
+        protected boolean isActive(Level level, ProximityActivator owner) {
+            return owner.hasProximity(level.getPlayer());
         }
     }
 }
