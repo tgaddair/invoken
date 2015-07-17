@@ -160,14 +160,17 @@ public class DoorActivator extends ClickActivator implements Crackable, Damageab
             return false;
         }
 
+        if (open != opened) {
+            // set animations
+            stateTime = 0;
+            PlayMode mode = opened ? PlayMode.NORMAL : PlayMode.REVERSED;
+            lockedAnimation.setPlayMode(mode);
+            unlockedAnimation.setPlayMode(mode);
+            InvokenGame.SOUND_MANAGER.playAtPoint(SoundEffect.DOOR_OPEN, getPosition());
+        }
+
         activating = true;
         open = opened;
-        InvokenGame.SOUND_MANAGER.playAtPoint(SoundEffect.DOOR_OPEN, getPosition());
-
-        // set animations
-        PlayMode mode = open ? PlayMode.REVERSED : PlayMode.NORMAL;
-        lockedAnimation.setPlayMode(mode);
-        unlockedAnimation.setPlayMode(mode);
 
         return true;
     }
@@ -302,7 +305,6 @@ public class DoorActivator extends ClickActivator implements Crackable, Damageab
             if (animation.isAnimationFinished(stateTime)) {
                 finished = true;
                 activating = false;
-                stateTime = 0;
             }
         }
 
