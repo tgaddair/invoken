@@ -85,7 +85,7 @@ public class DoorActivator extends ClickActivator implements Crackable, Damageab
     }
 
     public DoorActivator(int x, int y, Vector2 center, LockInfo lock, boolean front) {
-        super(x, y, front ? 1 : 1, 2, ProximityParams.of(center).withIndicator(
+        super(x, y, front ? 2 : 1, 2, ProximityParams.of(center).withIndicator(
                 createIndicator(lock, front)));
         this.bulletHandler = new DoorBulletHandler();
         this.lock = lock;
@@ -163,6 +163,12 @@ public class DoorActivator extends ClickActivator implements Crackable, Damageab
         activating = true;
         open = opened;
         InvokenGame.SOUND_MANAGER.playAtPoint(SoundEffect.DOOR_OPEN, getPosition());
+
+        // set animations
+        PlayMode mode = open ? PlayMode.REVERSED : PlayMode.NORMAL;
+        lockedAnimation.setPlayMode(mode);
+        unlockedAnimation.setPlayMode(mode);
+
         return true;
     }
 
@@ -297,12 +303,6 @@ public class DoorActivator extends ClickActivator implements Crackable, Damageab
                 finished = true;
                 activating = false;
                 stateTime = 0;
-
-                // set animations
-                PlayMode lastMode = animation.getPlayMode();
-                PlayMode mode = lastMode == PlayMode.NORMAL ? PlayMode.REVERSED : PlayMode.NORMAL;
-                lockedAnimation.setPlayMode(mode);
-                unlockedAnimation.setPlayMode(mode);
             }
         }
 
@@ -570,7 +570,7 @@ public class DoorActivator extends ClickActivator implements Crackable, Damageab
             return !lock.isBroken() && lock.isLocked() && super.isActive(level, owner);
         }
     }
-    
+
     private static Indicator createIndicator(LockInfo lock, boolean front) {
         Vector2 renderOffset = new Vector2();
         if (front) {
