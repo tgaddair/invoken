@@ -746,7 +746,7 @@ public class LocationGenerator {
         for (int x = 0; x < exterior.getWidth(); x++) {
             for (int y = 0; y < exterior.getHeight(); y++) {
                 if (exterior.isFilled(x, y) && exterior.isFilled(x, y + 1)
-                        && !exterior.isFilled(x, y - 1)) {
+                        && !exterior.isFilled(x, y - 1) && !exterior.isFilled(x, y + 2)) {
                     if (!exterior.isFilled(x - 1, y)) {
                         // no exterior to the left
                         addCell(left, walls.getTile(WallTile.LeftExtBottom), x, y + 0);

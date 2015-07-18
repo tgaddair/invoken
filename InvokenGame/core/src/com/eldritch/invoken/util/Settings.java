@@ -48,6 +48,7 @@ public class Settings {
 	
 	// visuals
 	public static final boolean ENABLE_FOG = false;
+	public static final boolean ENABLE_FOW = true;
 	
 	// debug settings
 	public static final boolean GOD_MODE = false;

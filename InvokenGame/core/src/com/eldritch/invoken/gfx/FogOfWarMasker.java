@@ -21,6 +21,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.eldritch.invoken.location.NaturalVector2;
 import com.eldritch.invoken.screens.GameScreen;
+import com.eldritch.invoken.util.Settings;
 
 public class FogOfWarMasker {
     private static final float FADE_SECONDS = 1f;
@@ -90,7 +91,7 @@ public class FogOfWarMasker {
         // reset
         for (int i = 0; i < mask.length; i++) {
             for (int j = 0; j < mask[i].length; j++) {
-                mask[i][j] = false;
+                mask[i][j] = !Settings.ENABLE_FOW;
             }
         }
 
