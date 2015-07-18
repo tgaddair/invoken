@@ -14,11 +14,12 @@ public abstract class InteractableActivator extends ClickActivator implements In
     private Agent interactor = null;
 
     public InteractableActivator(NaturalVector2 position) {
-        super(position);
+        this(position, 1, 1);
     }
 
     public InteractableActivator(NaturalVector2 position, int width, int height) {
-        super(position, width, height);
+        this(position.x, position.y, width, height, new Vector2(position.x + width / 2f, position.y
+                + height / 2f));
     }
 
     public InteractableActivator(float x, float y, int width, int height, Vector2 center) {
@@ -27,7 +28,7 @@ public abstract class InteractableActivator extends ClickActivator implements In
 
     public InteractableActivator(float x, float y, int width, int height, ProximityParams params) {
         super(x, y, width, height, params.withIndicator(new Indicator(INDICATOR, new Vector2(
-                width / 2f, height / 2f))));
+                width / 2f, height))));
     }
 
     @Override
@@ -40,11 +41,6 @@ public abstract class InteractableActivator extends ClickActivator implements In
             onBeginInteraction(interactor);
         }
     }
-    
-//    @Override
-//    public float getZ() {
-//        return Float.NEGATIVE_INFINITY;
-//    }
 
     @Override
     public boolean canInteract() {
@@ -60,6 +56,10 @@ public abstract class InteractableActivator extends ClickActivator implements In
 
     @Override
     public void postRegister(Level level) {
+    }
+
+    protected Agent getInteractor() {
+        return interactor;
     }
 
     protected abstract void onBeginInteraction(Agent interactor);

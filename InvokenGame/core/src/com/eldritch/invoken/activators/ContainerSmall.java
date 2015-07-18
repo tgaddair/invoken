@@ -2,7 +2,6 @@ package com.eldritch.invoken.activators;
 
 import java.util.ArrayList;
 
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -22,7 +21,7 @@ import com.eldritch.invoken.util.Settings;
  * Containers use a TMX constraints file to define their position, but because they are animated,
  * the actual textures are loaded here.
  */
-public class ContainerSmall extends ClickActivator implements Lootable {
+public class ContainerSmall extends InteractableActivator implements Lootable {
     private static final TextureRegion[] regions = GameScreen.getMergedRegion(GameScreen.ATLAS
             .findRegion("activators/container-small").split(32, 32));
 
@@ -30,10 +29,8 @@ public class ContainerSmall extends ClickActivator implements Lootable {
     private final Animation animation;
     private boolean activating = false;
     private float stateTime = 0;
-    private Agent agent = null;
     private boolean open = false;
-    private boolean canActivate = false;
-    
+
     public ContainerSmall(NaturalVector2 position) {
         this(position, new Inventory(new ArrayList<InventoryItem>()));
     }
@@ -46,21 +43,8 @@ public class ContainerSmall extends ClickActivator implements Lootable {
     }
 
     @Override
-    public void activate(Agent agent, Level level) {
-        if (!activating) {
-            activating = true;
-            this.agent = agent;
-        }
-    }
-
-    @Override
-    public void postRegister(Level level) {
-    }
-    
-    @Override
     public void update(float delta, Level level) {
         if (activating) {
-        	canActivate = false;
             stateTime += delta;
             if (animation.isAnimationFinished(stateTime)) {
                 activating = false;
@@ -69,30 +53,29 @@ public class ContainerSmall extends ClickActivator implements Lootable {
                 animation
                         .setPlayMode(mode == PlayMode.NORMAL ? PlayMode.REVERSED : PlayMode.NORMAL);
                 open = !open;
+
+                Agent agent = getInteractor();
                 if (open && agent != null) {
                     // begin looting
                     agent.beginLooting(this);
                 }
             }
-        } else {
-        	canActivate = canActivate(level.getPlayer());
         }
     }
 
     @Override
     public void render(float delta, OrthogonalTiledMapRenderer renderer) {
         TextureRegion frame = animation.getKeyFrame(stateTime);
-        Vector2 position = getPosition();
+        Vector2 position = getRenderPosition();
 
         Batch batch = renderer.getBatch();
         batch.begin();
-        if (!canActivate) {
-        	batch.setColor(Color.GRAY);
-        }
         batch.draw(frame, position.x, position.y, frame.getRegionWidth() * Settings.SCALE,
                 frame.getRegionHeight() * Settings.SCALE);
-        batch.setColor(Color.WHITE);
         batch.end();
+
+        // render indicator
+        super.render(delta, renderer);
     }
 
     @Override
@@ -101,14 +84,13 @@ public class ContainerSmall extends ClickActivator implements Lootable {
     }
 
     @Override
-    public boolean canInteract() {
-        return true;
+    protected void onBeginInteraction(Agent interactor) {
+        activating = true;
     }
 
     @Override
-    public void endInteraction() {
+    protected void onEndInteraction(Agent interactor) {
         // close
         activating = true;
-        agent = null;
     }
 }

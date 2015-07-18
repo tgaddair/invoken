@@ -25,4 +25,10 @@ public class ResearchStation extends InteractableActivator {
     protected void onEndInteraction(Agent interactor) {
         interactor.research(false);
     }
+
+    @Override
+    public float getZ() {
+        // do this so the indicator appears on top
+        return Float.NEGATIVE_INFINITY;
+    }
 }
