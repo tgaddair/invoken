@@ -1234,7 +1234,7 @@ public class LocationGenerator {
     }
 
     private static TextureRegion merge(TextureRegion left, TextureRegion right) {
-        FrameBuffer buffer = new FrameBuffer(Format.RGB888, Settings.PX, Settings.PX, false);
+        FrameBuffer buffer = new FrameBuffer(Format.RGBA8888, Settings.PX, Settings.PX, false);
         TextureRegion region = new TextureRegion(buffer.getColorBufferTexture());
         region.flip(false, true);
 
