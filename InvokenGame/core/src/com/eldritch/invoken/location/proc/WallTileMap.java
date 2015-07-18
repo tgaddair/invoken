@@ -14,7 +14,8 @@ public class WallTileMap {
         Roof, LeftWallTop, LeftWallBottom, MidWallTop, MidWallCenter, MidWallBottom, RightWallTop, //
         RightWallBottom, LeftTrim, RightTrim, TopLeftTrim, TopRightTrim, LeftCorner, RightCorner, //
         TopLeftCorner, TopRightCorner, FrontLeftTrim, FrontMiddleTrim, FrontRightTrim, //
-        OverlayBelowTrim, OverlayLeftTrim, OverlayRightTrim
+        OverlayBelowTrim, OverlayLeftTrim, OverlayRightTrim, //
+        LeftExtTop, LeftExtBottom, MidExtTop, MidExtBottom, RightExtTop, RightExtBottom,
     }
 
     private final Map<WallTile, NormalMappedTile> tiles;
@@ -27,9 +28,11 @@ public class WallTileMap {
         return tiles.get(type);
     }
 
-    public static WallTileMap from(NormalMappedTile wall, NormalMappedTile roof ) {
+    public static WallTileMap from(NormalMappedTile wall, NormalMappedTile roof,
+            NormalMappedTile exterior) {
         Map<WallTile, NormalMappedTile> tiles = Maps.newEnumMap(WallTile.class);
         tiles.put(WallTile.Roof, getTile(roof, 16 + 64, 48));
+        
         tiles.put(WallTile.LeftWallTop, getTile(wall, 0, 0, SIZE / 2, SIZE));
         tiles.put(WallTile.LeftWallBottom, getTile(wall, 0, 32, SIZE / 2, SIZE));
         tiles.put(WallTile.MidWallTop, getTile(wall, 16, 0));
@@ -51,6 +54,15 @@ public class WallTileMap {
         tiles.put(WallTile.OverlayBelowTrim, getTile(roof, 16, 32));
         tiles.put(WallTile.OverlayLeftTrim, getTile(roof, 32, 32));
         tiles.put(WallTile.OverlayRightTrim, getTile(roof, 0, 32));
+        
+        // exterior
+        tiles.put(WallTile.LeftExtTop, getTile(exterior, 0, 0, SIZE / 2, SIZE));
+        tiles.put(WallTile.LeftExtBottom, getTile(exterior, 0, 32, SIZE / 2, SIZE));
+        tiles.put(WallTile.MidExtTop, getTile(exterior, 16, 0));
+        tiles.put(WallTile.MidExtBottom, getTile(exterior, 16, 32));
+        tiles.put(WallTile.RightExtTop, getTile(exterior, 48, 0, SIZE / 2, SIZE, SIZE / 2, 0));
+        tiles.put(WallTile.RightExtBottom, getTile(exterior, 48, 32, SIZE / 2, SIZE, SIZE / 2, 0));
+        
         return new WallTileMap(tiles);
     }
 

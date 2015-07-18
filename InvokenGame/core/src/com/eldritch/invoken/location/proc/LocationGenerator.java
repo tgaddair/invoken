@@ -72,6 +72,7 @@ public class LocationGenerator {
     private static final String FLOOR = "/floor";
     private static final String ROOF = "/roof";
     private static final String WALL = "/wall";
+    private static final String EXTERIOR = "/exterior";
     private static final String COLLISION = "markers/collision";
 
     private static final int PX = Settings.PX;
@@ -104,7 +105,8 @@ public class LocationGenerator {
         String biomeName = "office";
         NormalMappedTile wall = getTile(WALL, biomeName);
         NormalMappedTile roof = getTile(ROOF, biomeName);
-        walls = WallTileMap.from(wall, roof);
+        NormalMappedTile exterior = getTile(EXTERIOR, biomeName);
+        walls = WallTileMap.from(wall, roof, exterior);
         ground = getTile(FLOOR, biome);
 
         narrowWall = merge(walls.getTile(WallTile.RightTrim), walls.getTile(WallTile.LeftTrim));
@@ -207,7 +209,7 @@ public class LocationGenerator {
         }
 
         InvokenGame.log("Creating Exterior");
-        LocationLayer exterior = createExteriorLayer(base, overlay, map);
+        List<LocationLayer> exterior = createExteriorLayers(base, overlay, map);
         save(map.getConvexHull(), "convex-hull");
         save(typeMap, "cell-types");
 
@@ -219,7 +221,9 @@ public class LocationGenerator {
 
         // add all the overlays
         // map.addOverlay(roof);
-        map.addOverlay(exterior);
+        for (LocationLayer layer : exterior) {
+            map.addOverlay(layer);
+        }
         for (LocationLayer layer : baseLayers.overlays) {
             map.addOverlay(layer);
         }
@@ -699,7 +703,7 @@ public class LocationGenerator {
         return layer;
     }
 
-    private LocationLayer createExteriorLayer(LocationLayer base, LocationLayer overlay,
+    private List<LocationLayer> createExteriorLayers(LocationLayer base, LocationLayer overlay,
             LocationMap map) {
         // build convex hull
         Boolean[][] convexHull = map.buildConvexHull();
@@ -718,13 +722,43 @@ public class LocationGenerator {
         for (int x = 0; x < overlay.getWidth(); x++) {
             for (int y = 0; y < overlay.getHeight(); y++) {
                 if (overlay.isFilled(x, y) && !overlay.isFilled(x, y - 1)) {
-                    addCell(exterior, roofTile, x, y);
-                    addCell(exterior, roofTile, x, y - 1);
+//                    addCell(exterior, roofTile, x, y);
+//                    addCell(exterior, roofTile, x, y - 1);
+                }
+            }
+        }
+        
+        // add exterior hull
+        for (int x = 0; x < exterior.getWidth(); x++) {
+            for (int y = 0; y < exterior.getHeight(); y++) {
+                if (overlay.isFilled(x, y) && !overlay.isFilled(x, y - 1)) {
+                    addCell(exterior, walls.getTile(WallTile.MidExtBottom), x, y - 1);
+                    addCell(exterior, walls.getTile(WallTile.MidExtTop), x, y);
                 }
             }
         }
 
-        return exterior;
+        // add bookend hull
+        LocationLayer left = createEmptyLayer(base, map, "exterior-left");
+        LocationLayer right = createEmptyLayer(base, map, "exterior-right");
+        for (int x = 0; x < exterior.getWidth(); x++) {
+            for (int y = 0; y < exterior.getHeight(); y++) {
+                if (exterior.isFilled(x, y) && exterior.isFilled(x, y + 1)) {
+                    if (!exterior.isFilled(x - 1, y)) {
+                        // no exterior to the left
+                        addCell(left, walls.getTile(WallTile.LeftExtBottom), x, y + 0);
+                        addCell(left, walls.getTile(WallTile.LeftExtTop), x, y + 1);
+                    }
+                    if (!exterior.isFilled(x + 1, y)) {
+                        // no exterior to the right
+                        addCell(right, walls.getTile(WallTile.RightExtBottom), x, y + 0);
+                        addCell(right, walls.getTile(WallTile.RightExtTop), x, y + 1);
+                    }
+                }
+            }
+        }
+
+        return ImmutableList.of(exterior, left, right);
     }
 
     private LocationLayer createTrimLayer(LocationLayer base, LocationLayer overlay, LocationMap map) {
