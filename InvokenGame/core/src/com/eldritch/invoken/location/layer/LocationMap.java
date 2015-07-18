@@ -3,6 +3,7 @@ package com.eldritch.invoken.location.layer;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -26,6 +27,7 @@ import com.eldritch.invoken.location.ConnectedRoomManager;
 import com.eldritch.invoken.location.EncounterDescription;
 import com.eldritch.invoken.location.NaturalVector2;
 import com.eldritch.invoken.location.layer.LocationLayer.CollisionLayer;
+import com.eldritch.invoken.location.proc.BspGenerator.CellType;
 import com.eldritch.invoken.util.Constants;
 import com.eldritch.invoken.util.Settings;
 
@@ -37,7 +39,7 @@ public class LocationMap extends TiledMap {
     // TODO: maintain a map of visited connected rooms and use it as a minimap for the player
     private final Type[][] typeMap;
     private final int[][] lightWalls;
-    private final boolean[][] convexHull;
+    private final Boolean[][] convexHull;
 
     private final TiledMapTile ground;
     private final int width;
@@ -61,18 +63,46 @@ public class LocationMap extends TiledMap {
         this.height = height;
         typeMap = new Type[width][height];
         lightWalls = new int[width][height];
-        convexHull = new boolean[width][height];
+        convexHull = new Boolean[width][height];
     }
 
-    private void buildConvexHull() {
+    public Boolean[][] getConvexHull() {
+        return convexHull;
+    }
+
+    public void buildConvexHull(CellType[][] typeMap) {
+        // explore all the non-ground stemming from the border
         Set<NaturalVector2> visited = new HashSet<>();
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
                 if (isOnBorder(x, y)) {
-                    NaturalVector2 current = NaturalVector2.of(x, y);
-                    if (typeMap[x][y] != Type.Ground && !visited.contains(current)) {
-                        visitBorder(current, visited);
+                    LinkedList<NaturalVector2> queue = new LinkedList<>();
+                    queue.add(NaturalVector2.of(x, y));
+                    while (!queue.isEmpty()) {
+                        NaturalVector2 current = queue.remove();
+                        if (typeMap[current.x][current.y] == CellType.Wall
+                                && !visited.contains(current)) {
+                            visited.add(current);
+                            for (int dx = -1; dx <= 1; dx++) {
+                                for (int dy = -1; dy <= 1; dy++) {
+                                    if ((dx == 0) != (dy == 0)) {
+                                        // cardinal directions
+                                        NaturalVector2 neighbor = NaturalVector2.of(current.x + dx,
+                                                current.y + dy);
+                                        if (!inBounds(neighbor.x, neighbor.y)) {
+                                            continue;
+                                        }
+
+                                        if (typeMap[neighbor.x][neighbor.y] == CellType.Wall
+                                                && !visited.contains(neighbor)) {
+                                            queue.add(neighbor);
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
+
                 }
 
             }
@@ -81,29 +111,11 @@ public class LocationMap extends TiledMap {
         // all the non-ground we didn't visit is part of the convex hull
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
-                if (typeMap[x][y] != Type.Ground && !visited.contains(NaturalVector2.of(x, y))) {
-                    convexHull[x][y] = true;
-                }
+                boolean isHull = typeMap[x][y] == CellType.Wall
+                        && !visited.contains(NaturalVector2.of(x, y));
+                convexHull[x][y] = isHull;
             }
         }
-    }
-
-    private boolean visitBorder(NaturalVector2 current, Set<NaturalVector2> visited) {
-        visited.add(current);
-        for (int dx = -1; dx <= 1; dx++) {
-            for (int dy = -1; dy <= 1; dy++) {
-                if ((dx == 0) != (dy == 0)) {
-                    // cardinal directions
-                    NaturalVector2 neighbor = NaturalVector2.of(current.x + dx, current.y + dy);
-                    if (typeMap[neighbor.x][neighbor.y] != Type.Ground
-                            && !visited.contains(neighbor)) {
-                        visitBorder(neighbor, visited);
-                    }
-                }
-            }
-        }
-
-        return true;
     }
 
     private boolean isOnBorder(int x, int y) {

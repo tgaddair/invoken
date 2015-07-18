@@ -170,11 +170,16 @@ public class LocationGenerator {
         bsp.generateSegments();
         bsp.save("bsp");
         CellType[][] typeMap = bsp.getMap();
-
+        
         // create map
         int width = bsp.getWidth();
         int height = bsp.getHeight();
         LocationMap map = getBaseMap(width, height);
+        
+        // build convex hull
+        map.buildConvexHull(typeMap);
+        save(typeMap, "cell-types");
+        save(map.getConvexHull(), "convex-hull");
 
         // create layers
         InvokenGame.log("Creating Base");
@@ -225,7 +230,6 @@ public class LocationGenerator {
         ConnectedRoomManager rooms = createRooms(bsp.getEncounterRooms(), typeMap);
         map.setRooms(rooms);
         save(rooms.getGrid(), "connected-rooms");
-        
 
         // create and lock doors
         InvokenGame.log("Adding Doors");

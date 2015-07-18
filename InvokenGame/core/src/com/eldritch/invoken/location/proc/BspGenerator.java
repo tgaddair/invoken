@@ -35,7 +35,7 @@ public class BspGenerator {
     public List<Rectangle> Rooms = new ArrayList<Rectangle>();
     private List<NaturalVector2> currentPath = new ArrayList<NaturalVector2>();
 
-    enum CellType {
+    public enum CellType {
         Floor(1), Wall(4), Stone(20), Door(10), None(0);
 
         private CellType(int cost) {
