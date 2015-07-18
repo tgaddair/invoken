@@ -49,6 +49,10 @@ public abstract class InanimateEntity extends CollisionEntity implements Drawabl
         this.bodyType = bodyType;
     }
     
+    public Body getBody() {
+        return body;
+    }
+    
     public void addListener(InanimateEntityListener listener) {
         listeners.add(listener);
     }

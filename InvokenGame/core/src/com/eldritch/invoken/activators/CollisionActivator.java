@@ -41,7 +41,7 @@ public abstract class CollisionActivator extends BasicActivator implements Inani
 	}
 	
 	@Override
-    public void register(List<InanimateEntity> entities) {
+    public final void register(List<InanimateEntity> entities) {
 	    for (InanimateEntity entity : entities) {
 	        entity.addListener(this);
 	    }
