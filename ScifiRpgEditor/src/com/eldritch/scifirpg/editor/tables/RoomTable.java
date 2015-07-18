@@ -20,8 +20,8 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import com.eldritch.invoken.proto.Locations.Room;
-import com.eldritch.invoken.proto.Locations.Room.Furniture;
-import com.eldritch.invoken.proto.Locations.Room.Furniture.Type;
+import com.eldritch.invoken.proto.Locations.Furniture;
+import com.eldritch.invoken.proto.Locations.Furniture.Type;
 import com.eldritch.invoken.proto.Locations.Room.Size;
 import com.eldritch.scifirpg.editor.AssetTablePanel;
 import com.eldritch.scifirpg.editor.MainPanel;

@@ -1,12 +1,11 @@
 syntax = "proto2";
 
 package scifirpg;
-option java_package = "com.eldritch.invoken.proto";
 
+option java_package = "com.eldritch.invoken.proto";
 import "com/eldritch/invoken/proto/actors.proto";
 import "com/eldritch/invoken/proto/prerequisites.proto";
 import "com/eldritch/invoken/proto/outcomes.proto";
-
 message Level {
 	optional int32 level = 1;
 	repeated Location location = 2;
@@ -14,26 +13,22 @@ message Level {
 }
 
 message Location {
-	required string id = 1;  // unique key
+	required string id = 1; // unique key
 	required string name = 2;
-
 	repeated Encounter encounter = 3;
 	repeated Territory territory = 11;
 	repeated ControlPoint control_point = 12;
-
 	optional Light light = 7;
 	optional Biome biome = 8 [default = INDUSTRY];
-
 	optional string music = 13;
-
 	repeated string hall_id = 14;
 
 	// DEPRECATED
 	optional int32 parent_id_DEPRECATED = 4;
 	repeated string room_id_DEPRECATED = 9;
-	optional string faction_id_DEPRECATED = 5;  // access restricted to this faction
-	optional int32 min_rank_DEPRECATED = 6;  // min rank allowed in area
-	optional string credential_DEPRECATED = 10;  // allows wandering the premises
+	optional string faction_id_DEPRECATED = 5; // access restricted to this faction
+	optional int32 min_rank_DEPRECATED = 6; // min rank allowed in area
+	optional string credential_DEPRECATED = 10; // allows wandering the premises
 }
 
 message EncounterCollection {
@@ -42,9 +37,8 @@ message EncounterCollection {
 
 message Territory {
 	optional string faction_id = 1;
-	optional int32 min_rank = 2;  // min rank allowed in area
-	optional string credential = 3;  // allows wandering the premises
-
+	optional int32 min_rank = 2; // min rank allowed in area
+	optional string credential = 3; // allows wandering the premises
 	optional int32 control = 4;
 
 	// a compound is contiguous and only connects to other territories through key 'access' points
@@ -54,46 +48,40 @@ message Territory {
 message ControlPoint {
 	optional string id = 1;
 	optional int32 value = 10 [default = 0];
-
 	repeated string room_id = 2;
 	repeated string follows = 3;
-
 	optional int32 lock_strength = 4 [default = 0];
 	optional string required_key = 5;
 	repeated string available_key = 6;
-
 	optional bool origin = 7 [default = false];
 	optional bool exit = 15 [default = false];
 	optional bool closed = 11 [default = false];
 	optional bool access = 13 [default = false];
-
 	optional int32 min = 8 [default = 1];
 	optional int32 max = 9 [default = 1];
+	optional string faction_id = 12; // owned by a specific faction
+	optional string agent_id = 14; // owned by a specific agent
+}
 
-	optional string faction_id = 12;  // owned by a specific faction
-	optional string agent_id = 14;  // owned by a specific agent
+message Furniture {
+	enum Type {
+		ATLAS = 1; // check the tile atlas
+		TMX = 2; // Tiled TMX file
+		ACTIVATOR = 3; // hardcoded
+		CONTAINER = 4; // special activator that references a container type
+		TERMINAL = 5;
+	}
+
+	optional string id = 1;
+	optional Type type = 2;
+
+	// some pieces of furniture have custom behavior described by another asset proto
+	optional string asset_id = 3;
+	optional int32 min = 4 [default = 0];
+	optional int32 max = 5 [default = 1];
 }
 
 message Room {
-	message Furniture {
-		enum Type {
-			ATLAS = 1;  // check the tile atlas
-			TMX = 2;  // Tiled TMX file
-			ACTIVATOR = 3;  // hardcoded
-			CONTAINER = 4;  // special activator that references a container type
-			TERMINAL = 5;
-		}
-
-		optional string id = 1;
-		optional Type type = 2;
-
-		// some pieces of furniture have custom behavior described by another asset proto
-		optional string asset_id = 3;
-
-		optional int32 min = 4 [default = 0];
-		optional int32 max = 5 [default = 1];
-	}
-
 	enum Size {
 		SMALL = 0;
 		MEDIUM = 1;
@@ -102,10 +90,10 @@ message Room {
 
 	enum Type {
 		NONE = 0;
-		DINING = 1;  // reduces desire to Eat
-		BEDROOM = 2;  // reduces desire to Rest
-		LOUNGE = 3;   // reduces desire to Socialize
-		STUDY = 4;   // reduces desire for Solitude
+		DINING = 1; // reduces desire to Eat
+		BEDROOM = 2; // reduces desire to Rest
+		LOUNGE = 3; // reduces desire to Socialize
+		STUDY = 4; // reduces desire for Solitude
 	}
 
 	optional string id = 1;
@@ -174,9 +162,7 @@ message Encounter {
 			// Other ways to proceed include fleeing (sneaking) and teleport/set_successor
 			// dialogue outcomes.
 			optional bool blocking = 5 [default = false];
-
 			optional bool alive = 8 [default = true];
-
 			optional int32 min = 6 [default = 1];
 			optional int32 max = 7 [default = 1];
 		}
@@ -217,7 +203,6 @@ message Encounter {
 	// For negatives, lower weight -> lower prob, and take the first that meets our prereqs
 	required double weight = 4 [default = 1.0];
 	required bool unique = 5 [default = false];
-
 	repeated Prerequisite prereq = 6;
 	repeated string room_id = 22;
 	optional string faction_id = 19;
@@ -227,6 +212,7 @@ message Encounter {
 	optional DecisionParams decision_params = 9;
 	optional ActorParams actor_params = 10;
 	optional RegionParams region_params = 11;
+	repeated Furniture furniture = 25;
 
 	optional int32 min_level = 20 [default = 0];
 	optional int32 max_level = 21;

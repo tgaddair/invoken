@@ -32,9 +32,11 @@ import com.eldritch.scifirpg.editor.tables.DialogueTable;
 import com.eldritch.scifirpg.editor.tables.EncounterTable;
 import com.eldritch.scifirpg.editor.tables.OutcomeTable;
 import com.eldritch.scifirpg.editor.tables.OutcomeTable.EncounterOutcomeTable;
+import com.eldritch.scifirpg.editor.tables.RoomTable.FurnitureTable;
 import com.eldritch.scifirpg.editor.tables.PrerequisiteTable;
 import com.eldritch.invoken.proto.Actors.NonPlayerActor;
 import com.eldritch.invoken.proto.Locations.Encounter;
+import com.eldritch.invoken.proto.Locations.Furniture;
 import com.eldritch.invoken.proto.Locations.Location;
 import com.eldritch.invoken.proto.Locations.Encounter.ActorParams;
 import com.eldritch.invoken.proto.Locations.Encounter.ActorParams.ActorScenario;
@@ -82,6 +84,7 @@ public class EncounterEditorPanel extends AssetEditorPanel<Encounter, EncounterT
     private final RegionEncounterPanel regionPanel = new RegionEncounterPanel();
 
     private final AssetPointerTable<Room> roomTable;
+    private final FurnitureTable furnitureTable = new FurnitureTable();
 
     public EncounterEditorPanel(EncounterTable owner, JFrame frame, Optional<Encounter> prev) {
         super(owner, frame, prev);
@@ -144,6 +147,10 @@ public class EncounterEditorPanel extends AssetEditorPanel<Encounter, EncounterT
         builder.appendRow("fill:80dlu");
         builder.append("Rooms:", new AssetTablePanel(roomTable));
         builder.nextLine();
+        
+        builder.appendRow("fill:80dlu");
+        builder.append("Furniture:", new AssetTablePanel(furnitureTable));
+        builder.nextLine();
 
         List<String> factionIds = new ArrayList<>();
         factionIds.add("");
@@ -197,6 +204,9 @@ public class EncounterEditorPanel extends AssetEditorPanel<Encounter, EncounterT
             for (String room : asset.getRoomIdList()) {
                 roomTable.addAssetId(room);
             }
+            for (Furniture f : asset.getFurnitureList()) {
+                furnitureTable.addAsset(f);
+            }
             if (asset.hasFactionId()) {
                 factionBox.setSelectedItem(asset.getFactionId());
             }
@@ -213,6 +223,7 @@ public class EncounterEditorPanel extends AssetEditorPanel<Encounter, EncounterT
                 .setWeight(Double.parseDouble(weightField.getText()))
                 .setUnique(uniqueCheck.isSelected()).addAllPrereq(prereqTable.getAssets())
                 .addAllRoomId(roomTable.getAssetIds())
+                .addAllFurniture(furnitureTable.getAssets())
                 .setFactionId((String) factionBox.getSelectedItem())
                 .setActorParams(actorPanel.getParams())
                 .setMinLevel(Integer.parseInt(minLevelField.getText()));
