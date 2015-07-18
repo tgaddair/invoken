@@ -450,7 +450,7 @@ public class Level {
 
     public void addEntities(List<Agent> entities) {
         for (Agent agent : entities) {
-            addActor(agent);
+            addAgent(agent);
         }
     }
 
@@ -491,7 +491,7 @@ public class Level {
         return new HealthBar(state.getSkin());
     }
 
-    private void addActor(Agent agent) {
+    public void addAgent(Agent agent) {
         entities.add(agent);
         ids.put(agent.getInfo().getId(), agent);
         healthBars.put(agent, new HealthBar(state.getSkin()));
@@ -1196,7 +1196,7 @@ public class Level {
 
     public Npc createNpc(String id, Vector2 position) {
         Npc npc = createTestNpc(position, id);
-        addActor(npc);
+        addAgent(npc);
         forceRefresh = true;
         return npc;
     }
@@ -1217,7 +1217,7 @@ public class Level {
             for (AgentDescription agent : encounter.getAgents()) {
                 ActorScenario scenario = agent.getScenario();
                 Npc npc = createTestNpc(agent.getPosition(), scenario.getActorId());
-                addActor(npc);
+                addAgent(npc);
                 npcs.add(npc);
 
                 if (agent.hasRoom()) {
@@ -1286,13 +1286,13 @@ public class Level {
         Vector2 spawn = getSpawnLocation();
         player.setLocation(this, spawn.x, spawn.y);
         this.player = player;
-        addActor(player);
+        addAgent(player);
         return player;
     }
 
     private Player createPlayer(PlayerActor proto, float x, float y) {
         Player player = new Player(proto, x, y, this);
-        addActor(player);
+        addAgent(player);
 
         // PointLight light = new PointLight(rayHandler,
         // LightManager.RAYS_PER_BALL, null,
@@ -1306,7 +1306,7 @@ public class Level {
         Vector2 spawn = getSpawnLocation();
         this.player = new DummyPlayer(Profession.Centurion, Settings.START_LEVEL, spawn.x, spawn.y,
                 this, "sprite/characters/light-blue-hair.png");
-        addActor(player);
+        addAgent(player);
         return player;
     }
 
@@ -1314,7 +1314,7 @@ public class Level {
         // spawn and add the player
         Vector2 spawn = getSpawnLocation();
         this.player = createPlayer(profession, spawn.x, spawn.y);
-        addActor(player);
+        addAgent(player);
 
         return player;
     }

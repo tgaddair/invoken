@@ -8,24 +8,30 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.actor.AgentHandler;
 import com.eldritch.invoken.actor.DamageHandler;
+import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.InanimateEntity;
+import com.eldritch.invoken.actor.type.Npc;
 import com.eldritch.invoken.actor.util.Damageable;
 import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.location.NaturalVector2;
 import com.eldritch.invoken.screens.GameScreen;
 import com.eldritch.invoken.ui.HealthBar;
+import com.eldritch.invoken.util.Constants;
 import com.eldritch.invoken.util.Damage;
 import com.eldritch.invoken.util.Damager;
 import com.eldritch.invoken.util.Settings;
+import com.google.common.base.Optional;
 
 public class Spawner extends CollisionActivator implements Damageable {
     private static final TextureRegion[] regions = GameScreen.getMergedRegion(GameScreen.ATLAS
             .findRegion("activators/spawner").split(32, 32));
 
     private final SpawnerHandler handler;
-    private HealthBar healthBar = null;
+    private HealthBar healthBar;
+    private Optional<Agent> spawned = Optional.absent();
 
     public Spawner(NaturalVector2 position) {
         super(position);
@@ -33,14 +39,18 @@ public class Spawner extends CollisionActivator implements Damageable {
     }
 
     @Override
-    public void register(Level level) {
-        super.register(level);
-        this.healthBar = level.createHealthBar();
+    public void update(float delta, Level level) {
+        if (isAlive()) {
+            if (spawned.isPresent() && !spawned.get().isAlive()) {
+                spawned = Optional.absent();
+                spawn(level);
+            }
+        }
     }
 
     @Override
     public void render(float delta, OrthogonalTiledMapRenderer renderer) {
-        TextureRegion frame = handler.getHealth() > 0 ? regions[0] : regions[1];
+        TextureRegion frame = isAlive() ? regions[0] : regions[1];
         Vector2 position = getPosition();
         float w = frame.getRegionWidth() * Settings.SCALE;
         float h = frame.getRegionHeight() * Settings.SCALE;
@@ -55,6 +65,38 @@ public class Spawner extends CollisionActivator implements Damageable {
             healthBar.update(this);
             healthBar.draw(getLevel().getCamera());
         }
+    }
+
+    @Override
+    public void register(Level level) {
+        super.register(level);
+        this.healthBar = level.createHealthBar();
+        spawn(level);
+    }
+
+    private void spawn(Level level) {
+        for (int dx = -1; dx <= 1; dx++) {
+            for (int dy = -1; dy <= 1; dy++) {
+                if (dx == 0 && dy == 0) {
+                    continue;
+                }
+
+                NaturalVector2 point = NaturalVector2.of((int) position.x + dx, (int) position.y
+                        + dy);
+                if (level.isGround(point)) {
+                    System.out.println("spawn!!! " + point);
+                    spawn(point, level);
+                    return;
+                }
+            }
+        }
+    }
+
+    private void spawn(NaturalVector2 point, Level level) {
+        String id = Constants.CRAWLER;
+        spawned = Optional.<Agent> of(Npc.create(InvokenGame.ACTOR_READER.readAsset(id), point.x,
+                point.y, level));
+        level.addAgent(spawned.get());
     }
 
     @Override

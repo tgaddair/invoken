@@ -20,5 +20,8 @@ public class Constants {
     public static final String CATEGORY = "category";
     public static final String LOW = "low";
     
+    // IDs
+    public static final String CRAWLER = "Crawler";
+    
     private Constants() {};
 }
