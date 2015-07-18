@@ -33,4 +33,21 @@ public class BackgroundManager {
         batch.draw(bg, bounds.x, bounds.y, w, h);
         batch.end();
     }
+    
+    public void render(Batch batch, int width, int height) {
+        // render the background
+        float w;
+        float h;
+        if (width > height) {
+            w = width;
+            h = w * (bg.getHeight() / bg.getWidth());
+        } else {
+            h = height;
+            w = h * (bg.getWidth() / bg.getHeight());
+        }
+        
+        batch.begin();
+        batch.draw(bg, 0, 0, w, h);
+        batch.end();
+    }
 }

@@ -652,15 +652,14 @@ public class Level {
         overlayRenderer.setView(camera);
 
         lightManager.update(delta);
-        fowMasker.render(delta, camera);
         bgManager.update(delta);
+        bgManager.render(renderer);
+        fowMasker.render(delta, camera);
         
         // draw lights
         renderer.getBatch().setShader(lightManager.getDefaultShader());
         overlayRenderer.getBatch().setShader(lightManager.getDefaultShader());
         normalMapShader.render(lightManager, player, delta, camera, renderer, overlayRenderer);
-        
-//        bgManager.render(renderer);
         
         // set the tile map render view based on what the
         // camera sees and render the map

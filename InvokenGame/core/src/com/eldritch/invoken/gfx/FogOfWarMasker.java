@@ -112,7 +112,6 @@ public class FogOfWarMasker {
         int y2 = bounds != null ? (int) (bounds.y + bounds.height) : mask[0].length;
 
         // draw the mask
-        // TODO: iterate over view bounds
         sr.setProjectionMatrix(camera.combined);
         sr.begin(ShapeType.Filled);
         // sr.setColor(1, 1, 1, 0);
@@ -169,10 +168,10 @@ public class FogOfWarMasker {
         blurShader.begin();
         blurShader.setUniformf("dir", 1f, 0f);
         blurShader.end();
-
+        
         // start rendering to target B
         pingPongBuffer.begin();
-
+        
         batch.begin();
 
         // no need to clear since targetA has an opaque background
