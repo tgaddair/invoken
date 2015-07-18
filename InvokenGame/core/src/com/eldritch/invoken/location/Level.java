@@ -660,8 +660,10 @@ public class Level {
         overlayRenderer.setView(camera);
 
         lightManager.update(delta);
-        bgManager.update(delta);
-        bgManager.render(renderer);
+        if (Settings.ENABLE_BACKGROUND) {
+            bgManager.update(delta);
+            bgManager.render(renderer);
+        }
         fowMasker.render(delta, camera);
 
         // draw lights

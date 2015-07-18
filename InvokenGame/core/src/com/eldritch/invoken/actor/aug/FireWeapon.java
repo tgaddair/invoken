@@ -56,6 +56,10 @@ public class FireWeapon extends ProjectileAugmentation {
 
     @Override
     public Action getAction(Agent owner, Vector2 target) {
+        if (!owner.isAiming()) {
+            // whip the opponent with your melee weapon
+            return RendWeapon.getInstance().getAction(owner, target);
+        }
         return new FireAction(owner, target);
     }
 

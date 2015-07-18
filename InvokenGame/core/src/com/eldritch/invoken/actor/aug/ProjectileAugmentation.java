@@ -27,7 +27,8 @@ public abstract class ProjectileAugmentation extends ActiveAugmentation {
     
     @Override
     public boolean isValid(Agent owner) {
-        return owner.isAiming();
+//        return owner.isAiming();
+        return true;
     }
     
     @Override

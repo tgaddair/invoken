@@ -18,6 +18,9 @@ import com.eldritch.invoken.util.Settings;
 import com.eldritch.invoken.util.SoundManager.SoundEffect;
 
 public class RendWeapon extends ActiveAugmentation {
+    private static final float DEFAULT_RANGE = 1.5f;
+    private static final int DEFAULT_DAMAGE = 5;
+
     private static class Holder {
         private static final RendWeapon INSTANCE = new RendWeapon();
     }
@@ -28,6 +31,20 @@ public class RendWeapon extends ActiveAugmentation {
 
     private RendWeapon() {
         super("rend");
+    }
+
+    @Override
+    public void prepare(Agent owner) {
+        owner.toggleOn(RendWeapon.class);
+    }
+
+    @Override
+    public void unprepare(Agent owner) {
+        owner.toggleOff(RendWeapon.class);
+    }
+
+    public boolean isPrepared(Agent owner) {
+        return owner.isToggled(RendWeapon.class);
     }
 
     @Override
@@ -61,9 +78,9 @@ public class RendWeapon extends ActiveAugmentation {
             return 0;
         }
 
-        MeleeWeapon weapon = owner.getInventory().getMeleeWeapon();
-        return owner.dst2(target) <= weapon.getRange() ? Heuristics.randomizedDistanceScore(
-                owner.dst2(target), weapon.getRange()) : 0;
+        float range = getRange(owner);
+        return owner.dst2(target) <= range ? Heuristics.randomizedDistanceScore(owner.dst2(target),
+                range) : 0;
     }
 
     public class RendAction extends AnimatedAction {
@@ -78,14 +95,17 @@ public class RendWeapon extends ActiveAugmentation {
             // update agent to fact the direction of their strike
             owner.setDirection(owner.getRelativeDirection(target));
 
-            MeleeWeapon weapon = actor.getInventory().getMeleeWeapon();
-            this.damage = Damage.from(actor, DamageType.PHYSICAL, (int) weapon.getDamage());
+            int damage = DEFAULT_DAMAGE;
+            if (actor.getInventory().hasMeleeWeapon() && isPrepared(actor)) {
+                MeleeWeapon weapon = actor.getInventory().getMeleeWeapon();
+                damage = (int) weapon.getDamage();
+            }
+            this.damage = Damage.from(actor, DamageType.PHYSICAL, damage);
         }
 
         @Override
         public void apply(Level level) {
-            MeleeWeapon weapon = owner.getInventory().getMeleeWeapon();
-            float range = getRange(weapon);
+            float range = getRange(owner);
             float radius = range / 2;
             strike.set(owner.getPosition());
             strike.add(owner.getForwardVector().scl(radius));
@@ -107,15 +127,17 @@ public class RendWeapon extends ActiveAugmentation {
         public void render(OrthogonalTiledMapRenderer renderer) {
             super.render(renderer);
 
-            // render weapon
-            MeleeWeapon weapon = owner.getInventory().getMeleeWeapon();
-            if (weapon.isVisible()) {
-                weapon.render(owner, Activity.Combat, getStateTime(), renderer);
+            if (owner.getInventory().hasMeleeWeapon() && isPrepared(owner)) {
+                // render weapon
+                MeleeWeapon weapon = owner.getInventory().getMeleeWeapon();
+                if (weapon.isVisible()) {
+                    weapon.render(owner, Activity.Combat, getStateTime(), renderer);
+                }
             }
 
             if (Settings.DEBUG_DRAW) {
                 // debug: draw attack radius
-                float range = getRange(weapon);
+                float range = getRange(owner);
                 Vector2 center = getCenter(owner.getPosition(), target, range);
                 DebugEntityRenderer.getInstance().renderCircle(center, range / 2,
                         renderer.getBatch().getProjectionMatrix());
@@ -147,7 +169,12 @@ public class RendWeapon extends ActiveAugmentation {
         return origin.cpy().add(delta);
     }
 
-    private static float getRange(MeleeWeapon weapon) {
+    private float getRange(Agent owner) {
+        if (!owner.getInventory().hasMeleeWeapon() || !isPrepared(owner)) {
+            return DEFAULT_RANGE;
+        }
+
+        MeleeWeapon weapon = owner.getInventory().getMeleeWeapon();
         return weapon.getRange();
     }
 }
