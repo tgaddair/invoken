@@ -1,14 +1,13 @@
 package com.eldritch.invoken.location.layer;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.maps.MapLayer;
-import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
@@ -23,12 +22,10 @@ import com.eldritch.invoken.actor.type.InanimateEntity.StaticEntity;
 import com.eldritch.invoken.gfx.Light;
 import com.eldritch.invoken.gfx.Light.LightDescription;
 import com.eldritch.invoken.gfx.Light.StaticLight;
-import com.eldritch.invoken.gfx.NormalMapShader;
 import com.eldritch.invoken.location.ConnectedRoomManager;
 import com.eldritch.invoken.location.EncounterDescription;
 import com.eldritch.invoken.location.NaturalVector2;
 import com.eldritch.invoken.location.layer.LocationLayer.CollisionLayer;
-import com.eldritch.invoken.location.proc.TmxPlaceableFurniture;
 import com.eldritch.invoken.util.Constants;
 import com.eldritch.invoken.util.Settings;
 
@@ -40,6 +37,7 @@ public class LocationMap extends TiledMap {
     // TODO: maintain a map of visited connected rooms and use it as a minimap for the player
     private final Type[][] typeMap;
     private final int[][] lightWalls;
+    private final boolean[][] convexHull;
 
     private final TiledMapTile ground;
     private final int width;
@@ -63,6 +61,53 @@ public class LocationMap extends TiledMap {
         this.height = height;
         typeMap = new Type[width][height];
         lightWalls = new int[width][height];
+        convexHull = new boolean[width][height];
+    }
+
+    private void buildConvexHull() {
+        Set<NaturalVector2> visited = new HashSet<>();
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                if (isOnBorder(x, y)) {
+                    NaturalVector2 current = NaturalVector2.of(x, y);
+                    if (typeMap[x][y] != Type.Ground && !visited.contains(current)) {
+                        visitBorder(current, visited);
+                    }
+                }
+
+            }
+        }
+
+        // all the non-ground we didn't visit is part of the convex hull
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                if (typeMap[x][y] != Type.Ground && !visited.contains(NaturalVector2.of(x, y))) {
+                    convexHull[x][y] = true;
+                }
+            }
+        }
+    }
+
+    private boolean visitBorder(NaturalVector2 current, Set<NaturalVector2> visited) {
+        visited.add(current);
+        for (int dx = -1; dx <= 1; dx++) {
+            for (int dy = -1; dy <= 1; dy++) {
+                if ((dx == 0) != (dy == 0)) {
+                    // cardinal directions
+                    NaturalVector2 neighbor = NaturalVector2.of(current.x + dx, current.y + dy);
+                    if (typeMap[neighbor.x][neighbor.y] != Type.Ground
+                            && !visited.contains(neighbor)) {
+                        visitBorder(neighbor, visited);
+                    }
+                }
+            }
+        }
+
+        return true;
+    }
+
+    private boolean isOnBorder(int x, int y) {
+        return x == 0 || x == width - 1 || y == 0 || y == height - 1;
     }
 
     public void setWall(int x, int y) {
@@ -72,11 +117,11 @@ public class LocationMap extends TiledMap {
     public boolean isWall(int x, int y) {
         return typeMap[x][y] == Type.Wall;
     }
-    
+
     public void addEncounter(EncounterDescription encounter) {
         encounters.add(encounter);
     }
-    
+
     public List<EncounterDescription> getEncounters() {
         return encounters;
     }
@@ -286,7 +331,7 @@ public class LocationMap extends TiledMap {
                         + bounds.y + 0.5f), light));
             }
         }
-        
+
         return inanimates;
     }
 }

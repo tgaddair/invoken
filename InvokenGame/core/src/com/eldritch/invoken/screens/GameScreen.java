@@ -314,9 +314,9 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 
         // render the background
         // TODO: trim must use the 16x16 pixel patches for this to work
-        // batch.begin();
-        // batch.draw(bg, 0, 0, getWidth(), getHeight());
-        // batch.end();
+         batch.begin();
+         batch.draw(bg, 0, 0, getWidth(), getHeight());
+         batch.end();
 
         // render the location
         level.render(delta, camera, selector, tacticalPause);
