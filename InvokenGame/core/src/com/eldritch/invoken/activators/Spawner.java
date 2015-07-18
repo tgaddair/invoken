@@ -1,6 +1,7 @@
 package com.eldritch.invoken.activators;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
@@ -11,6 +12,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.actor.AgentHandler;
 import com.eldritch.invoken.actor.DamageHandler;
+import com.eldritch.invoken.actor.aug.Burrow;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.InanimateEntity;
 import com.eldritch.invoken.actor.type.Npc;
@@ -75,28 +77,37 @@ public class Spawner extends CollisionActivator implements Damageable {
     }
 
     private void spawn(Level level) {
+        for (NaturalVector2 point : getRandomPoints()) {
+            if (level.isGround(point)) {
+                System.out.println("spawn!!! " + point);
+                spawn(point, level);
+                return;
+            }
+        }
+    }
+
+    private List<NaturalVector2> getRandomPoints() {
+        List<NaturalVector2> points = new ArrayList<>();
         for (int dx = -1; dx <= 1; dx++) {
             for (int dy = -1; dy <= 1; dy++) {
                 if (dx == 0 && dy == 0) {
                     continue;
                 }
 
-                NaturalVector2 point = NaturalVector2.of((int) position.x + dx, (int) position.y
-                        + dy);
-                if (level.isGround(point)) {
-                    System.out.println("spawn!!! " + point);
-                    spawn(point, level);
-                    return;
-                }
+                points.add(NaturalVector2.of((int) position.x + dx, (int) position.y + dy));
             }
         }
+        Collections.shuffle(points);
+        return points;
     }
 
     private void spawn(NaturalVector2 point, Level level) {
         String id = Constants.CRAWLER;
-        spawned = Optional.<Agent> of(Npc.create(InvokenGame.ACTOR_READER.readAsset(id), point.x,
-                point.y, level));
-        level.addAgent(spawned.get());
+        Agent agent = Npc.create(InvokenGame.ACTOR_READER.readAsset(id), point.x, point.y, level);
+        spawned = Optional.of(agent);
+        
+        level.addAgent(agent);
+        Burrow.addDust(agent);
     }
 
     @Override

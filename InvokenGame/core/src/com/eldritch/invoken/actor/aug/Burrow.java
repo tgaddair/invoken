@@ -2,7 +2,6 @@ package com.eldritch.invoken.actor.aug;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.GdxNativesLoader;
 import com.eldritch.invoken.actor.aug.Augmentation.ActiveAugmentation;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Agent.Activity;
@@ -136,7 +135,7 @@ public class Burrow extends ActiveAugmentation {
         }
     }
 
-    private static void addDust(Agent owner) {
+    public static void addDust(Agent owner) {
         Level level = owner.getLocation();
         AnimatedEntity anim = new AnimatedEntity(DUST_REGIONS, owner.getPosition().cpy(),
                 new Vector2(DUST_SIZE, DUST_SIZE), 0.05f);
