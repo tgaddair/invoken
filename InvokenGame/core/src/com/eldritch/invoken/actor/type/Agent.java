@@ -14,6 +14,7 @@ import java.util.Stack;
 import com.badlogic.gdx.ai.steer.Steerable;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -95,6 +96,9 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
 
     private static final float ROTATION_SCALE = 4.5f;
 
+    private static final TextureRegion SHADOW = new TextureRegion(new Texture(
+            "sprite/shadow.png"));
+
     static AssetManager assetManager = new AssetManager();
     static float MAX_FREEZE = 25f;
     static float DAMPING = 5f;
@@ -122,7 +126,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     Direction direction = Direction.Down;
     private final Map<Activity, Map<Direction, Animation>> animations;
     float stateTime = 0;
-    
+
     private Activity lastActivity = activity;
     private float lastStateTime = stateTime;
 
@@ -206,10 +210,10 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         radius = getBodyRadius();
         this.level = level;
         body = createBody(x, y, level.getWorld());
-        
+
         dodgeHandlers.add(new DefaultDodgeHandler(this));
     }
-    
+
     public float getBodyRadius() {
         return Math.max(getWidth(), getHeight()) / 5;
     }
@@ -259,7 +263,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         circleShape.dispose();
         return body;
     }
-    
+
     public void addListener(AgentListener listener) {
         listeners.add(listener);
     }
@@ -307,7 +311,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         }
         return true;
     }
-    
+
     public RayTarget getTargeting(Vector2 source, Vector2 target) {
         targetCast(source, target);
         return new RayTarget(targetingHandler.getTargeting(), targetingHandler.getFraction());
@@ -326,7 +330,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         level.getWorld().rayCast(targetingHandler, source, target);
         return true;
     }
-    
+
     public void setDodgeHandler(DodgeHandler handler) {
         dodgeHandlers.push(handler);
     }
@@ -413,7 +417,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     public float getAttackSpeed() {
         return 1f;
     }
-    
+
     public float getHoldSeconds() {
         return 0f;
     }
@@ -469,7 +473,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     public void kill() {
         info.setHealth(0);
     }
-    
+
     @Override
     public float getBaseHealth() {
         return info.getBaseHealth();
@@ -479,12 +483,12 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     public float getHealth() {
         return info.getHealth();
     }
-    
+
     @Override
     public boolean isAlive() {
         return info.isAlive();
     }
-    
+
     @Override
     public void setHealthIndicator(Vector3 worldCoords) {
         Vector2 position = getRenderPosition();
@@ -951,11 +955,11 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     public void upload(boolean value) {
         this.uploading = value;
     }
-    
+
     public boolean isResearching() {
         return researching;
     }
-    
+
     public void research(boolean value) {
         this.researching = value;
     }
@@ -1282,7 +1286,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         releaseFragments();
         announcements.clear();
         InvokenGame.SOUND_MANAGER.playAtPoint(getDeathSound(), getPosition(), 3f);
-        
+
         for (AgentListener listener : listeners) {
             listener.onDeath();
         }
@@ -1364,7 +1368,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
 
         changeRelationScaled(source, -magnitude, 0.01f);
     }
-    
+
     public float changeRelationScaled(Agent target, float delta, float scale) {
         if (delta < 0 && isAlly(target)) {
             // scale down friendly fire
@@ -1524,7 +1528,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
                 it.remove();
             }
         }
-        
+
         // remove inactive dodge handlers
         Iterator<DodgeHandler> dodgeIt = dodgeHandlers.iterator();
         while (dodgeIt.hasNext()) {
@@ -1657,18 +1661,18 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     public Vector2 getForwardVector() {
         Vector2 result = new Vector2();
         switch (direction) {
-        case Left:
-            result.set(-1, 0);
-            break;
-        case Right:
-            result.set(1, 0);
-            break;
-        case Down:
-            result.set(0, -1);
-            break;
-        case Up:
-            result.set(0, 1);
-            break;
+            case Left:
+                result.set(-1, 0);
+                break;
+            case Right:
+                result.set(1, 0);
+                break;
+            case Down:
+                result.set(0, -1);
+                break;
+            case Up:
+                result.set(0, 1);
+                break;
         }
         return result;
     }
@@ -1704,7 +1708,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
             // cannot render when inactive
             return;
         }
-        
+
         // cloaking
         if (isCloaked()) {
             float maxDst2 = Cloak.MAX_DST2;
@@ -1715,6 +1719,9 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
                 float a = MathUtils.lerp(getCloakAlpha(), 1f, 1f - dst2 / maxDst2);
                 setAlpha(a);
             }
+        } else {
+            // draw shadow
+            drawShadow(renderer);
         }
 
         // render character
@@ -1726,6 +1733,18 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
                 effect.render(delta, renderer);
             }
         }
+    }
+
+    private void drawShadow(OrthogonalTiledMapRenderer renderer) {
+        Vector2 position = getPosition();
+        float w = 2f * getBodyRadius();
+        float h = 1f * getBodyRadius();
+
+        Batch batch = renderer.getBatch();
+        batch.setColor(color);
+        batch.begin();
+        batch.draw(SHADOW, position.x - w / 2, position.y - h, w, h);
+        batch.end();
     }
 
     public void render(OrthogonalTiledMapRenderer renderer) {
@@ -1791,11 +1810,11 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         float height = getHeight();
         batch.draw(frame, position.x - width / 2, position.y - height / 2, width, height);
     }
-    
+
     public Activity getLastActivity() {
         return lastActivity;
     }
-    
+
     public float getLastStateTime() {
         return lastStateTime;
     }
@@ -1825,18 +1844,18 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         // TODO separate weapon class
         return 0.65f;
     }
-    
+
     public boolean isIdentified(String itemId) {
         return true;
     }
-    
+
     public void identify(String itemId) {
     }
-    
+
     public boolean isIdentified(Item item) {
         return true;
     }
-    
+
     public boolean canEquip(Item item) {
         return info.satisfies(item.getData().getRequirementList());
     }
@@ -1871,7 +1890,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     public float getZ() {
         return isAlive() ? super.getZ() : super.getZ() + 1000;
     }
-    
+
     protected void setLocation(Level level, float x, float y) {
         this.level = level;
         body = createBody(x, y, level.getWorld());
@@ -1880,7 +1899,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
             effect.reset(level);
         }
     }
-    
+
     @Override
     public Vector2 getPhysicalPosition() {
         return body.getPosition();
@@ -2128,7 +2147,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
             }
             return Agent.this.getZ();
         }
-        
+
         @Override
         public boolean inOverlay() {
             return false;
@@ -2163,8 +2182,8 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     }
 
     /**
-     * Rotates towards the focus point, but does not immediately set itself
-     * there for a smoother effect.
+     * Rotates towards the focus point, but does not immediately set itself there for a smoother
+     * effect.
      */
     public class RotatingWeaponSentry extends WeaponSentry {
         private final Vector2 destination = new Vector2();
