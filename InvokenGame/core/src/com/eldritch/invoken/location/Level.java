@@ -60,6 +60,7 @@ import com.eldritch.invoken.actor.type.Npc;
 import com.eldritch.invoken.actor.type.Player;
 import com.eldritch.invoken.actor.type.Projectile;
 import com.eldritch.invoken.actor.type.TemporaryEntity;
+import com.eldritch.invoken.gfx.BackgroundManager;
 import com.eldritch.invoken.gfx.FogMaskManager;
 import com.eldritch.invoken.gfx.FogOfWarMasker;
 import com.eldritch.invoken.gfx.Light;
@@ -127,6 +128,7 @@ public class Level {
     private final OverlayLightMasker lightMasker;
     private final FogOfWarMasker fowMasker;
     private final FogMaskManager fogManager;
+    private final BackgroundManager bgManager;
 
     private OrthogonalShadedTiledMapRenderer renderer;
     private OrthogonalShadedTiledMapRenderer overlayRenderer;
@@ -168,6 +170,7 @@ public class Level {
         lightMasker = new OverlayLightMasker(lightManager.getVertexShaderDef());
         fowMasker = new FogOfWarMasker();
         fogManager = new FogMaskManager();
+        bgManager = new BackgroundManager();
 
         // create territory table
         assignTerritory(map.getRooms(), data.getLocationList());
@@ -644,25 +647,28 @@ public class Level {
                 }
             }
         }
-
+        
         renderer.setView(camera);
         overlayRenderer.setView(camera);
 
         lightManager.update(delta);
         fowMasker.render(delta, camera);
-
+        bgManager.update(delta);
+        
         // draw lights
         renderer.getBatch().setShader(lightManager.getDefaultShader());
         overlayRenderer.getBatch().setShader(lightManager.getDefaultShader());
         normalMapShader.render(lightManager, player, delta, camera, renderer, overlayRenderer);
-
+        
+//        bgManager.render(renderer);
+        
         // set the tile map render view based on what the
         // camera sees and render the map
         renderer.getBatch().setShader(normalMapShader.getShader());
         normalMapShader.useNormalMap(true);
         renderer.render();
         normalMapShader.useNormalMap(false);
-
+        
         if (paused) {
             // render all pending player actions
             actionsColor.set(actionsColor.r, actionsColor.g, actionsColor.b, 1);
@@ -672,7 +678,7 @@ public class Level {
                         actionsColor.a * 0.5f);
             }
         }
-
+        
         // sort drawables by descending y
         Collections.sort(drawables, new Comparator<Drawable>() {
             @Override
@@ -741,7 +747,7 @@ public class Level {
                     losFocus.add(player.getWeaponSentry().getPosition()).sub(
                             player.getWeaponSentry().getDirection()), camera);
         }
-
+        
         // render the overlay layers
         overlayRenderer.getBatch().setShader(normalMapShader.getShader());
         normalMapShader.useNormalMap(true);
@@ -756,7 +762,7 @@ public class Level {
             fogManager.update(delta);
             fogManager.render(renderer);
         }
-
+        
         // render lighting
         // boolean stepped = fixedStep(delta);
         // rayHandler.setCombinedMatrix(camera);

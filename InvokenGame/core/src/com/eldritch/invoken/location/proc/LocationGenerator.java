@@ -673,7 +673,7 @@ public class LocationGenerator {
         right.setVisible(true);
         right.setOpacity(1.0f);
         right.setName("base-right");
-        
+
         LocationLayer top = createEmptyLayer(layer, map, "base-top");
         LocationLayer ltop = createEmptyLayer(layer, map, "base-left-top");
         LocationLayer rtop = createEmptyLayer(layer, map, "base-right-top");
@@ -682,14 +682,16 @@ public class LocationGenerator {
         addWalls(layer, left, right, top, ltop, rtop, typeMap);
         InvokenGame.log("done");
 
-        return new LayerCollection(ImmutableList.of(layer, left, right), ImmutableList.of(top, ltop, rtop));
+        return new LayerCollection(ImmutableList.of(layer, left, right), ImmutableList.of(top,
+                ltop, rtop));
     }
-    
+
     private static class LayerCollection {
         private final ImmutableList<LocationLayer> layers;
         private final ImmutableList<LocationLayer> overlays;
-        
-        public LayerCollection(ImmutableList<LocationLayer> layers, ImmutableList<LocationLayer> overlays) {
+
+        public LayerCollection(ImmutableList<LocationLayer> layers,
+                ImmutableList<LocationLayer> overlays) {
             this.layers = layers;
             this.overlays = overlays;
         }
@@ -722,12 +724,12 @@ public class LocationGenerator {
         for (int x = 0; x < overlay.getWidth(); x++) {
             for (int y = 0; y < overlay.getHeight(); y++) {
                 if (overlay.isFilled(x, y) && !overlay.isFilled(x, y - 1)) {
-//                    addCell(exterior, roofTile, x, y);
-//                    addCell(exterior, roofTile, x, y - 1);
+                    // addCell(exterior, roofTile, x, y);
+                    // addCell(exterior, roofTile, x, y - 1);
                 }
             }
         }
-        
+
         // add exterior hull
         for (int x = 0; x < exterior.getWidth(); x++) {
             for (int y = 0; y < exterior.getHeight(); y++) {
@@ -743,7 +745,8 @@ public class LocationGenerator {
         LocationLayer right = createEmptyLayer(base, map, "exterior-right");
         for (int x = 0; x < exterior.getWidth(); x++) {
             for (int y = 0; y < exterior.getHeight(); y++) {
-                if (exterior.isFilled(x, y) && exterior.isFilled(x, y + 1)) {
+                if (exterior.isFilled(x, y) && exterior.isFilled(x, y + 1)
+                        && !exterior.isFilled(x, y - 1)) {
                     if (!exterior.isFilled(x - 1, y)) {
                         // no exterior to the left
                         addCell(left, walls.getTile(WallTile.LeftExtBottom), x, y + 0);
@@ -1102,8 +1105,8 @@ public class LocationGenerator {
         });
     }
 
-    private void addWalls(LocationLayer layer, LocationLayer left, LocationLayer right, LocationLayer top, LocationLayer ltop, LocationLayer rtop,
-            CellType[][] typeMap) {
+    private void addWalls(LocationLayer layer, LocationLayer left, LocationLayer right,
+            LocationLayer top, LocationLayer ltop, LocationLayer rtop, CellType[][] typeMap) {
         for (int x = 0; x < layer.getWidth(); x++) {
             for (int y = 0; y < layer.getHeight(); y++) {
                 Cell cell = layer.getCell(x, y);

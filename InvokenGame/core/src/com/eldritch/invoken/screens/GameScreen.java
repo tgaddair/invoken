@@ -114,8 +114,6 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
     private boolean shiftDown = false;
     private float shiftTime = 0;
 
-    private final Texture bg = getTexture("sprite/starfield.png");
-
     public GameScreen(InvokenGame game, String playerName) {
         this(game, playerName, null, Settings.FIRST_REGION);
     }
@@ -311,12 +309,6 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         // update mouse position
         Vector3 world = camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
         level.setFocusPoint(world.x, world.y);
-
-        // render the background
-        // TODO: trim must use the 16x16 pixel patches for this to work
-         batch.begin();
-         batch.draw(bg, 0, 0, getWidth(), getHeight());
-         batch.end();
 
         // render the location
         level.render(delta, camera, selector, tacticalPause);
