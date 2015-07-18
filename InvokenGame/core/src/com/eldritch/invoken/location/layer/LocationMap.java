@@ -70,7 +70,7 @@ public class LocationMap extends TiledMap {
         return convexHull;
     }
 
-    public void buildConvexHull(CellType[][] typeMap) {
+    public Boolean[][] buildConvexHull(CellType[][] typeMap) {
         // explore all the non-ground stemming from the border
         Set<NaturalVector2> visited = new HashSet<>();
         for (int x = 0; x < width; x++) {
@@ -80,8 +80,7 @@ public class LocationMap extends TiledMap {
                     queue.add(NaturalVector2.of(x, y));
                     while (!queue.isEmpty()) {
                         NaturalVector2 current = queue.remove();
-                        if (typeMap[current.x][current.y] == CellType.Wall
-                                && !visited.contains(current)) {
+                        if (isEmpty(current.x, current.y) && !visited.contains(current)) {
                             visited.add(current);
                             for (int dx = -1; dx <= 1; dx++) {
                                 for (int dy = -1; dy <= 1; dy++) {
@@ -93,7 +92,7 @@ public class LocationMap extends TiledMap {
                                             continue;
                                         }
 
-                                        if (typeMap[neighbor.x][neighbor.y] == CellType.Wall
+                                        if (isEmpty(neighbor.x, neighbor.y)
                                                 && !visited.contains(neighbor)) {
                                             queue.add(neighbor);
                                         }
@@ -102,24 +101,29 @@ public class LocationMap extends TiledMap {
                             }
                         }
                     }
-
                 }
-
             }
         }
 
         // all the non-ground we didn't visit is part of the convex hull
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
-                boolean isHull = typeMap[x][y] == CellType.Wall
+                boolean isHull = isEmpty(x, y)
                         && !visited.contains(NaturalVector2.of(x, y));
                 convexHull[x][y] = isHull;
             }
         }
+
+        return convexHull;
     }
 
     private boolean isOnBorder(int x, int y) {
         return x == 0 || x == width - 1 || y == 0 || y == height - 1;
+    }
+    
+    private boolean isEmpty(int x, int y) {
+        LocationLayer base = (LocationLayer) getLayers().get(0);
+        return !base.isFilled(x, y);
     }
 
     public void setWall(int x, int y) {

@@ -175,11 +175,6 @@ public class LocationGenerator {
         int width = bsp.getWidth();
         int height = bsp.getHeight();
         LocationMap map = getBaseMap(width, height);
-        
-        // build convex hull
-        map.buildConvexHull(typeMap);
-        save(typeMap, "cell-types");
-        save(map.getConvexHull(), "convex-hull");
 
         // create layers
         InvokenGame.log("Creating Base");
@@ -210,6 +205,19 @@ public class LocationGenerator {
                 }
             }
         }
+        
+        // build convex hull
+        Boolean[][] convexHull = map.buildConvexHull(typeMap);
+        LocationLayer enclosed = createEmptyLayer(base, map, "enclosed");
+        for (int x = 0; x < convexHull.length; x++) {
+            for (int y = 0; y < convexHull[x].length; y++) {
+                if (convexHull[x][y]) {
+                    addTile(x, y, enclosed, roofTile);
+                }
+            }
+        }
+        save(typeMap, "cell-types");
+        save(convexHull, "convex-hull");
 
         InvokenGame.log("Creating Overlays");
         LocationLayer trimLayer = createTrimLayer(base, overlay, map);
@@ -219,6 +227,7 @@ public class LocationGenerator {
 
         // add all the overlays
 //        map.addOverlay(roof);
+        map.addOverlay(enclosed);
         map.addOverlay(trimLayer);
         map.addOverlay(overlay);
         map.addOverlay(doorLayer);
