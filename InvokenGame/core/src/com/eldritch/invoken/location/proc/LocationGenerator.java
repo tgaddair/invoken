@@ -170,7 +170,7 @@ public class LocationGenerator {
         bsp.generateSegments();
         bsp.save("bsp");
         CellType[][] typeMap = bsp.getMap();
-        
+
         // create map
         int width = bsp.getWidth();
         int height = bsp.getHeight();
@@ -178,9 +178,9 @@ public class LocationGenerator {
 
         // create layers
         InvokenGame.log("Creating Base");
-        List<LocationLayer> baseLayers = createBaseLayers(typeMap, width, height, map);
-        LocationLayer base = Iterables.getFirst(baseLayers, null);
-        for (LocationLayer layer : baseLayers) {
+        LayerCollection baseLayers = createBaseLayers(typeMap, width, height, map);
+        LocationLayer base = Iterables.getFirst(baseLayers.layers, null);
+        for (LocationLayer layer : baseLayers.layers) {
             map.getLayers().add(layer);
         }
 
@@ -205,19 +205,11 @@ public class LocationGenerator {
                 }
             }
         }
-        
-        // build convex hull
-        Boolean[][] convexHull = map.buildConvexHull(typeMap);
-        LocationLayer enclosed = createEmptyLayer(base, map, "enclosed");
-        for (int x = 0; x < convexHull.length; x++) {
-            for (int y = 0; y < convexHull[x].length; y++) {
-                if (convexHull[x][y]) {
-                    addTile(x, y, enclosed, roofTile);
-                }
-            }
-        }
+
+        InvokenGame.log("Creating Exterior");
+        LocationLayer exterior = createExteriorLayer(base, overlay, map);
+        save(map.getConvexHull(), "convex-hull");
         save(typeMap, "cell-types");
-        save(convexHull, "convex-hull");
 
         InvokenGame.log("Creating Overlays");
         LocationLayer trimLayer = createTrimLayer(base, overlay, map);
@@ -226,8 +218,11 @@ public class LocationGenerator {
                 map);
 
         // add all the overlays
-//        map.addOverlay(roof);
-        map.addOverlay(enclosed);
+        // map.addOverlay(roof);
+        map.addOverlay(exterior);
+        for (LocationLayer layer : baseLayers.overlays) {
+            map.addOverlay(layer);
+        }
         map.addOverlay(trimLayer);
         map.addOverlay(overlay);
         map.addOverlay(doorLayer);
@@ -269,11 +264,10 @@ public class LocationGenerator {
                 encounters)) {
             map.getLayers().add(layer);
         }
-        
+
         // add furniture
         // InvokenGame.log("Adding Furniture");
         // List<Activator> activators = new ArrayList<Activator>();
-
 
         // lights
         InvokenGame.log("Adding Lights");
@@ -651,7 +645,7 @@ public class LocationGenerator {
         return map;
     }
 
-    private List<LocationLayer> createBaseLayers(CellType[][] typeMap, int width, int height,
+    private LayerCollection createBaseLayers(CellType[][] typeMap, int width, int height,
             LocationMap map) {
         LocationLayer layer = new LocationLayer(width, height, PX, PX, map);
         layer.setVisible(true);
@@ -675,12 +669,26 @@ public class LocationGenerator {
         right.setVisible(true);
         right.setOpacity(1.0f);
         right.setName("base-right");
+        
+        LocationLayer top = createEmptyLayer(layer, map, "base-top");
+        LocationLayer ltop = createEmptyLayer(layer, map, "base-left-top");
+        LocationLayer rtop = createEmptyLayer(layer, map, "base-right-top");
 
         // add walls
-        addWalls(layer, left, right, typeMap);
+        addWalls(layer, left, right, top, ltop, rtop, typeMap);
         InvokenGame.log("done");
 
-        return ImmutableList.of(layer, left, right);
+        return new LayerCollection(ImmutableList.of(layer, left, right), ImmutableList.of(top, ltop, rtop));
+    }
+    
+    private static class LayerCollection {
+        private final ImmutableList<LocationLayer> layers;
+        private final ImmutableList<LocationLayer> overlays;
+        
+        public LayerCollection(ImmutableList<LocationLayer> layers, ImmutableList<LocationLayer> overlays) {
+            this.layers = layers;
+            this.overlays = overlays;
+        }
     }
 
     private LocationLayer createEmptyLayer(LocationLayer base, LocationMap map, String name) {
@@ -689,6 +697,34 @@ public class LocationGenerator {
         layer.setOpacity(1.0f);
         layer.setName(name);
         return layer;
+    }
+
+    private LocationLayer createExteriorLayer(LocationLayer base, LocationLayer overlay,
+            LocationMap map) {
+        // build convex hull
+        Boolean[][] convexHull = map.buildConvexHull();
+        LocationLayer exterior = createEmptyLayer(base, map, "exterior");
+
+        TiledMapTile roofTile = walls.getTile(WallTile.Roof);
+        for (int x = 0; x < convexHull.length; x++) {
+            for (int y = 0; y < convexHull[x].length; y++) {
+                if (convexHull[x][y]) {
+                    addTile(x, y, exterior, roofTile);
+                }
+            }
+        }
+
+        // fill in front trim
+        for (int x = 0; x < overlay.getWidth(); x++) {
+            for (int y = 0; y < overlay.getHeight(); y++) {
+                if (overlay.isFilled(x, y) && !overlay.isFilled(x, y - 1)) {
+                    addCell(exterior, roofTile, x, y);
+                    addCell(exterior, roofTile, x, y - 1);
+                }
+            }
+        }
+
+        return exterior;
     }
 
     private LocationLayer createTrimLayer(LocationLayer base, LocationLayer overlay, LocationMap map) {
@@ -1032,7 +1068,7 @@ public class LocationGenerator {
         });
     }
 
-    private void addWalls(LocationLayer layer, LocationLayer left, LocationLayer right,
+    private void addWalls(LocationLayer layer, LocationLayer left, LocationLayer right, LocationLayer top, LocationLayer ltop, LocationLayer rtop,
             CellType[][] typeMap) {
         for (int x = 0; x < layer.getWidth(); x++) {
             for (int y = 0; y < layer.getHeight(); y++) {
@@ -1042,6 +1078,7 @@ public class LocationGenerator {
                     if (y + 2 < layer.getHeight() && layer.getCell(x, y + 2) == null) {
                         addCell(layer, walls.getTile(WallTile.MidWallBottom), x, y + 0);
                         addCell(layer, walls.getTile(WallTile.MidWallTop), x, y + 1);
+                        addCell(top, walls.getTile(WallTile.MidWallTop), x, y + 1);
                     }
                 }
             }
@@ -1056,12 +1093,12 @@ public class LocationGenerator {
                     if (!layer.isWall(x - 1, y)) {
                         // no wall to the left
                         addCell(left, walls.getTile(WallTile.LeftWallBottom), x, y + 0);
-                        addCell(left, walls.getTile(WallTile.LeftWallTop), x, y + 1);
+                        addCell(ltop, walls.getTile(WallTile.LeftWallTop), x, y + 1);
                     }
                     if (!layer.isWall(x + 1, y)) {
                         // no wall to the right
                         addCell(right, walls.getTile(WallTile.RightWallBottom), x, y + 0);
-                        addCell(right, walls.getTile(WallTile.RightWallTop), x, y + 1);
+                        addCell(rtop, walls.getTile(WallTile.RightWallTop), x, y + 1);
                     }
                 }
             }

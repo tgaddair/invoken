@@ -46,6 +46,11 @@ public class Splash implements TemporaryEntity {
     public float getZ() {
         return Float.POSITIVE_INFINITY;
     }
+    
+    @Override
+    public boolean inOverlay() {
+        return false;
+    }
 
     @Override
     public Vector2 getPosition() {

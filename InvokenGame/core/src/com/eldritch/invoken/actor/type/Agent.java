@@ -1871,7 +1871,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     public float getZ() {
         return isAlive() ? super.getZ() : super.getZ() + 1000;
     }
-
+    
     protected void setLocation(Level level, float x, float y) {
         this.level = level;
         body = createBody(x, y, level.getWorld());
@@ -2127,6 +2127,11 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
                 return Agent.this.getZ() + Settings.EPSILON;
             }
             return Agent.this.getZ();
+        }
+        
+        @Override
+        public boolean inOverlay() {
+            return false;
         }
 
         @Override

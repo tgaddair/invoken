@@ -55,6 +55,11 @@ public class AnimatedEntity implements TemporaryEntity {
     public float getZ() {
         return 0;
     }
+    
+    @Override
+    public boolean inOverlay() {
+        return false;
+    }
 
     @Override
     public Vector2 getPosition() {

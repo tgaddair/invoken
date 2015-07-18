@@ -70,7 +70,7 @@ public class LocationMap extends TiledMap {
         return convexHull;
     }
 
-    public Boolean[][] buildConvexHull(CellType[][] typeMap) {
+    public Boolean[][] buildConvexHull() {
         // explore all the non-ground stemming from the border
         Set<NaturalVector2> visited = new HashSet<>();
         for (int x = 0; x < width; x++) {

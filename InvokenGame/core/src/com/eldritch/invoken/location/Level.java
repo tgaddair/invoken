@@ -113,6 +113,7 @@ public class Level {
     private int inactiveIndex = 0;
 
     private final List<Drawable> drawables = new ArrayList<>();
+    private final List<Drawable> overlays = new ArrayList<>();
     private final List<TemporaryEntity> pending = new ArrayList<>();
     private final List<TemporaryEntity> tempEntities = new ArrayList<>();
     private final List<Activator> activators = new ArrayList<>();
@@ -381,7 +382,7 @@ public class Level {
 
     private void addFromPending(TemporaryEntity entity) {
         tempEntities.add(entity);
-        drawables.add(entity);
+        addDrawable(entity);
     }
 
     public void addEntities(LocationMap map) {
@@ -448,7 +449,23 @@ public class Level {
 
     public void removeActivator(Activator activator) {
         activators.remove(activator);
-        drawables.remove(activator);
+        removeDrawable(activator);
+    }
+    
+    private void addDrawable(Drawable drawable) {
+        if (drawable.inOverlay()) {
+            overlays.add(drawable);
+        } else {
+            drawables.add(drawable);
+        }
+    }
+    
+    private void removeDrawable(Drawable drawable) {
+        if (drawable.inOverlay()) {
+            overlays.remove(drawable);
+        } else {
+            drawables.remove(drawable);
+        }
     }
 
     public boolean hasAgentWithId(String id) {
@@ -587,8 +604,7 @@ public class Level {
                     if (entity.isFinished()) {
                         entity.dispose();
                         it.remove();
-                        drawables.remove(entity); // TODO: could be more
-                                                  // efficient
+                        removeDrawable(entity);
                     }
                 }
             }
@@ -601,8 +617,7 @@ public class Level {
                     if (entity.isFinished()) {
                         entity.dispose(this);
                         it.remove();
-                        drawables.remove(entity); // TODO: could be more
-                                                  // efficient
+                        removeDrawable(entity);
                     }
                 }
             }
@@ -624,8 +639,7 @@ public class Level {
                     if (entity.isFinished()) {
                         entity.dispose();
                         it.remove();
-                        drawables.remove(entity); // TODO: could be more
-                                                  // efficient
+                        removeDrawable(entity);
                     }
                 }
             }
@@ -661,6 +675,13 @@ public class Level {
 
         // sort drawables by descending y
         Collections.sort(drawables, new Comparator<Drawable>() {
+            @Override
+            public int compare(Drawable a1, Drawable a2) {
+                return Float.compare(a2.getZ(), a1.getZ());
+            }
+        });
+        
+        Collections.sort(overlays, new Comparator<Drawable>() {
             @Override
             public int compare(Drawable a1, Drawable a2) {
                 return Float.compare(a2.getZ(), a1.getZ());
@@ -725,6 +746,11 @@ public class Level {
         overlayRenderer.getBatch().setShader(normalMapShader.getShader());
         normalMapShader.useNormalMap(true);
         overlayRenderer.render();
+        
+        // render the overlay drawables
+        for (Drawable drawable : overlays) {
+            drawable.render(delta, renderer);
+        }
 
         if (Settings.ENABLE_FOG) {
             fogManager.update(delta);
@@ -843,13 +869,14 @@ public class Level {
         inactiveEntities.clear();
         activeEntities.clear();
         drawables.clear();
+        overlays.clear();
         elapsed.clear();
 
         // add agents
         for (Agent other : entities) {
             if (activeTiles.contains(other.getCellPosition())) {
                 activeEntities.add(other);
-                drawables.add(other);
+                addDrawable(other);
             } else if (other.getThreat().hasEnemies() && player.isNear(other)) {
                 activeEntities.add(other);
             } else if (other == player) {
@@ -863,19 +890,21 @@ public class Level {
         // add activators
         for (Activator activator : activators) {
             if (activeTiles.contains(getCellPosition(activator))) {
-                drawables.add(activator);
+                addDrawable(activator);
             }
         }
 
         // add objects
         for (InanimateEntity entity : objects) {
             if (isActive(entity)) {
-                drawables.add(entity);
+                addDrawable(entity);
             }
         }
 
         // add temporary entities
-        drawables.addAll(tempEntities);
+        for (TemporaryEntity entity : tempEntities) {
+            addDrawable(entity);
+        }
     }
 
     private boolean isActive(InanimateEntity entity) {

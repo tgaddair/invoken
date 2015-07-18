@@ -367,6 +367,11 @@ public abstract class RangedWeapon extends Item {
         public float getZ() {
             return owner.getWeaponSentry().getZ() + Settings.EPSILON;
         }
+        
+        @Override
+        public boolean inOverlay() {
+            return false;
+        }
 
         @Override
         public Vector2 getPosition() {

@@ -42,6 +42,11 @@ public abstract class BasicActivator extends BasicLocatable implements Activator
     }
     
     @Override
+    public boolean inOverlay() {
+        return false;
+    }
+    
+    @Override
     public boolean isFinished() {
         return false;
     }

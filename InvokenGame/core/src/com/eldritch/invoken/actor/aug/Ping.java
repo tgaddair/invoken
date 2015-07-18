@@ -185,6 +185,11 @@ public class Ping extends SelfAugmentation {
         public float getZ() {
             return Float.POSITIVE_INFINITY;
         }
+        
+        @Override
+        public boolean inOverlay() {
+            return false;
+        }
 
         @Override
         public Vector2 getPosition() {

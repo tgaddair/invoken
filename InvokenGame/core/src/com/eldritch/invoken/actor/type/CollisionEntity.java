@@ -46,6 +46,11 @@ public abstract class CollisionEntity extends BasicLocatable implements Entity {
         return getPosition().y;
     }
     
+    @Override
+    public boolean inOverlay() {
+        return false;
+    }
+    
     public Vector2 getVelocity() {
         return velocity;
     }

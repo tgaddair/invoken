@@ -9,5 +9,7 @@ public interface Drawable {
     // used for determining render priority
     float getZ();
     
+    boolean inOverlay();
+    
     Vector2 getPosition();
 }

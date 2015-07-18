@@ -357,6 +357,11 @@ public class DoorActivator extends ClickActivator implements Crackable, Damageab
         }
         return getPosition().y;
     }
+    
+    @Override
+    public boolean inOverlay() {
+        return !front;
+    }
 
     public void lock(int strength) {
         lock.setStrength(strength);
