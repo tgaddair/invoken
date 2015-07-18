@@ -10,7 +10,7 @@ import com.eldritch.invoken.location.ConnectedRoom;
 import com.eldritch.invoken.location.NaturalVector2;
 import com.eldritch.invoken.location.layer.LocationMap;
 import com.eldritch.invoken.location.proc.FurnitureLoader.PlaceableFurniture;
-import com.eldritch.invoken.proto.Locations.Room.Furniture;
+import com.eldritch.invoken.proto.Locations.Furniture;
 import com.google.common.base.CaseFormat;
 
 public class PlaceableActivator implements PlaceableFurniture {

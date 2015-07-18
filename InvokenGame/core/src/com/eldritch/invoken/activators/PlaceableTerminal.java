@@ -5,7 +5,7 @@ import com.eldritch.invoken.location.NaturalVector2;
 import com.eldritch.invoken.location.layer.LocationMap;
 import com.eldritch.invoken.location.proc.FurnitureLoader.PlaceableFurniture;
 import com.eldritch.invoken.proto.Actors.Terminal;
-import com.eldritch.invoken.proto.Locations.Room.Furniture;
+import com.eldritch.invoken.proto.Locations.Furniture;
 
 public class PlaceableTerminal extends PlaceableActivator {
     private final Terminal terminal;

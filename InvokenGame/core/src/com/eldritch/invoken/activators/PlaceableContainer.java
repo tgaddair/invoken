@@ -6,7 +6,7 @@ import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.location.NaturalVector2;
 import com.eldritch.invoken.location.layer.LocationMap;
 import com.eldritch.invoken.location.proc.FurnitureLoader.PlaceableFurniture;
-import com.eldritch.invoken.proto.Locations.Room.Furniture;
+import com.eldritch.invoken.proto.Locations.Furniture;
 import com.eldritch.invoken.state.Inventory;
 
 public class PlaceableContainer extends PlaceableActivator {

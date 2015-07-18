@@ -16,7 +16,7 @@ import com.eldritch.invoken.actor.type.InanimateEntity;
 import com.eldritch.invoken.location.ConnectedRoom;
 import com.eldritch.invoken.location.NaturalVector2;
 import com.eldritch.invoken.location.layer.LocationMap;
-import com.eldritch.invoken.proto.Locations.Room.Furniture;
+import com.eldritch.invoken.proto.Locations.Furniture;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;

@@ -13,12 +13,12 @@ import com.badlogic.gdx.math.Rectangle;
 import com.eldritch.invoken.location.ConnectedRoom;
 import com.eldritch.invoken.location.ConnectedRoomManager;
 import com.eldritch.invoken.location.NaturalVector2;
-import com.eldritch.invoken.location.layer.LocationMap;
 import com.eldritch.invoken.location.layer.LocationLayer.CollisionLayer;
-import com.eldritch.invoken.location.proc.RoomGenerator.ControlRoom;
+import com.eldritch.invoken.location.layer.LocationMap;
 import com.eldritch.invoken.location.proc.FurnitureLoader.PlaceableFurniture;
+import com.eldritch.invoken.location.proc.RoomGenerator.ControlRoom;
+import com.eldritch.invoken.proto.Locations.Furniture;
 import com.eldritch.invoken.proto.Locations.Room;
-import com.eldritch.invoken.proto.Locations.Room.Furniture;
 
 public class RoomDecorator {
     // threshold of furniture to open ground in room, past which we need to stop
