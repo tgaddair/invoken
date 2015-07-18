@@ -265,7 +265,7 @@ public class LocationGenerator {
         InvokenGame.log("Creating Spawn Layers");
         List<Encounter> encounters = InvokenGame.ENCOUNTER_SELECTOR.select(floor);
         for (LocationLayer layer : createSpawnLayers(base, collision, bsp, map, rooms, floor,
-                encounters)) {
+                encounters, roomDecorator)) {
             map.getLayers().add(layer);
         }
 
@@ -995,7 +995,7 @@ public class LocationGenerator {
 
     private List<LocationLayer> createSpawnLayers(LocationLayer base, LocationLayer collision,
             RoomGenerator generator, LocationMap map, ConnectedRoomManager rooms, int level,
-            List<Encounter> encounterList) {
+            List<Encounter> encounterList, RoomDecorator roomDecorator) {
         Set<Encounter> encounters = new LinkedHashSet<>(encounterList);
         List<LocationLayer> layers = new ArrayList<LocationLayer>();
         for (ControlRoom controlRoom : generator.getEncounterRooms()) {
@@ -1032,8 +1032,12 @@ public class LocationGenerator {
             // generate encounter layers
             Optional<Encounter> encounter = controlRoom.chooseEncounter(level, encounters, rooms);
             if (encounter.isPresent()) {
-                createLayer(bounds, encounter.get(), freeSpaces, rooms, base, collision, map,
+                // add encounter entities
+                addEntities(bounds, encounter.get(), freeSpaces, rooms, base, collision, map,
                         layers);
+                
+                // add furniture
+                roomDecorator.place(encounter.get().getFurnitureList(), connected);
 
                 if (encounter.get().getUnique()) {
                     // remove the encounter from the list of possibilities
@@ -1062,7 +1066,7 @@ public class LocationGenerator {
         return cp.getOrigin();
     }
 
-    private void createLayer(Rectangle bounds, Encounter encounter,
+    private void addEntities(Rectangle bounds, Encounter encounter,
             List<NaturalVector2> freeSpaces, ConnectedRoomManager rooms, LocationLayer base,
             LocationLayer collision, LocationMap map, List<LocationLayer> layers) {
         Set<NaturalVector2> used = new HashSet<>();

@@ -105,8 +105,16 @@ public class RoomDecorator {
     }
 
     private void place(Room room, ConnectedRoom connected, double area) {
+        place(room.getFurnitureList(), connected, area);
+    }
+    
+    public void place(List<Furniture> furnitureList, ConnectedRoom connected) {
+        place(furnitureList, connected, connected.getAllPoints().size());
+    }
+    
+    private void place(List<Furniture> furnitureList, ConnectedRoom connected, double area) {
         int coveredTiles = 0; // running count of covered tiles
-        List<Furniture> availableFurniture = new ArrayList<Furniture>(room.getFurnitureList());
+        List<Furniture> availableFurniture = new ArrayList<Furniture>(furnitureList);
         
         Collections.shuffle(availableFurniture, rand);
         Collections.sort(availableFurniture, new Comparator<Furniture>() {
