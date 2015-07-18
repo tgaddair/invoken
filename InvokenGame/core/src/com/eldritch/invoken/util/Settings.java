@@ -52,21 +52,21 @@ public class Settings {
 	public static final boolean ENABLE_BACKGROUND = false;
 	
 	// debug settings
-	public static final boolean GOD_MODE = false;
-	public static final boolean DEBUG_DRAW = false;
-	public static final boolean DEBUG_CLICKS = false;
-	public static final boolean DEBUG_LIGHTS = false;
-	public static final boolean DEBUG_COVER = false;
-	public static final boolean DEBUG_PATHFINDING = false;
-	public static final boolean DEBUG_STEALTH = false;
-	public static final boolean DEBUG_TARGETING = false;
-	public static final boolean DEBUG_STATS = true;
-	public static final boolean DEBUG_MAP = false;
-	public static final boolean DEBUG_CRITICAL_PATH = false;
-	public static final boolean SKIP_MENU = true;
-	public static final int START_LEVEL = 1;  // 1, 10, 25
-	public static final int START_FLOOR = 0;
-	public static final Profession DEFAULT_PROFESSION = Profession.Centurion;
+	public static boolean GOD_MODE = false;
+	public static boolean DEBUG_DRAW = false;
+	public static boolean DEBUG_CLICKS = false;
+	public static boolean DEBUG_LIGHTS = false;
+	public static boolean DEBUG_COVER = false;
+	public static boolean DEBUG_PATHFINDING = false;
+	public static boolean DEBUG_STEALTH = false;
+	public static boolean DEBUG_TARGETING = false;
+	public static boolean DEBUG_STATS = true;
+	public static boolean DEBUG_MAP = false;
+	public static boolean DEBUG_CRITICAL_PATH = false;
+	public static boolean SKIP_MENU = true;
+	public static int START_LEVEL = 1;  // 1, 10, 25
+	public static int START_FLOOR = 0;
+	public static Profession DEFAULT_PROFESSION = Profession.Centurion;
 	
 	// string constants
 	public static final String FIRST_ROOM = "ResearchFacility"; // "Bedroom";

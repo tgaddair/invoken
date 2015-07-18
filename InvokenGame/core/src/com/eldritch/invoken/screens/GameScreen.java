@@ -636,11 +636,13 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
                 // loadLocation("WelcomeCenterLevel2", Optional.<String>
                 // absent(), level
                 // .getPlayer().serialize());
+                Settings.DEBUG_DRAW = !Settings.DEBUG_DRAW;
                 return true;
             case Keys.NUMPAD_1:
                 // loadLocation("Tutorial", Optional.<String> absent(),
                 // level.getPlayer()
                 // .serialize());
+                Settings.DEBUG_CLICKS = !Settings.DEBUG_CLICKS;
                 return true;
             case Keys.NUMPAD_2:
                 // loadLocation("WelcomeCenterLevel3", Optional.<String>

@@ -83,7 +83,7 @@ public class LevelDoorActivator extends ClickActivator {
     @Override
     public void render(float delta, OrthogonalTiledMapRenderer renderer) {
         TextureRegion frame = animation.getKeyFrame(stateTime);
-        Vector2 position = getPosition();
+        Vector2 position = getRenderPosition();
 
         Batch batch = renderer.getBatch();
         batch.begin();
