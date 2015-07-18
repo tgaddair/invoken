@@ -69,6 +69,7 @@ import com.eldritch.invoken.gfx.NormalMapShader;
 import com.eldritch.invoken.gfx.OrthogonalShadedTiledMapRenderer;
 import com.eldritch.invoken.gfx.OverlayLightMasker;
 import com.eldritch.invoken.location.EncounterDescription.AgentDescription;
+import com.eldritch.invoken.location.layer.CompactedLocationMap;
 import com.eldritch.invoken.location.layer.LocationLayer.CollisionLayer;
 import com.eldritch.invoken.location.layer.LocationMap;
 import com.eldritch.invoken.location.proc.LocationGenerator;
@@ -193,6 +194,13 @@ public class Level {
         overlayRenderer = new OrthogonalShadedTiledMapRenderer(map.getOverlayMap(), unitScale,
                 normalMapShader);
 
+        // TODO:
+        // renderer = new OrthogonalShadedTiledMapRenderer(CompactedLocationMap.from(map,
+        // map.getLayers()), unitScale, normalMapShader);
+        // overlayRenderer = new OrthogonalShadedTiledMapRenderer(CompactedLocationMap.from(map,
+        // map.getOverlayMap().getLayers()), unitScale,
+        // normalMapShader);
+
         // Instantiate a new World with no gravity and tell it to sleep when
         // possible.
         world = new World(new Vector2(0, 0), true);
@@ -283,7 +291,7 @@ public class Level {
     public String getMusicId() {
         return locations.get(currentCell).getMusic();
     }
-    
+
     public String getFullName() {
         return String.format("%s, Floor %d", getRegion(), getFloor());
     }
@@ -454,7 +462,7 @@ public class Level {
         activators.remove(activator);
         removeDrawable(activator);
     }
-    
+
     private void addDrawable(Drawable drawable) {
         if (drawable.inOverlay()) {
             overlays.add(drawable);
@@ -462,7 +470,7 @@ public class Level {
             drawables.add(drawable);
         }
     }
-    
+
     private void removeDrawable(Drawable drawable) {
         if (drawable.inOverlay()) {
             overlays.remove(drawable);
@@ -647,7 +655,7 @@ public class Level {
                 }
             }
         }
-        
+
         renderer.setView(camera);
         overlayRenderer.setView(camera);
 
@@ -655,19 +663,19 @@ public class Level {
         bgManager.update(delta);
         bgManager.render(renderer);
         fowMasker.render(delta, camera);
-        
+
         // draw lights
         renderer.getBatch().setShader(lightManager.getDefaultShader());
         overlayRenderer.getBatch().setShader(lightManager.getDefaultShader());
         normalMapShader.render(lightManager, player, delta, camera, renderer, overlayRenderer);
-        
+
         // set the tile map render view based on what the
         // camera sees and render the map
         renderer.getBatch().setShader(normalMapShader.getShader());
         normalMapShader.useNormalMap(true);
         renderer.render();
         normalMapShader.useNormalMap(false);
-        
+
         if (paused) {
             // render all pending player actions
             actionsColor.set(actionsColor.r, actionsColor.g, actionsColor.b, 1);
@@ -677,7 +685,7 @@ public class Level {
                         actionsColor.a * 0.5f);
             }
         }
-        
+
         // sort drawables by descending y
         Collections.sort(drawables, new Comparator<Drawable>() {
             @Override
@@ -685,7 +693,7 @@ public class Level {
                 return Float.compare(a2.getZ(), a1.getZ());
             }
         });
-        
+
         Collections.sort(overlays, new Comparator<Drawable>() {
             @Override
             public int compare(Drawable a1, Drawable a2) {
@@ -746,12 +754,12 @@ public class Level {
                     losFocus.add(player.getWeaponSentry().getPosition()).sub(
                             player.getWeaponSentry().getDirection()), camera);
         }
-        
+
         // render the overlay layers
         overlayRenderer.getBatch().setShader(normalMapShader.getShader());
         normalMapShader.useNormalMap(true);
         overlayRenderer.render();
-        
+
         // render the overlay drawables
         for (Drawable drawable : overlays) {
             drawable.render(delta, renderer);
@@ -761,7 +769,7 @@ public class Level {
             fogManager.update(delta);
             fogManager.render(renderer);
         }
-        
+
         // render lighting
         // boolean stepped = fixedStep(delta);
         // rayHandler.setCombinedMatrix(camera);
@@ -1365,7 +1373,7 @@ public class Level {
             player.identify(weapon.getId());
             inv.addItem(weapon);
             inv.equip(weapon);
-            
+
             Item shotgun = Item.fromProto(InvokenGame.ITEM_READER.readAsset("Shotgun"));
             inv.addItem(shotgun);
         } else if (level < 25) {

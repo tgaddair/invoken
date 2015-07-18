@@ -27,7 +27,6 @@ import com.eldritch.invoken.location.ConnectedRoomManager;
 import com.eldritch.invoken.location.EncounterDescription;
 import com.eldritch.invoken.location.NaturalVector2;
 import com.eldritch.invoken.location.layer.LocationLayer.CollisionLayer;
-import com.eldritch.invoken.location.proc.BspGenerator.CellType;
 import com.eldritch.invoken.util.Constants;
 import com.eldritch.invoken.util.Settings;
 

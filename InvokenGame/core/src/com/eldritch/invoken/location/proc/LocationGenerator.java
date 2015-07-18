@@ -733,6 +733,10 @@ public class LocationGenerator {
         // add exterior hull
         for (int x = 0; x < exterior.getWidth(); x++) {
             for (int y = 0; y < exterior.getHeight(); y++) {
+                if (convexHull[x][y]) {
+                    continue;
+                }
+                
                 if (overlay.isFilled(x, y) && !overlay.isFilled(x, y - 1)) {
                     addCell(exterior, walls.getTile(WallTile.MidExtBottom), x, y - 1);
                     addCell(exterior, walls.getTile(WallTile.MidExtTop), x, y);
@@ -745,6 +749,10 @@ public class LocationGenerator {
         LocationLayer right = createEmptyLayer(base, map, "exterior-right");
         for (int x = 0; x < exterior.getWidth(); x++) {
             for (int y = 0; y < exterior.getHeight(); y++) {
+                if (convexHull[x][y]) {
+                    continue;
+                }
+                
                 if (exterior.isFilled(x, y) && exterior.isFilled(x, y + 1)
                         && !exterior.isFilled(x, y - 1) && !exterior.isFilled(x, y + 2)) {
                     if (!exterior.isFilled(x - 1, y)) {

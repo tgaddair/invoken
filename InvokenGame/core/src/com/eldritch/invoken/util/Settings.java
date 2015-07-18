@@ -59,7 +59,7 @@ public class Settings {
 	public static final boolean DEBUG_PATHFINDING = false;
 	public static final boolean DEBUG_STEALTH = false;
 	public static final boolean DEBUG_TARGETING = false;
-	public static final boolean DEBUG_STATS = false;
+	public static final boolean DEBUG_STATS = true;
 	public static final boolean DEBUG_MAP = false;
 	public static final boolean DEBUG_CRITICAL_PATH = false;
 	public static final boolean SKIP_MENU = true;
