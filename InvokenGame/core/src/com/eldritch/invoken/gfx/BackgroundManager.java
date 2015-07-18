@@ -1,13 +1,19 @@
 package com.eldritch.invoken.gfx;
 
-import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.Texture.TextureWrap;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.eldritch.invoken.screens.GameScreen;
 
 public class BackgroundManager {
-    private final Texture bg = GameScreen.getTexture("sprite/starfield.png");
+    private final TextureRegion region = new TextureRegion(
+            GameScreen.getTexture("sprite/starfield.png"));
+
+    public BackgroundManager() {
+        region.getTexture().setWrap(TextureWrap.Repeat, TextureWrap.Repeat);
+    }
 
     public void update(float delta) {
     }
@@ -17,20 +23,25 @@ public class BackgroundManager {
         Rectangle bounds = renderer.getViewBounds();
         float width = bounds.width;
         float height = bounds.height;
-        
+
         // render the background
         float w;
         float h;
         if (width < height) {
             w = width;
-            h = w * (bg.getHeight() / bg.getWidth());
+            h = w * (region.getRegionHeight() / region.getRegionWidth());
         } else {
             h = height;
-            w = h * (bg.getWidth() / bg.getHeight());
+            w = h * (region.getRegionWidth() / region.getRegionHeight());
         }
-        
+
+        region.setU(bounds.x / w);
+        region.setV(bounds.y / h);
+        region.setU2(bounds.x / w + 1);
+        region.setV2(bounds.y / h - 1);
+
         batch.begin();
-        batch.draw(bg, bounds.x, bounds.y, w, h);
+        batch.draw(region, bounds.x, bounds.y, w, h);
         batch.end();
     }
 }
