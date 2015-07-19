@@ -69,7 +69,6 @@ import com.eldritch.invoken.gfx.NormalMapShader;
 import com.eldritch.invoken.gfx.OrthogonalShadedTiledMapRenderer;
 import com.eldritch.invoken.gfx.OverlayLightMasker;
 import com.eldritch.invoken.location.EncounterDescription.AgentDescription;
-import com.eldritch.invoken.location.layer.CompactedLocationMap;
 import com.eldritch.invoken.location.layer.LocationLayer.CollisionLayer;
 import com.eldritch.invoken.location.layer.LocationMap;
 import com.eldritch.invoken.location.proc.LocationGenerator;

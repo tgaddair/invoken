@@ -1018,8 +1018,8 @@ public class LocationGenerator {
                 Iterator<NaturalVector2> it = freeSpaces.iterator();
                 if (!it.hasNext()) {
                     // TODO: this should never happen, but just in case we
-                    // should regenerate the
-                    // whole map
+                    // should regenerate the whole map
+                    throw new IllegalStateException("Unable to place player!");
                 }
 
                 NaturalVector2 position = it.next();
