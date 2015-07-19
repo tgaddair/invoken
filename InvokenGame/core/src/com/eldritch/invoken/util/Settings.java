@@ -30,7 +30,7 @@ public class Settings {
 	// collision bit filters
 	public static final short BIT_NOTHING = 0x0000;
 	public static final short BIT_DEFAULT = 0x0001;
-	public static final short BIT_AGENT = 0x0002;
+	public static final short BIT_HIGH_AGENT = 0x0002;
 	public static final short BIT_WALL = 0x0004;
 	public static final short BIT_OBSTACLE = 0x0008;
 	public static final short BIT_SHORT_OBSTACLE = 0x0010;
@@ -39,8 +39,9 @@ public class Settings {
 	public static final short BIT_PERIMETER = 0x0080;
 	public static final short BIT_SHIELD = 0x0100;
 	public static final short BIT_INVISIBLE = 0x0200;
+	public static final short BIT_AGENTS = BIT_HIGH_AGENT | BIT_LOW_AGENT;
 	public static final short BIT_STATIC = BIT_WALL | BIT_OBSTACLE | BIT_SHORT_OBSTACLE;
-	public static final short BIT_HIGH_SHOOTABLE = BIT_AGENT | BIT_WALL | BIT_OBSTACLE;
+	public static final short BIT_HIGH_SHOOTABLE = BIT_HIGH_AGENT | BIT_WALL | BIT_OBSTACLE;
 	public static final short BIT_TARGETABLE = BIT_HIGH_SHOOTABLE | BIT_LOW_AGENT;
 	public static final short BIT_SHOOTABLE = BIT_TARGETABLE | BIT_SHIELD;
 	public static final short BIT_PHYSICAL = BIT_SHOOTABLE | BIT_SHORT_OBSTACLE | BIT_INVISIBLE;  // can walk into

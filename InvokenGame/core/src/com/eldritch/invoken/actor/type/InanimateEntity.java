@@ -146,7 +146,7 @@ public abstract class InanimateEntity extends CollisionEntity implements Drawabl
 
         // collision filters
         Filter filter = fixture.getFilterData();
-        filter.categoryBits = Settings.BIT_AGENT;
+        filter.categoryBits = Settings.BIT_HIGH_AGENT;
         filter.maskBits = Settings.BIT_ANYTHING;
 
         // optional collision filter

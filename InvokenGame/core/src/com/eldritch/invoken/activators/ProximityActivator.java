@@ -143,7 +143,7 @@ public abstract class ProximityActivator extends BasicActivator {
         // collision filters
         Filter filter = fixture.getFilterData();
         filter.categoryBits = Settings.BIT_INVISIBLE; // does not interrupt targeting
-        filter.maskBits = Settings.BIT_AGENT; // hit by agents
+        filter.maskBits = Settings.BIT_AGENTS; // hit by agents
         fixture.setFilterData(filter);
 
         shape.dispose();

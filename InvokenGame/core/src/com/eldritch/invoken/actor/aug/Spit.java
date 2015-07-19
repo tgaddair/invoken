@@ -8,6 +8,7 @@ import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.actor.type.HandledBullet;
 import com.eldritch.invoken.effects.Bleed;
 import com.eldritch.invoken.effects.Stunned;
+import com.eldritch.invoken.gfx.Splash;
 import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.proto.Effects.DamageType;
 import com.eldritch.invoken.screens.GameScreen;
@@ -20,7 +21,10 @@ import com.google.common.base.Optional;
 public class Spit extends ProjectileAugmentation {
     private static final int DAMAGE_SCALE = 10;
     private static final int BASE_COST = 20;
-    private static final float PELLET_SCALE = 0.35f;
+    private static final float SIZE = 1f;
+    
+    private static final TextureRegion SPLASH_REGION = new TextureRegion(
+            GameScreen.getTexture("sprite/effects/toxic-splash.png"));
 
     private static class Holder {
         private static final Spit INSTANCE = new Spit();
@@ -43,6 +47,11 @@ public class Spit extends ProjectileAugmentation {
     public int getCost(Agent owner) {
         return BASE_COST;
     }
+    
+    @Override
+    public boolean isValid(Agent owner) {
+        return super.isValid(owner) && !owner.isToggled(Burrow.class);
+    }
 
     @Override
     public float quality(Agent owner, Agent target, Level level) {
@@ -64,7 +73,7 @@ public class Spit extends ProjectileAugmentation {
 
         @Override
         public void apply(Level level) {
-            level.addEntity(new AcidPellet(owner, PELLET_SCALE));
+            level.addEntity(new AcidPellet(owner));
         }
 
         @Override
@@ -84,8 +93,8 @@ public class Spit extends ProjectileAugmentation {
         private static final TextureRegion PELLET_TEXTURE = new TextureRegion(
                 GameScreen.getTexture("sprite/effects/toxic-projectile.png"));
 
-        public AcidPellet(Agent owner, float scale) {
-            super(owner, PELLET_TEXTURE, V_MAX, Damage.from(owner, DamageType.TOXIC,
+        public AcidPellet(Agent owner) {
+            super(owner, PELLET_TEXTURE, SIZE, V_MAX, Damage.from(owner, DamageType.TOXIC,
                     getBaseDamage(owner)));
         }
 
@@ -112,6 +121,7 @@ public class Spit extends ProjectileAugmentation {
         
         @Override
         protected void onFinish() {
+            getOwner().getLocation().addEntity(new Splash(SPLASH_REGION, getPosition().cpy(), 3));
         }
     }
 }

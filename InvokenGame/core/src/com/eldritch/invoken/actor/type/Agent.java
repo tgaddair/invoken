@@ -227,7 +227,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     }
 
     protected short getCategoryBits() {
-        return Settings.BIT_AGENT;
+        return Settings.BIT_HIGH_AGENT;
     }
 
     private Body createBody(float x, float y, World world) {

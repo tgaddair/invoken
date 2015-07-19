@@ -52,6 +52,11 @@ public class Acid extends ProjectileAugmentation {
     public int getCost(Agent owner) {
         return BASE_COST;
     }
+    
+    @Override
+    public boolean isValid(Agent owner) {
+        return super.isValid(owner) && !owner.isToggled(Burrow.class);
+    }
 
     @Override
     public float quality(Agent owner, Agent target, Level level) {
