@@ -14,8 +14,8 @@ import com.eldritch.invoken.actor.util.Lootable;
 import com.eldritch.invoken.state.Inventory.ItemState;
 import com.eldritch.invoken.util.DefaultInputListener;
 import com.eldritch.invoken.util.Settings;
-import com.eldritch.invoken.util.Utils;
 import com.eldritch.invoken.util.SoundManager.SoundEffect;
+import com.eldritch.invoken.util.Utils;
 
 public class LootMenu {
 	private final Table container;

@@ -18,8 +18,8 @@ import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.state.Inventory.ItemState;
 import com.eldritch.invoken.util.DefaultInputListener;
 import com.eldritch.invoken.util.Settings;
-import com.eldritch.invoken.util.Utils;
 import com.eldritch.invoken.util.SoundManager.SoundEffect;
+import com.eldritch.invoken.util.Utils;
 
 public class ResearchMenu implements HudElement {
     private final Map<TextButton, Item> buttons = new HashMap<>();

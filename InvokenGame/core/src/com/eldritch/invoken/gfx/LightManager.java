@@ -20,7 +20,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.eldritch.invoken.location.NaturalVector2;
 import com.eldritch.invoken.proto.Locations.Level;
-import com.eldritch.invoken.proto.Locations.Location;
 import com.eldritch.invoken.util.Settings;
 
 public class LightManager {

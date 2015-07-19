@@ -6,9 +6,9 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.PriorityQueue;
 import java.util.Set;
-import java.util.Map.Entry;
 
 import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.location.ConnectedRoom;

@@ -37,7 +37,6 @@ import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.location.proc.LocationGenerator;
 import com.eldritch.invoken.proto.Actors.PlayerActor;
 import com.eldritch.invoken.proto.Effects.DamageType;
-import com.eldritch.invoken.proto.Locations;
 import com.eldritch.invoken.proto.Locations.Biome;
 import com.eldritch.invoken.ui.ActionBar;
 import com.eldritch.invoken.ui.ConsumableBar;
@@ -62,7 +61,6 @@ import com.eldritch.invoken.util.Settings;
 import com.eldritch.invoken.util.SoundManager;
 import com.eldritch.invoken.util.SoundManager.SoundEffect;
 import com.google.common.base.Optional;
-import com.google.common.collect.ImmutableList;
 
 public class GameScreen extends AbstractScreen implements InputProcessor {
     public static final AssetManager textureManager = new AssetManager();

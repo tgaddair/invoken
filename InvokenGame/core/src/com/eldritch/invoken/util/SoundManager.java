@@ -1,6 +1,8 @@
 package com.eldritch.invoken.util;
 
-import static com.eldritch.invoken.util.SoundManager.CodingFormat.*;
+import static com.eldritch.invoken.util.SoundManager.CodingFormat.EMPTY;
+import static com.eldritch.invoken.util.SoundManager.CodingFormat.OGG;
+import static com.eldritch.invoken.util.SoundManager.CodingFormat.WAV;
 
 import java.util.Arrays;
 import java.util.concurrent.ExecutionException;

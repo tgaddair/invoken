@@ -16,8 +16,13 @@
 
 package com.eldritch.invoken.ui;
 
-import static com.badlogic.gdx.math.Interpolation.*;
-import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
+import static com.badlogic.gdx.math.Interpolation.fade;
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.alpha;
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.fadeIn;
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.parallel;
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.removeActor;
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.scaleTo;
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.sequence;
 
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
