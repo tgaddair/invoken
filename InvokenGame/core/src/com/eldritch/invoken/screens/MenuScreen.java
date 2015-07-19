@@ -8,7 +8,6 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.utils.async.AsyncExecutor;
@@ -21,12 +20,13 @@ import com.eldritch.invoken.location.proc.LocationGenerator;
 import com.eldritch.invoken.proto.Actors.PlayerActor;
 import com.eldritch.invoken.util.DefaultInputListener;
 import com.eldritch.invoken.util.GameTransition;
+import com.eldritch.invoken.util.GameTransition.GameTransitionHandler;
 import com.eldritch.invoken.util.MusicManager;
 import com.eldritch.invoken.util.SoundManager;
 import com.google.common.base.Optional;
 
 public class MenuScreen extends AbstractScreen {
-    private final GameTransition gameState = new GameTransition() {
+    private final GameTransitionHandler dummyHandler = new GameTransitionHandler() {
         @Override
         public void transition(String locationName, Optional<String> encounterName,
                 PlayerActor state) {
@@ -36,11 +36,6 @@ public class MenuScreen extends AbstractScreen {
         @Override
         public void transition(String region, int level, PlayerActor state) {
             // do nothing
-        }
-
-        @Override
-        public Skin getSkin() {
-            return MenuScreen.this.getSkin();
         }
     };
     private OrthographicCamera camera;
@@ -172,8 +167,8 @@ public class MenuScreen extends AbstractScreen {
 
         Random rand = new Random();
         // Locations.Location data = InvokenGame.LOCATION_READER.readAsset("WelcomeCenter");
-        LocationGenerator generator = new LocationGenerator(gameState, GameScreen.getBiome(),
-                rand.nextLong());
+        LocationGenerator generator = new LocationGenerator(new GameTransition(dummyHandler,
+                getSkin()), GameScreen.getBiome(), rand.nextLong());
         Level level = generator.generate();
         Player player = level.createDummyPlayer();
 

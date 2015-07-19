@@ -97,9 +97,9 @@ public class BspGenerator {
     }
 
     public void generateSegments() {
-        System.out.println("room count: " + RoomCount);
-        System.out.println("width: " + Width);
-        System.out.println("height: " + Height);
+        InvokenGame.log("room count: " + RoomCount);
+        InvokenGame.log("width: " + Width);
+        InvokenGame.log("height: " + Height);
 
         // fill with Wall tiles
         FillMap(CellType.Wall);

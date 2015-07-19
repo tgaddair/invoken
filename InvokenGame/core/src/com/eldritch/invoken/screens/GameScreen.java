@@ -56,6 +56,7 @@ import com.eldritch.invoken.ui.Toaster;
 import com.eldritch.invoken.ui.Toaster.Message;
 import com.eldritch.invoken.ui.UploadMenu;
 import com.eldritch.invoken.util.GameTransition;
+import com.eldritch.invoken.util.GameTransition.GameTransitionHandler;
 import com.eldritch.invoken.util.Settings;
 import com.eldritch.invoken.util.SoundManager;
 import com.eldritch.invoken.util.SoundManager.SoundEffect;
@@ -75,7 +76,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
     private static Toaster toaster;
     public static boolean SCREEN_GRAB = false;
 
-    private final GameTransition gameState = new GameState();
+    private final GameTransition gameState;
     private DialogueMenu dialogue;
     private LootMenu loot;
 
@@ -129,6 +130,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
     private GameScreen(InvokenGame game, String playerName, Profession profession,
             String locationName) {
         super(game);
+        this.gameState = new GameTransition(new GameScreenTransitionHandler(), getSkin());
         this.playerName = playerName;
         this.profession = profession;
     }
@@ -974,7 +976,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         return Biome.INDUSTRY;
     }
 
-    public class GameState implements GameTransition {
+    public class GameScreenTransitionHandler implements GameTransitionHandler {
         @Override
         public void transition(String locationName, Optional<String> encounterName,
                 PlayerActor state) {
@@ -984,11 +986,6 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         @Override
         public void transition(String region, int level, PlayerActor state) {
             loadLocation(level, state);
-        }
-
-        @Override
-        public Skin getSkin() {
-            return GameScreen.this.getSkin();
         }
     }
 }
