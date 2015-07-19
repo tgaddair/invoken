@@ -38,19 +38,20 @@ import com.eldritch.invoken.actor.type.FixedPoint;
 import com.eldritch.invoken.gfx.Light;
 import com.eldritch.invoken.gfx.NormalMappedTile;
 import com.eldritch.invoken.location.ConnectedRoom;
+import com.eldritch.invoken.location.ConnectedRoom.Type;
 import com.eldritch.invoken.location.ConnectedRoomManager;
 import com.eldritch.invoken.location.EncounterDescription;
 import com.eldritch.invoken.location.EncounterDescription.AgentDescription;
 import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.location.NaturalVector2;
-import com.eldritch.invoken.location.ConnectedRoom.Type;
 import com.eldritch.invoken.location.layer.LocationCell;
 import com.eldritch.invoken.location.layer.LocationLayer;
-import com.eldritch.invoken.location.layer.LocationMap;
 import com.eldritch.invoken.location.layer.LocationLayer.CollisionLayer;
+import com.eldritch.invoken.location.layer.LocationMap;
 import com.eldritch.invoken.location.proc.BspGenerator.CellType;
 import com.eldritch.invoken.location.proc.RoomGenerator.ControlRoom;
 import com.eldritch.invoken.location.proc.WallTileMap.WallTile;
+import com.eldritch.invoken.proto.Actors.PlayerActor;
 import com.eldritch.invoken.proto.Locations;
 import com.eldritch.invoken.proto.Locations.Biome;
 import com.eldritch.invoken.proto.Locations.ControlPoint;
@@ -60,6 +61,7 @@ import com.eldritch.invoken.proto.Locations.Room;
 import com.eldritch.invoken.proto.Locations.Territory;
 import com.eldritch.invoken.screens.GameScreen;
 import com.eldritch.invoken.util.GameTransition;
+import com.eldritch.invoken.util.GameTransition.GameState;
 import com.eldritch.invoken.util.Heuristics;
 import com.eldritch.invoken.util.Settings;
 import com.google.common.base.Optional;
@@ -80,7 +82,8 @@ public class LocationGenerator {
     private final long globalSeed;
     private Random rand;
     private long counter = 0;
-    private int floor;
+    private Optional<GameState> prev;
+    private GameState next;
 
     private final GameTransition state;
     private final String biome;
@@ -126,15 +129,21 @@ public class LocationGenerator {
     }
 
     public Level generate() {
-        return generate(ImmutableList.<Locations.Location> of(), Settings.START_FLOOR);
+        return generate(Optional.<GameState> absent(), new GameState(Settings.FIRST_REGION,
+                Settings.START_FLOOR));
     }
 
-    public Level generate(List<Locations.Location> protos, int floor) {
+    public Level generate(PlayerActor playerState) {
+        return generate(Optional.<GameState> absent(), new GameState(playerState.getRegion(),
+                playerState.getFloor()));
+    }
+
+    public Level generate(Optional<GameState> prev, GameState next) {
         System.out.println("global seed: " + globalSeed);
 
         // System.out.println("hash code: " + proto.getId().hashCode());
         // long hashCode = proto.getId().hashCode();
-        long hashCode = floor;
+        long hashCode = next.getFloor();
 
         final int attempts = 3;
         while (counter < attempts) {
@@ -143,28 +152,29 @@ public class LocationGenerator {
             // name
             long seed = (globalSeed ^ hashCode) + counter++;
             try {
-                return generate(protos, floor, seed);
+                return generate(prev, next, seed);
             } catch (Exception ex) {
                 InvokenGame.error("Failed generating location: " + counter, ex);
             }
         }
         throw new IllegalStateException(String.format(
-                "Failed to generate level %d after %d attempts", floor, attempts));
+                "Failed to generate level %d after %d attempts", next.getFloor(), attempts));
     }
 
-    private Level generate(List<Locations.Location> protos, int floor, long seed) {
+    private Level generate(Optional<GameState> prev, GameState next, long seed) {
         System.out.println("seed: " + seed);
         this.rand = new Random(seed);
-        this.floor = floor;
+        this.prev = prev;
+        this.next = next;
 
         // territory
         List<Territory> territory = new ArrayList<>();
 
         // control points, both generic and from locations
         List<ControlPoint> controlPoints = new ArrayList<>();
-        controlPoints.add(ControlPointGenerator.generateOrigin(floor));
+        controlPoints.add(ControlPointGenerator.generateOrigin(next.getFloor()));
         controlPoints.add(ControlPointGenerator.generate(17, 20));
-        controlPoints.add(ControlPointGenerator.generateExit(floor));
+        controlPoints.add(ControlPointGenerator.generateExit(next.getFloor()));
 
         RoomGenerator bsp = RoomGenerator.from(territory, controlPoints, seed);
         NaturalVector2.init(bsp.getWidth(), bsp.getHeight());
@@ -262,9 +272,9 @@ public class LocationGenerator {
         roomDecorator.generate(rooms, hallways);
 
         InvokenGame.log("Creating Spawn Layers");
-        List<Encounter> encounters = InvokenGame.ENCOUNTER_SELECTOR.select(floor);
-        for (LocationLayer layer : createSpawnLayers(base, collision, bsp, map, rooms, floor,
-                encounters, roomDecorator)) {
+        List<Encounter> encounters = InvokenGame.ENCOUNTER_SELECTOR.select(next.getFloor());
+        for (LocationLayer layer : createSpawnLayers(base, collision, bsp, map, rooms,
+                next.getFloor(), encounters, roomDecorator)) {
             map.getLayers().add(layer);
         }
 
@@ -287,8 +297,8 @@ public class LocationGenerator {
 
         Locations.Level.Builder builder = Locations.Level.newBuilder();
         builder.setRegion(Settings.FIRST_REGION);
-        builder.setLevel(floor);
-        builder.addAllLocation(protos);
+        builder.setLevel(next.getFloor());
+        // builder.addAllLocation(protos);
 
         Level level = new Level(builder.build(), map, state, globalSeed);
         level.addLights(lights);
@@ -735,7 +745,7 @@ public class LocationGenerator {
                 if (convexHull[x][y]) {
                     continue;
                 }
-                
+
                 if (overlay.isFilled(x, y) && !overlay.isFilled(x, y - 1)) {
                     addCell(exterior, walls.getTile(WallTile.MidExtBottom), x, y - 1);
                     addCell(exterior, walls.getTile(WallTile.MidExtTop), x, y);
@@ -751,7 +761,7 @@ public class LocationGenerator {
                 if (convexHull[x][y]) {
                     continue;
                 }
-                
+
                 if (exterior.isFilled(x, y) && exterior.isFilled(x, y + 1)
                         && !exterior.isFilled(x, y - 1) && !exterior.isFilled(x, y + 2)) {
                     if (!exterior.isFilled(x - 1, y)) {
@@ -1034,7 +1044,7 @@ public class LocationGenerator {
                 // add encounter entities
                 addEntities(bounds, encounter.get(), freeSpaces, rooms, base, collision, map,
                         layers);
-                
+
                 // add furniture
                 roomDecorator.place(encounter.get().getFurnitureList(), connected);
 
@@ -1090,7 +1100,7 @@ public class LocationGenerator {
     public int getCount(Encounter encounter, ActorScenario scenario) {
         // the greater the delta, the greater the chance of getting a higher
         // count
-        int delta = encounter.getMinLevel() - floor;
+        int delta = encounter.getMinLevel() - next.getFloor();
         float target = rand.nextFloat() * Heuristics.sigmoid(delta);
 
         // fit the target between the min and the max

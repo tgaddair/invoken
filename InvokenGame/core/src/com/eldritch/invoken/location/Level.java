@@ -84,6 +84,7 @@ import com.eldritch.invoken.ui.AgentStatusRenderer;
 import com.eldritch.invoken.ui.DebugEntityRenderer;
 import com.eldritch.invoken.ui.HealthBar;
 import com.eldritch.invoken.util.GameTransition;
+import com.eldritch.invoken.util.GameTransition.GameState;
 import com.eldritch.invoken.util.Settings;
 import com.google.common.base.Optional;
 import com.google.common.collect.Maps;
@@ -264,12 +265,10 @@ public class Level {
         aoePool.free(aoe);
     }
 
-    public void transition(String locationName, Optional<String> encounterName) {
-        state.transition(locationName, encounterName, player.serialize());
-    }
-
     public void transition(int offset) {
-        state.transition("", data.getLevel() + offset, player.serialize());
+        GameState current = new GameState(data.getRegion(), data.getLevel());
+        GameState next = new GameState(data.getRegion(), data.getLevel() + offset);
+        state.transition(current, next, player.serialize());
     }
 
     public Player getPlayer() {

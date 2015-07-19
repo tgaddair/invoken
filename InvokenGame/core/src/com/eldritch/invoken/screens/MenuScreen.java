@@ -20,22 +20,15 @@ import com.eldritch.invoken.location.proc.LocationGenerator;
 import com.eldritch.invoken.proto.Actors.PlayerActor;
 import com.eldritch.invoken.util.DefaultInputListener;
 import com.eldritch.invoken.util.GameTransition;
+import com.eldritch.invoken.util.GameTransition.GameState;
 import com.eldritch.invoken.util.GameTransition.GameTransitionHandler;
 import com.eldritch.invoken.util.MusicManager;
 import com.eldritch.invoken.util.SoundManager;
-import com.google.common.base.Optional;
 
 public class MenuScreen extends AbstractScreen {
     private final GameTransitionHandler dummyHandler = new GameTransitionHandler() {
         @Override
-        public void transition(String locationName, Optional<String> encounterName,
-                PlayerActor state) {
-            // do nothing
-        }
-
-        @Override
-        public void transition(String region, int level, PlayerActor state) {
-            // do nothing
+        public void transition(GameState prev, GameState next, PlayerActor playerState) {
         }
     };
     private OrthographicCamera camera;

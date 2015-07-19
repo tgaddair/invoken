@@ -107,7 +107,7 @@ public class Teleporter extends ClickActivator {
     
     private void transition(Level level) {
         if (destination.isPresent() && !Strings.isNullOrEmpty(destination.get())) {
-            level.transition(destination.get(), nextEncounter);
+//            level.transition(destination.get(), nextEncounter);
         }
     }
 }

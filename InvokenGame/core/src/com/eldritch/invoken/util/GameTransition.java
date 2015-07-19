@@ -2,7 +2,6 @@ package com.eldritch.invoken.util;
 
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.eldritch.invoken.proto.Actors.PlayerActor;
-import com.google.common.base.Optional;
 
 public class GameTransition {
     private final GameTransitionHandler handler;
@@ -17,17 +16,29 @@ public class GameTransition {
         return skin;
     }
     
-    public void transition(String locationName, Optional<String> encounterName, PlayerActor state) {
-        handler.transition(locationName, encounterName, state);
+    public void transition(GameState prev, GameState next, PlayerActor playerState) {
+        handler.transition(prev, next, playerState);
     }
     
-    public void transition(String region, int level, PlayerActor state) {
-        handler.transition(region, level, state);
+    public static class GameState {
+        private final String region;
+        private final int floor;
+        
+        public GameState(String region, int floor) {
+            this.region = region;
+            this.floor = floor;
+        }
+
+        public String getRegion() {
+            return region;
+        }
+
+        public int getFloor() {
+            return floor;
+        }
     }
     
     public interface GameTransitionHandler {
-        void transition(String locationName, Optional<String> encounterName, PlayerActor state);
-    
-        void transition(String region, int level, PlayerActor state);
+        void transition(GameState prev, GameState next, PlayerActor playerState);
     }
 }

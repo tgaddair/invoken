@@ -56,6 +56,7 @@ import com.eldritch.invoken.ui.Toaster;
 import com.eldritch.invoken.ui.Toaster.Message;
 import com.eldritch.invoken.ui.UploadMenu;
 import com.eldritch.invoken.util.GameTransition;
+import com.eldritch.invoken.util.GameTransition.GameState;
 import com.eldritch.invoken.util.GameTransition.GameTransitionHandler;
 import com.eldritch.invoken.util.Settings;
 import com.eldritch.invoken.util.SoundManager;
@@ -164,7 +165,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
             // InvokenGame.LOCATION_READER.readAsset(state.getLocation());
             LocationGenerator generator = new LocationGenerator(gameState, getBiome(),
                     state.getSeed());
-            level = generator.generate(ImmutableList.<Locations.Location> of(), state.getFloor());
+            level = generator.generate(state);
             onLoad(level, Optional.of(state));
 
             // load from disk
@@ -896,17 +897,17 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
     // toast(level.getName());
     // }
 
-    private void loadLocation(int floor, PlayerActor state) {
+    private void loadLocation(GameState prev, GameState next, PlayerActor playerState) {
         // dispose of the current location
         level.dispose();
 
         // load the location
         // Locations.Location data =
         // InvokenGame.LOCATION_READER.readAsset(locationName);
-        LocationGenerator generator = new LocationGenerator(gameState, getBiome(), state.getSeed());
-        level = generator.generate(ImmutableList.<Locations.Location> of(), floor);
+        LocationGenerator generator = new LocationGenerator(gameState, getBiome(), playerState.getSeed());
+        level = generator.generate(Optional.of(prev), next);
         level.spawnPlayer(player);
-        onLoad(level, Optional.of(state));
+        onLoad(level, Optional.of(playerState));
 
         // resize
         level.resize(getWidth(), getHeight());
@@ -918,7 +919,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         level.setCamera(camera);
 
         refreshHud();
-        minimap = new Minimap(level, level.getSeed(), Optional.of(state));
+        minimap = new Minimap(level, level.getSeed(), Optional.of(playerState));
     }
 
     private void onLoad(Level level, Optional<PlayerActor> state) {
@@ -978,14 +979,8 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 
     public class GameScreenTransitionHandler implements GameTransitionHandler {
         @Override
-        public void transition(String locationName, Optional<String> encounterName,
-                PlayerActor state) {
-            // loadLocation(locationName, encounterName, state);
-        }
-
-        @Override
-        public void transition(String region, int level, PlayerActor state) {
-            loadLocation(level, state);
+        public void transition(GameState prev, GameState next, PlayerActor playerState) {
+            loadLocation(prev, next, playerState);
         }
     }
 }
