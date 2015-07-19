@@ -19,7 +19,7 @@ import com.eldritch.invoken.util.SoundManager.SoundEffect;
 import com.google.common.base.Optional;
 
 public class Spit extends ProjectileAugmentation {
-    private static final int DAMAGE_SCALE = 7;
+    private static final int DAMAGE_SCALE = 5;
     private static final int BASE_COST = 20;
     private static final float SIZE = 1f;
     
@@ -100,7 +100,7 @@ public class Spit extends ProjectileAugmentation {
 
         @Override
         protected void apply(Agent owner, Agent target) {
-            target.addEffect(new Stunned(owner, target, 0.2f));
+            target.addEffect(new Stunned(owner, target, 0.5f));
             target.addEffect(new Bleed(target, getDamage(), velocity.cpy().nor().scl(50)));
             InvokenGame.SOUND_MANAGER.playAtPoint(SoundEffect.HIT, target.getPosition());
         }
