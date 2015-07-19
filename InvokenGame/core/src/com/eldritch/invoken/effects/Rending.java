@@ -1,26 +1,27 @@
 package com.eldritch.invoken.effects;
 
 import com.badlogic.gdx.math.Vector2;
-import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.actor.type.Agent;
+import com.eldritch.invoken.actor.util.Applier;
 import com.eldritch.invoken.box2d.AgentHandler.DefaultAgentHandler;
 import com.eldritch.invoken.box2d.AreaOfEffect;
 import com.eldritch.invoken.box2d.AreaOfEffect.AoeHandler;
 import com.eldritch.invoken.box2d.DamageHandler;
 import com.eldritch.invoken.util.Damage;
-import com.eldritch.invoken.util.SoundManager.SoundEffect;
 
 public class Rending extends BasicEffect {
     private final Vector2 position = new Vector2();
+    private final Applier applier;
     private final Damage damage;
     private final float radius;
 
     private AreaOfEffect aoe;
     float elapsed = 0;
 
-    public Rending(Agent target, Vector2 position, Damage damage, float radius) {
+    public Rending(Agent target, Vector2 position, Applier applier, Damage damage, float radius) {
         super(target);
         this.position.set(position);
+        this.applier = applier;
         this.damage = damage;
         this.radius = radius;
     }
@@ -63,8 +64,7 @@ public class Rending extends BasicEffect {
                 return false;
             }
             
-            agent.addEffect(new Bleed(agent, damage));
-            InvokenGame.SOUND_MANAGER.playAtPoint(SoundEffect.MELEE_HIT, agent.getPosition());
+            applier.apply(agent);
             return true;
         }
 

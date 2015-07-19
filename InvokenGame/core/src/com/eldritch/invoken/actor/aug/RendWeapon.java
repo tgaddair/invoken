@@ -7,8 +7,11 @@ import com.eldritch.invoken.actor.aug.Augmentation.ActiveAugmentation;
 import com.eldritch.invoken.actor.items.MeleeWeapon;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Agent.Activity;
+import com.eldritch.invoken.actor.util.Applier;
+import com.eldritch.invoken.effects.Bleed;
 import com.eldritch.invoken.effects.Rending;
 import com.eldritch.invoken.effects.Slash;
+import com.eldritch.invoken.effects.Stunned;
 import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.proto.Effects.DamageType;
 import com.eldritch.invoken.util.Damage;
@@ -81,7 +84,7 @@ public class RendWeapon extends ActiveAugmentation {
                 range) : 0;
     }
 
-    public class RendAction extends AnimatedAction {
+    public class RendAction extends AnimatedAction implements Applier {
         private final Vector2 strike = new Vector2();
         private final Vector2 target;
         private final Damage damage;
@@ -112,7 +115,13 @@ public class RendWeapon extends ActiveAugmentation {
             owner.addEffect(new Slash(owner, center, range * 0.75f));
             InvokenGame.SOUND_MANAGER.playAtPoint(SoundEffect.MELEE_SWING, owner.getPosition());
             
-            owner.addEffect(new Rending(owner, center, damage, radius));
+            owner.addEffect(new Rending(owner, center, this, damage, radius));
+        }
+        
+        @Override
+        public void apply(Agent agent) {
+            agent.addEffect(new Bleed(agent, damage));
+            InvokenGame.SOUND_MANAGER.playAtPoint(SoundEffect.MELEE_HIT, agent.getPosition());
         }
 
         @Override
@@ -144,10 +153,29 @@ public class RendWeapon extends ActiveAugmentation {
             return target;
         }
     }
+    
+    public class ShoveAction extends RendAction {
+        private final Vector2 direction = new Vector2();
+        
+        private ShoveAction(Agent actor, Vector2 target) {
+            super(actor, target);
+            direction.set(target).sub(actor.getPosition()).nor();
+        }
+        
+        @Override
+        public void apply(Agent agent) {
+            agent.applyForce(direction.scl(250));
+            agent.addEffect(new Stunned(getOwner(), agent, 0.2f));
+            super.apply(agent);
+        }
+    }
+    
+    public ShoveAction createShove(Agent agent, Vector2 target) {
+        return new ShoveAction(agent, target);
+    }
 
     // Add half the range along the direction of the strike. The second half of
-    // the range is the
-    // radius.
+    // the range is the radius.
     private static Vector2 getCenter(Vector2 origin, Vector2 target, float range) {
         Vector2 delta = target.cpy().sub(origin).nor().scl(range / 2);
         return origin.cpy().add(delta);
