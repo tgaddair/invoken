@@ -27,9 +27,9 @@ public class OrthogonalWallRenderer extends OrthogonalShadedTiledMapRenderer {
         }
     }
     
-    public void render(int startZ, int endZ) {
+    public void render(int upperZ, int lowerZ) {
         beginRender();
-        for (int z = startZ; z <= endZ; z++) {
+        for (int z = upperZ; z >= lowerZ; z--) {
             if (zLayers.containsKey(z)) {
                 for (LocationLayer layer : zLayers.get(z)) {
                     renderTileLayer(layer);

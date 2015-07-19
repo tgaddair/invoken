@@ -71,6 +71,7 @@ import com.eldritch.invoken.gfx.Light;
 import com.eldritch.invoken.gfx.LightManager;
 import com.eldritch.invoken.gfx.NormalMapShader;
 import com.eldritch.invoken.gfx.OrthogonalShadedTiledMapRenderer;
+import com.eldritch.invoken.gfx.OrthogonalWallRenderer;
 import com.eldritch.invoken.gfx.OverlayLightMasker;
 import com.eldritch.invoken.location.EncounterDescription.AgentDescription;
 import com.eldritch.invoken.location.layer.LocationLayer.CollisionLayer;
@@ -139,6 +140,7 @@ public class Level {
 
     private OrthogonalShadedTiledMapRenderer renderer;
     private OrthogonalShadedTiledMapRenderer overlayRenderer;
+    private OrthogonalWallRenderer wallRenderer;
     private Array<Rectangle> tiles = new Array<Rectangle>();
     private OrthographicCamera camera;
     private final Vector3 cameraV = new Vector3();
@@ -199,6 +201,7 @@ public class Level {
         renderer = new OrthogonalShadedTiledMapRenderer(map, unitScale, normalMapShader);
         overlayRenderer = new OrthogonalShadedTiledMapRenderer(map.getOverlayMap(), unitScale,
                 normalMapShader);
+        wallRenderer = new OrthogonalWallRenderer(map.getWallMap(), unitScale, normalMapShader);
 
         // TODO:
         // renderer = new OrthogonalShadedTiledMapRenderer(CompactedLocationMap.from(map,
@@ -680,6 +683,7 @@ public class Level {
 
         renderer.setView(camera);
         overlayRenderer.setView(camera);
+        wallRenderer.setView(camera);
 
         lightManager.update(delta);
         if (Settings.ENABLE_BACKGROUND) {
@@ -756,10 +760,29 @@ public class Level {
                 drawCentered(selector, agent.getRenderPosition(), color);
             }
         }
+        
+        // render the walls
+        wallRenderer.getBatch().setShader(normalMapShader.getShader());
+        
+        // tracking pointer for current wall z
+        int z = (int) (viewBounds.y + viewBounds.height - 1);
+        int minZ = (int) viewBounds.y;
 
         // render the drawables
         for (Drawable drawable : drawables) {
+            if (drawable.getZ() < z && z > minZ) {
+                // draw the walls first
+                int lowerZ = Math.max((int) drawable.getZ(), minZ);
+                wallRenderer.render(z, lowerZ);
+                z = lowerZ;
+            }
+            
             drawable.render(delta, renderer);
+        }
+        
+        // draw remaining walls
+        if (z > minZ) {
+            wallRenderer.render(z, minZ);
         }
 
         // draw overlay info
@@ -781,7 +804,6 @@ public class Level {
 
         // render the overlay layers
         overlayRenderer.getBatch().setShader(normalMapShader.getShader());
-        normalMapShader.useNormalMap(true);
         overlayRenderer.render();
 
         // render the overlay drawables
