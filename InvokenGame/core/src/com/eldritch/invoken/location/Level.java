@@ -765,7 +765,7 @@ public class Level {
         wallRenderer.getBatch().setShader(normalMapShader.getShader());
         
         // tracking pointer for current wall z
-        int z = (int) (viewBounds.y + viewBounds.height - 1);
+        int z = (int) (viewBounds.y + viewBounds.height);
         int minZ = (int) viewBounds.y;
 
         // render the drawables
@@ -773,7 +773,9 @@ public class Level {
             if (drawable.getZ() < z && z > minZ) {
                 // draw the walls first
                 int lowerZ = Math.max((int) drawable.getZ(), minZ);
+                normalMapShader.useNormalMap(true);
                 wallRenderer.render(z, lowerZ);
+                normalMapShader.useNormalMap(false);
                 z = lowerZ;
             }
             
@@ -782,7 +784,9 @@ public class Level {
         
         // draw remaining walls
         if (z > minZ) {
+            normalMapShader.useNormalMap(true);
             wallRenderer.render(z, minZ);
+            normalMapShader.useNormalMap(false);
         }
 
         // draw overlay info
@@ -804,6 +808,7 @@ public class Level {
 
         // render the overlay layers
         overlayRenderer.getBatch().setShader(normalMapShader.getShader());
+        normalMapShader.useNormalMap(true);
         overlayRenderer.render();
 
         // render the overlay drawables
