@@ -228,6 +228,14 @@ public class LocationMap extends TiledMap {
         LocationLayer base = (LocationLayer) getLayers().get(0);
         return base.isGround(x, y);
     }
+    
+    public LocationLayer getLayer(String name) {
+        MapLayer layer = getLayers().get(name);
+        if (layer != null && layer instanceof LocationLayer) {
+            return (LocationLayer) layer;
+        }
+        return null;
+    }
 
     public LocationLayer getCollisionLayer() {
         if (collision == null) {
@@ -248,8 +256,8 @@ public class LocationMap extends TiledMap {
         return height;
     }
 
-    public Map<String, LocationLayer> getLayerMap() {
-        Map<String, LocationLayer> map = new LinkedHashMap<String, LocationLayer>();
+    public Map<String, LocationLayer> createLayerMap() {
+        Map<String, LocationLayer> map = new LinkedHashMap<>();
         for (MapLayer layer : getLayers()) {
             map.put(layer.getName(), (LocationLayer) layer);
         }
@@ -264,7 +272,7 @@ public class LocationMap extends TiledMap {
         List<TiledMapTileLayer> collisions = new ArrayList<>();
         List<LightDescription> lights = new ArrayList<>();
 
-        Map<String, LocationLayer> presentLayers = getLayerMap();
+        Map<String, LocationLayer> presentLayers = createLayerMap();
         for (MapLayer mapLayer : map.getLayers()) {
             TiledMapTileLayer layer = (TiledMapTileLayer) mapLayer;
             if (layer.getName().startsWith(Constants.CONSTRAINTS)) {

@@ -62,6 +62,7 @@ import com.eldritch.invoken.proto.Locations.Territory;
 import com.eldritch.invoken.screens.GameScreen;
 import com.eldritch.invoken.util.GameTransition;
 import com.eldritch.invoken.util.GameTransition.GameState;
+import com.eldritch.invoken.util.Constants;
 import com.eldritch.invoken.util.Heuristics;
 import com.eldritch.invoken.util.Settings;
 import com.google.common.base.Optional;
@@ -1001,12 +1002,36 @@ public class LocationGenerator {
 
         return layer;
     }
+    
+    private boolean addPlayerLayer(LocationMap map) {
+        if (prev.isPresent()) {
+            GameState last = prev.get();
+            
+            LocationLayer layer = null;
+            if (last.getFloor() < next.getFloor()) {
+                // from above
+                layer = map.getLayer(Constants.FROM_ABOVE_LAYER);
+            } else if (last.getFloor() > next.getFloor()) {
+                // from below
+                layer = map.getLayer(Constants.FROM_BELOW_LAYER);
+            }
+            
+            if (layer != null) {
+                layer.setVisible(false);
+                layer.setName(Constants.PLAYER_LAYER);
+                return true;
+            }
+        }
+        return false;
+    }
 
     private List<LocationLayer> createSpawnLayers(LocationLayer base, LocationLayer collision,
             RoomGenerator generator, LocationMap map, ConnectedRoomManager rooms, int level,
             List<Encounter> encounterList, RoomDecorator roomDecorator) {
         Set<Encounter> encounters = new LinkedHashSet<>(encounterList);
         List<LocationLayer> layers = new ArrayList<LocationLayer>();
+        
+        boolean playerAdded = addPlayerLayer(map);
         for (ControlRoom controlRoom : generator.getEncounterRooms()) {
             // further restrict bounds to prevent spawning at wall level
             Rectangle bounds = new Rectangle(controlRoom.getRestrictedBounds());
@@ -1017,12 +1042,12 @@ public class LocationGenerator {
             freeSpaces.retainAll(connected.getPoints());
 
             // generate the player layer
-            if (isSpawnRoom(controlRoom.getControlPoint())) {
+            if (!playerAdded && isSpawnRoom(controlRoom.getControlPoint())) {
                 LocationLayer playerLayer = new LocationLayer(base.getWidth(), base.getHeight(),
                         PX, PX, map);
                 playerLayer.setVisible(false);
                 playerLayer.setOpacity(1.0f);
-                playerLayer.setName("player");
+                playerLayer.setName(Constants.PLAYER_LAYER);
 
                 Collections.shuffle(freeSpaces, rand);
                 Iterator<NaturalVector2> it = freeSpaces.iterator();
@@ -1036,6 +1061,7 @@ public class LocationGenerator {
                 addCell(playerLayer, collider, position.x, position.y);
                 it.remove();
                 layers.add(playerLayer);
+                playerAdded = true;
             }
 
             // generate encounter layers

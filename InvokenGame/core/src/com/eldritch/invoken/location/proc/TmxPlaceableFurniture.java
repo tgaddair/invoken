@@ -47,7 +47,7 @@ public class TmxPlaceableFurniture implements PlaceableFurniture {
     @Override
     public NaturalVector2 findPosition(ConnectedRoom room, LocationMap map, Random rand) {
         List<NaturalVector2> origins = new ArrayList<NaturalVector2>(room.getPoints());
-        Map<String, LocationLayer> presentLayers = map.getLayerMap();
+        Map<String, LocationLayer> presentLayers = map.createLayerMap();
 
         // randomize the positions
         Collections.shuffle(origins, rand);

@@ -10,6 +10,10 @@ public class Constants {
     public static final String BLANK = "blank";
     public static final String BUFFER = "buffer";
     
+    public static final String PLAYER_LAYER = "player";
+    public static final String FROM_ABOVE_LAYER = "player-above";
+    public static final String FROM_BELOW_LAYER = "player-below";
+    
     // opposite of a traditional collision constraint, this tile explicitly allows layers named
     // "surface" to be placed here
     // dock: layer defining where something can be placed

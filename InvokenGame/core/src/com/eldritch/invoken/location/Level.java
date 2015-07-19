@@ -83,6 +83,7 @@ import com.eldritch.invoken.proto.Locations.Location;
 import com.eldritch.invoken.ui.AgentStatusRenderer;
 import com.eldritch.invoken.ui.DebugEntityRenderer;
 import com.eldritch.invoken.ui.HealthBar;
+import com.eldritch.invoken.util.Constants;
 import com.eldritch.invoken.util.GameTransition;
 import com.eldritch.invoken.util.GameTransition.GameState;
 import com.eldritch.invoken.util.Settings;
@@ -252,7 +253,7 @@ public class Level {
         bullet.setActive(false);
         bulletPool.free(bullet);
     }
-    
+
     public AreaOfEffect obtainAoe(AoeHandler handler) {
         AreaOfEffect aoe = aoePool.obtain();
         aoe.setup(handler);
@@ -1202,7 +1203,8 @@ public class Level {
     }
 
     private Vector2 getSpawnLocation() {
-        TiledMapTileLayer spawnLayer = (TiledMapTileLayer) map.getLayers().get("player");
+        TiledMapTileLayer spawnLayer = (TiledMapTileLayer) map.getLayers().get(
+                Constants.PLAYER_LAYER);
         spawnLayer.setVisible(false);
         for (int x = 0; x < spawnLayer.getWidth(); x++) {
             for (int y = 0; y < spawnLayer.getHeight(); y++) {
