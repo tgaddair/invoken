@@ -130,8 +130,11 @@ public class LocationGenerator {
     }
 
     public Level generate() {
-        return generate(Optional.<GameState> absent(), new GameState(Settings.FIRST_REGION,
-                Settings.START_FLOOR));
+        Optional<GameState> prev = Optional.absent();
+        if (Settings.START_FLOOR > 0) {
+            prev = Optional.of(new GameState(Settings.FIRST_REGION, Settings.START_FLOOR - 1));
+        }
+        return generate(prev, new GameState(Settings.FIRST_REGION, Settings.START_FLOOR));
     }
 
     public Level generate(PlayerActor playerState) {
@@ -1002,11 +1005,11 @@ public class LocationGenerator {
 
         return layer;
     }
-    
+
     private boolean addPlayerLayer(LocationMap map) {
         if (prev.isPresent()) {
             GameState last = prev.get();
-            
+
             LocationLayer layer = null;
             if (last.getFloor() < next.getFloor()) {
                 // from above
@@ -1015,7 +1018,7 @@ public class LocationGenerator {
                 // from below
                 layer = map.getLayer(Constants.FROM_BELOW_LAYER);
             }
-            
+
             if (layer != null) {
                 layer.setVisible(false);
                 layer.setName(Constants.PLAYER_LAYER);
@@ -1030,7 +1033,7 @@ public class LocationGenerator {
             List<Encounter> encounterList, RoomDecorator roomDecorator) {
         Set<Encounter> encounters = new LinkedHashSet<>(encounterList);
         List<LocationLayer> layers = new ArrayList<LocationLayer>();
-        
+
         boolean playerAdded = addPlayerLayer(map);
         for (ControlRoom controlRoom : generator.getEncounterRooms()) {
             // further restrict bounds to prevent spawning at wall level
