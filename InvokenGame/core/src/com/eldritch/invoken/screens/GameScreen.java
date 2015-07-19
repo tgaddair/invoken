@@ -51,6 +51,7 @@ import com.eldritch.invoken.ui.Minimap;
 import com.eldritch.invoken.ui.ResearchMenu;
 import com.eldritch.invoken.ui.StatusBar;
 import com.eldritch.invoken.ui.StatusBar.EnergyCalculator;
+import com.eldritch.invoken.ui.StoreMenu;
 import com.eldritch.invoken.ui.Toaster;
 import com.eldritch.invoken.ui.Toaster.Message;
 import com.eldritch.invoken.ui.UploadMenu;
@@ -239,6 +240,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         hud.add(new FragmentCounter(player, skin));
         hud.add(new UploadMenu(player, skin));
         hud.add(new ResearchMenu(player, skin));
+        hud.add(new StoreMenu(player, skin));
         hud.add(new DesireMenu(player, skin));
         hud.add(new ConsumableBar(player, skin));
 

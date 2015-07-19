@@ -170,6 +170,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     private Conversable converser = null;
     private boolean uploading = false;
     private boolean researching = false;
+    private Lootable bartered = null;
     private boolean forcedDialogue;
 
     private final LinkedList<Announcement> announcements = Lists.newLinkedList();
@@ -963,6 +964,18 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     public void research(boolean value) {
         this.researching = value;
     }
+    
+    public boolean isBartering() {
+        return bartered != null;
+    }
+    
+    public void barter(Lootable other) {
+        this.bartered = other;
+    }
+    
+    public Lootable getBartered() {
+        return bartered;
+    }
 
     public void beginInteraction(Interactable other) {
         interact(other);
@@ -1055,6 +1068,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         interact(null);
         converser = null;
         looting = null;
+        bartered = null;
     }
 
     public Interactable getInteractor() {

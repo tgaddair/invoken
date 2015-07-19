@@ -22,7 +22,7 @@ public class VendingMachine extends InteractableActivator implements Lootable {
 
     @Override
     protected void onBeginInteraction(Agent interactor) {
-        interactor.beginLooting(this);
+        interactor.barter(this);
     }
 
     @Override
