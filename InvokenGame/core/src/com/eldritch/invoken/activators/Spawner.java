@@ -105,7 +105,7 @@ public class Spawner extends CollisionActivator implements Damageable {
         String id = Constants.CRAWLER;
         Agent agent = Npc.create(InvokenGame.ACTOR_READER.readAsset(id), point.x, point.y, level);
         spawned = Optional.of(agent);
-        
+
         level.addAgent(agent);
         Burrow.addDust(agent);
     }
@@ -151,7 +151,12 @@ public class Spawner extends CollisionActivator implements Damageable {
         public boolean handle(Damager damager) {
             // only vulnerable to thermal
             Damage damage = damager.getDamage();
+
+            // do full damage from theraml, plus a significantly scaled down version of the full
+            // magnitude, meaning thermal does extra damage, but all else is negligible
             health -= damage.getDamageOf(DamageType.THERMAL);
+            health -= 0.1f * damage.getMagnitude();
+
             if (health <= 0) {
                 destroy();
             }

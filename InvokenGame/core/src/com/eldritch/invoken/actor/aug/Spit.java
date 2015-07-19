@@ -19,7 +19,7 @@ import com.eldritch.invoken.util.SoundManager.SoundEffect;
 import com.google.common.base.Optional;
 
 public class Spit extends ProjectileAugmentation {
-    private static final int DAMAGE_SCALE = 10;
+    private static final int DAMAGE_SCALE = 7;
     private static final int BASE_COST = 20;
     private static final float SIZE = 1f;
     
