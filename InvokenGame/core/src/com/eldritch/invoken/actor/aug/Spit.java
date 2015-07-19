@@ -83,7 +83,7 @@ public class Spit extends ProjectileAugmentation {
         
         @Override
         protected float getHoldSeconds() {
-            return 0.25f;
+            return 0.0f;
         }
     }
 
