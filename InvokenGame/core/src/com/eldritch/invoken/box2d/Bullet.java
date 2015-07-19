@@ -1,4 +1,4 @@
-package com.eldritch.invoken.location;
+package com.eldritch.invoken.box2d;
 
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
@@ -8,8 +8,8 @@ import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
-import com.eldritch.invoken.actor.AgentHandler.DamagingAgentHandler;
 import com.eldritch.invoken.actor.type.Projectile;
+import com.eldritch.invoken.box2d.AgentHandler.DamagingAgentHandler;
 import com.eldritch.invoken.util.Settings;
 
 public class Bullet extends DamagingAgentHandler {

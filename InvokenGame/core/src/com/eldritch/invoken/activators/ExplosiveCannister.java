@@ -1,9 +1,9 @@
 package com.eldritch.invoken.activators;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.eldritch.invoken.actor.AgentHandler;
-import com.eldritch.invoken.actor.DamageHandler;
 import com.eldritch.invoken.actor.type.InanimateEntity;
+import com.eldritch.invoken.box2d.AgentHandler;
+import com.eldritch.invoken.box2d.DamageHandler;
 import com.eldritch.invoken.effects.Detonation;
 import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.location.NaturalVector2;

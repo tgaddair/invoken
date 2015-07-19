@@ -60,6 +60,8 @@ import com.eldritch.invoken.actor.type.Npc;
 import com.eldritch.invoken.actor.type.Player;
 import com.eldritch.invoken.actor.type.Projectile;
 import com.eldritch.invoken.actor.type.TemporaryEntity;
+import com.eldritch.invoken.box2d.Bullet;
+import com.eldritch.invoken.box2d.LocationContactListener;
 import com.eldritch.invoken.gfx.BackgroundManager;
 import com.eldritch.invoken.gfx.FogMaskManager;
 import com.eldritch.invoken.gfx.FogOfWarMasker;

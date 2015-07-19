@@ -1,11 +1,10 @@
-package com.eldritch.invoken.actor;
+package com.eldritch.invoken.box2d;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Filter;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.eldritch.invoken.actor.type.Agent;
-import com.eldritch.invoken.actor.type.Projectile;
 import com.eldritch.invoken.util.Damage;
 import com.eldritch.invoken.util.Damager;
 import com.eldritch.invoken.util.Settings;

@@ -1,4 +1,4 @@
-package com.eldritch.invoken.actor.ai;
+package com.eldritch.invoken.box2d;
 
 import com.badlogic.gdx.ai.utils.Collision;
 import com.badlogic.gdx.ai.utils.Ray;

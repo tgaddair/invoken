@@ -1,9 +1,10 @@
-package com.eldritch.invoken.actor.pathfinding;
+package com.eldritch.invoken.box2d;
 
 import com.badlogic.gdx.ai.utils.Collision;
 import com.badlogic.gdx.ai.utils.Ray;
 import com.badlogic.gdx.ai.utils.RaycastCollisionDetector;
 import com.badlogic.gdx.math.Vector2;
+import com.eldritch.invoken.actor.pathfinding.LocationGraph;
 
 /**
  * A raycast collision detector used for path smoothing against a {@link TiledGraph}.

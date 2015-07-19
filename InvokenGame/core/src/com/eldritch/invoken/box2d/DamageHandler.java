@@ -1,7 +1,7 @@
-package com.eldritch.invoken.actor;
+package com.eldritch.invoken.box2d;
 
-import com.eldritch.invoken.actor.AgentHandler.DefaultAgentHandler;
 import com.eldritch.invoken.actor.type.Agent;
+import com.eldritch.invoken.box2d.AgentHandler.DefaultAgentHandler;
 import com.eldritch.invoken.util.Damager;
 
 public abstract class DamageHandler extends DefaultAgentHandler {

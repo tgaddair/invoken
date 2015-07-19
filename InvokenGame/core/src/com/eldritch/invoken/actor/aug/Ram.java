@@ -5,10 +5,10 @@ import java.util.Set;
 
 import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.InvokenGame;
-import com.eldritch.invoken.actor.AgentHandler.DefaultAgentHandler;
 import com.eldritch.invoken.actor.aug.Augmentation.ActiveAugmentation;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Agent.Activity;
+import com.eldritch.invoken.box2d.AgentHandler.DefaultAgentHandler;
 import com.eldritch.invoken.effects.BasicEffect;
 import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.location.Wall;

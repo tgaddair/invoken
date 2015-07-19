@@ -8,7 +8,7 @@ import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
-import com.eldritch.invoken.actor.AgentHandler.DamagingAgentHandler;
+import com.eldritch.invoken.box2d.AgentHandler.DamagingAgentHandler;
 import com.eldritch.invoken.effects.Detonation;
 import com.eldritch.invoken.effects.Detonation.AoeHandler;
 import com.eldritch.invoken.util.Settings;
