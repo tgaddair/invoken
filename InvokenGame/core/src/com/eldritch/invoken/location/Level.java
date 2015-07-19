@@ -614,13 +614,19 @@ public class Level {
 
         // updates
         if (!paused) {
+            Optional<Agent> activated = Optional.absent();
             for (int i = 0; i < inactiveEntities.size(); i++) {
                 Agent agent = inactiveEntities.get(i);
                 if (i == inactiveIndex) {
                     // update one inactive entity
                     inactiveIndex = (inactiveIndex + 1) % inactiveEntities.size();
-                    inactiveEntities.get(inactiveIndex).update(getElapsed(agent) + delta, this);
+                    agent.update(getElapsed(agent) + delta, this);
                     setElapsed(agent, 0);
+
+                    // check that the agent is now active
+                    if (activeTiles.contains(agent.getCellPosition())) {
+                        activated = Optional.of(agent);
+                    }
                 } else {
                     setElapsed(agent, getElapsed(agent) + delta);
                 }
@@ -629,6 +635,12 @@ public class Level {
             // update all active entities
             for (Agent actor : activeEntities) {
                 actor.update(delta, this);
+            }
+
+            // in case we have an activated agent, we need to add it to the drawables and active
+            // sets now
+            if (activated.isPresent()) {
+                addActive(activated.get());
             }
 
             // update all activators
@@ -760,10 +772,10 @@ public class Level {
                 drawCentered(selector, agent.getRenderPosition(), color);
             }
         }
-        
+
         // render the walls
         wallRenderer.getBatch().setShader(normalMapShader.getShader());
-        
+
         // tracking pointer for current wall z
         int z = (int) (viewBounds.y + viewBounds.height);
         int minZ = (int) viewBounds.y;
@@ -778,10 +790,10 @@ public class Level {
                 normalMapShader.useNormalMap(false);
                 z = lowerZ;
             }
-            
+
             drawable.render(delta, renderer);
         }
-        
+
         // draw remaining walls
         if (z > minZ) {
             normalMapShader.useNormalMap(true);
@@ -928,6 +940,11 @@ public class Level {
         }
         return neighbors;
     }
+    
+    private void addActive(Agent agent) {
+        activeEntities.add(agent);
+        addDrawable(agent);
+    }
 
     private void resetActiveEntities() {
         inactiveEntities.clear();
@@ -939,8 +956,7 @@ public class Level {
         // add agents
         for (Agent other : entities) {
             if (activeTiles.contains(other.getCellPosition())) {
-                activeEntities.add(other);
-                addDrawable(other);
+                addActive(other);
             } else if (other.getThreat().hasEnemies() && player.isNear(other)) {
                 activeEntities.add(other);
             } else if (other == player) {

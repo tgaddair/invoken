@@ -57,6 +57,7 @@ import com.eldritch.invoken.ui.UploadMenu;
 import com.eldritch.invoken.util.GameTransition;
 import com.eldritch.invoken.util.GameTransition.GameState;
 import com.eldritch.invoken.util.GameTransition.GameTransitionHandler;
+import com.eldritch.invoken.util.MusicManager;
 import com.eldritch.invoken.util.Settings;
 import com.eldritch.invoken.util.SoundManager;
 import com.eldritch.invoken.util.SoundManager.SoundEffect;
@@ -923,9 +924,10 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 
     private void onLoad(Level level, Optional<PlayerActor> state) {
         minimap = new Minimap(level, level.getSeed(), state);
-        if (level.hasMusic()) {
-            InvokenGame.MUSIC_MANAGER.play(level.getMusicId());
-        }
+//        if (level.hasMusic()) {
+//            InvokenGame.MUSIC_MANAGER.play(level.getMusicId());
+//        }
+        InvokenGame.MUSIC_MANAGER.play(MusicManager.LEVEL0);
     }
 
     private static void saveOnDeath(Level level) {
