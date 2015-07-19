@@ -1,5 +1,6 @@
 package com.eldritch.invoken.box2d;
 
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.CircleShape;
@@ -9,8 +10,7 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.eldritch.invoken.box2d.AgentHandler.DamagingAgentHandler;
-import com.eldritch.invoken.effects.Detonation;
-import com.eldritch.invoken.effects.Detonation.AoeHandler;
+import com.eldritch.invoken.util.Damager;
 import com.eldritch.invoken.util.Settings;
 
 public class AreaOfEffect extends DamagingAgentHandler {
@@ -63,5 +63,11 @@ public class AreaOfEffect extends DamagingAgentHandler {
 
         circle.dispose();
         return fixture;
+    }
+    
+    public interface AoeHandler extends AgentHandler, Damager {
+        Vector2 getCenter();
+        
+        float getRadius();
     }
 }

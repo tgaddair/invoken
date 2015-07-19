@@ -7,13 +7,13 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.TemporaryEntity;
-import com.eldritch.invoken.box2d.AreaOfEffect;
-import com.eldritch.invoken.box2d.DamageHandler;
 import com.eldritch.invoken.box2d.AgentHandler.DefaultAgentHandler;
+import com.eldritch.invoken.box2d.AreaOfEffect;
+import com.eldritch.invoken.box2d.AreaOfEffect.AoeHandler;
+import com.eldritch.invoken.box2d.DamageHandler;
 import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.screens.GameScreen;
 import com.eldritch.invoken.util.Damage;
-import com.eldritch.invoken.util.Damager;
 
 public class Detonation implements TemporaryEntity {
     private static final TextureRegion[] explosionRegions = GameScreen.getMergedRegion(
@@ -59,7 +59,7 @@ public class Detonation implements TemporaryEntity {
     private void apply(Level level) {
         this.level = level;
         this.aoe = new AreaOfEffect(level.getWorld());
-        aoe.setup(new AoeHandler(position, damage, radius));
+        aoe.setup(new DetonationHandler(position, damage, radius));
     }
     
     @Override
@@ -122,12 +122,12 @@ public class Detonation implements TemporaryEntity {
         return damage.getSource();
     }
     
-    public class AoeHandler extends DefaultAgentHandler implements Damager {
+    public static class DetonationHandler extends DefaultAgentHandler implements AoeHandler {
         private final Vector2 center;
         private final Damage damage;
         private final float radius;
         
-        public AoeHandler(Vector2 center, Damage damage, float radius) {
+        public DetonationHandler(Vector2 center, Damage damage, float radius) {
             this.center = center;
             this.damage = damage;
             this.radius = radius;
@@ -157,10 +157,12 @@ public class Detonation implements TemporaryEntity {
             return damage;
         }
         
+        @Override
         public Vector2 getCenter() {
             return center;
         }
         
+        @Override
         public float getRadius() {
             return radius;
         }

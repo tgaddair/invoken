@@ -7,14 +7,12 @@ import com.eldritch.invoken.actor.aug.Augmentation.ActiveAugmentation;
 import com.eldritch.invoken.actor.items.MeleeWeapon;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Agent.Activity;
-import com.eldritch.invoken.effects.Bleed;
+import com.eldritch.invoken.effects.Rending;
 import com.eldritch.invoken.effects.Slash;
 import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.proto.Effects.DamageType;
-import com.eldritch.invoken.ui.DebugEntityRenderer;
 import com.eldritch.invoken.util.Damage;
 import com.eldritch.invoken.util.Heuristics;
-import com.eldritch.invoken.util.Settings;
 import com.eldritch.invoken.util.SoundManager.SoundEffect;
 
 public class RendWeapon extends ActiveAugmentation {
@@ -113,14 +111,8 @@ public class RendWeapon extends ActiveAugmentation {
             Vector2 center = getCenter(owner.getPosition(), target, range);
             owner.addEffect(new Slash(owner, center, range * 0.75f));
             InvokenGame.SOUND_MANAGER.playAtPoint(SoundEffect.MELEE_SWING, owner.getPosition());
-
-            for (Agent neighbor : owner.getNeighbors()) {
-                if (neighbor.inRange(center, radius)) {
-                    neighbor.addEffect(new Bleed(neighbor, damage));
-                    InvokenGame.SOUND_MANAGER.playAtPoint(SoundEffect.MELEE_HIT,
-                            neighbor.getPosition());
-                }
-            }
+            
+            owner.addEffect(new Rending(owner, center, damage, radius));
         }
 
         @Override
@@ -133,14 +125,6 @@ public class RendWeapon extends ActiveAugmentation {
                 if (weapon.isVisible()) {
                     weapon.render(owner, Activity.Combat, getStateTime(), renderer);
                 }
-            }
-
-            if (Settings.DEBUG_DRAW) {
-                // debug: draw attack radius
-                float range = getRange(owner);
-                Vector2 center = getCenter(owner.getPosition(), target, range);
-                DebugEntityRenderer.getInstance().renderCircle(center, range / 2,
-                        renderer.getBatch().getProjectionMatrix());
             }
         }
 
