@@ -85,13 +85,19 @@ public class RendWeapon extends ActiveAugmentation {
     }
 
     public class RendAction extends AnimatedAction implements Applier {
+        private final Vector2 knockback = new Vector2();
         private final Vector2 strike = new Vector2();
         private final Vector2 target;
         private final Damage damage;
-
+        
         public RendAction(Agent actor, Vector2 target) {
+            this(actor, target, 100f);
+        }
+
+        public RendAction(Agent actor, Vector2 target, float force) {
             super(actor, Activity.Swipe, RendWeapon.this);
             this.target = target;
+            knockback.set(target).sub(actor.getPosition()).nor().scl(force);
 
             // update agent to fact the direction of their strike
             owner.setDirection(owner.getRelativeDirection(target));
@@ -120,6 +126,8 @@ public class RendWeapon extends ActiveAugmentation {
         
         @Override
         public void apply(Agent agent) {
+            agent.applyForce(knockback);
+            agent.addEffect(new Stunned(getOwner(), agent, 0.2f));
             agent.addEffect(new Bleed(agent, damage));
             InvokenGame.SOUND_MANAGER.playAtPoint(SoundEffect.MELEE_HIT, agent.getPosition());
         }
@@ -155,18 +163,8 @@ public class RendWeapon extends ActiveAugmentation {
     }
     
     public class ShoveAction extends RendAction {
-        private final Vector2 direction = new Vector2();
-        
         private ShoveAction(Agent actor, Vector2 target) {
-            super(actor, target);
-            direction.set(target).sub(actor.getPosition()).nor();
-        }
-        
-        @Override
-        public void apply(Agent agent) {
-            agent.applyForce(direction.scl(250));
-            agent.addEffect(new Stunned(getOwner(), agent, 0.2f));
-            super.apply(agent);
+            super(actor, target, 250f);
         }
     }
     
