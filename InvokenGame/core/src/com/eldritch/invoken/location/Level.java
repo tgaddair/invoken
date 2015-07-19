@@ -615,20 +615,24 @@ public class Level {
         // updates
         if (!paused) {
             Optional<Agent> activated = Optional.absent();
-            for (int i = 0; i < inactiveEntities.size(); i++) {
-                Agent agent = inactiveEntities.get(i);
-                if (i == inactiveIndex) {
-                    // update one inactive entity
-                    inactiveIndex = (inactiveIndex + 1) % inactiveEntities.size();
-                    agent.update(getElapsed(agent) + delta, this);
-                    setElapsed(agent, 0);
-
-                    // check that the agent is now active
-                    if (activeTiles.contains(agent.getCellPosition())) {
-                        activated = Optional.of(agent);
+            {
+                Iterator<Agent> it = inactiveEntities.iterator();
+                for (int i = 0; it.hasNext(); i++) {
+                    Agent agent = it.next();
+                    if (i == inactiveIndex) {
+                        // update one inactive entity
+                        inactiveIndex = (inactiveIndex + 1) % inactiveEntities.size();
+                        agent.update(getElapsed(agent) + delta, this);
+                        setElapsed(agent, 0);
+    
+                        // check that the agent is now active
+                        if (isVisibleOnScreen(agent)) {
+                            activated = Optional.of(agent);
+                            it.remove();
+                        }
+                    } else {
+                        setElapsed(agent, getElapsed(agent) + delta);
                     }
-                } else {
-                    setElapsed(agent, getElapsed(agent) + delta);
                 }
             }
 
