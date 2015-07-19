@@ -1057,20 +1057,29 @@ public class LocationGenerator {
     }
 
     private boolean addPlayerLayer(LocationMap map) {
+        LocationLayer above = map.getLayer(Constants.FROM_ABOVE_LAYER);
+        if (above != null) {
+            above.setVisible(false);
+        }
+        
+        LocationLayer below = map.getLayer(Constants.FROM_BELOW_LAYER);
+        if (below != null) {
+            below.setVisible(false);
+        }
+        
         if (prev.isPresent()) {
             GameState last = prev.get();
 
             LocationLayer layer = null;
             if (last.getFloor() < next.getFloor()) {
                 // from above
-                layer = map.getLayer(Constants.FROM_ABOVE_LAYER);
+                layer = above;
             } else if (last.getFloor() > next.getFloor()) {
                 // from below
-                layer = map.getLayer(Constants.FROM_BELOW_LAYER);
+                layer = below;
             }
 
             if (layer != null) {
-                layer.setVisible(false);
                 layer.setName(Constants.PLAYER_LAYER);
                 return true;
             }
