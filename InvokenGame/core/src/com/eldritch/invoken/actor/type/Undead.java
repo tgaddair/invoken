@@ -54,8 +54,8 @@ public class Undead extends HumanNpc {
     }
 
     private static class Reborn extends Undead {
-        public static float MAX_VELOCITY = 5f;
-        public static float MAX_ACCELERATION = 10f;
+        public static float MAX_VELOCITY = 3f;
+        public static float MAX_ACCELERATION = 5f;
 
         private Reborn(NonPlayerActor data, float x, float y, String asset, Level level) {
             super(data, x, y, asset, level, MAX_VELOCITY, MAX_ACCELERATION);

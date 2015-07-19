@@ -83,6 +83,10 @@ public class FireWeapon extends ProjectileAugmentation {
 
     @Override
     public boolean isValid(Agent owner, Agent target) {
+        if (target != null && !target.isAlive() && !owner.isAiming()) {
+            // loot
+            return false;
+        }
         return super.isValid(owner, target) && isValid(owner);
     }
 

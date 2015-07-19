@@ -713,7 +713,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
                                                      // location)) {
                 selection = true;
                 if (pa.hasActiveAugmentation(button)
-                        && pa.getActiveAugmentation(button).isValid(player)
+                        && pa.getActiveAugmentation(button).isValid(player, entity)
                         && player.select(entity, level)) {
                     pa.useActiveAugmentation(button, tacticalPause);
                 } else if (player.getTarget() != entity) {
@@ -729,6 +729,14 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
                 if (selection) {
                     break;
                 }
+            }
+        }
+        
+        if (!selection) {
+            if (pa.hasActiveAugmentation(button)
+                    && pa.getActiveAugmentation(button).isValid(player)) {
+                player.select(null, level);
+                pa.useActiveAugmentation(button, tacticalPause);
             }
         }
 
