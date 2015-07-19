@@ -349,14 +349,14 @@ public class Beast extends Npc {
             super.onDeath();
 
             // explode
-            Damage damage = Damage.from(this, DamageType.PHYSICAL, BASE_DAMAGE);
+            Damage damage = Damage.from(this, DamageType.VIRAL, BASE_DAMAGE);
             Detonation detonation = new Detonation(damage, getPosition().cpy(), RANGE,
                     explosionRegions);
             getLocation().addEntity(detonation);
         }
 
         private static Map<Activity, Map<Direction, Animation>> getAnimations(String assetPath) {
-            Map<Activity, Map<Direction, Animation>> animations = new HashMap<Activity, Map<Direction, Animation>>();
+            Map<Activity, Map<Direction, Animation>> animations = new HashMap<>();
 
             TextureRegion[] moveRegions = GameScreen.getMergedRegion(assetPath + ".png", PX, PX);
             Animation anim = new Animation(0.15f, moveRegions);

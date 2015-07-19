@@ -38,7 +38,7 @@ public class ExplosiveCannister extends CollisionActivator {
         @Override
         public boolean handle(Damager damager) {
             Level level = getLevel();
-            Damage damage = Damage.from(level.getPlayer(), DamageType.PHYSICAL, BASE_DAMAGE);
+            Damage damage = Damage.from(level.getPlayer(), DamageType.THERMAL, BASE_DAMAGE);
             Detonation detonation = new Detonation(damage, entity.getPosition().cpy(), RANGE,
                     explosionRegions);
             level.addEntity(detonation);
