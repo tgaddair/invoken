@@ -107,6 +107,11 @@ public class Inventory {
     }
 
     public void addItem(Item item, int count) {
+        if (count <= 0) {
+            // disallow this
+            return;
+        }
+        
         if (!items.containsKey(item.getId())) {
             items.put(item.getId(), new Inventory.ItemState(item, count));
         } else {
