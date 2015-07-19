@@ -126,4 +126,17 @@ public class LocationLayer extends TiledMapTileLayer {
             return false;
         }
     }
+    
+    public static class WallLayer extends LocationLayer {
+        private final int z;
+        
+        public WallLayer(int width, int height, int tileWidth, int tileHeight, LocationMap map, int z) {
+            super(width, height, tileWidth, tileHeight, map);
+            this.z = z;
+        }
+        
+        public int getZ() {
+            return z;
+        }
+    }
 }

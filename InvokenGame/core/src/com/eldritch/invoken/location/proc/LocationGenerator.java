@@ -47,6 +47,7 @@ import com.eldritch.invoken.location.NaturalVector2;
 import com.eldritch.invoken.location.layer.LocationCell;
 import com.eldritch.invoken.location.layer.LocationLayer;
 import com.eldritch.invoken.location.layer.LocationLayer.CollisionLayer;
+import com.eldritch.invoken.location.layer.LocationLayer.WallLayer;
 import com.eldritch.invoken.location.layer.LocationMap;
 import com.eldritch.invoken.location.proc.BspGenerator.CellType;
 import com.eldritch.invoken.location.proc.RoomGenerator.ControlRoom;
@@ -198,6 +199,11 @@ public class LocationGenerator {
         LocationLayer base = Iterables.getFirst(baseLayers.layers, null);
         for (LocationLayer layer : baseLayers.layers) {
             map.getLayers().add(layer);
+        }
+        
+        // add walls
+        for (WallLayer layer : baseLayers.walls) {
+            map.addWall(layer);
         }
 
         InvokenGame.log("Creating Trim");
@@ -677,41 +683,47 @@ public class LocationGenerator {
             }
         }
 
-        LocationLayer left = new LocationLayer(width, height, PX, PX, map);
-        left.setVisible(true);
-        left.setOpacity(1.0f);
-        left.setName("base-left");
+        ImmutableList.Builder<WallLayer> wallList = new ImmutableList.Builder<>();
+        for (int z = 0; z < height; z++) {
+            WallLayer midWalls = createWallLayer(layer, map, "walls-mid-" + z, z);
+            WallLayer leftWalls = createWallLayer(layer, map, "walls-left-" + z, z);
+            WallLayer rightWalls = createWallLayer(layer, map, "walls-right-" + z, z);
 
-        LocationLayer right = new LocationLayer(width, height, PX, PX, map);
-        right.setVisible(true);
-        right.setOpacity(1.0f);
-        right.setName("base-right");
-
-        LocationLayer top = createEmptyLayer(layer, map, "base-top");
-        LocationLayer ltop = createEmptyLayer(layer, map, "base-left-top");
-        LocationLayer rtop = createEmptyLayer(layer, map, "base-right-top");
-
-        // add walls
-        addWalls(layer, left, right, top, ltop, rtop, typeMap);
+            // add walls
+            addWalls(layer, z, midWalls, leftWalls, rightWalls, typeMap);
+            wallList.add(midWalls);
+            wallList.add(leftWalls);
+            wallList.add(rightWalls);
+        }
         InvokenGame.log("done");
 
-        return new LayerCollection(ImmutableList.of(layer, left, right), ImmutableList.of(top,
-                ltop, rtop));
+        return new LayerCollection(ImmutableList.of(layer),
+                ImmutableList.<LocationLayer> of(), wallList.build());
     }
 
     private static class LayerCollection {
         private final ImmutableList<LocationLayer> layers;
         private final ImmutableList<LocationLayer> overlays;
+        private final ImmutableList<WallLayer> walls;
 
         public LayerCollection(ImmutableList<LocationLayer> layers,
-                ImmutableList<LocationLayer> overlays) {
+                ImmutableList<LocationLayer> overlays, ImmutableList<WallLayer> walls) {
             this.layers = layers;
             this.overlays = overlays;
+            this.walls = walls;
         }
     }
 
     private LocationLayer createEmptyLayer(LocationLayer base, LocationMap map, String name) {
         LocationLayer layer = new LocationLayer(base.getWidth(), base.getHeight(), PX, PX, map);
+        layer.setVisible(true);
+        layer.setOpacity(1.0f);
+        layer.setName(name);
+        return layer;
+    }
+
+    private WallLayer createWallLayer(LocationLayer base, LocationMap map, String name, int z) {
+        WallLayer layer = new WallLayer(base.getWidth(), base.getHeight(), PX, PX, map, z);
         layer.setVisible(true);
         layer.setOpacity(1.0f);
         layer.setName(name);
@@ -1155,38 +1167,37 @@ public class LocationGenerator {
         });
     }
 
-    private void addWalls(LocationLayer layer, LocationLayer left, LocationLayer right,
-            LocationLayer top, LocationLayer ltop, LocationLayer rtop, CellType[][] typeMap) {
+    private void addWalls(LocationLayer layer, int y, LocationLayer mid, LocationLayer left,
+            LocationLayer right, CellType[][] typeMap) {
         for (int x = 0; x < layer.getWidth(); x++) {
-            for (int y = 0; y < layer.getHeight(); y++) {
-                Cell cell = layer.getCell(x, y);
-                if (cell != null && cell.getTile() == ground) {
-                    // check for empty space above
-                    if (y + 2 < layer.getHeight() && layer.getCell(x, y + 2) == null) {
-                        addCell(layer, walls.getTile(WallTile.MidWallBottom), x, y + 0);
-                        addCell(layer, walls.getTile(WallTile.MidWallTop), x, y + 1);
-                        addCell(top, walls.getTile(WallTile.MidWallTop), x, y + 1);
-                    }
+            Cell cell = layer.getCell(x, y);
+            if (cell != null && cell.getTile() == ground) {
+                // check for empty space above
+                if (y + 2 < layer.getHeight() && layer.getCell(x, y + 2) == null) {
+                    // must add to base layer for wall presence testing
+                    addCell(layer, walls.getTile(WallTile.MidWallBottom), x, y + 0);
+                    addCell(layer, walls.getTile(WallTile.MidWallTop), x, y + 1);
+                    
+                    addCell(mid, walls.getTile(WallTile.MidWallBottom), x, y + 0);
+                    addCell(mid, walls.getTile(WallTile.MidWallTop), x, y + 1);
                 }
             }
         }
 
         // add bookend walls
         for (int x = 0; x < layer.getWidth(); x++) {
-            for (int y = 0; y < layer.getHeight(); y++) {
-                // check ground below, wall here
-                if (typeMap[x][y] == CellType.Floor && layer.isWall(x, y) && layer.isWall(x, y + 1)) {
-                    // check for ground left or right
-                    if (!layer.isWall(x - 1, y)) {
-                        // no wall to the left
-                        addCell(left, walls.getTile(WallTile.LeftWallBottom), x, y + 0);
-                        addCell(ltop, walls.getTile(WallTile.LeftWallTop), x, y + 1);
-                    }
-                    if (!layer.isWall(x + 1, y)) {
-                        // no wall to the right
-                        addCell(right, walls.getTile(WallTile.RightWallBottom), x, y + 0);
-                        addCell(rtop, walls.getTile(WallTile.RightWallTop), x, y + 1);
-                    }
+            // check ground below, wall here
+            if (typeMap[x][y] == CellType.Floor && layer.isWall(x, y) && layer.isWall(x, y + 1)) {
+                // check for ground left or right
+                if (!layer.isWall(x - 1, y)) {
+                    // no wall to the left
+                    addCell(left, walls.getTile(WallTile.LeftWallBottom), x, y + 0);
+                    addCell(left, walls.getTile(WallTile.LeftWallTop), x, y + 1);
+                }
+                if (!layer.isWall(x + 1, y)) {
+                    // no wall to the right
+                    addCell(right, walls.getTile(WallTile.RightWallBottom), x, y + 0);
+                    addCell(right, walls.getTile(WallTile.RightWallTop), x, y + 1);
                 }
             }
         }

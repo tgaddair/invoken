@@ -27,6 +27,7 @@ import com.eldritch.invoken.location.ConnectedRoomManager;
 import com.eldritch.invoken.location.EncounterDescription;
 import com.eldritch.invoken.location.NaturalVector2;
 import com.eldritch.invoken.location.layer.LocationLayer.CollisionLayer;
+import com.eldritch.invoken.location.layer.LocationLayer.WallLayer;
 import com.eldritch.invoken.util.Constants;
 import com.eldritch.invoken.util.Settings;
 
@@ -50,6 +51,7 @@ public class LocationMap extends TiledMap {
     private final List<Light> lights = new ArrayList<>();
     private final List<FixedPoint> coverPoints = new ArrayList<>();
     private final TiledMap overlayMap = new TiledMap();
+    private final TiledMap wallMap = new TiledMap();
 
     private ConnectedRoomManager rooms;
 
@@ -186,6 +188,14 @@ public class LocationMap extends TiledMap {
 
     public TiledMap getOverlayMap() {
         return overlayMap;
+    }
+    
+    public void addWall(WallLayer layer) {
+        wallMap.getLayers().add(layer);
+    }
+    
+    public TiledMap getWallMap() {
+        return wallMap;
     }
 
     public void add(Activator activator) {
