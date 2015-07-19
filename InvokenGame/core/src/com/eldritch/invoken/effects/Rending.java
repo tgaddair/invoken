@@ -16,7 +16,7 @@ public class Rending extends BasicEffect {
     private final float radius;
 
     private AreaOfEffect aoe;
-    private boolean applied = false;
+    float elapsed = 0;
 
     public Rending(Agent target, Vector2 position, Damage damage, float radius) {
         super(target);
@@ -27,23 +27,22 @@ public class Rending extends BasicEffect {
 
     @Override
     protected void doApply() {
-        this.aoe = new AreaOfEffect(target.getLocation().getWorld());
-        aoe.setup(new RendHandler(position, damage, radius));
-        applied = true;
+        this.aoe = target.getLocation().obtainAoe(new RendHandler(position, damage, radius));
     }
 
     @Override
     public void dispel() {
-        target.getLocation().getWorld().destroyBody(aoe.getBody());
+        target.getLocation().freeAoe(aoe);
     }
 
     @Override
     public boolean isFinished() {
-        return applied;
+        return elapsed > 0;
     }
 
     @Override
     protected void update(float delta) {
+        elapsed += delta;
     }
 
     public class RendHandler extends DefaultAgentHandler implements AoeHandler {

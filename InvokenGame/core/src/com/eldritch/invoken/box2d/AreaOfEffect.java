@@ -24,11 +24,11 @@ public class AreaOfEffect extends DamagingAgentHandler {
         for (Fixture fixture : body.getFixtureList()) {
             fixture.getShape().setRadius(delegate.getRadius());
         }
-        
-        body.setTransform(delegate.getCenter(), 0);
-        body.setActive(true);
-        
         setup(delegate, delegate.getDamage());
+        
+        body.setActive(true);
+        body.setAwake(true);
+        body.setTransform(delegate.getCenter(), 0);
     }
     
     @Override

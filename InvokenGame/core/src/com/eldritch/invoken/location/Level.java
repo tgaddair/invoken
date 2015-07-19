@@ -53,13 +53,15 @@ import com.eldritch.invoken.actor.items.Icepik;
 import com.eldritch.invoken.actor.items.Item;
 import com.eldritch.invoken.actor.pathfinding.PathManager;
 import com.eldritch.invoken.actor.type.Agent;
-import com.eldritch.invoken.actor.type.FixedPoint;
 import com.eldritch.invoken.actor.type.DummyPlayer;
+import com.eldritch.invoken.actor.type.FixedPoint;
 import com.eldritch.invoken.actor.type.InanimateEntity;
 import com.eldritch.invoken.actor.type.Npc;
 import com.eldritch.invoken.actor.type.Player;
 import com.eldritch.invoken.actor.type.Projectile;
 import com.eldritch.invoken.actor.type.TemporaryEntity;
+import com.eldritch.invoken.box2d.AreaOfEffect;
+import com.eldritch.invoken.box2d.AreaOfEffect.AoeHandler;
 import com.eldritch.invoken.box2d.Bullet;
 import com.eldritch.invoken.box2d.LocationContactListener;
 import com.eldritch.invoken.gfx.BackgroundManager;
@@ -95,6 +97,7 @@ public class Level {
     };
 
     private final Pool<Bullet> bulletPool;
+    private final Pool<AreaOfEffect> aoePool;
     private final LineOfSightHandler losHandler = new LineOfSightHandler();
     private final Color actionsColor = new Color(1, 0, 0, 1);
 
@@ -212,6 +215,12 @@ public class Level {
                 return new Bullet(world);
             }
         };
+        aoePool = new Pool<AreaOfEffect>() {
+            @Override
+            protected AreaOfEffect newObject() {
+                return new AreaOfEffect(world);
+            }
+        };
         addWalls(world);
 
         // add encounters
@@ -241,6 +250,18 @@ public class Level {
     public void freeBullet(Bullet bullet) {
         bullet.setActive(false);
         bulletPool.free(bullet);
+    }
+    
+    public AreaOfEffect obtainAoe(AoeHandler handler) {
+        AreaOfEffect aoe = aoePool.obtain();
+        aoe.setup(handler);
+        aoe.setActive(true);
+        return aoe;
+    }
+
+    public void freeAoe(AreaOfEffect aoe) {
+        aoe.setActive(false);
+        aoePool.free(aoe);
     }
 
     public void transition(String locationName, Optional<String> encounterName) {
