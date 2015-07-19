@@ -45,7 +45,7 @@ public abstract class InanimateEntity extends CollisionEntity implements Drawabl
         super(position.toVector2(), getWidth(layer, false), getHeight(layer, false));
         this.layer = layer;
         this.offset = Vector2.Zero;
-        this.zOff = getOffset(layer, false).y;
+        this.zOff = getZ(layer);
         this.bodyType = bodyType;
     }
     
@@ -203,6 +203,13 @@ public abstract class InanimateEntity extends CollisionEntity implements Drawabl
         }
         // System.out.println("height = " + maxHeight);
         return maxHeight;
+    }
+    
+    private static float getZ(TiledMapTileLayer layer) {
+        if (layer.getProperties().containsKey(Constants.Z_OFF)) {
+            return Integer.parseInt((String) layer.getProperties().get(Constants.Z_OFF));
+        }
+        return getOffset(layer, false).y;
     }
 
     private static Vector2 getOffset(TiledMapTileLayer layer, boolean checkTransient) {
