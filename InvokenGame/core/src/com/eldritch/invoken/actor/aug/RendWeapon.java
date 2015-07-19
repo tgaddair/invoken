@@ -20,7 +20,7 @@ import com.eldritch.invoken.util.SoundManager.SoundEffect;
 
 public class RendWeapon extends ActiveAugmentation {
     private static final float DEFAULT_RANGE = 1.5f;
-    private static final int DEFAULT_DAMAGE = 10;
+    private static final int DEFAULT_DAMAGE = 5;
 
     private static class Holder {
         private static final RendWeapon INSTANCE = new RendWeapon();

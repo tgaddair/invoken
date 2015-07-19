@@ -19,6 +19,7 @@ import com.eldritch.invoken.box2d.AgentHandler;
 import com.eldritch.invoken.box2d.DamageHandler;
 import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.location.NaturalVector2;
+import com.eldritch.invoken.proto.Effects.DamageType;
 import com.eldritch.invoken.screens.GameScreen;
 import com.eldritch.invoken.ui.HealthBar;
 import com.eldritch.invoken.util.Constants;
@@ -79,7 +80,6 @@ public class Spawner extends CollisionActivator implements Damageable {
     private void spawn(Level level) {
         for (NaturalVector2 point : getRandomPoints()) {
             if (level.isGround(point)) {
-                System.out.println("spawn!!! " + point);
                 spawn(point, level);
                 return;
             }
@@ -149,8 +149,9 @@ public class Spawner extends CollisionActivator implements Damageable {
 
         @Override
         public boolean handle(Damager damager) {
+            // only vulnerable to thermal
             Damage damage = damager.getDamage();
-            health -= damage.getMagnitude();
+            health -= damage.getDamageOf(DamageType.THERMAL);
             if (health <= 0) {
                 destroy();
             }
