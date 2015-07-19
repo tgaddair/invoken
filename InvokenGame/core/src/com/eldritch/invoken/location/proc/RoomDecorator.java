@@ -88,6 +88,18 @@ public class RoomDecorator {
             }
         }
     }
+    
+    public void place(List<Furniture> furnitureList, ConnectedRoom connected) {
+        place(furnitureList, connected, connected.getAllPoints().size());
+
+        // remove collision points used during procedural generation
+        for (MapLayer layer : map.getLayers()) {
+            if (layer instanceof CollisionLayer) {
+                CollisionLayer collision = (CollisionLayer) layer;
+                collision.removeTransient();
+            }
+        }
+    }
 
     private void place(ControlRoom encounter, ConnectedRoom connected) {
         // InvokenGame.log("placing: " + encounter.getEncounter().getId());
@@ -107,15 +119,11 @@ public class RoomDecorator {
     private void place(Room room, ConnectedRoom connected, double area) {
         place(room.getFurnitureList(), connected, area);
     }
-    
-    public void place(List<Furniture> furnitureList, ConnectedRoom connected) {
-        place(furnitureList, connected, connected.getAllPoints().size());
-    }
-    
+
     private void place(List<Furniture> furnitureList, ConnectedRoom connected, double area) {
         int coveredTiles = 0; // running count of covered tiles
         List<Furniture> availableFurniture = new ArrayList<Furniture>(furnitureList);
-        
+
         Collections.shuffle(availableFurniture, rand);
         Collections.sort(availableFurniture, new Comparator<Furniture>() {
             @Override
@@ -125,7 +133,7 @@ public class RoomDecorator {
                 return Integer.compare(f2.getMin(), f1.getMin());
             }
         });
-        
+
         for (Furniture furniture : availableFurniture) {
             int placed = 0;
             for (int i = 0; i < furniture.getMax(); i++) {
