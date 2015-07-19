@@ -34,6 +34,7 @@ enum AugmentationProto {
 	Ram = 21;
 	Leech = 22;
 	Acid = 23;
+	Spit = 34;
 	Detonate = 26;
 	Web = 27;
 	CrawlerParalyze = 28;
