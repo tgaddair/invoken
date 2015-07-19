@@ -50,7 +50,7 @@ public class Settings {
 	// visuals
 	public static final boolean ENABLE_FOG = false;
 	public static final boolean ENABLE_FOW = true;
-	public static final boolean ENABLE_BACKGROUND = false;
+	public static final boolean ENABLE_BACKGROUND = true;
 	
 	// debug settings
 	public static boolean GOD_MODE = false;

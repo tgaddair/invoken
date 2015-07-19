@@ -729,14 +729,6 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
                 }
             }
         }
-        
-        if (!selection) {
-            if (pa.hasActiveAugmentation(button)
-                    && pa.getActiveAugmentation(button).isValid(player)) {
-                player.select(null, level);
-                pa.useActiveAugmentation(button, tacticalPause);
-            }
-        }
 
         // handle activators
         for (Activator activator : level.getActivators()) {
@@ -746,13 +738,15 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
             }
         }
 
+        boolean interacting = player.isInteracting();
         if (!playerClicked && !selection) {
             // clicked on a non-interactive object, so deselect
             player.select(null, level);
         }
         playerClicked = false;
 
-        if (!selection) {
+        
+        if (!selection && !interacting) {
             // click on arbitrary position
             // if (player.holdingPosition()) {
             // player.getInfo().getAugmentations().useActiveAugmentation(
@@ -761,7 +755,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
             // // move to destination
             // player.moveToFixedTarget(world.x, world.y);
             // }
-            if (pa.hasActiveAugmentation(button)) {
+            if (pa.hasActiveAugmentation(button) && pa.getActiveAugmentation(button).isValid(player)) {
                 pa.useActiveAugmentation(new Vector2(world.x, world.y), button, tacticalPause);
             }
             selection = true;
