@@ -253,10 +253,9 @@ public class LocationGenerator {
 
         // load hallways
         List<Room> hallways = new ArrayList<>();
-        // for (String id : proto.getHallIdList()) {
-        // hallways.add(bsp.getRoom(id));
-        // }
-        // TODO: get generic hallways from the room selector
+        for (String id : Settings.HALLS) {
+            hallways.add(bsp.getRoom(id));
+        }
 
         InvokenGame.log("Adding Furniture");
         RoomDecorator roomDecorator = new RoomDecorator(map, seed);

@@ -72,6 +72,7 @@ public class Settings {
 	public static final String FIRST_ROOM = "ResearchFacility"; // "Bedroom";
 	public static final String ENTRANCE = "Entrance";
 	public static final String EXIT = "Exit";
+	public static final String[] HALLS = { "HallCommon1" };
 	
 //	public static final String FIRST_LOCATION = "Tutorial";
 	public static final String FIRST_REGION = "Central Tower";
