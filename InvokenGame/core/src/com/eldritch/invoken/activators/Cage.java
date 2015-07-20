@@ -18,6 +18,7 @@ import com.eldritch.invoken.actor.type.Npc;
 import com.eldritch.invoken.actor.util.Damageable;
 import com.eldritch.invoken.box2d.AgentHandler;
 import com.eldritch.invoken.box2d.DamageHandler;
+import com.eldritch.invoken.location.ConnectedRoom;
 import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.location.NaturalVector2;
 import com.eldritch.invoken.proto.Effects.DamageType;
@@ -32,11 +33,14 @@ import com.eldritch.invoken.util.Settings;
 import com.google.common.base.Optional;
 
 public class Cage extends CollisionActivator implements Damageable {
+    private static final float RELATION_DELTA = 50f;
+    
     private static final TextureRegion frame = GameScreen.ATLAS.findRegion("activators/cage");
 
     private final Vector2 center = new Vector2();
     private final CageHandler handler;
     private HealthBar healthBar;
+    private Optional<ConnectedRoom> room = Optional.absent();
     private Optional<Agent> captive = Optional.absent();
 
     public Cage(NaturalVector2 position) {
@@ -73,6 +77,7 @@ public class Cage extends CollisionActivator implements Damageable {
     public void register(Level level) {
         super.register(level);
         this.healthBar = level.createHealthBar();
+        room = level.getRoomFor(NaturalVector2.of(center));
 
         // add an entity
         double total = 0.0;
@@ -122,12 +127,23 @@ public class Cage extends CollisionActivator implements Damageable {
         return handler.with(entity);
     }
 
-    private void destroy() {
+    private void destroyBy(Agent source) {
+        // destroy physics
         for (InanimateEntity entity : handler.entities) {
             entity.finish();
         }
+        
+        // update the captive
         if (captive.isPresent()) {
             captive.get().setEnabled(true);
+            
+            // modify relations
+            captive.get().changeRelation(source, RELATION_DELTA);
+            if (room.isPresent()) {
+                for (Agent resident : room.get().getResidents()) {
+                    captive.get().changeRelation(resident, -RELATION_DELTA);
+                }
+            }
         }
     }
 
@@ -165,7 +181,7 @@ public class Cage extends CollisionActivator implements Damageable {
             health -= 0.1f * damage.getMagnitude();
 
             if (health <= 0) {
-                destroy();
+                destroyBy(damage.getSource());
             }
             return true;
         }

@@ -342,6 +342,13 @@ public class Level {
         }
         return locations.get(currentCell).getName();
     }
+    
+    public Optional<ConnectedRoom> getRoomFor(NaturalVector2 point) {
+        if (map.getRooms().hasRoom(point.x, point.y)) {
+            return Optional.of(map.getRooms().getRoom(point.x, point.y));
+        }
+        return Optional.absent();
+    }
 
     public LocationMap getMap() {
         return map;
