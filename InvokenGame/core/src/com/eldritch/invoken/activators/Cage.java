@@ -85,8 +85,10 @@ public class Cage extends CollisionActivator implements Damageable {
 
             // create an inverted index from agent to encounter
             for (ActorScenario scenario : encounter.getActorParams().getActorScenarioList()) {
-                available.put(scenario.getActorId(), encounter);
-                total += selector.getWeight(encounter, level.getFloor());
+                if (!available.containsKey(scenario.getActorId())) {
+                    available.put(scenario.getActorId(), encounter);
+                    total += selector.getWeight(encounter, level.getFloor());
+                }
             }
         }
 
