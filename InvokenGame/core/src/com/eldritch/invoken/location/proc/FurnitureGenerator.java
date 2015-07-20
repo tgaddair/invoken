@@ -13,7 +13,7 @@ import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
 import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.activators.Activator;
 import com.eldritch.invoken.activators.DoorActivator;
-import com.eldritch.invoken.activators.DoorActivator.LockInfo;
+import com.eldritch.invoken.activators.util.LockManager.LockInfo;
 import com.eldritch.invoken.gfx.Light;
 import com.eldritch.invoken.gfx.Light.StaticLight;
 import com.eldritch.invoken.location.ConnectedRoom;

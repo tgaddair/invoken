@@ -5,7 +5,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
@@ -15,32 +14,25 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.Fixture;
 import com.eldritch.invoken.InvokenGame;
+import com.eldritch.invoken.activators.util.LockManager;
+import com.eldritch.invoken.activators.util.LockManager.LockCallback;
+import com.eldritch.invoken.activators.util.LockManager.LockIndicator;
+import com.eldritch.invoken.activators.util.LockManager.LockInfo;
 import com.eldritch.invoken.actor.items.Icepik;
-import com.eldritch.invoken.actor.items.Item;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.util.AgentListener;
 import com.eldritch.invoken.actor.util.Damageable;
-import com.eldritch.invoken.box2d.DamageHandler;
 import com.eldritch.invoken.gfx.Light;
 import com.eldritch.invoken.gfx.Light.StaticLight;
-import com.eldritch.invoken.gfx.WorldText;
-import com.eldritch.invoken.location.ConnectedRoom;
 import com.eldritch.invoken.location.Level;
-import com.eldritch.invoken.proto.Effects.DamageType;
-import com.eldritch.invoken.proto.Locations.ControlPoint;
 import com.eldritch.invoken.screens.GameScreen;
-import com.eldritch.invoken.state.Inventory;
 import com.eldritch.invoken.ui.HealthBar;
-import com.eldritch.invoken.util.Damage;
-import com.eldritch.invoken.util.Damager;
 import com.eldritch.invoken.util.Settings;
 import com.eldritch.invoken.util.SoundManager.SoundEffect;
 import com.google.common.base.Optional;
-import com.google.common.base.Strings;
 
-public class DoorActivator extends ClickActivator implements Crackable, Damageable, AgentListener {
+public class DoorActivator extends ClickActivator implements Crackable, Damageable, AgentListener, LockCallback {
     private static final Texture PADLOCK = GameScreen.getTexture("icon/padlock.png");
     private static final TextureRegion[] frontRegions = GameScreen.getMergedRegion(
             "sprite/activators/blast-door-short.png", 64, 64);
@@ -54,11 +46,10 @@ public class DoorActivator extends ClickActivator implements Crackable, Damageab
     // for bounding area
     private static final int SIZE = 2;
 
+    private final LockManager lockManager;
     private final LockInfo lock;
     private final Animation unlockedAnimation;
     private final Animation lockedAnimation;
-
-    private final DoorBulletHandler bulletHandler;
 
     private final boolean front;
     private boolean open = false;
@@ -87,7 +78,7 @@ public class DoorActivator extends ClickActivator implements Crackable, Damageab
     public DoorActivator(int x, int y, Vector2 center, LockInfo lock, boolean front) {
         super(x, y, front ? 2 : 1, 2, ProximityParams.of(center).withIndicator(
                 createIndicator(lock, front)));
-        this.bulletHandler = new DoorBulletHandler();
+        this.lockManager = new LockManager(lock, this);
         this.lock = lock;
         this.front = front;
 
@@ -108,7 +99,7 @@ public class DoorActivator extends ClickActivator implements Crackable, Damageab
 
         setColor();
 
-        lock.room.addDoor(this);
+        lock.getRoom().addDoor(this);
     }
 
     @Override
@@ -290,11 +281,7 @@ public class DoorActivator extends ClickActivator implements Crackable, Damageab
         level.addLight(light);
 
         // set the appropriate handler
-        for (Body body : bodies) {
-            for (Fixture fixture : body.getFixtureList()) {
-                fixture.setUserData(bulletHandler);
-            }
-        }
+        lockManager.register(bodies);
     }
 
     @Override
@@ -320,7 +307,7 @@ public class DoorActivator extends ClickActivator implements Crackable, Damageab
         // render indicator
         super.render(delta, renderer);
 
-        if (bulletHandler.isDamaged() && !lock.isBroken()) {
+        if (lockManager.isDamaged() && !lock.isBroken()) {
             // update and render health
             healthBar.update(this);
             healthBar.draw(level.getCamera());
@@ -329,12 +316,12 @@ public class DoorActivator extends ClickActivator implements Crackable, Damageab
 
     @Override
     public float getBaseHealth() {
-        return bulletHandler.getBaseStrength();
+        return lockManager.getBaseHealth();
     }
 
     @Override
     public float getHealth() {
-        return bulletHandler.getStrength();
+        return lockManager.getHealth();
     }
 
     @Override
@@ -382,7 +369,8 @@ public class DoorActivator extends ClickActivator implements Crackable, Damageab
         // location.alertTo(agent);
     }
 
-    public void destroy() {
+    @Override
+    public void destroyBy(Agent source) {
         setLocked(false);
         setOpened(true, level);
         lock.breakLock();
@@ -407,177 +395,6 @@ public class DoorActivator extends ClickActivator implements Crackable, Damageab
         return !lock.isLocked();
     }
 
-    public static class LockInfo {
-        private final Optional<Item> key;
-        private final ConnectedRoom room;
-        private int strength;
-        private boolean locked;
-        private boolean broken = false;
-
-        public LockInfo(String keyId, int strength, ConnectedRoom room) {
-            boolean uniqueKey = false;
-            if (!Strings.isNullOrEmpty(keyId)) {
-                this.key = Optional.of(Item.fromProto(InvokenGame.ITEM_READER.readAsset(keyId)));
-                uniqueKey = true;
-            } else {
-                this.key = Optional.of(room.getKey());
-            }
-            this.room = room;
-
-            // strength key:
-            // 0 -> open
-            // 1 -> closed
-            // 2+ -> locked
-            // 10 -> requires key
-            this.strength = strength;
-            locked = uniqueKey || shouldLock();
-        }
-
-        public ConnectedRoom getRoom() {
-            return room;
-        }
-
-        public Item getKey() {
-            return key.get();
-        }
-
-        public void setStrength(int strength) {
-            this.strength = strength;
-            if (shouldLock()) {
-                locked = true;
-            }
-        }
-
-        public int getStrength() {
-            return strength;
-        }
-
-        public void setLocked(boolean locked) {
-            this.locked = locked;
-        }
-
-        public boolean isLocked() {
-            return locked;
-        }
-
-        public boolean canUnlock(Agent agent) {
-            return hasKey(agent.getInventory());
-        }
-
-        public boolean hasKey(Inventory inventory) {
-            return !key.isPresent() || inventory.hasItem(key.get());
-        }
-
-        private boolean shouldLock() {
-            return strength > 1;
-        }
-
-        private boolean canPick(Agent agent) {
-            int piks = getAvailablePiks(agent);
-            int required = getRequiredPiks(agent);
-            return piks >= required;
-        }
-
-        public int getAvailablePiks(Agent agent) {
-            Icepik item = Icepik.from(agent.getLocation());
-            if (agent.getInventory().hasItem(item)) {
-                return agent.getInventory().getItemCount(item);
-            }
-            return 0;
-        }
-
-        public int getRequiredPiks(Agent agent) {
-            int ability = agent.getInfo().getSubterfuge() / 10;
-            int difficulty = strength;
-            if (ability >= difficulty) {
-                return 1;
-            }
-
-            // required piks scales with the square of the difference
-            int delta = difficulty - ability;
-            return delta * delta + 1;
-        }
-
-        public void breakLock() {
-            broken = true;
-        }
-
-        public boolean isBroken() {
-            return broken;
-        }
-
-        public static LockInfo from(ControlPoint controlPoint, ConnectedRoom room) {
-            return new LockInfo(controlPoint.getRequiredKey(), controlPoint.getLockStrength(), room);
-        }
-    }
-
-    private class DoorBulletHandler extends DamageHandler {
-        private static final float BASE_HEALTH = 100f;
-        private float health = BASE_HEALTH;
-
-        public boolean isDamaged() {
-            return getStrength() < getBaseStrength();
-        }
-
-        public float getBaseStrength() {
-            return BASE_HEALTH;
-        }
-
-        public float getStrength() {
-            return health;
-        }
-
-        @Override
-        public boolean handle(Damager damager) {
-            Damage damage = damager.getDamage();
-            health -= damage.getDamageOf(DamageType.PHYSICAL)
-                    + damage.getDamageOf(DamageType.THERMAL);
-            if (health <= 0) {
-                destroy();
-            }
-            return true;
-        }
-    }
-
-    private static class DoorIndicator extends Indicator {
-        private final WorldText lockText = new WorldText();
-        private final LockInfo lock;
-
-        public DoorIndicator(Texture texture, Vector2 renderOffset, LockInfo lock) {
-            super(texture, renderOffset);
-            this.lock = lock;
-        }
-
-        @Override
-        protected void preRender(float delta, OrthogonalTiledMapRenderer renderer,
-                ProximityActivator owner) {
-            if (!lock.canPick(getLevel().getPlayer())) {
-                renderer.getBatch().setColor(Color.RED);
-                lockText.setColor(Color.RED);
-            } else {
-                lockText.setColor(Color.WHITE);
-            }
-        }
-
-        @Override
-        protected void postRender(float delta, OrthogonalTiledMapRenderer renderer,
-                ProximityActivator owner) {
-            // draw icepik requirements
-            Level level = getLevel();
-            float x = getX(owner);
-            float y = getY(owner);
-            float w = getWidth();
-            float h = getHeight();
-            lockText.render(String.valueOf(lock.getRequiredPiks(level.getPlayer())),
-                    level.getCamera(), x + w, y + h);
-        }
-
-        @Override
-        protected boolean isActive(Level level, ProximityActivator owner) {
-            return !lock.isBroken() && lock.isLocked() && super.isActive(level, owner);
-        }
-    }
-
     private static Indicator createIndicator(LockInfo lock, boolean front) {
         Vector2 renderOffset = new Vector2();
         if (front) {
@@ -585,6 +402,6 @@ public class DoorActivator extends ClickActivator implements Crackable, Damageab
         } else {
             renderOffset.set(0.5f, 0.5f);
         }
-        return new DoorIndicator(PADLOCK, renderOffset, lock);
+        return new LockIndicator(PADLOCK, renderOffset, lock);
     }
 }
