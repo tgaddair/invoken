@@ -172,14 +172,9 @@ public class Cage extends CollisionActivator implements Damageable {
 
         @Override
         public boolean handle(Damager damager) {
-            // only vulnerable to thermal
             Damage damage = damager.getDamage();
-
-            // do full damage from theraml, plus a significantly scaled down version of the full
-            // magnitude, meaning thermal does extra damage, but all else is negligible
-            health -= damage.getDamageOf(DamageType.THERMAL);
-            health -= 0.1f * damage.getMagnitude();
-
+            health -= damage.getDamageOf(DamageType.PHYSICAL)
+                    + damage.getDamageOf(DamageType.THERMAL);
             if (health <= 0) {
                 destroyBy(damage.getSource());
             }
