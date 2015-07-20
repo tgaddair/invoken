@@ -1,25 +1,33 @@
 package com.eldritch.invoken.activators;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.InanimateEntity;
+import com.eldritch.invoken.actor.type.Npc;
 import com.eldritch.invoken.actor.util.Damageable;
 import com.eldritch.invoken.box2d.AgentHandler;
 import com.eldritch.invoken.box2d.DamageHandler;
 import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.location.NaturalVector2;
 import com.eldritch.invoken.proto.Effects.DamageType;
+import com.eldritch.invoken.proto.Locations.Encounter;
+import com.eldritch.invoken.proto.Locations.Encounter.ActorParams.ActorScenario;
 import com.eldritch.invoken.screens.GameScreen;
 import com.eldritch.invoken.ui.HealthBar;
 import com.eldritch.invoken.util.Damage;
 import com.eldritch.invoken.util.Damager;
+import com.eldritch.invoken.util.EncounterSelector;
 import com.eldritch.invoken.util.Settings;
 import com.google.common.base.Optional;
 
@@ -46,19 +54,21 @@ public class Cage extends CollisionActivator implements Damageable {
 
     @Override
     public void render(float delta, OrthogonalTiledMapRenderer renderer) {
-        Vector2 position = getPosition();
-        float w = frame.getRegionWidth() * Settings.SCALE;
-        float h = frame.getRegionHeight() * Settings.SCALE;
-
-        Batch batch = renderer.getBatch();
-        batch.begin();
-        batch.draw(frame, position.x, position.y, w, h);
-        batch.end();
-
-        if (handler.isDamaged() && isAlive()) {
-            // update and render health
-            healthBar.update(this);
-            healthBar.draw(getLevel().getCamera());
+        if (isAlive()) {
+            Vector2 position = getPosition();
+            float w = frame.getRegionWidth() * Settings.SCALE;
+            float h = frame.getRegionHeight() * Settings.SCALE;
+    
+            Batch batch = renderer.getBatch();
+            batch.begin();
+            batch.draw(frame, position.x, position.y, w, h);
+            batch.end();
+    
+            if (handler.isDamaged()) {
+                // update and render health
+                healthBar.update(this);
+                healthBar.draw(getLevel().getCamera());
+            }
         }
     }
 
@@ -66,6 +76,44 @@ public class Cage extends CollisionActivator implements Damageable {
     public void register(Level level) {
         super.register(level);
         this.healthBar = level.createHealthBar();
+
+        // add an entity
+        double total = 0.0;
+        EncounterSelector selector = InvokenGame.ENCOUNTER_SELECTOR;
+        Map<String, Encounter> available = new HashMap<>();
+        for (Encounter encounter : selector.select(level.getFloor())) {
+            if (encounter.getUnique()) {
+                continue;
+            }
+
+            // create an inverted index from agent to encounter
+            for (ActorScenario scenario : encounter.getActorParams().getActorScenarioList()) {
+                available.put(scenario.getActorId(), encounter);
+                total += selector.getWeight(encounter, level.getFloor());
+            }
+        }
+
+        // sample an encounter with replacement by its weight
+        double target = Math.random() * total;
+        double sum = 0.0;
+        for (Entry<String, Encounter> entry : available.entrySet()) {
+            String id = entry.getKey();
+            Encounter encounter = entry.getValue();
+
+            sum += selector.getWeight(encounter, level.getFloor());
+            if (sum >= target) {
+                spawn(id, level);
+                break;
+            }
+        }
+    }
+
+    private void spawn(String id, Level level) {
+        Vector2 position = getPosition();
+        Agent agent = Npc.create(InvokenGame.ACTOR_READER.readAsset(id), position.x, position.y,
+                level);
+        spawned = Optional.of(agent);
+        level.addAgent(agent);
     }
 
     @Override
