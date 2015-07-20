@@ -184,7 +184,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     private final Color DEFAULT_COLOR = new Color(1, 1, 1, 1);
     private final Color color = new Color(1, 1, 1, 1);
 
-    private short lastMask;
+    private final Stack<Short> lastMasks = new Stack<>();
     private Optional<AgentHandler> collisionDelegate = Optional.absent();
 
     public Agent(ActorParams params, boolean unique, float x, float y, float width, float height,
@@ -1336,7 +1336,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
             // collision filters
             Filter filter = fixture.getFilterData();
             if (filter.maskBits != maskBits) {
-                lastMask = filter.maskBits;
+                lastMasks.push(filter.maskBits);
                 filter.maskBits = maskBits;
                 fixture.setFilterData(filter);
             }
@@ -1344,7 +1344,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     }
 
     private void resetCollisionMask() {
-        setCollisionMask(lastMask);
+        setCollisionMask(lastMasks.pop());
     }
 
     protected void attemptTakeAction(float delta, Level level) {

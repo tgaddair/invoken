@@ -34,7 +34,7 @@ import com.google.common.base.Optional;
 
 public class Cage extends CollisionActivator implements Damageable {
     private static final float RELATION_DELTA = 50f;
-    
+
     private static final TextureRegion frame = GameScreen.ATLAS.findRegion("activators/cage");
 
     private final Vector2 center = new Vector2();
@@ -42,6 +42,7 @@ public class Cage extends CollisionActivator implements Damageable {
     private HealthBar healthBar;
     private Optional<ConnectedRoom> room = Optional.absent();
     private Optional<Agent> captive = Optional.absent();
+    private boolean pendingEnable = false;
 
     public Cage(NaturalVector2 position) {
         super(position);
@@ -51,6 +52,12 @@ public class Cage extends CollisionActivator implements Damageable {
 
     @Override
     public void update(float delta, Level level) {
+        if (pendingEnable) {
+            if (captive.isPresent()) {
+                captive.get().setEnabled(true);
+            }
+            pendingEnable = false;
+        }
     }
 
     @Override
@@ -118,7 +125,7 @@ public class Cage extends CollisionActivator implements Damageable {
         captive = Optional.of(agent);
         level.addAgent(agent);
     }
-    
+
     @Override
     protected AgentHandler getCollisionHandler(InanimateEntity entity) {
         // NOTE: in order for this to be called, the TMX must have a TRANSIENT collider in the
@@ -132,11 +139,12 @@ public class Cage extends CollisionActivator implements Damageable {
         for (InanimateEntity entity : handler.entities) {
             entity.finish();
         }
-        
+
+        // note that we can't actually change the enabled state of the captive here, because we
+        // are in a Box2D update step, so we defer to the next update cycle
         // update the captive
+        pendingEnable = true;
         if (captive.isPresent()) {
-            captive.get().setEnabled(true);
-            
             // modify relations
             captive.get().changeRelation(source, RELATION_DELTA);
             if (room.isPresent()) {
