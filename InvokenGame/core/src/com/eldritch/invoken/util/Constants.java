@@ -10,6 +10,7 @@ public class Constants {
     public static final String BLANK = "blank";
     public static final String BUFFER = "buffer";
     public static final String Z_OFF = "z";
+    public static final String RADIUS = "radius";
     
     public static final String PLAYER_LAYER = "player";
     public static final String FROM_ABOVE_LAYER = "player-above";

@@ -59,7 +59,7 @@ public abstract class InanimateEntity extends CollisionEntity implements Drawabl
 
     public void addCollisionLayer(TiledMapTileLayer collisionLayer) {
         this.collisionLayer = collisionLayer;
-        this.radius = getWidth(collisionLayer, true) / 3;
+        this.radius = getRadius(collisionLayer);
         if (radius > 0) {
             this.offset = getOffset(collisionLayer, true).add(0.5f, 0.5f); // centered
         }
@@ -173,6 +173,13 @@ public abstract class InanimateEntity extends CollisionEntity implements Drawabl
 
     private float getRadius() {
         return radius;
+    }
+    
+    private static float getRadius(TiledMapTileLayer layer) {
+        if (layer.getProperties().containsKey(Constants.RADIUS)) {
+            return Float.parseFloat((String) layer.getProperties().get(Constants.RADIUS));
+        }
+        return getWidth(layer, true) / 3;
     }
 
     private static float getWidth(TiledMapTileLayer layer, boolean checkTransient) {
