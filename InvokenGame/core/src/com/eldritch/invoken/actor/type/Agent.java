@@ -222,6 +222,10 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     protected void setWeaponSentry(WeaponSentry sentry) {
         this.weaponSentry = sentry;
     }
+    
+    public void setActive(boolean active) {
+        body.setActive(active);
+    }
 
     public Body getBody() {
         return body;
@@ -1315,6 +1319,15 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         int total = info.getInventory().getItemCount((Fragment.getInstance()));
         Fragment.release(level, getPosition(), total);
         info.getInventory().removeItem(Fragment.getInstance(), total);
+    }
+    
+    public void setEnabled(boolean enabled) {
+        setParalyzed(!enabled);
+        if (enabled) {
+            resetCollisionMask();
+        } else {
+            setCollisionMask(Settings.BIT_NOTHING);
+        }
     }
 
     protected final void setCollisionMask(short maskBits) {

@@ -34,22 +34,19 @@ import com.google.common.base.Optional;
 public class Cage extends CollisionActivator implements Damageable {
     private static final TextureRegion frame = GameScreen.ATLAS.findRegion("activators/cage");
 
+    private final Vector2 center = new Vector2();
     private final CageHandler handler;
     private HealthBar healthBar;
-    private Optional<Agent> spawned = Optional.absent();
+    private Optional<Agent> captive = Optional.absent();
 
     public Cage(NaturalVector2 position) {
         super(position);
+        center.set(getPosition()).add(0.5f, 0.5f);
         handler = new CageHandler();
     }
 
     @Override
     public void update(float delta, Level level) {
-        if (isAlive()) {
-            if (spawned.isPresent() && !spawned.get().isAlive()) {
-                spawned = Optional.absent();
-            }
-        }
     }
 
     @Override
@@ -58,12 +55,12 @@ public class Cage extends CollisionActivator implements Damageable {
             Vector2 position = getPosition();
             float w = frame.getRegionWidth() * Settings.SCALE;
             float h = frame.getRegionHeight() * Settings.SCALE;
-    
+
             Batch batch = renderer.getBatch();
             batch.begin();
             batch.draw(frame, position.x, position.y, w, h);
             batch.end();
-    
+
             if (handler.isDamaged()) {
                 // update and render health
                 healthBar.update(this);
@@ -109,18 +106,16 @@ public class Cage extends CollisionActivator implements Damageable {
     }
 
     private void spawn(String id, Level level) {
-        Vector2 position = getPosition();
-        Agent agent = Npc.create(InvokenGame.ACTOR_READER.readAsset(id), position.x, position.y,
-                level);
-        spawned = Optional.of(agent);
+        Agent agent = Npc.create(InvokenGame.ACTOR_READER.readAsset(id), center.x, center.y, level);
+        agent.setEnabled(false);
+        captive = Optional.of(agent);
         level.addAgent(agent);
     }
-
+    
     @Override
     protected AgentHandler getCollisionHandler(InanimateEntity entity) {
         // NOTE: in order for this to be called, the TMX must have a TRANSIENT collider in the
         // collision layer and a "statics" or "dynamics" layer
-        Vector2 center = getPosition().cpy().add(0.5f, 0.5f);
         entity.getBody().setTransform(center, 0);
         return handler.with(entity);
     }
@@ -128,6 +123,9 @@ public class Cage extends CollisionActivator implements Damageable {
     private void destroy() {
         for (InanimateEntity entity : handler.entities) {
             entity.finish();
+        }
+        if (captive.isPresent()) {
+            captive.get().setEnabled(true);
         }
     }
 
