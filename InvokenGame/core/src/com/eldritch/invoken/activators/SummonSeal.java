@@ -24,7 +24,7 @@ public class SummonSeal extends ProximityActivator {
 
     @Override
     protected boolean onProximityChange(boolean hasProximity, Level level) {
-        if (hasProximity && !released) {
+        if (hasProximity && !released && hasNonResident()) {
             release();
         }
         return false;
@@ -56,5 +56,20 @@ public class SummonSeal extends ProximityActivator {
             agent.setParalyzed(false);
         }
         released = true;
+    }
+    
+    private boolean hasNonResident() {
+        if (!room.isPresent()) {
+            // no room means the activator is definitely not a resident
+            return true;
+        }
+        
+        // when at least one of the triggering agents is a non-resident, then allow it
+        for (Agent agent : getTriggerAgents()) {
+            if (!room.get().isResident(agent)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

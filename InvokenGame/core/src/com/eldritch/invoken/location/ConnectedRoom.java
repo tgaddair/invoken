@@ -95,6 +95,10 @@ public class ConnectedRoom {
 	    return false;
 	}
 	
+	public boolean isResident(Agent agent) {
+	    return residents.contains(agent);
+	}
+	
 	public boolean hasHostileResident(Agent other) {
 	    for (Agent agent : residents) {
             if (agent.isAlive() && contains(agent.getNaturalPosition()) && agent.isEnemy(other)) {
