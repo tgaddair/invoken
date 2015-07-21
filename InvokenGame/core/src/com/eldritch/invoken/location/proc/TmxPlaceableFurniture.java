@@ -182,8 +182,8 @@ public class TmxPlaceableFurniture implements PlaceableFurniture {
             }
         }
 
-        // give ourselves enough steps to fully traverse the parameter of the furniture
-        int steps = 2 * (collision2.getWidth() + 1) + 2 * (collision2.getHeight() + 1);
+        // give ourselves enough steps to fully traverse the perimeter of the furniture
+        int steps = 4 * (collision2.getWidth() + 1) + 4 * (collision2.getHeight() + 1);
 
         // try to find as many of the region points in 'steps' moves
         // in the end, all points must be found, or else the area is unreachable
