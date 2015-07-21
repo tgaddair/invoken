@@ -767,12 +767,20 @@ public class RoomGenerator extends BspGenerator {
                 agentCount += scenario.getMin();
             }
 
+//            if (agentCount > 3) {
+//                return room.getSize() == Size.LARGE;
+//            } else if (agentCount > 1) {
+//                return room.getSize() != Size.SMALL;
+//            }
+//            return true;
+            
             if (agentCount > 3) {
                 return room.getSize() == Size.LARGE;
             } else if (agentCount > 1) {
-                return room.getSize() != Size.SMALL;
+                return room.getSize() == Size.MEDIUM;
+            } else {
+                return room.getSize() == Size.SMALL;
             }
-            return true;
         }
 
         private boolean matchesPoint(Encounter encounter, ControlPoint cp) {
