@@ -788,7 +788,7 @@ public class Level {
         wallRenderer.getBatch().setShader(normalMapShader.getShader());
 
         // tracking pointer for current wall z
-        int z = (int) (viewBounds.y + viewBounds.height);
+        int z = (int) (viewBounds.y + viewBounds.height + 2);
         int minZ = (int) viewBounds.y;
 
         // render the drawables
