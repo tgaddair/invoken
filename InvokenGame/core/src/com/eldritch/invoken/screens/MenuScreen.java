@@ -22,7 +22,7 @@ import com.eldritch.invoken.util.DefaultInputListener;
 import com.eldritch.invoken.util.GameTransition;
 import com.eldritch.invoken.util.GameTransition.GameState;
 import com.eldritch.invoken.util.GameTransition.GameTransitionHandler;
-import com.eldritch.invoken.util.MusicManager;
+import com.eldritch.invoken.util.MusicManager.MusicTrack;
 import com.eldritch.invoken.util.SoundManager;
 
 public class MenuScreen extends AbstractScreen {
@@ -109,7 +109,7 @@ public class MenuScreen extends AbstractScreen {
         }
 
         // play title music
-        InvokenGame.MUSIC_MANAGER.play(MusicManager.MAIN);
+        InvokenGame.MUSIC_MANAGER.play(MusicTrack.MAIN);
 
         SoundManager sounds = InvokenGame.SOUND_MANAGER;
         sounds.setCamera(camera);

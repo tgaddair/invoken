@@ -16,7 +16,7 @@ import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.ui.Toaster;
 import com.eldritch.invoken.ui.Toaster.Message;
-import com.eldritch.invoken.util.MusicManager;
+import com.eldritch.invoken.util.MusicManager.MusicTrack;
 
 /**
  * Shows a splash image and moves on to the next screen.
@@ -54,7 +54,7 @@ public class CreditsScreen extends AbstractScreen implements InputProcessor {
         }
         toaster.add(getMessage(sb.toString()));
         
-        InvokenGame.MUSIC_MANAGER.play(MusicManager.CREDITS);
+        InvokenGame.MUSIC_MANAGER.play(MusicTrack.CREDITS);
         Gdx.input.setInputProcessor(this);
     }
     

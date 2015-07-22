@@ -1,7 +1,12 @@
 package com.eldritch.invoken.util;
 
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Music.OnCompletionListener;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Disposable;
@@ -14,40 +19,76 @@ import com.google.common.base.Optional;
  * Only one music may be playing at a given time.
  */
 public class MusicManager implements Disposable {
-    public static final String MAIN = "main.ogg";
-    
-    public static final String LEVEL0 = "level0.ogg";
+    public enum MusicTrack {
+        MAIN("main.ogg"), //
+        LEVEL0("level0.ogg"), //
+        COMBAT0("combat0.ogg", 11.465f, 356.7f), //
+        CREDITS("sweet_ice.ogg"); // alt: credits.ogg
 
-    public static final String COMBAT0 = "combat0.ogg";
-    
-//    public static final String CREDITS = "credits.ogg";
-    public static final String CREDITS = "sweet_ice.ogg";
-    
-    // private constants
-    private static final float FADE_DURATION = 5f;
-    
-    /**
-     * The available music files.
-     */
-    public class BackgroundMusic {
         private final String asset;
-        private final String fileName;
-        private final Music musicResource;
+        private final float start;
+        private final Optional<Float> end;
 
-        private BackgroundMusic(String asset) {
-            this.asset = asset;
-            this.fileName = "music/" + asset;
-            
-            FileHandle musicFile = Gdx.files.internal(fileName);
-            musicResource = Gdx.audio.newMusic(musicFile);
+        private MusicTrack(String asset) {
+            this(asset, 0, Optional.<Float> absent());
         }
-        
+
+        private MusicTrack(String asset, float start, float end) {
+            this(asset, start, Optional.of(end));
+        }
+
+        private MusicTrack(String asset, float start, Optional<Float> end) {
+            this.asset = asset;
+            this.start = start;
+            this.end = end;
+        }
+
         public String getAsset() {
             return asset;
         }
 
+        public float getStart() {
+            return start;
+        }
+
+        public float getEnd() {
+            return end.get();
+        }
+
+        public boolean hasEnd() {
+            return end.isPresent();
+        }
+    }
+
+    // private constants
+    private static final float FADE_DURATION = 5f;
+
+    /**
+     * The available music files.
+     */
+    public class BackgroundMusic {
+        private final MusicTrack track;
+        private final String fileName;
+        private final Music musicResource;
+
+        private BackgroundMusic(MusicTrack track) {
+            this.track = track;
+            this.fileName = "music/" + track.getAsset();
+
+            FileHandle musicFile = Gdx.files.internal(fileName);
+            musicResource = Gdx.audio.newMusic(musicFile);
+        }
+
+        public String getAsset() {
+            return track.getAsset();
+        }
+
         public String getFileName() {
             return fileName;
+        }
+
+        public MusicTrack getTrack() {
+            return track;
         }
 
         public Music getMusicResource() {
@@ -69,33 +110,35 @@ public class MusicManager implements Disposable {
      * Whether the music is enabled.
      */
     private boolean enabled = true;
-    
-    private Optional<Fader> fader = Optional.absent();
+
+    private final List<MusicHandler> handlers = new LinkedList<>();
 
     /**
      * Creates the music manager.
      */
     public MusicManager() {
     }
-    
+
     public void update(float delta) {
-        if (fader.isPresent()) {
-            fader.get().update(delta);
-            if (fader.get().isFinished()) {
-                fader.get().dispose();
-                fader = Optional.absent();
+        Iterator<MusicHandler> it = handlers.iterator();
+        while (it.hasNext()) {
+            MusicHandler handler = it.next();
+            handler.update(delta);
+            if (handler.isFinished()) {
+                handler.dispose();
+                it.remove();
             }
         }
     }
-    
-    public void fadeIn(String asset) {
+
+    public void fadeIn(MusicTrack track) {
         // check if the music is enabled
         if (!enabled) {
             return;
         }
 
         // check if the given music is already being played
-        BackgroundMusic music = getMusic(asset);
+        BackgroundMusic music = getMusic(track);
         if (musicBeingPlayed == music) {
             return;
         }
@@ -103,26 +146,41 @@ public class MusicManager implements Disposable {
         // do some logging
         InvokenGame.log("Fading in music: " + music.getAsset());
 
-        // stop any music being faded
-        if (fader.isPresent()) {
-            fader.get().dispose();
-        }
+        // TODO: stop any music being faded, if not handled already
 
         // start streaming the new music
         Music musicResource = music.getMusicResource();
         musicResource.setVolume(0);
         musicResource.setLooping(true);
         musicResource.play();
-        
+
         // construct a new fader
-        fader = Optional.of(new Fader(musicBeingPlayed, FADE_DURATION));
+        handlers.add(new Fader(musicBeingPlayed, FADE_DURATION));
 
         // set the music being played
         musicBeingPlayed = music;
     }
-    
-    public void playPostConclusion(String asset) {
-        
+
+    public void playPostConclusion(MusicTrack track) {
+        // check if the music is enabled
+        if (!enabled) {
+            return;
+        }
+
+        // check if the given music is already being played
+        BackgroundMusic music = getMusic(track);
+        if (musicBeingPlayed == music) {
+            return;
+        }
+
+        // do some logging
+        InvokenGame.log("Concluding and starting music: " + music.getAsset());
+
+        // construct a new concluder
+        handlers.add(new Concluder(musicBeingPlayed, music));
+
+        // set the music being played
+        musicBeingPlayed = music;
     }
 
     /**
@@ -130,14 +188,14 @@ public class MusicManager implements Disposable {
      * <p>
      * If there is already a music being played it is stopped automatically.
      */
-    public void play(String asset) {
+    public void play(MusicTrack track) {
         // check if the music is enabled
         if (!enabled) {
             return;
         }
 
         // check if the given music is already being played
-        BackgroundMusic music = getMusic(asset);
+        BackgroundMusic music = getMusic(track);
         if (musicBeingPlayed == music) {
             return;
         }
@@ -168,7 +226,7 @@ public class MusicManager implements Disposable {
             musicBeingPlayed = null;
         }
     }
-    
+
     private void stop(BackgroundMusic music) {
         Music musicResource = music.getMusicResource();
         musicResource.stop();
@@ -212,39 +270,96 @@ public class MusicManager implements Disposable {
         InvokenGame.log("Disposing music manager");
         stop();
     }
-    
-    private BackgroundMusic getMusic(String asset) {
-        if (musicBeingPlayed != null && asset.equals(musicBeingPlayed.asset)) {
+
+    private BackgroundMusic getMusic(MusicTrack track) {
+        if (musicBeingPlayed != null && track == musicBeingPlayed.getTrack()) {
             return musicBeingPlayed;
         }
-        return new BackgroundMusic(asset);
+        return new BackgroundMusic(track);
     }
-    
-    public class Fader {
+
+    private class Fader implements MusicHandler {
         private final BackgroundMusic outgoingMusic;
         private final float duration;
         private float elapsed = 0;
-        
+
         public Fader(BackgroundMusic outgoingMusic, float duration) {
             this.outgoingMusic = outgoingMusic;
             this.duration = duration;
         }
-        
+
+        @Override
         public void update(float delta) {
             elapsed += delta;
-            
+
             float progress = Math.max(Math.min(elapsed / duration, 1f), 0f);
             float fraction = MathUtils.lerp(0, volume, progress);
             musicBeingPlayed.getMusicResource().setVolume(fraction);
             outgoingMusic.getMusicResource().setVolume(volume - fraction);
         }
-        
+
+        @Override
         public boolean isFinished() {
             return elapsed > duration;
         }
-        
+
+        @Override
         public void dispose() {
             stop(outgoingMusic);
         }
+    }
+
+    private class Concluder implements MusicHandler, OnCompletionListener {
+        private final BackgroundMusic outgoingMusic;
+        private final BackgroundMusic music;
+        private boolean finished = false;
+
+        public Concluder(BackgroundMusic outgoingMusic, BackgroundMusic music) {
+            this.outgoingMusic = outgoingMusic;
+            this.music = music;
+
+            MusicTrack track = outgoingMusic.getTrack();
+            if (track.hasEnd()) {
+                Music musicResource = outgoingMusic.getMusicResource();
+                musicResource.setPosition(track.getEnd());
+                musicResource.setLooping(false);
+                musicResource.setOnCompletionListener(this);
+            } else {
+                finished = true;
+            }
+        }
+
+        @Override
+        public void update(float delta) {
+        }
+
+        @Override
+        public boolean isFinished() {
+            return finished;
+        }
+
+        @Override
+        public void dispose() {
+            stop(outgoingMusic);
+
+            // start streaming the new music
+            Music musicResource = music.getMusicResource();
+            musicResource.setVolume(volume);
+            musicResource.setLooping(true);
+            musicResource.play();
+        }
+
+        @Override
+        public void onCompletion(Music music) {
+            finished = true;
+        }
+    }
+
+    private interface MusicHandler {
+        void update(float delta);
+
+        boolean isFinished();
+
+        void dispose();
     }
 }

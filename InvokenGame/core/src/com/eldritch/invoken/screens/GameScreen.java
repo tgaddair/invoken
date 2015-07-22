@@ -59,6 +59,7 @@ import com.eldritch.invoken.util.GameTransition;
 import com.eldritch.invoken.util.GameTransition.GameState;
 import com.eldritch.invoken.util.GameTransition.GameTransitionHandler;
 import com.eldritch.invoken.util.MusicManager;
+import com.eldritch.invoken.util.MusicManager.MusicTrack;
 import com.eldritch.invoken.util.Settings;
 import com.eldritch.invoken.util.SoundManager;
 import com.eldritch.invoken.util.SoundManager.SoundEffect;
@@ -346,9 +347,9 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         music.update(delta);
         if (level.inCombat() != wasCombat) {
             if (level.inCombat()) {
-                music.fadeIn(MusicManager.COMBAT0);
+                music.fadeIn(MusicTrack.COMBAT0);
             } else {
-                music.play(MusicManager.LEVEL0);
+                music.play(MusicTrack.LEVEL0);
             }
         }
 
@@ -941,7 +942,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 //        if (level.hasMusic()) {
 //            InvokenGame.MUSIC_MANAGER.play(level.getMusicId());
 //        }
-        InvokenGame.MUSIC_MANAGER.play(MusicManager.LEVEL0);
+        InvokenGame.MUSIC_MANAGER.play(MusicTrack.LEVEL0);
     }
 
     private static void saveOnDeath(Level level) {
