@@ -774,9 +774,9 @@ public class RoomGenerator extends BspGenerator {
 //            }
 //            return true;
             
-            if (agentCount > 3) {
+            if (agentCount >= 4) {
                 return room.getSize() == Size.LARGE;
-            } else if (agentCount > 1) {
+            } else if (agentCount >= 2) {
                 return room.getSize() == Size.MEDIUM;
             } else {
                 return room.getSize() == Size.SMALL;
