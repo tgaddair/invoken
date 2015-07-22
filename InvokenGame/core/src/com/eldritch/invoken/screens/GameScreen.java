@@ -342,11 +342,13 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         }
         
         // update the music
+        MusicManager music = InvokenGame.MUSIC_MANAGER;
+        music.update(delta);
         if (level.inCombat() != wasCombat) {
             if (level.inCombat()) {
-                InvokenGame.MUSIC_MANAGER.play(MusicManager.COMBAT0);
+                music.fadeIn(MusicManager.COMBAT0);
             } else {
-                InvokenGame.MUSIC_MANAGER.play(MusicManager.LEVEL0);
+                music.play(MusicManager.LEVEL0);
             }
         }
 
