@@ -343,10 +343,12 @@ public class MusicManager implements Disposable {
             stop(outgoingMusic);
 
             // start streaming the new music
-            Music musicResource = music.getMusicResource();
-            musicResource.setVolume(volume);
-            musicResource.setLooping(true);
-            musicResource.play();
+            if (music == musicBeingPlayed) {
+                Music musicResource = music.getMusicResource();
+                musicResource.setVolume(volume);
+                musicResource.setLooping(true);
+                musicResource.play();
+            }
         }
 
         @Override
