@@ -315,6 +315,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         level.setFocusPoint(world.x, world.y);
 
         // render the location
+        boolean wasCombat = level.inCombat();
         level.render(delta, camera, selector, tacticalPause);
 
         // draw health bars
@@ -338,6 +339,15 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
             batch.begin();
             drawAmmunition(batch, 0);
             batch.end();
+        }
+        
+        // update the music
+        if (level.inCombat() != wasCombat) {
+            if (level.inCombat()) {
+                InvokenGame.MUSIC_MANAGER.play(MusicManager.COMBAT0);
+            } else {
+                InvokenGame.MUSIC_MANAGER.play(MusicManager.LEVEL0);
+            }
         }
 
         // reset

@@ -164,8 +164,10 @@ public class Level {
     private final Set<ConnectedRoom> visitedRooms = new HashSet<>();
     private ConnectedRoom currentRoom;
 
-    DebugEntityRenderer debugEntityRenderer = DebugEntityRenderer.getInstance();
-    Box2DDebugRenderer debugRenderer = new Box2DDebugRenderer();
+    private DebugEntityRenderer debugEntityRenderer = DebugEntityRenderer.getInstance();
+    private Box2DDebugRenderer debugRenderer = new Box2DDebugRenderer();
+    
+    private boolean combat = false;
 
     public Level(Locations.Level data, LocationMap map, GameTransition state, long seed) {
         this.data = data;
@@ -562,6 +564,10 @@ public class Level {
     public List<Integer> getVisitedIndices() {
         return map.getRooms().getIndices(visitedRooms);
     }
+    
+    public boolean inCombat() {
+        return combat;
+    }
 
     public void render(float delta, OrthographicCamera camera, TextureRegion selector,
             boolean paused) {
@@ -644,8 +650,14 @@ public class Level {
             }
 
             // update all active entities
+            combat = false;
             for (Agent actor : activeEntities) {
                 actor.update(delta, this);
+                
+                // when a single agent is in combat with the player, we're in combat
+                if (actor.isAlive() && actor.getThreat().hostileTo(player)) {
+                    combat = true;
+                }
             }
 
             // in case we have an activated agent, we need to add it to the drawables and active

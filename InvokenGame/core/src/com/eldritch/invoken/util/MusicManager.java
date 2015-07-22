@@ -13,7 +13,11 @@ import com.eldritch.invoken.InvokenGame;
  */
 public class MusicManager implements Disposable {
     public static final String MAIN = "main.ogg";
+    
     public static final String LEVEL0 = "level0.ogg";
+
+    public static final String COMBAT0 = "combat0.ogg";
+    
 //    public static final String CREDITS = "credits.ogg";
     public static final String CREDITS = "sweet_ice.ogg";
     
@@ -65,6 +69,14 @@ public class MusicManager implements Disposable {
      * Creates the music manager.
      */
     public MusicManager() {
+    }
+    
+    public void fadeIn(String asset) {
+        
+    }
+    
+    public void playPostConclusion(String asset) {
+        
     }
 
     /**
