@@ -22,24 +22,22 @@ public class MusicManager implements Disposable {
     public enum MusicTrack {
         MAIN("main.ogg"), //
         LEVEL0("level0.ogg"), //
-        COMBAT0("combat0.ogg", 11.465f, 356.7f), //
+        COMBAT0("combat_loop.ogg", "combat_end.ogg"), //
         CREDITS("sweet_ice.ogg"); // alt: credits.ogg
 
         private final String asset;
-        private final float start;
-        private final Optional<Float> end;
+        private final Optional<String> end;
 
         private MusicTrack(String asset) {
-            this(asset, 0, Optional.<Float> absent());
+            this(asset, Optional.<String> absent());
         }
 
-        private MusicTrack(String asset, float start, float end) {
-            this(asset, start, Optional.of(end));
+        private MusicTrack(String asset, String end) {
+            this(asset, Optional.of(end));
         }
 
-        private MusicTrack(String asset, float start, Optional<Float> end) {
+        private MusicTrack(String asset, Optional<String> end) {
             this.asset = asset;
-            this.start = start;
             this.end = end;
         }
 
@@ -47,11 +45,7 @@ public class MusicManager implements Disposable {
             return asset;
         }
 
-        public float getStart() {
-            return start;
-        }
-
-        public float getEnd() {
+        public String getEnd() {
             return end.get();
         }
 
@@ -68,23 +62,22 @@ public class MusicManager implements Disposable {
      */
     public class BackgroundMusic {
         private final MusicTrack track;
-        private final String fileName;
         private final Music musicResource;
+        private final Optional<Music> conclusion;
 
         private BackgroundMusic(MusicTrack track) {
             this.track = track;
-            this.fileName = "music/" + track.getAsset();
-
-            FileHandle musicFile = Gdx.files.internal(fileName);
-            musicResource = Gdx.audio.newMusic(musicFile);
+            musicResource = loadMusic(track.getAsset());
+            
+            if (track.hasEnd()) {
+                conclusion = Optional.of(loadMusic(track.getEnd()));
+            } else {
+                conclusion = Optional.absent();
+            }
         }
 
         public String getAsset() {
             return track.getAsset();
-        }
-
-        public String getFileName() {
-            return fileName;
         }
 
         public MusicTrack getTrack() {
@@ -94,6 +87,20 @@ public class MusicManager implements Disposable {
         public Music getMusicResource() {
             return musicResource;
         }
+        
+        public Music getConclusionResource() {
+            return conclusion.get();
+        }
+        
+        public boolean hasConclusion() {
+            return conclusion.isPresent();
+        }
+    }
+    
+    private static Music loadMusic(String asset) {
+        String fileName = "music/" + asset;
+        FileHandle musicFile = Gdx.files.internal(fileName);
+        return Gdx.audio.newMusic(musicFile);
     }
 
     /**
@@ -231,6 +238,12 @@ public class MusicManager implements Disposable {
         Music musicResource = music.getMusicResource();
         musicResource.stop();
         musicResource.dispose();
+        
+        if (music.hasConclusion()) {
+            musicResource = music.getConclusionResource();
+            musicResource.stop();
+            musicResource.dispose();
+        }
     }
 
     /**
@@ -318,12 +331,13 @@ public class MusicManager implements Disposable {
             this.outgoingMusic = outgoingMusic;
             this.music = music;
 
-            MusicTrack track = outgoingMusic.getTrack();
-            if (track.hasEnd()) {
-                Music musicResource = outgoingMusic.getMusicResource();
-                musicResource.setPosition(track.getEnd());
+            if (outgoingMusic.hasConclusion()) {
+                outgoingMusic.getMusicResource().stop();
+                
+                Music musicResource = outgoingMusic.getConclusionResource();
                 musicResource.setLooping(false);
                 musicResource.setOnCompletionListener(this);
+                musicResource.play();
             } else {
                 finished = true;
             }
