@@ -97,7 +97,7 @@ public class LocationGenerator {
 
     private final TiledMapTile narrowWall;
     private final TiledMapTile narrowTop;
-    private final TiledMapTile collider;
+    private final StaticTiledMapTile collider;
     private final TiledMapTile shortCollider;
 
     public LocationGenerator(GameTransition state, Biome biomeType, long seed) {
@@ -263,7 +263,7 @@ public class LocationGenerator {
         InvokenGame.log("Adding Doors");
         IcarianFurnitureGenerator furnitureGenerator = new IcarianFurnitureGenerator(atlas, ground,
                 seed);
-        furnitureGenerator.createDoors(rooms, base, map.getActivators());
+        furnitureGenerator.createDoors(rooms, base, collision, collider, map.getActivators());
         buildCriticalPath(rooms);
         lockDoors(rooms);
 

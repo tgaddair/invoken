@@ -21,6 +21,7 @@ import com.eldritch.invoken.location.ConnectedRoomManager;
 import com.eldritch.invoken.location.NaturalVector2;
 import com.eldritch.invoken.location.layer.LocationCell;
 import com.eldritch.invoken.location.layer.LocationLayer;
+import com.eldritch.invoken.location.layer.LocationLayer.CollisionLayer;
 import com.eldritch.invoken.location.layer.LocationMap;
 import com.eldritch.invoken.location.layer.RemovableCell;
 import com.eldritch.invoken.location.proc.RoomGenerator.ControlRoom;
@@ -62,7 +63,7 @@ public abstract class FurnitureGenerator {
     }
 
     public void createDoors(ConnectedRoomManager rooms, LocationLayer base,
-            List<Activator> activators) {
+            CollisionLayer collision, StaticTiledMapTile collider, List<Activator> activators) {
         for (Entry<ControlRoom, ConnectedRoom> room : rooms.getChambers()) {
             ControlPoint metadata = room.getKey().getControlPoint();
             ConnectedRoom connectedRoom = room.getValue();
@@ -105,6 +106,13 @@ public abstract class FurnitureGenerator {
                     mark(x, y);
                 }
             }
+        }
+
+        // add collision tiles for all marked positions
+        TiledMapTile tempTile = new StaticTiledMapTile(collider);
+        tempTile.getProperties().put("transient", "");
+        for (NaturalVector2 point : marked) {
+            collision.addCell(tempTile, point.x, point.y);
         }
     }
 
