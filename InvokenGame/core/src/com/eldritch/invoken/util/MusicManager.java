@@ -34,23 +34,29 @@ public class MusicManager implements Disposable {
         MAIN("main.ogg"), //
         LEVEL0("level0.ogg"), //
         COMBAT0("combat0_loop.ogg", "combat0_end.ogg"), //
-        COMBAT1("combat1.ogg", "combat1_end.ogg"), //
+        COMBAT1("combat1.ogg", "combat1_end.ogg", 16f), //
         CREDITS("sweet_ice.ogg"); // alt: credits.ogg
 
         private final String asset;
         private final Optional<String> end;
+        private final float inflectionPoint;
 
         private MusicTrack(String asset) {
-            this(asset, Optional.<String> absent());
+            this(asset, Optional.<String> absent(), 0);
         }
 
         private MusicTrack(String asset, String end) {
-            this(asset, Optional.of(end));
+            this(asset, Optional.of(end), 0);
         }
 
-        private MusicTrack(String asset, Optional<String> end) {
+        private MusicTrack(String asset, String end, float inflectionPoint) {
+            this(asset, Optional.of(end), inflectionPoint);
+        }
+
+        private MusicTrack(String asset, Optional<String> end, float inflectionPoint) {
             this.asset = asset;
             this.end = end;
+            this.inflectionPoint = inflectionPoint;
         }
 
         public String getAsset() {
@@ -63,6 +69,10 @@ public class MusicManager implements Disposable {
 
         public boolean hasEnd() {
             return end.isPresent();
+        }
+
+        public float getInflectionPoint() {
+            return inflectionPoint;
         }
     }
 
@@ -192,14 +202,20 @@ public class MusicManager implements Disposable {
             return;
         }
 
-        // do some logging
-        InvokenGame.log("Concluding and starting music: " + music.getAsset());
+        if (musicBeingPlayed == null
+                || musicBeingPlayed.getMusicResource().getPosition() < musicBeingPlayed.getTrack()
+                        .getInflectionPoint()) {
+            fadeIn(track);
+        } else {
+            // do some logging
+            InvokenGame.log("Concluding and starting music: " + music.getAsset());
 
-        // construct a new concluder
-        handlers.add(new Concluder(musicBeingPlayed, music));
+            // construct a new concluder
+            handlers.add(new Concluder(musicBeingPlayed, music));
 
-        // set the music being played
-        musicBeingPlayed = music;
+            // set the music being played
+            musicBeingPlayed = music;
+        }
     }
 
     /**
@@ -254,7 +270,7 @@ public class MusicManager implements Disposable {
         if (music.hasConclusion()) {
             musicResource = music.getConclusionResource();
             musicResource.stop();
-            musicResource.dispose();
+            // musicResource.dispose();
         }
     }
 
@@ -300,7 +316,7 @@ public class MusicManager implements Disposable {
         if (musicBeingPlayed != null && track == musicBeingPlayed.getTrack()) {
             return musicBeingPlayed;
         }
-        
+
         try {
             return cache.get(track);
         } catch (ExecutionException e) {

@@ -113,6 +113,8 @@ public abstract class FurnitureGenerator {
         tempTile.getProperties().put("transient", "");
         for (NaturalVector2 point : marked) {
             collision.addCell(tempTile, point.x, point.y);
+
+            // TODO: add tiles to the buffer area around the marked tiles
         }
     }
 
