@@ -3,6 +3,7 @@ package com.eldritch.invoken.util;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
@@ -12,6 +13,9 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Disposable;
 import com.eldritch.invoken.InvokenGame;
 import com.google.common.base.Optional;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 
 /**
  * A service that manages the background music.
@@ -19,6 +23,13 @@ import com.google.common.base.Optional;
  * Only one music may be playing at a given time.
  */
 public class MusicManager implements Disposable {
+    private final LoadingCache<MusicTrack, BackgroundMusic> cache = CacheBuilder.newBuilder()
+            .build(new CacheLoader<MusicTrack, BackgroundMusic>() {
+                public BackgroundMusic load(MusicTrack track) {
+                    return new BackgroundMusic(track);
+                }
+            });
+
     public enum MusicTrack {
         MAIN("main.ogg"), //
         LEVEL0("level0.ogg"), //
@@ -69,7 +80,7 @@ public class MusicManager implements Disposable {
         private BackgroundMusic(MusicTrack track) {
             this.track = track;
             musicResource = loadMusic(track.getAsset());
-            
+
             if (track.hasEnd()) {
                 conclusion = Optional.of(loadMusic(track.getEnd()));
             } else {
@@ -88,16 +99,16 @@ public class MusicManager implements Disposable {
         public Music getMusicResource() {
             return musicResource;
         }
-        
+
         public Music getConclusionResource() {
             return conclusion.get();
         }
-        
+
         public boolean hasConclusion() {
             return conclusion.isPresent();
         }
     }
-    
+
     private static Music loadMusic(String asset) {
         String fileName = "music/" + asset;
         FileHandle musicFile = Gdx.files.internal(fileName);
@@ -239,7 +250,7 @@ public class MusicManager implements Disposable {
         Music musicResource = music.getMusicResource();
         musicResource.stop();
         musicResource.dispose();
-        
+
         if (music.hasConclusion()) {
             musicResource = music.getConclusionResource();
             musicResource.stop();
@@ -289,7 +300,13 @@ public class MusicManager implements Disposable {
         if (musicBeingPlayed != null && track == musicBeingPlayed.getTrack()) {
             return musicBeingPlayed;
         }
-        return new BackgroundMusic(track);
+        
+        try {
+            return cache.get(track);
+        } catch (ExecutionException e) {
+            InvokenGame.error("Failed to load music!", e);
+            return musicBeingPlayed;
+        }
     }
 
     private class Fader implements MusicHandler {
@@ -334,7 +351,7 @@ public class MusicManager implements Disposable {
 
             if (outgoingMusic.hasConclusion()) {
                 outgoingMusic.getMusicResource().stop();
-                
+
                 Music musicResource = outgoingMusic.getConclusionResource();
                 musicResource.setVolume(volume);
                 musicResource.setLooping(false);
