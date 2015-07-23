@@ -48,7 +48,9 @@ public abstract class ProximityActivator extends BasicActivator {
     }
 
     @Override
-    public void update(float delta, Level level) {
+    public final void update(float delta, Level level) {
+        preUpdate(delta, level);
+        
         // only change the state of the door if it differs from the current
         // state must click to unlock
         boolean hasProximity = !proximityAgents.isEmpty();
@@ -64,6 +66,15 @@ public abstract class ProximityActivator extends BasicActivator {
 
         lastProximityAgents.clear();
         lastProximityAgents.addAll(proximityAgents);
+        
+        // delegate to subclasses
+        postUpdate(delta, level);
+    }
+    
+    protected void preUpdate(float delta, Level level) {
+    }
+    
+    protected void postUpdate(float delta, Level level) {
     }
     
     @Override

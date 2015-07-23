@@ -27,7 +27,7 @@ public class ProximityMine extends ClickActivator implements TemporaryEntity {
     }
     
     @Override
-    public void update(float delta, Level level) {
+    public void postUpdate(float delta, Level level) {
         if (detonation.isActive()) {
             detonation.update(delta, level);
         } else {

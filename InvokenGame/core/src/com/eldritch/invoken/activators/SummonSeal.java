@@ -3,9 +3,11 @@ package com.eldritch.invoken.activators;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.location.ConnectedRoom;
@@ -16,10 +18,11 @@ import com.google.common.base.Optional;
 
 public class SummonSeal extends ProximityActivator {
     private static final float RADIUS = 1.5f;
-    
+
     private static final TextureRegion region = GameScreen.ATLAS.findRegion("trap/advanced");
 
     private final List<Agent> agents = new ArrayList<>();
+    private final Color color = new Color(Color.WHITE);
     private Optional<ConnectedRoom> room = Optional.absent();
     private boolean released = false;
 
@@ -27,7 +30,12 @@ public class SummonSeal extends ProximityActivator {
         super(position, ProximityParams.of(new Vector2(position.x + 0.5f, position.y + 0.5f),
                 Vector2.Zero, RADIUS));
     }
-    
+
+    @Override
+    protected void postUpdate(float delta, Level level) {
+        setAlpha(level);
+    }
+
     @Override
     public void render(float delta, OrthogonalTiledMapRenderer renderer) {
         Vector2 position = getRenderPosition();
@@ -46,7 +54,7 @@ public class SummonSeal extends ProximityActivator {
         }
         return false;
     }
-    
+
     @Override
     public float getZ() {
         return Float.POSITIVE_INFINITY;
@@ -93,5 +101,23 @@ public class SummonSeal extends ProximityActivator {
             }
         }
         return false;
+    }
+
+    private void setAlpha(Level level) {
+        if (released) {
+            // opaque
+            color.a = 1f;
+        }
+        
+        // set alpha component
+        float maxDst2 = RADIUS;
+        float dst2 = getCenter().dst2(level.getPlayer().getPosition());
+        if (dst2 > maxDst2) {
+            // invisible
+            color.a = 0f;
+        } else {
+            float a = MathUtils.lerp(0f, 1f, 1f - dst2 / maxDst2);
+            color.a = a;
+        }
     }
 }

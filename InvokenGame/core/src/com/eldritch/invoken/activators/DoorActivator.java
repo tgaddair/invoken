@@ -104,7 +104,9 @@ public class DoorActivator extends ClickActivator implements Crackable, Damageab
     }
 
     @Override
-    public void update(float delta, Level level) {
+    public void preUpdate(float delta, Level level) {
+        // only change the state of the door if it differs from the current
+        // state must click to unlock
         if (!activating) {
             if (!open && lockChange.isPresent()) {
                 applyLocked(lockChange.get());
@@ -114,10 +116,6 @@ public class DoorActivator extends ClickActivator implements Crackable, Damageab
         if (finished) {
             postActivation(level);
         }
-
-        // only change the state of the door if it differs from the current
-        // state must click to unlock
-        super.update(delta, level);
     }
 
     @Override

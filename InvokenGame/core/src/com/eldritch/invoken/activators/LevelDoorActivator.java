@@ -50,7 +50,7 @@ public class LevelDoorActivator extends ClickActivator {
     }
 
     @Override
-    public void update(float delta, Level level) {
+    public void postUpdate(float delta, Level level) {
         if (activating) {
             stateTime += delta;
             if (animation.isAnimationFinished(stateTime)) {

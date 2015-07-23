@@ -46,7 +46,7 @@ public class Teleporter extends ClickActivator {
     }
 
     @Override
-    public void update(float delta, Level level) {
+    public void postUpdate(float delta, Level level) {
         canActivate = hasProximity(level.getPlayer());
         
         // actually do the teleportation
