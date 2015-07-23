@@ -13,7 +13,7 @@ public class Settings {
 	
 	// audio
 	public static final boolean MUTE = false;
-	public static final float MUSIC_VOLUME = 0.2f;
+	public static final float MUSIC_VOLUME = 0.5f;
 //	public static final float MUSIC_VOLUME = 0.0f;
 	public static final float SFX_VOLUME = 0.1f;
 	

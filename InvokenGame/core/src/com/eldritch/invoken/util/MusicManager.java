@@ -22,7 +22,8 @@ public class MusicManager implements Disposable {
     public enum MusicTrack {
         MAIN("main.ogg"), //
         LEVEL0("level0.ogg"), //
-        COMBAT0("combat_loop.ogg", "combat_end.ogg"), //
+        COMBAT0("combat0_loop.ogg", "combat0_end.ogg"), //
+        COMBAT1("combat1.ogg", "combat1_end.ogg"), //
         CREDITS("sweet_ice.ogg"); // alt: credits.ogg
 
         private final String asset;
@@ -335,6 +336,7 @@ public class MusicManager implements Disposable {
                 outgoingMusic.getMusicResource().stop();
                 
                 Music musicResource = outgoingMusic.getConclusionResource();
+                musicResource.setVolume(volume);
                 musicResource.setLooping(false);
                 musicResource.setOnCompletionListener(this);
                 musicResource.play();

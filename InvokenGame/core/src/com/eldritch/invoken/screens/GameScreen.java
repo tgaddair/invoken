@@ -347,7 +347,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         music.update(delta);
         if (level.inCombat() != wasCombat) {
             if (level.inCombat()) {
-                music.fadeIn(MusicTrack.COMBAT0);
+                music.fadeIn(MusicTrack.COMBAT1);
             } else {
                 music.playPostConclusion(MusicTrack.LEVEL0);
             }
