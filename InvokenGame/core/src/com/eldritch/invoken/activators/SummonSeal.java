@@ -18,6 +18,7 @@ import com.google.common.base.Optional;
 
 public class SummonSeal extends ProximityActivator {
     private static final float RADIUS = 1.5f;
+    private static final float MAX_DST2 = (RADIUS * 2) * (RADIUS * 2);
 
     private static final TextureRegion region = GameScreen.ATLAS.findRegion("trap/advanced");
 
@@ -42,9 +43,11 @@ public class SummonSeal extends ProximityActivator {
         float w = 1;
         float h = 1;
         Batch batch = renderer.getBatch();
+        batch.setColor(color);
         batch.begin();
         batch.draw(region, position.x, position.y, w, h);
         batch.end();
+        batch.setColor(Color.WHITE);
     }
 
     @Override
@@ -107,16 +110,16 @@ public class SummonSeal extends ProximityActivator {
         if (released) {
             // opaque
             color.a = 1f;
+            return;
         }
         
         // set alpha component
-        float maxDst2 = RADIUS;
         float dst2 = getCenter().dst2(level.getPlayer().getPosition());
-        if (dst2 > maxDst2) {
+        if (dst2 > MAX_DST2) {
             // invisible
             color.a = 0f;
         } else {
-            float a = MathUtils.lerp(0f, 1f, 1f - dst2 / maxDst2);
+            float a = MathUtils.lerp(0f, 1f, 1f - dst2 / MAX_DST2);
             color.a = a;
         }
     }
