@@ -357,6 +357,7 @@ public class BspGenerator {
 
     protected void addPath(int x, int y, int x2, int y2, List<NaturalVector2> currentPath,
             int size, CellType untype) {
+        // true when the last move was a vertical (up or down) move
         boolean lastVertical = false;
         for (int i = 1; i < currentPath.size(); i++) {
             NaturalVector2 prev = currentPath.get(i - 1);
@@ -371,6 +372,11 @@ public class BspGenerator {
                 height = size;
             }
             lastVertical = vertical;
+            
+            if (!vertical) {
+                // make the horizontal moves a little bit wider
+                height += 1;
+            }
             
             Set(point.x - width / 2, point.y - height / 2, width, height, CellType.Floor, untype);
         }

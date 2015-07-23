@@ -121,7 +121,7 @@ public abstract class FurnitureGenerator {
     }
 
     private boolean isSideGap(int x, int y, LocationLayer base) {
-        return !base.isGround(x, y + 1) && !base.isGround(x, y - 1) // walls above and below
+        return !base.isGround(x, y + 2) && !base.isGround(x, y - 1) // walls above and below
                 && (base.isGround(x - 1, y + 1) || base.isGround(x + 1, y + 1)); // ground at side
     }
 

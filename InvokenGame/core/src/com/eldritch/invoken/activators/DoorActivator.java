@@ -28,11 +28,11 @@ import com.eldritch.invoken.gfx.Light.StaticLight;
 import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.screens.GameScreen;
 import com.eldritch.invoken.ui.HealthBar;
-import com.eldritch.invoken.util.Settings;
 import com.eldritch.invoken.util.SoundManager.SoundEffect;
 import com.google.common.base.Optional;
 
-public class DoorActivator extends ClickActivator implements Crackable, Damageable, AgentListener, LockCallback {
+public class DoorActivator extends ClickActivator implements Crackable, Damageable, AgentListener,
+        LockCallback {
     private static final Texture PADLOCK = GameScreen.getTexture("icon/padlock.png");
     private static final TextureRegion[] frontRegions = GameScreen.getMergedRegion(
             "sprite/activators/blast-door-short.png", 64, 64);
@@ -67,16 +67,17 @@ public class DoorActivator extends ClickActivator implements Crackable, Damageab
 
     public static DoorActivator createFront(int x, int y, LockInfo lock) {
         Vector2 center = new Vector2(x + 1, y + 0.5f);
-        return new DoorActivator(x, y, center, lock, true);
+        return new DoorActivator(x, y, 2, 2, center, lock, true);
     }
 
     public static DoorActivator createSide(int x, int y, LockInfo lock) {
-        Vector2 center = new Vector2(x + 0.5f, y - 1);
-        return new DoorActivator(x, y, center, lock, false);
+        Vector2 center = new Vector2(x + 0.5f, y);
+        return new DoorActivator(x, y, 1, 3, center, lock, false);
     }
 
-    public DoorActivator(int x, int y, Vector2 center, LockInfo lock, boolean front) {
-        super(x, y, front ? 2 : 1, 2, ProximityParams.of(center).withIndicator(
+    public DoorActivator(int x, int y, int width, int height, Vector2 center, LockInfo lock,
+            boolean front) {
+        super(x, y, width, height, ProximityParams.of(center).withIndicator(
                 createIndicator(lock, front)));
         this.lockManager = new LockManager(lock, this);
         this.lock = lock;
@@ -300,8 +301,7 @@ public class DoorActivator extends ClickActivator implements Crackable, Damageab
 
         Batch batch = renderer.getBatch();
         batch.begin();
-        batch.draw(frame, position.x, position.y, frame.getRegionWidth() * Settings.SCALE,
-                frame.getRegionHeight() * Settings.SCALE);
+        batch.draw(frame, position.x, position.y, SIZE, getHeight());
         batch.end();
 
         // render indicator
@@ -344,7 +344,7 @@ public class DoorActivator extends ClickActivator implements Crackable, Damageab
         }
         return getPosition().y;
     }
-    
+
     @Override
     public boolean inOverlay() {
         return !front;

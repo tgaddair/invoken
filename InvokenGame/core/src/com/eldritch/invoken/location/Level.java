@@ -655,7 +655,7 @@ public class Level {
                 actor.update(delta, this);
                 
                 // when a single agent is in combat with the player, we're in combat
-                if (actor.isAlive() && actor.getThreat().hostileTo(player)) {
+                if (actor.isAlive() && actor.getThreat().hasEnemy(player)) {
                     combat = true;
                 }
             }
