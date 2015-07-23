@@ -87,7 +87,7 @@ public class SummonSeal extends ProximityActivator {
         }
 
         // when at least one of the triggering agents is a non-resident, then allow it
-        for (Agent agent : getTriggerAgents()) {
+        for (Agent agent : getProximityAgents()) {
             if (!room.get().isResident(agent)) {
                 return true;
             }
