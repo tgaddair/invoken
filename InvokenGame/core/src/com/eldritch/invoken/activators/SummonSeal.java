@@ -34,11 +34,18 @@ public class SummonSeal extends ProximityActivator {
 
     @Override
     protected void postUpdate(float delta, Level level) {
-        setAlpha(level);
+        if (!released) {
+            setAlpha(level);
+        }
     }
 
     @Override
     public void render(float delta, OrthogonalTiledMapRenderer renderer) {
+        if (released) {
+            // no rendering
+            return;
+        }
+        
         Vector2 position = getRenderPosition();
         float w = 1;
         float h = 1;
