@@ -400,7 +400,7 @@ public class DoorActivator extends ClickActivator implements Crackable, Damageab
         if (front) {
             renderOffset.set(1f, 1f);
         } else {
-            renderOffset.set(0.5f, 0.5f);
+            renderOffset.set(0.5f, 1f);
         }
         return new LockIndicator(PADLOCK, renderOffset, lock);
     }
