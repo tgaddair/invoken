@@ -271,8 +271,8 @@ public class DoorActivator extends ClickActivator implements Crackable, Damageab
         } else {
             x += 0.2f;
             y -= 1;
-            bodies.add(level.createEdge(x + 0.2f, y, x + 0.2f, y + SIZE));
-            bodies.add(level.createEdge(x + 0.5f, y, x + 0.5f, y + SIZE));
+            bodies.add(level.createEdge(x + 0.2f, y, x + 0.2f, y + SIZE + 1));
+            bodies.add(level.createEdge(x + 0.5f, y, x + 0.5f, y + SIZE + 1));
             offset.set(0.5f, 0f);
         }
 
