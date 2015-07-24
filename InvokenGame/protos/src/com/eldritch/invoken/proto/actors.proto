@@ -200,6 +200,11 @@ message PlayerActor {
 		required int32 count = 2 [default = 1];
 	}
 
+	message KillRecord {
+		optional string agent_id = 1;
+		optional int32 count = 2;
+	}
+
 	required ActorParams params = 1;
 	optional float health = 7; // remaining, max health is calculated
 	repeated string equipped_item_id = 21; // NPC: if not specified, inferred from inventory
@@ -209,6 +214,7 @@ message PlayerActor {
 	repeated string known_npc = 20;
 	repeated string unique_dialogue = 30;
 	repeated string identified_item = 33;
+	repeated KillRecord kill = 34;
 	repeated Mission mission = 22;
 
 	// position
