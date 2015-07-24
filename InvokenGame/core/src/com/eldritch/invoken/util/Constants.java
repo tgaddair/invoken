@@ -29,5 +29,8 @@ public class Constants {
     // IDs
     public static final String CRAWLER = "Crawler";
     
+    // Factions
+    public static final String STATION_FACTION = "TheStation";
+    
     private Constants() {};
 }

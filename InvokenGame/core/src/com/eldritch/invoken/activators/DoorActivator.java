@@ -19,6 +19,7 @@ import com.eldritch.invoken.activators.util.LockManager;
 import com.eldritch.invoken.activators.util.LockManager.LockCallback;
 import com.eldritch.invoken.activators.util.LockManager.LockIndicator;
 import com.eldritch.invoken.activators.util.LockManager.LockInfo;
+import com.eldritch.invoken.actor.factions.Faction;
 import com.eldritch.invoken.actor.items.Icepik;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.util.AgentListener;
@@ -28,6 +29,7 @@ import com.eldritch.invoken.gfx.Light.StaticLight;
 import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.screens.GameScreen;
 import com.eldritch.invoken.ui.HealthBar;
+import com.eldritch.invoken.util.Constants;
 import com.eldritch.invoken.util.SoundManager.SoundEffect;
 import com.google.common.base.Optional;
 
@@ -120,7 +122,29 @@ public class DoorActivator extends ClickActivator implements Crackable, Damageab
 
     @Override
     protected boolean shouldActivate(boolean hasProximity) {
-        return super.shouldActivate(hasProximity) && !lock.isLocked();
+        if (!super.shouldActivate(hasProximity)) {
+            return false;
+        }
+        
+        if (!lock.isLocked()) {
+            return true;
+        }
+        
+        if (!hasProximity || hasCredentials()) {
+            return true;
+        }
+        
+        return false;
+    }
+    
+    private boolean hasCredentials() {
+        for (Agent agent : getProximityAgents()) {
+            if (agent.getInfo().hasRank(Faction.of(Constants.STATION_FACTION))) {
+                // members of this faction can open all doors
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
