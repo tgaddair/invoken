@@ -187,7 +187,7 @@ public abstract class NavigatedSteerable extends BasicSteerable implements Locat
     
     protected abstract void computePath(NaturalVector2 destination);
     
-    protected abstract boolean hasPath();
+    public abstract boolean hasPath();
 
     public static class AStarNavigatedSteerable extends NavigatedSteerable {
         private final PathManager pathManager;
@@ -238,7 +238,7 @@ public abstract class NavigatedSteerable extends BasicSteerable implements Locat
         }
 
         @Override
-        protected boolean hasPath() {
+        public boolean hasPath() {
             return getPath() != null;
         }
     }
@@ -270,7 +270,7 @@ public abstract class NavigatedSteerable extends BasicSteerable implements Locat
         }
 
         @Override
-        protected boolean hasPath() {
+        public boolean hasPath() {
             return true;
         }
     }

@@ -58,7 +58,7 @@ public class Patrol extends AbstractDesire {
         elapsed += delta;
         NaturalVector2 current = owner.getNaturalPosition();
         if (destination == current || current.mdst(destination.getNaturalPosition()) < MIN_MDST
-                || elapsed > DURATION) {
+                || elapsed > DURATION || !owner.getLastSeen().hasPath()) {
             setDestination();
         }
     }
