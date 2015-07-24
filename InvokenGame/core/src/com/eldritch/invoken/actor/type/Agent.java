@@ -539,6 +539,15 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     public int getKillCount() {
         return killTotal;
     }
+    
+    protected final void setKillCount(String id, int count) {
+        killCounts.put(id, count);
+        killTotal += count;
+    }
+    
+    protected final Map<String, Integer> getKills() {
+        return killCounts;
+    }
 
     protected float damage(float value) {
         // setCloaked(false); // damage breaks cloaking

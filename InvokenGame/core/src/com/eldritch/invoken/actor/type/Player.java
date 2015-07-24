@@ -2,6 +2,7 @@ package com.eldritch.invoken.actor.type;
 
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import com.badlogic.gdx.Gdx;
@@ -20,6 +21,7 @@ import com.eldritch.invoken.actor.items.Item;
 import com.eldritch.invoken.actor.util.ThreatMonitor;
 import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.proto.Actors.PlayerActor;
+import com.eldritch.invoken.proto.Actors.PlayerActor.KillRecord;
 import com.eldritch.invoken.state.Inventory.ItemState;
 import com.eldritch.invoken.util.AnimationUtils;
 import com.eldritch.invoken.util.Settings;
@@ -32,7 +34,7 @@ public class Player extends SteeringAgent {
     private final ThreatMonitor<Player> threat;
     private final String bodyType;
     private final Optional<PlayerActor> priorState;
-    
+
     private final Set<String> identifiedItems = new LinkedHashSet<>();
 
     private boolean holding = false;
@@ -55,7 +57,7 @@ public class Player extends SteeringAgent {
         super(data.getParams(), true, x, y, Human.getWidth(), Human.getHeight(),
                 Human.MAX_VELOCITY, level, AnimationUtils.getHumanAnimations(data.getParams()
                         .getBodyType()));
-        
+
         // identify items
         for (String itemId : data.getIdentifiedItemList()) {
             identifiedItems.add(itemId);
@@ -68,7 +70,7 @@ public class Player extends SteeringAgent {
                 info.getInventory().equip(item.getItem());
             }
         }
-        
+
         // map consumable bar
         AgentInventory inv = info.getInventory();
         for (int i = 0; i < data.getConsumableIdCount(); i++) {
@@ -86,23 +88,28 @@ public class Player extends SteeringAgent {
         this.threat = new ThreatMonitor<Player>(this);
         this.bodyType = data.getParams().getBodyType();
 
-        // restore prior state
+        // restore the prior state
         this.priorState = Optional.of(data);
         for (String dialogue : data.getUniqueDialogueList()) {
             addDialogue(dialogue);
         }
+
+        // record all kills
+        for (KillRecord kill : data.getKillList()) {
+            setKillCount(kill.getAgentId(), kill.getCount());
+        }
     }
-    
+
     @Override
     public boolean isIdentified(String itemId) {
         return identifiedItems.contains(itemId);
     }
-    
+
     @Override
     public void identify(String itemId) {
         identifiedItems.add(itemId);
     }
-    
+
     @Override
     public boolean isIdentified(Item item) {
         if (item.isEncrypted()) {
@@ -110,7 +117,7 @@ public class Player extends SteeringAgent {
         }
         return true;
     }
-    
+
     @Override
     public boolean canEquip(Item item) {
         return isIdentified(item) && super.canEquip(item);
@@ -284,7 +291,7 @@ public class Player extends SteeringAgent {
         }
         return false;
     }
-    
+
     @Override
     public float getAttackSpeed() {
         return 2;
@@ -336,7 +343,7 @@ public class Player extends SteeringAgent {
         for (Ammunition ammo : inventory.getAmmunition()) {
             builder.addEquippedItemId(ammo.getId());
         }
-        
+
         // consumables
         for (Consumable consumable : inventory.getConsumables()) {
             if (consumable != null) {
@@ -349,12 +356,16 @@ public class Player extends SteeringAgent {
             PlayerActor prior = priorState.get();
             builder.addAllVisitedRooms(prior.getVisitedRoomsList());
         }
-        
+
         // identified items
         builder.addAllIdentifiedItem(identifiedItems);
 
         // state markers
         builder.addAllUniqueDialogue(getUniqueDialogue());
+        for (Entry<String, Integer> kill : getKills().entrySet()) {
+            builder.addKill(KillRecord.newBuilder().setAgentId(kill.getKey())
+                    .setCount(kill.getValue()).build());
+        }
 
         return builder.build();
     }
