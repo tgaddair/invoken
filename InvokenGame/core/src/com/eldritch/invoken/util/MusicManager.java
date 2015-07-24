@@ -78,6 +78,7 @@ public class MusicManager implements Disposable {
 
     // private constants
     private static final float FADE_DURATION = 5f;
+    private static final float MIN_TRANSITION_TIME = 10f;
 
     /**
      * The available music files.
@@ -172,6 +173,12 @@ public class MusicManager implements Disposable {
             return;
         }
 
+        if (musicBeingPlayed != null
+                && musicBeingPlayed.getMusicResource().getPosition() < MIN_TRANSITION_TIME) {
+            // avoid constantly thrashing between tracks
+            return;
+        }
+
         // do some logging
         InvokenGame.log("Fading in music: " + music.getAsset());
 
@@ -199,6 +206,12 @@ public class MusicManager implements Disposable {
         // check if the given music is already being played
         BackgroundMusic music = getMusic(track);
         if (musicBeingPlayed == music) {
+            return;
+        }
+        
+        if (musicBeingPlayed != null
+                && musicBeingPlayed.getMusicResource().getPosition() < MIN_TRANSITION_TIME) {
+            // avoid constantly thrashing between tracks
             return;
         }
 
@@ -232,6 +245,12 @@ public class MusicManager implements Disposable {
         // check if the given music is already being played
         BackgroundMusic music = getMusic(track);
         if (musicBeingPlayed == music) {
+            return;
+        }
+        
+        if (musicBeingPlayed != null
+                && musicBeingPlayed.getMusicResource().getPosition() < MIN_TRANSITION_TIME) {
+            // avoid constantly thrashing between tracks
             return;
         }
 
