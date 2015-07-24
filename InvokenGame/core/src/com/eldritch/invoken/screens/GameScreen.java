@@ -140,7 +140,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
     @Override
     public void show() {
         super.show();
-        
+
         // create an orthographic camera, shows us 10(w/h) x 10 units of the
         // world
         float w = Gdx.graphics.getWidth();
@@ -153,7 +153,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 
         font = new BitmapFont();
         batch = new SpriteBatch();
-        
+
         // load the selector
         selector = new TextureRegion(new Texture("sprite/selection.png"));
 
@@ -224,7 +224,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
     private void refreshHud() {
         hud.clear();
         stage.clear();
-        
+
         // enable markup in labels
         Skin skin = getSkin();
         skin.getFont("default-font").getData().markupEnabled = true;
@@ -266,7 +266,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         // announce the new location
         toaster = new Toaster(getSkin());
         stage.addActor(toaster.getContainer());
-        
+
         toast(level.getFullName());
     }
 
@@ -332,7 +332,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         // render the HUD
         stage.act(delta);
         stage.draw();
-        
+
         if (Settings.DEBUG_STATS) {
             drawFps();
             drawStats();
@@ -341,16 +341,14 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
             drawAmmunition(batch, 0);
             batch.end();
         }
-        
+
         // update the music
         MusicManager music = InvokenGame.MUSIC_MANAGER;
         music.update(delta);
-        if (level.inCombat() != wasCombat) {
-            if (level.inCombat()) {
-                music.fadeIn(MusicTrack.COMBAT1);
-            } else {
-                music.playPostConclusion(MusicTrack.LEVEL0);
-            }
+        if (level.inCombat()) {
+            music.fadeIn(MusicTrack.COMBAT1);
+        } else {
+            music.playPostConclusion(MusicTrack.LEVEL0);
         }
 
         // reset
@@ -382,7 +380,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         // font.draw(batch, "Zoom: " + camera.zoom, 10, getHeight() - 10);
         batch.end();
     }
-    
+
     private void drawAmmunition(SpriteBatch batch, int i) {
         if (player.getInventory().hasRangedWeapon()) {
             if (!player.getInventory().isReloading()) {
@@ -424,6 +422,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
             float energy = target.getInfo().getEnergy();
             int level = target.getInfo().getLevel();
             float freezing = target.getFreezing();
+            int kills = target.getKillCount();
             int enemies = target.getThreat().getEnemyCount();
             float visibility = target.getVisibility();
             // String trespass = target.getLocation().isTrespasser(target) ?
@@ -440,6 +439,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
             // font.draw(batch, String.format("Freezing: %.2f", freezing), 10,
             // getHeight()
             // - (30 + 20 * i++));
+            font.draw(batch, String.format("Kills: %d", kills), 10, getHeight() - (30 + 20 * i++));
             font.draw(batch, String.format("Enemies: %d", enemies), 10, getHeight()
                     - (30 + 20 * i++));
             // font.draw(batch, String.format("Visibility: %.2f", visibility),
@@ -761,7 +761,6 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         }
         playerClicked = false;
 
-        
         if (!selection && !interacting) {
             // click on arbitrary position
             // if (player.holdingPosition()) {
@@ -771,7 +770,8 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
             // // move to destination
             // player.moveToFixedTarget(world.x, world.y);
             // }
-            if (pa.hasActiveAugmentation(button) && pa.getActiveAugmentation(button).isValid(player)) {
+            if (pa.hasActiveAugmentation(button)
+                    && pa.getActiveAugmentation(button).isValid(player)) {
                 pa.useActiveAugmentation(new Vector2(world.x, world.y), button, tacticalPause);
             }
             selection = true;
@@ -919,7 +919,8 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         // load the location
         // Locations.Location data =
         // InvokenGame.LOCATION_READER.readAsset(locationName);
-        LocationGenerator generator = new LocationGenerator(gameState, getBiome(), playerState.getSeed());
+        LocationGenerator generator = new LocationGenerator(gameState, getBiome(),
+                playerState.getSeed());
         level = generator.generate(Optional.of(prev), next);
         level.spawnPlayer(player);
         onLoad(level, Optional.of(playerState));
@@ -939,9 +940,9 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 
     private void onLoad(Level level, Optional<PlayerActor> state) {
         minimap = new Minimap(level, level.getSeed(), state);
-//        if (level.hasMusic()) {
-//            InvokenGame.MUSIC_MANAGER.play(level.getMusicId());
-//        }
+        // if (level.hasMusic()) {
+        // InvokenGame.MUSIC_MANAGER.play(level.getMusicId());
+        // }
         InvokenGame.MUSIC_MANAGER.play(MusicTrack.LEVEL0);
     }
 

@@ -96,8 +96,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
 
     private static final float ROTATION_SCALE = 4.5f;
 
-    private static final TextureRegion SHADOW = new TextureRegion(new Texture(
-            "sprite/shadow.png"));
+    private static final TextureRegion SHADOW = new TextureRegion(new Texture("sprite/shadow.png"));
 
     static AssetManager assetManager = new AssetManager();
     static float MAX_FREEZE = 25f;
@@ -149,6 +148,8 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
                                                            // those who have
                                                            // no enemies
     private final Map<Agent, Float> relations = new HashMap<>();
+    private final Map<String, Integer> killCounts = new HashMap<>();
+    private int killTotal = 0; // caching the sum of all entries in killCounts
 
     private int confused = 0;
     private int paralyzed = 0;
@@ -222,7 +223,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     protected void setWeaponSentry(WeaponSentry sentry) {
         this.weaponSentry = sentry;
     }
-    
+
     public void setActive(boolean active) {
         body.setActive(active);
     }
@@ -505,14 +506,38 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         return damage(damage, 1);
     }
 
-    public float damage(Damage damage, float delta) {
+    public final float damage(Damage damage, float delta) {
+        float result = 0;
+
         float value = damage.apply(this, delta);
         if (isAlive()) {
             Agent source = damage.getSource();
             addHostility(source, value);
             alertTo(source);
+
+            result = damage(value);
+            if (!isAlive()) {
+                // the damage killed them
+                damage.getSource().addKillCount(this);
+            }
         }
-        return damage(value);
+
+        return result;
+    }
+
+    private void addKillCount(Agent agent) {
+        String id = agent.getInfo().getId();
+        int count = killCounts.containsKey(id) ? killCounts.get(id) + 1 : 1;
+        killCounts.put(id, count);
+        killTotal++;
+    }
+
+    public boolean hasKilled(Agent agent) {
+        return killCounts.containsKey(agent) && killCounts.get(agent) > 0;
+    }
+
+    public int getKillCount() {
+        return killTotal;
     }
 
     protected float damage(float value) {
@@ -968,15 +993,15 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     public void research(boolean value) {
         this.researching = value;
     }
-    
+
     public boolean isBartering() {
         return bartered != null;
     }
-    
+
     public void barter(Lootable other) {
         this.bartered = other;
     }
-    
+
     public Lootable getBartered() {
         return bartered;
     }
@@ -1320,7 +1345,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         Fragment.release(level, getPosition(), total);
         info.getInventory().removeItem(Fragment.getInstance(), total);
     }
-    
+
     public void setEnabled(boolean enabled) {
         setParalyzed(!enabled);
         if (enabled) {
