@@ -157,7 +157,7 @@ public class FireWeapon extends ProjectileAugmentation {
         @Override
         protected boolean canApply() {
             Animation anim = getAnimation();
-            return anim.getKeyFrameIndex(stateTime) == 2;
+            return anim.getKeyFrameIndex(stateTime) == anim.getKeyFrames().length / 4;
         }
 
         @Override

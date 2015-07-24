@@ -60,6 +60,7 @@ public abstract class AnimatedAction extends AugmentationAction {
         } else if (!isAnimationFinished()) {
             stateTime += delta * getOwner().getInfo().getEfficacy() * timeScale;
         } else {
+            stateTime += delta;
             postHoldTime += delta;
         }
 
