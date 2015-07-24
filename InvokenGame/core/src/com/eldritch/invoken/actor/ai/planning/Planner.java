@@ -16,7 +16,9 @@ public class Planner {
         this.owner = owner;
         this.desires.addAll(desires);
         this.desires.add(new Loiter(owner));
+        
         active = getGreatestDesire();
+        active.start();
     }
     
     public void plan(float delta) {
@@ -29,7 +31,7 @@ public class Planner {
         boolean success = active.act();
         if (!success) {
             // choose a new desire to act upon
-            active = getGreatestDesire();
+            setActiveDesire(getGreatestDesire());
         }
         return success;
     }
@@ -47,6 +49,12 @@ public class Planner {
             }
         }
         return greatest;
+    }
+    
+    private void setActiveDesire(Desire desire) {
+        active.stop();
+        active = desire;
+        active.start();
     }
 
     public static Planner from(Npc npc) {

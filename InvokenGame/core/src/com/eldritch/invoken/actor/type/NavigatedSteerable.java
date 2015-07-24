@@ -177,11 +177,17 @@ public abstract class NavigatedSteerable extends BasicSteerable implements Locat
         this.path = path;
     }
     
+    protected final LocationGraphPath getPath() {
+        return path;
+    }
+    
     protected Agent getOwner() {
         return npc;
     }
     
     protected abstract void computePath(NaturalVector2 destination);
+    
+    protected abstract boolean hasPath();
 
     public static class AStarNavigatedSteerable extends NavigatedSteerable {
         private final PathManager pathManager;
@@ -230,6 +236,11 @@ public abstract class NavigatedSteerable extends BasicSteerable implements Locat
             // for now, an error
             return null;
         }
+
+        @Override
+        protected boolean hasPath() {
+            return getPath() != null;
+        }
     }
     
     public static class BasicNavigatedSteerable extends NavigatedSteerable {
@@ -256,6 +267,11 @@ public abstract class NavigatedSteerable extends BasicSteerable implements Locat
             } else {
                 setPosition(getLastLocation());
             }
+        }
+
+        @Override
+        protected boolean hasPath() {
+            return true;
         }
     }
 }
