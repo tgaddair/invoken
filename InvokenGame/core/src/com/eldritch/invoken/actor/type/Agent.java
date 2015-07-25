@@ -1113,11 +1113,11 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     @Override
     public void endInteraction() {
         resetCamera();
+        setTarget(null);
         interact(null);
         converser = null;
         looting = null;
         bartered = null;
-        setTarget(null);
     }
 
     public Interactable getInteractor() {

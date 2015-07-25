@@ -233,8 +233,8 @@ public class Player extends SteeringAgent {
 
     public boolean select(Agent other, Level level) {
         // if (other == this || other == null || canTarget(other, location)) {
-        setTarget(other);
         endJointInteraction();
+        setTarget(other);
         return true;
     }
 
