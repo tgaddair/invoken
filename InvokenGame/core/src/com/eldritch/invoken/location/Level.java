@@ -167,10 +167,14 @@ public class Level {
 
     private DebugEntityRenderer debugEntityRenderer = DebugEntityRenderer.getInstance();
     private Box2DDebugRenderer debugRenderer = new Box2DDebugRenderer();
-    
+
     private boolean combat = false;
 
     public Level(Locations.Level data, LocationMap map, GameTransition state, long seed) {
+        // reset some global state
+        // TODO: this should be hidden behind a FactionFactory owned by an individual level
+        Faction.resetAll();
+
         this.data = data;
         this.map = map;
         this.territory = new Territory[map.getWidth()][map.getHeight()];
@@ -346,7 +350,7 @@ public class Level {
         }
         return locations.get(currentCell).getName();
     }
-    
+
     public Optional<ConnectedRoom> getRoomFor(NaturalVector2 point) {
         if (map.getRooms().hasRoom(point.x, point.y)) {
             return Optional.of(map.getRooms().getRoom(point.x, point.y));
@@ -365,7 +369,7 @@ public class Level {
     public ConnectedRoomManager getConnections() {
         return map.getRooms();
     }
-    
+
     public CrimeManager getCrimeManager() {
         return crimeManager;
     }
@@ -570,7 +574,7 @@ public class Level {
     public List<Integer> getVisitedIndices() {
         return map.getRooms().getIndices(visitedRooms);
     }
-    
+
     public boolean inCombat() {
         return combat;
     }
@@ -643,7 +647,7 @@ public class Level {
                         inactiveIndex = (inactiveIndex + 1) % inactiveEntities.size();
                         agent.update(getElapsed(agent) + delta, this);
                         setElapsed(agent, 0);
-    
+
                         // check that the agent is now active
                         if (isVisibleOnScreen(agent)) {
                             activated = Optional.of(agent);
@@ -659,7 +663,7 @@ public class Level {
             combat = false;
             for (Agent actor : activeEntities) {
                 actor.update(delta, this);
-                
+
                 // when a single agent is in combat with the player, we're in combat
                 if (actor.isAlive() && actor.getThreat().hasEnemy(player)) {
                     combat = true;
@@ -969,7 +973,7 @@ public class Level {
         }
         return neighbors;
     }
-    
+
     private void addActive(Agent agent) {
         activeEntities.add(agent);
         addDrawable(agent);

@@ -86,7 +86,9 @@ public class SecurityCamera extends ClickActivator implements GameCamera, CrimeH
 
                 // now we need to lock down this room and call in the guards
                 room.get().setLocked(true);
-                
+                for (Agent member : faction.getMembers()) {
+                    member.alertTo(crime.getPerpetrator());
+                }
                 System.out.println("reporting crime!");
             }
         }

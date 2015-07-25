@@ -8,6 +8,8 @@ import java.util.concurrent.ExecutionException;
 
 import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.actor.type.Agent;
+import com.eldritch.invoken.location.Level;
+import com.eldritch.invoken.proto.Factions;
 import com.eldritch.invoken.proto.Factions.Faction.Relation;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -17,8 +19,7 @@ public class Faction {
     private static final LoadingCache<String, Faction> factionLoader = CacheBuilder.newBuilder()
             .build(new CacheLoader<String, Faction>() {
                 public Faction load(String id) {
-                    com.eldritch.invoken.proto.Factions.Faction proto = InvokenGame.FACTION_READER
-                            .readAsset(id);
+                    Factions.Faction proto = InvokenGame.FACTION_READER.readAsset(id);
                     Faction faction = new Faction(proto.getId(), proto.getName());
                     for (Relation relation : proto.getRelationList()) {
                         faction.addRelation(relation.getFactionId(), relation.getReaction());
@@ -26,7 +27,7 @@ public class Faction {
                     return faction;
                 }
             });
-    
+
     private final String id;
     private final String name;
     private final Map<String, Integer> relations = new HashMap<String, Integer>();
@@ -36,7 +37,7 @@ public class Faction {
         this.id = id;
         this.name = name;
     }
-    
+
     public Set<Agent> getMembers() {
         return members;
     }
@@ -67,7 +68,7 @@ public class Faction {
         }
         return 0;
     }
-    
+
     public String getId() {
         return id;
     }
@@ -100,13 +101,13 @@ public class Faction {
             return false;
         return true;
     }
-    
+
     public static Faction forMember(Agent member, String id) {
         Faction faction = of(id);
         faction.members.add(member);
         return faction;
     }
-    
+
     public static Faction of(String id) {
         try {
             return factionLoader.get(id);
@@ -114,5 +115,9 @@ public class Faction {
             InvokenGame.error("Failed to load faction: " + id, ex);
             return null;
         }
+    }
+    
+    public static void resetAll() {
+        factionLoader.invalidateAll();
     }
 }

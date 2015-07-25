@@ -23,6 +23,7 @@ public abstract class PrerequisiteVerifier {
 
     public boolean verify(Prerequisite prereq, Agent agent) {
         AgentInfo info = agent.getInfo();
+        Level level = agent.getLocation();
         switch (prereq.getType()) {
             case DISCIPLINE_BETWEEN: { // TARGET attribute between MIN and MAX
                 Discipline d = Discipline.valueOf(prereq.getTarget());
@@ -57,21 +58,18 @@ public abstract class PrerequisiteVerifier {
                 return verifyHas(prereq, equipped);
             }
             case FOLLOWER: { // TARGET following agent
-                Level level = agent.getLocation();
                 String id = prereq.getTarget();
                 boolean follower = level.hasAgentWithId(id)
                         && level.getAgentById(id).isFollowing(agent);
                 return verifyHas(prereq, follower);
             }
             case INTERACTOR: { // TARGET interactor
-                Level level = agent.getLocation();
                 String id = prereq.getTarget();
                 boolean interactor = level.hasAgentWithId(id)
                         && level.getAgentById(id) == agent;
                 return verifyHas(prereq, interactor);
             }
             case STATE_MARKER: {
-                Level level = agent.getLocation();
                 int value = level.getMarkerCount(prereq.getTarget());
                 return verifyBetween(prereq, value);
             }
