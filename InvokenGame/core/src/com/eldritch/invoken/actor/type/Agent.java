@@ -1433,9 +1433,10 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
             return;
         }
 
-        if (!getThreat().hasEnemies()) {
+        if (!getThreat().hasEnemies() && !assaulters.contains(source)) {
             // we're not in combat with anyone, so this is considered assault
             assaulters.add(source);
+            getLocation().getCrimeManager().commitAssault(source, this);
         }
 
         changeRelationScaled(source, -magnitude, 0.01f);
