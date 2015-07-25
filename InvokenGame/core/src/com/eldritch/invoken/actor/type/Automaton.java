@@ -81,6 +81,8 @@ public class Automaton extends Npc {
                 return new Android(data, x, y, getAssetPath(asset), level);
             case "drone":
                 return new Drone(data, x, y, getAssetPath(asset), level);
+            case "goliath":
+                return new Goliath(data, x, y, getAssetPath(asset), level);
             default:
                 return new Mech(data, x, y, getAssetPath(asset), level);
         }
@@ -120,8 +122,12 @@ public class Automaton extends Npc {
         private static final int PX = 64;
 
         public Mech(NonPlayerActor data, float x, float y, String asset, Level level) {
-            super(data, x, y, Settings.SCALE * PX, Settings.SCALE * PX, MAX_VELOCITY,
-                    getAnimations(asset), level);
+            this(data, x, y, Settings.SCALE * PX, Settings.SCALE * PX, PX, asset, level);
+        }
+
+        public Mech(NonPlayerActor data, float x, float y, float width, float height, int px, String asset,
+                Level level) {
+            super(data, x, y, width, height, MAX_VELOCITY, getAnimations(asset, px), level);
         }
 
         @Override
@@ -144,10 +150,10 @@ public class Automaton extends Npc {
             return 25 * getDensity();
         }
 
-        private static Map<Activity, Map<Direction, Animation>> getAnimations(String assetName) {
+        private static Map<Activity, Map<Direction, Animation>> getAnimations(String assetName, int px) {
             Map<Activity, Map<Direction, Animation>> animations = new HashMap<Activity, Map<Direction, Animation>>();
 
-            TextureRegion[][] regions = GameScreen.getRegions(assetName + "-walk.png", PX, PX);
+            TextureRegion[][] regions = GameScreen.getRegions(assetName + "-walk.png", px, px);
             animations.put(Activity.Cast, AnimationUtils.getAnimations(regions));
             animations.put(Activity.Thrust, AnimationUtils.getAnimations(regions));
             animations.put(Activity.Idle, AnimationUtils.getAnimations(regions));
@@ -155,10 +161,18 @@ public class Automaton extends Npc {
             animations.put(Activity.Swipe, AnimationUtils.getAnimations(regions));
             animations.put(Activity.Combat, AnimationUtils.getAnimations(regions));
 
-            regions = GameScreen.getRegions(assetName + "-death.png", PX, PX);
+            regions = GameScreen.getRegions(assetName + "-death.png", px, px);
             animations.put(Activity.Death, AnimationUtils.getFixedAnimation(regions));
 
             return animations;
+        }
+    }
+
+    public static class Goliath extends Mech {
+        private static final int PX = 96;
+        
+        public Goliath(NonPlayerActor data, float x, float y, String asset, Level level) {
+            super(data, x, y, Settings.SCALE * PX, Settings.SCALE * PX, PX, asset, level);
         }
     }
 }
