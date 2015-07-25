@@ -6,6 +6,8 @@ import com.badlogic.gdx.ai.utils.Ray;
 import com.badlogic.gdx.math.Vector;
 
 public class AdaptiveRayWithWhiskersConfiguration<T extends Vector<T>> extends CentralRayWithWhiskersConfiguration<T> {
+    private static final float MAX_LINEAR_SPEED = 15f;
+    
 	private final float maxRayLength;
 	private final float maxWhiskerLength;
 	private final float maxWhiskerAngle;
@@ -22,7 +24,7 @@ public class AdaptiveRayWithWhiskersConfiguration<T extends Vector<T>> extends C
 	public Ray<T>[] updateRays() {
 		// Scale the whisker angle down to 0 as the owner's linear velocity approaches the max.
 		float velocity = owner.getLinearVelocity().len2();
-		float maxVelocity = owner.getMaxLinearSpeed() * owner.getMaxLinearSpeed();
+		float maxVelocity = MAX_LINEAR_SPEED * MAX_LINEAR_SPEED;
 		
 		float angle = ((maxVelocity - velocity) / maxVelocity) * maxWhiskerAngle;
 		setWhiskerAngle(angle);
