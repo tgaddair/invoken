@@ -29,7 +29,13 @@ public class Patrol extends AbstractDesire {
         List<ConnectedRoom> rooms = new ArrayList<>(owner.getLocation().getRooms());
         Collections.shuffle(rooms);
         for (ConnectedRoom room : rooms) {
-            patrolPoints.add(new BasicLocatable(room.getCenter()));
+            NaturalVector2 center = room.getCenter();
+            if (!owner.getLocation().isNavigable(center)) {
+                // there must be a node in the graph for this room, otherwise we should skip it
+                continue;
+            }
+            
+            patrolPoints.add(new BasicLocatable(center));
             if (++i >= 3) {
                 break;
             }

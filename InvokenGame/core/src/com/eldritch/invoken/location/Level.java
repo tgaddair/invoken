@@ -371,6 +371,13 @@ public class Level {
     public PathManager getPathManager() {
         return pathManager;
     }
+    
+    /**
+     * True iff there is a node in the location graph at this point.
+     */
+    public boolean isNavigable(NaturalVector2 point) {
+        return getPathManager().getGraph().hasNode(point.x, point.y);
+    }
 
     public ConnectedRoomManager getConnections() {
         return map.getRooms();

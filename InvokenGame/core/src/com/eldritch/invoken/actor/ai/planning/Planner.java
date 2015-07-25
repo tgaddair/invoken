@@ -28,6 +28,7 @@ public class Planner {
     }
     
     public boolean act() {
+        owner.setTask("Desire " + active.getClass().getSimpleName());
         boolean success = active.act();
         if (!success) {
             // choose a new desire to act upon
