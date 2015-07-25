@@ -95,6 +95,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     public static final float SPRINT_COST = 5f;
 
     private static final float ROTATION_SCALE = 4.5f;
+    private static final float DIRECTION_CHANGE_DELAY = 0.5f;
 
     private static final TextureRegion SHADOW = new TextureRegion(new Texture("sprite/shadow.png"));
 
@@ -123,6 +124,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     AgentInfo info;
     Activity activity = Activity.Explore;
     Direction direction = Direction.Down;
+    private float lastDirectionChange = 0;
     private final Map<Activity, Map<Direction, Animation>> animations;
     float stateTime = 0;
 
@@ -222,6 +224,10 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
 
     protected void setWeaponSentry(WeaponSentry sentry) {
         this.weaponSentry = sentry;
+    }
+    
+    public boolean isActive() {
+        return body.isActive();
     }
 
     public void setActive(boolean active) {
@@ -565,6 +571,9 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     }
 
     public boolean isVisible() {
+        if (!isActive()) {
+            return false;
+        }
         return !isCloaked();
     }
 
@@ -893,6 +902,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
 
     public void setDirection(Direction direction) {
         this.direction = direction;
+        lastDirectionChange = 0;
     }
 
     public Direction getRelativeDirection(Vector2 point) {
@@ -1107,6 +1117,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         converser = null;
         looting = null;
         bartered = null;
+        setTarget(null);
     }
 
     public Interactable getInteractor() {
@@ -1661,10 +1672,13 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
             observed = target;
         }
 
+        lastDirectionChange += delta;
         if (observed != null) {
-            float dx = observed.getPosition().x - getPosition().x;
-            float dy = observed.getPosition().y - getPosition().y;
-            setDirection(getDominantDirection(dx, dy));
+            if (lastDirectionChange > DIRECTION_CHANGE_DELAY) {
+                float dx = observed.getPosition().x - getPosition().x;
+                float dy = observed.getPosition().y - getPosition().y;
+                setDirection(getDominantDirection(dx, dy));
+            }
         } else if (isAiming()) {
             // face the aimed direction
             setDirection(getDominantDirection(weaponSentry.direction.x, weaponSentry.direction.y));
