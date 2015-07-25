@@ -27,6 +27,7 @@ import com.eldritch.invoken.actor.util.Damageable;
 import com.eldritch.invoken.gfx.Light;
 import com.eldritch.invoken.gfx.Light.StaticLight;
 import com.eldritch.invoken.location.Level;
+import com.eldritch.invoken.location.NaturalVector2;
 import com.eldritch.invoken.screens.GameScreen;
 import com.eldritch.invoken.ui.HealthBar;
 import com.eldritch.invoken.util.Constants;
@@ -125,18 +126,18 @@ public class DoorActivator extends ClickActivator implements Crackable, Damageab
         if (!super.shouldActivate(hasProximity)) {
             return false;
         }
-        
+
         if (!lock.isLocked()) {
             return true;
         }
-        
+
         if (!hasProximity || hasCredentials()) {
             return true;
         }
-        
+
         return false;
     }
-    
+
     private boolean hasCredentials() {
         for (Agent agent : getProximityAgents()) {
             if (agent.getInfo().hasRank(Faction.of(Constants.STATION_FACTION))) {
@@ -393,6 +394,9 @@ public class DoorActivator extends ClickActivator implements Crackable, Damageab
         setLocked(false);
         setOpened(true, level);
         lock.breakLock();
+
+        // notify of vandalism
+        level.getCrimeManager().commitVandalism(source, NaturalVector2.of(getCenter()));
     }
 
     public void setLocked(boolean locked) {

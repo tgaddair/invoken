@@ -2,17 +2,23 @@ package com.eldritch.invoken.activators;
 
 import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.actor.GameCamera;
+import com.eldritch.invoken.actor.factions.Faction;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.location.ConnectedRoom;
+import com.eldritch.invoken.location.CrimeManager.Crime;
+import com.eldritch.invoken.location.CrimeManager.CrimeHandler;
 import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.location.NaturalVector2;
+import com.eldritch.invoken.util.Constants;
 import com.google.common.base.Optional;
 
-public class SecurityCamera extends ClickActivator implements GameCamera {
+public class SecurityCamera extends ClickActivator implements GameCamera, CrimeHandler {
     private static final int OFFSET = 2;
 
+    private final Faction faction = Faction.of(Constants.STATION_FACTION);
     private SecurityCamera next = null;
     private Optional<ConnectedRoom> room = Optional.absent();
+    private boolean active = true;
 
     public SecurityCamera(NaturalVector2 position) {
         super(position.x + OFFSET, position.y + OFFSET, 1, 1, ProximityParams.of(
@@ -47,6 +53,7 @@ public class SecurityCamera extends ClickActivator implements GameCamera {
 
     @Override
     public void postRegister(Level level) {
+        level.getCrimeManager().addHandler(this);
         level.addSecurityCamera(this);
         room = level.getRoomFor(NaturalVector2.of(getCenter()));
     }
@@ -64,9 +71,24 @@ public class SecurityCamera extends ClickActivator implements GameCamera {
     protected boolean canActivate(Agent agent) {
         return super.canActivate(agent) || agent.usingRemoteCamera();
     }
-    
+
     @Override
     public float getZ() {
         return 0;
+    }
+
+    @Override
+    public void handle(Crime crime) {
+        if (active && room.isPresent()) {
+            if (crime.hasRoom() && crime.getRoom() == room.get() && crime.isOffenseAgainst(faction)) {
+                // the camera is active and the crime took place in our room, so we can report it
+                crime.report(faction);
+
+                // now we need to lock down this room and call in the guards
+                room.get().setLocked(true);
+                
+                System.out.println("reporting crime!");
+            }
+        }
     }
 }
