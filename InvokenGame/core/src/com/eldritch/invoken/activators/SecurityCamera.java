@@ -28,13 +28,7 @@ public class SecurityCamera extends ClickActivator implements GameCamera, CrimeH
 
     @Override
     public void activate(Agent agent, Level level) {
-        // if (next != null && agent.usingRemoteCamera()) {
-        // agent.setCamera(next);
-        // } else {
-        // agent.resetCamera();
-        // }
-
-        if (next != null) {
+        if (next != null && agent.usingRemoteCamera()) {
             agent.setCamera(next);
         } else {
             agent.resetCamera();
