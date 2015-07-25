@@ -108,6 +108,7 @@ public class Level {
     private final Locations.Level data;
     private final LocationMap map;
     private final Territory[][] territory;
+    private final CrimeManager crimeManager;
     private final PathManager pathManager;
     private final GameTransition state;
     private final long seed;
@@ -173,6 +174,7 @@ public class Level {
         this.data = data;
         this.map = map;
         this.territory = new Territory[map.getWidth()][map.getHeight()];
+        this.crimeManager = new CrimeManager(map.getRooms());
         this.pathManager = new PathManager(map);
         this.state = state;
         this.seed = seed;
@@ -362,6 +364,10 @@ public class Level {
 
     public ConnectedRoomManager getConnections() {
         return map.getRooms();
+    }
+    
+    public CrimeManager getCrimeManager() {
+        return crimeManager;
     }
 
     public void dispose() {

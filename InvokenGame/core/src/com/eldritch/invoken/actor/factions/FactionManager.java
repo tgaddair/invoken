@@ -150,6 +150,26 @@ public class FactionManager {
         
         return reaction;
     }
+    
+    /**
+     * Standing with the given faction.
+     */
+    public float getRelation(Faction otherFaction) {
+        float otherRep = getReputation(otherFaction);
+        
+        float relation = 0;
+        for (Faction faction : getFactions()) {
+            if (agent.getInfo().hasRank(faction)) {
+                float rep = getReputation(faction);
+                if (rep > 0) {
+                    float f = otherFaction.getRelation(faction);
+                    relation += rep * f;
+                }
+            }
+        }
+        
+        return otherRep + relation;
+    }
 
     public ActorParams.FactionStatus toProto(Faction faction) {
         FactionStatus status = getStatus(faction);
