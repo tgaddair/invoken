@@ -40,7 +40,7 @@ public class SummonSeal extends ProximityActivator {
     }
 
     @Override
-    public void render(float delta, OrthogonalTiledMapRenderer renderer) {
+    public void preRender(float delta, OrthogonalTiledMapRenderer renderer) {
         if (released) {
             // no rendering
             return;

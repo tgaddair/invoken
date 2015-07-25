@@ -64,7 +64,7 @@ public class ContainerSmall extends InteractableActivator implements Lootable {
     }
 
     @Override
-    public void render(float delta, OrthogonalTiledMapRenderer renderer) {
+    public void preRender(float delta, OrthogonalTiledMapRenderer renderer) {
         TextureRegion frame = animation.getKeyFrame(stateTime);
         Vector2 position = getRenderPosition();
 
@@ -73,9 +73,6 @@ public class ContainerSmall extends InteractableActivator implements Lootable {
         batch.draw(frame, position.x, position.y, frame.getRegionWidth() * Settings.SCALE,
                 frame.getRegionHeight() * Settings.SCALE);
         batch.end();
-
-        // render indicator
-        super.render(delta, renderer);
     }
 
     @Override

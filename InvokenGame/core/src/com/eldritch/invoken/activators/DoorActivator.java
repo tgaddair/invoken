@@ -308,7 +308,7 @@ public class DoorActivator extends ClickActivator implements Crackable, Damageab
     }
 
     @Override
-    public void render(float delta, OrthogonalTiledMapRenderer renderer) {
+    public void preRender(float delta, OrthogonalTiledMapRenderer renderer) {
         Animation animation = lock.isLocked() ? lockedAnimation : unlockedAnimation;
         if (activating) {
             stateTime += delta;
@@ -325,9 +325,6 @@ public class DoorActivator extends ClickActivator implements Crackable, Damageab
         batch.begin();
         batch.draw(frame, position.x, position.y, SIZE, getHeight());
         batch.end();
-
-        // render indicator
-        super.render(delta, renderer);
 
         if (lockManager.isDamaged() && !lock.isBroken()) {
             // update and render health

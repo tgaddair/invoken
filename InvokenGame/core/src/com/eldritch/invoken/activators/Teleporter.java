@@ -57,7 +57,7 @@ public class Teleporter extends ClickActivator {
     }
     
     @Override
-    public void render(float delta, OrthogonalTiledMapRenderer renderer) {
+    public void preRender(float delta, OrthogonalTiledMapRenderer renderer) {
         if (activating) {
             stateTime += delta;
             if (animation.isAnimationFinished(stateTime)) {

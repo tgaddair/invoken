@@ -1,6 +1,5 @@
 package com.eldritch.invoken.activators;
 
-import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.actor.GameCamera;
 import com.eldritch.invoken.actor.type.Agent;
@@ -16,8 +15,9 @@ public class SecurityCamera extends ClickActivator implements GameCamera {
     private Optional<ConnectedRoom> room = Optional.absent();
 
     public SecurityCamera(NaturalVector2 position) {
-        super(position.x + OFFSET, position.y + OFFSET, 1, 1, ProximityParams.of(new Vector2(
-                position.x + OFFSET + 0.5f, position.y + 0.5f)));
+        super(position.x + OFFSET, position.y + OFFSET, 1, 1, ProximityParams.of(
+                new Vector2(position.x + OFFSET + 0.5f, position.y + 0.5f)).withIndicator(
+                ProximityActivator.getIndicator(new Vector2(1f, 0.5f))));
     }
 
     @Override
@@ -56,11 +56,6 @@ public class SecurityCamera extends ClickActivator implements GameCamera {
     }
 
     @Override
-    public void render(float delta, OrthogonalTiledMapRenderer renderer) {
-        // delegated to layer
-    }
-
-    @Override
     protected boolean onProximityChange(boolean hasProximity, Level level) {
         return true;
     }
@@ -68,5 +63,10 @@ public class SecurityCamera extends ClickActivator implements GameCamera {
     @Override
     protected boolean canActivate(Agent agent) {
         return super.canActivate(agent) || agent.usingRemoteCamera();
+    }
+    
+    @Override
+    public float getZ() {
+        return 0;
     }
 }

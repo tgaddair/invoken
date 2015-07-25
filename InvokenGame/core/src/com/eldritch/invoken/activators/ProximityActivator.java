@@ -19,10 +19,13 @@ import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.box2d.AgentHandler.DefaultAgentHandler;
 import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.location.NaturalVector2;
+import com.eldritch.invoken.screens.GameScreen;
 import com.eldritch.invoken.util.Settings;
 import com.google.common.base.Optional;
 
 public abstract class ProximityActivator extends BasicActivator {
+    private static final Texture INDICATOR = GameScreen.getTexture("icon/indicator/default.png");
+    
     private final Vector2 center = new Vector2();
     private final Vector2 offset = new Vector2();
     private final float radius;
@@ -78,10 +81,14 @@ public abstract class ProximityActivator extends BasicActivator {
     }
     
     @Override
-    public void render(float delta, OrthogonalTiledMapRenderer renderer) {
+    public final void render(float delta, OrthogonalTiledMapRenderer renderer) {
+        preRender(delta, renderer);
         if (indicator.isPresent()) {
             indicator.get().render(delta, renderer, this);
         }
+    }
+    
+    protected void preRender(float delta, OrthogonalTiledMapRenderer renderer) {
     }
 
     @Override
@@ -281,5 +288,9 @@ public abstract class ProximityActivator extends BasicActivator {
         protected boolean isActive(Level level, ProximityActivator owner) {
             return owner.hasProximity(level.getPlayer());
         }
+    }
+    
+    public static Indicator getIndicator(Vector2 offset) {
+        return new Indicator(INDICATOR, offset);
     }
 }

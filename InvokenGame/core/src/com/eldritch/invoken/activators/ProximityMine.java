@@ -48,7 +48,7 @@ public class ProximityMine extends ClickActivator implements TemporaryEntity {
     }
     
     @Override
-    public void render(float delta, OrthogonalTiledMapRenderer renderer) {
+    public void preRender(float delta, OrthogonalTiledMapRenderer renderer) {
         if (detonation.isActive()) {
             detonation.render(delta, renderer);
         } else {
