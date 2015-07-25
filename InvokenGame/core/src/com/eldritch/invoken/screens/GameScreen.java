@@ -316,7 +316,6 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         level.setFocusPoint(world.x, world.y);
 
         // render the location
-        boolean wasCombat = level.inCombat();
         level.render(delta, camera, selector, tacticalPause);
 
         // draw health bars
