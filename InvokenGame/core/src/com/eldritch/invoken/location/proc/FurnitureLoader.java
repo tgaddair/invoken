@@ -43,10 +43,14 @@ public abstract class FurnitureLoader {
     }
     
     public static class TmxFurnitureLoader extends FurnitureLoader {
+        private final TmxMapLoader loader = new TmxCachedMapLoader();
+        
         private final LoadingCache<String, TmxPlaceableFurniture> cache = CacheBuilder.newBuilder()
                 .build(new CacheLoader<String, TmxPlaceableFurniture>() {
                   public TmxPlaceableFurniture load(String assetId) {
-                	  TiledMap tiles = new TmxMapLoader().load("furniture/" + assetId + ".tmx");
+//                	  TiledMap tiles = new AtlasCachedTmxMapLoader(GameScreen.ATLAS).load("furniture/" + assetId + ".tmx");
+//                	  TiledMap tiles = new TmxMapLoader().load("furniture/" + assetId + ".tmx");
+                	  TiledMap tiles = loader.load("furniture/" + assetId + ".tmx");
                       return new TmxPlaceableFurniture(tiles);
                   }
                 });
