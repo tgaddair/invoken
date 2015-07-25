@@ -36,6 +36,12 @@ public class Patrol extends AbstractDesire {
         }
         patrolPoints.add(new BasicLocatable(owner.getNaturalPosition()));
     }
+    
+    @Override
+    protected void onStart() {
+        // always choose a new destination to prevent thrashing
+        setDestination();
+    }
 
     @Override
     public void activeUpdate(float delta) {
