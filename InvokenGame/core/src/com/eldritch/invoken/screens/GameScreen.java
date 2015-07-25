@@ -618,6 +618,16 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
             case Keys.TAB:
                 showMinimap = false;
                 return true;
+            case Keys.BACKSPACE:
+//                if (tacticalPause) {
+//                    player.removeAction();
+//                    return true;
+//                }
+//                return false;
+                if (!player.inForcedDialogue()) {
+                    player.endJointInteraction();
+                }
+                return true;
 
                 // debug
             case Keys.P:
@@ -632,12 +642,6 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
             case Keys.SHIFT_LEFT:
                 player.setAiming(false);
                 return true;
-            case Keys.BACKSPACE:
-                if (tacticalPause) {
-                    player.removeAction();
-                    return true;
-                }
-                return false;
             case Keys.MINUS:
                 Settings.lastDebugGraph();
                 return true;

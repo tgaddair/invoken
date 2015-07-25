@@ -12,10 +12,10 @@ public class Settings {
 	public static final float FRAME_DURATION = 0.15f;
 	
 	// audio
-	public static final boolean MUTE = false;
-	public static final float MUSIC_VOLUME = 0.5f;
-//	public static final float MUSIC_VOLUME = 0.0f;
-	public static final float SFX_VOLUME = 0.1f;
+	public static boolean MUTE = true;
+	public static float MUSIC_VOLUME = 0.5f;
+//	public static float MUSIC_VOLUME = 0.0f;
+	public static float SFX_VOLUME = 0.1f;
 	
 	// a number just greater than the previous for the purpose of approximating a total ordering
 	// real numbers
@@ -49,7 +49,7 @@ public class Settings {
 	
 	// visuals
 	public static final boolean ENABLE_FOG = false;
-	public static final boolean ENABLE_FOW = false;
+	public static final boolean ENABLE_FOW = true;
 	public static final boolean ENABLE_BACKGROUND = true;
 	
 	// debug settings
@@ -60,7 +60,7 @@ public class Settings {
 	public static boolean DEBUG_COVER = false;
 	public static boolean DEBUG_PATHFINDING = false;
 	public static boolean DEBUG_STEALTH = false;
-	public static boolean DEBUG_TARGETING = true;
+	public static boolean DEBUG_TARGETING = false;
 	public static boolean DEBUG_STATS = true;
 	public static boolean DEBUG_MAP = false;
 	public static boolean DEBUG_CRITICAL_PATH = false;
@@ -70,7 +70,7 @@ public class Settings {
 	public static Profession DEFAULT_PROFESSION = Profession.Centurion;
 	
 	// string constants
-	public static final String FIRST_ROOM = "ThugLeaderBedroom"; // "Bedroom";
+	public static final String FIRST_ROOM = "Vault1"; // "ResearchStation" "Bedroom";
 	public static final String ENTRANCE = "Entrance";
 	public static final String EXIT = "Exit";
 	public static final String[] HALLS = { "HallCommon1" };

@@ -1096,8 +1096,8 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     public void endJointInteraction() {
         if (interactor != null) {
             interactor.endInteraction();
-            endInteraction();
         }
+        endInteraction();
     }
 
     @Override
