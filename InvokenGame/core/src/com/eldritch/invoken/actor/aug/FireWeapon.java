@@ -167,7 +167,7 @@ public class FireWeapon extends ProjectileAugmentation {
             // alert all enemies in range if the weapon is not silenced
             for (Agent neighbor : owner.getNeighbors()) {
                 if (owner.dst2(neighbor) < ALERT_DST2) {
-                    neighbor.alertTo(owner);
+                    neighbor.suspicionTo(owner);
                 }
             }
         }

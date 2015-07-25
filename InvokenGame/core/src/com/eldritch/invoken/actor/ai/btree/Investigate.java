@@ -50,7 +50,8 @@ public class Investigate extends Sequence<Npc> {
     private static class CanPursue extends BooleanTask {
         @Override
         protected boolean check(Npc npc) {
-            return npc.dst2(npc.getLastSeen()) > RANGE2;
+//            return npc.dst2(npc.getLastSeen()) > RANGE2;
+            return true;
         }
     }
 

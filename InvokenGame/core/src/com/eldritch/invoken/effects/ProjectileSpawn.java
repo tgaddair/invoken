@@ -43,7 +43,7 @@ public abstract class ProjectileSpawn extends BasicEffect {
         // alert all enemies in range if the weapon is not silenced
         for (Agent neighbor : target.getNeighbors()) {
             if (target.dst2(neighbor) < ALERT_RADIUS * ALERT_RADIUS) {
-                neighbor.alertTo(target);
+                neighbor.suspicionTo(target);
             }
         }
 

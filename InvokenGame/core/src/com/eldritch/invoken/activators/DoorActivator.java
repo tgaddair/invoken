@@ -19,7 +19,6 @@ import com.eldritch.invoken.activators.util.LockManager;
 import com.eldritch.invoken.activators.util.LockManager.LockCallback;
 import com.eldritch.invoken.activators.util.LockManager.LockIndicator;
 import com.eldritch.invoken.activators.util.LockManager.LockInfo;
-import com.eldritch.invoken.actor.factions.Faction;
 import com.eldritch.invoken.actor.items.Icepik;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.util.AgentListener;
@@ -396,7 +395,7 @@ public class DoorActivator extends ClickActivator implements Crackable, Damageab
         lock.breakLock();
 
         // notify of vandalism
-        level.getCrimeManager().commitVandalism(source, NaturalVector2.of(getCenter()));
+        level.getCrimeManager().commitVandalism(source, lock.getRoom());
     }
 
     public void setLocked(boolean locked) {

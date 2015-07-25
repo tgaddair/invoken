@@ -256,9 +256,14 @@ public class Player extends SteeringAgent {
         }
         return super.damage(value);
     }
-
+    
     @Override
     public void alertTo(Agent other) {
+        // does nothing
+    }
+
+    @Override
+    public void suspicionTo(Agent other) {
         // does nothing
     }
 

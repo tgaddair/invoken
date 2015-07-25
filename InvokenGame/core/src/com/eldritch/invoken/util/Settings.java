@@ -83,7 +83,7 @@ public class Settings {
 	// hash code: 257920894
 	// seed: -509684375158687360
 	
-	public static DebugGraph DRAW_GRAPH = DebugGraph.None;
+	public static DebugGraph DRAW_GRAPH = DebugGraph.Disposition;
 	public enum DebugGraph {
 	    None, Disposition, Enemies, LOS, Visible
 	}

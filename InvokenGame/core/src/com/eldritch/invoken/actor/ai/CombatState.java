@@ -24,7 +24,7 @@ public enum CombatState implements State<Npc> {
             if (target != null) {
                 // alert neighbors of attack
                 for (Agent neighbor : entity.getNeighbors()) {
-                    neighbor.alertTo(target);
+                    neighbor.suspicionTo(target);
                 }
             }
 		}

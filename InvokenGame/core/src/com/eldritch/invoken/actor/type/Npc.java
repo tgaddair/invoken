@@ -437,7 +437,7 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
         for (Agent neighbor : getNeighbors()) {
             if (isAlly(neighbor)) {
                 // nearby ally
-                neighbor.alertTo(target);
+                neighbor.suspicionTo(target);
             }
         }
     }
@@ -459,9 +459,18 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
     public boolean isEnemy(Agent other) {
         return behavior.wantsToAttack(other);
     }
-
+    
     @Override
     public void alertTo(Agent other) {
+        lastSeen.setPosition(other);
+        setFocusPoint(other.getTargetingPosition());
+        setTarget(other);
+        threat.addEnemy(other);
+        threat.setAlerted();
+    }
+
+    @Override
+    public void suspicionTo(Agent other) {
         if (!hasTarget()) {
             lastSeen.setPosition(other);
             setFocusPoint(other.getTargetingPosition());

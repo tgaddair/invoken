@@ -396,10 +396,8 @@ public class Level {
         Map<String, Territory> factionMap = new HashMap<>();
         for (Location location : locations) {
             for (Locations.Territory territory : location.getTerritoryList()) {
-                Optional<Faction> owningFaction = Optional
-                        .fromNullable(territory.hasFactionId() ? getFaction(territory
-                                .getFactionId()) : null);
-                factionMap.put(territory.getFactionId(), new Territory(owningFaction, territory));
+                String id = territory.getFactionId();
+                factionMap.put(id, new Territory(Optional.of(getFaction(id)), territory));
             }
         }
 

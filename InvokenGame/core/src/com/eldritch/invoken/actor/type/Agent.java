@@ -519,7 +519,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         if (isAlive()) {
             Agent source = damage.getSource();
             addHostility(source, value);
-            alertTo(source);
+            suspicionTo(source);
 
             result = damage(value);
             if (!isAlive()) {
@@ -1172,10 +1172,6 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         return focusPoint;
     }
 
-    public abstract void alertTo(Agent target);
-
-    public abstract ThreatMonitor<?> getThreat();
-
     public void locate(Locatable other) {
     }
 
@@ -1546,6 +1542,12 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     protected void notifyOfHostility(Agent source, Agent enemy) {
         // does nothing
     }
+    
+    public abstract void alertTo(Agent target);
+    
+    public abstract void suspicionTo(Agent target);
+
+    public abstract ThreatMonitor<?> getThreat();
     
     public boolean isAllyOf(Faction faction) {
         float relation = info.getFactionManager().getRelation(faction);

@@ -14,6 +14,7 @@ import com.google.common.base.Optional;
 
 public class SecurityCamera extends ClickActivator implements GameCamera, CrimeHandler {
     private static final int OFFSET = 2;
+    private static final float RELATION_DELTA = 100f;
 
     private SecurityCamera next = null;
     private Optional<ConnectedRoom> room = Optional.absent();
@@ -88,6 +89,10 @@ public class SecurityCamera extends ClickActivator implements GameCamera, CrimeH
                 // now we need to lock down this room and call in the guards
                 room.get().setLocked(true);
                 for (Agent member : faction.getMembers()) {
+                    System.out.println("alerting " + member.getInfo().getName() + " to "
+                            + crime.getPerpetrator().getInfo().getName());
+                    
+                    member.changeRelation(crime.getPerpetrator(), -RELATION_DELTA);
                     member.alertTo(crime.getPerpetrator());
                 }
                 System.out.println("reporting crime!");

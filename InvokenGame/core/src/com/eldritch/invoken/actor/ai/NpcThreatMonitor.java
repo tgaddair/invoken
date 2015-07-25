@@ -13,7 +13,7 @@ import com.eldritch.invoken.util.StepTimer;
 public class NpcThreatMonitor extends ThreatMonitor<Npc> {
     private static final float DELTA = 0.01f; // state machine update frequency, 10 times a second
     private static final float SUSPICION_SECS = 20;
-    private static final float ALERT_SECS = 20;
+    private static final float ALERT_SECS = 60;
 
     public static final float SUSPICION_RADIUS = 7;
     public static final float ALERT_RADIUS = 3;
@@ -82,7 +82,7 @@ public class NpcThreatMonitor extends ThreatMonitor<Npc> {
     
     public void setSuspicious(Agent other) {
         setSuspicious();
-        getAgent().alertTo(other);
+        getAgent().suspicionTo(other);
     }
 
     public boolean isSuspicious() {

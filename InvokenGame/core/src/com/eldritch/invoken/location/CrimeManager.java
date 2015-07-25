@@ -32,8 +32,8 @@ public class CrimeManager {
         notify(new AgentCrime(perp, victim, ASSAULT_SEVERITY));
     }
 
-    public void commitVandalism(Agent perp, NaturalVector2 point) {
-        notify(new FactionCrime(perp, stationFaction, point, VANDALISM_SEVERITY));
+    public void commitVandalism(Agent perp, ConnectedRoom room) {
+        notify(new DoorCrime(perp, stationFaction, room, VANDALISM_SEVERITY));
     }
 
     public void commitTheft() {
@@ -113,13 +113,15 @@ public class CrimeManager {
         }
     }
 
-    public class FactionCrime extends Crime {
+    public class DoorCrime extends Crime {
         private final Faction offended;
+        private final ConnectedRoom room;
 
-        private FactionCrime(Agent perpetrator, Faction offended, NaturalVector2 point,
+        private DoorCrime(Agent perpetrator, Faction offended, ConnectedRoom room,
                 float severity) {
-            super(perpetrator, point, severity);
+            super(perpetrator, perpetrator.getCellPosition(), severity);
             this.offended = offended;
+            this.room = room;
         }
 
         public Faction getOffended() {
@@ -129,6 +131,16 @@ public class CrimeManager {
         @Override
         public boolean isOffenseAgainst(Faction faction) {
             return faction.getRelation(offended) > 0;
+        }
+        
+        @Override
+        public boolean hasRoom() {
+            return true;
+        }
+
+        @Override
+        public ConnectedRoom getRoom() {
+            return room;
         }
     }
 
