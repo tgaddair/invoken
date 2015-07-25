@@ -17,13 +17,11 @@ import com.eldritch.invoken.util.Heuristics;
 import com.eldritch.invoken.util.SoundManager.SoundEffect;
 
 public class FireWeapon extends ProjectileAugmentation {
-    private static final float ALERT_RADIUS = 10;
-    
+    private static final float ALERT_DST2 = 10 * 10;
+
     private static final String TOOLTIP = "Fire Weapon\n\n"
             + "Fires a single round from the currently equipped ranged weapon when aimed.\n\n"
-            + "Mode: Activated\n"
-            + "Cost: 1 ammunition";
-            
+            + "Mode: Activated\n" + "Cost: 1 ammunition";
 
     private static class Holder {
         private static final FireWeapon INSTANCE = new FireWeapon();
@@ -48,7 +46,7 @@ public class FireWeapon extends ProjectileAugmentation {
     public void unprepare(Agent owner) {
         owner.toggleOff(HoldingWeapon.class);
     }
-    
+
     @Override
     public void release(Agent owner) {
         owner.toggleOff(FireWeapon.class);
@@ -70,7 +68,7 @@ public class FireWeapon extends ProjectileAugmentation {
         }
         return super.isValid(owner) && owner.getInventory().canUseRangedWeapon();
     }
-    
+
     @Override
     public boolean isValidWithAiming(Agent owner, Agent target) {
         return super.isValidWithAiming(owner, target) && owner.getInventory().canUseRangedWeapon();
@@ -94,34 +92,34 @@ public class FireWeapon extends ProjectileAugmentation {
     public int getCost(Agent owner) {
         return 0;
     }
-    
+
     @Override
     public float quality(Agent owner, Agent target, Level level) {
         if (!owner.getInventory().hasRangedWeapon() || !target.isAlive()) {
             return 0;
         }
-        
+
         float idealDst = owner.getInventory().getRangedWeapon().getIdealDistance();
         return Heuristics.randomizedDistanceScore(owner.dst2(target), idealDst * idealDst);
     }
-    
+
     @Override
     public SoundEffect getFailureSound() {
         return SoundEffect.RANGED_WEAPON_DRY;
     }
-    
+
     @Override
     public String getLabel(Agent owner) {
         if (owner.getInventory().isReloading()) {
             return "-";
         }
-        
+
         int clip = owner.getInventory().getClip();
-//        int ammunition = owner.getInventory().getAmmunitionCount();
-//        return String.format("%d / %d", clip, ammunition - clip);
+        // int ammunition = owner.getInventory().getAmmunitionCount();
+        // return String.format("%d / %d", clip, ammunition - clip);
         return clip > 0 ? String.valueOf(clip) : "";
     }
-    
+
     @Override
     public String getTooltip() {
         return TOOLTIP;
@@ -165,6 +163,13 @@ public class FireWeapon extends ProjectileAugmentation {
             // add projectile to scene
             RangedWeapon weapon = owner.getInventory().getRangedWeapon();
             owner.addEffect(weapon.getProjectileSpawn(owner));
+
+            // alert all enemies in range if the weapon is not silenced
+            for (Agent neighbor : owner.getNeighbors()) {
+                if (owner.dst2(neighbor) < ALERT_DST2) {
+                    neighbor.alertTo(owner);
+                }
+            }
         }
 
         @Override
