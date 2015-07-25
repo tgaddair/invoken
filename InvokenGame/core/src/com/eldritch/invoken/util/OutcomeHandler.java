@@ -7,6 +7,7 @@ import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.actor.factions.Faction;
 import com.eldritch.invoken.actor.items.Item;
 import com.eldritch.invoken.actor.type.Agent;
+import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.proto.Actors.DialogueTree.Choice;
 import com.eldritch.invoken.proto.Actors.DialogueTree.Response;
 import com.eldritch.invoken.proto.Items.Item.Type;
@@ -28,6 +29,7 @@ public abstract class OutcomeHandler {
 
     private void handle(Outcome outcome, Agent target, Response response) {
         Agent source = getSource();
+        Level level = source.getLocation();
         switch (outcome.getType()) {
             case ITEM_CHANGE:
                 if (outcome.getValue() > 0) {
@@ -65,7 +67,7 @@ public abstract class OutcomeHandler {
                 break;
             }
             case REP_CHANGE: // change TARGET reputation by VALUE
-                Faction faction = Faction.of(outcome.getTarget());
+                Faction faction = level.getFaction(outcome.getTarget());
                 target.getInfo().getFactionManager()
                         .modifyReputationFor(faction, outcome.getValue());
                 break;

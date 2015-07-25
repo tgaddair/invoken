@@ -15,7 +15,6 @@ import com.google.common.base.Optional;
 public class SecurityCamera extends ClickActivator implements GameCamera, CrimeHandler {
     private static final int OFFSET = 2;
 
-    private final Faction faction = Faction.of(Constants.STATION_FACTION);
     private SecurityCamera next = null;
     private Optional<ConnectedRoom> room = Optional.absent();
     private boolean active = true;
@@ -80,6 +79,8 @@ public class SecurityCamera extends ClickActivator implements GameCamera, CrimeH
     @Override
     public void handle(Crime crime) {
         if (active && room.isPresent()) {
+            Faction faction = crime.getPerpetrator().getLocation()
+                    .getFaction(Constants.STATION_FACTION);
             if (crime.hasRoom() && crime.getRoom() == room.get() && crime.isOffenseAgainst(faction)) {
                 // the camera is active and the crime took place in our room, so we can report it
                 crime.report(faction);

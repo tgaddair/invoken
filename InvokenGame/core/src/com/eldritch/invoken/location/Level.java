@@ -48,6 +48,7 @@ import com.eldritch.invoken.actor.Profession;
 import com.eldritch.invoken.actor.ai.Squad;
 import com.eldritch.invoken.actor.aug.Action;
 import com.eldritch.invoken.actor.factions.Faction;
+import com.eldritch.invoken.actor.factions.Faction.FactionCache;
 import com.eldritch.invoken.actor.items.Fragment;
 import com.eldritch.invoken.actor.items.Icepik;
 import com.eldritch.invoken.actor.items.Item;
@@ -108,6 +109,7 @@ public class Level {
     private final Locations.Level data;
     private final LocationMap map;
     private final Territory[][] territory;
+    private final FactionCache factionCache = new FactionCache();
     private final CrimeManager crimeManager;
     private final PathManager pathManager;
     private final GameTransition state;
@@ -171,14 +173,10 @@ public class Level {
     private boolean combat = false;
 
     public Level(Locations.Level data, LocationMap map, GameTransition state, long seed) {
-        // reset some global state
-        // TODO: this should be hidden behind a FactionFactory owned by an individual level
-        Faction.resetAll();
-
         this.data = data;
         this.map = map;
         this.territory = new Territory[map.getWidth()][map.getHeight()];
-        this.crimeManager = new CrimeManager(map.getRooms());
+        this.crimeManager = new CrimeManager(this, map.getRooms());
         this.pathManager = new PathManager(map);
         this.state = state;
         this.seed = seed;
@@ -287,6 +285,14 @@ public class Level {
         return player;
     }
 
+    public Faction getFactionFor(Agent member, String id) {
+        return factionCache.forMember(member, id);
+    }
+
+    public Faction getFaction(String id) {
+        return factionCache.from(id);
+    }
+
     public Set<ConnectedRoom> getRooms() {
         return map.getRooms().getRooms();
     }
@@ -383,7 +389,10 @@ public class Level {
         Map<String, Territory> factionMap = new HashMap<>();
         for (Location location : locations) {
             for (Locations.Territory territory : location.getTerritoryList()) {
-                factionMap.put(territory.getFactionId(), new Territory(territory));
+                Optional<Faction> owningFaction = Optional
+                        .fromNullable(territory.hasFactionId() ? getFaction(territory
+                                .getFactionId()) : null);
+                factionMap.put(territory.getFactionId(), new Territory(owningFaction, territory));
             }
         }
 
@@ -1426,7 +1435,7 @@ public class Level {
         // 3 is the "standard" rank at which members of the same faction should
         // become allies
         // i.e. 30 rep
-        Faction playerFaction = Faction.of("_PlayerFaction");
+        Faction playerFaction = getFaction("_PlayerFaction");
         player.getInfo().addFaction(playerFaction, 3, 0);
 
         AgentInventory inv = player.getInfo().getInventory();

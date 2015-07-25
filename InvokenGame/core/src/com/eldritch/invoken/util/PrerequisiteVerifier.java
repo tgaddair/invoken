@@ -4,7 +4,6 @@ import java.util.List;
 
 import com.eldritch.invoken.actor.AgentInfo;
 import com.eldritch.invoken.actor.AgentInventory;
-import com.eldritch.invoken.actor.factions.Faction;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.proto.Disciplines.Discipline;
@@ -31,14 +30,14 @@ public abstract class PrerequisiteVerifier {
                 return verifyBetween(prereq, value);
             }
             case REP_BETWEEN: { // TARGET faction reputation between MIN and MAX
-                int value = info.getReputation(Faction.of(prereq.getTarget()));
+                int value = info.getReputation(level.getFaction(prereq.getTarget()));
                 return verifyBetween(prereq, value);
             }
             case RANK_BETWEEN: { // TARGET faction rank between MIN and MAX
-                if (!info.hasRank(Faction.of(prereq.getTarget()))) {
+                if (!info.hasRank(level.getFaction(prereq.getTarget()))) {
                     return verifyHas(prereq, false);
                 }
-                int value = info.getRank(Faction.of(prereq.getTarget()));
+                int value = info.getRank(level.getFaction(prereq.getTarget()));
                 return verifyBetween(prereq, value);
             }
             case LVL_BETWEEN: { // player level between MIN and MAX

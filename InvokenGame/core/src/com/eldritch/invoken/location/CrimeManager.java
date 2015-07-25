@@ -19,11 +19,12 @@ public class CrimeManager {
     private static float VANDALISM_SEVERITY = 5f;
     private static float THEFT_SEVERITY = 1f;
 
-    private final Faction stationFaction = Faction.of(Constants.STATION_FACTION);
+    private final Faction stationFaction;
     private final List<CrimeHandler> handlers = new ArrayList<>();
     private final ConnectedRoomManager rooms;
 
-    public CrimeManager(ConnectedRoomManager rooms) {
+    public CrimeManager(Level level, ConnectedRoomManager rooms) {
+        this.stationFaction = level.getFaction(Constants.STATION_FACTION);
         this.rooms = rooms;
     }
 

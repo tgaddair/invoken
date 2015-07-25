@@ -7,6 +7,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import com.eldritch.invoken.actor.type.Agent;
+import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.proto.Actors.ActorParams;
 
 public class FactionManager {
@@ -58,7 +59,8 @@ public class FactionManager {
     }
 
     public void addFaction(com.eldritch.invoken.proto.Actors.ActorParams.FactionStatus status) {
-        Faction faction = Faction.forMember(agent, status.getFactionId());
+        Level level = agent.getLocation();
+        Faction faction = level.getFactionFor(agent, status.getFactionId());
         addFaction(faction, status.getRank(), status.getReputation());
     }
 

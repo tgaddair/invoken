@@ -10,16 +10,16 @@ import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 
 public class Territory {
-    public static final Territory DEFAULT = new Territory(Locations.Territory.getDefaultInstance());
+    public static final Territory DEFAULT = new Territory(Optional.<Faction> absent(),
+            Locations.Territory.getDefaultInstance());
 
     private final Map<ConnectedRoom, Boolean> frontier = new HashMap<>();
     private final Optional<Faction> owningFaction;
     private final int minRank;
     private final Optional<String> credential;
 
-    public Territory(Locations.Territory proto) {
-        owningFaction = Optional.fromNullable(proto.hasFactionId() ? Faction.of(proto
-                .getFactionId()) : null);
+    public Territory(Optional<Faction> faction, Locations.Territory proto) {
+        owningFaction = faction;
         minRank = owningFaction.isPresent() ? proto.getMinRank() : 0;
         credential = !Strings.isNullOrEmpty(proto.getCredential()) ? Optional.of(proto
                 .getCredential()) : Optional.<String> absent();

@@ -8,7 +8,6 @@ import java.util.concurrent.ExecutionException;
 
 import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.actor.type.Agent;
-import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.proto.Factions;
 import com.eldritch.invoken.proto.Factions.Faction.Relation;
 import com.google.common.cache.CacheBuilder;
@@ -16,18 +15,6 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 
 public class Faction {
-    private static final LoadingCache<String, Faction> factionLoader = CacheBuilder.newBuilder()
-            .build(new CacheLoader<String, Faction>() {
-                public Faction load(String id) {
-                    Factions.Faction proto = InvokenGame.FACTION_READER.readAsset(id);
-                    Faction faction = new Faction(proto.getId(), proto.getName());
-                    for (Relation relation : proto.getRelationList()) {
-                        faction.addRelation(relation.getFactionId(), relation.getReaction());
-                    }
-                    return faction;
-                }
-            });
-
     private final String id;
     private final String name;
     private final Map<String, Integer> relations = new HashMap<String, Integer>();
@@ -101,23 +88,33 @@ public class Faction {
             return false;
         return true;
     }
-
-    public static Faction forMember(Agent member, String id) {
-        Faction faction = of(id);
-        faction.members.add(member);
-        return faction;
-    }
-
-    public static Faction of(String id) {
-        try {
-            return factionLoader.get(id);
-        } catch (ExecutionException ex) {
-            InvokenGame.error("Failed to load faction: " + id, ex);
-            return null;
-        }
-    }
     
-    public static void resetAll() {
-        factionLoader.invalidateAll();
+    public static class FactionCache {
+        private final LoadingCache<String, Faction> factionLoader = CacheBuilder.newBuilder()
+                .build(new CacheLoader<String, Faction>() {
+                    public Faction load(String id) {
+                        Factions.Faction proto = InvokenGame.FACTION_READER.readAsset(id);
+                        Faction faction = new Faction(proto.getId(), proto.getName());
+                        for (Relation relation : proto.getRelationList()) {
+                            faction.addRelation(relation.getFactionId(), relation.getReaction());
+                        }
+                        return faction;
+                    }
+                });
+        
+        public Faction forMember(Agent member, String id) {
+            Faction faction = from(id);
+            faction.members.add(member);
+            return faction;
+        }
+        
+        public Faction from(String id) {
+            try {
+                return factionLoader.get(id);
+            } catch (ExecutionException ex) {
+                InvokenGame.error("Failed to load faction: " + id, ex);
+                return null;
+            }
+        }
     }
 }

@@ -140,7 +140,7 @@ public class DoorActivator extends ClickActivator implements Crackable, Damageab
 
     private boolean hasCredentials() {
         for (Agent agent : getProximityAgents()) {
-            if (agent.getInfo().hasRank(Faction.of(Constants.STATION_FACTION))) {
+            if (agent.getInfo().hasRank(agent.getLocation().getFaction(Constants.STATION_FACTION))) {
                 // members of this faction can open all doors
                 return true;
             }
