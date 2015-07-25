@@ -20,7 +20,7 @@ public class LocationGraphPath extends DefaultGraphPath<LocationNode> implements
     @Override
     public Vector2 getNodePosition(int index) {
         LocationNode node = nodes.get(index);
-        return tmpPosition.set(node.position.x, node.position.y);
+        return tmpPosition.set(node.position.x + 0.5f, node.position.y + 0.5f);
     }
 
     @Override
