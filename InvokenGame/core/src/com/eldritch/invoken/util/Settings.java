@@ -49,7 +49,7 @@ public class Settings {
 	
 	// visuals
 	public static final boolean ENABLE_FOG = false;
-	public static final boolean ENABLE_FOW = true;
+	public static final boolean ENABLE_FOW = false;
 	public static final boolean ENABLE_BACKGROUND = true;
 	
 	// debug settings
@@ -60,7 +60,7 @@ public class Settings {
 	public static boolean DEBUG_COVER = false;
 	public static boolean DEBUG_PATHFINDING = false;
 	public static boolean DEBUG_STEALTH = false;
-	public static boolean DEBUG_TARGETING = false;
+	public static boolean DEBUG_TARGETING = true;
 	public static boolean DEBUG_STATS = true;
 	public static boolean DEBUG_MAP = false;
 	public static boolean DEBUG_CRITICAL_PATH = false;
