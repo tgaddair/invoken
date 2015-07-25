@@ -120,6 +120,7 @@ public class Automaton extends Npc {
 
     public static class Mech extends Automaton {
         private static final int PX = 64;
+        private static float MAX_VELOCITY = 2f;
 
         public Mech(NonPlayerActor data, float x, float y, String asset, Level level) {
             this(data, x, y, Settings.SCALE * PX, Settings.SCALE * PX, PX, asset, level);
