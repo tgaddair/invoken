@@ -43,6 +43,7 @@ public class NormalMapShader {
 
     // Ambient RGB and intensity (alpha)
     public static final Vector3 AMBIENT_COLOR = new Vector3(0.6f, 0.6f, 1f);
+    public static final Vector3 LOCKDOWN_COLOR = new Vector3(0.77f, 0.12f, 0.23f);
 
     // Attenuation coefficients for light falloff
     // the greater the falloff, the lower the dispersion of light
