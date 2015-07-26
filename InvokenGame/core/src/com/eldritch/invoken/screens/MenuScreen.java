@@ -94,6 +94,16 @@ public class MenuScreen extends AbstractScreen {
         });
         table.add(optionsButton).size(300, 60).uniform().spaceBottom(10);
         table.row();
+        
+        TextButton exitButton = new TextButton("Exit", getSkin());
+        exitButton.addListener(new DefaultInputListener() {
+            @Override
+            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                Gdx.app.exit();
+            }
+        });
+        table.add(exitButton).size(300, 60).uniform().spaceBottom(10);
+        table.row();
 
         // setup background world
         // location = null;

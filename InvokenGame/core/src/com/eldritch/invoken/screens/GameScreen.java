@@ -48,6 +48,7 @@ import com.eldritch.invoken.ui.HealthBar;
 import com.eldritch.invoken.ui.HudElement;
 import com.eldritch.invoken.ui.InventoryMenu;
 import com.eldritch.invoken.ui.LootMenu;
+import com.eldritch.invoken.ui.MainMenu;
 import com.eldritch.invoken.ui.Minimap;
 import com.eldritch.invoken.ui.ResearchMenu;
 import com.eldritch.invoken.ui.StatusBar;
@@ -89,6 +90,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
     private ActionBar actionBar;
     private InventoryMenu inventoryMenu;
     private CharacterMenu characterMenu;
+    private MainMenu mainMenu;
 
     private Table statusTable;
     // private StatusBar<Agent> playerHealth;
@@ -249,6 +251,9 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         
         characterMenu = new CharacterMenu(player, skin);
         hud.add(characterMenu);
+        
+        mainMenu = new MainMenu(player, skin);
+        hud.add(mainMenu);
 
         statusTable = new Table(skin);
         statusTable.setHeight(Settings.MENU_VIEWPORT_HEIGHT / 2);
@@ -626,6 +631,9 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
                 return true;
             case Keys.TAB:
                 showMinimap = false;
+                return true;
+            case Keys.ESCAPE:
+                mainMenu.toggle();
                 return true;
             case Keys.BACKSPACE:
 //                if (tacticalPause) {
