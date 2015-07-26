@@ -6,11 +6,13 @@ import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.actor.type.Player;
 import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.screens.GameScreen;
 import com.eldritch.invoken.util.DefaultInputListener;
 import com.eldritch.invoken.util.Settings;
+import com.eldritch.invoken.util.SoundManager.SoundEffect;
 
 public class MainMenu implements HudElement {
     private final Table container;
@@ -36,6 +38,7 @@ public class MainMenu implements HudElement {
         continueButton.addListener(new DefaultInputListener() {
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                InvokenGame.SOUND_MANAGER.play(SoundEffect.CLICK);
                 show(false);
             }
         });
@@ -44,6 +47,7 @@ public class MainMenu implements HudElement {
         exitButton.addListener(new DefaultInputListener() {
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                InvokenGame.SOUND_MANAGER.play(SoundEffect.CLICK);
                 GameScreen.save(player.getLocation());
                 Gdx.app.exit();
             }

@@ -24,6 +24,7 @@ import com.eldritch.invoken.util.GameTransition.GameState;
 import com.eldritch.invoken.util.GameTransition.GameTransitionHandler;
 import com.eldritch.invoken.util.MusicManager.MusicTrack;
 import com.eldritch.invoken.util.SoundManager;
+import com.eldritch.invoken.util.SoundManager.SoundEffect;
 
 public class MenuScreen extends AbstractScreen {
     private final GameTransitionHandler dummyHandler = new GameTransitionHandler() {
@@ -62,7 +63,7 @@ public class MenuScreen extends AbstractScreen {
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 super.touchUp(event, x, y, pointer, button);
-                // game.getSoundManager().play(TyrianSound.CLICK);
+                InvokenGame.SOUND_MANAGER.play(SoundEffect.CLICK);
                 game.setScreen(new CharacterCreationScreen(game, level, camera));
             }
         });
@@ -75,7 +76,7 @@ public class MenuScreen extends AbstractScreen {
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 super.touchUp(event, x, y, pointer, button);
-                // game.getSoundManager().play(TyrianSound.CLICK);
+                InvokenGame.SOUND_MANAGER.play(SoundEffect.CLICK);
                 game.setScreen(new GameScreen(game, Profession.getDefault(), "Tutorial"));
             }
         });
@@ -88,17 +89,18 @@ public class MenuScreen extends AbstractScreen {
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 super.touchUp(event, x, y, pointer, button);
-                // game.getSoundManager().play(TyrianSound.CLICK);
+                InvokenGame.SOUND_MANAGER.play(SoundEffect.CLICK);
                 game.setScreen(new CreditsScreen(game, level, camera));
             }
         });
         table.add(optionsButton).size(300, 60).uniform().spaceBottom(10);
         table.row();
-        
+
         TextButton exitButton = new TextButton("Exit", getSkin());
         exitButton.addListener(new DefaultInputListener() {
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                InvokenGame.SOUND_MANAGER.play(SoundEffect.CLICK);
                 Gdx.app.exit();
             }
         });

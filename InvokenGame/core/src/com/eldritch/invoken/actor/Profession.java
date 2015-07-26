@@ -410,7 +410,7 @@ public enum Profession {
 	
 	public TextureRegionDrawable getPortrait() {
         TextureRegion region = Human.getDefaultAnimations()
-                .get(Activity.Explore).get(Direction.Right).getKeyFrame(0);
+                .get(Activity.Idle).get(Direction.Right).getKeyFrame(0);
         Outfit outfit = getDefaultOutfit();
         TextureRegion outfitRegion = outfit.getPortrait();
         if (outfit.covers()) {
