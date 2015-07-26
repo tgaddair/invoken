@@ -28,6 +28,7 @@ import com.eldritch.invoken.proto.Locations.Room;
 import com.eldritch.invoken.proto.Locations.Room.Size;
 import com.eldritch.invoken.proto.Locations.Territory;
 import com.eldritch.invoken.util.Pair;
+import com.eldritch.invoken.util.Settings;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
@@ -762,11 +763,21 @@ public class RoomGenerator extends BspGenerator {
         }
 
         private boolean matchesRoom(Encounter encounter, Room room) {
+            if (Settings.DEBUG_ENCOUNTER) {
+                // debugging a specific encounter, so make sure it is spawned somewhere
+                return true;
+            }
+            
             int agentCount = 0;
             for (ActorScenario scenario : encounter.getActorParams().getActorScenarioList()) {
                 agentCount += scenario.getMin();
             }
-
+            
+            if (agentCount == 0) {
+                // any room can contain an empty encounter
+                return true;
+            }
+            
 //            if (agentCount > 3) {
 //                return room.getSize() == Size.LARGE;
 //            } else if (agentCount > 1) {

@@ -138,7 +138,9 @@ public class DoorActivator extends ClickActivator implements Crackable, Damageab
 
     private boolean hasCredentials() {
         for (Agent agent : getProximityAgents()) {
-            if (agent.getInfo().hasRank(agent.getLocation().getFaction(Constants.STATION_FACTION))) {
+            if (lock.canUnlock(agent)
+                    || agent.getInfo().hasRank(
+                            agent.getLocation().getFaction(Constants.STATION_FACTION))) {
                 // members of this faction can open all doors
                 return true;
             }
@@ -331,7 +333,7 @@ public class DoorActivator extends ClickActivator implements Crackable, Damageab
             healthBar.draw(level.getCamera());
         }
     }
-    
+
     @Override
     protected void postRender(float delta, OrthogonalTiledMapRenderer renderer) {
         // do this to draw the indicator, which is otherwise hidden for some reason

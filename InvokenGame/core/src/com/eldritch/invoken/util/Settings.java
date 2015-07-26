@@ -58,15 +58,17 @@ public class Settings {
 	public static boolean DEBUG_CLICKS = false;
 	public static boolean DEBUG_LIGHTS = false;
 	public static boolean DEBUG_COVER = false;
-	public static boolean DEBUG_PATHFINDING = true;
+	public static boolean DEBUG_PATHFINDING = false;
 	public static boolean DEBUG_STEALTH = false;
 	public static boolean DEBUG_TARGETING = false;
 	public static boolean DEBUG_STATS = true;
 	public static boolean DEBUG_MAP = false;
 	public static boolean DEBUG_CRITICAL_PATH = false;
+	public static boolean DEBUG_ENCOUNTER = true;
+	
 	public static boolean SKIP_MENU = true;
 	public static int START_LEVEL = 1;  // 1, 10, 25
-	public static int START_FLOOR = 0;
+	public static int START_FLOOR = 3;  // 0
 	public static Profession DEFAULT_PROFESSION = Profession.Centurion;
 	
 	// string constants

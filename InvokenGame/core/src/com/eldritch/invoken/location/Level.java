@@ -80,7 +80,6 @@ import com.eldritch.invoken.location.layer.LocationMap;
 import com.eldritch.invoken.location.proc.LocationGenerator;
 import com.eldritch.invoken.proto.Actors.PlayerActor;
 import com.eldritch.invoken.proto.Locations;
-import com.eldritch.invoken.proto.Locations.Encounter.ActorParams.ActorScenario;
 import com.eldritch.invoken.proto.Locations.Location;
 import com.eldritch.invoken.ui.AgentStatusRenderer;
 import com.eldritch.invoken.ui.DebugEntityRenderer;
@@ -1342,17 +1341,9 @@ public class Level {
         for (EncounterDescription encounter : map.getEncounters()) {
             // create NPCs
             for (AgentDescription agent : encounter.getAgents()) {
-                ActorScenario scenario = agent.getScenario();
-                Npc npc = createTestNpc(agent.getPosition(), scenario.getActorId());
+                Npc npc = agent.create(this);
                 addAgent(npc);
                 npcs.add(npc);
-
-                if (agent.hasRoom()) {
-                    // give the NPC the key
-                    ConnectedRoom room = agent.getRoom();
-                    npc.getInventory().addItem(room.getKey());
-                    room.addResident(npc);
-                }
             }
 
             // create squads
