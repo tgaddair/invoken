@@ -39,6 +39,7 @@ import com.eldritch.invoken.proto.Actors.PlayerActor;
 import com.eldritch.invoken.proto.Effects.DamageType;
 import com.eldritch.invoken.proto.Locations.Biome;
 import com.eldritch.invoken.ui.ActionBar;
+import com.eldritch.invoken.ui.CharacterMenu;
 import com.eldritch.invoken.ui.ConsumableBar;
 import com.eldritch.invoken.ui.DesireMenu;
 import com.eldritch.invoken.ui.DialogueMenu;
@@ -87,6 +88,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
                                           // containing play info
     private ActionBar actionBar;
     private InventoryMenu inventoryMenu;
+    private CharacterMenu characterMenu;
 
     private Table statusTable;
     // private StatusBar<Agent> playerHealth;
@@ -244,6 +246,9 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         hud.add(new StoreMenu(player, skin));
         hud.add(new DesireMenu(player, skin));
         hud.add(new ConsumableBar(player, skin));
+        
+        characterMenu = new CharacterMenu(player, skin);
+        hud.add(characterMenu);
 
         statusTable = new Table(skin);
         statusTable.setHeight(Settings.MENU_VIEWPORT_HEIGHT / 2);
@@ -603,6 +608,10 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
             case Keys.I:
                 inventoryMenu.toggle();
                 return true;
+            case Keys.P:
+                printPlayerStatus();
+                characterMenu.toggle();
+                return true;
             case Keys.F:
                 player.toggleLastAugmentation();
                 return true;
@@ -630,9 +639,6 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
                 return true;
 
                 // debug
-            case Keys.P:
-                printPlayerStatus();
-                return true;
             case Keys.SPACE:
                 // tacticalPause = !tacticalPause;
                 // return true;
