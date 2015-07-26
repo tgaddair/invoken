@@ -1,7 +1,9 @@
 package com.eldritch.invoken.actor.type;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.Random;
 import java.util.Set;
@@ -491,12 +493,7 @@ public class Player extends SteeringAgent {
 
     public static PlayerActor load(String id) {
         FileHandle handle = Gdx.files.local("saves/" + id + ".dat");
-        try {
-            return PlayerActor.parseFrom(handle.readBytes());
-        } catch (Exception ex) {
-            InvokenGame.error("Failed reading " + handle.name(), ex);
-            return null;
-        }
+        return load(handle);
     }
 
     public static void save(Player player, Optional<PlayerActor> previous) {
@@ -531,6 +528,29 @@ public class Player extends SteeringAgent {
             handle.writeBytes(data.toByteArray(), append);
         } catch (Exception ex) {
             InvokenGame.error("Failed writing " + handle.name(), ex);
+        }
+    }
+
+    public static List<PlayerActor> readSaves() {
+        List<PlayerActor> results = new ArrayList<>();
+        
+        FileHandle root = Gdx.files.local("saves/");
+        FileHandle[] newHandles = root.list();
+        for (FileHandle saveHandle : newHandles) {
+            if (!saveHandle.isDirectory()) {
+                results.add(load(saveHandle));
+            }
+        }
+        
+        return results;
+    }
+    
+    private static PlayerActor load(FileHandle saveHandle) {
+        try {
+            return PlayerActor.parseFrom(saveHandle.readBytes());
+        } catch (Exception ex) {
+            InvokenGame.error("Failed reading " + saveHandle.name(), ex);
+            return null;
         }
     }
 }

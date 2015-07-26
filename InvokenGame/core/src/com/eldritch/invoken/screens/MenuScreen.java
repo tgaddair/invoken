@@ -10,10 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.utils.async.AsyncExecutor;
-import com.badlogic.gdx.utils.async.AsyncResult;
 import com.eldritch.invoken.InvokenGame;
-import com.eldritch.invoken.actor.Profession;
 import com.eldritch.invoken.actor.type.Player;
 import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.location.proc.LocationGenerator;
@@ -35,8 +32,8 @@ public class MenuScreen extends AbstractScreen {
     private OrthographicCamera camera;
     private Level level;
 
-    private final AsyncExecutor executor = new AsyncExecutor(1);
-    private AsyncResult<Level> locationFuture;
+    // private final AsyncExecutor executor = new AsyncExecutor(1);
+    // private AsyncResult<Level> locationFuture;
 
     public MenuScreen(InvokenGame game) {
         super(game);
@@ -70,18 +67,31 @@ public class MenuScreen extends AbstractScreen {
         table.add(startGameButton).size(300, 60).uniform().spaceBottom(10);
         table.row();
 
+        // register the button "load game"
+        TextButton loadGameButton = new TextButton("Load Game", getSkin());
+        loadGameButton.addListener(new DefaultInputListener() {
+            @Override
+            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                super.touchUp(event, x, y, pointer, button);
+                InvokenGame.SOUND_MANAGER.play(SoundEffect.CLICK);
+                game.setScreen(new LoadGameScreen(game, level, camera));
+            }
+        });
+        table.add(loadGameButton).size(300, 60).uniform().spaceBottom(10);
+        table.row();
+
         // register the button "tutorial"
-//        TextButton tutorialButton = new TextButton("Tutorial", getSkin());
-//        tutorialButton.addListener(new DefaultInputListener() {
-//            @Override
-//            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-//                super.touchUp(event, x, y, pointer, button);
-//                InvokenGame.SOUND_MANAGER.play(SoundEffect.CLICK);
-//                game.setScreen(new GameScreen(game, Profession.getDefault(), "Tutorial"));
-//            }
-//        });
-//        table.add(tutorialButton).size(300, 60).uniform().spaceBottom(10);
-//        table.row();
+        // TextButton tutorialButton = new TextButton("Tutorial", getSkin());
+        // tutorialButton.addListener(new DefaultInputListener() {
+        // @Override
+        // public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+        // super.touchUp(event, x, y, pointer, button);
+        // InvokenGame.SOUND_MANAGER.play(SoundEffect.CLICK);
+        // game.setScreen(new GameScreen(game, Profession.getDefault(), "Tutorial"));
+        // }
+        // });
+        // table.add(tutorialButton).size(300, 60).uniform().spaceBottom(10);
+        // table.row();
 
         // register the button "options"
         TextButton optionsButton = new TextButton("Credits", getSkin());
