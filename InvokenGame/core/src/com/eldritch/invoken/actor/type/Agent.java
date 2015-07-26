@@ -2221,6 +2221,10 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
                 weapon.render(position, direction, renderer);
             }
         }
+        
+        @Override
+        public void renderOverlay(float delta, OrthogonalTiledMapRenderer renderer) {
+        }
 
         @Override
         public float getZ() {

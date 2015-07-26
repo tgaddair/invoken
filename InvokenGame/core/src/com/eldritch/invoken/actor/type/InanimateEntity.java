@@ -103,6 +103,10 @@ public abstract class InanimateEntity extends CollisionEntity implements Drawabl
         }
         batch.end();
     }
+    
+    @Override
+    public void renderOverlay(float delta, OrthogonalTiledMapRenderer renderer) {
+    }
 
     @Override
     public Vector2 getPosition() {

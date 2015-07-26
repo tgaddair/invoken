@@ -50,6 +50,10 @@ public class AnimatedEntity implements TemporaryEntity {
                 width, height);
         batch.end();
     }
+    
+    @Override
+    public void renderOverlay(float delta, OrthogonalTiledMapRenderer renderer) {
+    }
 
     @Override
     public float getZ() {

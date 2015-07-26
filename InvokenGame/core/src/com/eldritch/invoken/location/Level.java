@@ -893,6 +893,11 @@ public class Level {
             AgentStatusRenderer.render(agent, player, renderer);
         }
         renderer.getBatch().end();
+        
+        // draw additional overlays
+        for (Drawable drawable : drawables) {
+            drawable.renderOverlay(delta, renderer);
+        }
 
         if (Settings.DEBUG_DRAW) {
             // draw NPC debug rays

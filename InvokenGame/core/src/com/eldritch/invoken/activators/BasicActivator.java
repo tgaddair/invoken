@@ -37,6 +37,10 @@ public abstract class BasicActivator extends BasicLocatable implements Activator
     }
     
     @Override
+    public void renderOverlay(float delta, OrthogonalTiledMapRenderer renderer) {
+    }
+    
+    @Override
     public float getZ() {
         return position.y;
     }

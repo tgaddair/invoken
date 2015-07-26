@@ -83,12 +83,16 @@ public abstract class ProximityActivator extends BasicActivator {
     @Override
     public final void render(float delta, OrthogonalTiledMapRenderer renderer) {
         preRender(delta, renderer);
-        if (indicator.isPresent()) {
-            indicator.get().render(delta, renderer, this);
-        }
     }
     
     protected void preRender(float delta, OrthogonalTiledMapRenderer renderer) {
+    }
+    
+    @Override
+    public void renderOverlay(float delta, OrthogonalTiledMapRenderer renderer) {
+        if (indicator.isPresent()) {
+            indicator.get().render(delta, renderer, this);
+        }
     }
 
     @Override

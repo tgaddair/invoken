@@ -362,6 +362,10 @@ public abstract class RangedWeapon extends Item {
                 successor.render(delta, renderer);
             }
         }
+        
+        @Override
+        public void renderOverlay(float delta, OrthogonalTiledMapRenderer renderer) {
+        }
 
         @Override
         public float getZ() {

@@ -41,6 +41,10 @@ public class Splash implements TemporaryEntity {
         batch.setColor(1, 1, 1, 1);
         batch.end();
     }
+    
+    @Override
+    public void renderOverlay(float delta, OrthogonalTiledMapRenderer renderer) {
+    }
 
     @Override
     public float getZ() {

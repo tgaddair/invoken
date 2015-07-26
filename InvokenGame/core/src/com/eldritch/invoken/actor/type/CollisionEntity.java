@@ -1,5 +1,6 @@
 package com.eldritch.invoken.actor.type;
 
+import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.eldritch.invoken.actor.Entity;
@@ -39,6 +40,10 @@ public abstract class CollisionEntity extends BasicLocatable implements Entity {
             }
         }
         return agents;
+    }
+
+    @Override
+    public void renderOverlay(float delta, OrthogonalTiledMapRenderer renderer) {
     }
     
     @Override

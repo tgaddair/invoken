@@ -180,6 +180,10 @@ public class Ping extends SelfAugmentation {
                     direction.angle());
             batch.end();  
         }
+        
+        @Override
+        public void renderOverlay(float delta, OrthogonalTiledMapRenderer renderer) {
+        }
 
         @Override
         public float getZ() {

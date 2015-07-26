@@ -86,6 +86,10 @@ public class Detonation implements TemporaryEntity {
         batch.end();
     }
     
+    @Override
+    public void renderOverlay(float delta, OrthogonalTiledMapRenderer renderer) {
+    }
+    
     public float getProgress() {
         return elapsed / explosion.getAnimationDuration();
     }
