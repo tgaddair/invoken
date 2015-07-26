@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Fixture;
+import com.eldritch.invoken.actor.ai.TacticsManager.Waypoint;
 import com.eldritch.invoken.actor.pathfinding.LocationGraphPath;
 import com.eldritch.invoken.actor.pathfinding.LocationNode;
 import com.eldritch.invoken.actor.pathfinding.PathManager;
@@ -124,6 +125,11 @@ public abstract class NavigatedSteerable implements Locatable {
     @Override
     public Iterable<Fixture> getFixtures() {
         return ImmutableList.of();
+    }
+    
+    public void locateWaypoint(Waypoint target) {
+        // only invalidate the path if the target was updated this cycle
+        setPosition(target, target.wasUpdated());
     }
 
     public void locate(Locatable target) {

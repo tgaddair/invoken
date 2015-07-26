@@ -3,9 +3,9 @@ package com.eldritch.invoken.actor.ai.btree;
 import com.badlogic.gdx.ai.btree.branch.Selector;
 import com.badlogic.gdx.ai.btree.branch.Sequence;
 import com.badlogic.gdx.ai.btree.decorator.AlwaysFail;
+import com.eldritch.invoken.actor.ai.TacticsManager.Waypoint;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Npc;
-import com.eldritch.invoken.actor.util.Locatable;
 import com.eldritch.invoken.util.GenericDialogue;
 
 public class Investigate extends Sequence<Npc> {
@@ -57,17 +57,14 @@ public class Investigate extends Sequence<Npc> {
     private static class Locate extends SuccessTask {
         @Override
         protected void doFor(Npc npc) {
-            Locatable waypoint = npc.getTactics().getWaypoint(Investigate.class);
-            npc.locate(waypoint);
-            System.out.println("waypoint: " + waypoint.getPosition());
-            System.out.println("last seen: " + npc.getLastSeen().getPosition());
+            Waypoint waypoint = npc.getTactics().getWaypoint(Investigate.class);
+            npc.getLastSeen().locateWaypoint(waypoint);
         }
     }
 
     private static class CanPursue extends BooleanTask {
         @Override
         protected boolean check(Npc npc) {
-            System.out.println("can pursue: " + npc.getPosition() + " -> " + npc.getLastSeen().getPosition());
             return npc.dst2(npc.getLastSeen()) > RANGE2;
         }
     }

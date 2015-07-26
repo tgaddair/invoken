@@ -8,7 +8,6 @@ import com.eldritch.invoken.actor.aug.Augmentation;
 import com.eldritch.invoken.actor.aug.Augmentation.Target;
 import com.eldritch.invoken.actor.type.BasicLocatable;
 import com.eldritch.invoken.actor.type.Npc;
-import com.eldritch.invoken.actor.util.Locatable;
 
 public class TacticsManager {
     private final Map<Class<?>, Waypoint> waypoints = new HashMap<>();
@@ -21,6 +20,9 @@ public class TacticsManager {
     }
     
     public void update(float delta) {
+        for (Waypoint waypoint : waypoints.values()) {
+            waypoint.setUpdated(false);
+        }
     }
     
     public void setChosen(Augmentation chosen) {
@@ -45,9 +47,7 @@ public class TacticsManager {
     
     public void setWaypoint(Class<?> key, Vector2 point) {
         if (waypoints.containsKey(key)) {
-            Waypoint waypoint = waypoints.get(key); 
-            waypoint.setPosition(point);
-            waypoint.setActive(true);
+            waypoints.get(key).reset(point);
         } else {
             waypoints.put(key, new Waypoint(point));
         }
@@ -61,7 +61,7 @@ public class TacticsManager {
         return waypoints.containsKey(key) && waypoints.get(key).isActive();
     }
     
-    public Locatable getWaypoint(Class<?> key) {
+    public Waypoint getWaypoint(Class<?> key) {
         return waypoints.get(key);
     }
     
@@ -71,10 +71,20 @@ public class TacticsManager {
      * waypoints.
      */
     public static class Waypoint extends BasicLocatable {
+        // should we allow navigation to this point?
         private boolean active = true;
+        
+        // was this point just updated this cycle?
+        private boolean updated = false;
         
         public Waypoint(Vector2 point) {
             super(point);
+        }
+        
+        public void reset(Vector2 point) {
+            setPosition(point);
+            active = true;
+            updated = true;
         }
         
         public void setActive(boolean value) {
@@ -83,6 +93,14 @@ public class TacticsManager {
         
         public boolean isActive() {
             return active;
+        }
+        
+        public boolean wasUpdated() {
+            return updated;
+        }
+        
+        private void setUpdated(boolean value) {
+            this.updated = value;
         }
     }
 }
