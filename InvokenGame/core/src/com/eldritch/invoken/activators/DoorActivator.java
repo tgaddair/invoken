@@ -26,7 +26,6 @@ import com.eldritch.invoken.actor.util.Damageable;
 import com.eldritch.invoken.gfx.Light;
 import com.eldritch.invoken.gfx.Light.StaticLight;
 import com.eldritch.invoken.location.Level;
-import com.eldritch.invoken.location.NaturalVector2;
 import com.eldritch.invoken.screens.GameScreen;
 import com.eldritch.invoken.ui.HealthBar;
 import com.eldritch.invoken.util.Constants;
@@ -331,6 +330,13 @@ public class DoorActivator extends ClickActivator implements Crackable, Damageab
             healthBar.update(this);
             healthBar.draw(level.getCamera());
         }
+    }
+    
+    @Override
+    protected void postRender(float delta, OrthogonalTiledMapRenderer renderer) {
+        // do this to draw the indicator, which is otherwise hidden for some reason
+        // TODO: figure out why
+        renderOverlay(delta, renderer);
     }
 
     @Override

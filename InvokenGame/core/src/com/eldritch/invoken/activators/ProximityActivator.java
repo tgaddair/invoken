@@ -83,9 +83,13 @@ public abstract class ProximityActivator extends BasicActivator {
     @Override
     public final void render(float delta, OrthogonalTiledMapRenderer renderer) {
         preRender(delta, renderer);
+        postRender(delta, renderer);
     }
     
     protected void preRender(float delta, OrthogonalTiledMapRenderer renderer) {
+    }
+    
+    protected void postRender(float delta, OrthogonalTiledMapRenderer renderer) {
     }
     
     @Override
