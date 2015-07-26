@@ -24,29 +24,30 @@ import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
-import com.eldritch.scifirpg.editor.AssetTablePanel;
-import com.eldritch.scifirpg.editor.MainPanel;
-import com.eldritch.scifirpg.editor.tables.AssetPointerTable;
-import com.eldritch.scifirpg.editor.tables.AssetTable;
-import com.eldritch.scifirpg.editor.tables.DialogueTable;
-import com.eldritch.scifirpg.editor.tables.EncounterTable;
-import com.eldritch.scifirpg.editor.tables.OutcomeTable;
-import com.eldritch.scifirpg.editor.tables.OutcomeTable.EncounterOutcomeTable;
-import com.eldritch.scifirpg.editor.tables.RoomTable.FurnitureTable;
-import com.eldritch.scifirpg.editor.tables.PrerequisiteTable;
 import com.eldritch.invoken.proto.Actors.NonPlayerActor;
+import com.eldritch.invoken.proto.Locations.DesireProto;
 import com.eldritch.invoken.proto.Locations.Encounter;
-import com.eldritch.invoken.proto.Locations.Furniture;
-import com.eldritch.invoken.proto.Locations.Location;
 import com.eldritch.invoken.proto.Locations.Encounter.ActorParams;
 import com.eldritch.invoken.proto.Locations.Encounter.ActorParams.ActorScenario;
 import com.eldritch.invoken.proto.Locations.Encounter.RegionParams;
 import com.eldritch.invoken.proto.Locations.Encounter.RegionParams.Cell;
 import com.eldritch.invoken.proto.Locations.Encounter.StaticParams;
 import com.eldritch.invoken.proto.Locations.Encounter.Type;
+import com.eldritch.invoken.proto.Locations.Furniture;
+import com.eldritch.invoken.proto.Locations.Location;
 import com.eldritch.invoken.proto.Locations.Room;
 import com.eldritch.invoken.proto.Outcomes.Outcome;
 import com.eldritch.invoken.proto.Prerequisites.Prerequisite;
+import com.eldritch.scifirpg.editor.AssetTablePanel;
+import com.eldritch.scifirpg.editor.MainPanel;
+import com.eldritch.scifirpg.editor.tables.AssetPointerTable;
+import com.eldritch.scifirpg.editor.tables.AssetTable;
+import com.eldritch.scifirpg.editor.tables.DesireTable;
+import com.eldritch.scifirpg.editor.tables.EncounterTable;
+import com.eldritch.scifirpg.editor.tables.OutcomeTable;
+import com.eldritch.scifirpg.editor.tables.OutcomeTable.EncounterOutcomeTable;
+import com.eldritch.scifirpg.editor.tables.PrerequisiteTable;
+import com.eldritch.scifirpg.editor.tables.RoomTable.FurnitureTable;
 import com.google.common.base.Optional;
 import com.google.protobuf.Message;
 import com.jgoodies.forms.builder.DefaultFormBuilder;
@@ -147,7 +148,7 @@ public class EncounterEditorPanel extends AssetEditorPanel<Encounter, EncounterT
         builder.appendRow("fill:80dlu");
         builder.append("Rooms:", new AssetTablePanel(roomTable));
         builder.nextLine();
-        
+
         builder.appendRow("fill:80dlu");
         builder.append("Furniture:", new AssetTablePanel(furnitureTable));
         builder.nextLine();
@@ -222,8 +223,7 @@ public class EncounterEditorPanel extends AssetEditorPanel<Encounter, EncounterT
                 .setTitle(titleField.getText()).setType(Type.ACTOR)
                 .setWeight(Double.parseDouble(weightField.getText()))
                 .setUnique(uniqueCheck.isSelected()).addAllPrereq(prereqTable.getAssets())
-                .addAllRoomId(roomTable.getAssetIds())
-                .addAllFurniture(furnitureTable.getAssets())
+                .addAllRoomId(roomTable.getAssetIds()).addAllFurniture(furnitureTable.getAssets())
                 .setFactionId((String) factionBox.getSelectedItem())
                 .setActorParams(actorPanel.getParams())
                 .setMinLevel(Integer.parseInt(minLevelField.getText()));
@@ -543,7 +543,7 @@ public class EncounterEditorPanel extends AssetEditorPanel<Encounter, EncounterT
         private final JTextField maxField = new JTextField();
         private final OutcomeTable outcomeTable = new EncounterOutcomeTable(
                 EncounterEditorPanel.this.getTable());
-        private final DialogueTable dialogueTable = new DialogueTable();
+        private final DesireTable desireTable = new DesireTable();
 
         public ActorScenarioPanel(ActorScenarioTable table, JFrame frame,
                 Optional<ActorScenario> prev) {
@@ -590,7 +590,7 @@ public class EncounterEditorPanel extends AssetEditorPanel<Encounter, EncounterT
             builder.nextLine();
 
             builder.appendRow("fill:200dlu:grow");
-            builder.append("Dialogue:", new AssetTablePanel(dialogueTable));
+            builder.append("Desires:", new AssetTablePanel(desireTable));
             builder.nextLine();
 
             JButton saveButton = new JButton("Save");
@@ -609,8 +609,8 @@ public class EncounterEditorPanel extends AssetEditorPanel<Encounter, EncounterT
                 for (Outcome o : scenario.getOnDeathList()) {
                     outcomeTable.addAsset(o);
                 }
-                if (scenario.hasDialogue()) {
-                    dialogueTable.addAsset(scenario.getDialogue());
+                for (DesireProto desire : scenario.getDesireList()) {
+                    desireTable.addAsset(desire);
                 }
             }
 
@@ -623,15 +623,12 @@ public class EncounterEditorPanel extends AssetEditorPanel<Encounter, EncounterT
             ActorScenario.Builder as = ActorScenario.newBuilder().setActorId(id)
                     .setEssential(essentialCheck.isSelected())
                     .setBlocking(blockingCheck.isSelected()).setAlive(aliveCheck.isSelected())
-                    .addAllOnDeath(outcomeTable.getAssets());
+                    .addAllDesire(desireTable.getAssets()).addAllOnDeath(outcomeTable.getAssets());
             if (!minField.getText().isEmpty()) {
                 as.setMin(Integer.parseInt(minField.getText()));
             }
             if (!maxField.getText().isEmpty()) {
                 as.setMax(Integer.parseInt(maxField.getText()));
-            }
-            if (!dialogueTable.getAssets().isEmpty()) {
-                as.setDialogue(dialogueTable.getAsset());
             }
             return as.build();
         }

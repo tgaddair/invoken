@@ -122,6 +122,13 @@ message Light {
 	optional float intensity = 4;
 }
 
+enum DesireProto {
+	Patrol = 0;
+	Follow = 1;
+	Meander = 2;
+	Hunt = 3;
+}
+
 message Encounter {
 	enum Type {
 		STATIC = 0;
@@ -154,6 +161,8 @@ message Encounter {
 
 			// Override dialogue from base actor if present and passes prereqs
 			optional DialogueTree dialogue = 3;
+
+			repeated DesireProto desire = 9;
 
 			// This encounter cannot occur without this actor
 			optional bool essential = 4 [default = false];
