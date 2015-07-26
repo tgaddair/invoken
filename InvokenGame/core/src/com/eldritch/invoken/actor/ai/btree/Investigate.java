@@ -13,7 +13,6 @@ public class Investigate extends Sequence<Npc> {
     private static final float RANGE2 = 3f * 3f;
     
     public Investigate() {
-        addChild(new SetLastTask("Maybe Investigate?"));
         addChild(new IsSuspicious());
         addChild(new Locate());
         addChild(new SetLastTask("Investigate"));
@@ -25,11 +24,8 @@ public class Investigate extends Sequence<Npc> {
 
         // first we pursue the source of the suspicion
         Sequence<Npc> pursueSequence = new Sequence<>();
-        pursueSequence.addChild(new SetLastTask("Can Pursue?"));
         pursueSequence.addChild(new CanPursue());
-        pursueSequence.addChild(new SetLastTask("Investigate Pursue"));
         pursueSequence.addChild(new Pursue());
-        pursueSequence.addChild(new SetLastTask("Done"));
 
         // then we confront the instigator
         Sequence<Npc> confrontSequence = new Sequence<>();
@@ -66,13 +62,6 @@ public class Investigate extends Sequence<Npc> {
         @Override
         protected boolean check(Npc npc) {
             return npc.dst2(npc.getLastSeen()) > RANGE2;
-        }
-    }
-    
-    private static class RemoveWaypoint extends SuccessTask {
-        @Override
-        protected void doFor(Npc npc) {
-            npc.getTactics().removeWaypoint(Investigate.class);
         }
     }
 
@@ -127,6 +116,7 @@ public class Investigate extends Sequence<Npc> {
         @Override
         protected void doFor(Npc npc) {
             npc.setTarget(null);
+            npc.getTactics().removeWaypoint(Investigate.class);
         }
     }
 }
