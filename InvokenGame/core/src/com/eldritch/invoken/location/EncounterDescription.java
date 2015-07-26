@@ -53,7 +53,7 @@ public class EncounterDescription {
             float y = position.y + 0.5f;
             NonPlayerActor proto = InvokenGame.ACTOR_READER.readAsset(scenario.getActorId());
             
-            Npc npc = Npc.create(proto, x, y, level);
+            Npc npc = Npc.create(proto, Optional.of(scenario), x, y, level);
             if (hasRoom()) {
                 // give the NPC the key
                 ConnectedRoom room = getRoom();

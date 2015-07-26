@@ -3,12 +3,14 @@ package com.eldritch.invoken.actor.type;
 import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.proto.Actors.NonPlayerActor;
 import com.eldritch.invoken.proto.Effects.DamageType;
+import com.eldritch.invoken.proto.Locations.Encounter.ActorParams.ActorScenario;
 import com.eldritch.invoken.util.SoundManager.SoundEffect;
+import com.google.common.base.Optional;
 
 public class Undead extends HumanNpc {
-    private Undead(NonPlayerActor data, float x, float y, String asset, Level level,
-            float maxVelocity, float maxAcceleration) {
-        super(data, x, y, maxVelocity, asset, level);
+    private Undead(NonPlayerActor data, Optional<ActorScenario> scenario, float x, float y,
+            String asset, Level level, float maxVelocity, float maxAcceleration) {
+        super(data, scenario, x, y, maxVelocity, asset, level);
         setMaxLinearAcceleration(maxAcceleration);
     }
 
@@ -25,7 +27,8 @@ public class Undead extends HumanNpc {
         return SoundEffect.GHOST_DEATH;
     }
 
-    public static Undead from(NonPlayerActor data, float x, float y, Level level) {
+    public static Undead from(NonPlayerActor data, Optional<ActorScenario> scenario, float x,
+            float y, Level level) {
         String asset = getAsset(data, "hollow-zombie");
 
         String base = asset;
@@ -36,9 +39,9 @@ public class Undead extends HumanNpc {
 
         switch (base) {
             case "reborn":
-                return new Reborn(data, x, y, getAssetPath(asset), level);
+                return new Reborn(data, scenario, x, y, getAssetPath(asset), level);
             default:
-                return new DefaultUndead(data, x, y, getAssetPath(asset), level);
+                return new DefaultUndead(data, scenario, x, y, getAssetPath(asset), level);
         }
     }
 
@@ -57,8 +60,9 @@ public class Undead extends HumanNpc {
         public static float MAX_VELOCITY = 10f;
         public static float MAX_ACCELERATION = 5f;
 
-        private Reborn(NonPlayerActor data, float x, float y, String asset, Level level) {
-            super(data, x, y, asset, level, MAX_VELOCITY, MAX_ACCELERATION);
+        private Reborn(NonPlayerActor data, Optional<ActorScenario> scenario, float x, float y,
+                String asset, Level level) {
+            super(data, scenario, x, y, asset, level, MAX_VELOCITY, MAX_ACCELERATION);
         }
     }
 
@@ -66,8 +70,9 @@ public class Undead extends HumanNpc {
         public static float MAX_VELOCITY = 15f;
         public static float MAX_ACCELERATION = 10f;
 
-        private DefaultUndead(NonPlayerActor data, float x, float y, String asset, Level level) {
-            super(data, x, y, asset, level, MAX_VELOCITY, MAX_ACCELERATION);
+        private DefaultUndead(NonPlayerActor data, Optional<ActorScenario> scenario, float x,
+                float y, String asset, Level level) {
+            super(data, scenario, x, y, asset, level, MAX_VELOCITY, MAX_ACCELERATION);
         }
     }
 }

@@ -16,21 +16,24 @@ import com.eldritch.invoken.effects.Detonation;
 import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.proto.Actors.NonPlayerActor;
 import com.eldritch.invoken.proto.Effects.DamageType;
+import com.eldritch.invoken.proto.Locations.Encounter.ActorParams.ActorScenario;
 import com.eldritch.invoken.screens.GameScreen;
 import com.eldritch.invoken.util.AnimationUtils;
 import com.eldritch.invoken.util.AnimationUtils.AnimationBuilder;
 import com.eldritch.invoken.util.Damage;
 import com.eldritch.invoken.util.Settings;
 import com.eldritch.invoken.util.SoundManager.SoundEffect;
+import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 
 public class Beast extends Npc {
     public static float MAX_VELOCITY = 4f;
     public static int PX = 32;
 
-    public Beast(NonPlayerActor data, float x, float y, float width, float height, float velocity,
+    public Beast(NonPlayerActor data, Optional<ActorScenario> scenario, float x, float y,
+            float width, float height, float velocity,
             Map<Activity, Map<Direction, Animation>> animations, Level level) {
-        super(data, x, y, width, height, velocity, animations, level);
+        super(data, scenario, x, y, width, height, velocity, animations, level);
     }
 
     @Override
@@ -75,7 +78,8 @@ public class Beast extends Npc {
                 .getBodyType() : "slime";
     }
 
-    public static Beast from(NonPlayerActor data, float x, float y, Level level) {
+    public static Beast from(NonPlayerActor data, Optional<ActorScenario> scenario, float x,
+            float y, Level level) {
         String asset = getAsset(data);
 
         String base = asset;
@@ -86,21 +90,22 @@ public class Beast extends Npc {
 
         switch (base) {
             case "crawler":
-                return new Crawler(data, x, y, getAssetPath(asset), level);
+                return new Crawler(data, scenario, x, y, getAssetPath(asset), level);
             case "dragon":
-                return new Dragon(data, x, y, getAssetPath(asset), level);
+                return new Dragon(data, scenario, x, y, getAssetPath(asset), level);
             case "parasite":
-                return new Parasite(data, x, y, getAssetPath(asset), level);
+                return new Parasite(data, scenario, x, y, getAssetPath(asset), level);
             case "wisp":
-                return new Wisp(data, x, y, getAssetPath(asset), level);
+                return new Wisp(data, scenario, x, y, getAssetPath(asset), level);
             default:
-                return new DefaultBeast(data, x, y, getAssetPath(asset), level);
+                return new DefaultBeast(data, scenario, x, y, getAssetPath(asset), level);
         }
     }
 
     public static class DefaultBeast extends Beast {
-        public DefaultBeast(NonPlayerActor data, float x, float y, String asset, Level level) {
-            super(data, x, y, Settings.SCALE * PX, Settings.SCALE * PX, MAX_VELOCITY,
+        public DefaultBeast(NonPlayerActor data, Optional<ActorScenario> scenario, float x,
+                float y, String asset, Level level) {
+            super(data, scenario, x, y, Settings.SCALE * PX, Settings.SCALE * PX, MAX_VELOCITY,
                     getAllAnimations(asset), level);
         }
 
@@ -125,8 +130,9 @@ public class Beast extends Npc {
     public static class Crawler extends Beast {
         private static final int PX = 64;
 
-        public Crawler(NonPlayerActor data, float x, float y, String asset, Level level) {
-            super(data, x, y, Settings.SCALE * PX, Settings.SCALE * PX, MAX_VELOCITY,
+        public Crawler(NonPlayerActor data, Optional<ActorScenario> scenario, float x, float y,
+                String asset, Level level) {
+            super(data, scenario, x, y, Settings.SCALE * PX, Settings.SCALE * PX, MAX_VELOCITY,
                     getAnimations(asset), level);
         }
 
@@ -199,9 +205,10 @@ public class Beast extends Npc {
         private Direction lastDirection;
         private boolean flipX;
 
-        public Dragon(NonPlayerActor data, float x, float y, String asset, Level level) {
-            super(data, x, y, scale(WIDTH), scale(HEIGHT), MAX_VELOCITY, getAnimations(asset),
-                    level);
+        public Dragon(NonPlayerActor data, Optional<ActorScenario> scenario, float x, float y,
+                String asset, Level level) {
+            super(data, scenario, x, y, scale(WIDTH), scale(HEIGHT), MAX_VELOCITY,
+                    getAnimations(asset), level);
         }
 
         @Override
@@ -276,8 +283,9 @@ public class Beast extends Npc {
     public static class Parasite extends Beast {
         private static final int PX = 20;
 
-        public Parasite(NonPlayerActor data, float x, float y, String asset, Level level) {
-            super(data, x, y, Settings.SCALE * PX, Settings.SCALE * PX, MAX_VELOCITY,
+        public Parasite(NonPlayerActor data, Optional<ActorScenario> scenario, float x, float y,
+                String asset, Level level) {
+            super(data, scenario, x, y, Settings.SCALE * PX, Settings.SCALE * PX, MAX_VELOCITY,
                     getAnimations(asset), level);
         }
 
@@ -312,8 +320,9 @@ public class Beast extends Npc {
         private static final int BASE_DAMAGE = 100;
         private static final int PX = 64;
 
-        public Wisp(NonPlayerActor data, float x, float y, String asset, Level level) {
-            super(data, x, y, Settings.SCALE * PX, Settings.SCALE * PX, MAX_VELOCITY,
+        public Wisp(NonPlayerActor data, Optional<ActorScenario> scenario, float x, float y,
+                String asset, Level level) {
+            super(data, scenario, x, y, Settings.SCALE * PX, Settings.SCALE * PX, MAX_VELOCITY,
                     getAnimations(asset), level);
             setCollisionMask((short) (Settings.BIT_PERIMETER | Settings.BIT_BULLET));
         }

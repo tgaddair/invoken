@@ -121,12 +121,13 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
     // debug
     private String lastTask = "";
 
-    public Npc(NonPlayerActor data, float x, float y, float width, float height, float maxVelocity,
+    public Npc(NonPlayerActor data, Optional<ActorScenario> scenario, float x, float y,
+            float width, float height, float maxVelocity,
             Map<Activity, Map<Direction, Animation>> animations, Level level) {
         super(data.getParams(), data.getUnique(), x, y, width, height, maxVelocity, level,
                 animations);
         this.data = data;
-        scenario = Optional.absent();
+        this.scenario = scenario;
         dialogue = new ConversationHandler(data.getDialogueList(), new NpcDialogueVerifier(),
                 new NpcOutcomeHandler());
         behavior = new Behavior(this, data);
@@ -643,18 +644,23 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
     }
 
     public static Npc create(NonPlayerActor data, float x, float y, Level level) {
+        return create(data, Optional.<ActorScenario> absent(), x, y, level);
+    }
+
+    public static Npc create(NonPlayerActor data, Optional<ActorScenario> scenario, float x,
+            float y, Level level) {
         Species species = data.getParams().getSpecies();
         switch (species) {
             case HUMAN:
-                return new HumanNpc(data, x, y, level);
+                return new HumanNpc(data, scenario, x, y, level);
             case UNDEAD:
-                return Undead.from(data, x, y, level);
+                return Undead.from(data, scenario, x, y, level);
             case AUTOMATON:
-                return Automaton.from(data, x, y, level);
+                return Automaton.from(data, scenario, x, y, level);
             case BEAST:
-                return Beast.from(data, x, y, level);
+                return Beast.from(data, scenario, x, y, level);
             case HOLLOW:
-                return Hollow.from(data, x, y, level);
+                return Hollow.from(data, scenario, x, y, level);
             default:
                 throw new IllegalArgumentException("unrecognized species: " + species);
         }

@@ -4,14 +4,16 @@ import com.eldritch.invoken.actor.util.Locatable;
 import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.proto.Actors.NonPlayerActor;
 import com.eldritch.invoken.proto.Effects.DamageType;
+import com.eldritch.invoken.proto.Locations.Encounter.ActorParams.ActorScenario;
 import com.eldritch.invoken.util.SoundManager.SoundEffect;
+import com.google.common.base.Optional;
 
 public class Invoken extends HumanNpc {
     public static float MAX_VELOCITY = 15f;
     public static float MAX_ACCELERATION = 10f;
     
-    public Invoken(NonPlayerActor data, float x, float y, String asset, Level level) {
-        super(data, x, y, MAX_VELOCITY, asset, level);
+    public Invoken(NonPlayerActor data, Optional<ActorScenario> scenario, float x, float y, String asset, Level level) {
+        super(data, scenario, x, y, MAX_VELOCITY, asset, level);
         setMaxLinearAcceleration(MAX_ACCELERATION);
     }
     

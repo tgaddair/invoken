@@ -10,18 +10,21 @@ import com.eldritch.invoken.actor.util.Locatable;
 import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.proto.Actors.NonPlayerActor;
 import com.eldritch.invoken.proto.Effects.DamageType;
+import com.eldritch.invoken.proto.Locations.Encounter.ActorParams.ActorScenario;
 import com.eldritch.invoken.screens.GameScreen;
 import com.eldritch.invoken.util.AnimationUtils;
 import com.eldritch.invoken.util.Settings;
 import com.eldritch.invoken.util.SoundManager.SoundEffect;
+import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 
 public class Hollow extends Npc {
     public static float MAX_VELOCITY = 3f;
 
-    private Hollow(NonPlayerActor data, float x, float y, float width, float height,
-            float velocity, Map<Activity, Map<Direction, Animation>> animations, Level level) {
-        super(data, x, y, width, height, velocity, animations, level);
+    private Hollow(NonPlayerActor data, Optional<ActorScenario> scenario, float x, float y,
+            float width, float height, float velocity,
+            Map<Activity, Map<Direction, Animation>> animations, Level level) {
+        super(data, scenario, x, y, width, height, velocity, animations, level);
     }
 
     @Override
@@ -49,7 +52,8 @@ public class Hollow extends Npc {
                 .getBodyType() : "hollow";
     }
 
-    public static Hollow from(NonPlayerActor data, float x, float y, Level level) {
+    public static Hollow from(NonPlayerActor data, Optional<ActorScenario> scenario, float x,
+            float y, Level level) {
         String asset = getAsset(data);
 
         String base = asset;
@@ -60,9 +64,9 @@ public class Hollow extends Npc {
 
         switch (base) {
             case "golem":
-                return new Golem(data, x, y, getAssetPath(asset), level);
+                return new Golem(data, scenario, x, y, getAssetPath(asset), level);
             default:
-                return new Humanoid(data, x, y, getAssetPath(asset), level);
+                return new Humanoid(data, scenario, x, y, getAssetPath(asset), level);
         }
     }
 
@@ -71,22 +75,23 @@ public class Hollow extends Npc {
         private static final int ATTACK_PX = 144;
         private static final float SCALE = 0.85f;
 
-        public Golem(NonPlayerActor data, float x, float y, String asset, Level level) {
-            super(data, x, y, 2.5f, 2.5f, MAX_VELOCITY, getAnimations(asset), level);
+        public Golem(NonPlayerActor data, Optional<ActorScenario> scenario, float x, float y,
+                String asset, Level level) {
+            super(data, scenario, x, y, 2.5f, 2.5f, MAX_VELOCITY, getAnimations(asset), level);
         }
-        
+
         @Override
         protected void draw(Batch batch, TextureRegion frame, Direction direction) {
             float width = frame.getRegionWidth() * Settings.SCALE * SCALE;
             float height = frame.getRegionHeight() * Settings.SCALE * SCALE;
             batch.draw(frame, position.x - width / 2, position.y - height / 2, width, height);
         }
-        
+
         @Override
         public float getAttackSpeed() {
             return 1f;
         }
-        
+
         @Override
         public float getHoldSeconds() {
             return 1f;
@@ -118,7 +123,7 @@ public class Hollow extends Npc {
             TextureRegion[][] regions = GameScreen.getRegions(assetName + "-walk.png", PX, PX);
             animations.put(Activity.Idle, AnimationUtils.getAnimations(regions));
             animations.put(Activity.Explore, AnimationUtils.getAnimations(regions));
-            
+
             regions = GameScreen.getRegions(assetName + "-attack.png", PX, ATTACK_PX);
             animations.put(Activity.Cast, AnimationUtils.getAnimations(regions));
             animations.put(Activity.Thrust, AnimationUtils.getAnimations(regions));
@@ -135,20 +140,22 @@ public class Hollow extends Npc {
     public static class Humanoid extends Hollow {
         private static final int PX = 64;
 
-        public Humanoid(NonPlayerActor data, float x, float y, String asset, Level level) {
-            super(data, x, y, Settings.SCALE * PX, Settings.SCALE * PX, MAX_VELOCITY,
+        public Humanoid(NonPlayerActor data, Optional<ActorScenario> scenario, float x, float y,
+                String asset, Level level) {
+            super(data, scenario, x, y, Settings.SCALE * PX, Settings.SCALE * PX, MAX_VELOCITY,
                     AnimationUtils.getHumanAnimations(asset + ".png"), level);
         }
     }
-    
+
     public static class Psion extends Hollow {
         private static final int PX = 64;
 
-        public Psion(NonPlayerActor data, float x, float y, String asset, Level level) {
-            super(data, x, y, Settings.SCALE * PX, Settings.SCALE * PX, MAX_VELOCITY,
+        public Psion(NonPlayerActor data, Optional<ActorScenario> scenario, float x, float y,
+                String asset, Level level) {
+            super(data, scenario, x, y, Settings.SCALE * PX, Settings.SCALE * PX, MAX_VELOCITY,
                     AnimationUtils.getHumanAnimations(asset + ".png"), level);
         }
-        
+
         @Override
         public boolean hasLineOfSight(Locatable other) {
             return true;

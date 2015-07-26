@@ -81,6 +81,7 @@ import com.eldritch.invoken.location.proc.LocationGenerator;
 import com.eldritch.invoken.proto.Actors.PlayerActor;
 import com.eldritch.invoken.proto.Locations;
 import com.eldritch.invoken.proto.Locations.Location;
+import com.eldritch.invoken.proto.Locations.Encounter.ActorParams.ActorScenario;
 import com.eldritch.invoken.ui.AgentStatusRenderer;
 import com.eldritch.invoken.ui.DebugEntityRenderer;
 import com.eldritch.invoken.ui.HealthBar;
@@ -371,7 +372,7 @@ public class Level {
     public PathManager getPathManager() {
         return pathManager;
     }
-    
+
     /**
      * True iff there is a node in the location graph at this point.
      */
@@ -592,11 +593,11 @@ public class Level {
     public boolean inCombat() {
         return combat;
     }
-    
+
     public boolean inLockdown() {
         return lockdown;
     }
-    
+
     public void setLockdown(boolean value) {
         lockdown = value;
     }
@@ -901,7 +902,7 @@ public class Level {
             AgentStatusRenderer.render(agent, player, renderer);
         }
         renderer.getBatch().end();
-        
+
         // draw additional overlays
         for (Drawable drawable : drawables) {
             drawable.renderOverlay(delta, renderer);
@@ -1332,7 +1333,8 @@ public class Level {
     }
 
     public Npc createTestNpc(float x, float y, String id) {
-        return Npc.create(InvokenGame.ACTOR_READER.readAsset(id), x, y, this);
+        return Npc.create(InvokenGame.ACTOR_READER.readAsset(id),
+                Optional.<ActorScenario> absent(), x, y, this);
     }
 
     public void addEntities(Locations.Level data, LocationMap map) {
