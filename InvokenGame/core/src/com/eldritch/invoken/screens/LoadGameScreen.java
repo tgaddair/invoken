@@ -43,25 +43,11 @@ public class LoadGameScreen extends AbstractScreen {
         
         Skin skin = getSkin();
         Table table = new Table(skin);
-        table.top();
 
         container = super.getTable();
-        resize(Settings.MENU_VIEWPORT_WIDTH, Settings.MENU_VIEWPORT_HEIGHT);
-        container.center();
 
         ScrollPane scroll = new ScrollPane(getInfoTable(table), skin);
-        container.add(scroll).expand().fill();
-    }
-
-    @Override
-    public void resize(int width, int height) {
-        if (container != null) {
-            container.setHeight(height - 100);
-            container.setWidth(width - 100);
-            container.setPosition(width / 2 - container.getWidth() / 2,
-                    height / 2 - container.getHeight() / 2);
-            container.center();
-        }
+        container.add(scroll).expand().fill().uniform().pad(100);
     }
 
     @Override
@@ -76,12 +62,18 @@ public class LoadGameScreen extends AbstractScreen {
 
     private Table getInfoTable(Table table) {
         Skin skin = getSkin();
+        
+        Table savesTable = new Table(skin);
+        savesTable.top().left();
 
         for (PlayerActor saved : Player.readSaves()) {
             ActorParams params = saved.getParams();
             Label label = new Label(params.getName(), skin.get("default-nobg", LabelStyle.class));
-            table.add(label).row();
+            savesTable.add(label).space(35).row();
         }
+        
+        table.add(savesTable).expand().fill();
+        table.row();
 
         Table buttons = new Table(skin);
         TextButton start = createStartButton();
@@ -89,8 +81,7 @@ public class LoadGameScreen extends AbstractScreen {
         buttons.add(back).size(200, 50).spaceRight(10).right();
         buttons.add(start).size(200, 50).right();
 
-        table.row();
-        table.bottom().right();
+        table.bottom();
         table.add(buttons);
 
         return table;

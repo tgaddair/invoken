@@ -150,7 +150,7 @@ public class LocationGenerator {
         // long hashCode = proto.getId().hashCode();
         long hashCode = next.getFloor();
 
-        final int attempts = 3;
+        final int attempts = Settings.MAX_GENERATION_ATTEMPTS;
         while (counter < attempts) {
             // generate a new random seed that combines the global player seed
             // with the location

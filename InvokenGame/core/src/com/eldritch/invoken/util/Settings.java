@@ -66,6 +66,7 @@ public class Settings {
 	public static boolean DEBUG_CRITICAL_PATH = false;
 	public static boolean DEBUG_ENCOUNTER = true;
 	
+	public static final int MAX_GENERATION_ATTEMPTS = 5;
 	public static boolean SKIP_MENU = false;
 	public static int START_LEVEL = 1;  // 1, 10, 25
 	public static int START_FLOOR = 3;  // 0
