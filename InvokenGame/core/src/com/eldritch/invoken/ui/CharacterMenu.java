@@ -175,13 +175,6 @@ public class CharacterMenu implements HudElement {
         return label;
     }
 
-    private boolean canLevel() {
-        int level = player.getInfo().getLevel();
-        int currentFragments = player.getInventory().getItemCount(Fragment.getInstance());
-        int requiredFragments = AgentInfo.getFragmentRequirement(level + 1);
-        return currentFragments >= requiredFragments;
-    }
-
     private Table createTable(final Discipline d) {
         Table table = new Table(skin);
         table.left();

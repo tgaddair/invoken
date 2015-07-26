@@ -27,14 +27,21 @@ public class AnimatedEntity implements TemporaryEntity {
     private final Vector2 position;
     private final float width;
     private final float height;
+    private final float z;
     private float elapsed = 0;
-
+    
     public AnimatedEntity(TextureRegion[] regions, Vector2 position, Vector2 size,
             float frameDuration) {
+        this(regions, position, size, frameDuration, 0);
+    }
+
+    public AnimatedEntity(TextureRegion[] regions, Vector2 position, Vector2 size,
+            float frameDuration, float z) {
         animation = new Animation(frameDuration, regions);
         this.width = size.x;
         this.height = size.y;
         this.position = position;
+        this.z = z;
     }
 
     @Override
@@ -57,7 +64,7 @@ public class AnimatedEntity implements TemporaryEntity {
 
     @Override
     public float getZ() {
-        return 0;
+        return z;
     }
     
     @Override

@@ -54,7 +54,12 @@ public class FragmentCounter implements HudElement {
             if (elapsed > DELAY) {
                 int dx = (int) Math.signum(target - current);
                 current += dx;
-                label.setText(String.valueOf(current));
+                
+                String text = String.valueOf(current);
+                if (level.getPlayer().getInfo().canLevel()) {
+                    text = "[CYAN]" + text;
+                }
+                label.setText(text);
                 elapsed = 0;
             }
         }

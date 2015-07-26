@@ -12,6 +12,7 @@ import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.actor.type.Agent.Direction;
 import com.eldritch.invoken.actor.type.CollisionEntity;
 import com.eldritch.invoken.actor.type.TemporaryEntity;
+import com.eldritch.invoken.effects.SummonEnergy;
 import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.proto.Items;
 import com.eldritch.invoken.screens.GameScreen;
@@ -130,8 +131,14 @@ public class Fragment extends Item {
         }
         
         private void grantTo(Agent agent) {
+            boolean couldLevel = agent.getInfo().canLevel();
             finished = true;
             agent.getInventory().addItem(Fragment.getInstance(), quantity);
+            
+            // check that we can level up now
+            if (agent.getInfo().canLevel() && !couldLevel) {
+                agent.getLocation().addEntity(SummonEnergy.getEntity(agent, 2, 0.15f));
+            }
         }
 
         @Override
