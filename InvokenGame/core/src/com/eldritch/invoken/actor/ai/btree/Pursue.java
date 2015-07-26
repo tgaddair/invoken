@@ -18,7 +18,7 @@ public class Pursue extends LeafTask<Npc> {
     }
     
     public static void act(Npc entity) {
-        entity.getPursue().setTarget(entity.getLastSeen());
+        entity.getPursue().setTarget(entity.getLastSeen().getNavpoint());
         entity.setBehavior(SteeringMode.Pursue);
         entity.setTask(Pursue.class.getSimpleName());
     }

@@ -462,6 +462,9 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
     
     @Override
     public void alertTo(Agent other) {
+        // set a waypoint to investigate
+        tactics.setWaypoint(Investigate.class, other.getPosition());
+        
         lastSeen.setPosition(other);
         setFocusPoint(other.getTargetingPosition());
         setTarget(other);

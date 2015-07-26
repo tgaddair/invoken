@@ -49,7 +49,7 @@ public class SquadTactics extends Sequence<Npc> {
             
             // in case we're at the last seen, but unable to find the leader
             float r = SQUAD_COHESION;
-            if (npc.getPosition().dst2(npc.getLastSeen().getLastLocation()) < r * r) {
+            if (npc.dst2(npc.getLastSeen()) < r * r) {
                 npc.locate(leader);
             }
         }

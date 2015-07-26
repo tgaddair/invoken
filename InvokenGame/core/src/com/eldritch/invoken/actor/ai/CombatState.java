@@ -133,9 +133,9 @@ public enum CombatState implements State<Npc> {
         
         @Override
         public void enter(Npc entity) {
-            entity.getSeek().setTarget(entity.getLastSeen());
+            entity.getSeek().setTarget(entity.getLastSeen().getNavpoint());
             entity.getSeek().setEnabled(true);
-            entity.getHide().setTarget(entity.getLastSeen());
+            entity.getHide().setTarget(entity.getLastSeen().getNavpoint());
             entity.getHide().setEnabled(true);
         }
 

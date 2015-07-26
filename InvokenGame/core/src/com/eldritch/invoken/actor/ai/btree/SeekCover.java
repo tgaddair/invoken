@@ -8,8 +8,8 @@ import com.eldritch.invoken.actor.type.Npc.SteeringMode;
 public class SeekCover extends LeafTask<Npc> {
     @Override
     public void run(Npc npc) {
-        npc.getHide().setTarget(npc.getLastSeen());
-        npc.getEvade().setTarget(npc.getLastSeen());
+        npc.getHide().setTarget(npc.getLastSeen().getNavpoint());
+        npc.getEvade().setTarget(npc.getLastSeen().getNavpoint());
         npc.setBehavior(SteeringMode.Evade);
         npc.setTask(getClass().getSimpleName());
         success();

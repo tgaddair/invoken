@@ -17,6 +17,10 @@ public class BasicLocatable implements Locatable {
         this.position.set(point);
     }
     
+    public void setPosition(Vector2 point) {
+        this.position.set(point);
+    }
+    
     @Override
     public Vector2 getPosition() {
         return position;

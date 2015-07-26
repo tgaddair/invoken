@@ -5,19 +5,22 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Fixture;
 import com.eldritch.invoken.actor.pathfinding.LocationGraphPath;
 import com.eldritch.invoken.actor.pathfinding.LocationNode;
 import com.eldritch.invoken.actor.pathfinding.PathManager;
 import com.eldritch.invoken.actor.util.Locatable;
 import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.location.NaturalVector2;
+import com.google.common.collect.ImmutableList;
 
-public abstract class NavigatedSteerable extends BasicSteerable implements Locatable {
+public abstract class NavigatedSteerable implements Locatable {
     private static final float MIN_DIST = 1f;
     private static final float WAIT_SECONDS = 3f;
 
     private final Agent npc;
     private final Vector2 lastSeen = new Vector2();
+    private final Navpoint navpoint = new Navpoint();
     private Locatable target = null;
     private boolean arrived = false; // done navigating
 
@@ -43,11 +46,11 @@ public abstract class NavigatedSteerable extends BasicSteerable implements Locat
             if (npc.getPosition().dst2(path.getNodePosition(pathIndex)) <= MIN_DIST) {
                 if (pathIndex + 1 < path.getCount()) {
                     // proceed to the next node
-                    setPosition(path.getNodePosition(++pathIndex));
+                    navpoint.setPosition(path.getNodePosition(++pathIndex));
                     pathAge = 0;
                 } else {
                     // fallback to moving in a straight line
-                    setPosition(lastSeen);
+                    navpoint.setPosition(lastSeen);
                     resetPath();
                 }
             }
@@ -98,9 +101,29 @@ public abstract class NavigatedSteerable extends BasicSteerable implements Locat
     public void setLastLocation(Vector2 location) {
         lastSeen.set(location);
     }
-
-    public Vector2 getLastLocation() {
+    
+    public Navpoint getNavpoint() {
+        return navpoint;
+    }
+    
+    @Override
+    public Vector2 getPosition() {
         return lastSeen;
+    }
+
+    @Override
+    public NaturalVector2 getNaturalPosition() {
+        return NaturalVector2.of(lastSeen);
+    }
+
+    @Override
+    public Vector2 getPhysicalPosition() {
+        return lastSeen;
+    }
+
+    @Override
+    public Iterable<Fixture> getFixtures() {
+        return ImmutableList.of();
     }
 
     public void locate(Locatable target) {
@@ -135,9 +158,9 @@ public abstract class NavigatedSteerable extends BasicSteerable implements Locat
         if (npc.hasVisibilityTo(target)) {
             // we don't need pathfinding if we have line of sight
             lastSeen.set(target.getPosition());
-            setPosition(target.getPosition());
+            navpoint.setPosition(target.getPosition());
         } else if (npc.hasLineOfSight(lastSeen)) {
-            setPosition(lastSeen);
+            navpoint.setPosition(lastSeen);
         } else {
             // only update the path if the new position is sufficiently different from the last we
             // computed a path for, and a certain amount of time has elapsed
@@ -148,19 +171,18 @@ public abstract class NavigatedSteerable extends BasicSteerable implements Locat
 
                 if (path != null && path.getCount() > 0) {
                     // begin at the first node in the path
-                    setPosition(path.getNodePosition(0));
+                    navpoint.setPosition(path.getNodePosition(0));
                 } else {
                     // pathfinding failed, so fallback to the default behavior
-                    setPosition(lastSeen);
+                    navpoint.setPosition(lastSeen);
                     resetPath();
                 }
             }
         }
     }
-
-    @Override
-    public Vector2 getPosition() {
-        return super.getPosition();
+    
+    protected void setNavpoint(Vector2 position) {
+        navpoint.setPosition(position);
     }
 
     public Locatable getTarget() {
@@ -263,9 +285,9 @@ public abstract class NavigatedSteerable extends BasicSteerable implements Locat
             if (getOwner().hasVisibilityTo(target)) {
                 // we don't need pathfinding if we have line of sight
                 setLastLocation(target.getPosition());
-                setPosition(target.getPosition());
+                setNavpoint(target.getPosition());
             } else {
-                setPosition(getLastLocation());
+                setNavpoint(getPosition());
             }
         }
 
@@ -273,5 +295,8 @@ public abstract class NavigatedSteerable extends BasicSteerable implements Locat
         public boolean hasPath() {
             return true;
         }
+    }
+    
+    public class Navpoint extends BasicSteerable {
     }
 }

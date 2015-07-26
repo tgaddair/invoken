@@ -37,7 +37,7 @@ public class DummyPlayer extends Player {
             List<Agent> agents = level.getAllAgents();
             Agent agent = agents.get((int) (Math.random() * agents.size()));
             lastSeen.setPosition(agent);
-            pursue.setTarget(lastSeen);
+            pursue.setTarget(lastSeen.getNavpoint());
             elapsed = 0;
         }
         
