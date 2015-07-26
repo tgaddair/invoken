@@ -163,6 +163,14 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
         // post init
         setWeaponSentry(new RotatingWeaponSentry());
     }
+    
+    public boolean hasScenario() {
+        return scenario.isPresent();
+    }
+    
+    public ActorScenario getScenario() {
+        return scenario.get();
+    }
 
     protected NavigatedSteerable createSteerable(Level level) {
         return new AStarNavigatedSteerable(this, level);

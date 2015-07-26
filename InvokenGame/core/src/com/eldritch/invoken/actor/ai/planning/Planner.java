@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.eldritch.invoken.actor.Profession;
+import com.eldritch.invoken.actor.ai.planning.Desire.DesireFactory;
 import com.eldritch.invoken.actor.type.Npc;
+import com.eldritch.invoken.proto.Locations.DesireProto;
 
 public class Planner {
     private final List<Desire> desires = new ArrayList<>();
@@ -60,21 +62,28 @@ public class Planner {
 
     public static Planner from(Npc npc) {
         List<Desire> desires = new ArrayList<>();
-        desires.add(new Buff(npc));
         
+        // universal desires
+        desires.add(new Buff(npc));
         if (npc.isGuard()) {
             desires.add(new Guard(npc));
         }
-        
-        if (npc.getInfo().getProfession() == Profession.Assassin) {
-            desires.add(new Hunt(npc));
-        }
-        
-        // TODO: check actor scenario for the Patrol routine
-        desires.add(new Patrol(npc));
         desires.add(new Follow(npc));
         
-        desires.add(new Meander(npc));
+        // check actor scenario for the various routines
+        if (npc.hasScenario() && !npc.getScenario().getDesireList().isEmpty()) {
+            for (DesireProto proto : npc.getScenario().getDesireList()) {
+                desires.add(DesireFactory.fromProto(proto, npc));
+            }
+        } else {
+            // default desires
+            if (npc.getInfo().getProfession() == Profession.Assassin) {
+                desires.add(new Hunt(npc));
+            }
+            desires.add(new Patrol(npc));
+            desires.add(new Meander(npc));
+        }
+        
         return new Planner(npc, desires);
     }
 }
