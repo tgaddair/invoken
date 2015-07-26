@@ -158,27 +158,27 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
         intimidation = new IntimidationMonitor(this);
         tactics = new TacticsManager(this);
         planner = Planner.from(this);
-        
+
         // post init
         setWeaponSentry(new RotatingWeaponSentry());
     }
-    
+
     protected NavigatedSteerable createSteerable(Level level) {
         return new AStarNavigatedSteerable(this, level);
     }
-    
+
     protected RaycastCollisionDetector<Vector2> createCollisionDetector(Level level) {
         return new Box2dRaycastCollisionDetector(level.getWorld());
     }
-    
+
     public void setSquad(Squad squad) {
         this.squad = Optional.of(squad);
     }
-    
+
     public boolean hasSquad() {
         return squad.isPresent();
     }
-    
+
     public Squad getSquad() {
         return squad.get();
     }
@@ -194,11 +194,11 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
     public Augmentation getChosen() {
         return chosenAug;
     }
-    
+
     public boolean hasChosen() {
         return chosenAug != null;
     }
-    
+
     @Override
     public void setAiming(boolean aiming) {
         super.setAiming(aiming);
@@ -219,7 +219,7 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
     public TacticsManager getTactics() {
         return tactics;
     }
-    
+
     public Planner getPlanner() {
         return planner;
     }
@@ -302,17 +302,17 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
     public Wander<Vector2> getWander() {
         return wander;
     }
-    
+
     public float getLastDialogue() {
         return lastDialogue;
     }
-    
+
     @Override
     public void beginInteraction(Agent other, boolean forced) {
         super.beginInteraction(other, forced);
         lastDialogue = 0;
     }
-    
+
     public boolean isThreatened() {
         return threat.hasEnemies();
     }
@@ -352,7 +352,7 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
         if (!inDialogue()) {
             lastDialogue += delta;
         }
-        
+
         // update tactics
         tactics.update(delta);
         planner.plan(delta);
@@ -370,7 +370,6 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
             // lose sight
             sighted = 0;
         }
-        
 
         // action planning
         lastStep += delta;
@@ -459,12 +458,12 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
     public boolean isEnemy(Agent other) {
         return behavior.wantsToAttack(other);
     }
-    
+
     @Override
     public void alertTo(Agent other) {
         // set a waypoint to investigate
         tactics.setWaypoint(Investigate.class, other.getPosition());
-        
+
         lastSeen.setPosition(other);
         setFocusPoint(other.getTargetingPosition());
         setTarget(other);
@@ -474,6 +473,9 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
 
     @Override
     public void suspicionTo(Agent other) {
+        // set a waypoint to investigate
+        tactics.setWaypoint(Investigate.class, other.getPosition());
+
         if (!hasTarget()) {
             lastSeen.setPosition(other);
             setFocusPoint(other.getTargetingPosition());
@@ -490,7 +492,7 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
             threat.addEnemy(other);
         }
     }
-    
+
     @Override
     public void locate(Locatable other) {
         lastSeen.locate(other);
@@ -523,7 +525,7 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
     public NavigatedSteerable getLastSeen() {
         return lastSeen;
     }
-    
+
     @Override
     public double getFieldOfView() {
         float scale = threat.getAwareness();
@@ -605,15 +607,15 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
 
                 for (FixedPoint coverPoint : getLocation().getActiveCover()) {
                     Vector2 position = coverPoint.getPosition();
-                    if (!getLocation()
-                            .hasLineOfSight(Npc.this, getHide().getTarget().getPosition(), position)) {
+                    if (!getLocation().hasLineOfSight(Npc.this,
+                            getHide().getTarget().getPosition(), position)) {
                         boolean los = hasLineOfSight(position);
                         float distance = position.dst2(getPosition());
                         if (target.getPosition().dst2(position) < distance) {
                             // enemy in the way
                             continue;
                         }
-                        
+
                         if (los && !bestLos) {
                             // any cover point we can see is immediately better
                             bestLos = true;
@@ -715,11 +717,13 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
                 // We don't need a limiter supporting angular components because Face is not used
                 // No need to call setAlignTolerance, setDecelerationRadius and setTimeToTarget for
                 // the same reason
-                .setLimiter(new LinearAccelerationLimiter(getDefaultAcceleration() / 2)).setWanderOffset(2)
-                .setWanderOrientation(0).setWanderRadius(0.5f).setWanderRate(MathUtils.PI / 5);
+                .setLimiter(new LinearAccelerationLimiter(getDefaultAcceleration() / 2))
+                .setWanderOffset(2).setWanderOrientation(0).setWanderRadius(0.5f)
+                .setWanderRate(MathUtils.PI / 5);
         Wander<Vector2> combatWander = new Wander<Vector2>(this).setFaceEnabled(false)
-                .setLimiter(new LinearAccelerationLimiter(getDefaultAcceleration())).setWanderOffset(3)
-                .setWanderOrientation(0).setWanderRadius(2).setWanderRate(MathUtils.PI / 5);
+                .setLimiter(new LinearAccelerationLimiter(getDefaultAcceleration()))
+                .setWanderOffset(3).setWanderOrientation(0).setWanderRadius(2)
+                .setWanderRate(MathUtils.PI / 5);
 
         // initially disable our states
         // hide.setEnabled(false);
@@ -766,7 +770,7 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
 
         return behaviors;
     }
-    
+
     protected float getCombatWander() {
         return 2f;
     }
