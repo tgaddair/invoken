@@ -171,6 +171,7 @@ public class Level {
     private Box2DDebugRenderer debugRenderer = new Box2DDebugRenderer();
 
     private boolean combat = false;
+    private boolean lockdown = false;
 
     public Level(Locations.Level data, LocationMap map, GameTransition state, long seed) {
         this.data = data;
@@ -591,6 +592,14 @@ public class Level {
 
     public boolean inCombat() {
         return combat;
+    }
+    
+    public boolean inLockdown() {
+        return lockdown;
+    }
+    
+    public void setLockdown(boolean value) {
+        lockdown = value;
     }
 
     public void render(float delta, OrthographicCamera camera, TextureRegion selector,

@@ -19,11 +19,13 @@ public class CrimeManager {
     private static float VANDALISM_SEVERITY = 5f;
     private static float THEFT_SEVERITY = 1f;
 
+    private final Level level;
     private final Faction stationFaction;
     private final List<CrimeHandler> handlers = new ArrayList<>();
     private final ConnectedRoomManager rooms;
 
     public CrimeManager(Level level, ConnectedRoomManager rooms) {
+        this.level = level;
         this.stationFaction = level.getFaction(Constants.STATION_FACTION);
         this.rooms = rooms;
     }
@@ -74,6 +76,7 @@ public class CrimeManager {
 
         public void report(Faction faction) {
             if (!reported.contains(faction)) {
+                level.setLockdown(true);
                 perpetrator.changeFactionStatus(faction, -severity);
                 reported.add(faction);
             }
