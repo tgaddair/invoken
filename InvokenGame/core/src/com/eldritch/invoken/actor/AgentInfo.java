@@ -15,6 +15,7 @@ import com.eldritch.invoken.actor.factions.FactionManager;
 import com.eldritch.invoken.actor.items.Fragment;
 import com.eldritch.invoken.actor.items.Outfit;
 import com.eldritch.invoken.actor.type.Agent;
+import com.eldritch.invoken.actor.type.Player.NewPlayerDescription;
 import com.eldritch.invoken.proto.Actors.ActorParams;
 import com.eldritch.invoken.proto.Actors.ActorParams.FactionStatus;
 import com.eldritch.invoken.proto.Actors.ActorParams.Skill;
@@ -110,15 +111,15 @@ public class AgentInfo {
         energy = getMaxEnergy();
     }
 
-    public AgentInfo(Agent agent, Profession profession, int level) {
+    public AgentInfo(Agent agent, NewPlayerDescription info, int level) {
         this.agent = agent;
-        this.id = "Player";
-        this.name = "Player";
+        this.id = info.getId();
+        this.name = info.getName();
         this.species = Species.from(ActorParams.Species.HUMAN);
         this.unique = true;
         augmentations = new PreparedAugmentations(agent);
 
-        this.profession = profession;
+        this.profession = info.getProfession();
         for (Augmentation aug : profession.getStartingAugmentations()) {
             knownAugmentations.add(aug);
             addAugmentation(aug);

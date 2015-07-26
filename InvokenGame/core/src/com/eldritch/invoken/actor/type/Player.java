@@ -3,11 +3,14 @@ package com.eldritch.invoken.actor.type;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Map.Entry;
+import java.util.Random;
 import java.util.Set;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.math.Vector2;
+import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.actor.AgentInventory;
 import com.eldritch.invoken.actor.ConversationHandler;
 import com.eldritch.invoken.actor.ConversationHandler.DefaultConversationHandler;
@@ -20,6 +23,7 @@ import com.eldritch.invoken.actor.items.Fragment;
 import com.eldritch.invoken.actor.items.Item;
 import com.eldritch.invoken.actor.util.ThreatMonitor;
 import com.eldritch.invoken.location.Level;
+import com.eldritch.invoken.location.proc.LocationGenerator;
 import com.eldritch.invoken.proto.Actors.PlayerActor;
 import com.eldritch.invoken.proto.Actors.PlayerActor.KillRecord;
 import com.eldritch.invoken.state.Inventory.ItemState;
@@ -45,10 +49,11 @@ public class Player extends SteeringAgent {
 
     private int lastFragments = 0;
 
-    public Player(Profession profession, int level, float x, float y, Level location, String body) {
-        super(x, y, Human.getWidth(), Human.getHeight(), Human.MAX_VELOCITY, profession, level,
-                location, AnimationUtils.getHumanAnimations(body));
-        this.threat = new ThreatMonitor<Player>(this);
+    public Player(NewPlayerDescription info, int level, float x, float y, Level location,
+            String body) {
+        super(x, y, Human.getWidth(), Human.getHeight(), Human.MAX_VELOCITY, info, level, location,
+                AnimationUtils.getHumanAnimations(body));
+        this.threat = new ThreatMonitor<>(this);
         this.bodyType = body;
         this.priorState = Optional.<PlayerActor> absent();
     }
@@ -256,7 +261,7 @@ public class Player extends SteeringAgent {
         }
         return super.damage(value);
     }
-    
+
     @Override
     public void alertTo(Agent other) {
         // does nothing
@@ -284,18 +289,18 @@ public class Player extends SteeringAgent {
         return 0.1f;
     }
 
-    private boolean isTouched(float startX, float endX) {
-        // check if any finger is touch the area between startX and endX
-        // startX/endX are given between 0 (left edge of the screen) and 1
-        // (right edge of the screen)
-        for (int i = 0; i < 2; i++) {
-            float x = Gdx.input.getX() / (float) Gdx.graphics.getWidth();
-            if (Gdx.input.isTouched(i) && (x >= startX && x <= endX)) {
-                return true;
-            }
-        }
-        return false;
-    }
+    // private boolean isTouched(float startX, float endX) {
+    // // check if any finger is touch the area between startX and endX
+    // // startX/endX are given between 0 (left edge of the screen) and 1
+    // // (right edge of the screen)
+    // for (int i = 0; i < 2; i++) {
+    // float x = Gdx.input.getX() / (float) Gdx.graphics.getWidth();
+    // if (Gdx.input.isTouched(i) && (x >= startX && x <= endX)) {
+    // return true;
+    // }
+    // }
+    // return false;
+    // }
 
     @Override
     public float getAttackSpeed() {
@@ -373,5 +378,159 @@ public class Player extends SteeringAgent {
         }
 
         return builder.build();
+    }
+
+    /**
+     * For creating new players.
+     */
+    public static class NewPlayerDescription implements PlayerDescription {
+        private final String id;
+        private final String name;
+        private final Profession profession;
+
+        private NewPlayerDescription(String id, String name, Profession profession) {
+            this.id = id;
+            this.name = name;
+            this.profession = profession;
+        }
+
+        public String getId() {
+            return id;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public Profession getProfession() {
+            return profession;
+        }
+
+        @Override
+        public long getSeed() {
+            Random rand = new Random();
+            return rand.nextLong();
+        }
+
+        @Override
+        public Level load(LocationGenerator generator) {
+            Level level = generator.generate();
+
+            // create a new player
+            Player player = level.createPlayer(this);
+
+            // save in case they die before reaching the first save point
+            save(player, Optional.<PlayerActor> absent());
+            return level;
+        }
+
+        @Override
+        public Optional<PlayerActor> getState() {
+            return Optional.<PlayerActor> absent();
+        }
+
+        public static NewPlayerDescription from(String name, Profession profession) {
+            long time = System.currentTimeMillis();
+            String id = name + "_" + time;
+            return new NewPlayerDescription(id, name, profession);
+        }
+
+        public static NewPlayerDescription getDefault() {
+            return from("Travid", Profession.getDefault());
+        }
+    }
+
+    /**
+     * For loading existing players.
+     */
+    public static class SavedPlayerDescription implements PlayerDescription {
+        private final PlayerActor state;
+
+        private SavedPlayerDescription(PlayerActor state) {
+            this.state = state;
+        }
+
+        @Override
+        public long getSeed() {
+            return state.getSeed();
+        }
+
+        @Override
+        public Level load(LocationGenerator generator) {
+            // load the location
+            Level level = generator.generate(state);
+
+            // load from disk
+            level.createPlayer(state);
+
+            // create a corpse, if present
+            if (state.hasCorpse()) {
+                level.createPlayerCorpse(state.getCorpse());
+            }
+
+            return level;
+        }
+
+        @Override
+        public Optional<PlayerActor> getState() {
+            return Optional.of(state);
+        }
+
+        public static SavedPlayerDescription from(String id) {
+            return new SavedPlayerDescription(Player.load(id));
+        }
+    }
+
+    public interface PlayerDescription {
+        long getSeed();
+
+        Level load(LocationGenerator generator);
+
+        Optional<PlayerActor> getState();
+    }
+
+    public static PlayerActor load(String id) {
+        FileHandle handle = Gdx.files.local("saves/" + id + ".dat");
+        try {
+            return PlayerActor.parseFrom(handle.readBytes());
+        } catch (Exception ex) {
+            InvokenGame.error("Failed reading " + handle.name(), ex);
+            return null;
+        }
+    }
+
+    public static void save(Player player, Optional<PlayerActor> previous) {
+        // setup the save state
+        PlayerActor data = player.serialize();
+        if (previous.isPresent()) {
+            PlayerActor.Builder builder = PlayerActor.newBuilder(data);
+
+            PlayerActor.Builder corpseBuilder = PlayerActor.newBuilder(data);
+            corpseBuilder.clearEquippedItemId();
+            corpseBuilder.getParamsBuilder().clearInventoryItem();
+            corpseBuilder.getParamsBuilder().setBodyType("sprite/characters/hollow.png");
+            corpseBuilder.setFragments(player.getLastFragments());
+            builder.setCorpse(corpseBuilder.build());
+
+            // Set the location and position info from the previous save.
+            PlayerActor last = previous.get();
+            builder.setX(last.getX());
+            builder.setY(last.getY());
+            builder.setSeed(last.getSeed());
+            builder.setRegion(last.getRegion());
+            builder.setFloor(last.getFloor());
+
+            builder.addAllVisitedRooms(player.getLocation().getVisitedIndices());
+
+            data = builder.build();
+        }
+
+        FileHandle handle = Gdx.files.local("saves/" + player.getInfo().getId() + ".dat");
+        try {
+            final boolean append = false;
+            handle.writeBytes(data.toByteArray(), append);
+        } catch (Exception ex) {
+            InvokenGame.error("Failed writing " + handle.name(), ex);
+        }
     }
 }

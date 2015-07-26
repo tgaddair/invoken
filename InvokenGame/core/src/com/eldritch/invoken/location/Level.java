@@ -59,6 +59,7 @@ import com.eldritch.invoken.actor.type.FixedPoint;
 import com.eldritch.invoken.actor.type.InanimateEntity;
 import com.eldritch.invoken.actor.type.Npc;
 import com.eldritch.invoken.actor.type.Player;
+import com.eldritch.invoken.actor.type.Player.NewPlayerDescription;
 import com.eldritch.invoken.actor.type.Projectile;
 import com.eldritch.invoken.actor.type.TemporaryEntity;
 import com.eldritch.invoken.box2d.AreaOfEffect;
@@ -80,8 +81,8 @@ import com.eldritch.invoken.location.layer.LocationMap;
 import com.eldritch.invoken.location.proc.LocationGenerator;
 import com.eldritch.invoken.proto.Actors.PlayerActor;
 import com.eldritch.invoken.proto.Locations;
-import com.eldritch.invoken.proto.Locations.Location;
 import com.eldritch.invoken.proto.Locations.Encounter.ActorParams.ActorScenario;
+import com.eldritch.invoken.proto.Locations.Location;
 import com.eldritch.invoken.ui.AgentStatusRenderer;
 import com.eldritch.invoken.ui.DebugEntityRenderer;
 import com.eldritch.invoken.ui.HealthBar;
@@ -1430,18 +1431,18 @@ public class Level {
         return player;
     }
 
-    public Player createPlayer(Profession profession) {
+    public Player createPlayer(NewPlayerDescription info) {
         // spawn and add the player
         Vector2 spawn = getSpawnLocation();
-        this.player = createPlayer(profession, spawn.x, spawn.y);
+        this.player = createPlayer(info, spawn.x, spawn.y);
         addAgent(player);
 
         return player;
     }
 
-    private Player createPlayer(Profession profession, float x, float y) {
+    private Player createPlayer(NewPlayerDescription info, float x, float y) {
         // create the Player we want to move around the world
-        Player player = new Player(profession, Settings.START_LEVEL, x, y, this,
+        Player player = new Player(info, Settings.START_LEVEL, x, y, this,
                 "sprite/characters/light-blue-hair.png");
 
         // 3 is the "standard" rank at which members of the same faction should
@@ -1451,7 +1452,7 @@ public class Level {
         player.getInfo().addFaction(playerFaction, 3, 0);
 
         AgentInventory inv = player.getInfo().getInventory();
-        Item outfit = profession.getDefaultOutfit();
+        Item outfit = info.getProfession().getDefaultOutfit();
         player.identify(outfit.getId());
         inv.addItem(outfit);
         inv.equip(outfit);

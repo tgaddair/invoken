@@ -3,14 +3,12 @@ package com.eldritch.invoken.screens;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Random;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -27,12 +25,12 @@ import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.activators.Activator;
 import com.eldritch.invoken.actor.AgentInfo;
 import com.eldritch.invoken.actor.PreparedAugmentations;
-import com.eldritch.invoken.actor.Profession;
 import com.eldritch.invoken.actor.ai.NpcThreatMonitor.ThreatLevel;
 import com.eldritch.invoken.actor.aug.Augmentation;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Npc;
 import com.eldritch.invoken.actor.type.Player;
+import com.eldritch.invoken.actor.type.Player.PlayerDescription;
 import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.location.proc.LocationGenerator;
 import com.eldritch.invoken.proto.Actors.PlayerActor;
@@ -80,13 +78,11 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
     private static Toaster toaster;
     public static boolean SCREEN_GRAB = false;
 
+    private final PlayerDescription playerLoader;
     private final GameTransition gameState;
     private DialogueMenu dialogue;
     private LootMenu loot;
 
-    private final String playerName;
-    private Profession profession = null; // TODO: this will become a proto
-                                          // containing play info
     private ActionBar actionBar;
     private InventoryMenu inventoryMenu;
     private CharacterMenu characterMenu;
@@ -121,24 +117,10 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
     private boolean shiftDown = false;
     private float shiftTime = 0;
 
-    public GameScreen(InvokenGame game, String playerName) {
-        this(game, playerName, null, Settings.FIRST_REGION);
-    }
-
-    public GameScreen(InvokenGame game, Profession profession) {
-        this(game, "Player", profession, Settings.FIRST_REGION);
-    }
-
-    public GameScreen(InvokenGame game, Profession profession, String locationName) {
-        this(game, "Player", profession, locationName);
-    }
-
-    private GameScreen(InvokenGame game, String playerName, Profession profession,
-            String locationName) {
+    public GameScreen(InvokenGame game, PlayerDescription playerLoader) {
         super(game);
+        this.playerLoader = playerLoader;
         this.gameState = new GameTransition(new GameScreenTransitionHandler(), getSkin());
-        this.playerName = playerName;
-        this.profession = profession;
     }
 
     @Override
@@ -161,46 +143,12 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         // load the selector
         selector = new TextureRegion(new Texture("sprite/selection.png"));
 
-        if (profession == null) {
-            // saved state
-            PlayerActor state = load(playerName);
-
-            // load the location
-            // Locations.Location data =
-            // InvokenGame.LOCATION_READER.readAsset(state.getLocation());
-            LocationGenerator generator = new LocationGenerator(gameState, getBiome(),
-                    state.getSeed());
-            level = generator.generate(state);
-            onLoad(level, Optional.of(state));
-
-            // load from disk
-            player = level.createPlayer(state);
-
-            // create a corpse, if present
-            if (state.hasCorpse()) {
-                level.createPlayerCorpse(state.getCorpse());
-            }
-        } else {
-            Random rand = new Random();
-            // Locations.Location data =
-            // InvokenGame.LOCATION_READER.readAsset(locationName);
-            // InvokenGame.LOCATION_READER.readAsset("DebugPlayground");
-            // InvokenGame.LOCATION_READER.readAsset("CentralProcessing");
-            // InvokenGame.LOCATION_READER.readAsset("WelcomeCenterLevel2");
-            // InvokenGame.LOCATION_READER.readAsset("WelcomeCenter");
-            // InvokenGame.LOCATION_READER.readAsset("TestWorld1");
-            // InvokenGame.LOCATION_READER.readAsset("DebugArena");
-            LocationGenerator generator = new LocationGenerator(gameState, getBiome(),
-                    rand.nextLong());
-            level = generator.generate();
-            onLoad(level, Optional.<PlayerActor> absent());
-
-            // create a new player
-            player = level.createPlayer(profession);
-
-            // save in case they die before reaching the first save point
-            save(player, Optional.<PlayerActor> absent());
-        }
+        // load the level
+        LocationGenerator generator = new LocationGenerator(gameState, getBiome(),
+                playerLoader.getSeed());
+        level = playerLoader.load(generator);
+        player = level.getPlayer();
+        onLoad(level, playerLoader.getState());
 
         // init camera position
         Vector2 position = player.getCamera().getPosition();
@@ -248,10 +196,10 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         hud.add(new StoreMenu(player, skin));
         hud.add(new DesireMenu(player, skin));
         hud.add(new ConsumableBar(player, skin));
-        
+
         characterMenu = new CharacterMenu(player, skin);
         hud.add(characterMenu);
-        
+
         mainMenu = new MainMenu(player, skin);
         hud.add(mainMenu);
 
@@ -636,11 +584,11 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
                 mainMenu.toggle();
                 return true;
             case Keys.BACKSPACE:
-//                if (tacticalPause) {
-//                    player.removeAction();
-//                    return true;
-//                }
-//                return false;
+                // if (tacticalPause) {
+                // player.removeAction();
+                // return true;
+                // }
+                // return false;
                 if (!player.inForcedDialogue()) {
                     player.endJointInteraction();
                 }
@@ -684,7 +632,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
                 // .getPlayer().serialize());
                 return true;
             case Keys.L:
-                game.setScreen(new GameScreen(game, "PlayerDebug"));
+//                game.setScreen(new GameScreen(game, "PlayerDebug"));
                 return true;
             default:
                 return false;
@@ -888,16 +836,6 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         return textureManager.get(assetName, Texture.class);
     }
 
-    public static PlayerActor load(String name) {
-        FileHandle handle = Gdx.files.local("saves/" + name + ".dat");
-        try {
-            return PlayerActor.parseFrom(handle.readBytes());
-        } catch (Exception ex) {
-            InvokenGame.error("Failed reading " + handle.name(), ex);
-            return null;
-        }
-    }
-
     // private void loadLocation(String locationName, Optional<String>
     // encounterName, PlayerActor
     // state) {
@@ -965,46 +903,11 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 
     private static void saveOnDeath(Level level) {
         Player player = level.getPlayer();
-        save(player, Optional.of(load(player.getInfo().getId())));
+        Player.save(player, Optional.of(Player.load(player.getInfo().getId())));
     }
 
     public static void save(Level level) {
-        save(level.getPlayer(), Optional.<PlayerActor> absent());
-    }
-
-    private static void save(Player player, Optional<PlayerActor> previous) {
-        // setup the save state
-        PlayerActor data = player.serialize();
-        if (previous.isPresent()) {
-            PlayerActor.Builder builder = PlayerActor.newBuilder(data);
-
-            PlayerActor.Builder corpseBuilder = PlayerActor.newBuilder(data);
-            corpseBuilder.clearEquippedItemId();
-            corpseBuilder.getParamsBuilder().clearInventoryItem();
-            corpseBuilder.getParamsBuilder().setBodyType("sprite/characters/hollow.png");
-            corpseBuilder.setFragments(player.getLastFragments());
-            builder.setCorpse(corpseBuilder.build());
-
-            // Set the location and position info from the previous save.
-            PlayerActor last = previous.get();
-            builder.setX(last.getX());
-            builder.setY(last.getY());
-            builder.setSeed(last.getSeed());
-            builder.setRegion(last.getRegion());
-            builder.setFloor(last.getFloor());
-
-            builder.addAllVisitedRooms(player.getLocation().getVisitedIndices());
-
-            data = builder.build();
-        }
-
-        FileHandle handle = Gdx.files.local("saves/" + player.getInfo().getName() + ".dat");
-        try {
-            final boolean append = false;
-            handle.writeBytes(data.toByteArray(), append);
-        } catch (Exception ex) {
-            InvokenGame.error("Failed writing " + handle.name(), ex);
-        }
+        Player.save(level.getPlayer(), Optional.<PlayerActor> absent());
     }
 
     public static Biome getBiome() {

@@ -18,6 +18,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.actor.Profession;
+import com.eldritch.invoken.actor.type.Player.NewPlayerDescription;
+import com.eldritch.invoken.actor.type.Player.PlayerDescription;
 import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.util.DefaultInputListener;
 import com.eldritch.invoken.util.Settings;
@@ -26,6 +28,7 @@ public class CharacterCreationScreen extends AbstractScreen {
     private final Level level;
     private final OrthographicCamera camera;
 
+    private TextField nameField;
     private Profession selectedProfession = Profession.Centurion;
     private ScrollPane scroll;
     private SplitPane descriptionPane;
@@ -131,7 +134,9 @@ public class CharacterCreationScreen extends AbstractScreen {
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 super.touchUp(event, x, y, pointer, button);
-                game.setScreen(new GameScreen(game, selectedProfession));
+                PlayerDescription loader = NewPlayerDescription.from(nameField.getText(),
+                        selectedProfession);
+                game.setScreen(new GameScreen(game, loader));
             }
         });
         return button;
@@ -155,7 +160,7 @@ public class CharacterCreationScreen extends AbstractScreen {
         nameTable.top().left();
 
         Label label = new Label("Name:", skin.get("default-nobg", LabelStyle.class));
-        TextField nameField = new TextField("Travid", skin);
+        nameField = new TextField("Travid", skin);
         nameField.setColor(Color.CYAN);
 
         nameTable.add(label).left().uniform().spaceRight(15);

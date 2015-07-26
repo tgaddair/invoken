@@ -40,7 +40,6 @@ import com.eldritch.invoken.actor.AgentInfo;
 import com.eldritch.invoken.actor.AgentInventory;
 import com.eldritch.invoken.actor.Conversable;
 import com.eldritch.invoken.actor.GameCamera;
-import com.eldritch.invoken.actor.Profession;
 import com.eldritch.invoken.actor.ai.Behavior;
 import com.eldritch.invoken.actor.aug.Action;
 import com.eldritch.invoken.actor.aug.Augmentation;
@@ -51,6 +50,7 @@ import com.eldritch.invoken.actor.items.Item;
 import com.eldritch.invoken.actor.items.Outfit;
 import com.eldritch.invoken.actor.items.RangedWeapon;
 import com.eldritch.invoken.actor.type.HandledProjectile.ProjectileHandler;
+import com.eldritch.invoken.actor.type.Player.NewPlayerDescription;
 import com.eldritch.invoken.actor.util.ActivationHandler;
 import com.eldritch.invoken.actor.util.AgentListener;
 import com.eldritch.invoken.actor.util.Announcement;
@@ -198,12 +198,12 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         this.info = new AgentInfo(this, params, unique);
     }
 
-    public Agent(float x, float y, float width, float height, Profession profession, int level,
+    public Agent(float x, float y, float width, float height, NewPlayerDescription info, int level,
             Level location, Map<Activity, Map<Direction, Animation>> animations) {
         this(x, y, width, height, location, animations);
 
         // health, level, augmentations, etc.
-        this.info = new AgentInfo(this, profession, level);
+        this.info = new AgentInfo(this, info, level);
     }
 
     public Agent(float x, float y, float width, float height, Level level,
@@ -225,7 +225,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     protected void setWeaponSentry(WeaponSentry sentry) {
         this.weaponSentry = sentry;
     }
-    
+
     public boolean isActive() {
         return body.isActive();
     }
@@ -545,12 +545,12 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     public int getKillCount() {
         return killTotal;
     }
-    
+
     protected final void setKillCount(String id, int count) {
         killCounts.put(id, count);
         killTotal += count;
     }
-    
+
     protected final Map<String, Integer> getKills() {
         return killCounts;
     }
@@ -1544,13 +1544,13 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     protected void notifyOfHostility(Agent source, Agent enemy) {
         // does nothing
     }
-    
+
     public abstract void alertTo(Agent target);
-    
+
     public abstract void suspicionTo(Agent target);
 
     public abstract ThreatMonitor<?> getThreat();
-    
+
     public boolean isAllyOf(Faction faction) {
         float relation = info.getFactionManager().getRelation(faction);
         return Behavior.isAllyGiven(relation);
@@ -2223,7 +2223,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
                 weapon.render(position, direction, renderer);
             }
         }
-        
+
         @Override
         public void renderOverlay(float delta, OrthogonalTiledMapRenderer renderer) {
         }

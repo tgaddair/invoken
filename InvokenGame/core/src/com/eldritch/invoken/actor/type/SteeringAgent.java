@@ -8,7 +8,7 @@ import com.badlogic.gdx.ai.steer.SteeringBehavior;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
-import com.eldritch.invoken.actor.Profession;
+import com.eldritch.invoken.actor.type.Player.NewPlayerDescription;
 import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.proto.Actors.ActorParams;
 import com.eldritch.invoken.proto.Effects.DamageType;
@@ -40,9 +40,9 @@ public abstract class SteeringAgent extends Agent {
     }
 
     public SteeringAgent(float x, float y, float width, float height, float maxVelocity,
-            Profession profession, int level, Level location,
+            NewPlayerDescription info, int level, Level location,
             Map<Activity, Map<Direction, Animation>> animations) {
-        super(x, y, width, height, profession, level, location, animations);
+        super(x, y, width, height, info, level, location, animations);
         this.maxLinearVelocity = maxVelocity;
         this.baseLinearVelocity = maxVelocity;
         this.maxLinearAcceleration = getDefaultAcceleration();

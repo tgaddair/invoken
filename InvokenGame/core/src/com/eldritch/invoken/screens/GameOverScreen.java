@@ -7,14 +7,17 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.eldritch.invoken.InvokenGame;
+import com.eldritch.invoken.actor.type.Player.PlayerDescription;
+import com.eldritch.invoken.actor.type.Player.SavedPlayerDescription;
 import com.eldritch.invoken.util.DefaultInputListener;
+import com.eldritch.invoken.util.SoundManager.SoundEffect;
 
 public class GameOverScreen extends AbstractScreen {
-    private final String player;
+    private final String id;
     
-	public GameOverScreen(InvokenGame game, String player) {
+	public GameOverScreen(InvokenGame game, String id) {
 		super(game);
-		this.player = player;
+		this.id = id;
 	}
 
 	@Override
@@ -39,8 +42,9 @@ public class GameOverScreen extends AbstractScreen {
 			public void touchUp(InputEvent event, float x, float y,
 					int pointer, int button) {
 				super.touchUp(event, x, y, pointer, button);
-				//game.getSoundManager().play(TyrianSound.CLICK);
-				game.setScreen(new GameScreen(game, player));
+				InvokenGame.SOUND_MANAGER.play(SoundEffect.CLICK);
+				PlayerDescription loader = SavedPlayerDescription.from(id);
+				game.setScreen(new GameScreen(game, loader));
 			}
 		});
 		table.add(startGameButton).spaceBottom(15);
@@ -52,7 +56,7 @@ public class GameOverScreen extends AbstractScreen {
             public void touchUp(InputEvent event, float x, float y,
                     int pointer, int button) {
                 super.touchUp(event, x, y, pointer, button);
-                //game.getSoundManager().play(TyrianSound.CLICK);
+                InvokenGame.SOUND_MANAGER.play(SoundEffect.CLICK);
                 game.setScreen(new MenuScreen(game));
             }
         });

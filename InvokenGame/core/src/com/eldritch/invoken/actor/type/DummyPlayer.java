@@ -21,7 +21,7 @@ public class DummyPlayer extends Player {
     
     public DummyPlayer(Profession profession, int level, float x, float y, Level location,
             String body) {
-        super(profession, level, x, y, location, body);
+        super(NewPlayerDescription.getDefault(), level, x, y, location, body);
         lastSeen = new AStarNavigatedSteerable(this, location);
 
         pursue = new Pursue<Vector2>(this, this).setLimiter(new LinearAccelerationLimiter(7));

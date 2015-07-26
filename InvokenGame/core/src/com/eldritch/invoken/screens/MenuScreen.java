@@ -70,18 +70,18 @@ public class MenuScreen extends AbstractScreen {
         table.add(startGameButton).size(300, 60).uniform().spaceBottom(10);
         table.row();
 
-        // register the button "start game"
-        TextButton tutorialButton = new TextButton("Tutorial", getSkin());
-        tutorialButton.addListener(new DefaultInputListener() {
-            @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                super.touchUp(event, x, y, pointer, button);
-                InvokenGame.SOUND_MANAGER.play(SoundEffect.CLICK);
-                game.setScreen(new GameScreen(game, Profession.getDefault(), "Tutorial"));
-            }
-        });
-        table.add(tutorialButton).size(300, 60).uniform().spaceBottom(10);
-        table.row();
+        // register the button "tutorial"
+//        TextButton tutorialButton = new TextButton("Tutorial", getSkin());
+//        tutorialButton.addListener(new DefaultInputListener() {
+//            @Override
+//            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+//                super.touchUp(event, x, y, pointer, button);
+//                InvokenGame.SOUND_MANAGER.play(SoundEffect.CLICK);
+//                game.setScreen(new GameScreen(game, Profession.getDefault(), "Tutorial"));
+//            }
+//        });
+//        table.add(tutorialButton).size(300, 60).uniform().spaceBottom(10);
+//        table.row();
 
         // register the button "options"
         TextButton optionsButton = new TextButton("Credits", getSkin());
