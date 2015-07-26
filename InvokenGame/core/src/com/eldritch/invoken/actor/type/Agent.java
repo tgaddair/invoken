@@ -1060,11 +1060,12 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     }
 
     public boolean inForcedDialogue() {
-        return interactor != null && forcedDialogue;
+        return inDialogue() && forcedDialogue;
     }
 
     public void beginInteraction(Agent other, boolean forced) {
         this.forcedDialogue = forced;
+        other.forcedDialogue = forced;
         interact(other);
         other.interact(this);
         setCamera(other.defaultCamera);
@@ -1118,6 +1119,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         converser = null;
         looting = null;
         bartered = null;
+        unforceDialogue();
     }
 
     public Interactable getInteractor() {

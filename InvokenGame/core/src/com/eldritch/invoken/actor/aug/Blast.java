@@ -63,6 +63,10 @@ public class Blast extends ActiveAugmentation {
 
     @Override
     public float quality(Agent owner, Agent target, Level level) {
+        if (owner == target) {
+            return 0;
+        }
+        
         float x = owner.dst2(target);
         if (x > RANGE * RANGE) {
             return 0;

@@ -1456,12 +1456,12 @@ public class Level {
 
         Item biocell = Item.fromProto(InvokenGame.ITEM_READER.readAsset("Biocell"));
         player.identify(biocell.getId());
-        inv.addItem(biocell, 3);
+        inv.addItem(biocell, 1);
         biocell.mapTo(inv, 0);
 
         Item stimpak = Item.fromProto(InvokenGame.ITEM_READER.readAsset("Stimpak"));
         player.identify(stimpak.getId());
-        inv.addItem(stimpak, 3);
+        inv.addItem(stimpak, 1);
         stimpak.mapTo(inv, 1);
 
         player.getInfo().getInventory().addItem(Fragment.getInstance(), 150);
