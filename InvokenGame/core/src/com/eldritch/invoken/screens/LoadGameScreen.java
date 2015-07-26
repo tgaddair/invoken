@@ -68,8 +68,12 @@ public class LoadGameScreen extends AbstractScreen {
 
         for (PlayerActor saved : Player.readSaves()) {
             ActorParams params = saved.getParams();
-            Label label = new Label(params.getName(), skin.get("default-nobg", LabelStyle.class));
-            savesTable.add(label).space(35).row();
+            addLabel(params.getName(), savesTable);
+            addLabel(String.valueOf(params.getLevel()), savesTable);
+            addLabel(Profession.fromProto(params.getProfession()).name(), savesTable);
+            addLabel(saved.getRegion(), savesTable);
+            addLabel(String.valueOf(saved.getFloor()), savesTable);
+            savesTable.row();
         }
         
         table.add(savesTable).expand().fill();
@@ -85,6 +89,12 @@ public class LoadGameScreen extends AbstractScreen {
         table.add(buttons);
 
         return table;
+    }
+    
+    private Label addLabel(String text, Table table) {
+        Label label = new Label(text, getSkin().get("default-nobg", LabelStyle.class));
+        table.add(label).space(25);
+        return label;
     }
 
     private TextButton createStartButton() {
