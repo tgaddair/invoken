@@ -10,7 +10,7 @@ import com.eldritch.invoken.util.GenericDialogue;
 
 public class Investigate extends Sequence<Npc> {
     public static final int INVESTIGATION_PENALTY = -5;
-    private static final float RANGE2 = 3f * 3f;
+    private static final float RANGE2 = 1f * 1f;
     
     public Investigate() {
         addChild(new IsSuspicious());
@@ -29,6 +29,7 @@ public class Investigate extends Sequence<Npc> {
 
         // then we confront the instigator
         Sequence<Npc> confrontSequence = new Sequence<>();
+        confrontSequence.addChild(new RemoveWaypoint());
         confrontSequence.addChild(new HasCaughtInstigator());
         confrontSequence.addChild(new LowerRelation());
 
@@ -62,6 +63,13 @@ public class Investigate extends Sequence<Npc> {
         @Override
         protected boolean check(Npc npc) {
             return npc.dst2(npc.getLastSeen()) > RANGE2;
+        }
+    }
+    
+    private static class RemoveWaypoint extends SuccessTask {
+        @Override
+        protected void doFor(Npc npc) {
+            npc.getTactics().removeWaypoint(Investigate.class);
         }
     }
 
@@ -116,7 +124,6 @@ public class Investigate extends Sequence<Npc> {
         @Override
         protected void doFor(Npc npc) {
             npc.setTarget(null);
-            npc.getTactics().removeWaypoint(Investigate.class);
         }
     }
 }
