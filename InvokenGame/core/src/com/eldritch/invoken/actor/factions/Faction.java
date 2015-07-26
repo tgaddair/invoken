@@ -9,20 +9,25 @@ import java.util.concurrent.ExecutionException;
 import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.proto.Factions;
+import com.eldritch.invoken.proto.Factions.Faction.Rank;
 import com.eldritch.invoken.proto.Factions.Faction.Relation;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 
 public class Faction {
+    private final Factions.Faction proto;
     private final String id;
-    private final String name;
     private final Map<String, Integer> relations = new HashMap<String, Integer>();
     private final Set<Agent> members = new HashSet<Agent>();
+    private final Map<Integer, String> titles = new HashMap<>();
 
-    private Faction(String id, String name) {
-        this.id = id;
-        this.name = name;
+    private Faction(Factions.Faction proto) {
+        this.proto = proto;
+        this.id = proto.getId();
+        for (Rank rank : proto.getRankList()) {
+            titles.put(rank.getId(), rank.getTitle());
+        }
     }
 
     public Set<Agent> getMembers() {
@@ -61,7 +66,19 @@ public class Faction {
     }
 
     public String getName() {
-        return name;
+        return proto.getName();
+    }
+    
+    public boolean hasTitle(int rank) {
+        return titles.containsKey(rank);
+    }
+    
+    public String getTitle(int rank) {
+        return titles.get(rank);
+    }
+    
+    public boolean isVisible() {
+        return proto.getVisible();
     }
 
     @Override
@@ -94,7 +111,7 @@ public class Faction {
                 .build(new CacheLoader<String, Faction>() {
                     public Faction load(String id) {
                         Factions.Faction proto = InvokenGame.FACTION_READER.readAsset(id);
-                        Faction faction = new Faction(proto.getId(), proto.getName());
+                        Faction faction = new Faction(proto);
                         for (Relation relation : proto.getRelationList()) {
                             faction.addRelation(relation.getFactionId(), relation.getReaction());
                         }
