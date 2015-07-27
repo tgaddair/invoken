@@ -79,6 +79,7 @@ import com.eldritch.invoken.ui.MultiTextureRegionDrawable;
 import com.eldritch.invoken.util.Damage;
 import com.eldritch.invoken.util.Settings;
 import com.eldritch.invoken.util.SoundManager.SoundEffect;
+import com.eldritch.invoken.util.Utils;
 import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -1226,7 +1227,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         // vectors
         Vector2 a = getForwardVector();
         Vector2 b = tempV.set(otherPosition).sub(position).nor();
-        double theta = Math.atan2(a.x * b.y - a.y * b.x, a.x * b.x + a.y * b.y);
+        double theta = Utils.getAngle(a, b);
         return Math.abs(theta) <= getFieldOfView();
     }
 

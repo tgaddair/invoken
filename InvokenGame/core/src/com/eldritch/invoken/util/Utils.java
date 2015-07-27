@@ -7,6 +7,10 @@ import com.eldritch.invoken.ui.Tooltip;
 import com.eldritch.invoken.ui.TooltipManager;
 
 public class Utils {
+    public static double getAngle(Vector2 a, Vector2 b) {
+        return Math.atan2(a.x * b.y - a.y * b.x, a.x * b.x + a.y * b.y);
+    }
+    
     public static Vector2 getSize(TextureRegion region, float majorSize) {
         return new Vector2(getWidth(region, majorSize), getHeight(region, majorSize));
     }

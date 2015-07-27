@@ -18,6 +18,8 @@ import com.google.common.collect.ImmutableList;
  * Lazy calculator of damage.
  */
 public class Damage {
+    private final Vector2 tmp = new Vector2();
+    
     private final Map<Agent, ReifiedDamage> reified = new HashMap<>();
     private final Agent attacker;
     private final List<DamageMod> components;
@@ -63,6 +65,7 @@ public class Damage {
     
     private ReifiedDamage getDamage(Agent defender, Vector2 contact) {
         float scale = getBaseScale(defender);
+        scale *= getDirectionScale(defender, contact);
         if (attacker != defender && attacker.isAlly(defender)) {
             // scale down friendly fire
             scale *= 0.1f;
@@ -86,6 +89,27 @@ public class Damage {
         
         // lazily resolve the magnitude, but only do so once
         return reified.get(defender);
+    }
+    
+    private float getDirectionScale(Agent defender, Vector2 contact) {
+        // first we calculate the angle between the point of contact and our defender's current
+        // forward direction
+        Vector2 a = defender.getForwardVector();
+        Vector2 b = tmp.set(contact).sub(defender.getPosition()).nor();
+        double theta = Utils.getAngle(a, b);
+        
+        // now we need calculate the distance of our angle from the ideal angle: pi
+        double delta = Math.abs(theta - Math.PI);
+        
+        // finally, we scale up anything less than pi / 4 away, and scale down anything greater than
+        // 3 * pi / 4
+        float scale = 1f;
+        if (delta < Math.PI / 4) {
+            scale *= 2;
+        } else if (delta > 3 * Math.PI / 4) {
+            scale *= 0.5f;
+        }
+        return scale;
     }
     
     public void setBaseScale(float scale) {
