@@ -79,7 +79,7 @@ public class Frenzy extends ProjectileAugmentation {
         }
 
         @Override
-        protected void apply(Agent owner, Agent target) {
+        protected void apply(Agent owner, Agent target, Vector2 contact) {
         	if (target.getInfo().getSpecies() != Species.Automaton) {
         		target.addEffect(new Frenzied(owner, target, 3));
         	}

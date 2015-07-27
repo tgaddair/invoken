@@ -104,9 +104,9 @@ public class Spit extends ProjectileAugmentation {
         }
 
         @Override
-        protected void apply(Agent owner, Agent target) {
+        protected void apply(Agent owner, Agent target, Vector2 contact) {
             target.addEffect(new Stunned(owner, target, 0.5f));
-            target.addEffect(new Bleed(target, getDamage(), velocity.cpy().nor().scl(50)));
+            target.addEffect(new Bleed(target, getDamage(), contact, velocity.cpy().nor().scl(50)));
             InvokenGame.SOUND_MANAGER.playAtPoint(SoundEffect.HIT, target.getPosition());
         }
 

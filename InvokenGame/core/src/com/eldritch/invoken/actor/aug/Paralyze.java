@@ -83,7 +83,7 @@ public class Paralyze extends ProjectileAugmentation {
         }
 
         @Override
-        protected void apply(Agent owner, Agent target) {
+        protected void apply(Agent owner, Agent target, Vector2 contact) {
             target.addEffect(new Paralyzed(owner, target, 3));
         }
 

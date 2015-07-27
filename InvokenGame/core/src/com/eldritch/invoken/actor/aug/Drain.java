@@ -93,8 +93,8 @@ public class Drain extends ProjectileAugmentation {
         }
 
         @Override
-        protected void apply(Agent owner, Agent target) {
-            target.addEffect(new Draining(target, getDamage(), 2));
+        protected void apply(Agent owner, Agent target, Vector2 contact) {
+            target.addEffect(new Draining(target, getDamage(), contact, 2));
         }
 
         @Override

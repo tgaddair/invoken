@@ -99,7 +99,7 @@ public class Smash extends ActiveAugmentation {
 
                     Damage damage = Damage.from(owner, DamageType.PHYSICAL,
                             (int) (weapon.getDamage() * scale));
-                    neighbor.addEffect(new Bleed(neighbor, damage));
+                    neighbor.addEffect(new Bleed(neighbor, damage, center));
                     InvokenGame.SOUND_MANAGER.playAtPoint(SoundEffect.MELEE_HIT,
                             neighbor.getPosition());
                 }

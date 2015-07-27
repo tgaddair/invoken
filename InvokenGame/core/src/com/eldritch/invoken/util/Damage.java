@@ -49,19 +49,19 @@ public class Damage {
         return magnitude;
     }
     
-    public float apply(Agent defender, float delta) {
-        ReifiedDamage damage = getDamage(defender);
+    public float apply(Agent defender, Vector2 contact, float delta) {
+        ReifiedDamage damage = getDamage(defender, contact);
         for (Entry<DamageType, Float> entry : damage.magnitudes.entrySet()) {
             defender.getInfo().addStatus(entry.getKey(), entry.getValue());
         }
         return damage.total * delta;
     }
     
-    public float get(Agent defender) {
-        return getDamage(defender).total;
+    public float get(Agent defender, Vector2 contact) {
+        return getDamage(defender, contact).total;
     }
     
-    private ReifiedDamage getDamage(Agent defender) {
+    private ReifiedDamage getDamage(Agent defender, Vector2 contact) {
         float scale = getBaseScale(defender);
         if (attacker != defender && attacker.isAlly(defender)) {
             // scale down friendly fire

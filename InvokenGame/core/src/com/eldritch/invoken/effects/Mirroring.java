@@ -36,7 +36,7 @@ public class Mirroring extends AnimatedEffect {
 	private class MirrorProjectileHandler implements ProjectileHandler {
         @Override
         public boolean handle(HandledProjectile projectile) {
-            float damage = projectile.getDamage().get(target);
+            float damage = projectile.getDamage().get(target, projectile.getPosition());
             if (damage > 0) {
                 target.getInfo().expend(damage);
                 if (target.getInfo().getEnergy() < damage) {

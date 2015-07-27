@@ -33,7 +33,7 @@ public class Leech extends ActiveAugmentation {
     }
 
     private Leech() {
-        super(Optional.<String>absent());
+        super(Optional.<String> absent());
     }
 
     @Override
@@ -103,7 +103,7 @@ public class Leech extends ActiveAugmentation {
             super(agent);
             this.handler = new LeechHandler();
         }
-        
+
         public void cancel() {
             this.cancelled = true;
         }
@@ -132,10 +132,11 @@ public class Leech extends ActiveAugmentation {
                 if (joint == null) {
                     // weld the entities
                     weld(handler.victim);
-                    
+
                     // start draining until detachment
                     Damage damage = Damage.from(target, DamageType.VIRAL, getBaseDamage(target));
-                    this.draining = new Draining(handler.victim, damage, DURATION);
+                    this.draining = new Draining(handler.victim, damage, target.getPosition(),
+                            DURATION);
                     handler.victim.addEffect(draining);
                 } else {
                     // check that the weld condition still holds
@@ -163,7 +164,7 @@ public class Leech extends ActiveAugmentation {
 
             joint = target.getLocation().getWorld().createJoint(def);
         }
-        
+
         private void unweld() {
             if (joint != null) {
                 target.getLocation().getWorld().destroyJoint(joint);
@@ -185,7 +186,7 @@ public class Leech extends ActiveAugmentation {
             return false;
         }
     }
-    
+
     private static int getBaseDamage(Agent owner) {
         return (int) (DAMAGE * owner.getInfo().getExecuteModifier());
     }

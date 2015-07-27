@@ -28,7 +28,7 @@ public class Blast extends ActiveAugmentation {
     }
 
     private Blast() {
-        super(Optional.<String>absent());
+        super(Optional.<String> absent());
     }
 
     @Override
@@ -66,7 +66,7 @@ public class Blast extends ActiveAugmentation {
         if (owner == target) {
             return 0;
         }
-        
+
         float x = owner.dst2(target);
         if (x > RANGE * RANGE) {
             return 0;
@@ -86,7 +86,8 @@ public class Blast extends ActiveAugmentation {
                 if (owner.dst2(neighbor) < RANGE * RANGE) {
                     Vector2 direction = neighbor.getPosition().cpy().sub(owner.getPosition()).nor();
                     neighbor.addEffect(new Stunned(owner, neighbor, 1f));
-                    neighbor.addEffect(new Bleed(neighbor, damage, direction.scl(500)));
+                    neighbor.addEffect(new Bleed(neighbor, damage, owner.getPosition(), direction
+                            .scl(500)));
                 }
             }
             InvokenGame.SOUND_MANAGER.playAtPoint(SoundEffect.BUFF, owner.getPosition());
@@ -97,7 +98,7 @@ public class Blast extends ActiveAugmentation {
             return owner.getPosition();
         }
     }
-    
+
     private static int getBaseDamage(Agent owner) {
         return (int) (DAMAGE_SCALE * owner.getInfo().getExecuteModifier());
     }

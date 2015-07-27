@@ -116,8 +116,8 @@ public class Infect extends ActiveAugmentation {
                     // infection does not stack
                     if (neighbor.inRange(getPosition(), getRadius())) {
                         immune.add(neighbor);
-                        neighbor.addEffect(new Infected(neighbor, immune, getDamage(), DURATION,
-                                getRadius()));
+                        neighbor.addEffect(new Infected(neighbor, immune, getDamage(),
+                                getPosition(), DURATION, getRadius()));
                     }
                 }
             }

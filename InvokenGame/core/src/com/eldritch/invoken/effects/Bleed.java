@@ -24,21 +24,23 @@ public class Bleed extends AnimatedEffect {
             GameScreen.getTexture("sprite/effects/blood-splatter.png"));
 	
 	private final Damage damage;
+	private final Vector2 contact;
 	private final Vector2 knockback;
 	
-	public Bleed(Agent target, Damage damage) {
-	    this(target, damage, Vector2.Zero);
+	public Bleed(Agent target, Damage damage, Vector2 contact) {
+	    this(target, damage, contact, Vector2.Zero);
 	}
 	
-	public Bleed(Agent target, Damage damage, Vector2 knockback) {
+	public Bleed(Agent target, Damage damage, Vector2 contact, Vector2 knockback) {
 		super(target, randomAnimation(), new Vector2(0, 0.5f));
+		this.contact = contact;
 		this.damage = damage;
 		this.knockback = knockback;
 	}
 	
 	@Override
     protected void doApply() {
-        getTarget().damage(damage);
+        getTarget().damage(damage, contact);
         if (!knockback.isZero()) {
             if (!target.isAlive()) {
                 // extra knockback for effect

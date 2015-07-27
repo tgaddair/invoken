@@ -31,9 +31,9 @@ public abstract class HandledBullet extends Projectile implements HandledProject
     }
 
     public void apply(Agent target) {
-        apply(getOwner(), target);
+        apply(getOwner(), target, getPosition().cpy());
         finish();
     }
 
-    protected abstract void apply(Agent owner, Agent target);
+    protected abstract void apply(Agent owner, Agent target, Vector2 contact);
 }

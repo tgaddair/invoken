@@ -508,14 +508,14 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         worldCoords.set(position.x, position.y + h, 0);
     }
 
-    public float damage(Damage damage) {
-        return damage(damage, 1);
+    public float damage(Damage damage, Vector2 contact) {
+        return damage(damage, contact, 1);
     }
 
-    public final float damage(Damage damage, float delta) {
+    public final float damage(Damage damage, Vector2 contact, float delta) {
         float result = 0;
 
-        float value = damage.apply(this, delta);
+        float value = damage.apply(this, contact, delta);
         if (isAlive()) {
             Agent source = damage.getSource();
             addHostility(source, value);

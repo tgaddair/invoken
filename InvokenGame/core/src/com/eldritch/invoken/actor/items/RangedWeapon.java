@@ -208,9 +208,9 @@ public abstract class RangedWeapon extends Item {
         }
 
         @Override
-        protected void apply(Agent owner, Agent target) {
+        protected void apply(Agent owner, Agent target, Vector2 contact) {
             target.addEffect(new Stunned(owner, target, 0.2f));
-            target.addEffect(new Bleed(target, getDamage(), velocity.cpy().nor().scl(150)));
+            target.addEffect(new Bleed(target, getDamage(), contact, velocity.cpy().nor().scl(150)));
             InvokenGame.SOUND_MANAGER.playAtPoint(SoundEffect.HIT, target.getPosition());
         }
 
@@ -229,7 +229,7 @@ public abstract class RangedWeapon extends Item {
 
         @Override
         public void apply(Agent target) {
-            apply(getOwner(), target);
+            apply(getOwner(), target, getPosition().cpy());
 
             // rail guns shoot through enemies, but lose half their damage
             scale /= 2;
@@ -258,9 +258,9 @@ public abstract class RangedWeapon extends Item {
         }
 
         @Override
-        protected void apply(Agent owner, Agent target) {
+        protected void apply(Agent owner, Agent target, Vector2 contact) {
             target.addEffect(new Stunned(owner, target, 0.2f));
-            target.addEffect(new Bleed(target, getDamage(), velocity.cpy().nor().scl(150)));
+            target.addEffect(new Bleed(target, getDamage(), contact, velocity.cpy().nor().scl(150)));
             if (ammo != null && Math.random() < BULLET_RECLAIM_CHANCE) {
                 target.getInventory().addItem(ammo);
             }
@@ -344,7 +344,7 @@ public abstract class RangedWeapon extends Item {
         @Override
         public void apply(Agent target) {
             target.addEffect(new Stunned(owner, target, 0.2f));
-            target.addEffect(new Bleed(target, getDamage()));
+            target.addEffect(new Bleed(target, getDamage(), getPosition().cpy()));
         }
 
         @Override

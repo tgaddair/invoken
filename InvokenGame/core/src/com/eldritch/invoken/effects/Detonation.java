@@ -142,7 +142,7 @@ public class Detonation implements TemporaryEntity {
             Vector2 direction = agent.getPosition().cpy().sub(center).nor();
             agent.applyForce(direction.scl(500));
             agent.addEffect(new Stunned(damage.getSource(), agent, 0.2f));
-            agent.addEffect(new Bleed(agent, damage));
+            agent.addEffect(new Bleed(agent, damage, center));
             return false;
         }
         

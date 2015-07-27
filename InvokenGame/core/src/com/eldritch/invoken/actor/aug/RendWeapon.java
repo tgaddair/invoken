@@ -128,7 +128,7 @@ public class RendWeapon extends ActiveAugmentation {
         public void apply(Agent agent) {
             agent.applyForce(knockback);
             agent.addEffect(new Stunned(getOwner(), agent, 0.2f));
-            agent.addEffect(new Bleed(agent, damage));
+            agent.addEffect(new Bleed(agent, damage, getOwner().getPosition()));
             InvokenGame.SOUND_MANAGER.playAtPoint(SoundEffect.MELEE_HIT, agent.getPosition());
         }
 

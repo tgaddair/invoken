@@ -163,7 +163,7 @@ public class Ram extends ActiveAugmentation {
         public boolean handle(Agent agent) {
             // avoid damaging more than once
             if (!damaged.contains(agent)) {
-                agent.damage(damage);
+                agent.damage(damage, damage.getSource().getPosition());
                 agent.applyForce(force);
                 damaged.add(agent);
                 return true;
