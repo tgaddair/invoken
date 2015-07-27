@@ -65,6 +65,7 @@ public class Settings {
 	public static boolean DEBUG_MAP = false;
 	public static boolean DEBUG_CRITICAL_PATH = false;
 	public static boolean DEBUG_ENCOUNTER = true;
+	public static boolean DEBUG_SAVE = true;
 	
 	public static final int MAX_GENERATION_ATTEMPTS = 5;
 	public static boolean SKIP_MENU = true;

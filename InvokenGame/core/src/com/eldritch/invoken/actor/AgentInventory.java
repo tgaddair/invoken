@@ -22,17 +22,17 @@ public class AgentInventory extends Inventory {
     private static final float MAX_WEIGHT = 150f;
     private static final float BURDEN_RATIO = 1f;
     private static final float BURDEN_PENALTY = 5f;
-    
+
     private final Set<Item> loot = new HashSet<>();
     private final AgentInfo info;
-    
+
     // equipment
     private final Consumable[] consumables = new Consumable[2];
     private final Map<RangedWeaponType, Ammunition> ammunition = new HashMap<>();
     private Outfit outfit;
     private RangedWeaponState rangedWeapon = new RangedWeaponState(null, null);
     private MeleeWeapon meleeWeapon;
-    
+
     // additional properties
     private float weight = 0;
 
@@ -44,7 +44,7 @@ public class AgentInventory extends Inventory {
     public AgentInfo getAgentInfo() {
         return info;
     }
-    
+
     @Override
     public boolean isEmpty() {
         return super.isEmpty() || loot.isEmpty();
@@ -59,18 +59,19 @@ public class AgentInventory extends Inventory {
             rangedWeapon.update(delta);
         }
     }
-    
+
     public float getWeight() {
         return weight;
     }
-    
+
     public float getMaxWeight() {
         return MAX_WEIGHT;
     }
 
     public boolean canUseRangedWeapon() {
         // return hasRangedWeapon() && !isCooling(rangedWeapon);
-        return hasRangedWeapon() && getClip() > 0 && getAmmunitionCount() > 0 && !isReloading();
+        return hasRangedWeapon() && getClip() > 0 && getAmmunitionCount() > 0 && !isReloading()
+                && !isCooling(rangedWeapon.getWeapon());
     }
 
     public void setCooldown(Item item, float cooldown) {
@@ -80,11 +81,11 @@ public class AgentInventory extends Inventory {
     public boolean isCooling(Item item) {
         return getState(item.getId()).getCooldown() > 0;
     }
-    
+
     public Consumable[] getConsumables() {
         return consumables;
     }
-    
+
     public int getConsumableCount() {
         return consumables.length;
     }
@@ -120,23 +121,23 @@ public class AgentInventory extends Inventory {
         }
         return false;
     }
-    
+
     public Iterable<Ammunition> getAmmunition() {
         return ammunition.values();
     }
-    
+
     public boolean hasAmmunition(RangedWeaponType type) {
         return ammunition.containsKey(type);
     }
-    
+
     public Ammunition getAmmunition(RangedWeaponType type) {
         return ammunition.get(type);
     }
-    
+
     public void setAmmunition(RangedWeaponType type, Ammunition ammo) {
         ammunition.put(type, ammo);
     }
-    
+
     public void removeAmmunition(RangedWeaponType type) {
         ammunition.remove(type);
     }
@@ -234,20 +235,20 @@ public class AgentInventory extends Inventory {
     public void unequip(Item item) {
         item.unequipFrom(this);
     }
-    
+
     @Override
     protected void onAdd(Item item, int count) {
         item.addFrom(this);
-        
+
         boolean wasBurdened = isBurdened();
         weight += item.getWeight() * count;
         updateBurden(wasBurdened);
-        
+
         if (item.canLoot()) {
             loot.add(item);
         }
     }
-    
+
     @Override
     protected void onRemove(Item item, int count) {
         boolean wasBurdened = isBurdened();
@@ -263,7 +264,7 @@ public class AgentInventory extends Inventory {
             loot.remove(item);
         }
     }
-    
+
     private void updateBurden(boolean wasBurdened) {
         boolean burdened = isBurdened();
         if (burdened != wasBurdened) {
@@ -271,7 +272,7 @@ public class AgentInventory extends Inventory {
             info.getAgent().addVelocityPenalty(sign * BURDEN_PENALTY);
         }
     }
-    
+
     public boolean isBurdened() {
         return getWeight() / MAX_WEIGHT >= BURDEN_RATIO;
     }
@@ -326,7 +327,7 @@ public class AgentInventory extends Inventory {
             }
             reloadElapsed = 0;
         }
-        
+
         private void resetClip() {
             clip = Math.min(weapon.getClipSize(), getAmmunitionCount());
         }

@@ -434,6 +434,10 @@ public class Player extends SteeringAgent {
         public static NewPlayerDescription from(String name, Profession profession) {
             long time = System.currentTimeMillis();
             String id = name + "_" + time;
+            if (Settings.DEBUG_SAVE) {
+                id = name;
+            }
+            
             return new NewPlayerDescription(id, name, profession);
         }
 

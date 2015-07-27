@@ -43,7 +43,14 @@ public class ResearchMenu implements HudElement {
 	    table = new Table(skin);
 		table.top();
 		
-		ScrollPane scroll = new ScrollPane(table, skin);
+		Table mainTable = new Table(skin);
+		mainTable.top();
+		
+//		add(createLabel("Research Station"), mainTable);
+//		mainTable.row();
+		mainTable.add(table).expand().fill();
+		
+		ScrollPane scroll = new ScrollPane(mainTable, skin);
 		container.add(scroll).expand().fill();
 		container.setVisible(false);
 	}

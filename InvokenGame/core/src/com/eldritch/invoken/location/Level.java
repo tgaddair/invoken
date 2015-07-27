@@ -44,6 +44,7 @@ import com.eldritch.invoken.activators.ClickActivator;
 import com.eldritch.invoken.activators.SecurityCamera;
 import com.eldritch.invoken.actor.AgentInventory;
 import com.eldritch.invoken.actor.Drawable;
+import com.eldritch.invoken.actor.PreparedAugmentations;
 import com.eldritch.invoken.actor.Profession;
 import com.eldritch.invoken.actor.ai.Squad;
 import com.eldritch.invoken.actor.aug.Action;
@@ -869,10 +870,16 @@ public class Level {
 
         // draw targeting reticle
         if (player.isAiming()) {
+            PreparedAugmentations pa = player.getInfo().getAugmentations();
+            Color color = Color.RED;
+            if (pa.hasActiveAugmentation(0) && pa.getActiveAugmentation(0).isValid(player)) {
+                color = Color.GREEN;
+            }
+            
             debugEntityRenderer.drawBetween(
                     player.getWeaponSentry().getPosition(),
                     losFocus.add(player.getWeaponSentry().getPosition()).sub(
-                            player.getWeaponSentry().getDirection()), camera);
+                            player.getWeaponSentry().getDirection()), color, camera);
         }
 
         // render the overlay layers

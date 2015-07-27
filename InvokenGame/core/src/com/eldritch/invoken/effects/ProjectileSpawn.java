@@ -38,7 +38,7 @@ public abstract class ProjectileSpawn extends BasicEffect {
 
         // add cooldown to weapon
         RangedWeapon weapon = target.getInventory().getRangedWeapon();
-        // target.getInventory().setCooldown(weapon, weapon.getCooldown());
+        target.getInventory().setCooldown(weapon, weapon.getCooldown());
 
         // alert all enemies in range if the weapon is not silenced
         for (Agent neighbor : target.getNeighbors()) {

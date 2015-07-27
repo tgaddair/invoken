@@ -675,7 +675,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
                 if (!success) {
                     Augmentation active = pa.getActiveAugmentation(button);
                     InvokenGame.SOUND_MANAGER.play(active.getFailureSound(), 2);
-                    toast("No Ammunition!");
+//                    toast("No Ammunition!");
                 }
                 return true;
             }
