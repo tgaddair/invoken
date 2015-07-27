@@ -49,6 +49,11 @@ public class Spit extends ProjectileAugmentation {
     }
     
     @Override
+    public boolean isAimed() {
+        return false;
+    }
+    
+    @Override
     public boolean isValid(Agent owner) {
         return super.isValid(owner) && !owner.isToggled(Burrow.class);
     }
