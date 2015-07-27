@@ -163,11 +163,11 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
         // post init
         setWeaponSentry(new RotatingWeaponSentry());
     }
-    
+
     public boolean hasScenario() {
         return scenario.isPresent();
     }
-    
+
     public ActorScenario getScenario() {
         return scenario.get();
     }
@@ -396,6 +396,13 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
             // Apply steering acceleration to move this agent
             applySteering(steeringOutput, delta);
         }
+    }
+
+    @Override
+    protected void updateDirection(Locatable observed) {
+        // face the aimed direction
+        WeaponSentry weaponSentry = getWeaponSentry();
+        setDirection(getDominantDirection(weaponSentry.direction.x, weaponSentry.direction.y));
     }
 
     public void render(OrthographicCamera camera) {

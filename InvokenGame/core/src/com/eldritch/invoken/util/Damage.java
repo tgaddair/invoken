@@ -105,8 +105,10 @@ public class Damage {
         // 3 * pi / 4
         float scale = 1f;
         if (delta < Math.PI / 4) {
+            System.out.println("CRITICAL!");
             scale *= 2;
         } else if (delta > 3 * Math.PI / 4) {
+            System.out.println("reduced...");
             scale *= 0.5f;
         }
         return scale;

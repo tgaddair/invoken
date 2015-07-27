@@ -1685,16 +1685,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
 
         lastDirectionChange += delta;
         if (!actionInProgress()) {
-            if (observed != null) {
-                if (lastDirectionChange > DIRECTION_CHANGE_DELAY) {
-                    float dx = observed.getPosition().x - getPosition().x;
-                    float dy = observed.getPosition().y - getPosition().y;
-                    setDirection(getDominantDirection(dx, dy));
-                }
-            } else if (isAiming()) {
-                // face the aimed direction
-                setDirection(getDominantDirection(weaponSentry.direction.x, weaponSentry.direction.y));
-            }
+            updateDirection(observed);
         }
 
         // end interactions if outside range
@@ -1704,6 +1695,19 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
 
         position.set(body.getPosition().cpy().add(0, getHeight() / 2 - radius));
         velocity.set(body.getLinearVelocity());
+    }
+    
+    protected void updateDirection(Locatable observed) {
+        if (observed != null) {
+            if (lastDirectionChange > DIRECTION_CHANGE_DELAY) {
+                float dx = observed.getPosition().x - getPosition().x;
+                float dy = observed.getPosition().y - getPosition().y;
+                setDirection(getDominantDirection(dx, dy));
+            }
+        } else if (isAiming()) {
+            // face the aimed direction
+            setDirection(getDominantDirection(weaponSentry.direction.x, weaponSentry.direction.y));
+        }
     }
 
     public boolean collidesWith(float x, float y) {
