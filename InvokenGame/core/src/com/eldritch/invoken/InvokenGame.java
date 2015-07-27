@@ -5,7 +5,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.eldritch.invoken.actor.Profession;
 import com.eldritch.invoken.actor.type.Player.NewPlayerDescription;
 import com.eldritch.invoken.actor.type.Player.PlayerDescription;
 import com.eldritch.invoken.screens.GameScreen;
@@ -61,6 +60,9 @@ public class InvokenGame extends Game {
 
         MUSIC_MANAGER = new MusicManager();
         SOUND_MANAGER = new SoundManager();
+        
+        SOUND_MANAGER.setEnabled(!Settings.MUTE);
+        SOUND_MANAGER.setVolume(Settings.SFX_VOLUME);
 
         // // create the preferences manager preferencesManager = new
         // PreferencesManager();

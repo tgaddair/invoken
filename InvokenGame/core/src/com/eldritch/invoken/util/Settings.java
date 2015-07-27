@@ -49,7 +49,7 @@ public class Settings {
 	
 	// visuals
 	public static final boolean ENABLE_FOG = false;
-	public static final boolean ENABLE_FOW = false;
+	public static final boolean ENABLE_FOW = true;
 	public static final boolean ENABLE_BACKGROUND = true;
 	
 	// debug settings
@@ -67,9 +67,9 @@ public class Settings {
 	public static boolean DEBUG_ENCOUNTER = true;
 	
 	public static final int MAX_GENERATION_ATTEMPTS = 5;
-	public static boolean SKIP_MENU = false;
+	public static boolean SKIP_MENU = true;
 	public static int START_LEVEL = 1;  // 1, 10, 25
-	public static int START_FLOOR = 3;  // 0
+	public static int START_FLOOR = 0;  // 0, 3
 	public static Profession DEFAULT_PROFESSION = Profession.Centurion;
 	
 	// string constants

@@ -4,12 +4,16 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
+import com.badlogic.gdx.utils.Align;
 import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.actor.items.Fragment;
 import com.eldritch.invoken.actor.items.Item;
@@ -73,6 +77,11 @@ public class StoreMenu implements HudElement {
     public void setup(Player player) {
         buttons.clear();
         table.clear();
+        
+        add(createLabel("[CYAN]Name"), table);
+        add(createLabel("[CYAN]Cost"), table);
+        add(createLabel("[CYAN]Count"), table);
+        
         for (ItemState item : player.getBartered().getInventory().getItems()) {
             addItemButton(item, player, player.getBartered());
         }
@@ -87,13 +96,15 @@ public class StoreMenu implements HudElement {
 
     private void addItemButton(ItemState itemState, final Player player, final Lootable bartered) {
         final Item item = itemState.getItem();
-        String styleName = getStyle(item);
-        TextButtonStyle buttonStyle = skin.get(styleName, TextButtonStyle.class);
-
         final Tooltip tooltip = Utils.createTooltip(item.getTooltipFor(player), skin);
 
-        final TextButton itemButton = new TextButton(getText(item, itemState.getCount()),
-                buttonStyle);
+        String styleName = getStyle(item);
+        TextButtonStyle bStyle = skin.get(styleName, TextButtonStyle.class);
+        final TextButton itemButton = new TextButton(item.getName(player), bStyle);
+
+        final Label costLabel = createLabel(String.valueOf(item.getValue()));
+        final Label countLabel = createLabel(String.valueOf(itemState.getCount()));
+
         itemButton.addListener(new DefaultInputListener() {
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
@@ -105,8 +116,8 @@ public class StoreMenu implements HudElement {
 
                     // update button with new count and new style if we can no longer afford
                     int count = bartered.getInventory().getItemCount(item);
+                    countLabel.setText(String.valueOf(count));
                     if (count > 0) {
-                        itemButton.setText(getText(item, count));
                         itemButton.setStyle(skin.get(getStyle(item), TextButtonStyle.class));
                     } else {
                         itemButton.setVisible(false);
@@ -130,9 +141,21 @@ public class StoreMenu implements HudElement {
         itemButton.addListener(tooltip);
 
         table.row();
-        table.add(itemButton).expandX().fillX().padLeft(5).padRight(5).padBottom(5).padTop(5);
+        add(itemButton, table);
+        add(costLabel, table);
+        add(countLabel, table);
 
         buttons.put(itemButton, item);
+    }
+    
+    private void add(Actor actor, Table table) {
+        table.add(actor).center().expandX().fillX().padLeft(5).padRight(5).padBottom(5).padTop(5);
+    }
+
+    private Label createLabel(String text) {
+        Label label = new Label(text, skin.get("default-nobg", LabelStyle.class));
+        label.setAlignment(Align.center);
+        return label;
     }
 
     private boolean canPurchase(Player player, Item item) {
@@ -143,10 +166,6 @@ public class StoreMenu implements HudElement {
         int cost = item.getValue();
         int fragments = player.getInventory().getItemCount(Fragment.getInstance());
         return fragments >= cost;
-    }
-
-    private String getText(Item item, int count) {
-        return String.format("%s (%d): %d", item.getName(player), count, item.getValue());
     }
 
     private void exitMenu() {
