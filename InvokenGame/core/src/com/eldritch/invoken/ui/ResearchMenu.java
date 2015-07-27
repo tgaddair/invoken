@@ -27,34 +27,34 @@ import com.eldritch.invoken.util.Utils;
 
 public class ResearchMenu implements HudElement {
     private final Map<TextButton, Item> buttons = new HashMap<>();
-	private final Table container;
-	private final Table table;
-	private final Skin skin;
-	private final Player player;
-	private boolean active = false;
-	
-	public ResearchMenu(Player player, Skin skin) {
-	    this.player = player;
-		this.skin = skin;
-	    container = new Table(skin);
-	    resize(Settings.MENU_VIEWPORT_WIDTH, Settings.MENU_VIEWPORT_HEIGHT);
-		container.center();
+    private final Table container;
+    private final Table table;
+    private final Skin skin;
+    private final Player player;
+    private boolean active = false;
 
-	    table = new Table(skin);
-		table.top();
-		
-		Table mainTable = new Table(skin);
-		mainTable.top();
-		
-//		add(createLabel("Research Station"), mainTable);
-//		mainTable.row();
-		mainTable.add(table).expand().fill();
-		
-		ScrollPane scroll = new ScrollPane(mainTable, skin);
-		container.add(scroll).expand().fill();
-		container.setVisible(false);
-	}
-	
+    public ResearchMenu(Player player, Skin skin) {
+        this.player = player;
+        this.skin = skin;
+        container = new Table(skin);
+        resize(Settings.MENU_VIEWPORT_WIDTH, Settings.MENU_VIEWPORT_HEIGHT);
+        container.center();
+
+        table = new Table(skin);
+        table.top();
+
+        Table mainTable = new Table(skin);
+        mainTable.top();
+
+        Label title = createLabel("RESEARCH STATION");
+        add(title, mainTable, 10);
+        mainTable.row();
+        mainTable.add(table).expand().fill();
+
+        ScrollPane scroll = new ScrollPane(mainTable, skin);
+        container.add(scroll).expand().fill();
+        container.setVisible(false);
+    }
 
     @Override
     public Table getContainer() {
@@ -73,56 +73,55 @@ public class ResearchMenu implements HudElement {
             exitMenu();
         }
     }
-	
-	public void resize(int width, int height) {
-	    container.setHeight(height - 100);
+
+    public void resize(int width, int height) {
+        container.setHeight(height - 100);
         container.setWidth(width / 3);
-        container.setPosition(
-                width / 2 - container.getWidth() / 2,
+        container.setPosition(width / 2 - container.getWidth() / 2,
                 height / 2 - container.getHeight() / 2);
-	}
-	
-	public void setup(Player player) {
-	    buttons.clear();
-		table.clear();
-		
-		add(createLabel("[CYAN]Name"), table);
+    }
+
+    public void setup(Player player) {
+        buttons.clear();
+        table.clear();
+
+        add(createLabel("[CYAN]Name"), table);
         add(createLabel("[CYAN]Cost"), table);
-		
-		for (ItemState item : player.getInventory().getItems()) {
-		    if (!player.isIdentified(item.getItem())) {
-		        addItemButton(item, player);
-		    }
-		}
-	}
-	
-	private void addItemButton(ItemState itemState, final Player player) {
-		final Item item = itemState.getItem();
+
+        for (ItemState item : player.getInventory().getItems()) {
+            if (!player.isIdentified(item.getItem())) {
+                addItemButton(item, player);
+            }
+        }
+    }
+
+    private void addItemButton(ItemState itemState, final Player player) {
+        final Item item = itemState.getItem();
         final Tooltip tooltip = Utils.createTooltip(item.getTooltipFor(player), skin);
-        
+
         final Label costLabel = createLabel(String.valueOf(item.getValue()));
-        
+
         String styleName = canAfford(player, item) ? "encrypted" : "invalid";
         TextButtonStyle buttonStyle = skin.get(styleName, TextButtonStyle.class);
-		final TextButton itemButton = new TextButton(item.getName(player), buttonStyle);
-		
-		itemButton.addListener(new DefaultInputListener() {
-			@Override
-			public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-			    if (canAfford(player, item)) {
-			        // identify
-			        player.identify(item.getId());
-			        player.getInventory().removeItem(Fragment.getInstance(), item.getValue());
-			    }
-			    
-			    // update button
+        final TextButton itemButton = new TextButton(item.getName(player), buttonStyle);
+
+        itemButton.addListener(new DefaultInputListener() {
+            @Override
+            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                if (canAfford(player, item)) {
+                    // identify
+                    player.identify(item.getId());
+                    player.getInventory().removeItem(Fragment.getInstance(), item.getValue());
+                }
+
+                // update button
                 if (player.isIdentified(item.getId())) {
                     itemButton.setText(item.getName(player));
                     costLabel.setText("N/A");
                     itemButton.setStyle(skin.get("choice", TextButtonStyle.class));
                     tooltip.setText(item.getTooltipFor(player));
                 }
-                
+
                 // update cost
                 for (Entry<TextButton, Item> entry : buttons.entrySet()) {
                     Item otherItem = entry.getValue();
@@ -135,26 +134,31 @@ public class ResearchMenu implements HudElement {
                         } else {
                             styleName = "invalid";
                         }
-                        
+
                         TextButtonStyle buttonStyle = skin.get(styleName, TextButtonStyle.class);
                         entry.getKey().setStyle(buttonStyle);
                     }
                 }
-			    
-				InvokenGame.SOUND_MANAGER.play(SoundEffect.INVENTORY_ON, 2);
-			}
-		});
-		itemButton.addListener(tooltip);
-		
-		table.row();
-		add(itemButton, table);
-		add(costLabel, table);
-		
-		buttons.put(itemButton, item);
-	}
-	
-	private void add(Actor actor, Table table) {
-        table.add(actor).center().expandX().fillX().padLeft(5).padRight(5).padBottom(5).padTop(5);
+
+                InvokenGame.SOUND_MANAGER.play(SoundEffect.INVENTORY_ON, 2);
+            }
+        });
+        itemButton.addListener(tooltip);
+
+        table.row();
+        add(itemButton, table);
+        add(costLabel, table);
+
+        buttons.put(itemButton, item);
+    }
+
+    private void add(Actor actor, Table table) {
+        add(actor, table, 5);
+    }
+
+    private void add(Actor actor, Table table, float pad) {
+        table.add(actor).center().expandX().fillX().padLeft(pad).padRight(pad).padBottom(pad)
+                .padTop(pad);
     }
 
     private Label createLabel(String text) {
@@ -162,15 +166,15 @@ public class ResearchMenu implements HudElement {
         label.setAlignment(Align.center);
         return label;
     }
-	
-	private boolean canAfford(Player player, Item item) {
-	    int cost = item.getValue();
+
+    private boolean canAfford(Player player, Item item) {
+        int cost = item.getValue();
         int fragments = player.getInventory().getItemCount(Fragment.getInstance());
         return fragments >= cost;
-	}
-	
-	private void exitMenu() {
-		container.setVisible(false);
-		active = false;
-	}
+    }
+
+    private void exitMenu() {
+        container.setVisible(false);
+        active = false;
+    }
 }

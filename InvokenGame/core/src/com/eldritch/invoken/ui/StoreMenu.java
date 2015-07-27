@@ -43,8 +43,16 @@ public class StoreMenu implements HudElement {
 
         table = new Table(skin);
         table.top();
+        
+        Table mainTable = new Table(skin);
+        mainTable.top();
 
-        ScrollPane scroll = new ScrollPane(table, skin);
+        Label title = createLabel("VENDING MACHINE");
+        add(title, mainTable, 10);
+        mainTable.row();
+        mainTable.add(table).expand().fill();
+
+        ScrollPane scroll = new ScrollPane(mainTable, skin);
         container.add(scroll).expand().fill();
         container.setVisible(false);
     }
@@ -149,7 +157,12 @@ public class StoreMenu implements HudElement {
     }
     
     private void add(Actor actor, Table table) {
-        table.add(actor).center().expandX().fillX().padLeft(5).padRight(5).padBottom(5).padTop(5);
+        add(actor, table, 5);
+    }
+
+    private void add(Actor actor, Table table, float pad) {
+        table.add(actor).center().expandX().fillX().padLeft(pad).padRight(pad).padBottom(pad)
+                .padTop(pad);
     }
 
     private Label createLabel(String text) {
