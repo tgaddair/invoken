@@ -4,7 +4,6 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
-import com.eldritch.invoken.actor.type.Agent.WeaponSentry;
 import com.eldritch.invoken.box2d.AgentHandler;
 import com.eldritch.invoken.box2d.Bullet;
 import com.eldritch.invoken.location.Level;
@@ -14,19 +13,21 @@ import com.eldritch.invoken.util.Settings;
 
 public abstract class Projectile extends CollisionEntity implements AgentHandler, TemporaryEntity {
     private final Bullet bullet;
+    private final Vector2 direction;
     private final float speed;
     private final Damage damage;
     private Agent owner;
     private boolean finished;
     private float stateTime;
 
-    public Projectile(Agent owner, TextureRegion region, float speed, Damage damage) {
-        this(owner, region.getRegionWidth() * Settings.SCALE, region.getRegionHeight() * Settings.SCALE,
+    public Projectile(Agent owner, TextureRegion region, Vector2 direction, float speed, Damage damage) {
+        this(owner, region.getRegionWidth() * Settings.SCALE, region.getRegionHeight() * Settings.SCALE, direction,
                 speed, damage);
     }
 
-    public Projectile(Agent owner, float width, float height, float speed, Damage damage) {
+    public Projectile(Agent owner, float width, float height, Vector2 direction, float speed, Damage damage) {
         super(owner.getWeaponSentry().getPosition(), width, height);
+        this.direction = direction;
         this.speed = speed;
         this.damage = damage;
         
@@ -87,9 +88,8 @@ public abstract class Projectile extends CollisionEntity implements AgentHandler
         finished = false;
         stateTime = 0;
 
-        WeaponSentry sentry = source.getWeaponSentry();
         owner = source;
-        velocity.set(sentry.getDirection());
+        velocity.set(direction);
         velocity.scl(speed);
     }
     
@@ -190,4 +190,8 @@ public abstract class Projectile extends CollisionEntity implements AgentHandler
     protected abstract void handleAgentContact(Agent agent);
 
     protected abstract void handleObstacleContact();
+    
+    public static Vector2 fixedSentryDirection(Agent owner) {
+        return owner.getWeaponSentry().getDirection().cpy();
+    }
 }

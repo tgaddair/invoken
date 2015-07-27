@@ -27,7 +27,7 @@ public class Acid extends ProjectileAugmentation {
     private static final int BASE_COST = 20;
     private static final float SPREAD_DEGREES = 5f;
     private static final float PELLET_SCALE = 0.35f;
-    
+
     private static final TextureRegion SPLASH_REGION = new TextureRegion(
             GameScreen.getTexture("sprite/effects/toxic-splash.png"));
 
@@ -52,7 +52,7 @@ public class Acid extends ProjectileAugmentation {
     public int getCost(Agent owner) {
         return BASE_COST;
     }
-    
+
     @Override
     public boolean isValid(Agent owner) {
         return super.isValid(owner) && !owner.isToggled(Burrow.class);
@@ -87,7 +87,7 @@ public class Acid extends ProjectileAugmentation {
         public Vector2 getPosition() {
             return target;
         }
-        
+
         @Override
         protected float getHoldSeconds() {
             return 0.25f;
@@ -101,8 +101,8 @@ public class Acid extends ProjectileAugmentation {
                 GameScreen.getTexture("sprite/effects/toxic-projectile.png"));
 
         public AcidPellet(Agent owner, float theta, float scale) {
-            super(owner, PELLET_TEXTURE, V_MAX, Damage.from(owner, DamageType.TOXIC,
-                    getBaseDamage(owner)));
+            super(owner, PELLET_TEXTURE, fixedSentryDirection(owner), V_MAX, Damage.from(owner,
+                    DamageType.TOXIC, getBaseDamage(owner)));
             rotate(theta);
         }
 
@@ -121,12 +121,12 @@ public class Acid extends ProjectileAugmentation {
         private static int getBaseDamage(Agent owner) {
             return DAMAGE_SCALE;
         }
-        
+
         @Override
         public short getCollisionMask() {
             return Settings.BIT_HIGH_SHOOTABLE;
         }
-        
+
         @Override
         protected void onFinish() {
             getOwner().getLocation().addEntity(new Splash(SPLASH_REGION, getPosition().cpy(), 3));

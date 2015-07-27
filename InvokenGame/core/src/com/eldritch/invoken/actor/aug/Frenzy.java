@@ -63,7 +63,7 @@ public class Frenzy extends ProjectileAugmentation {
         private final Animation animation;
 
         public FrenzyBullet(Agent owner) {
-            super(owner, regions[0], 10, Damage.from(owner));
+            super(owner, regions[0], fixedSentryDirection(owner), 10, Damage.from(owner));
             animation = new Animation(0.1f, regions);
             animation.setPlayMode(Animation.PlayMode.LOOP_PINGPONG);
         }

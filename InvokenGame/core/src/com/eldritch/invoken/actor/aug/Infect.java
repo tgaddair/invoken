@@ -93,8 +93,8 @@ public class Infect extends ActiveAugmentation {
                 "sprite/effects/infect_cloud.png", 256, 256);
 
         public Grenade(Agent owner, Vector2 target) {
-            super(owner, target, texture, explosionRegions, 5, Damage.from(owner, DamageType.VIRAL,
-                    getBaseDamage(owner)), 2);
+            super(owner, target, texture, explosionRegions, fixedSentryDirection(owner), 5, Damage
+                    .from(owner, DamageType.VIRAL, getBaseDamage(owner)), 2);
         }
 
         @Override

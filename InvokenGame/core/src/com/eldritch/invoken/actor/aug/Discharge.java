@@ -92,8 +92,9 @@ public class Discharge extends ProjectileAugmentation {
 
     public static class DischargeBolt extends HandledBullet {
         public DischargeBolt(Agent owner, float theta) {
-            super(owner, BOLT_TEXTURE, BOLT_SIZE, BULLET_VELOCITY * 0.5f, Damage.from(owner,
-                    DamageType.RADIOACTIVE, getBaseDamage(owner)));
+            super(owner, BOLT_TEXTURE, BOLT_SIZE, fixedSentryDirection(owner),
+                    BULLET_VELOCITY * 0.5f, Damage.from(owner, DamageType.RADIOACTIVE,
+                            getBaseDamage(owner)));
             rotate(theta);
         }
 
@@ -119,5 +120,4 @@ public class Discharge extends ProjectileAugmentation {
         }
     }
 
-    
 }

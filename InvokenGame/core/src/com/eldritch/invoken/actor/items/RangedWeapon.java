@@ -201,8 +201,9 @@ public abstract class RangedWeapon extends Item {
 
     public class ShotgunPellet extends HandledBullet {
         public ShotgunPellet(Agent owner, float theta, float scale) {
-            super(owner, texture, BULLET_VELOCITY * 0.5f, Damage.from(owner, RangedWeapon.this,
-                    owner.getWeaponSentry().getPosition(), scale));
+            super(owner, texture, owner.getWeaponSentry().getDirection(), BULLET_VELOCITY * 0.5f,
+                    Damage.from(owner, RangedWeapon.this, owner.getWeaponSentry().getPosition(),
+                            scale));
             rotate(theta);
         }
 
@@ -247,7 +248,8 @@ public abstract class RangedWeapon extends Item {
         private final Ammunition ammo;
 
         public RangedWeaponBullet(Agent owner, TextureRegion texture) {
-            super(owner, texture, BULLET_VELOCITY * 0.75f, Damage.from(owner, RangedWeapon.this));
+            super(owner, texture, owner.getWeaponSentry().getDirection(), BULLET_VELOCITY * 0.75f,
+                    Damage.from(owner, RangedWeapon.this));
             this.texture = texture;
 
             // with some prob, add the bullet to the inventory of the target
@@ -362,7 +364,7 @@ public abstract class RangedWeapon extends Item {
                 successor.render(delta, renderer);
             }
         }
-        
+
         @Override
         public void renderOverlay(float delta, OrthogonalTiledMapRenderer renderer) {
         }
@@ -371,7 +373,7 @@ public abstract class RangedWeapon extends Item {
         public float getZ() {
             return owner.getWeaponSentry().getZ() + Settings.EPSILON;
         }
-        
+
         @Override
         public boolean inOverlay() {
             return false;

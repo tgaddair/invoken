@@ -1,22 +1,23 @@
 package com.eldritch.invoken.actor.type;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.util.Damage;
 import com.eldritch.invoken.util.Utils;
 
 public abstract class HandledBullet extends Projectile implements HandledProjectile {
-    public HandledBullet(Agent owner, TextureRegion region, float speed, Damage damage) {
-        super(owner, region, speed, damage);
+    public HandledBullet(Agent owner, TextureRegion region, Vector2 direction, float speed, Damage damage) {
+        super(owner, region, direction, speed, damage);
     }
 
-    public HandledBullet(Agent owner, TextureRegion region, float majorSize, float speed,
+    public HandledBullet(Agent owner, TextureRegion region, float majorSize, Vector2 direction, float speed,
             Damage damage) {
-        super(owner, Utils.getWidth(region, majorSize), Utils.getHeight(region, majorSize), speed,
+        super(owner, Utils.getWidth(region, majorSize), Utils.getHeight(region, majorSize), direction, speed,
                 damage);
     }
 
-    public HandledBullet(Agent owner, float width, float height, float speed, Damage damage) {
-        super(owner, width, height, speed, damage);
+    public HandledBullet(Agent owner, float width, float height, Vector2 direction, float speed, Damage damage) {
+        super(owner, width, height, direction, speed, damage);
     }
 
     @Override

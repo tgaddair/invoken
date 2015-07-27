@@ -18,7 +18,7 @@ import com.eldritch.invoken.util.Utils;
 public class Drain extends ProjectileAugmentation {
     public static final TextureRegion[] SPLASH_REGIONS = GameScreen.getMergedRegion(
             "sprite/effects/drain1.png", 120, 120);
-    
+
     private static final int DAMAGE_SCALE = 25;
     private static final int BASE_COST = 10;
 
@@ -88,8 +88,8 @@ public class Drain extends ProjectileAugmentation {
         private float lastAdjustment = 0;
 
         public DrainBullet(Agent owner) {
-            super(owner, region, BULLET_SIZE, V_MAX, Damage.from(owner, DamageType.VIRAL,
-                    getBaseDamage(owner)));
+            super(owner, region, BULLET_SIZE, fixedSentryDirection(owner), V_MAX, Damage.from(
+                    owner, DamageType.VIRAL, getBaseDamage(owner)));
         }
 
         @Override

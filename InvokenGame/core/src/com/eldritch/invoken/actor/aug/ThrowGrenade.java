@@ -16,13 +16,12 @@ import com.eldritch.invoken.util.Damage;
 
 public class ThrowGrenade extends InstantAugmentation {
     private static final int BASE_COST = 20;
-    
+
     private static final String TOOLTIP = String.format("Grenade\n\n"
             + "Throws a grenade in front of the user or in the aimed direction that detonates "
             + "in a fiery explosion on impact or after a brief period of time has elapsed.\n\n"
-            + "Mode: Instant\n"
-            + "Cost: %d energy, 1 grenade", BASE_COST);
-    
+            + "Mode: Instant\n" + "Cost: %d energy, 1 grenade", BASE_COST);
+
     private static class Holder {
         private static final ThrowGrenade INSTANCE = new ThrowGrenade();
     }
@@ -49,12 +48,12 @@ public class ThrowGrenade extends InstantAugmentation {
         }
         return getAction(owner, position);
     }
-    
+
     @Override
     public Action getAction(Agent owner, Vector2 target) {
         return new ThrowAction(owner, target);
     }
-    
+
     public boolean isValid(Agent owner) {
         return owner.getInventory().hasAmmunition(RangedWeaponType.GRENADE);
     }
@@ -78,18 +77,18 @@ public class ThrowGrenade extends InstantAugmentation {
     public float quality(Agent owner, Agent target, Level level) {
         return owner.getWeaponSentry().hasLineOfSight(target) ? 1 : 0;
     }
-    
+
     @Override
     public String getTooltip() {
         return TOOLTIP;
     }
-    
+
     @Override
     public String getLabel(Agent owner) {
         if (!owner.getInventory().hasAmmunition(RangedWeaponType.GRENADE)) {
             return "";
         }
-        
+
         Ammunition ammo = owner.getInventory().getAmmunition(RangedWeaponType.GRENADE);
         int count = owner.getInventory().getItemCount(ammo);
         return count > 0 ? String.valueOf(count) : "";
@@ -110,7 +109,7 @@ public class ThrowGrenade extends InstantAugmentation {
 
             Grenade bullet = new Grenade(owner, target);
             level.addEntity(bullet);
-            
+
             // remove one grenade
             Ammunition grenade = owner.getInventory().getAmmunition(RangedWeaponType.GRENADE);
             owner.getInventory().removeItem(grenade, 1);
@@ -133,8 +132,8 @@ public class ThrowGrenade extends InstantAugmentation {
         private static final int RADIUS = 3;
 
         public Grenade(Agent owner, Vector2 target) {
-            super(owner, target, texture, explosionRegions, SPEED, Damage.from(owner,
-                    DamageType.THERMAL, DAMAGE), RADIUS);
+            super(owner, target, texture, explosionRegions, fixedSentryDirection(owner), SPEED,
+                    Damage.from(owner, DamageType.THERMAL, DAMAGE), RADIUS);
         }
 
         @Override
