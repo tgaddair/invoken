@@ -247,12 +247,6 @@ public class MusicManager implements Disposable {
         if (musicBeingPlayed == music) {
             return;
         }
-        
-        if (musicBeingPlayed != null
-                && musicBeingPlayed.getMusicResource().getPosition() < MIN_TRANSITION_TIME) {
-            // avoid constantly thrashing between tracks
-            return;
-        }
 
         // do some logging
         InvokenGame.log("Playing music: " + music.getAsset());
