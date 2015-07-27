@@ -4,12 +4,16 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
+import com.badlogic.gdx.utils.Align;
 import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.actor.items.Fragment;
 import com.eldritch.invoken.actor.items.Item;
@@ -74,6 +78,10 @@ public class ResearchMenu implements HudElement {
 	public void setup(Player player) {
 	    buttons.clear();
 		table.clear();
+		
+		add(createLabel("[CYAN]Name"), table);
+        add(createLabel("[CYAN]Cost"), table);
+		
 		for (ItemState item : player.getInventory().getItems()) {
 		    if (!player.isIdentified(item.getItem())) {
 		        addItemButton(item, player);
@@ -83,13 +91,14 @@ public class ResearchMenu implements HudElement {
 	
 	private void addItemButton(ItemState itemState, final Player player) {
 		final Item item = itemState.getItem();
-		
-		String styleName = canAfford(player, item) ? "encrypted" : "invalid";
-        TextButtonStyle buttonStyle = skin.get(styleName, TextButtonStyle.class);
-        
         final Tooltip tooltip = Utils.createTooltip(item.getTooltipFor(player), skin);
         
-		final TextButton itemButton = new TextButton(getText(item), buttonStyle);
+        final Label costLabel = createLabel(String.valueOf(item.getValue()));
+        
+        String styleName = canAfford(player, item) ? "encrypted" : "invalid";
+        TextButtonStyle buttonStyle = skin.get(styleName, TextButtonStyle.class);
+		final TextButton itemButton = new TextButton(item.getName(player), buttonStyle);
+		
 		itemButton.addListener(new DefaultInputListener() {
 			@Override
 			public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
@@ -102,6 +111,7 @@ public class ResearchMenu implements HudElement {
 			    // update button
                 if (player.isIdentified(item.getId())) {
                     itemButton.setText(item.getName(player));
+                    costLabel.setText("N/A");
                     itemButton.setStyle(skin.get("choice", TextButtonStyle.class));
                     tooltip.setText(item.getTooltipFor(player));
                 }
@@ -130,19 +140,26 @@ public class ResearchMenu implements HudElement {
 		itemButton.addListener(tooltip);
 		
 		table.row();
-		table.add(itemButton).expandX().fillX().padLeft(5).padRight(5).padBottom(5).padTop(5);
+		add(itemButton, table);
+		add(costLabel, table);
 		
 		buttons.put(itemButton, item);
 	}
+	
+	private void add(Actor actor, Table table) {
+        table.add(actor).center().expandX().fillX().padLeft(5).padRight(5).padBottom(5).padTop(5);
+    }
+
+    private Label createLabel(String text) {
+        Label label = new Label(text, skin.get("default-nobg", LabelStyle.class));
+        label.setAlignment(Align.center);
+        return label;
+    }
 	
 	private boolean canAfford(Player player, Item item) {
 	    int cost = item.getValue();
         int fragments = player.getInventory().getItemCount(Fragment.getInstance());
         return fragments >= cost;
-	}
-	
-	private String getText(Item item) {
-		return String.format("%s (%d)", item.getName(player), item.getValue());
 	}
 	
 	private void exitMenu() {
