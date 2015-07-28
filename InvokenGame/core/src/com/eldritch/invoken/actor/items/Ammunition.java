@@ -1,17 +1,27 @@
 package com.eldritch.invoken.actor.items;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector2;
+import com.eldritch.invoken.actor.AgentInfo;
 import com.eldritch.invoken.actor.AgentInventory;
+import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.actor.type.Agent.Direction;
+import com.eldritch.invoken.actor.type.Collectible;
+import com.eldritch.invoken.actor.type.Collectible.CollectibleGenerator;
+import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.proto.Items;
 import com.eldritch.invoken.proto.Items.Item.RangedWeaponType;
+import com.eldritch.invoken.screens.GameScreen;
 
 public class Ammunition extends Item {
+    private final AmmunitionGenerator generator = new AmmunitionGenerator();
+
     public Ammunition(Items.Item data) {
         super(data, 0);
     }
-    
+
     public RangedWeaponType getType() {
         return data.getRangedType();
     }
@@ -21,7 +31,7 @@ public class Ammunition extends Item {
         RangedWeaponType type = getType();
         return inventory.hasAmmunition(type) && inventory.getAmmunition(type) == this;
     }
-    
+
     @Override
     public void addFrom(AgentInventory inventory) {
         if (!inventory.hasAmmunition(getType())) {
@@ -38,9 +48,16 @@ public class Ammunition extends Item {
     public void unequipFrom(AgentInventory inventory) {
         inventory.removeAmmunition(getType());
     }
-    
+
     @Override
     public void releaseFrom(AgentInventory inventory) {
+        AgentInfo info = inventory.getAgentInfo();
+        Agent agent = info.getAgent();
+        Level level = agent.getLocation();
+
+        int total = info.getInventory().getItemCount((this));
+        generator.release(level, agent.getPosition(), total);
+        info.getInventory().removeItem(this, total);
     }
 
     @Override
@@ -48,9 +65,30 @@ public class Ammunition extends Item {
         // not animated
         return null;
     }
-    
+
     @Override
     public String getTypeName() {
         return "Ammunition";
+    }
+
+    private static class AmmunitionEntity extends Collectible {
+        private static final TextureRegion texture = GameScreen
+                .getAtlasRegion("collectibles/ammo1");
+
+        public AmmunitionEntity(Ammunition item, Vector2 position, int quantity, float r) {
+            super(item, quantity, texture, position, r);
+        }
+
+        @Override
+        protected void onCollect(Agent agent) {
+            // TODO: popup for collectibles
+        }
+    }
+
+    private class AmmunitionGenerator extends CollectibleGenerator<AmmunitionEntity> {
+        @Override
+        protected AmmunitionEntity generate(Vector2 position, int quantity, float r) {
+            return new AmmunitionEntity(Ammunition.this, position, quantity, r);
+        }
     }
 }

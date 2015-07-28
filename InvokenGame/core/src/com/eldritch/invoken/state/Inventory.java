@@ -93,6 +93,10 @@ public class Inventory {
         return items.values();
     }
     
+    /**
+     * Iterating over this newly constructed collection will allow the caller to remove items from
+     * the inventory without concurrent modification.
+     */
     public Iterable<Item> getStatelessItems() {
         List<Item> statelessItems = new ArrayList<>();
         for (ItemState state : getItems()) {
