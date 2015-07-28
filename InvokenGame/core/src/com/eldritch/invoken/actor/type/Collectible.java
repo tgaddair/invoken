@@ -4,8 +4,10 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
+import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.actor.items.Item;
 import com.eldritch.invoken.location.Level;
+import com.eldritch.invoken.util.SoundManager.SoundEffect;
 
 public abstract class Collectible extends CollisionEntity implements TemporaryEntity {
     private static final float MOVE_RADIUS = 2f * 2f;
@@ -64,6 +66,7 @@ public abstract class Collectible extends CollisionEntity implements TemporaryEn
         finished = true;
         agent.getInventory().addItem(item, quantity);
         onCollect(agent);
+        InvokenGame.SOUND_MANAGER.play(SoundEffect.COLLECT);
     }
 
     protected abstract void onCollect(Agent agent);

@@ -36,6 +36,7 @@ public class SoundManager implements Disposable {
     public enum SoundEffect {
         NONE(EMPTY, ""),
         CLICK(WAV, "click"),
+        COLLECT(OGG, "collect1"),
         FOOTSTEP(OGG, "footstep00", "footstep01"),
         HIT(OGG, "hit00"),
         MELEE_HIT(OGG, "melee-hit-00", "melee-hit-01"),
