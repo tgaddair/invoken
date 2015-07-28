@@ -66,7 +66,7 @@ public abstract class Collectible extends CollisionEntity implements TemporaryEn
         finished = true;
         agent.getInventory().addItem(item, quantity);
         onCollect(agent);
-        InvokenGame.SOUND_MANAGER.play(SoundEffect.COLLECT);
+        InvokenGame.SOUND_MANAGER.playAtPoint(SoundEffect.COLLECT, agent.getPosition());
     }
 
     protected abstract void onCollect(Agent agent);
