@@ -1,5 +1,6 @@
 package com.eldritch.invoken.state;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -90,6 +91,14 @@ public class Inventory {
 
     public Iterable<ItemState> getItems() {
         return items.values();
+    }
+    
+    public Iterable<Item> getStatelessItems() {
+        List<Item> statelessItems = new ArrayList<>();
+        for (ItemState state : getItems()) {
+            statelessItems.add(state.getItem());
+        }
+        return statelessItems;
     }
 
     public Map<Item, Integer> getItemCounts(Type type) {

@@ -192,8 +192,12 @@ public class AgentInfo {
     }
     
     public boolean canLevel() {
+        return couldLevel(0);
+    }
+    
+    public boolean couldLevel(int delta) {
         int level = getLevel();
-        int currentFragments = agent.getInventory().getItemCount(Fragment.getInstance());
+        int currentFragments = agent.getInventory().getItemCount(Fragment.getInstance()) + delta;
         int requiredFragments = AgentInfo.getFragmentRequirement(level + 1);
         return currentFragments >= requiredFragments;
     }

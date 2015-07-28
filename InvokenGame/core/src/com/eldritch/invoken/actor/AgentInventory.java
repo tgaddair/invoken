@@ -235,6 +235,12 @@ public class AgentInventory extends Inventory {
     public void unequip(Item item) {
         item.unequipFrom(this);
     }
+    
+    public void releaseItems() {
+        for (Item item : getStatelessItems()) {
+            item.releaseFrom(this);
+        }
+    }
 
     @Override
     protected void onAdd(Item item, int count) {

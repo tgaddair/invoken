@@ -135,10 +135,11 @@ public class Player extends SteeringAgent {
     }
 
     @Override
-    protected void releaseFragments() {
+    protected void onDeath() {
         int total = info.getInventory().getItemCount((Fragment.getInstance()));
         lastFragments = total;
-        super.releaseFragments();
+        
+        super.onDeath();
     }
 
     public void toggleLastAugmentation() {

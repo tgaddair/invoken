@@ -632,7 +632,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
                 // .getPlayer().serialize());
                 return true;
             case Keys.L:
-//                game.setScreen(new GameScreen(game, "PlayerDebug"));
+                // game.setScreen(new GameScreen(game, "PlayerDebug"));
                 return true;
             default:
                 return false;
@@ -675,7 +675,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
                 if (!success) {
                     Augmentation active = pa.getActiveAugmentation(button);
                     InvokenGame.SOUND_MANAGER.play(active.getFailureSound(), 2);
-//                    toast("No Ammunition!");
+                    // toast("No Ammunition!");
                 }
                 return true;
             }
@@ -834,6 +834,10 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
             textureManager.finishLoading();
         }
         return textureManager.get(assetName, Texture.class);
+    }
+
+    public static TextureRegion getAtlasRegion(String assetName) {
+        return ATLAS.findRegion(assetName);
     }
 
     // private void loadLocation(String locationName, Optional<String>

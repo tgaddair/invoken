@@ -45,7 +45,6 @@ import com.eldritch.invoken.actor.aug.Action;
 import com.eldritch.invoken.actor.aug.Augmentation;
 import com.eldritch.invoken.actor.aug.Cloak;
 import com.eldritch.invoken.actor.factions.Faction;
-import com.eldritch.invoken.actor.items.Fragment;
 import com.eldritch.invoken.actor.items.Item;
 import com.eldritch.invoken.actor.items.Outfit;
 import com.eldritch.invoken.actor.items.RangedWeapon;
@@ -1345,24 +1344,13 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         toggles.clear();
         setRgb(1, 1, 1);
         setCollisionMask(Settings.BIT_STATIC);
-        releaseFragments();
+        info.getInventory().releaseItems();
         announcements.clear();
         InvokenGame.SOUND_MANAGER.playAtPoint(getDeathSound(), getPosition(), 3f);
 
         for (AgentListener listener : listeners) {
             listener.onDeath();
         }
-    }
-
-    // add fragment temporary entities to the world in a radial pattern around
-    // the agent
-    // for players, we must also assign the fragments to the nearest unique
-    // neighbor (if possible)
-    // for persistence
-    protected void releaseFragments() {
-        int total = info.getInventory().getItemCount((Fragment.getInstance()));
-        Fragment.release(level, getPosition(), total);
-        info.getInventory().removeItem(Fragment.getInstance(), total);
     }
 
     public void setEnabled(boolean enabled) {

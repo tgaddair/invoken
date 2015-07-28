@@ -38,6 +38,10 @@ public class Ammunition extends Item {
     public void unequipFrom(AgentInventory inventory) {
         inventory.removeAmmunition(getType());
     }
+    
+    @Override
+    public void releaseFrom(AgentInventory inventory) {
+    }
 
     @Override
     protected Animation getAnimation(Activity activity, Direction direction) {
