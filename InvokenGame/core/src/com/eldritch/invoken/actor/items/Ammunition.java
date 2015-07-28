@@ -16,6 +16,8 @@ import com.eldritch.invoken.proto.Items.Item.RangedWeaponType;
 import com.eldritch.invoken.screens.GameScreen;
 
 public class Ammunition extends Item {
+    private static final float AMMO_SCALE = 0.4f;
+    
     private final AmmunitionGenerator generator = new AmmunitionGenerator();
 
     public Ammunition(Items.Item data) {
@@ -86,6 +88,10 @@ public class Ammunition extends Item {
     }
 
     private class AmmunitionGenerator extends CollectibleGenerator<AmmunitionEntity> {
+        public AmmunitionGenerator() {
+            super(AMMO_SCALE);
+        }
+        
         @Override
         protected AmmunitionEntity generate(Vector2 position, int quantity, float r) {
             return new AmmunitionEntity(Ammunition.this, position, quantity, r);

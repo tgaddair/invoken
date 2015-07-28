@@ -8,7 +8,7 @@ import com.eldritch.invoken.actor.items.Item;
 import com.eldritch.invoken.location.Level;
 
 public abstract class Collectible extends CollisionEntity implements TemporaryEntity {
-    private static final float MOVE_RADIUS = 25f;
+    private static final float MOVE_RADIUS = 2f * 2f;
     private static final float OBTAIN_RADIUS = 0.1f;
 
     private final Item item;
@@ -97,6 +97,16 @@ public abstract class Collectible extends CollisionEntity implements TemporaryEn
      * for persistence.
      */
     public abstract static class CollectibleGenerator<T extends Collectible> {
+        private final float scale;
+        
+        public CollectibleGenerator() {
+            this(1 / 5f);
+        }
+        
+        public CollectibleGenerator(float scale) {
+            this.scale = scale;
+        }
+        
         public void release(Level level, Vector2 origin, int count) {
             int remaining = count;
             while (remaining > 0) {
@@ -110,7 +120,7 @@ public abstract class Collectible extends CollisionEntity implements TemporaryEn
         private T generateShifted(Vector2 origin, int quantity) {
             // shift the origin by a random amount
             Vector2 position = origin.cpy().add((float) Math.random(), (float) Math.random());
-            float r = (float) Math.log(quantity) / 5f;
+            float r = (float) Math.log(quantity) * scale;
             return generate(position, quantity, r);
         }
 
