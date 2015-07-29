@@ -77,8 +77,8 @@ public class Ammunition extends Item {
         private static final TextureRegion texture = GameScreen
                 .getAtlasRegion("collectibles/ammo1");
 
-        public AmmunitionEntity(Ammunition item, Vector2 position, int quantity, float r) {
-            super(item, quantity, texture, position, r);
+        public AmmunitionEntity(Ammunition item, Vector2 origin, Vector2 direction, int quantity, float r) {
+            super(item, quantity, texture, origin, direction, r);
         }
 
         @Override
@@ -93,8 +93,8 @@ public class Ammunition extends Item {
         }
         
         @Override
-        protected AmmunitionEntity generate(Vector2 position, int quantity, float r) {
-            return new AmmunitionEntity(Ammunition.this, position, quantity, r);
+        protected AmmunitionEntity generate(Vector2 origin, Vector2 direction, int quantity, float r) {
+            return new AmmunitionEntity(Ammunition.this, origin, direction, quantity, r);
         }
     }
 }

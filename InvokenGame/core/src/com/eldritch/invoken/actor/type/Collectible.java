@@ -7,6 +7,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.actor.items.Item;
 import com.eldritch.invoken.location.Level;
+import com.eldritch.invoken.util.Settings;
 import com.eldritch.invoken.util.SoundManager.SoundEffect;
 
 public abstract class Collectible extends CollisionEntity implements TemporaryEntity {
@@ -16,19 +17,33 @@ public abstract class Collectible extends CollisionEntity implements TemporaryEn
     private final Item item;
     private final TextureRegion texture;
     private final int quantity;
+    private boolean ejecting = true;
     private boolean finished = false;
 
-    public Collectible(Item item, int quanitity, TextureRegion texture, Vector2 position, float r) {
-        super(position, r, r);
+    public Collectible(Item item, int quanitity, TextureRegion texture, Vector2 origin,
+            Vector2 direction, float r) {
+        super(origin, r, r);
         this.item = item;
         this.quantity = quanitity;
         this.texture = texture;
+
+        velocity.set(direction).scl(0.15f);
     }
 
     @Override
     public void update(float delta, Level level) {
         // update our position
         position.add(velocity);
+
+        if (ejecting) {
+            // apply friction
+            velocity.scl(0.925f * (1f - delta));
+            if (velocity.epsilonEquals(Vector2.Zero, Settings.EPSILON)) {
+                velocity.set(Vector2.Zero);
+                ejecting = false;
+            }
+            return;
+        }
 
         // find the closest entity
         Agent closest = null;
@@ -50,6 +65,8 @@ public abstract class Collectible extends CollisionEntity implements TemporaryEn
             if (bestD < OBTAIN_RADIUS) {
                 // grant the fragments
                 grantTo(closest);
+            } else if (ejecting) {
+
             } else {
                 // move towards the closest
                 velocity.set(closest.getPosition());
@@ -101,15 +118,15 @@ public abstract class Collectible extends CollisionEntity implements TemporaryEn
      */
     public abstract static class CollectibleGenerator<T extends Collectible> {
         private final float scale;
-        
+
         public CollectibleGenerator() {
             this(1 / 5f);
         }
-        
+
         public CollectibleGenerator(float scale) {
             this.scale = scale;
         }
-        
+
         public void release(Level level, Vector2 origin, int count) {
             int remaining = count;
             while (remaining > 0) {
@@ -122,11 +139,11 @@ public abstract class Collectible extends CollisionEntity implements TemporaryEn
 
         private T generateShifted(Vector2 origin, int quantity) {
             // shift the origin by a random amount
-            Vector2 position = origin.cpy().add((float) Math.random(), (float) Math.random());
+            Vector2 direction = new Vector2((float) Math.random(), (float) Math.random());
             float r = (float) Math.log(quantity) * scale;
-            return generate(position, quantity, r);
+            return generate(origin, direction, quantity, r);
         }
 
-        protected abstract T generate(Vector2 position, int quantity, float size);
+        protected abstract T generate(Vector2 origin, Vector2 direction, int quantity, float size);
     }
 }

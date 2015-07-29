@@ -83,8 +83,8 @@ public class Fragment extends Item {
         private static final TextureRegion texture = new TextureRegion(
                 GameScreen.getTexture("sprite/effects/orb.png"));
 
-        public FragmentEntity(Vector2 position, int quantity, float r) {
-            super(Fragment.getInstance(), quantity, texture, position, r);
+        public FragmentEntity(Vector2 origin, Vector2 direction, int quantity, float r) {
+            super(Fragment.getInstance(), quantity, texture, origin, direction, r);
         }
 
         @Override
@@ -98,8 +98,8 @@ public class Fragment extends Item {
 
     private static class FragmentGenerator extends CollectibleGenerator<FragmentEntity> {
         @Override
-        protected FragmentEntity generate(Vector2 position, int quantity, float r) {
-            return new FragmentEntity(position, quantity, r);
+        protected FragmentEntity generate(Vector2 origin, Vector2 direction, int quantity, float r) {
+            return new FragmentEntity(origin, direction, quantity, r);
         }
         
         private static class Holder {
