@@ -37,16 +37,6 @@ public abstract class Collectible extends CollisionEntity implements TemporaryEn
         // update our position
         position.add(velocity);
 
-        if (ejecting) {
-            // apply friction
-            velocity.scl(0.95f * (1f - delta));
-            if (velocity.epsilonEquals(Vector2.Zero, Settings.EPSILON)) {
-                velocity.set(Vector2.Zero);
-                ejecting = false;
-            }
-            return;
-        }
-
         // find the closest entity
         Agent closest = null;
         float bestD = Float.POSITIVE_INFINITY;
@@ -67,8 +57,6 @@ public abstract class Collectible extends CollisionEntity implements TemporaryEn
             if (bestD < OBTAIN_RADIUS) {
                 // grant the fragments
                 grantTo(closest);
-            } else if (ejecting) {
-
             } else {
                 // move towards the closest
                 velocity.set(closest.getPosition());
@@ -76,8 +64,12 @@ public abstract class Collectible extends CollisionEntity implements TemporaryEn
                 velocity.nor().scl(0.05f);
             }
         } else {
-            // stop moving
-            velocity.set(Vector2.Zero);
+            // apply friction
+            velocity.scl(0.95f * (1f - delta));
+            if (velocity.epsilonEquals(Vector2.Zero, Settings.EPSILON)) {
+                velocity.set(Vector2.Zero);
+                ejecting = false;
+            }
         }
     }
 
@@ -146,7 +138,7 @@ public abstract class Collectible extends CollisionEntity implements TemporaryEn
             float r = (float) Math.log(quantity) * scale;
             return generate(origin, direction, quantity, r);
         }
-        
+
         private float random() {
             // [-1, 1]
             return (rand.nextFloat() * 2f) - 1f;
