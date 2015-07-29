@@ -1,9 +1,11 @@
 package com.eldritch.invoken.actor.type;
 
+import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.proto.Actors.NonPlayerActor;
 import com.eldritch.invoken.proto.Effects.DamageType;
 import com.eldritch.invoken.proto.Locations.Encounter.ActorParams.ActorScenario;
+import com.eldritch.invoken.util.Constants;
 import com.eldritch.invoken.util.SoundManager.SoundEffect;
 import com.google.common.base.Optional;
 
@@ -45,6 +47,12 @@ public class Undead extends HumanNpc {
         }
     }
 
+    public static Undead createDummy(float x, float y, Level level) {
+        String asset = "hollow";
+        NonPlayerActor data = InvokenGame.ACTOR_READER.readAsset(Constants.DUMMY_NPC);
+        return new Dummy(data, x, y, getAssetPath(asset), level);
+    }
+
     private static String getAsset(NonPlayerActor data, String defaultAsset) {
         if (data.getParams().hasBodyType()) {
             return data.getParams().getBodyType();
@@ -73,6 +81,20 @@ public class Undead extends HumanNpc {
         private DefaultUndead(NonPlayerActor data, Optional<ActorScenario> scenario, float x,
                 float y, String asset, Level level) {
             super(data, scenario, x, y, asset, level, MAX_VELOCITY, MAX_ACCELERATION);
+        }
+    }
+
+    private static class Dummy extends Undead {
+        public static float MAX_VELOCITY = 15f;
+        public static float MAX_ACCELERATION = 10f;
+
+        private Dummy(NonPlayerActor data, float x, float y, String asset, Level level) {
+            super(data, Optional.<ActorScenario> absent(), x, y, asset, level, MAX_VELOCITY,
+                    MAX_ACCELERATION);
+        }
+
+        @Override
+        protected void takeAction(float delta, Level screen) {
         }
     }
 }

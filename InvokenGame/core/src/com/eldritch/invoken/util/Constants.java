@@ -28,6 +28,7 @@ public class Constants {
     
     // IDs
     public static final String CRAWLER = "Crawler";
+    public static final String DUMMY_NPC = "Dummy";
     
     // Factions
     public static final String STATION_FACTION = "TheStation";

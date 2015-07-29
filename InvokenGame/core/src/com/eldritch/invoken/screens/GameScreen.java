@@ -31,6 +31,7 @@ import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Npc;
 import com.eldritch.invoken.actor.type.Player;
 import com.eldritch.invoken.actor.type.Player.PlayerDescription;
+import com.eldritch.invoken.actor.type.Undead;
 import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.location.proc.LocationGenerator;
 import com.eldritch.invoken.proto.Actors.PlayerActor;
@@ -633,6 +634,11 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
                 return true;
             case Keys.L:
                 // game.setScreen(new GameScreen(game, "PlayerDebug"));
+                return true;
+            case Keys.NUMPAD_9:
+                Vector2 point = player.getFocusPoint();
+                Npc dummy = Undead.createDummy(point.x, point.y, level);
+                level.addAgent(dummy);
                 return true;
             default:
                 return false;
