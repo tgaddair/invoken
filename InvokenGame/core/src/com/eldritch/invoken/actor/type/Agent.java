@@ -1352,7 +1352,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
             listener.onDeath();
         }
     }
-    
+
     protected void releaseItems() {
         info.getInventory().releaseItems();
     }
@@ -1688,7 +1688,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         position.set(body.getPosition().cpy().add(0, getHeight() / 2 - radius));
         velocity.set(body.getLinearVelocity());
     }
-    
+
     protected void updateDirection(Locatable observed) {
         if (observed != null) {
             if (lastDirectionChange > DIRECTION_CHANGE_DELAY) {
@@ -2175,16 +2175,20 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
             if (Agent.this.isAiming()) {
                 updateAiming(delta);
             } else {
-                rotateTowards(delta, getForwardVector());
-                updatePosition();
+                updateDirection(delta);
             }
         }
-        
+
         protected void updateAiming(float delta) {
             Vector2 origin = getRenderPosition();
             direction.set(getFocusPoint()).sub(origin).nor();
             updatePosition();
             clear();
+        }
+
+        protected void updateDirection(float delta) {
+            rotateTowards(delta, getForwardVector());
+            updatePosition();
         }
 
         @Override
@@ -2280,12 +2284,30 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     public class RotatingWeaponSentry extends WeaponSentry {
         private final Vector2 destination = new Vector2();
         private float theta = 0;
-        
+
+        @Override
+        public void update(float delta) {
+            if (Agent.this.isAiming() || Agent.this.hasTarget()) {
+                updateAiming(delta);
+            } else {
+                updateDirection(delta);
+            }
+        }
+
         @Override
         protected void updateAiming(float delta) {
-            Vector2 origin = getRenderPosition();
-            destination.set(getFocusPoint()).sub(origin).nor();
+            update(delta, getFocusPoint());
+        }
 
+        @Override
+        protected void updateDirection(float delta) {
+            update(delta, destination.set(getRenderPosition()).add(getVelocity()));
+        }
+
+        protected void update(float delta, Vector2 point) {
+            Vector2 origin = getRenderPosition();
+            destination.set(point).sub(origin).nor();
+            
             // move direction towards destination
             theta = getTheta(destination);
             rotate(delta, theta, ROTATION_SCALE);
