@@ -1344,13 +1344,17 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         toggles.clear();
         setRgb(1, 1, 1);
         setCollisionMask(Settings.BIT_STATIC);
-        info.getInventory().releaseItems();
+        releaseItems();
         announcements.clear();
         InvokenGame.SOUND_MANAGER.playAtPoint(getDeathSound(), getPosition(), 3f);
 
         for (AgentListener listener : listeners) {
             listener.onDeath();
         }
+    }
+    
+    protected void releaseItems() {
+        info.getInventory().releaseItems();
     }
 
     public void setEnabled(boolean enabled) {

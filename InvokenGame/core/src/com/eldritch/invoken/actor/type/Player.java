@@ -141,6 +141,12 @@ public class Player extends SteeringAgent {
         
         super.onDeath();
     }
+    
+    @Override
+    protected void releaseItems() {
+        // only release fragments, hold on to other resources
+        Fragment.getInstance().releaseFrom(info.getInventory());
+    }
 
     public void toggleLastAugmentation() {
         PreparedAugmentations prepared = getInfo().getAugmentations();
