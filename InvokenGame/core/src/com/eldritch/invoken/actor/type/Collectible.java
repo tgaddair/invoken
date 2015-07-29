@@ -1,5 +1,7 @@
 package com.eldritch.invoken.actor.type;
 
+import java.util.Random;
+
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
@@ -27,7 +29,7 @@ public abstract class Collectible extends CollisionEntity implements TemporaryEn
         this.quantity = quanitity;
         this.texture = texture;
 
-        velocity.set(direction).scl(0.15f);
+        velocity.set(direction).scl(0.1f);
     }
 
     @Override
@@ -37,7 +39,7 @@ public abstract class Collectible extends CollisionEntity implements TemporaryEn
 
         if (ejecting) {
             // apply friction
-            velocity.scl(0.925f * (1f - delta));
+            velocity.scl(0.95f * (1f - delta));
             if (velocity.epsilonEquals(Vector2.Zero, Settings.EPSILON)) {
                 velocity.set(Vector2.Zero);
                 ejecting = false;
@@ -117,6 +119,7 @@ public abstract class Collectible extends CollisionEntity implements TemporaryEn
      * for persistence.
      */
     public abstract static class CollectibleGenerator<T extends Collectible> {
+        private final Random rand = new Random();
         private final float scale;
 
         public CollectibleGenerator() {
@@ -139,9 +142,14 @@ public abstract class Collectible extends CollisionEntity implements TemporaryEn
 
         private T generateShifted(Vector2 origin, int quantity) {
             // shift the origin by a random amount
-            Vector2 direction = new Vector2((float) Math.random(), (float) Math.random());
+            Vector2 direction = new Vector2(random(), random());
             float r = (float) Math.log(quantity) * scale;
             return generate(origin, direction, quantity, r);
+        }
+        
+        private float random() {
+            // [-1, 1]
+            return (rand.nextFloat() * 2f) - 1f;
         }
 
         protected abstract T generate(Vector2 origin, Vector2 direction, int quantity, float size);
