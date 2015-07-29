@@ -604,8 +604,7 @@ public class Level {
         lockdown = value;
     }
 
-    public void render(float delta, OrthographicCamera camera, TextureRegion selector,
-            boolean paused) {
+    public void update(float delta, boolean paused) {
         // update the world simulation
         world.step(1 / 60f, 8, 3);
 
@@ -750,6 +749,11 @@ public class Level {
                 }
             }
         }
+    }
+
+    public void render(float delta, OrthographicCamera camera, TextureRegion selector,
+            boolean paused) {
+        update(delta, paused);
 
         renderer.setView(camera);
         overlayRenderer.setView(camera);
@@ -875,7 +879,7 @@ public class Level {
             if (pa.hasActiveAugmentation(0) && pa.getActiveAugmentation(0).isValid(player)) {
                 color = Color.GREEN;
             }
-            
+
             debugEntityRenderer.drawBetween(
                     player.getWeaponSentry().getPosition(),
                     losFocus.add(player.getWeaponSentry().getPosition()).sub(

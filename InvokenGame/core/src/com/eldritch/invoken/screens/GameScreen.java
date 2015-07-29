@@ -149,15 +149,12 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
                 playerLoader.getSeed());
         level = playerLoader.load(generator);
         player = level.getPlayer();
-        onLoad(level, playerLoader.getState());
-
+        
         // init camera position
         Vector2 position = player.getCamera().getPosition();
         camera.position.x = level.scale(position.x, camera.zoom);
         camera.position.y = level.scale(position.y, camera.zoom);
         level.setCamera(camera);
-
-        refreshHud();
 
         // music settings
         InvokenGame.MUSIC_MANAGER.setEnabled(!Settings.MUTE);
@@ -168,6 +165,10 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         sounds.setCamera(camera);
         sounds.setEnabled(!Settings.MUTE);
         sounds.setVolume(Settings.SFX_VOLUME);
+        
+        // initialization
+        onLoad(level, playerLoader.getState());
+        refreshHud();
 
         // start
         Gdx.input.setInputProcessor(this);
@@ -904,6 +905,11 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
     }
 
     private void onLoad(Level level, Optional<PlayerActor> state) {
+        // run a few iterations of the level to let things settle down a bit
+        for (int i = 0; i < 60; i++) {
+            level.update(0.1f, false);
+        }
+        
         minimap = new Minimap(level, level.getSeed(), state);
         // if (level.hasMusic()) {
         // InvokenGame.MUSIC_MANAGER.play(level.getMusicId());
