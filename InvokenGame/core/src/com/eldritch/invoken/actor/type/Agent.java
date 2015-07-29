@@ -1226,7 +1226,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
         // vectors
         Vector2 a = getForwardVector();
         Vector2 b = tempV.set(otherPosition).sub(position).nor();
-        double theta = Utils.getAngle(a, b);
+        double theta = Utils.atan2(a, b);
         return Math.abs(theta) <= getFieldOfView();
     }
 
@@ -2173,14 +2173,18 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
 
         public void update(float delta) {
             if (Agent.this.isAiming()) {
-                Vector2 origin = getRenderPosition();
-                direction.set(getFocusPoint()).sub(origin).nor();
-                updatePosition();
-                clear();
+                updateAiming(delta);
             } else {
                 rotateTowards(delta, getForwardVector());
                 updatePosition();
             }
+        }
+        
+        protected void updateAiming(float delta) {
+            Vector2 origin = getRenderPosition();
+            direction.set(getFocusPoint()).sub(origin).nor();
+            updatePosition();
+            clear();
         }
 
         @Override
@@ -2276,9 +2280,9 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     public class RotatingWeaponSentry extends WeaponSentry {
         private final Vector2 destination = new Vector2();
         private float theta = 0;
-
+        
         @Override
-        public void update(float delta) {
+        protected void updateAiming(float delta) {
             Vector2 origin = getRenderPosition();
             destination.set(getFocusPoint()).sub(origin).nor();
 

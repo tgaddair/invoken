@@ -7,7 +7,7 @@ import com.eldritch.invoken.ui.Tooltip;
 import com.eldritch.invoken.ui.TooltipManager;
 
 public class Utils {
-    public static double getAngle(Vector2 a, Vector2 b) {
+    public static double atan2(Vector2 a, Vector2 b) {
         return Math.atan2(a.x * b.y - a.y * b.x, a.x * b.x + a.y * b.y);
     }
     

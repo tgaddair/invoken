@@ -96,10 +96,10 @@ public class Damage {
         // forward direction
         Vector2 a = defender.getForwardVector();
         Vector2 b = tmp.set(contact).sub(defender.getPosition()).nor();
-        double theta = Utils.getAngle(a, b);
+        double theta = a.angleRad(b);
         
         // now we need calculate the distance of our angle from the ideal angle: pi
-        double delta = Math.abs(theta - Math.PI);
+        double delta = Math.PI - Math.abs(theta);
         
         // finally, we scale up anything less than pi / 4 away, and scale down anything greater than
         // 3 * pi / 4
