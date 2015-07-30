@@ -22,7 +22,7 @@ public class Consumable extends Item {
 
     public Consumable(Items.Item data) {
         super(data, 0);
-        effects = EffectFactory.from(data.getEffectList());
+        effects = EffectFactory.from(this, data.getEffectList());
         String asset = data.hasAsset() ? data.getAsset() : "default";
         this.icon = GameScreen.getTexture("icon/consumable/" + asset + ".png");
     }

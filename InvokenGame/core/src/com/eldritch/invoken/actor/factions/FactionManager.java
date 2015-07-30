@@ -189,6 +189,7 @@ public class FactionManager {
     public static class FactionStatus {
         private int rank;
         private int reputation;
+        private int perceivedRank;
 
         public FactionStatus(int rank, int reputation) {
             this.rank = rank;
