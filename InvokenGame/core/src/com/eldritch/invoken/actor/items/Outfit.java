@@ -1,6 +1,7 @@
 package com.eldritch.invoken.actor.items;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
@@ -9,12 +10,16 @@ import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.actor.type.Agent.Direction;
 import com.eldritch.invoken.actor.type.Human;
+import com.eldritch.invoken.effects.Effect;
+import com.eldritch.invoken.effects.EffectFactory;
+import com.eldritch.invoken.effects.EffectFactory.EffectGenerator;
 import com.eldritch.invoken.proto.Effects.DamageType;
 import com.eldritch.invoken.proto.Items.Item.DamageMod;
 import com.eldritch.invoken.util.AnimationUtils;
 
 public class Outfit extends Item {
     private final Map<DamageType, Integer> resistance = new HashMap<>();
+    private final List<EffectGenerator> effects;
     private final Map<Activity, Map<Direction, Animation>> animations;
     private final float defense; // percentage
 
@@ -28,6 +33,8 @@ public class Outfit extends Item {
             resistance.put(mod.getDamage(), mod.getMagnitude());
         }
         defense = damageSum / 100;
+        
+        effects = EffectFactory.from(this, data.getEffectList());
     }
 
     public boolean covers() {
@@ -61,6 +68,7 @@ public class Outfit extends Item {
     @Override
     public void equipFrom(AgentInventory inventory) {
         inventory.setOutfit(this);
+        apply(inventory.getAgentInfo().getAgent());
     }
 
     @Override
@@ -97,5 +105,16 @@ public class Outfit extends Item {
             result.append(String.format("\n  %s: %d", mod.getDamage(), mod.getMagnitude()));
         }
         return result.toString();
+    }
+    
+    private void apply(Agent target) {
+        for (EffectGenerator generator : effects) {
+            Effect effect = generator.generate(target);
+            target.addEffect(effect);
+        }
+    }
+    
+    public interface Disguise {
+        void invalidate();
     }
 }

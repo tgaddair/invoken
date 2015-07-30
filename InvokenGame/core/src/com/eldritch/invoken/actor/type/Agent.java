@@ -47,6 +47,7 @@ import com.eldritch.invoken.actor.aug.Cloak;
 import com.eldritch.invoken.actor.factions.Faction;
 import com.eldritch.invoken.actor.items.Item;
 import com.eldritch.invoken.actor.items.Outfit;
+import com.eldritch.invoken.actor.items.Outfit.Disguise;
 import com.eldritch.invoken.actor.items.RangedWeapon;
 import com.eldritch.invoken.actor.type.HandledProjectile.ProjectileHandler;
 import com.eldritch.invoken.actor.type.Player.NewPlayerDescription;
@@ -158,6 +159,7 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
     private int imploding = 0;
     private int stunted = 0;
     private int crimes = 0;
+    private final Set<Disguise> disguises = new HashSet<>();
     private boolean sprinting = false;
     private Optional<NaturalVector2> mark = Optional.absent();
 
@@ -708,6 +710,18 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
 
     public boolean isCommittingCrime() {
         return crimes > 0;
+    }
+    
+    public void setDisguised(Disguise disguise) {
+        disguises.add(disguise);
+    }
+    
+    public void removeDisguise(Disguise disguise) {
+        disguises.remove(disguise);
+    }
+    
+    public boolean isDisguised() {
+        return !disguises.isEmpty();
     }
 
     public void addFollower(Agent follower) {
@@ -1428,6 +1442,11 @@ public abstract class Agent extends CollisionEntity implements Steerable<Vector2
             // we're not in combat with anyone, so this is considered assault
             assaulters.add(source);
             getLocation().getCrimeManager().commitAssault(source, this);
+            
+            // invalidate any disguises
+            for (Disguise disguise : disguises) {
+                disguise.invalidate();
+            }
         }
 
         changeRelationScaled(source, -magnitude, 0.01f);

@@ -243,7 +243,11 @@ public class AgentInfo {
     }
 
     public float getDisposition(Agent other) {
-        return getPersonalRelation(other) + factions.getDisposition(other);
+        float disposition = factions.getDisposition(other);
+        if (!other.isDisguised()) {
+            disposition += getPersonalRelation(other);
+        }
+        return disposition;
     }
 
     public PreparedAugmentations getAugmentations() {

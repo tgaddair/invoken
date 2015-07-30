@@ -1,9 +1,11 @@
 package com.eldritch.invoken.actor.factions;
 
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.PriorityQueue;
 import java.util.Set;
 
 import com.eldritch.invoken.actor.type.Agent;
@@ -58,7 +60,7 @@ public class FactionManager {
         }
     }
 
-    public void addFaction(com.eldritch.invoken.proto.Actors.ActorParams.FactionStatus status) {
+    public void addFaction(ActorParams.FactionStatus status) {
         Level level = agent.getLocation();
         Faction faction = level.getFactionFor(agent, status.getFactionId());
         addFaction(faction, status.getRank(), status.getReputation());
@@ -71,7 +73,7 @@ public class FactionManager {
     public Set<Faction> getFactions() {
         return factions.keySet();
     }
-    
+
     public Faction getDominantFaction() {
         Entry<Faction, FactionStatus> best = null;
         for (Entry<Faction, FactionStatus> entry : factions.entrySet()) {
@@ -80,6 +82,16 @@ public class FactionManager {
             }
         }
         return best != null ? best.getKey() : null;
+    }
+
+    public void setPerceivedRank(Faction faction, PerceivedRank rank) {
+        FactionStatus status = getStatus(faction);
+        status.addPerceivedRank(rank);
+    }
+    
+    public void removePerceivedRank(Faction faction, PerceivedRank rank) {
+        FactionStatus status = getStatus(faction);
+        status.removePerceivedRank(rank);
     }
 
     public int getRank(Faction faction) {
@@ -94,7 +106,7 @@ public class FactionManager {
         if (factions.containsKey(faction)) {
             // cap positive rep bonus at just under one rank's worth, don't limit negative rep
             FactionStatus status = factions.get(faction);
-            rep += status.rank * 10 + Math.min(status.reputation, 9);
+            rep += status.getPerceivedRank() * 10 + Math.min(status.reputation, 9);
         }
         return rep;
     }
@@ -123,7 +135,7 @@ public class FactionManager {
                         if (faction.hasRelation(otherFaction)) {
                             // we care more about how our target is perceived by the related faction
                             float b = other.getInfo().getReputation(otherFaction) / 3f;
-                            
+
                             // this is the modifier from this faction to the other
                             // this value is typically between [-3, 3]
                             // however, we want to rely more on individual reputation and
@@ -146,19 +158,19 @@ public class FactionManager {
                 }
             }
         }
-        
+
         // add 1 point of positive reaction for every 5 points in charisma
         reaction += agent.getInfo().getCharisma() / 5;
-        
+
         return reaction;
     }
-    
+
     /**
      * Standing with the given faction.
      */
     public float getRelation(Faction otherFaction) {
         float otherRep = getReputation(otherFaction);
-        
+
         float relation = 0;
         for (Faction faction : getFactions()) {
             if (agent.getInfo().hasRank(faction)) {
@@ -169,7 +181,7 @@ public class FactionManager {
                 }
             }
         }
-        
+
         return otherRep + relation;
     }
 
@@ -186,14 +198,53 @@ public class FactionManager {
         return factions.get(faction);
     }
 
-    public static class FactionStatus {
+    public static class FactionStatus implements PerceivedRank {
+        private final PriorityQueue<PerceivedRank> perceivedRanks = new PriorityQueue<>(1,
+                new Comparator<PerceivedRank>() {
+                    @Override
+                    public int compare(PerceivedRank r1, PerceivedRank r2) {
+                        // reverse comparison: highest rank comes first in any ordering
+                        return Integer.compare(r2.getRank(), r1.getRank());
+                    }
+                });
+
         private int rank;
         private int reputation;
-        private int perceivedRank;
 
         public FactionStatus(int rank, int reputation) {
             this.rank = rank;
             this.reputation = reputation;
+            this.perceivedRanks.add(this);
         }
+
+        public void addPerceivedRank(PerceivedRank rank) {
+            perceivedRanks.add(rank);
+        }
+
+        public void removePerceivedRank(PerceivedRank rank) {
+            perceivedRanks.remove(rank);
+        }
+        
+        public int getPerceivedRank() {
+            // only consider the highest rank
+            return perceivedRanks.peek().getRank();
+        }
+        
+        public void setRank(int rank) {
+            this.rank = rank;
+            
+            // invalidate our perceived rank
+            perceivedRanks.remove(this);
+            perceivedRanks.add(this);
+        }
+        
+        @Override
+        public int getRank() {
+            return rank;
+        }
+    }
+
+    public interface PerceivedRank {
+        int getRank();
     }
 }
