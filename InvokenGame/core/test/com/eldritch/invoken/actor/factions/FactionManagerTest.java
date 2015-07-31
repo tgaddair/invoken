@@ -1,6 +1,6 @@
 package com.eldritch.invoken.actor.factions;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -14,6 +14,8 @@ import com.eldritch.invoken.proto.Actors.ActorParams;
 import com.eldritch.invoken.proto.Actors.NonPlayerActor;
 import com.eldritch.invoken.proto.Actors.PlayerActor;
 import com.eldritch.invoken.proto.Disciplines;
+import com.eldritch.invoken.proto.Factions;
+import com.eldritch.invoken.proto.Factions.Faction.Rank;
 import com.eldritch.invoken.proto.Locations;
 import com.eldritch.invoken.proto.Locations.Encounter.ActorParams.ActorScenario;
 import com.eldritch.invoken.util.GameTransition;
@@ -24,15 +26,30 @@ import com.google.common.base.Optional;
 
 public class FactionManagerTest {
 	private FactionManager manager;
+	private Faction faction;
 
 	@Before
 	public void setUp() {
-
+		manager = new FactionManager(new DummyNpc(0, 0, FakeLevel.newInstance()));
+		faction = createTestFaction();
 	}
 
 	@Test
-	public void testHasRank() {
-		assertTrue(true);
+	public void testHasReputation() {
+		// initially, our rank is 0, corresponding to no rank
+		assertEquals(0, manager.getRank(faction));
+		
+		// similarly, our reputation should be 0
+		assertEquals(0, manager.getReputation(faction));
+		
+		// now let's increase our reputation with the faction
+		manager.modifyReputationFor(faction, 20);
+		
+		// verify that we now have positive reputation with the faction
+		assertEquals(20, manager.getReputation(faction));
+		
+		// ... but check that we still have no official rank
+		assertEquals(0, manager.getRank(faction));
 	}
 
 	private static class FakeLevel extends Level {
@@ -76,5 +93,14 @@ public class FactionManagerTest {
 				.setProfession(Disciplines.Profession.CENTURION)
 				.addAllSkill(Profession.Centurion.getSkillsFor(1)).build();
 		return builder.build();
+	}
+	
+	private static Faction createTestFaction() {
+		Factions.Faction.Builder builder = Factions.Faction.newBuilder();
+		builder.setId("Test").setName("Test");
+		builder.addRank(Rank.newBuilder().setId(1).setTitle("Initiate"));
+		builder.addRank(Rank.newBuilder().setId(3).setTitle("Member"));
+		builder.addRank(Rank.newBuilder().setId(9).setTitle("Leader"));
+		return new Faction(builder.build());
 	}
 }
