@@ -11,6 +11,7 @@ import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.proto.Factions;
 import com.eldritch.invoken.proto.Factions.Faction.Rank;
 import com.eldritch.invoken.proto.Factions.Faction.Relation;
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -22,14 +23,15 @@ public class Faction {
     private final Set<Agent> members = new HashSet<Agent>();
     private final Map<Integer, String> titles = new HashMap<>();
 
-    private Faction(Factions.Faction proto) {
+    @VisibleForTesting
+    Faction(Factions.Faction proto) {
         this.proto = proto;
         this.id = proto.getId();
         for (Rank rank : proto.getRankList()) {
             titles.put(rank.getId(), rank.getTitle());
         }
     }
-
+    
     public Set<Agent> getMembers() {
         return members;
     }
