@@ -13,11 +13,13 @@ public class Scrambled extends ActivatedEffect<Scramble> {
 
 	@Override
 	protected void afterApply() {
+		System.out.println("scramble");
 		target.setConfused(true);
 	}
 
 	@Override
 	protected void afterDispel() {
+		System.out.println("dispel");
 		target.setConfused(false);
 	}
 }

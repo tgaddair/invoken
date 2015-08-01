@@ -108,6 +108,9 @@ public class NpcThreatMonitor extends ThreatMonitor<Npc> {
     }
     
     public boolean isCombatReady() {
+    	if (getAgent().isConfused()) {
+    		return true;
+    	}
         return isAlerted() && hasEnemies();
     }
 

@@ -53,7 +53,7 @@ public class Settings {
 	public static final boolean ENABLE_BACKGROUND = true;
 	
 	// debug settings
-	public static boolean GOD_MODE = false;
+	public static boolean GOD_MODE = true;
 	public static boolean DEBUG_DRAW = false;
 	public static boolean DEBUG_CLICKS = false;
 	public static boolean DEBUG_LIGHTS = false;
@@ -71,7 +71,7 @@ public class Settings {
 	public static boolean SKIP_MENU = true;
 	public static int START_LEVEL = 1;  // 1, 10, 25
 	public static int START_FLOOR = 0;  // 0, 3
-	public static Profession DEFAULT_PROFESSION = Profession.Architect;
+	public static Profession DEFAULT_PROFESSION = Profession.Ghost;
 	
 	// string constants
 	public static final String FIRST_ROOM = "Barracks1"; // "ResearchFacility" "Bedroom" "ThugLeaderBedroom";

@@ -21,6 +21,8 @@ import com.eldritch.invoken.util.GenericDialogue;
 import com.eldritch.invoken.util.Heuristics;
 
 public class Attack extends Sequence<Npc> {
+    private static float IDEAL_DST = 3f;
+
     public Attack() {
         // if we can't select a target, then attacking fails
         addChild(new SelectBestTarget());
@@ -42,9 +44,13 @@ public class Attack extends Sequence<Npc> {
         useAugSequence.addChild(new LowerAim());
 
         Sequence<Npc> chooseAugSequence = new Sequence<>();
+        chooseAugSequence.addChild(new SetLastTask("MaybeChooseAugmentation"));
         chooseAugSequence.addChild(new ChooseWeapon());
+        chooseAugSequence.addChild(new SetLastTask("ChooseWeapon"));
         chooseAugSequence.addChild(new ChooseAugmentation());
+        chooseAugSequence.addChild(new SetLastTask("ChooseAugmentation"));
         chooseAugSequence.addChild(new TakeAim());
+        chooseAugSequence.addChild(new SetLastTask("TakeAim"));
 
         // attempt to use the augmentation, if we cannot use the augmentation
         // then we
@@ -83,7 +89,11 @@ public class Attack extends Sequence<Npc> {
         evasionSelector.addChild(pursueSequence);
         // selector.addChild(suppressSequence);
 
-        addChild(new AlwaysSucceed<>(evasionSelector));
+        Sequence<Npc> evasionSequence = new Sequence<>();
+        evasionSequence.addChild(new CanEvade());
+        evasionSequence.addChild(evasionSelector);
+
+        addChild(new AlwaysSucceed<>(evasionSequence));
         addChild(augSelector);
     }
 
@@ -118,21 +128,33 @@ public class Attack extends Sequence<Npc> {
         protected final Agent selectBestTarget(Npc entity) {
             // get one of our enemies
             Agent current = null;
-            float bestDistance = Float.MAX_VALUE;
+            float bestScore = Float.NEGATIVE_INFINITY;
             for (Agent agent : targets) {
                 if (!agent.isAlive()) {
                     // no point in attacking a dead enemy
                     continue;
                 }
 
-                float distance = entity.dst2(agent);
-                if (current == null || distance < bestDistance) {
+                float idealDst = getIdealDistance(entity);
+                float score = Heuristics.distanceScore(entity.dst2(agent), idealDst * idealDst);
+                if (current == null || score > bestScore) {
                     // attack the closer enemy
                     current = agent;
-                    bestDistance = distance;
+                    bestScore = score;
                 }
             }
             return current;
+        }
+
+        private float getIdealDistance(Npc npc) {
+            AgentInventory inv = npc.getInventory();
+            if (inv.hasRangedWeapon() && inv.hasAmmunition(inv.getRangedWeapon().getType())) {
+                return inv.getRangedWeapon().getIdealDistance();
+            } else if (inv.hasMeleeWeapon()) {
+                return inv.getMeleeWeapon().getRange();
+            } else {
+                return IDEAL_DST;
+            }
         }
 
         @Override
@@ -428,6 +450,13 @@ public class Attack extends Sequence<Npc> {
         @Override
         protected boolean check(Npc npc) {
             return npc.hasTarget();
+        }
+    }
+
+    private static class CanEvade extends BooleanTask {
+        @Override
+        protected boolean check(Npc npc) {
+            return true;
         }
     }
 }

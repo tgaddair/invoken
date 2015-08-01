@@ -140,6 +140,11 @@ public class Automaton extends Npc {
         public float getBodyRadius() {
             return 0.4f;
         }
+        
+        @Override
+        public boolean isStationary() {
+    		return true;
+    	}
 
         @Override
         protected void draw(Batch batch, TextureRegion frame, Direction direction) {
