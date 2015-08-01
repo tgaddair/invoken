@@ -25,6 +25,7 @@ public class Inventory {
                 }
             });
 
+    private final Map<Item, InventoryItem> itemMap = new HashMap<>();
     private final Map<String, ItemState> items = new HashMap<>();
     private final Random rand = new Random();
 
@@ -39,26 +40,55 @@ public class Inventory {
     }
 
     public void add(InventoryItem proto) {
-        // possibly add some number of the given item
+        if (checkForDrop(proto)) {
+            addItem(proto);
+        }
+    }
+    
+    protected boolean checkForDrop(Item item) {
+    	if (itemMap.containsKey(item)) {
+    		return checkForDrop(itemMap.get(item));
+    	}
+    	
+    	// when the item wasn't added with a drop chance from a specification, then it was
+    	// acquired dynamically, so we should always drop it
+    	return true;
+    }
+    
+    protected boolean checkForDrop(InventoryItem proto) {
+    	// possibly add some number of the given item
         boolean hasItem = true;
         if (proto.getDropChance() < 1) {
             // roll to see if we have any of the item in this inventory
             hasItem = rand.nextDouble() < proto.getDropChance();
         }
+        return hasItem;
+    }
+    
+    protected double getDropChance(Item item) {
+    	if (itemMap.containsKey(item)) {
+    		return itemMap.get(item).getDropChance();
+    	}
+    	return 1.0;
+    }
+    
+    protected final double random() {
+    	return rand.nextDouble();
+    }
+    
+    protected void addItem(InventoryItem proto) {
+    	// add plus or minus a fraction of the possible variation
+        int count = proto.getCount();
+        if (proto.getVariance() > 0) {
+            int delta = (int) (rand.nextFloat() * 2 * proto.getVariance() - proto.getVariance());
+            count += delta;
+        }
 
-        if (hasItem) {
-            // add plus or minus a fraction of the possible variation
-            int count = proto.getCount();
-            if (proto.getVariance() > 0) {
-                int delta = (int) (rand.nextFloat() * 2 * proto.getVariance() - proto.getVariance());
-                count += delta;
-            }
-
-            // add the item if we end up with a positive count
-            if (count > 0) {
-                Item item = Item.fromProto(InvokenGame.ITEM_READER.readAsset(proto.getItemId()));
-                addItem(item, count);
-            }
+        // add the item if we end up with a positive count
+        if (count > 0) {
+            Item item = Item.fromProto(InvokenGame.ITEM_READER.readAsset(proto.getItemId()));
+            itemMap.put(item, proto);
+            addItem(item, count);
         }
     }
 

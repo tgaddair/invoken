@@ -40,6 +40,12 @@ public class AgentInventory extends Inventory {
         super(new ArrayList<InventoryItem>());
         this.info = info;
     }
+    
+    @Override
+    public void add(InventoryItem proto) {
+    	// agents don't use the drop chance for adding items
+    	addItem(proto);
+    }
 
     public AgentInfo getAgentInfo() {
         return info;
@@ -238,7 +244,14 @@ public class AgentInventory extends Inventory {
     
     public void releaseItems() {
         for (Item item : getStatelessItems()) {
-            item.releaseFrom(this);
+        	if (!checkForDrop(item)) {
+        		// remove the items in proportion to the drop chance
+        		int total = getItemCount(item);
+        		int retained = (int) (random() * getDropChance(item) * total);
+        		removeItem(item, total - retained);
+        	}
+        	
+        	item.releaseFrom(this);
         }
     }
 
