@@ -621,11 +621,6 @@ public abstract class Agent extends CollisionEntity implements
 		this.confused += confused ? 1 : -1;
 		if (confused || this.confused == 0) {
 			handleConfusion(confused);
-			if (confused) {
-				setRgb(1, 0, 0);
-			} else {
-				setRgb(1, 1, 1);
-			}
 		}
 	}
 
@@ -1356,6 +1351,10 @@ public abstract class Agent extends CollisionEntity implements
 	public float getDeceiveScale(Agent other) {
 		return info.getDeception() * (1.0f - other.getInfo().getPerception());
 	}
+	
+	public float getManipulationScale(Agent other) {
+        return info.getGuile() * (1.0f - other.getInfo().getPerception());
+    }
 
 	public boolean hasPendingAction() {
 		return !actions.isEmpty();

@@ -44,13 +44,9 @@ public class Attack extends Sequence<Npc> {
         useAugSequence.addChild(new LowerAim());
 
         Sequence<Npc> chooseAugSequence = new Sequence<>();
-        chooseAugSequence.addChild(new SetLastTask("MaybeChooseAugmentation"));
         chooseAugSequence.addChild(new ChooseWeapon());
-        chooseAugSequence.addChild(new SetLastTask("ChooseWeapon"));
         chooseAugSequence.addChild(new ChooseAugmentation());
-        chooseAugSequence.addChild(new SetLastTask("ChooseAugmentation"));
         chooseAugSequence.addChild(new TakeAim());
-        chooseAugSequence.addChild(new SetLastTask("TakeAim"));
 
         // attempt to use the augmentation, if we cannot use the augmentation
         // then we

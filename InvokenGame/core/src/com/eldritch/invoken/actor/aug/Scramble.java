@@ -9,6 +9,8 @@ import com.eldritch.invoken.effects.Scrambled;
 import com.eldritch.invoken.location.Level;
 
 public class Scramble extends ActiveAugmentation {
+    private static final float BASE_DURATION = 60f;
+    
 	private static class Holder {
         private static final Scramble INSTANCE = new Scramble();
 	}
@@ -62,7 +64,7 @@ public class Scramble extends ActiveAugmentation {
 		@Override
 		public void apply(Level level) {
 			if (target.getInfo().getSpecies() == Species.Automaton) {
-				target.addEffect(new Scrambled(owner, target, Scramble.this, getCost()));
+				target.addEffect(new Scrambled(owner, target, BASE_DURATION));
 			}
 		}
 		

@@ -445,6 +445,10 @@ public class AgentInfo {
     public float getDeception() {
         return Math.min(getSubterfuge() / 100f, 1.0f);
     }
+    
+    public float getGuile() {
+        return Math.min(getCharisma() / 100f, 1.0f);
+    }
 
     public float getDefense() {
         return Math.min(getDefenseBonus(), 1.0f);
