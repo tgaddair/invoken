@@ -67,6 +67,12 @@ public class ThreatMonitor<T extends Agent> {
                 return true;
             }
         }
+        if (other.isFollowing()) {
+            // similarly, if hate the one they're following, then by extension we hate them, too
+            if (enemies.contains(other.getFollowed())) {
+                return true;
+            }
+        }
         return enemies.contains(other);
     }
     

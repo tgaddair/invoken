@@ -50,7 +50,10 @@ public class Scramble extends ActiveAugmentation {
 	
     @Override
     public float quality(Agent owner, Agent target, Level level) {
-        return 1;
+        if (target.isConfused()) {
+            return 0;
+        }
+        return 10f;
     }
 	
 	public class ScrambleAction extends AnimatedAction {

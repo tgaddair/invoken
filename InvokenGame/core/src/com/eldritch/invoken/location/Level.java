@@ -119,6 +119,7 @@ public class Level {
 
     private final Map<String, Agent> ids = new HashMap<>();
     private final List<Agent> entities = new ArrayList<>();
+    private final List<Agent> pendingAgents = new ArrayList<>();
     private final List<Agent> inactiveEntities = new ArrayList<>();
     private final Map<Agent, Float> elapsed = new HashMap<>();
     private final List<Agent> activeEntities = new ArrayList<>();
@@ -553,9 +554,17 @@ public class Level {
     }
 
     public void addAgent(Agent agent) {
+        pendingAgents.add(agent);
+    }
+
+    private void activateAgent(Agent agent) {
         entities.add(agent);
         ids.put(agent.getInfo().getId(), agent);
         healthBars.put(agent, new HealthBar(state.getSkin()));
+
+        // instead of checking for this explicitly, we'll just clean up in the next refreshdd
+        activeEntities.add(agent);
+        drawables.add(agent);
     }
 
     public World getWorld() {
@@ -633,6 +642,12 @@ public class Level {
 
         camera.position.add(cameraV);
         camera.update();
+        
+        // handle our pending entities
+        for (Agent agent : pendingAgents) {
+            activateAgent(agent);
+        }
+        pendingAgents.clear();
 
         // update the player (process input, collision detection, position
         // update)
@@ -1461,12 +1476,12 @@ public class Level {
         // i.e. 30 rep
         Faction playerFaction = getFaction("_PlayerFaction");
         player.getInfo().addFaction(playerFaction, 3, 0);
-        
+
         Faction stationFaction = getFaction("StationResidents");
         player.getInfo().addFaction(stationFaction, 3, 0);
 
         AgentInventory inv = player.getInfo().getInventory();
-//        Item outfit = info.getProfession().getDefaultOutfit();
+        // Item outfit = info.getProfession().getDefaultOutfit();
         Item outfit = Item.fromProto(InvokenGame.ITEM_READER.readAsset("PatientsGarb"));
         player.identify(outfit.getId());
         inv.addItem(outfit);

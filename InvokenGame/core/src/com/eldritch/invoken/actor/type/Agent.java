@@ -145,6 +145,7 @@ public abstract class Agent extends CollisionEntity implements
 	private final List<AgentListener> listeners = new ArrayList<>();
 	private Action action = null;
 
+	private final Set<Agent> followers = new HashSet<>();
 	private Agent followed = null;
 
 	// hostilities: agents with negative reaction who have attacked us
@@ -745,13 +746,18 @@ public abstract class Agent extends CollisionEntity implements
 	}
 
 	private void setFollowing(Agent actor) {
+	    if (followed != null) {
+	        followed.followers.remove(this);
+	    }
 		followed = actor;
+		followed.followers.add(this);
 	}
 
 	private void stopFollowing(Agent actor) {
 		// perform this check to avoid canceling the following of a different
 		// actor
 		if (followed == actor) {
+		    followed.followers.remove(this);
 			followed = null;
 		}
 	}
@@ -766,6 +772,10 @@ public abstract class Agent extends CollisionEntity implements
 
 	public boolean isFollowing(Agent agent) {
 		return getFollowed() == agent;
+	}
+	
+	public Iterable<Agent> getFollowers() {
+	    return followers;
 	}
 
 	public boolean isCloaked() {
@@ -1353,7 +1363,7 @@ public abstract class Agent extends CollisionEntity implements
 	}
 	
 	public float getManipulationScale(Agent other) {
-        return info.getGuile() * (1.0f - other.getInfo().getPerception());
+        return info.getGuile() * (1.0f - other.getInfo().getGuile());
     }
 
 	public boolean hasPendingAction() {

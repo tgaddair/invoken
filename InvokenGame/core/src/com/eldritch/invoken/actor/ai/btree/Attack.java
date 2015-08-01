@@ -132,7 +132,7 @@ public class Attack extends Sequence<Npc> {
                 }
 
                 float idealDst = getIdealDistance(entity);
-                float score = Heuristics.distanceScore(entity.dst2(agent), idealDst * idealDst);
+                float score = Heuristics.threatScore(entity, agent, idealDst * idealDst);
                 if (current == null || score > bestScore) {
                     // attack the closer enemy
                     current = agent;

@@ -5,6 +5,12 @@ import com.eldritch.invoken.actor.type.Agent;
 public class Heuristics {
     private Heuristics() {
     }
+    
+    public static float threatScore(Agent agent, Agent target, float idealDst2) {
+        float distanceScore = distanceScore(agent.dst2(target), idealDst2);
+        float threatScore = target.getInfo().getLevel();
+        return distanceScore * threatScore;
+    }
 
     public static float randomizedDistanceScore(float value, float target) {
         float score = Heuristics.distanceScore(value, target);
