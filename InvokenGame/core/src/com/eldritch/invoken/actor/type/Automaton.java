@@ -135,6 +135,11 @@ public class Automaton extends Npc {
             super(data, scenario, x, y, 1, 1, MAX_VELOCITY, AnimationUtils.forSingleSequence(asset,
                     PX), level);
         }
+        
+        @Override
+        public float getBodyRadius() {
+            return 0.4f;
+        }
 
         @Override
         protected void draw(Batch batch, TextureRegion frame, Direction direction) {
