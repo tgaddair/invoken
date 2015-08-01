@@ -1461,6 +1461,9 @@ public class Level {
         // i.e. 30 rep
         Faction playerFaction = getFaction("_PlayerFaction");
         player.getInfo().addFaction(playerFaction, 3, 0);
+        
+        Faction stationFaction = getFaction("StationResidents");
+        player.getInfo().addFaction(stationFaction, 3, 0);
 
         AgentInventory inv = player.getInfo().getInventory();
         Item outfit = info.getProfession().getDefaultOutfit();

@@ -27,6 +27,9 @@ enum AugmentationProto {
 	Discharge = 29;
 	Recall = 30;
 	Trap = 31;
+	FabricateSentry = 36;
+	FabricateDrone = 37;
+	FabricateGolem = 38;
 
 	// NPC only
 	Charge = 17;

@@ -21,6 +21,7 @@ import com.eldritch.invoken.actor.aug.Crack;
 import com.eldritch.invoken.actor.aug.Discharge;
 import com.eldritch.invoken.actor.aug.Drain;
 import com.eldritch.invoken.actor.aug.Empathy;
+import com.eldritch.invoken.actor.aug.FabricateSentry;
 import com.eldritch.invoken.actor.aug.FireWeapon;
 import com.eldritch.invoken.actor.aug.Frenzy;
 import com.eldritch.invoken.actor.aug.Jaunt;
@@ -64,7 +65,8 @@ public enum Profession {
 		
 		@Override
         public Outfit getDefaultOutfit() {
-            return new Outfit(InvokenGame.ITEM_READER.readAsset("IcarianInfantryArmor"));
+//            return new Outfit(InvokenGame.ITEM_READER.readAsset("IcarianInfantryArmor"));
+			return new Outfit(InvokenGame.ITEM_READER.readAsset("AgentAttire"));
         }
 
         @Override
@@ -178,6 +180,7 @@ public enum Profession {
 			return ImmutableList.<Augmentation>of(
 					Drain.getInstance(), 
 					Discharge.getInstance(),
+					FabricateSentry.getInstance(),
 					Resurrect.getInstance());
 		}
 		

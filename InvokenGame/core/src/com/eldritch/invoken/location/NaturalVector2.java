@@ -44,6 +44,10 @@ public class NaturalVector2 {
         return new Vector2(x, y);
     }
     
+    public Vector2 getCenter() {
+    	return new Vector2(x + 0.5f, y + 0.5f);
+    }
+    
     @Override
     public String toString() {
         return String.format("(%d,  %d)", x, y);

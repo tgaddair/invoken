@@ -85,6 +85,8 @@ public class Automaton extends Npc {
                 return new Android(data, scenario, x, y, getAssetPath(asset), level);
             case "drone":
                 return new Drone(data, scenario, x, y, getAssetPath(asset), level);
+            case "sentry":
+            	return new Sentry(data, scenario, x, y, getAssetPath(asset), level);
             case "goliath":
                 return new Goliath(data, scenario, x, y, getAssetPath(asset), level);
             default:
@@ -106,6 +108,29 @@ public class Automaton extends Npc {
         private static final int PX = 200;
 
         public Drone(NonPlayerActor data, Optional<ActorScenario> scenario, float x, float y,
+                String asset, Level level) {
+            super(data, scenario, x, y, 1, 1, MAX_VELOCITY, AnimationUtils.forSingleSequence(asset,
+                    PX), level);
+        }
+
+        @Override
+        protected void draw(Batch batch, TextureRegion frame, Direction direction) {
+            final float width = getWidth();
+            final float height = getHeight();
+            batch.draw(frame, // texture
+                    position.x - width / 2, position.y - height / 2, // position
+                    width / 2, height / 2, // origin
+                    width, height, // size
+                    1f, 1f, // scale
+                    getWeaponSentry().getDirection().angle()); // rotation
+        }
+    }
+    
+    public static class Sentry extends Automaton {
+    	public static float MAX_VELOCITY = 0f;  // stationary
+        private static final int PX = 200;
+
+        public Sentry(NonPlayerActor data, Optional<ActorScenario> scenario, float x, float y,
                 String asset, Level level) {
             super(data, scenario, x, y, 1, 1, MAX_VELOCITY, AnimationUtils.forSingleSequence(asset,
                     PX), level);
