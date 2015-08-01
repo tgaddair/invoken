@@ -65,8 +65,7 @@ public enum Profession {
 		
 		@Override
         public Outfit getDefaultOutfit() {
-//            return new Outfit(InvokenGame.ITEM_READER.readAsset("IcarianInfantryArmor"));
-			return new Outfit(InvokenGame.ITEM_READER.readAsset("AgentAttire"));
+            return new Outfit(InvokenGame.ITEM_READER.readAsset("IcarianInfantryArmor"));
         }
 
         @Override

@@ -20,6 +20,8 @@ public class FabricateSentry extends ActiveAugmentation {
 	private static final float SPLASH_SIZE = 2f;
 
 	private static final int BASE_COST = 20;
+	
+	private final Vector2 tmp = new Vector2();
 
 	private static class Holder {
 		private static final FabricateSentry INSTANCE = new FabricateSentry();
@@ -67,15 +69,20 @@ public class FabricateSentry extends ActiveAugmentation {
 
 	@Override
 	public float quality(Agent owner, Agent target, Level level) {
+		if (!owner.hasVisibilityTo(target)) {
+			return 0;
+		}
 		return 5;
 	}
 
 	@Override
 	protected void setBestTarget(Agent agent, Agent goal, Target target) {
-		for (Agent neighbor : goal.getNeighbors()) {
-			if (!neighbor.isAlive()) {
-				target.set(neighbor);
-			}
+		// find the midpoint between this agent and the goal
+		Vector2 v1 = agent.getPosition();
+		Vector2 v2 = goal.getPosition();
+		Vector2 midpoint = tmp.set((v1.x + v2.x) / 2f, (v1.y + v2.y) / 2f);
+		if (isValid(agent, midpoint)) {
+			target.set(midpoint);
 		}
 	}
 
