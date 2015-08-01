@@ -1466,7 +1466,8 @@ public class Level {
         player.getInfo().addFaction(stationFaction, 3, 0);
 
         AgentInventory inv = player.getInfo().getInventory();
-        Item outfit = info.getProfession().getDefaultOutfit();
+//        Item outfit = info.getProfession().getDefaultOutfit();
+        Item outfit = Item.fromProto(InvokenGame.ITEM_READER.readAsset("PatientsGarb"));
         player.identify(outfit.getId());
         inv.addItem(outfit);
         inv.equip(outfit);

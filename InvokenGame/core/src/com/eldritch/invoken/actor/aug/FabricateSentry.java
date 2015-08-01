@@ -19,7 +19,7 @@ public class FabricateSentry extends ActiveAugmentation {
 	private static final String ID = "SmallSentrySummoned";
 	private static final float SPLASH_SIZE = 2f;
 
-	private static final int BASE_COST = 30;
+	private static final int BASE_COST = 20;
 
 	private static class Holder {
 		private static final FabricateSentry INSTANCE = new FabricateSentry();
