@@ -1,7 +1,6 @@
-package com.eldritch.invoken.location;
+package com.eldritch.invoken.box2d;
 
 import com.eldritch.invoken.box2d.AgentHandler.DefaultAgentHandler;
-
 
 public class Wall extends DefaultAgentHandler {
     private Wall() {}

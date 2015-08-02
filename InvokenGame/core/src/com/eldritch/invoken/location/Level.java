@@ -67,6 +67,7 @@ import com.eldritch.invoken.box2d.AreaOfEffect;
 import com.eldritch.invoken.box2d.AreaOfEffect.AoeHandler;
 import com.eldritch.invoken.box2d.Bullet;
 import com.eldritch.invoken.box2d.LocationContactListener;
+import com.eldritch.invoken.box2d.Wall;
 import com.eldritch.invoken.gfx.BackgroundManager;
 import com.eldritch.invoken.gfx.FogMaskManager;
 import com.eldritch.invoken.gfx.FogOfWarMasker;

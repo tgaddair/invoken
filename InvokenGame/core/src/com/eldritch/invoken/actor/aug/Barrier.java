@@ -1,20 +1,32 @@
 package com.eldritch.invoken.actor.aug;
 
+import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
+import com.badlogic.gdx.physics.box2d.Filter;
+import com.badlogic.gdx.physics.box2d.Fixture;
+import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.badlogic.gdx.physics.box2d.PolygonShape;
+import com.badlogic.gdx.physics.box2d.World;
 import com.eldritch.invoken.actor.aug.Augmentation.SelfAugmentation;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Agent.Activity;
-import com.eldritch.invoken.effects.Shield;
-import com.eldritch.invoken.effects.Shield.FixedShield;
+import com.eldritch.invoken.actor.type.TemporaryEntity.DefaultTemporaryEntity;
+import com.eldritch.invoken.box2d.Wall;
 import com.eldritch.invoken.location.Level;
+import com.eldritch.invoken.screens.GameScreen;
+import com.eldritch.invoken.util.Settings;
 
 public class Barrier extends SelfAugmentation {
     private static final String TOOLTIP = "Barrier\n\n"
             + "Absorbs up to 100 damage from incoming projectiles in the direction "
             + "the user is currently facing.  Sustained the shield reduces movement speed.\n\n"
-            + "Mode: Sustained\n"
-            + "Cost: 0";
-    
+            + "Mode: Sustained\n" + "Cost: 0";
+
     private static class Holder {
         private static final Barrier INSTANCE = new Barrier();
     }
@@ -28,18 +40,13 @@ public class Barrier extends SelfAugmentation {
     }
 
     @Override
-    public void release(Agent owner) {
-        owner.toggleOff(Shield.class);
-    }
-
-    @Override
     public Action getAction(Agent owner, Agent target) {
-        return new ShieldAction(owner);
+        return new BarrierAction(owner);
     }
 
     @Override
     public Action getAction(Agent owner, Vector2 target) {
-        return new ShieldAction(owner);
+        return new BarrierAction(owner);
     }
 
     @Override
@@ -54,57 +61,113 @@ public class Barrier extends SelfAugmentation {
 
     @Override
     public int getCost(Agent owner) {
-        return owner.isToggled(Shield.class) ? 0 : 1;
+        return 20;
     }
 
     @Override
     public float quality(Agent owner, Agent target, Level level) {
-        if (!owner.isToggled(Shield.class)) {
-            // shield is currently inactive
-            if (owner.getInfo().getEnergyPercent() > 0.75f) {
-                // it's only worth using the shield if we have enough reserve energy to follow it
-                // up with an attack
-                // TODO: it would also help if we wished to do a flee or hide routine
-                for (Agent enemy : owner.getThreat().getEnemies()) {
-                    if (enemy.getInventory().hasRangedWeapon()) {
-                        return 2;
-                    }
-                }
-            }
-            return 0;
-        } else {
-            for (Agent enemy : owner.getThreat().getEnemies()) {
-                if (enemy.getInventory().hasRangedWeapon()) {
-                    // don't turn off the shield if we still have enemies shooting at us
-                    return 0;
-                }
-            }
-            
-            // turn off the shield if not facing an enemy with a ranged weapon
-            return 2;
+        if (owner.getInventory().hasRangedWeapon() && owner.inFieldOfView(target)
+                && owner.dst2(target) > 3 * 3) {
+            return 5;
         }
+        return 0;
     }
-    
+
     @Override
     public String getTooltip() {
         return TOOLTIP;
     }
 
-    public class ShieldAction extends AnimatedAction {
-        public ShieldAction(Agent actor) {
+    public class BarrierAction extends AnimatedAction {
+        public BarrierAction(Agent actor) {
             super(actor, Activity.Cast, Barrier.this);
         }
 
         @Override
         public void apply(Level level) {
-            if (owner.toggle(Shield.class)) {
-                owner.addEffect(new FixedShield(owner, Barrier.this));
-            }
+            Vector2 position = owner.getPosition().cpy().add(owner.getForwardVector());
+            float theta = owner.getForwardVector().angleRad();
+            level.addEntity(new BarrierEntity(position, theta, level));
         }
 
         @Override
         public Vector2 getPosition() {
             return owner.getPosition();
         }
+    }
+
+    private static class BarrierEntity extends DefaultTemporaryEntity {
+        private static final TextureRegion REGION = new TextureRegion(
+                GameScreen.getTexture("sprite/effects/barrier-stationary.png"));
+
+        private final World world;
+        private final Body body;
+        private final float theta;
+        float width = 1;
+        float height = 2;
+
+        public BarrierEntity(Vector2 position, float theta, Level level) {
+            super(position);
+            this.world = level.getWorld();
+            this.body = createBox(position.x, position.y, width, height, theta, world);
+            this.theta = theta;
+        }
+
+        @Override
+        public void render(float delta, OrthogonalTiledMapRenderer renderer) {
+            Vector2 position = getPosition();
+            Batch batch = renderer.getBatch();
+            batch.begin();
+            batch.draw(REGION.getTexture(),  // texture
+                    position.x, position.y,  // position
+                    width / 2, height / 2,  // origin
+                    width, height,  // size
+                    1f, 1f,  // scale
+                    theta,  // rotation
+                    0, 0,  // texture position
+                    REGION.getRegionWidth(), REGION.getRegionHeight(),  // texture size
+                    false, false);  // flip
+            batch.end();
+        }
+
+        @Override
+        public boolean isFinished() {
+            return false;
+        }
+
+        @Override
+        public void dispose() {
+            world.destroyBody(body);
+        }
+    }
+
+    private static Body createBox(float x0, float y0, float width, float height, float theta, World world) {
+        PolygonShape box = new PolygonShape();
+        float hx = width / 2;
+        float hy = height / 2;
+        Vector2 center = new Vector2(x0, y0);
+        box.setAsBox(hx, hy, center, theta);
+
+        BodyDef groundBodyDef = new BodyDef();
+        groundBodyDef.type = BodyType.StaticBody;
+        groundBodyDef.position.set(0, 0);
+
+        FixtureDef fixtureDef = new FixtureDef();
+        fixtureDef.shape = box;
+        fixtureDef.filter.groupIndex = 0;
+
+        Body body = world.createBody(groundBodyDef);
+        Fixture fixture = body.createFixture(fixtureDef);
+        fixture.setUserData(Wall.getInstance());
+
+        // collision filters
+        Filter filter = fixture.getFilterData();
+        filter.categoryBits = Settings.BIT_SHIELD;
+        filter.maskBits = Settings.BIT_ANYTHING;
+        fixture.setFilterData(filter);
+
+        box.dispose();
+
+        return body;
     }
 }

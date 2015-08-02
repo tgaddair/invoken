@@ -11,12 +11,12 @@ import com.eldritch.invoken.actor.aug.Augmentation.ActiveAugmentation;
 import com.eldritch.invoken.actor.items.MeleeWeapon;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Agent.Activity;
+import com.eldritch.invoken.box2d.Wall;
 import com.eldritch.invoken.box2d.AgentHandler.DefaultAgentHandler;
 import com.eldritch.invoken.effects.BasicEffect;
 import com.eldritch.invoken.effects.Bleed;
 import com.eldritch.invoken.effects.Stunned;
 import com.eldritch.invoken.location.Level;
-import com.eldritch.invoken.location.Wall;
 import com.eldritch.invoken.proto.Effects.DamageType;
 import com.eldritch.invoken.util.Damage;
 import com.eldritch.invoken.util.Heuristics;
@@ -184,7 +184,7 @@ public class Thrust extends ActiveAugmentation {
 
         public RamHandler(Damage damage, Vector2 force, RamEffect effect) {
             this.damage = damage;
-            this.force = force.cpy().scl(10f);
+            this.force = force.cpy().scl(25f);
             this.effect = effect;
         }
 
