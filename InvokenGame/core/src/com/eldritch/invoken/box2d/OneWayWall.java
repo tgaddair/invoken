@@ -18,7 +18,7 @@ public interface OneWayWall {
         @Override
         public boolean hasContact(Vector2 direction) {
             float theta = normal.angleRad(direction);
-            return Math.abs(theta) < TOLERANCE;
+            return Math.PI - Math.abs(theta) < TOLERANCE;
         }
     }
 }

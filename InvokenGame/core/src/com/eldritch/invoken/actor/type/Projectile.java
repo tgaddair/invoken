@@ -6,6 +6,7 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.box2d.AgentHandler;
 import com.eldritch.invoken.box2d.Bullet;
+import com.eldritch.invoken.box2d.OneWayWall;
 import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.location.NaturalVector2;
 import com.eldritch.invoken.util.Damage;
@@ -20,24 +21,26 @@ public abstract class Projectile extends CollisionEntity implements AgentHandler
     private boolean finished;
     private float stateTime;
 
-    public Projectile(Agent owner, TextureRegion region, Vector2 direction, float speed, Damage damage) {
-        this(owner, region.getRegionWidth() * Settings.SCALE, region.getRegionHeight() * Settings.SCALE, direction,
-                speed, damage);
+    public Projectile(Agent owner, TextureRegion region, Vector2 direction, float speed,
+            Damage damage) {
+        this(owner, region.getRegionWidth() * Settings.SCALE, region.getRegionHeight()
+                * Settings.SCALE, direction, speed, damage);
     }
 
-    public Projectile(Agent owner, float width, float height, Vector2 direction, float speed, Damage damage) {
+    public Projectile(Agent owner, float width, float height, Vector2 direction, float speed,
+            Damage damage) {
         super(owner.getWeaponSentry().getPosition(), width, height);
         this.direction = direction;
         this.speed = speed;
         this.damage = damage;
-        
+
         this.owner = owner;
         setup(owner);
 
         Level level = owner.getLocation();
         bullet = level.obtainBullet(this);
     }
-    
+
     public Damage getDamage() {
         return damage;
     }
@@ -53,10 +56,14 @@ public abstract class Projectile extends CollisionEntity implements AgentHandler
 
     @Override
     public boolean handle(Object userData) {
+        if (userData instanceof OneWayWall
+                && !((OneWayWall) userData).hasContact(bullet.getVelocity())) {
+            return false;
+        }
         handleObstacleContact();
         return true;
     }
-    
+
     @Override
     public boolean handleEnd(Agent agent) {
         return false;
@@ -66,7 +73,7 @@ public abstract class Projectile extends CollisionEntity implements AgentHandler
     public boolean handleEnd(Object userData) {
         return false;
     }
-    
+
     @Override
     public short getCollisionMask() {
         return Settings.BIT_SHOOTABLE;
@@ -79,7 +86,7 @@ public abstract class Projectile extends CollisionEntity implements AgentHandler
     public Agent getOwner() {
         return owner;
     }
-    
+
     public Bullet getBullet() {
         return bullet;
     }
@@ -92,7 +99,7 @@ public abstract class Projectile extends CollisionEntity implements AgentHandler
         velocity.set(direction);
         velocity.scl(speed);
     }
-    
+
     /**
      * Rotate velocity theta degrees.
      */
@@ -113,11 +120,11 @@ public abstract class Projectile extends CollisionEntity implements AgentHandler
     @Override
     public void update(float delta, Level level) {
         stateTime += delta;
-        
+
         if (handleBeforeUpdate(delta, level)) {
             return;
         }
-        
+
         // check that we've passed into the walls, possibly skipping over an edge
         position.set(bullet.getPosition());
         NaturalVector2 position = NaturalVector2.of(bullet.getPosition());
@@ -163,7 +170,7 @@ public abstract class Projectile extends CollisionEntity implements AgentHandler
         onCancel();
         finish();
     }
-    
+
     protected void onCancel() {
     }
 
@@ -171,7 +178,7 @@ public abstract class Projectile extends CollisionEntity implements AgentHandler
         finished = true;
         onFinish();
     }
-    
+
     protected void onFinish() {
     }
 
@@ -190,7 +197,7 @@ public abstract class Projectile extends CollisionEntity implements AgentHandler
     protected abstract void handleAgentContact(Agent agent);
 
     protected abstract void handleObstacleContact();
-    
+
     public static Vector2 fixedSentryDirection(Agent owner) {
         return owner.getWeaponSentry().getDirection().cpy();
     }

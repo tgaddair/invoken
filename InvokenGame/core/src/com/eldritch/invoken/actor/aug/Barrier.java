@@ -106,7 +106,7 @@ public class Barrier extends SelfAugmentation {
         private static final TextureRegion REGION = new TextureRegion(
                 GameScreen.getTexture("sprite/effects/barrier-stationary.png"));
         
-        private static final float width = 1;
+        private static final float width = 0.5f;
         private static final float height = 2;
 
         private final Handler handler;
