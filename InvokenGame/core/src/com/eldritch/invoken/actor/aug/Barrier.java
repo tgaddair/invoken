@@ -3,6 +3,7 @@ package com.eldritch.invoken.actor.aug;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
@@ -102,7 +103,7 @@ public class Barrier extends SelfAugmentation {
 
         private final World world;
         private final Body body;
-        private final float theta;
+        private final float thetaDegrees;
         float width = 1;
         float height = 2;
 
@@ -110,7 +111,7 @@ public class Barrier extends SelfAugmentation {
             super(position);
             this.world = level.getWorld();
             this.body = createBox(position.x, position.y, width, height, theta, world);
-            this.theta = theta;
+            this.thetaDegrees = theta * MathUtils.radiansToDegrees;
         }
 
         @Override
@@ -118,12 +119,14 @@ public class Barrier extends SelfAugmentation {
             Vector2 position = getPosition();
             Batch batch = renderer.getBatch();
             batch.begin();
+            float hx = width / 2;
+            float hy = height / 2;
             batch.draw(REGION.getTexture(),  // texture
-                    position.x, position.y,  // position
-                    width / 2, height / 2,  // origin
+                    position.x - hx, position.y - hy,  // position
+                    hx, hy,  // origin
                     width, height,  // size
                     1f, 1f,  // scale
-                    theta,  // rotation
+                    thetaDegrees,  // rotation
                     0, 0,  // texture position
                     REGION.getRegionWidth(), REGION.getRegionHeight(),  // texture size
                     false, false);  // flip
