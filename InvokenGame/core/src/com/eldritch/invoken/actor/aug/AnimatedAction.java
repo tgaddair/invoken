@@ -80,7 +80,12 @@ public abstract class AnimatedAction extends AugmentationAction {
 
     protected boolean canApplyFrame() {
         Animation anim = owner.getAnimation(activity);
-        return anim.getKeyFrameIndex(stateTime) == anim.getKeyFrames().length / 2;
+        return anim.getKeyFrameIndex(stateTime) == getApplyFrame();
+    }
+    
+    protected int getApplyFrame() {
+        Animation anim = owner.getAnimation(activity);
+        return anim.getKeyFrames().length / 2;
     }
 
     protected boolean canApply() {

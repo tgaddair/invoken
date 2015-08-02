@@ -3,13 +3,18 @@ package com.eldritch.invoken.actor.aug;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.actor.aug.Augmentation.ActiveAugmentation;
+import com.eldritch.invoken.actor.items.MeleeWeapon;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.box2d.AgentHandler.DefaultAgentHandler;
 import com.eldritch.invoken.effects.BasicEffect;
+import com.eldritch.invoken.effects.Bleed;
+import com.eldritch.invoken.effects.Stunned;
 import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.location.Wall;
 import com.eldritch.invoken.proto.Effects.DamageType;
@@ -21,7 +26,7 @@ public class Thrust extends ActiveAugmentation {
     private static final float RANGE = 5;
     private static final float DURATION = 0.5f;
     private static final float MAGNITUDE = 40f;
-    private static final int DAMAGE = 25;
+    private static final float DAMAGE_SCALE = 2f;
 
     private static class Holder {
         private static final Thrust INSTANCE = new Thrust();
@@ -38,7 +43,7 @@ public class Thrust extends ActiveAugmentation {
     @Override
     public boolean isValid(Agent owner) {
         // only one at a time
-        return !owner.isToggled(Thrust.class);
+        return !owner.isToggled(Thrust.class) && owner.getInventory().hasMeleeWeapon();
     }
 
     @Override
@@ -87,7 +92,27 @@ public class Thrust extends ActiveAugmentation {
         @Override
         public void apply(Level level) {
             owner.addEffect(new RamEffect(owner, target));
-            InvokenGame.SOUND_MANAGER.playAtPoint(SoundEffect.BUFF, owner.getPosition());
+            InvokenGame.SOUND_MANAGER.playAtPoint(SoundEffect.MELEE_SWING, owner.getPosition());
+        }
+
+        @Override
+        public void render(OrthogonalTiledMapRenderer renderer) {
+            super.render(renderer);
+
+            // render weapon
+            MeleeWeapon weapon = owner.getInventory().getMeleeWeapon();
+            if (weapon.isVisible()) {
+                weapon.render(owner, Activity.Combat, getStateTime(), renderer);
+            }
+        }
+
+        @Override
+        protected int getApplyFrame() {
+            Animation anim = owner.getAnimation(activity);
+            if (anim.getKeyFrames().length == 0) {
+                return 0;
+            }
+            return super.getApplyFrame() + 1;
         }
 
         @Override
@@ -109,7 +134,7 @@ public class Thrust extends ActiveAugmentation {
             this.force.set(target).sub(agent.getPosition()).nor().scl(MAGNITUDE);
             source.set(agent.getPosition());
         }
-        
+
         public void cancel() {
             this.cancelled = true;
         }
@@ -119,9 +144,11 @@ public class Thrust extends ActiveAugmentation {
             target.toggleOn(Thrust.class);
             target.setParalyzed(true);
 
-            Damage damage = Damage.from(target, DamageType.PHYSICAL, DAMAGE);
+            float magnitude = target.getInventory().getMeleeWeapon().getDamage();
+            Damage damage = Damage.from(target, DamageType.PHYSICAL,
+                    (int) (magnitude * DAMAGE_SCALE));
             target.setCollisionDelegate(new RamHandler(damage, force, this));
-            
+
             target.setDirection(target.getDominantDirection(force.x, force.y));
         }
 
@@ -156,7 +183,7 @@ public class Thrust extends ActiveAugmentation {
 
         public RamHandler(Damage damage, Vector2 force, RamEffect effect) {
             this.damage = damage;
-            this.force = force.cpy().scl(0.5f);
+            this.force = force.cpy().scl(10f);
             this.effect = effect;
         }
 
@@ -164,8 +191,12 @@ public class Thrust extends ActiveAugmentation {
         public boolean handle(Agent agent) {
             // avoid damaging more than once
             if (!damaged.contains(agent)) {
-                agent.damage(damage, damage.getSource().getPosition());
+                Agent owner = damage.getSource();
                 agent.applyForce(force);
+                agent.addEffect(new Stunned(owner, agent, 1.5f));
+                agent.addEffect(new Bleed(agent, damage, owner.getPosition()));
+                InvokenGame.SOUND_MANAGER.playAtPoint(SoundEffect.MELEE_HIT, agent.getPosition());
+
                 damaged.add(agent);
                 return true;
             }
