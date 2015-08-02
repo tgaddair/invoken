@@ -9,6 +9,7 @@ import java.util.Random;
 import java.util.Set;
 
 import com.badlogic.gdx.maps.MapLayer;
+import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
@@ -42,6 +43,11 @@ public class TmxPlaceableFurniture implements PlaceableFurniture {
             }
         }
         return cost;
+    }
+    
+    @Override
+    public MapProperties getProperties() {
+        return tiles.getProperties();
     }
 
     @Override

@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ExecutionException;
 
+import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.eldritch.invoken.InvokenGame;
@@ -40,6 +41,8 @@ public abstract class FurnitureLoader {
     	NaturalVector2 findPosition(ConnectedRoom room, LocationMap map, Random rand);
     	
     	List<InanimateEntity> place(NaturalVector2 position, LocationMap map);
+    	
+    	MapProperties getProperties();
     }
     
     public static class TmxFurnitureLoader extends FurnitureLoader {
