@@ -43,6 +43,10 @@ public class FabricateSentry extends ActiveAugmentation {
 
     @Override
     public Action getAction(Agent owner, Agent target) {
+        if (canDestroy(owner, target)) {
+            return new DestroyAction(owner, target);
+        }
+
         return getAction(owner, target.getPosition());
     }
 
@@ -53,6 +57,9 @@ public class FabricateSentry extends ActiveAugmentation {
 
     @Override
     public boolean isValid(Agent owner, Agent target) {
+        if (canDestroy(owner, target)) {
+            return true;
+        }
         return isValid(owner, target.getPosition());
     }
 
@@ -73,6 +80,11 @@ public class FabricateSentry extends ActiveAugmentation {
             return 0;
         }
         return 5;
+    }
+
+    private boolean canDestroy(Agent owner, Agent target) {
+        return target.getInfo().getId().equals(ID) && target.isFollowing(owner)
+                && !target.isConfused();
     }
 
     @Override
@@ -110,6 +122,30 @@ public class FabricateSentry extends ActiveAugmentation {
         @Override
         public Vector2 getPosition() {
             return target;
+        }
+    }
+
+    public class DestroyAction extends AnimatedAction {
+        private final Agent target;
+
+        public DestroyAction(Agent owner, Agent target) {
+            super(owner, Activity.Cast, FabricateSentry.this, new SummonEnergy(owner));
+            this.target = target;
+        }
+
+        @Override
+        public void apply(Level level) {
+            target.kill();
+        }
+
+        @Override
+        public Vector2 getPosition() {
+            return target.getPosition();
+        }
+        
+        @Override
+        public int getCost() {
+            return 0;
         }
     }
 }

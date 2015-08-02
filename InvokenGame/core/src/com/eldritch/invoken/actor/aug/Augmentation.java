@@ -80,12 +80,16 @@ public abstract class Augmentation {
     }
 
     private boolean invoke(Agent owner, Action action) {
-        if (hasEnergy(owner)) {
+        if (hasEnergy(owner, action)) {
             InvokenGame.log(String.format("%s uses %s", owner.getInfo().getName(), getName()));
             owner.addAction(action);
             return true;
         }
         return false;
+    }
+    
+    private boolean hasEnergy(Agent agent, Action action) {
+        return agent.getInfo().getEnergy() >= action.getCost();
     }
 
     public Texture getIcon() {
