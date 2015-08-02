@@ -200,7 +200,7 @@ public class LocationGenerator {
         for (LocationLayer layer : baseLayers.layers) {
             map.getLayers().add(layer);
         }
-        
+
         // add walls
         for (WallLayer layer : baseLayers.walls) {
             map.addWall(layer);
@@ -282,7 +282,8 @@ public class LocationGenerator {
         roomDecorator.generate(rooms, hallways);
 
         InvokenGame.log("Creating Spawn Layers");
-        List<Encounter> encounters = InvokenGame.ENCOUNTER_SELECTOR.select(next.getFloor());
+        EncounterSelector encounters = new EncounterSelector(next.getFloor(),
+                InvokenGame.ENCOUNTERS.select(next.getFloor()));
         for (LocationLayer layer : createSpawnLayers(base, collision, bsp, map, rooms,
                 next.getFloor(), encounters, roomDecorator)) {
             map.getLayers().add(layer);
@@ -697,10 +698,10 @@ public class LocationGenerator {
         }
         InvokenGame.log("done");
 
-        return new LayerCollection(ImmutableList.of(layer),
-                ImmutableList.<LocationLayer> of(), wallList.build());
+        return new LayerCollection(ImmutableList.of(layer), ImmutableList.<LocationLayer> of(),
+                wallList.build());
     }
-    
+
     private void addWalls(LocationLayer layer, int y, LocationLayer mid, LocationLayer left,
             LocationLayer right, CellType[][] typeMap) {
         for (int x = 0; x < layer.getWidth(); x++) {
@@ -711,7 +712,7 @@ public class LocationGenerator {
                     // must add to base layer for wall presence testing
                     addCell(layer, walls.getTile(WallTile.MidWallBottom), x, y + 0);
                     addCell(layer, walls.getTile(WallTile.MidWallTop), x, y + 1);
-                    
+
                     addCell(mid, walls.getTile(WallTile.MidWallBottom), x, y + 0);
                     addCell(mid, walls.getTile(WallTile.MidWallTop), x, y + 1);
                 }
@@ -1061,12 +1062,12 @@ public class LocationGenerator {
         if (above != null) {
             above.setVisible(false);
         }
-        
+
         LocationLayer below = map.getLayer(Constants.FROM_BELOW_LAYER);
         if (below != null) {
             below.setVisible(false);
         }
-        
+
         if (prev.isPresent()) {
             GameState last = prev.get();
 
@@ -1089,9 +1090,8 @@ public class LocationGenerator {
 
     private List<LocationLayer> createSpawnLayers(LocationLayer base, LocationLayer collision,
             RoomGenerator generator, LocationMap map, ConnectedRoomManager rooms, int level,
-            List<Encounter> encounterList, RoomDecorator roomDecorator) {
-        Set<Encounter> encounters = new LinkedHashSet<>(encounterList);
-        List<LocationLayer> layers = new ArrayList<LocationLayer>();
+            EncounterSelector encounters, RoomDecorator roomDecorator) {
+        List<LocationLayer> layers = new ArrayList<>();
 
         boolean playerAdded = addPlayerLayer(map);
         for (ControlRoom controlRoom : generator.getEncounterRooms()) {
@@ -1127,7 +1127,7 @@ public class LocationGenerator {
             }
 
             // generate encounter layers
-            Optional<Encounter> encounter = controlRoom.chooseEncounter(level, encounters, rooms);
+            Optional<Encounter> encounter = controlRoom.chooseEncounter(encounters, rooms);
             if (encounter.isPresent()) {
                 // add encounter entities
                 addEntities(bounds, encounter.get(), freeSpaces, rooms, base, collision, map,
@@ -1135,11 +1135,6 @@ public class LocationGenerator {
 
                 // add furniture
                 roomDecorator.place(encounter.get().getFurnitureList(), connected);
-
-                if (encounter.get().getUnique()) {
-                    // remove the encounter from the list of possibilities
-                    encounters.remove(encounter.get());
-                }
             }
         }
 

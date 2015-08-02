@@ -22,6 +22,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.location.ConnectedRoomManager;
 import com.eldritch.invoken.location.NaturalVector2;
+import com.eldritch.invoken.location.proc.EncounterSelector.EncounterMatcher;
 import com.eldritch.invoken.location.proc.RoomDecorator.RoomType;
 import com.eldritch.invoken.proto.Locations.ControlPoint;
 import com.eldritch.invoken.proto.Locations.Encounter;
@@ -203,6 +204,7 @@ public class RoomGenerator extends BspGenerator {
     }
 
     private int getDistance(ControlNode current, ControlNode node) {
+        // manhattan distance between the bottom-left corners of the room bounds
         return (int) (Math.abs(current.getBounds().x - node.getBounds().x) + Math.abs(current
                 .getBounds().y - node.getBounds().y));
     }
@@ -217,7 +219,7 @@ public class RoomGenerator extends BspGenerator {
             if (current.isOrigin() && node.cp.getExit()) {
                 distance = Integer.MAX_VALUE - 1;
             }
-            
+
             if (distance < bestDistance) {
                 closest = node;
                 bestDistance = distance;
@@ -641,12 +643,12 @@ public class RoomGenerator extends BspGenerator {
         return total;
     }
 
-    public class EncounterSelector {
+    public class EncounterSampler {
         private final double totalWeight;
         private final NavigableSet<WeightedEncounter> selection = new TreeSet<WeightedEncounter>();
         private final WeightedEncounter search = new WeightedEncounter(null, 0);
 
-        public EncounterSelector(List<Encounter> repeatedEncounters) {
+        public EncounterSampler(List<Encounter> repeatedEncounters) {
             // calculate the cumulative sum map
             double total = 0;
             for (Encounter encounter : repeatedEncounters) {
@@ -823,37 +825,19 @@ public class RoomGenerator extends BspGenerator {
             }
         }
 
-        public Optional<Encounter> chooseEncounter(int level, Collection<Encounter> encounters,
-                ConnectedRoomManager rooms) {
-            com.eldritch.invoken.util.EncounterSelector selector = InvokenGame.ENCOUNTER_SELECTOR;
-
-            // find all the available encounters for the given control point
-            double total = 0;
-            List<Encounter> available = new ArrayList<>();
-            for (Encounter encounter : encounters) {
-                if (matchesFaction(encounter, rooms)) {
-                    if (matchesRoom(encounter, room) && matchesPoint(encounter, cp)) {
-                        total += selector.getWeight(encounter, level);
-                        available.add(encounter);
+        public Optional<Encounter> chooseEncounter(EncounterSelector encounters,
+                final ConnectedRoomManager rooms) {
+            return encounters.select(new EncounterMatcher() {
+                @Override
+                public boolean matches(Encounter encounter) {
+                    if (matchesFaction(encounter, rooms)) {
+                        if (matchesRoom(encounter, room) && matchesPoint(encounter, cp)) {
+                            return true;
+                        }
                     }
+                    return false;
                 }
-            }
-
-            // System.out.println("choosing for " + cp.getId());
-            // System.out.println("available: " + available.size());
-
-            // sample an encounter with replacement by its weight
-            double target = Math.random() * total;
-            double sum = 0;
-            for (Encounter encounter : available) {
-                sum += selector.getWeight(encounter, level);
-                if (sum >= target) {
-                    return Optional.of(encounter);
-                }
-            }
-
-            // no encounter found
-            return Optional.absent();
+            });
         }
 
         public boolean matchesFaction(Encounter encounter, ConnectedRoomManager rooms) {

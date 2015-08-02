@@ -28,7 +28,7 @@ import com.eldritch.invoken.screens.GameScreen;
 import com.eldritch.invoken.ui.HealthBar;
 import com.eldritch.invoken.util.Damage;
 import com.eldritch.invoken.util.Damager;
-import com.eldritch.invoken.util.EncounterSelector;
+import com.eldritch.invoken.util.EncounterProvider;
 import com.eldritch.invoken.util.Settings;
 import com.google.common.base.Optional;
 
@@ -88,7 +88,7 @@ public class Cage extends CollisionActivator implements Damageable {
 
         // add an entity
         double total = 0.0;
-        EncounterSelector selector = InvokenGame.ENCOUNTER_SELECTOR;
+        EncounterProvider selector = InvokenGame.ENCOUNTERS;
         Map<String, Encounter> available = new HashMap<>();
         for (Encounter encounter : selector.select(level.getFloor())) {
             if (encounter.getUnique()) {
