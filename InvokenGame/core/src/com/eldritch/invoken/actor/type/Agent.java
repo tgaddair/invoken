@@ -64,6 +64,7 @@ import com.eldritch.invoken.actor.util.Interactable;
 import com.eldritch.invoken.actor.util.Locatable;
 import com.eldritch.invoken.actor.util.Lootable;
 import com.eldritch.invoken.actor.util.MotionTracker;
+import com.eldritch.invoken.actor.util.SelectionHandler;
 import com.eldritch.invoken.actor.util.ThreatMonitor;
 import com.eldritch.invoken.box2d.AgentHandler;
 import com.eldritch.invoken.effects.Effect;
@@ -165,6 +166,7 @@ public abstract class Agent extends CollisionEntity implements
 	private final Set<Disguise> disguises = new HashSet<>();
 	private boolean sprinting = false;
 	private Optional<NaturalVector2> mark = Optional.absent();
+	private Optional<SelectionHandler> selectionHandler = Optional.absent();
 
 	private float freezing = 0;
 	private float lastAction = 0;
@@ -244,6 +246,7 @@ public abstract class Agent extends CollisionEntity implements
 
 	public void setActive(boolean active) {
 		body.setActive(active);
+		body.setLinearVelocity(Vector2.Zero);
 	}
 
 	public Body getBody() {
@@ -672,6 +675,22 @@ public abstract class Agent extends CollisionEntity implements
 	}
 
 	protected abstract void handleConfusion(boolean confused);
+	
+	public boolean hasSelectionHandler() {
+	    return selectionHandler.isPresent();
+	}
+	
+	public SelectionHandler getSelectionHandler() {
+	    return selectionHandler.get();
+	}
+	
+	public void setSelectionHandler(SelectionHandler handler) {
+	    this.selectionHandler = Optional.of(handler);
+	}
+	
+	public void removeSelectionHandler() {
+	    selectionHandler = Optional.absent();
+	}
 
 	public boolean hasMark() {
 		return mark.isPresent();

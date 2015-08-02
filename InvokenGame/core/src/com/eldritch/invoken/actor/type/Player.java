@@ -23,6 +23,7 @@ import com.eldritch.invoken.actor.items.Ammunition;
 import com.eldritch.invoken.actor.items.Consumable;
 import com.eldritch.invoken.actor.items.Fragment;
 import com.eldritch.invoken.actor.items.Item;
+import com.eldritch.invoken.actor.util.SelectionHandler;
 import com.eldritch.invoken.actor.util.ThreatMonitor;
 import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.location.proc.LocationGenerator;
@@ -246,7 +247,13 @@ public class Player extends SteeringAgent {
     }
 
     public boolean select(Agent other, Level level) {
-        // if (other == this || other == null || canTarget(other, location)) {
+        if (hasSelectionHandler()) {
+            SelectionHandler handler = getSelectionHandler();
+            if (handler.canSelect(other) && handler.select(other)) {
+                return true;
+            }
+        }
+        
         endJointInteraction();
         setTarget(other);
         return true;
