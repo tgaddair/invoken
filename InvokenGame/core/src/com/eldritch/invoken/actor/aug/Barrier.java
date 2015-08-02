@@ -1,5 +1,7 @@
 package com.eldritch.invoken.actor.aug;
 
+import java.util.List;
+
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -14,19 +16,25 @@ import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
+import com.eldritch.invoken.activators.Activator;
 import com.eldritch.invoken.actor.aug.Augmentation.SelfAugmentation;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Agent.Activity;
+import com.eldritch.invoken.actor.type.InanimateEntity;
 import com.eldritch.invoken.actor.type.TemporaryEntity.DefaultTemporaryEntity;
 import com.eldritch.invoken.box2d.DamageHandler;
 import com.eldritch.invoken.box2d.OneWayWall;
+import com.eldritch.invoken.effects.DamagedEnergy;
 import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.screens.GameScreen;
+import com.eldritch.invoken.util.Condition;
 import com.eldritch.invoken.util.Damage;
 import com.eldritch.invoken.util.Damager;
 import com.eldritch.invoken.util.Settings;
 
 public class Barrier extends SelfAugmentation {
+    private static final int COST = 20;
+
     private static final String TOOLTIP = "Barrier\n\n"
             + "Absorbs up to 100 damage from incoming projectiles in the direction "
             + "the user is currently facing.  Sustained the shield reduces movement speed.\n\n"
@@ -66,7 +74,7 @@ public class Barrier extends SelfAugmentation {
 
     @Override
     public int getCost(Agent owner) {
-        return 20;
+        return COST;
     }
 
     @Override
@@ -93,7 +101,25 @@ public class Barrier extends SelfAugmentation {
             Vector2 direction = owner.getForwardVector();
             Vector2 position = owner.getPosition().cpy().add(direction);
             float theta = direction.angleRad();
-            level.addEntity(new BarrierEntity(position, direction, theta, level));
+
+            // having a barrier imposes an energy cost on the invocator
+            final BarrierEntity barrier = new BarrierEntity(owner, position, direction, theta,
+                    level);
+            level.addEntity(barrier);
+            level.addActivator(barrier);
+            getOwner().addEffect(new DamagedEnergy(getOwner(), COST, new Condition() {
+                private boolean finished = false;
+
+                @Override
+                public boolean satisfied() {
+                    return barrier.isFinished() || finished;
+                }
+
+                @Override
+                public void onReset(Level level) {
+                    finished = true;
+                }
+            }));
         }
 
         @Override
@@ -102,27 +128,30 @@ public class Barrier extends SelfAugmentation {
         }
     }
 
-    private static class BarrierEntity extends DefaultTemporaryEntity {
+    private static class BarrierEntity extends DefaultTemporaryEntity implements Activator {
         private static final TextureRegion REGION = new TextureRegion(
                 GameScreen.getTexture("sprite/effects/barrier-stationary.png"));
-        
+
         private static final float width = 0.5f;
         private static final float height = 2;
 
+        private final Agent owner;
         private final Handler handler;
         private final World world;
         private final Body body;
         private final float thetaDegrees;
         private boolean finished = false;
 
-        public BarrierEntity(Vector2 position, Vector2 direction, float theta, Level level) {
+        public BarrierEntity(Agent owner, Vector2 position, Vector2 direction, float theta,
+                Level level) {
             super(position);
+            this.owner = owner;
             this.handler = new Handler(direction);
             this.world = level.getWorld();
             this.body = createBox(position.x, position.y, width, height, theta, handler, world);
             this.thetaDegrees = theta * MathUtils.radiansToDegrees;
         }
-        
+
         @Override
         public void update(float delta, Level level) {
             handler.heal(delta);
@@ -137,21 +166,21 @@ public class Barrier extends SelfAugmentation {
                 float a = handler.getHealth() / handler.getBaseHealth();
                 batch.setColor(c.r, c.g * a, c.b * a, c.a);
             }
-            
+
             batch.begin();
             float hx = width / 2;
             float hy = height / 2;
-            batch.draw(REGION.getTexture(),  // texture
-                    position.x - hx, position.y - hy,  // position
-                    hx, hy,  // origin
-                    width, height,  // size
-                    1f, 1f,  // scale
-                    thetaDegrees,  // rotation
-                    0, 0,  // texture position
-                    REGION.getRegionWidth(), REGION.getRegionHeight(),  // texture size
-                    false, false);  // flip
+            batch.draw(REGION.getTexture(), // texture
+                    position.x - hx, position.y - hy, // position
+                    hx, hy, // origin
+                    width, height, // size
+                    1f, 1f, // scale
+                    thetaDegrees, // rotation
+                    0, 0, // texture position
+                    REGION.getRegionWidth(), REGION.getRegionHeight(), // texture size
+                    false, false); // flip
             batch.end();
-            
+
             if (handler.isDamaged()) {
                 batch.setColor(Color.WHITE);
             }
@@ -166,22 +195,52 @@ public class Barrier extends SelfAugmentation {
         public void dispose() {
             world.destroyBody(body);
         }
-        
+
         private void destroyBy(Agent agent) {
             finished = true;
         }
-        
+
+        @Override
+        public boolean click(Agent agent, Level level, float x, float y) {
+            if (agent != owner) {
+                return false;
+            }
+
+            for (Fixture fixture : body.getFixtureList()) {
+                if (fixture.testPoint(x, y)) {
+                    activate(agent, level);
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        @Override
+        public void activate(Agent agent, Level level) {
+            if (agent == owner) {
+                destroyBy(owner);
+            }
+        }
+
+        @Override
+        public void register(Level level) {
+        }
+
+        @Override
+        public void register(List<InanimateEntity> entities) {
+        }
+
         private class Handler extends DamageHandler implements OneWayWall {
             private static final float HEAL_RATE = 5f;
             private static final float BASE_HEALTH = 50f;
-            
+
             private final OneWayWall wallDelegate;
             private float health = BASE_HEALTH;
-            
+
             public Handler(Vector2 normal) {
                 wallDelegate = new OneWayWallImpl(normal);
             }
-            
+
             public void heal(float delta) {
                 if (isDamaged()) {
                     health += delta * HEAL_RATE;
@@ -208,7 +267,7 @@ public class Barrier extends SelfAugmentation {
                 if (!hasContact(damager.getDirection())) {
                     return false;
                 }
-                
+
                 health -= damage.getMagnitude();
                 if (health <= 0) {
                     destroyBy(damage.getSource());
@@ -223,7 +282,8 @@ public class Barrier extends SelfAugmentation {
         }
     }
 
-    private static Body createBox(float x0, float y0, float width, float height, float theta, DamageHandler handler, World world) {
+    private static Body createBox(float x0, float y0, float width, float height, float theta,
+            DamageHandler handler, World world) {
         PolygonShape box = new PolygonShape();
         float hx = width / 2;
         float hy = height / 2;
