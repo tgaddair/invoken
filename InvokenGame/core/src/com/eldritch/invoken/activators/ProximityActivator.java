@@ -111,6 +111,10 @@ public abstract class ProximityActivator extends BasicActivator {
         return proximityAgents.contains(agent);
     }
     
+    protected int getProximityAgentsCount() {
+        return proximityAgents.size();
+    }
+    
     protected Iterable<Agent> getProximityAgents() {
         return proximityAgents;
     }

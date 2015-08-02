@@ -47,7 +47,7 @@ public class Hideout extends ClickActivator {
     }
     
     protected boolean canActivate(Agent agent) {
-        return hasProximity(agent);
+        return hasProximity(agent) && getProximityAgentsCount() == 1 && hasProximity(agent);
     }
 
     @Override
