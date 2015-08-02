@@ -80,7 +80,7 @@ public class Barrier extends SelfAugmentation {
     @Override
     public float quality(Agent owner, Agent target, Level level) {
         if (owner.getInventory().hasRangedWeapon() && owner.inFieldOfView(target)
-                && owner.dst2(target) > 3 * 3) {
+                && owner.dst2(target) > 3 * 3 && target.isAimingAt(owner)) {
             return 5;
         }
         return 0;

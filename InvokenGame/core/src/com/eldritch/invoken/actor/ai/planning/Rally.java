@@ -11,6 +11,7 @@ import com.eldritch.invoken.location.NaturalVector2;
  * Rallies agents to a choke point in a hallway.  Even better if it's on the critical path.
  */
 public class Rally extends AbstractDesire {
+    private static final float MIN_MDST = 5f;
     private static final float MAX_MDST = 15f;
     
     private final NaturalVector2 target;
@@ -41,7 +42,17 @@ public class Rally extends AbstractDesire {
 
     @Override
     public float getValue() {
-        return Math.min(owner.getCellPosition().mdst(target) / MAX_MDST, 1f);
+        if (owner.hasSquad() && owner.getSquad().getLeader() == owner) {
+            // only squad leaders can rally
+            int mdst = owner.getCellPosition().mdst(target);
+            if (mdst < MIN_MDST) {
+                // avoid circling behavior
+                return 0;
+            }
+            
+            return Math.min(mdst / MAX_MDST, 1f);
+        }
+        return 0;
     }
 
     @Override

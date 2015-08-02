@@ -128,7 +128,7 @@ public class ThrowGrenade extends InstantAugmentation {
                 "sprite/effects/explosion.png", 256, 256);
 
         private static final int SPEED = 10;
-        private static final int DAMAGE = 50;
+        private static final int DAMAGE = 25;
         private static final int RADIUS = 3;
 
         public Grenade(Agent owner, Vector2 target) {
