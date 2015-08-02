@@ -141,6 +141,7 @@ public class Barrier extends SelfAugmentation {
         private final Body body;
         private final float thetaDegrees;
         private boolean finished = false;
+        private boolean disposed = false;
 
         public BarrierEntity(Agent owner, Vector2 position, Vector2 direction, float theta,
                 Level level) {
@@ -193,7 +194,11 @@ public class Barrier extends SelfAugmentation {
 
         @Override
         public void dispose() {
-            world.destroyBody(body);
+            if (!disposed) {
+                // destroying a body more than once can cause an infinite loop
+                world.destroyBody(body);
+                disposed = true;
+            }
         }
 
         private void destroyBy(Agent agent) {
@@ -263,7 +268,6 @@ public class Barrier extends SelfAugmentation {
             @Override
             public boolean handle(Damager damager) {
                 Damage damage = damager.getDamage();
-                System.out.println("direction: " + damager.getDirection());
                 if (!hasContact(damager.getDirection())) {
                     return false;
                 }
