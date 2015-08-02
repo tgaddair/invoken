@@ -80,7 +80,8 @@ public class Planner {
             if (npc.getInfo().getProfession() == Profession.Assassin) {
                 desires.add(new Hunt(npc));
             }
-            desires.add(new Patrol(npc));
+//            desires.add(new Patrol(npc));
+            desires.add(new Rally(npc));
             desires.add(new Meander(npc));
         }
         

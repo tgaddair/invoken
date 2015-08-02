@@ -96,6 +96,8 @@ import com.google.common.base.Optional;
 import com.google.common.collect.Maps;
 
 public class Level {
+    private static final int RALLY_POINTS = 20;
+    
     private static Pool<Rectangle> rectPool = new Pool<Rectangle>() {
         @Override
         protected Rectangle newObject() {
@@ -112,6 +114,7 @@ public class Level {
     private final Locations.Level data;
     private final LocationMap map;
     private final Territory[][] territory;
+    private final List<NaturalVector2> rallyPoints = new ArrayList<>();
     private final FactionCache factionCache = new FactionCache();
     private final CrimeManager crimeManager;
     private final PathManager pathManager;
@@ -193,6 +196,7 @@ public class Level {
         bgManager = new BackgroundManager();
 
         // create territory table
+        fillRallyPoints(map);
         assignTerritory(map.getRooms(), data.getLocationList());
         // assignLocations(map.getRooms(), data.getLocationList());
 
@@ -394,6 +398,49 @@ public class Level {
 
     public void dispose() {
         // rayHandler.dispose();
+    }
+    
+    public List<NaturalVector2> getRallyPoints() {
+        return rallyPoints;
+    }
+    
+    private void fillRallyPoints(LocationMap map) {
+        List<NaturalVector2> candidates = new ArrayList<>();
+        
+        ConnectedRoomManager rooms = map.getRooms();
+        for (ConnectedRoom room : rooms.getRooms()) {
+            if (!room.isChamber()) {
+                // all rally points in hallways
+                // TODO: look for choke points
+                for (NaturalVector2 point : room.getPoints()) {
+                    if (canRallyTo(point, map)) {
+                        candidates.add(point);
+                    }
+                }
+            }
+        }
+        
+        int remaining = RALLY_POINTS;
+        Collections.shuffle(candidates);
+        for (NaturalVector2 point : candidates) {
+            InvokenGame.logfmt("rally %d at %s", remaining, point);
+            rallyPoints.add(point);
+            if (--remaining == 0) {
+                break;
+            }
+        }
+    }
+    
+    private boolean canRallyTo(NaturalVector2 point, LocationMap map) {
+        // we need at least 25 square units of space around the point to rally
+        for (int dx = -2; dx <= 2; dx++) {
+            for (int dy = -2; dy <= 2; dy++) {
+                if (!map.isClearGround(point.x + dx, point.y + dy)) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     private void assignTerritory(ConnectedRoomManager rooms, List<Location> locations) {
