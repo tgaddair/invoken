@@ -54,7 +54,7 @@ public class Settings {
 	public static final boolean ENABLE_BACKGROUND = true;
 	
 	// debug settings
-	public static boolean GOD_MODE = true;
+	public static boolean GOD_MODE = false;
 	public static boolean DEBUG_DRAW = false;
 	public static boolean DEBUG_CLICKS = false;
 	public static boolean DEBUG_LIGHTS = false;

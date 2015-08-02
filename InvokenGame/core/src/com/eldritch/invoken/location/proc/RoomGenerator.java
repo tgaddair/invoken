@@ -12,6 +12,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.NavigableSet;
+import java.util.PriorityQueue;
+import java.util.Queue;
 import java.util.Random;
 import java.util.Set;
 import java.util.TreeSet;
@@ -200,14 +202,18 @@ public class RoomGenerator extends BspGenerator {
         return null;
     }
 
+    private int getDistance(ControlNode current, ControlNode node) {
+        return (int) (Math.abs(current.getBounds().x - node.getBounds().x) + Math.abs(current
+                .getBounds().y - node.getBounds().y));
+    }
+
     private ControlNode sample(ControlNode current, List<ControlNode> sample) {
         // return sample.get((int) (random() * sample.size()));
 
         ControlNode closest = null;
         int bestDistance = Integer.MAX_VALUE;
         for (ControlNode node : sample) {
-            int distance = (int) (Math.abs(current.getBounds().x - node.getBounds().x) + Math
-                    .abs(current.getBounds().y - node.getBounds().y));
+            int distance = getDistance(current, node);
             if (distance < bestDistance) {
                 closest = node;
                 bestDistance = distance;
@@ -223,13 +229,19 @@ public class RoomGenerator extends BspGenerator {
 
         // first, generate the dependency graph from all the encounter-room
         // pairs
-        ControlNode origin = generateDependencyGraph(controlRooms.values());
+        final ControlNode origin = generateDependencyGraph(controlRooms.values());
 
-        LinkedList<ControlNode> unlocked = new LinkedList<ControlNode>(); // can
-                                                                          // place
-        List<ControlNode> connectedSample = new ArrayList<ControlNode>(); // can
-                                                                          // connect
-                                                                          // to
+        // can place
+        Queue<ControlNode> unlocked = new PriorityQueue<>(controlRooms.size(),
+                new Comparator<ControlNode>() {
+                    @Override
+                    public int compare(ControlNode n1, ControlNode n2) {
+                        return Integer.compare(getDistance(n1, origin), getDistance(n2, origin));
+                    }
+                });
+
+        // cann connected to
+        List<ControlNode> connectedSample = new ArrayList<ControlNode>();
         Set<ControlNode> connected = new LinkedHashSet<ControlNode>();
 
         // draw from a separate well for connecting rooms in compounds
@@ -252,7 +264,7 @@ public class RoomGenerator extends BspGenerator {
         CostMatrix costs = new EncounterCostMatrix(getWidth(), getHeight(), controlRooms.values(),
                 compoundIndex);
         while (!unlocked.isEmpty()) {
-            ControlNode current = unlocked.removeFirst();
+            ControlNode current = unlocked.remove();
             if (connected.contains(current)) {
                 // already placed
                 continue;
@@ -767,24 +779,24 @@ public class RoomGenerator extends BspGenerator {
                 // debugging a specific encounter, so make sure it is spawned somewhere
                 return true;
             }
-            
+
             int agentCount = 0;
             for (ActorScenario scenario : encounter.getActorParams().getActorScenarioList()) {
                 agentCount += scenario.getMin();
             }
-            
+
             if (agentCount == 0) {
                 // any room can contain an empty encounter
                 return true;
             }
-            
-//            if (agentCount > 3) {
-//                return room.getSize() == Size.LARGE;
-//            } else if (agentCount > 1) {
-//                return room.getSize() != Size.SMALL;
-//            }
-//            return true;
-            
+
+            // if (agentCount > 3) {
+            // return room.getSize() == Size.LARGE;
+            // } else if (agentCount > 1) {
+            // return room.getSize() != Size.SMALL;
+            // }
+            // return true;
+
             if (agentCount >= 4) {
                 return room.getSize() == Size.LARGE;
             } else if (agentCount >= 2) {
@@ -805,7 +817,7 @@ public class RoomGenerator extends BspGenerator {
         public Optional<Encounter> chooseEncounter(int level, Collection<Encounter> encounters,
                 ConnectedRoomManager rooms) {
             com.eldritch.invoken.util.EncounterSelector selector = InvokenGame.ENCOUNTER_SELECTOR;
-            
+
             // find all the available encounters for the given control point
             double total = 0;
             List<Encounter> available = new ArrayList<>();
