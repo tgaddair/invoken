@@ -24,7 +24,7 @@ import com.eldritch.invoken.util.Settings;
 import com.google.common.base.Optional;
 
 public abstract class ProximityActivator extends BasicActivator {
-    private static final Texture INDICATOR = GameScreen.getTexture("icon/indicator/default.png");
+    public static final Texture INDICATOR = GameScreen.getTexture("icon/indicator/default.png");
     
     private final Vector2 center = new Vector2();
     private final Vector2 offset = new Vector2();
@@ -109,6 +109,10 @@ public abstract class ProximityActivator extends BasicActivator {
 
     public boolean hasProximity(Agent agent) {
         return proximityAgents.contains(agent);
+    }
+    
+    protected boolean canActivate(Agent agent) {
+        return hasProximity(agent);
     }
     
     protected int getProximityAgentsCount() {
@@ -306,7 +310,7 @@ public abstract class ProximityActivator extends BasicActivator {
         }
         
         protected boolean isActive(Level level, ProximityActivator owner) {
-            return owner.hasProximity(level.getPlayer());
+            return owner.canActivate(level.getPlayer());
         }
     }
     

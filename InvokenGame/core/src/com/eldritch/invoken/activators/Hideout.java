@@ -20,6 +20,16 @@ public class Hideout extends ClickActivator {
     }
     
     @Override
+    public void postUpdate(float delta, Level level) {
+        if (selectionHandler.isPresent()) {
+            HideoutSelectionHandler handler = selectionHandler.get();
+            if (handler.isCancelled()) {
+                reveal(handler.getOwner());
+            }
+        }
+    }
+    
+    @Override
     public void activate(Agent agent, Level level) {
         hide(agent);
     }
@@ -46,8 +56,9 @@ public class Hideout extends ClickActivator {
     protected void postRegister(Level level) {
     }
     
+    @Override
     protected boolean canActivate(Agent agent) {
-        return hasProximity(agent) && getProximityAgentsCount() == 1 && hasProximity(agent);
+        return super.canActivate(agent) && getProximityAgentsCount() == 1 && hasProximity(agent);
     }
 
     @Override
@@ -59,6 +70,7 @@ public class Hideout extends ClickActivator {
     
     private class HideoutSelectionHandler implements SelectionHandler {
         private final Agent owner;
+        private boolean cancelled = false;
         
         public HideoutSelectionHandler(Agent owner) {
             this.owner = owner;
@@ -76,7 +88,15 @@ public class Hideout extends ClickActivator {
         }
         
         private void cancel() {
-            reveal(owner);
+            cancelled = true;
+        }
+        
+        private boolean isCancelled() {
+            return cancelled;
+        }
+        
+        private Agent getOwner() {
+            return owner;
         }
     }
 }
