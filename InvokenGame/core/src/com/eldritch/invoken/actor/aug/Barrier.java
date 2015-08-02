@@ -1,5 +1,6 @@
 package com.eldritch.invoken.actor.aug;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
@@ -17,9 +18,12 @@ import com.eldritch.invoken.actor.aug.Augmentation.SelfAugmentation;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.actor.type.TemporaryEntity.DefaultTemporaryEntity;
-import com.eldritch.invoken.box2d.Wall;
+import com.eldritch.invoken.box2d.DamageHandler;
+import com.eldritch.invoken.box2d.OneWayWall;
 import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.screens.GameScreen;
+import com.eldritch.invoken.util.Damage;
+import com.eldritch.invoken.util.Damager;
 import com.eldritch.invoken.util.Settings;
 
 public class Barrier extends SelfAugmentation {
@@ -86,9 +90,10 @@ public class Barrier extends SelfAugmentation {
 
         @Override
         public void apply(Level level) {
-            Vector2 position = owner.getPosition().cpy().add(owner.getForwardVector());
-            float theta = owner.getForwardVector().angleRad();
-            level.addEntity(new BarrierEntity(position, theta, level));
+            Vector2 direction = owner.getForwardVector();
+            Vector2 position = owner.getPosition().cpy().add(direction);
+            float theta = direction.angleRad();
+            level.addEntity(new BarrierEntity(position, direction, theta, level));
         }
 
         @Override
@@ -100,24 +105,39 @@ public class Barrier extends SelfAugmentation {
     private static class BarrierEntity extends DefaultTemporaryEntity {
         private static final TextureRegion REGION = new TextureRegion(
                 GameScreen.getTexture("sprite/effects/barrier-stationary.png"));
+        
+        private static final float width = 1;
+        private static final float height = 2;
 
+        private final Handler handler;
         private final World world;
         private final Body body;
         private final float thetaDegrees;
-        float width = 1;
-        float height = 2;
+        private boolean finished = false;
 
-        public BarrierEntity(Vector2 position, float theta, Level level) {
+        public BarrierEntity(Vector2 position, Vector2 direction, float theta, Level level) {
             super(position);
+            this.handler = new Handler(direction);
             this.world = level.getWorld();
-            this.body = createBox(position.x, position.y, width, height, theta, world);
+            this.body = createBox(position.x, position.y, width, height, theta, handler, world);
             this.thetaDegrees = theta * MathUtils.radiansToDegrees;
+        }
+        
+        @Override
+        public void update(float delta, Level level) {
+            handler.heal(delta);
         }
 
         @Override
         public void render(float delta, OrthogonalTiledMapRenderer renderer) {
             Vector2 position = getPosition();
             Batch batch = renderer.getBatch();
+            if (handler.isDamaged()) {
+                Color c = batch.getColor();
+                float a = handler.getHealth() / handler.getBaseHealth();
+                batch.setColor(c.r, c.g * a, c.b * a, c.a);
+            }
+            
             batch.begin();
             float hx = width / 2;
             float hy = height / 2;
@@ -131,20 +151,74 @@ public class Barrier extends SelfAugmentation {
                     REGION.getRegionWidth(), REGION.getRegionHeight(),  // texture size
                     false, false);  // flip
             batch.end();
+            
+            if (handler.isDamaged()) {
+                batch.setColor(Color.WHITE);
+            }
         }
 
         @Override
         public boolean isFinished() {
-            return false;
+            return finished;
         }
 
         @Override
         public void dispose() {
             world.destroyBody(body);
         }
+        
+        private void destroyBy(Agent agent) {
+            finished = true;
+        }
+        
+        private class Handler extends DamageHandler implements OneWayWall {
+            private static final float HEAL_RATE = 5f;
+            private static final float BASE_HEALTH = 50f;
+            
+            private final OneWayWall wallDelegate;
+            private float health = BASE_HEALTH;
+            
+            public Handler(Vector2 normal) {
+                wallDelegate = new OneWayWallImpl(normal);
+            }
+            
+            public void heal(float delta) {
+                if (isDamaged()) {
+                    health += delta * HEAL_RATE;
+                    health = Math.min(health, getBaseHealth());
+                }
+            }
+
+            public boolean isDamaged() {
+                return getHealth() < getBaseHealth();
+            }
+
+            public float getBaseHealth() {
+                return BASE_HEALTH;
+            }
+
+            public float getHealth() {
+                return health;
+            }
+
+            @Override
+            public boolean handle(Damager damager) {
+                Damage damage = damager.getDamage();
+                health -= damage.getMagnitude();
+                if (health <= 0) {
+                    destroyBy(damage.getSource());
+                }
+                return true;
+            }
+
+            @Override
+            public boolean hasContact(Vector2 direction) {
+                return wallDelegate.hasContact(direction);
+            }
+        }
     }
 
-    private static Body createBox(float x0, float y0, float width, float height, float theta, World world) {
+    private static Body createBox(float x0, float y0, float width, float height, float theta, DamageHandler handler, World world) {
         PolygonShape box = new PolygonShape();
         float hx = width / 2;
         float hy = height / 2;
@@ -161,7 +235,7 @@ public class Barrier extends SelfAugmentation {
 
         Body body = world.createBody(groundBodyDef);
         Fixture fixture = body.createFixture(fixtureDef);
-        fixture.setUserData(Wall.getInstance());
+        fixture.setUserData(handler);
 
         // collision filters
         Filter filter = fixture.getFilterData();
