@@ -889,7 +889,6 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
                 playerState.getSeed());
         level = generator.generate(Optional.of(prev), next);
         level.spawnPlayer(player);
-        onLoad(level, Optional.of(playerState));
 
         // resize
         level.resize(getWidth(), getHeight());
@@ -899,6 +898,8 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         camera.position.x = level.scale(position.x, camera.zoom);
         camera.position.y = level.scale(position.y, camera.zoom);
         level.setCamera(camera);
+        
+        onLoad(level, Optional.of(playerState));
 
         refreshHud();
         minimap = new Minimap(level, level.getSeed(), Optional.of(playerState));
