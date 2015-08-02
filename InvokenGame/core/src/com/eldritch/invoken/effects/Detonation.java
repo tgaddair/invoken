@@ -162,6 +162,11 @@ public class Detonation implements TemporaryEntity {
         }
         
         @Override
+        public Vector2 getDirection() {
+            return Vector2.Zero;
+        }
+        
+        @Override
         public Vector2 getCenter() {
             return center;
         }

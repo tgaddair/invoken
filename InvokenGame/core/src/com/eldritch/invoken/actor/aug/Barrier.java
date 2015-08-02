@@ -204,6 +204,11 @@ public class Barrier extends SelfAugmentation {
             @Override
             public boolean handle(Damager damager) {
                 Damage damage = damager.getDamage();
+                System.out.println("direction: " + damager.getDirection());
+                if (!hasContact(damager.getDirection())) {
+                    return false;
+                }
+                
                 health -= damage.getMagnitude();
                 if (health <= 0) {
                     destroyBy(damage.getSource());

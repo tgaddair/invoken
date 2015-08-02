@@ -82,6 +82,11 @@ public class Rending extends BasicEffect {
         public Damage getDamage() {
             return damage;
         }
+        
+        @Override
+        public Vector2 getDirection() {
+            return Vector2.Zero;
+        }
 
         @Override
         public Vector2 getCenter() {

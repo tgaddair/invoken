@@ -65,8 +65,14 @@ public interface AgentHandler {
             }
         }
         
+        @Override
         public Damage getDamage() {
             return damage;
+        }
+        
+        @Override
+        public Vector2 getDirection() {
+            return getVelocity();
         }
 
         public void setActive(boolean active) {
