@@ -93,7 +93,7 @@ public abstract class Agent extends CollisionEntity implements
 	public static final int ASSAULT_PENALTY = -25;
 	public static final float AIMING_V_PENALTY = 5;
 
-	public static final float SPRINT_SCALE = 0.75f;
+	public static final float SPRINT_SCALE = 1.5f;
 	public static final float SPRINT_COST = 5f;
 
 	private static final float ROTATION_SCALE = 4.5f;

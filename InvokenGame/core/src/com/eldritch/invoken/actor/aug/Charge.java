@@ -63,7 +63,7 @@ public class Charge extends ActiveAugmentation {
 
     @Override
     public float quality(Agent owner, Agent target, Level level) {
-        if (!target.isAlive()) {
+        if (!target.isAlive() || target.isAimingAt(owner)) {
             return 0;
         }
         

@@ -37,6 +37,7 @@ public class Attack extends Sequence<Npc> {
         Sequence<Npc> useAugSequence = new Sequence<>();
         useAugSequence.addChild(new HasChosen());
         useAugSequence.addChild(new AcquireTarget());
+        useAugSequence.addChild(new StopSprinting());
         useAugSequence.addChild(new TakeAim());
         useAugSequence.addChild(new HasSights());
         useAugSequence.addChild(new AlwaysSucceed<>(thrustSequence));
@@ -73,9 +74,16 @@ public class Attack extends Sequence<Npc> {
         hideSequence.addChild(new Invert<>(new IsTrapped()));
         hideSequence.addChild(new Invert<>(new HasCover()));
         hideSequence.addChild(new Reload());
+        hideSequence.addChild(new StopSprinting());
         hideSequence.addChild(new SeekCover());
+        
+        // Sequence<Npc> sprintSequence = new Sequence<>();
+        // sprintSequence.addChild(new ShouldSprint());
+        // sprintSequence.addChild(new LowerAim());
+        // sprintSequence.addChild(new Sprint());
 
         Sequence<Npc> pursueSequence = new Sequence<>();
+//        pursueSequence.addChild(new AlwaysSucceed<>(sprintSequence));
         pursueSequence.addChild(new HasTarget());
         pursueSequence.addChild(new Pursue());
 
@@ -439,6 +447,30 @@ public class Attack extends Sequence<Npc> {
         @Override
         public void doFor(Npc npc) {
             npc.thrust(npc.getTarget());
+        }
+    }
+    
+    private static class ShouldSprint extends BooleanTask {
+        @Override
+        protected boolean check(Npc npc) {
+            if (!npc.getInventory().hasMeleeWeapon() || !npc.hasTarget()) {
+                return false;
+            }
+            return npc.getInfo().getEnergyPercent() > 0.25 && !npc.getTarget().isAimingAt(npc);
+        }
+    }
+
+    private static class Sprint extends SuccessTask {
+        @Override
+        public void doFor(Npc npc) {
+            npc.sprint(true);
+        }
+    }
+    
+    private static class StopSprinting extends SuccessTask {
+        @Override
+        public void doFor(Npc npc) {
+            npc.sprint(false);
         }
     }
 
