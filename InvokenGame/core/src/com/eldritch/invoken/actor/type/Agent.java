@@ -904,10 +904,6 @@ public abstract class Agent extends CollisionEntity implements
 	    position.set(tmp.set(body.getPosition()).add(0, getHeight() / 2 - radius));
 	}
 
-	public Vector2 getVisibleCenter() {
-		return position.cpy().add(getWidth() / 2, 0);
-	}
-
 	public Vector2 getRenderPosition() {
 		return position;
 	}
@@ -1413,17 +1409,23 @@ public abstract class Agent extends CollisionEntity implements
 	}
 
 	protected final void setCollisionMask(short maskBits) {
-		// update all fixtures
-		for (Fixture fixture : body.getFixtureList()) {
-			// collision filters
-			Filter filter = fixture.getFilterData();
-			if (filter.maskBits != maskBits) {
-				lastMasks.push(filter.maskBits);
-				filter.maskBits = maskBits;
-				fixture.setFilterData(filter);
-			}
-		}
+	    lastMasks.push(applyCollisionMask(maskBits));
 	}
+	
+	protected final short applyCollisionMask(short maskBits) {
+        // update all fixtures
+	    short lastMask = Settings.BIT_NOTHING;
+        for (Fixture fixture : body.getFixtureList()) {
+            // collision filters
+            Filter filter = fixture.getFilterData();
+            lastMask = filter.maskBits;
+            if (filter.maskBits != maskBits) {
+                filter.maskBits = maskBits;
+                fixture.setFilterData(filter);
+            }
+        }
+        return lastMask;
+    }
 
 	private void resetCollisionMask() {
 		setCollisionMask(lastMasks.pop());

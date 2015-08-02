@@ -1,12 +1,8 @@
 package com.eldritch.invoken.effects;
 
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.actor.type.Agent;
-import com.eldritch.invoken.gfx.AnimatedEntity;
-import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.location.NaturalVector2;
-import com.eldritch.invoken.screens.GameScreen;
 
 public class Teleported extends BasicEffect {
 //    private static final TextureRegion[] FLASH_REGIONS = GameScreen.getMergedRegion(
