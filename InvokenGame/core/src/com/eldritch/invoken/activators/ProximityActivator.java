@@ -120,6 +120,12 @@ public abstract class ProximityActivator extends BasicActivator {
     }
 
     protected abstract boolean onProximityChange(boolean hasProximity, Level level);
+    
+    protected void onProximityAdd(Agent agent) {
+    }
+    
+    protected void onProximityRemove(Agent agent) {
+    }
 
     @Override
     public Vector2 getPosition() {
@@ -184,12 +190,14 @@ public abstract class ProximityActivator extends BasicActivator {
         @Override
         public boolean handle(Agent agent) {
             proximityAgents.add(agent);
+            onProximityAdd(agent);
             return true;
         }
 
         @Override
         public boolean handleEnd(Agent agent) {
             proximityAgents.remove(agent);
+            onProximityRemove(agent);
             return true;
         }
     }
