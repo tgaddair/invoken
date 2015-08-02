@@ -14,103 +14,102 @@ import com.eldritch.invoken.screens.GameScreen;
 import com.eldritch.invoken.util.Callback;
 
 public class FabricateSentry extends ActiveAugmentation {
-	private static final TextureRegion[] SPLASH_REGIONS = GameScreen
-			.getMergedRegion("sprite/effects/envelop.png", 128, 128);
-	private static final String ID = "SmallSentrySummoned";
-	private static final float SPLASH_SIZE = 2f;
+    private static final TextureRegion[] SPLASH_REGIONS = GameScreen.getMergedRegion(
+            "sprite/effects/envelop.png", 128, 128);
+    private static final String ID = "SmallSentrySummoned";
+    private static final float SPLASH_SIZE = 2f;
 
-	private static final int BASE_COST = 20;
-	
-	private final Vector2 tmp = new Vector2();
+    private static final int BASE_COST = 20;
 
-	private static class Holder {
-		private static final FabricateSentry INSTANCE = new FabricateSentry();
-	}
+    private final Vector2 tmp = new Vector2();
 
-	public static FabricateSentry getInstance() {
-		return Holder.INSTANCE;
-	}
+    private static class Holder {
+        private static final FabricateSentry INSTANCE = new FabricateSentry();
+    }
 
-	private FabricateSentry() {
-		super("fabricate-sentry");
-	}
+    public static FabricateSentry getInstance() {
+        return Holder.INSTANCE;
+    }
 
-	@Override
-	public Action getBestAction(Agent owner, Agent target) {
-		// TODO: look nearby
-		return getAction(owner, target);
-	}
+    private FabricateSentry() {
+        super("fabricate-sentry");
+    }
 
-	@Override
-	public Action getAction(Agent owner, Agent target) {
-		return getAction(owner, target.getPosition());
-	}
+    @Override
+    public Action getBestAction(Agent owner, Agent target) {
+        // TODO: look nearby
+        return getAction(owner, target);
+    }
 
-	@Override
-	public Action getAction(Agent owner, Vector2 target) {
-		return new FabricateAction(owner, target);
-	}
+    @Override
+    public Action getAction(Agent owner, Agent target) {
+        return getAction(owner, target.getPosition());
+    }
 
-	@Override
-	public boolean isValid(Agent owner, Agent target) {
-		return isValid(owner, target.getPosition());
-	}
+    @Override
+    public Action getAction(Agent owner, Vector2 target) {
+        return new FabricateAction(owner, target);
+    }
 
-	@Override
-	public boolean isValid(Agent owner, Vector2 target) {
-		NaturalVector2 point = NaturalVector2.of(target);
-		return owner.getLocation().getMap().isClearGround(point.x, point.y);
-	}
+    @Override
+    public boolean isValid(Agent owner, Agent target) {
+        return isValid(owner, target.getPosition());
+    }
 
-	@Override
-	public int getCost(Agent owner) {
-		return BASE_COST;
-	}
+    @Override
+    public boolean isValid(Agent owner, Vector2 target) {
+        NaturalVector2 point = NaturalVector2.of(target);
+        return owner.getLocation().getMap().isClearGround(point.x, point.y);
+    }
 
-	@Override
-	public float quality(Agent owner, Agent target, Level level) {
-		if (!owner.hasVisibilityTo(target)) {
-			return 0;
-		}
-		return 5;
-	}
+    @Override
+    public int getCost(Agent owner) {
+        return BASE_COST;
+    }
 
-	@Override
-	protected void setBestTarget(Agent agent, Agent goal, Target target) {
-		// find the midpoint between this agent and the goal
-		Vector2 v1 = agent.getPosition();
-		Vector2 v2 = goal.getPosition();
-		Vector2 midpoint = tmp.set((v1.x + v2.x) / 2f, (v1.y + v2.y) / 2f);
-		if (isValid(agent, midpoint)) {
-			target.set(midpoint);
-		}
-	}
+    @Override
+    public float quality(Agent owner, Agent target, Level level) {
+        if (!owner.hasVisibilityTo(target)) {
+            return 0;
+        }
+        return 5;
+    }
 
-	public class FabricateAction extends AnimatedAction {
-		private final Vector2 target;
+    @Override
+    protected void setBestTarget(Agent agent, Agent goal, Target target) {
+        // find the midpoint between this agent and the goal
+        Vector2 v1 = agent.getPosition();
+        Vector2 v2 = goal.getPosition();
+        Vector2 midpoint = tmp.set((v1.x + v2.x) / 2f, (v1.y + v2.y) / 2f);
+        if (isValid(agent, midpoint)) {
+            target.set(midpoint);
+        }
+    }
 
-		public FabricateAction(Agent owner, Vector2 target) {
-			super(owner, Activity.Cast, FabricateSentry.this, new SummonEnergy(
-					owner));
-			this.target = NaturalVector2.of(target).getCenter();
-		}
+    public class FabricateAction extends AnimatedAction {
+        private final Vector2 target;
 
-		@Override
-		public void apply(Level level) {
-			AnimatedEntity entity = new AnimatedEntity(SPLASH_REGIONS, target,
-					new Vector2(SPLASH_SIZE, SPLASH_SIZE), 0.1f);
-			entity.withCallback(new Callback() {
-				@Override
-				public void call() {
-					owner.addEffect(new Fabricated(owner, ID, target, BASE_COST));
-				}
-			});
-			level.addEntity(entity);
-		}
+        public FabricateAction(Agent owner, Vector2 target) {
+            super(owner, Activity.Cast, FabricateSentry.this, new SummonEnergy(owner));
+            this.target = NaturalVector2.of(target).getCenter();
+        }
 
-		@Override
-		public Vector2 getPosition() {
-			return target;
-		}
-	}
+        @Override
+        public void apply(Level level) {
+            AnimatedEntity entity = new AnimatedEntity(SPLASH_REGIONS, target, new Vector2(
+                    SPLASH_SIZE, SPLASH_SIZE), 0.1f);
+            entity.withCallback(new Callback() {
+                @Override
+                public void call() {
+                    owner.addEffect(new Fabricated(owner, ID, target, BASE_COST));
+                }
+            });
+            level.addEntity(entity);
+        }
+
+        @Override
+        public Vector2 getPosition() {
+            return target;
+        }
+    }
 }

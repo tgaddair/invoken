@@ -12,7 +12,7 @@ public abstract class AnimatedEffect extends BasicEffect {
     private final Vector2 position;
     private final float width;
     private final float height;
-    private final Vector2 offset;
+    private final Vector2 offset = new Vector2();
     private final float theta;
     private Animation animation;
 
@@ -46,7 +46,7 @@ public abstract class AnimatedEffect extends BasicEffect {
             float theta, Animation.PlayMode playMode, float frameDuration, float width, float height) {
         super(actor);
         this.position = position;
-        this.offset = offset;
+        this.offset.set(offset);
         this.theta = theta;
 
         animation = new Animation(frameDuration, region);

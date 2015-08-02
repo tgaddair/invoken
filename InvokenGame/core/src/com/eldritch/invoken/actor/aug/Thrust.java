@@ -27,6 +27,7 @@ public class Thrust extends ActiveAugmentation {
     private static final float DURATION = 0.5f;
     private static final float MAGNITUDE = 40f;
     private static final float DAMAGE_SCALE = 2f;
+    private static final int BASE_COST = 25;
 
     private static class Holder {
         private static final Thrust INSTANCE = new Thrust();
@@ -68,7 +69,7 @@ public class Thrust extends ActiveAugmentation {
 
     @Override
     public int getCost(Agent owner) {
-        return 2;
+        return BASE_COST;
     }
 
     @Override
@@ -193,7 +194,7 @@ public class Thrust extends ActiveAugmentation {
             if (!damaged.contains(agent)) {
                 Agent owner = damage.getSource();
                 agent.applyForce(force);
-                agent.addEffect(new Stunned(owner, agent, 1.5f));
+                agent.addEffect(new Stunned(owner, agent, 0.5f));
                 agent.addEffect(new Bleed(agent, damage, owner.getPosition()));
                 InvokenGame.SOUND_MANAGER.playAtPoint(SoundEffect.MELEE_HIT, agent.getPosition());
 
