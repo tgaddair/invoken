@@ -214,6 +214,10 @@ public class RoomGenerator extends BspGenerator {
         int bestDistance = Integer.MAX_VALUE;
         for (ControlNode node : sample) {
             int distance = getDistance(current, node);
+            if (current.isOrigin() && node.cp.getExit()) {
+                distance = Integer.MAX_VALUE - 1;
+            }
+            
             if (distance < bestDistance) {
                 closest = node;
                 bestDistance = distance;
@@ -236,6 +240,11 @@ public class RoomGenerator extends BspGenerator {
                 new Comparator<ControlNode>() {
                     @Override
                     public int compare(ControlNode n1, ControlNode n2) {
+                        if (n1.cp.getExit()) {
+                            return 1;
+                        } else if (n2.cp.getExit()) {
+                            return -1;
+                        }
                         return Integer.compare(getDistance(n1, origin), getDistance(n2, origin));
                     }
                 });
