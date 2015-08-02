@@ -32,6 +32,7 @@ import com.eldritch.invoken.actor.aug.Recall;
 import com.eldritch.invoken.actor.aug.RendWeapon;
 import com.eldritch.invoken.actor.aug.Resurrect;
 import com.eldritch.invoken.actor.aug.Scramble;
+import com.eldritch.invoken.actor.aug.Teleport;
 import com.eldritch.invoken.actor.aug.ThrowGrenade;
 import com.eldritch.invoken.actor.aug.Trap;
 import com.eldritch.invoken.actor.items.Outfit;
@@ -120,6 +121,8 @@ public enum Profession {
 		public List<Augmentation> getStartingAugmentations() {
 			return ImmutableList.<Augmentation>of(
 					RendWeapon.getInstance(),
+					Cloak.getInstance(),
+					Teleport.getInstance(),
 					FireWeapon.getInstance());
 		}
 		

@@ -105,6 +105,7 @@ public abstract class Agent extends CollisionEntity implements
 	static float MAX_FREEZE = 25f;
 	static float DAMPING = 5f;
 
+	private final Vector2 tmp = new Vector2();
 	private final Vector2 focusPoint = new Vector2();
 	private final GameCamera defaultCamera = new AgentCamera();
 	private GameCamera camera = defaultCamera;
@@ -464,9 +465,13 @@ public abstract class Agent extends CollisionEntity implements
 			return 0;
 		}
 		if (!distanceCache.containsKey(other)) {
-			distanceCache.put(other, getPosition().dst2(other.getPosition()));
+		    setDst2(other);
 		}
 		return distanceCache.get(other);
+	}
+	
+	public void setDst2(Locatable other) {
+	    distanceCache.put(other, getPosition().dst2(other.getPosition()));
 	}
 
 	public void useAugmentation(int index) {
@@ -892,10 +897,11 @@ public abstract class Agent extends CollisionEntity implements
 
 	public void teleport(Vector2 position) {
 		getBody().setTransform(position, 0);
+		setPosition();
 	}
-
-	public void setPosition(float x, float y) {
-		position.set(x, y);
+	
+	private void setPosition() {
+	    position.set(tmp.set(body.getPosition()).add(0, getHeight() / 2 - radius));
 	}
 
 	public Vector2 getVisibleCenter() {
@@ -1732,7 +1738,7 @@ public abstract class Agent extends CollisionEntity implements
 			endJointInteraction();
 		}
 
-		position.set(body.getPosition().cpy().add(0, getHeight() / 2 - radius));
+		setPosition();
 		velocity.set(body.getLinearVelocity());
 	}
 
@@ -1791,7 +1797,7 @@ public abstract class Agent extends CollisionEntity implements
 	}
 
 	public Vector2 getForwardVector() {
-		Vector2 result = new Vector2();
+		Vector2 result = tmp;
 		switch (direction) {
 		case Left:
 			result.set(-1, 0);

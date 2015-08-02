@@ -9,9 +9,9 @@ import com.eldritch.invoken.location.NaturalVector2;
 import com.eldritch.invoken.screens.GameScreen;
 
 public class Teleported extends BasicEffect {
-    private static final TextureRegion[] FLASH_REGIONS = GameScreen.getMergedRegion(
-            "sprite/effects/flash.png", 128, 128);
-    private static final float FLASH_SIZE = 2.5f;
+//    private static final TextureRegion[] FLASH_REGIONS = GameScreen.getMergedRegion(
+//            "sprite/effects/flash.png", 128, 128);
+//    private static final float FLASH_SIZE = 2.5f;
 
     private final NaturalVector2 destination;
     private boolean applied = false;
@@ -32,18 +32,23 @@ public class Teleported extends BasicEffect {
 
     @Override
     protected void doApply() {
-        Level level = target.getLocation();
-        AnimatedEntity sourceAnim = new AnimatedEntity(FLASH_REGIONS, target.getPosition().cpy(),
-                new Vector2(FLASH_SIZE, FLASH_SIZE), 0.025f);
-        level.addEntity(sourceAnim);
+//        Level level = target.getLocation();
+//        AnimatedEntity sourceAnim = new AnimatedEntity(FLASH_REGIONS, target.getPosition().cpy(),
+//                new Vector2(FLASH_SIZE, FLASH_SIZE), 0.025f);
+//        level.addEntity(sourceAnim);
         
-        Vector2 destination2 = destination.toVector2();
+        Vector2 destination2 = destination.getCenter();
         target.teleport(destination2);
         applied = true;
+        
+        // we need to update the distance cache for things like rendering
+        for (Agent neighbor : target.getNeighbors()) {
+            target.setDst2(neighbor);
+        }
 
-        AnimatedEntity destAnim = new AnimatedEntity(FLASH_REGIONS, destination2, new Vector2(
-                FLASH_SIZE, FLASH_SIZE), 0.025f);
-        level.addEntity(destAnim);
+//        AnimatedEntity destAnim = new AnimatedEntity(FLASH_REGIONS, destination2, new Vector2(
+//                FLASH_SIZE, FLASH_SIZE), 0.025f);
+//        level.addEntity(destAnim);
     }
 
     @Override

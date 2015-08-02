@@ -30,6 +30,7 @@ enum AugmentationProto {
 	FabricateSentry = 36;
 	FabricateDrone = 37;
 	FabricateGolem = 38;
+	Teleport = 39;
 
 	// NPC only
 	Charge = 17;
