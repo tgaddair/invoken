@@ -304,6 +304,10 @@ public class Player extends SteeringAgent {
         // players should be able to see themselves on screen even when invisible
         float greatestAlpha = 0.1f;
         for (Agent neighbor : getNeighbors()) {
+            if (!neighbor.hasLineOfSight(this) || !neighbor.inFieldOfView(this)) {
+                continue;
+            }
+            
             // calculate the distance from the view threshold
             float visibility = neighbor.getVisibility();
             float visibility2 = visibility * visibility;
