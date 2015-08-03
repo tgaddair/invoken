@@ -139,10 +139,10 @@ public class Player extends SteeringAgent {
     protected void onDeath() {
         int total = info.getInventory().getItemCount((Fragment.getInstance()));
         lastFragments = total;
-        
+
         super.onDeath();
     }
-    
+
     @Override
     protected void releaseItems() {
         // only release fragments, hold on to other resources
@@ -253,7 +253,7 @@ public class Player extends SteeringAgent {
                 return true;
             }
         }
-        
+
         endJointInteraction();
         setTarget(other);
         return true;
@@ -302,7 +302,27 @@ public class Player extends SteeringAgent {
     @Override
     public float getCloakAlpha() {
         // players should be able to see themselves on screen even when invisible
-        return 0.1f;
+        float greatestAlpha = 0.1f;
+        for (Agent neighbor : getNeighbors()) {
+            // calculate the distance from the view threshold
+            float visibility = neighbor.getVisibility();
+            float visibility2 = visibility * visibility;
+            
+            float delta = dst2(neighbor) - visibility2;
+            if (delta < 0) {
+                // we are within the visibility bounds, so full visibility
+                greatestAlpha = 1f;
+                break;
+            } else {
+                // linearly interpolate between our delta and a max delta
+                float alpha = (visibility2 - delta) / visibility2;
+                if (alpha > greatestAlpha) {
+                    greatestAlpha = alpha;
+                }
+            }
+        }
+
+        return greatestAlpha;
     }
 
     // private boolean isTouched(float startX, float endX) {
@@ -451,7 +471,7 @@ public class Player extends SteeringAgent {
             if (Settings.DEBUG_SAVE) {
                 id = name;
             }
-            
+
             return new NewPlayerDescription(id, name, profession);
         }
 
@@ -551,7 +571,7 @@ public class Player extends SteeringAgent {
 
     public static List<PlayerActor> readSaves() {
         List<PlayerActor> results = new ArrayList<>();
-        
+
         FileHandle root = Gdx.files.local("saves/");
         FileHandle[] newHandles = root.list();
         for (FileHandle saveHandle : newHandles) {
@@ -559,10 +579,10 @@ public class Player extends SteeringAgent {
                 results.add(load(saveHandle));
             }
         }
-        
+
         return results;
     }
-    
+
     private static PlayerActor load(FileHandle saveHandle) {
         try {
             return PlayerActor.parseFrom(saveHandle.readBytes());

@@ -1327,7 +1327,7 @@ public abstract class Agent extends CollisionEntity implements
 	}
 
 	public float getVisibility() {
-		return info.getPerception() * UNMASK_RANGE;
+		return info.getStealthModifier() * UNMASK_RANGE;
 	}
 
 	public boolean isNear(Agent other) {

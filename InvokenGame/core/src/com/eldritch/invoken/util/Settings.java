@@ -72,10 +72,10 @@ public class Settings {
 	public static boolean SKIP_MENU = true;
 	public static int START_LEVEL = 1;  // 1, 10, 25
 	public static int START_FLOOR = 0;  // 0, 3
-	public static Profession DEFAULT_PROFESSION = Profession.Centurion;
+	public static Profession DEFAULT_PROFESSION = Profession.Ghost;
 	
 	// string constants
-	public static final String FIRST_ROOM = "Barracks1"; // "ResearchFacility" "Bedroom" "ThugLeaderBedroom";
+	public static final String FIRST_ROOM = "ThugLeaderBedroom"; // "ResearchFacility" "Bedroom" "ThugLeaderBedroom";
 	public static final String ENTRANCE = "Entrance";
 	public static final String EXIT = "Exit";
 	public static final String[] HALLS = { "HallCommon1" };
