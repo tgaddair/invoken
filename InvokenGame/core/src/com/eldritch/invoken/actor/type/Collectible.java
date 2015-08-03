@@ -9,6 +9,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.actor.items.Item;
 import com.eldritch.invoken.location.Level;
+import com.eldritch.invoken.location.NaturalVector2;
 import com.eldritch.invoken.util.Settings;
 import com.eldritch.invoken.util.SoundManager.SoundEffect;
 
@@ -19,6 +20,7 @@ public abstract class Collectible extends CollisionEntity implements TemporaryEn
     private final Item item;
     private final TextureRegion texture;
     private final int quantity;
+    private boolean ejecting = true;
     private boolean finished = false;
 
     public Collectible(Item item, int quanitity, TextureRegion texture, Vector2 origin,
@@ -52,7 +54,7 @@ public abstract class Collectible extends CollisionEntity implements TemporaryEn
 
         // when we find a closest entity, we either move towards it or grant the fragments
         // when within the obtain radius
-        if (closest != null) {
+        if (closest != null && !ejecting) {
             if (bestD < OBTAIN_RADIUS) {
                 // grant the fragments
                 grantTo(closest);
@@ -65,8 +67,10 @@ public abstract class Collectible extends CollisionEntity implements TemporaryEn
         } else {
             // apply friction
             velocity.scl(0.95f * (1f - delta));
-            if (velocity.epsilonEquals(Vector2.Zero, Settings.EPSILON)) {
+            if (velocity.epsilonEquals(Vector2.Zero, 0.005f)
+                    || level.isObstacle(NaturalVector2.of(position))) {
                 velocity.set(Vector2.Zero);
+                ejecting = false;
             }
         }
     }
@@ -110,7 +114,7 @@ public abstract class Collectible extends CollisionEntity implements TemporaryEn
      */
     public abstract static class CollectibleGenerator<T extends Collectible> {
         private static final float MIN_SIZE = 0.5f;
-        
+
         private final Random rand = new Random();
         private final float scale;
 
@@ -138,7 +142,7 @@ public abstract class Collectible extends CollisionEntity implements TemporaryEn
             float r = getSize(quantity);
             return generate(origin, direction, quantity, r);
         }
-        
+
         protected float getSize(int quantity) {
             return Math.max((float) Math.log(quantity) * scale, MIN_SIZE);
         }
