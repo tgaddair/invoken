@@ -171,9 +171,11 @@ public class Player extends SteeringAgent {
     @Override
     protected void releaseItems() {
         // only release fragments and core, hold on to other resources
-        Fragment.getInstance().releaseFrom(info.getInventory());
+        Level level = getLocation();
+        Vector2 position = getPosition();
+        Fragment.getInstance().releaseFrom(info.getInventory(), level, position);
         if (info.getInventory().hasItem(Core.getInstance())) {
-            Core.getInstance().releaseFrom(info.getInventory());
+            Core.getInstance().releaseFrom(info.getInventory(), level, position);
         }
     }
 

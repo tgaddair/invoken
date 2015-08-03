@@ -4,7 +4,6 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.InvokenGame;
-import com.eldritch.invoken.actor.AgentInfo;
 import com.eldritch.invoken.actor.AgentInventory;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Agent.Activity;
@@ -15,6 +14,7 @@ import com.eldritch.invoken.effects.SummonEnergy;
 import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.proto.Items;
 import com.eldritch.invoken.screens.GameScreen;
+import com.eldritch.invoken.state.Inventory;
 
 public class Fragment extends Item {
     private static Fragment instance = null;
@@ -43,15 +43,11 @@ public class Fragment extends Item {
     }
     
     @Override
-    public void releaseFrom(AgentInventory inventory) {
-        AgentInfo info = inventory.getAgentInfo();
-        Agent agent = info.getAgent();
-        Level level = agent.getLocation();
-        
-        int total = info.getInventory().getItemCount((Fragment.getInstance()));
+    public void releaseFrom(Inventory inventory, Level level, Vector2 position) {
+        int total = inventory.getItemCount((Fragment.getInstance()));
         FragmentGenerator generator = FragmentGenerator.Holder.INSTANCE;
-        generator.release(level, agent.getPosition(), total);
-        info.getInventory().removeItem(Fragment.getInstance(), total);
+        generator.release(level, position, total);
+        inventory.removeItem(Fragment.getInstance(), total);
     }
 
     @Override

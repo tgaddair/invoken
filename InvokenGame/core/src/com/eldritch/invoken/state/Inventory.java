@@ -7,8 +7,10 @@ import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ExecutionException;
 
+import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.actor.items.Item;
+import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.proto.Actors.Container;
 import com.eldritch.invoken.proto.Actors.InventoryItem;
 import com.eldritch.invoken.proto.Items.Item.Type;
@@ -88,6 +90,19 @@ public class Inventory {
             Item item = Item.fromProto(InvokenGame.ITEM_READER.readAsset(proto.getItemId()));
             itemMap.put(item, proto);
             addItem(item, count);
+        }
+    }
+    
+    public void releaseItems(Level level, Vector2 position) {
+        for (Item item : getStatelessItems()) {
+            if (!checkForDrop(item)) {
+                // remove the items in proportion to the drop chance
+                int total = getItemCount(item);
+                int retained = (int) (random() * getDropChance(item) * total);
+                removeItem(item, total - retained);
+            }
+            
+            item.releaseFrom(this, level, position);
         }
     }
 

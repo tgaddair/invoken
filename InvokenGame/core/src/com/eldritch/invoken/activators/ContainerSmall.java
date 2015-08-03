@@ -83,6 +83,7 @@ public class ContainerSmall extends InteractableActivator implements Lootable {
     @Override
     protected void onBeginInteraction(Agent interactor) {
         activating = true;
+        inventory.releaseItems(interactor.getLocation(), getCenter());
     }
 
     @Override

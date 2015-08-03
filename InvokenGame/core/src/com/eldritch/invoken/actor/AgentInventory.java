@@ -246,19 +246,6 @@ public class AgentInventory extends Inventory {
         item.unequipFrom(this);
     }
     
-    public void releaseItems() {
-        for (Item item : getStatelessItems()) {
-        	if (!checkForDrop(item)) {
-        		// remove the items in proportion to the drop chance
-        		int total = getItemCount(item);
-        		int retained = (int) (random() * getDropChance(item) * total);
-        		removeItem(item, total - retained);
-        	}
-        	
-        	item.releaseFrom(this);
-        }
-    }
-
     @Override
     protected void onAdd(Item item, int count) {
         item.addFrom(this);
@@ -298,6 +285,10 @@ public class AgentInventory extends Inventory {
 
     public boolean isBurdened() {
         return getWeight() / MAX_WEIGHT >= BURDEN_RATIO;
+    }
+    
+    public void releaseItems() {
+        releaseItems(info.getAgent().getLocation(), info.getAgent().getPosition());
     }
 
     private class RangedWeaponState {

@@ -3,7 +3,6 @@ package com.eldritch.invoken.actor.items;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
-import com.eldritch.invoken.actor.AgentInfo;
 import com.eldritch.invoken.actor.AgentInventory;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Agent.Activity;
@@ -14,6 +13,7 @@ import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.proto.Items;
 import com.eldritch.invoken.proto.Items.Item.RangedWeaponType;
 import com.eldritch.invoken.screens.GameScreen;
+import com.eldritch.invoken.state.Inventory;
 
 public class Ammunition extends Item {
     private static final float AMMO_SCALE = 0.4f;
@@ -52,14 +52,10 @@ public class Ammunition extends Item {
     }
 
     @Override
-    public void releaseFrom(AgentInventory inventory) {
-        AgentInfo info = inventory.getAgentInfo();
-        Agent agent = info.getAgent();
-        Level level = agent.getLocation();
-
-        int total = info.getInventory().getItemCount((this));
-        generator.release(level, agent.getPosition(), total);
-        info.getInventory().removeItem(this, total);
+    public void releaseFrom(Inventory inventory, Level level, Vector2 position) {
+        int total = inventory.getItemCount((this));
+        generator.release(level, position, total);
+        inventory.removeItem(this, total);
     }
 
     @Override

@@ -9,8 +9,10 @@ import com.eldritch.invoken.actor.AgentInventory;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.actor.type.Agent.Direction;
+import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.proto.Items;
 import com.eldritch.invoken.proto.Items.Item.Requirement;
+import com.eldritch.invoken.state.Inventory;
 import com.eldritch.invoken.util.Settings;
 import com.eldritch.invoken.util.Utils;
 
@@ -49,7 +51,7 @@ public abstract class Item {
 
     public abstract void unequipFrom(AgentInventory inventory);
     
-    public void releaseFrom(AgentInventory inventory) {
+    public void releaseFrom(Inventory inventory, Level level, Vector2 position) {
     }
 
     public boolean mapTo(AgentInventory inventory, int index) {
