@@ -250,10 +250,14 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         }
 
         // check that the player is still alive
-        if (level.getPlayer().isCompletelyDead()) {
+        if (player.isCompletelyDead()) {
             // game over
-            saveOnDeath(level);
-            game.setScreen(new GameOverScreen(game, level.getPlayer().getInfo().getId()));
+            if (player.hasBackup()) {
+                saveOnDeath(level);
+                game.setScreen(new ResurrectScreen(game, level.getPlayer().getInfo().getId()));
+            } else {
+                game.setScreen(new GameOverScreen(game, level.getPlayer().getInfo().getId()));
+            }
         }
 
         // update UI menus

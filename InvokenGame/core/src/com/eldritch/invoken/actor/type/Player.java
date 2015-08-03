@@ -23,6 +23,7 @@ import com.eldritch.invoken.actor.items.Ammunition;
 import com.eldritch.invoken.actor.items.Consumable;
 import com.eldritch.invoken.actor.items.Fragment;
 import com.eldritch.invoken.actor.items.Item;
+import com.eldritch.invoken.actor.util.Backup;
 import com.eldritch.invoken.actor.util.SelectionHandler;
 import com.eldritch.invoken.actor.util.ThreatMonitor;
 import com.eldritch.invoken.location.Level;
@@ -49,6 +50,7 @@ public class Player extends SteeringAgent {
     private boolean fixedTarget = false;
     private boolean lightOn = false;
     private Augmentation lastAug = null;
+    private Optional<Backup> backup = Optional.absent();
 
     private int lastFragments = 0;
 
@@ -59,6 +61,7 @@ public class Player extends SteeringAgent {
         this.threat = new ThreatMonitor<>(this);
         this.bodyType = body;
         this.priorState = Optional.<PlayerActor> absent();
+        createBackup();
     }
 
     public Player(PlayerActor data, float x, float y, Level level) {
@@ -106,6 +109,26 @@ public class Player extends SteeringAgent {
         for (KillRecord kill : data.getKillList()) {
             setKillCount(kill.getAgentId(), kill.getCount());
         }
+        
+        // backup
+        if (data.hasBackup()) {
+            backup = Optional.of(new Backup(data.getBackup()));
+        }
+    }
+    
+    public boolean hasBackup() {
+        return backup.isPresent();
+    }
+    
+    public Backup claimBackup() {
+        Backup claimed = backup.get();
+        backup = Optional.absent();
+        return claimed;
+    }
+    
+    public void createBackup() {
+        Level level = getLocation();
+        this.backup = Optional.of(new Backup(level.getFloor(), level.getRegion(), getPosition()));
     }
 
     @Override
@@ -416,6 +439,11 @@ public class Player extends SteeringAgent {
             builder.addKill(KillRecord.newBuilder().setAgentId(kill.getKey())
                     .setCount(kill.getValue()).build());
         }
+        
+        // backup
+        if (backup.isPresent()) {
+            builder.setBackup(backup.get().toProto());
+        }
 
         return builder.build();
     }
@@ -551,13 +579,24 @@ public class Player extends SteeringAgent {
             corpseBuilder.setFragments(player.getLastFragments());
             builder.setCorpse(corpseBuilder.build());
 
-            // Set the location and position info from the previous save.
+            // Set the location and position info from the backup.
             PlayerActor last = previous.get();
-            builder.setX(last.getX());
-            builder.setY(last.getY());
-            builder.setSeed(last.getSeed());
-            builder.setRegion(last.getRegion());
-            builder.setFloor(last.getFloor());
+            if (player.hasBackup()) {
+                Backup backup = player.claimBackup();
+                builder.clearBackup();
+                
+                builder.setX(backup.getPosition().x);
+                builder.setY(backup.getPosition().y);
+                builder.setSeed(last.getSeed());
+                builder.setRegion(backup.getRegion());
+                builder.setFloor(backup.getFloor());
+            } else {
+                builder.setX(last.getX());
+                builder.setY(last.getY());
+                builder.setSeed(last.getSeed());
+                builder.setRegion(last.getRegion());
+                builder.setFloor(last.getFloor());
+            }
 
             builder.addAllVisitedRooms(player.getLocation().getVisitedIndices());
 
