@@ -19,7 +19,6 @@ public abstract class Collectible extends CollisionEntity implements TemporaryEn
     private final Item item;
     private final TextureRegion texture;
     private final int quantity;
-    private boolean ejecting = true;
     private boolean finished = false;
 
     public Collectible(Item item, int quanitity, TextureRegion texture, Vector2 origin,
@@ -68,7 +67,6 @@ public abstract class Collectible extends CollisionEntity implements TemporaryEn
             velocity.scl(0.95f * (1f - delta));
             if (velocity.epsilonEquals(Vector2.Zero, Settings.EPSILON)) {
                 velocity.set(Vector2.Zero);
-                ejecting = false;
             }
         }
     }
@@ -111,6 +109,8 @@ public abstract class Collectible extends CollisionEntity implements TemporaryEn
      * for persistence.
      */
     public abstract static class CollectibleGenerator<T extends Collectible> {
+        private static final float MIN_SIZE = 0.5f;
+        
         private final Random rand = new Random();
         private final float scale;
 
@@ -140,7 +140,7 @@ public abstract class Collectible extends CollisionEntity implements TemporaryEn
         }
         
         protected float getSize(int quantity) {
-            return (float) Math.log(quantity) * scale;
+            return Math.max((float) Math.log(quantity) * scale, MIN_SIZE);
         }
 
         private float random() {
