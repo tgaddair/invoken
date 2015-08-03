@@ -14,6 +14,7 @@ import com.eldritch.invoken.actor.AgentInfo;
 import com.eldritch.invoken.actor.Profession;
 import com.eldritch.invoken.actor.factions.Faction;
 import com.eldritch.invoken.actor.factions.FactionManager;
+import com.eldritch.invoken.actor.items.Core;
 import com.eldritch.invoken.actor.items.Fragment;
 import com.eldritch.invoken.actor.type.Player;
 import com.eldritch.invoken.location.Level;
@@ -101,6 +102,12 @@ public class CharacterMenu implements HudElement {
             int requiredFragments = AgentInfo.getFragmentRequirement(level + 1);
             String fragmentsText = String.format("%d / %d", currentFragments, requiredFragments);
             addLabel("Fragments", fragmentsText, leftTable);
+            
+            String coreText = player.getInventory().hasItem(Core.getInstance()) ? "Yes" : "No";
+            addLabel("Core", coreText, leftTable);
+            
+            String backupText = player.hasBackup() ? "Yes" : "No";
+            addLabel("Backup", backupText, leftTable);
         }
 
         // disciplines
