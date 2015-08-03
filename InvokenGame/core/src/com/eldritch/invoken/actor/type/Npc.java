@@ -74,6 +74,8 @@ import com.google.common.base.Optional;
 public abstract class Npc extends SteeringAgent implements Telegraph {
     public static final float STEP = 0.01f; // behavior action frequency
     private static final float SIGHTED_DURATION = 1f; // time enemy is in sights before firing
+    
+    private static final float ALERT_DST2 = 3f * 3f;
     private static final float MIN_DST2 = 1f;
 
     public enum SteeringMode {
@@ -536,7 +538,15 @@ public abstract class Npc extends SteeringAgent implements Telegraph {
         // ignore FOV check if we're already in combat with the agent, as it's primarily for
         // handling stealth
         return super.isVisible(other) && hasLineOfSight(other)
-                && (threat.hostileTo(other) || inFieldOfView(other) || dst2(other) < MIN_DST2);
+                && (inFieldOfView(other) || canHear(other));
+    }
+
+    private boolean canHear(Agent other) {
+        if (threat.hostileTo(other)) {
+            return dst2(other) < ALERT_DST2;
+        }
+
+        return dst2(other) < MIN_DST2;
     }
 
     public NavigatedSteerable getLastSeen() {
