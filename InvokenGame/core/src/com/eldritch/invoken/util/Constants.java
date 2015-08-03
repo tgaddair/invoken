@@ -30,6 +30,7 @@ public class Constants {
     // IDs
     public static final String CRAWLER = "Crawler";
     public static final String DUMMY_NPC = "Dummy";
+    public static final String RANDOM_LOOT = "RandomLoot";
     
     // Factions
     public static final String STATION_FACTION = "TheStation";

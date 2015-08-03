@@ -33,7 +33,7 @@ public abstract class FurnitureLoader {
         loaders.put(Furniture.Type.TERMINAL, new TerminalLoader());
     }
     
-    public abstract PlaceableFurniture loadFrom(Furniture furniture);
+    public abstract PlaceableFurniture loadFrom(Furniture furniture, RoomDecorator decorator);
     
     public interface PlaceableFurniture {
     	int getCost();
@@ -59,7 +59,7 @@ public abstract class FurnitureLoader {
                 });
         
         @Override
-        public PlaceableFurniture loadFrom(Furniture furniture) {
+        public PlaceableFurniture loadFrom(Furniture furniture, RoomDecorator decorator) {
         	String id = furniture.getId();
             try {
                 return cache.get(id);
@@ -72,33 +72,33 @@ public abstract class FurnitureLoader {
     
     public static class ActivatorLoader extends FurnitureLoader {
     	@Override
-    	public PlaceableFurniture loadFrom(Furniture furniture) {
+    	public PlaceableFurniture loadFrom(Furniture furniture, RoomDecorator decorator) {
     		FurnitureLoader tmxLoader = FurnitureLoader.getLoader(Furniture.Type.TMX);
-    		PlaceableFurniture placeable = tmxLoader.loadFrom(furniture);
+    		PlaceableFurniture placeable = tmxLoader.loadFrom(furniture, decorator);
     		return new PlaceableActivator(furniture, placeable);
     	}
     }
     
     public static class ContainerLoader extends FurnitureLoader {
         @Override
-        public PlaceableFurniture loadFrom(Furniture furniture) {
+        public PlaceableFurniture loadFrom(Furniture furniture, RoomDecorator decorator) {
             FurnitureLoader tmxLoader = FurnitureLoader.getLoader(Furniture.Type.TMX);
-            PlaceableFurniture placeable = tmxLoader.loadFrom(furniture);
-            return new PlaceableContainer(furniture, placeable);
+            PlaceableFurniture placeable = tmxLoader.loadFrom(furniture, decorator);
+            return new PlaceableContainer(furniture, placeable, decorator.getLootGenerator());
         }
     }
     
     public static class TerminalLoader extends FurnitureLoader {
         @Override
-        public PlaceableFurniture loadFrom(Furniture furniture) {
+        public PlaceableFurniture loadFrom(Furniture furniture, RoomDecorator decorator) {
             FurnitureLoader tmxLoader = FurnitureLoader.getLoader(Furniture.Type.TMX);
-            PlaceableFurniture placeable = tmxLoader.loadFrom(furniture);
+            PlaceableFurniture placeable = tmxLoader.loadFrom(furniture, decorator);
             return new PlaceableTerminal(furniture, placeable);
         }
     }
     
-    public static PlaceableFurniture load(Furniture furniture) {
-        return getLoader(furniture.getType()).loadFrom(furniture);
+    public static PlaceableFurniture load(Furniture furniture, RoomDecorator decorator) {
+        return getLoader(furniture.getType()).loadFrom(furniture, decorator);
     }
     
     public static FurnitureLoader getLoader(Furniture.Type type) {

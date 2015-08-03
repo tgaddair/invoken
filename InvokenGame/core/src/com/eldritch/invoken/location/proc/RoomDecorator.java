@@ -59,6 +59,7 @@ public class RoomDecorator {
 
     private final LocationMap map;
     private final Random rand;
+    private final LootGenerator lootGenerator = new LootGenerator();
 
     public RoomDecorator(LocationMap map, long seed) {
         this.map = map;
@@ -139,7 +140,7 @@ public class RoomDecorator {
             for (int i = 0; i < furniture.getMax(); i++) {
                 // calculate the percentage of furniture coverage to ground
                 // tiles adding this piece of furniture would cost us
-                PlaceableFurniture placeable = FurnitureLoader.load(furniture);
+                PlaceableFurniture placeable = FurnitureLoader.load(furniture, this);
                 int cost = placeable.getCost();
                 double coverage = (coveredTiles + cost) / area;
 
@@ -163,6 +164,10 @@ public class RoomDecorator {
                         furniture.getId(), furniture.getMin()));
             }
         }
+    }
+    
+    public LootGenerator getLootGenerator() {
+        return lootGenerator;
     }
 
     public static RoomType get(Room.Size size) {

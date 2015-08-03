@@ -15,11 +15,12 @@ import com.eldritch.invoken.proto.Items.Item.Type;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
 
 public class Inventory {
-    private static final LoadingCache<String, Container> CONTAINER_LOADER = CacheBuilder.newBuilder().build(
-            new CacheLoader<String, Container>() {
+    private static final LoadingCache<String, Container> CONTAINER_LOADER = CacheBuilder
+            .newBuilder().build(new CacheLoader<String, Container>() {
                 public Container load(String id) {
                     return InvokenGame.CONTAINER_READER.readAsset(id);
                 }
@@ -29,12 +30,16 @@ public class Inventory {
     private final Map<String, ItemState> items = new HashMap<>();
     private final Random rand = new Random();
 
+    public Inventory() {
+        this(ImmutableList.<InventoryItem> of());
+    }
+
     public Inventory(List<InventoryItem> items) {
         for (InventoryItem item : items) {
             add(item);
         }
     }
-    
+
     public boolean isEmpty() {
         return items.isEmpty();
     }
@@ -44,19 +49,19 @@ public class Inventory {
             addItem(proto);
         }
     }
-    
+
     protected boolean checkForDrop(Item item) {
-    	if (itemMap.containsKey(item)) {
-    		return checkForDrop(itemMap.get(item));
-    	}
-    	
-    	// when the item wasn't added with a drop chance from a specification, then it was
-    	// acquired dynamically, so we should always drop it
-    	return true;
+        if (itemMap.containsKey(item)) {
+            return checkForDrop(itemMap.get(item));
+        }
+
+        // when the item wasn't added with a drop chance from a specification, then it was
+        // acquired dynamically, so we should always drop it
+        return true;
     }
-    
+
     protected boolean checkForDrop(InventoryItem proto) {
-    	// possibly add some number of the given item
+        // possibly add some number of the given item
         boolean hasItem = true;
         if (proto.getDropChance() < 1) {
             // roll to see if we have any of the item in this inventory
@@ -64,20 +69,20 @@ public class Inventory {
         }
         return hasItem;
     }
-    
+
     protected double getDropChance(Item item) {
-    	if (itemMap.containsKey(item)) {
-    		return itemMap.get(item).getDropChance();
-    	}
-    	return 1.0;
+        if (itemMap.containsKey(item)) {
+            return itemMap.get(item).getDropChance();
+        }
+        return 1.0;
     }
-    
+
     protected final double random() {
-    	return rand.nextDouble();
+        return rand.nextDouble();
     }
-    
+
     protected void addItem(InventoryItem proto) {
-    	// add plus or minus a fraction of the possible variation
+        // add plus or minus a fraction of the possible variation
         int count = proto.getCount();
         if (proto.getVariance() > 0) {
             int delta = (int) (rand.nextFloat() * 2 * proto.getVariance() - proto.getVariance());
@@ -122,7 +127,7 @@ public class Inventory {
     public Iterable<ItemState> getItems() {
         return items.values();
     }
-    
+
     /**
      * Iterating over this newly constructed collection will allow the caller to remove items from
      * the inventory without concurrent modification.
@@ -154,7 +159,7 @@ public class Inventory {
             // disallow this
             return;
         }
-        
+
         if (!items.containsKey(item.getId())) {
             items.put(item.getId(), new Inventory.ItemState(item, count));
         } else {
@@ -162,7 +167,7 @@ public class Inventory {
         }
         onAdd(item, count);
     }
-    
+
     protected void onAdd(Item item, int count) {
     }
 
@@ -199,11 +204,11 @@ public class Inventory {
             state.remove(count);
             removed = count;
         }
-        
+
         onRemove(state.getItem(), removed);
         return removed;
     }
-    
+
     protected void onRemove(Item item, int count) {
     }
 
@@ -261,9 +266,12 @@ public class Inventory {
     }
 
     public static Inventory from(String id) {
+        return new Inventory(getContainer(id).getItemList());
+    }
+
+    public static Container getContainer(String id) {
         try {
-            Container container = CONTAINER_LOADER.get(id);
-            return new Inventory(container.getItemList());
+            return CONTAINER_LOADER.get(id);
         } catch (ExecutionException ex) {
             InvokenGame.error("Failed to load container: " + id, ex);
             return null;

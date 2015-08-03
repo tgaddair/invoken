@@ -329,7 +329,11 @@ public class AgentInventory extends Inventory {
         }
 
         public float getReloadFraction() {
-            return reloadElapsed / (weapon.getCooldown() * 2);
+            return reloadElapsed / (getReloadSeconds());
+        }
+        
+        public float getReloadSeconds() {
+            return weapon.getCooldown() * 1.5f + 1f;
         }
 
         public void reload() {
