@@ -38,6 +38,7 @@ import com.eldritch.invoken.proto.Actors.PlayerActor;
 import com.eldritch.invoken.proto.Effects.DamageType;
 import com.eldritch.invoken.proto.Locations.Biome;
 import com.eldritch.invoken.ui.ActionBar;
+import com.eldritch.invoken.ui.BackupMenu;
 import com.eldritch.invoken.ui.CharacterMenu;
 import com.eldritch.invoken.ui.ConsumableBar;
 import com.eldritch.invoken.ui.DesireMenu;
@@ -195,6 +196,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         hud.add(new FragmentCounter(player, skin));
         hud.add(new UploadMenu(player, skin));
         hud.add(new ResearchMenu(player, skin));
+        hud.add(new BackupMenu(player, skin));
         hud.add(new StoreMenu(player, skin));
         hud.add(new DesireMenu(player, skin));
         hud.add(new ConsumableBar(player, skin));
