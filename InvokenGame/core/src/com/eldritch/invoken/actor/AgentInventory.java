@@ -41,8 +41,12 @@ public class AgentInventory extends Inventory {
         this.info = info;
     }
     
-    @Override
     public void add(InventoryItem proto) {
+        addItem(proto);
+    }
+    
+    @Override
+    public void maybeAdd(InventoryItem proto) {
     	// agents don't use the drop chance for adding items
     	addItem(proto);
     }

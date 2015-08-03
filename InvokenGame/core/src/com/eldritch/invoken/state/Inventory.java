@@ -36,7 +36,7 @@ public class Inventory {
 
     public Inventory(List<InventoryItem> items) {
         for (InventoryItem item : items) {
-            add(item);
+            maybeAdd(item);
         }
     }
 
@@ -44,7 +44,7 @@ public class Inventory {
         return items.isEmpty();
     }
 
-    public void add(InventoryItem proto) {
+    protected void maybeAdd(InventoryItem proto) {
         if (checkForDrop(proto)) {
             addItem(proto);
         }
@@ -82,14 +82,8 @@ public class Inventory {
     }
 
     protected void addItem(InventoryItem proto) {
-        // add plus or minus a fraction of the possible variation
-        int count = proto.getCount();
-        if (proto.getVariance() > 0) {
-            int delta = (int) (rand.nextFloat() * 2 * proto.getVariance() - proto.getVariance());
-            count += delta;
-        }
-
         // add the item if we end up with a positive count
+        int count = getDesiredCount(proto, rand);
         if (count > 0) {
             Item item = Item.fromProto(InvokenGame.ITEM_READER.readAsset(proto.getItemId()));
             itemMap.put(item, proto);
@@ -214,6 +208,16 @@ public class Inventory {
 
     protected void handleRemove(Item item) {
         items.remove(item.getId());
+    }
+    
+    public static int getDesiredCount(InventoryItem proto, Random rand) {
+        // add plus or minus a fraction of the possible variation
+        int count = proto.getCount();
+        if (proto.getVariance() > 0) {
+            int delta = (int) (rand.nextFloat() * 2 * proto.getVariance() - proto.getVariance());
+            count += delta;
+        }
+        return count;
     }
 
     public static class ItemState {

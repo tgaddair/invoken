@@ -59,11 +59,12 @@ public class RoomDecorator {
 
     private final LocationMap map;
     private final Random rand;
-    private final LootGenerator lootGenerator = new LootGenerator();
+    private final LootGenerator lootGenerator;
 
-    public RoomDecorator(LocationMap map, long seed) {
+    public RoomDecorator(int floor, LocationMap map, long seed) {
         this.map = map;
         this.rand = new Random(seed);
+        this.lootGenerator = new LootGenerator(floor);
     }
 
     public void generate(ConnectedRoomManager rooms, List<Room> halls) {

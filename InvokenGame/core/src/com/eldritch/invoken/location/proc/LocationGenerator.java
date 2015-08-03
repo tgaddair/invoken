@@ -278,7 +278,7 @@ public class LocationGenerator {
         }
 
         InvokenGame.log("Adding Furniture");
-        RoomDecorator roomDecorator = new RoomDecorator(map, seed);
+        RoomDecorator roomDecorator = new RoomDecorator(next.getFloor(), map, seed);
         roomDecorator.generate(rooms, hallways);
 
         InvokenGame.log("Creating Spawn Layers");
