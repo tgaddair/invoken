@@ -24,7 +24,7 @@ public class Hideout extends ClickActivator {
         if (selectionHandler.isPresent()) {
             HideoutSelectionHandler handler = selectionHandler.get();
             if (handler.isCancelled()) {
-                reveal(handler.getOwner());
+                reveal(handler.getOwner(), handler.getPosition());
             }
         }
     }
@@ -36,18 +36,18 @@ public class Hideout extends ClickActivator {
 
     private void hide(Agent agent) {
         Vector2 center = getCenter();
+        HideoutSelectionHandler handler = new HideoutSelectionHandler(agent);
+        
         agent.setActive(false);
         agent.teleport(new Vector2(center.x, center.y));
         
-        HideoutSelectionHandler handler = new HideoutSelectionHandler(agent);
         agent.setSelectionHandler(handler);
         selectionHandler = Optional.of(handler);
     }
     
-    private void reveal(Agent agent) {
-        Vector2 center = getCenter();
+    private void reveal(Agent agent, Vector2 position) {
         agent.removeSelectionHandler();
-        agent.teleport(new Vector2(center.x, center.y - H + 0.5f));
+        agent.teleport(position);
         agent.setActive(true);
         selectionHandler = Optional.absent();
     }
@@ -70,10 +70,12 @@ public class Hideout extends ClickActivator {
     
     private class HideoutSelectionHandler implements SelectionHandler {
         private final Agent owner;
+        private final Vector2 position = new Vector2();
         private boolean cancelled = false;
         
         public HideoutSelectionHandler(Agent owner) {
             this.owner = owner;
+            this.position.set(owner.getPosition());
         }
         
         @Override
@@ -97,6 +99,10 @@ public class Hideout extends ClickActivator {
         
         private Agent getOwner() {
             return owner;
+        }
+        
+        private Vector2 getPosition() {
+            return position;
         }
     }
 }
