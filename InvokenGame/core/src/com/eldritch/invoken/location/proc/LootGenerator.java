@@ -41,7 +41,13 @@ public class LootGenerator {
                 Item item = Item.fromProto(InvokenGame.ITEM_READER.readAsset(proto.getItemId()));
                 
                 int addedValue = item.getValue() * count;
-                if (currentValue + addedValue < targetValue) {
+                if (currentValue + addedValue > targetValue) {
+                    // reduce count to barely fit
+                    count = (targetValue - currentValue) / item.getValue();
+                    addedValue = item.getValue() * count;
+                }
+                
+                if (count > 0) {
                     // go ahead and add all the items
                     inv.addItem(item, count);
                     currentValue += addedValue;

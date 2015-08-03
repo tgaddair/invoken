@@ -10,13 +10,13 @@ import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.actor.items.Item;
 import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.location.NaturalVector2;
-import com.eldritch.invoken.util.Settings;
 import com.eldritch.invoken.util.SoundManager.SoundEffect;
 
 public abstract class Collectible extends CollisionEntity implements TemporaryEntity {
     private static final float MOVE_RADIUS = 2f * 2f;
     private static final float OBTAIN_RADIUS = 0.1f;
 
+    private final NaturalVector2 origin;
     private final Item item;
     private final TextureRegion texture;
     private final int quantity;
@@ -26,6 +26,7 @@ public abstract class Collectible extends CollisionEntity implements TemporaryEn
     public Collectible(Item item, int quanitity, TextureRegion texture, Vector2 origin,
             Vector2 direction, float r) {
         super(origin, r, r);
+        this.origin = NaturalVector2.of(origin);
         this.item = item;
         this.quantity = quanitity;
         this.texture = texture;
@@ -67,8 +68,10 @@ public abstract class Collectible extends CollisionEntity implements TemporaryEn
         } else {
             // apply friction
             velocity.scl(0.95f * (1f - delta));
+            
+            NaturalVector2 cell = NaturalVector2.of(position);
             if (velocity.epsilonEquals(Vector2.Zero, 0.005f)
-                    || level.isObstacle(NaturalVector2.of(position))) {
+                    || (cell != origin && level.isObstacle(cell))) {
                 velocity.set(Vector2.Zero);
                 ejecting = false;
             }
