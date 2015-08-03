@@ -66,7 +66,7 @@ public class Burrow extends ActiveAugmentation {
             if (owner.dst2(target) > MINDST * MINDST || !owner.hasVisibilityTo(target)) {
                 return 0f;
             }
-            return Heuristics.randomizedDistanceScore(owner.dst2(target), 0);
+            return Heuristics.randomizedDistanceScore(owner.dst2(target), 1);
         } else {
             if (!target.isAlive()) {
                 return 0;

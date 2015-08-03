@@ -12,7 +12,7 @@ import com.eldritch.invoken.util.AnimationUtils;
 import com.eldritch.invoken.util.Settings;
 
 public class Human {
-    public static float MAX_VELOCITY = 8f;
+    public static float MAX_VELOCITY = 10f;
     
     // figure out the width and height of the player for collision
     // detection and rendering by converting a player frames pixel

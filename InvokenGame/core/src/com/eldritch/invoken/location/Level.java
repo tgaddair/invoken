@@ -98,7 +98,7 @@ import com.google.common.collect.Maps;
 
 public class Level {
     private static final int RALLY_POINTS = 20;
-    
+
     private static Pool<Rectangle> rectPool = new Pool<Rectangle>() {
         @Override
         protected Rectangle newObject() {
@@ -400,14 +400,14 @@ public class Level {
     public void dispose() {
         // rayHandler.dispose();
     }
-    
+
     public List<NaturalVector2> getRallyPoints() {
         return rallyPoints;
     }
-    
+
     private void fillRallyPoints(LocationMap map) {
         List<NaturalVector2> candidates = new ArrayList<>();
-        
+
         ConnectedRoomManager rooms = map.getRooms();
         for (ConnectedRoom room : rooms.getRooms()) {
             if (!room.isChamber()) {
@@ -420,7 +420,7 @@ public class Level {
                 }
             }
         }
-        
+
         int remaining = RALLY_POINTS;
         Collections.shuffle(candidates);
         for (NaturalVector2 point : candidates) {
@@ -431,7 +431,7 @@ public class Level {
             }
         }
     }
-    
+
     private boolean canRallyTo(NaturalVector2 point, LocationMap map) {
         // we need at least 25 square units of space around the point to rally
         for (int dx = -2; dx <= 2; dx++) {
@@ -691,7 +691,7 @@ public class Level {
 
         camera.position.add(cameraV);
         camera.update();
-        
+
         // handle our pending entities
         for (Agent agent : pendingAgents) {
             activateAgent(agent);
@@ -1572,7 +1572,8 @@ public class Level {
             Item bullet = Item.fromProto(InvokenGame.ITEM_READER.readAsset("PistolBullet"));
             inv.addItem(bullet, 25);
 
-            Item weapon = Item.fromProto(InvokenGame.ITEM_READER.readAsset("DamagedPistol"));
+            // Item weapon = Item.fromProto(InvokenGame.ITEM_READER.readAsset("DamagedPistol"));
+            Item weapon = Item.fromProto(InvokenGame.ITEM_READER.readAsset("ConventionalPistol"));
             player.identify(weapon.getId());
             inv.addItem(weapon);
             inv.equip(weapon);

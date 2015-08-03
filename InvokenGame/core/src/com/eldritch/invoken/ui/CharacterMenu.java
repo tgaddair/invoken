@@ -89,7 +89,7 @@ public class CharacterMenu implements HudElement {
         // level and fragments
         {
             Label infoLabel = new Label("Overview", skin);
-            leftTable.add(infoLabel).left().expandX().fillX().space(25);
+            leftTable.add(infoLabel).left().expandX().fillX().space(20);
             leftTable.row();
 
             addLabel("Name", player.getInfo().getName(), leftTable);
@@ -113,7 +113,7 @@ public class CharacterMenu implements HudElement {
         // disciplines
         {
             Label disciplineLabel = new Label("Disciplines", skin);
-            leftTable.add(disciplineLabel).left().expandX().fillX().space(25);
+            leftTable.add(disciplineLabel).left().expandX().fillX().space(20);
             leftTable.row();
 
             Table disciplinesTable = new Table(skin);
