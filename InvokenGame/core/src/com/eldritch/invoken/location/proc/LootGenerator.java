@@ -12,6 +12,12 @@ import com.eldritch.invoken.proto.Actors.InventoryItem;
 import com.eldritch.invoken.state.Inventory;
 import com.eldritch.invoken.util.Constants;
 
+/**
+ * Generates loot to populate containers based on a number of criteria.
+ * 
+ *  TODO: when the player respawns, the totalValue here should carry over so we do not keep giving
+ *  them lots of resources.
+ */
 public class LootGenerator {
     private static final int MINOR_VALUE = 100;
     

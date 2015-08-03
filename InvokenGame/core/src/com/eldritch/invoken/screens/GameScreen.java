@@ -150,7 +150,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
                 playerLoader.getSeed());
         level = playerLoader.load(generator);
         player = level.getPlayer();
-        
+
         // init camera position
         Vector2 position = player.getCamera().getPosition();
         camera.position.x = level.scale(position.x, camera.zoom);
@@ -166,7 +166,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         sounds.setCamera(camera);
         sounds.setEnabled(!Settings.MUTE);
         sounds.setVolume(Settings.SFX_VOLUME);
-        
+
         // initialization
         onLoad(level, playerLoader.getState());
         refreshHud();
@@ -704,10 +704,14 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
                                                      // player.canTarget(entity,
                                                      // location)) {
                 selection = true;
-                if (pa.hasActiveAugmentation(button)
-                        && pa.getActiveAugmentation(button).isValid(player, entity)
-                        && player.select(entity, level)) {
-                    pa.useActiveAugmentation(button, tacticalPause);
+                if (pa.hasActiveAugmentation(button)) {
+                    if (pa.getActiveAugmentation(button).isValid(player, entity)
+                            && player.select(entity, level)) {
+                        pa.useActiveAugmentation(button, tacticalPause);
+                        player.select(null, level);
+                    } else {
+                        selection = false;
+                    }
                 } else if (player.getTarget() != entity) {
                     // initial selection -> set target
                     player.select(entity, level);
@@ -904,7 +908,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         camera.position.x = level.scale(position.x, camera.zoom);
         camera.position.y = level.scale(position.y, camera.zoom);
         level.setCamera(camera);
-        
+
         onLoad(level, Optional.of(playerState));
 
         refreshHud();
@@ -916,7 +920,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         for (int i = 0; i < 60; i++) {
             level.update(0.1f, false);
         }
-        
+
         minimap = new Minimap(level, level.getSeed(), state);
         // if (level.hasMusic()) {
         // InvokenGame.MUSIC_MANAGER.play(level.getMusicId());
