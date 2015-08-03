@@ -10,6 +10,7 @@ import com.eldritch.invoken.InvokenGame;
 import com.eldritch.invoken.actor.type.Player;
 import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.screens.GameScreen;
+import com.eldritch.invoken.screens.MenuScreen;
 import com.eldritch.invoken.util.DefaultInputListener;
 import com.eldritch.invoken.util.Settings;
 import com.eldritch.invoken.util.SoundManager.SoundEffect;
@@ -19,7 +20,7 @@ public class MainMenu implements HudElement {
     private final Table table;
     private final Skin skin;
 
-    public MainMenu(final Player player, Skin skin) {
+    public MainMenu(final InvokenGame game, final Player player, Skin skin) {
         this.skin = skin;
 
         table = new Table(skin);
@@ -40,6 +41,16 @@ public class MainMenu implements HudElement {
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 InvokenGame.SOUND_MANAGER.play(SoundEffect.CLICK);
                 show(false);
+            }
+        });
+        
+        TextButton menuButton = addButton("Save & Main Menu", table);
+        menuButton.addListener(new DefaultInputListener() {
+            @Override
+            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                InvokenGame.SOUND_MANAGER.play(SoundEffect.CLICK);
+                GameScreen.save(player.getLocation());
+                game.setScreen(new MenuScreen(game));
             }
         });
         

@@ -29,7 +29,7 @@ public class ResurrectScreen extends AbstractScreen {
 		table.center();
 		
 		LabelStyle headingStyle = new LabelStyle(getFont(), Color.WHITE);
-        Label heading = new Label("You have died...", headingStyle);
+        Label heading = new Label("You Died...", headingStyle);
         heading.setFontScale(2);
         
         table.add(heading).spaceBottom(75);

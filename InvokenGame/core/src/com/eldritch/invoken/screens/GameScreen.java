@@ -204,7 +204,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
         characterMenu = new CharacterMenu(player, skin);
         hud.add(characterMenu);
 
-        mainMenu = new MainMenu(player, skin);
+        mainMenu = new MainMenu(game, player, skin);
         hud.add(mainMenu);
 
         statusTable = new Table(skin);
