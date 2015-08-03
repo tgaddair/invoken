@@ -81,7 +81,7 @@ public class Core extends Item {
 
     private static class CoreEntity extends Collectible {
         private static final TextureRegion texture = new TextureRegion(
-                GameScreen.getTexture("sprite/effects/orb.png"));
+                GameScreen.getTexture("sprite/effects/core.png"));
 
         public CoreEntity(Vector2 origin, Vector2 direction, int quantity, float r) {
             super(Core.getInstance(), quantity, texture, origin, direction, r);
@@ -95,6 +95,13 @@ public class Core extends Item {
     }
 
     private static class CoreGenerator extends CollectibleGenerator<CoreEntity> {
+        private static final float SIZE = 1;
+        
+        @Override
+        protected float getSize(int quantity) {
+            return SIZE;
+        }
+        
         @Override
         protected CoreEntity generate(Vector2 origin, Vector2 direction, int quantity, float r) {
             return new CoreEntity(origin, direction, quantity, r);

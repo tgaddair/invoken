@@ -50,6 +50,7 @@ import com.eldritch.invoken.actor.ai.Squad;
 import com.eldritch.invoken.actor.aug.Action;
 import com.eldritch.invoken.actor.factions.Faction;
 import com.eldritch.invoken.actor.factions.Faction.FactionCache;
+import com.eldritch.invoken.actor.items.Core;
 import com.eldritch.invoken.actor.items.Fragment;
 import com.eldritch.invoken.actor.items.Icepik;
 import com.eldritch.invoken.actor.items.Item;
@@ -1545,7 +1546,8 @@ public class Level {
         inv.addItem(stimpak, 1);
         stimpak.mapTo(inv, 1);
 
-        player.getInfo().getInventory().addItem(Fragment.getInstance(), 150);
+        inv.addItem(Core.getInstance());
+        inv.addItem(Fragment.getInstance(), 150);
 
         Item grenade = Item.fromProto(InvokenGame.ITEM_READER.readAsset("FragmentationGrenade"));
         player.identify(grenade.getId());

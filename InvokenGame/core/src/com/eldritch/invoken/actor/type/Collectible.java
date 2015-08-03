@@ -135,8 +135,12 @@ public abstract class Collectible extends CollisionEntity implements TemporaryEn
         private T generateShifted(Vector2 origin, int quantity) {
             // shift the origin by a random amount
             Vector2 direction = new Vector2(random(), random());
-            float r = (float) Math.log(quantity) * scale;
+            float r = getSize(quantity);
             return generate(origin, direction, quantity, r);
+        }
+        
+        protected float getSize(int quantity) {
+            return (float) Math.log(quantity) * scale;
         }
 
         private float random() {

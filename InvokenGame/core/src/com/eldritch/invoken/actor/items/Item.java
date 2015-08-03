@@ -183,6 +183,8 @@ public abstract class Item {
                 return Icepik.from(item);
             case FRAGMENT:
                 return Fragment.getInstance(item);
+            case CORE:
+                return Core.getInstance(item);
             case AMMUNITION:
                 return new Ammunition(item);
             case OTHER:
