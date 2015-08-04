@@ -9,11 +9,13 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import com.badlogic.gdx.scenes.scene2d.Action;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.Array;
 import com.eldritch.invoken.actor.AgentInventory.InventoryListener;
 import com.eldritch.invoken.actor.items.Item;
 import com.eldritch.invoken.actor.type.Player;
@@ -23,12 +25,16 @@ import com.eldritch.invoken.util.Settings;
 public class ItemLog implements HudElement, InventoryListener {
     private final Table container;
     private final Skin skin;
-    
-    private final Map<Item, Message> messages = new LinkedHashMap<>();
-    
-    private boolean active = false;
+    private final Player player;
+
+    private final Map<String, Message> messages = new LinkedHashMap<>();
+    private final Map<String, Message> active = new LinkedHashMap<>();
+    private final Array<Actor> tmp = new Array<>();
+
     private float displayTime = 1.75f;
     private float fadeTime = 0.75f;
+    
+    private float delay = 0;
 
     public ItemLog(Player player, Skin skin) {
         container = new Table(skin);
@@ -36,6 +42,7 @@ public class ItemLog implements HudElement, InventoryListener {
         container.right().top();
         this.skin = skin;
 
+        this.player = player;
         player.getInventory().addListener(this);
     }
 
@@ -52,8 +59,12 @@ public class ItemLog implements HudElement, InventoryListener {
 
     @Override
     public void update(float delta, Level level) {
-        if (!active && !messages.isEmpty()) {
-            container.clear();
+        if (delay > 0) {
+            delay -= delta;
+            return;
+        }
+        
+        if (active.size() < 3 && !messages.isEmpty()) {
             showNext();
         }
     }
@@ -68,23 +79,33 @@ public class ItemLog implements HudElement, InventoryListener {
 
     private void showNext() {
         final Message message = getHead();
-        Label label = message.getLabel();
+        if (message.isActive()) {
+            // already displayed
+            return;
+        }
+
+        delay = 1f;
+        final Label label = message.getLabel();
 
         // configure the fade-in/out effect on the splash image
-        active = true;
         label.addAction(sequence(fadeIn(fadeTime), delay(displayTime), fadeOut(fadeTime),
                 new Action() {
                     @Override
                     public boolean act(float delta) {
                         // the last action will remove this item from the queue
-                        active = false;
-                        messages.remove(message.getItem());
+                        // messages.remove(message.getItem().getId());
+                        active.remove(message.getItem().getId());
+                        shiftTable(container);
                         return true;
                     }
                 }));
 
         // and finally we add the actor to the stage
-        container.add(label).expandX().fillX().padBottom(container.getHeight() / 4f);
+        insert(container, label);
+
+        messages.remove(message.getItem().getId());
+        active.put(message.getItem().getId(), message);
+        message.setActive(true);
     }
 
     @Override
@@ -95,34 +116,54 @@ public class ItemLog implements HudElement, InventoryListener {
     @Override
     public void onRemove(Item item, int count) {
     }
-    
+
     private void addMessage(Message message) {
-        if (messages.containsKey(message.getItem())) {
+        if (messages.containsKey(message.getItem().getId())) {
             // get the element corresponding to this message, update the count, and re-insert
-            Message original = messages.get(message.getItem());
+            Message original = messages.get(message.getItem().getId());
             messages.remove(message.getItem());
             original.update(message.getCount());
-            messages.put(message.getItem(), original);
+            messages.put(message.getItem().getId(), original);
         } else {
-            messages.put(message.getItem(), message);
+            messages.put(message.getItem().getId(), message);
+        }
+    }
+
+    public void shiftTable(Table table) {
+        tmp.clear();
+        tmp.addAll(table.getChildren());
+        table.clear();
+        
+        boolean skipped = false;
+        for (Actor actor : tmp) {
+            if (skipped) {
+                insert(table, actor);
+            } else {
+                skipped = true;
+            }
         }
     }
     
+    private void insert(Table container, Actor actor) {
+        container.add(actor).expandX().fillX().pad(10);
+    }
+
     private Message getHead() {
         return messages.entrySet().iterator().next().getValue();
     }
-    
+
     public class Message {
         private final Item item;
         private final Label label;
-        
+
         private int count;
         private String text;
+        private boolean active = false;
 
         public Message(Item item, int count) {
             this.item = item;
             this.count = count;
-            
+
             // create the label that we will display
             LabelStyle labelStyle = skin.get("toast", LabelStyle.class);
             label = new Label("", labelStyle);
@@ -131,35 +172,42 @@ public class ItemLog implements HudElement, InventoryListener {
             // making the image completely transparent
             label.getColor().a = 0f;
             label.setAlignment(Align.right);
-            label.setFontScale(1.25f);
-            
+
             // update label text
             setText();
         }
-        
+
+        public boolean isActive() {
+            return active;
+        }
+
+        public void setActive(boolean value) {
+            this.active = value;
+        }
+
         public void update(int delta) {
             count += delta;
             setText();
         }
-        
+
         public Item getItem() {
             return item;
         }
-        
+
         public Label getLabel() {
             return label;
         }
-        
+
         public int getCount() {
             return count;
         }
-        
+
         public String getText() {
             return text;
         }
-        
+
         private void setText() {
-            text = String.format("Added %s (%d)", item.getName(), count);
+            text = String.format("Added %s (%d)", item.getName(player), count);
             label.setText(text);
         }
     }
