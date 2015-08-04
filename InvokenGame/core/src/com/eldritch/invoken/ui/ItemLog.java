@@ -33,7 +33,7 @@ public class ItemLog implements HudElement, InventoryListener {
 
     private float displayTime = 1.75f;
     private float fadeTime = 0.75f;
-    
+
     private float delay = 0;
 
     public ItemLog(Player player, Skin skin) {
@@ -63,7 +63,7 @@ public class ItemLog implements HudElement, InventoryListener {
             delay -= delta;
             return;
         }
-        
+
         if (active.size() < 3 && !messages.isEmpty()) {
             showNext();
         }
@@ -118,22 +118,29 @@ public class ItemLog implements HudElement, InventoryListener {
     }
 
     private void addMessage(Message message) {
-        if (messages.containsKey(message.getItem().getId())) {
-            // get the element corresponding to this message, update the count, and re-insert
-            Message original = messages.get(message.getItem().getId());
-            messages.remove(message.getItem());
+        if (active.containsKey(message.getItem().getId())) {
+            Message original = active.get(message.getItem().getId());
             original.update(message.getCount());
-            messages.put(message.getItem().getId(), original);
+        } else if (messages.containsKey(message.getItem().getId())) {
+            update(messages, message);
         } else {
             messages.put(message.getItem().getId(), message);
         }
+    }
+
+    private void update(Map<String, Message> mapping, Message message) {
+        // get the element corresponding to this message, update the count, and re-insert
+        Message original = mapping.get(message.getItem().getId());
+        mapping.remove(message.getItem());
+        original.update(message.getCount());
+        mapping.put(message.getItem().getId(), original);
     }
 
     public void shiftTable(Table table) {
         tmp.clear();
         tmp.addAll(table.getChildren());
         table.clear();
-        
+
         boolean skipped = false;
         for (Actor actor : tmp) {
             if (skipped) {
@@ -143,7 +150,7 @@ public class ItemLog implements HudElement, InventoryListener {
             }
         }
     }
-    
+
     private void insert(Table container, Actor actor) {
         container.add(actor).expandX().fillX().pad(10);
     }
