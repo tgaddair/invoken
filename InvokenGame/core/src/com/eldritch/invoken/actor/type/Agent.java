@@ -2374,11 +2374,16 @@ public abstract class Agent extends CollisionEntity implements
 
 		@Override
 		public void update(float delta) {
-			if (Agent.this.isAiming() || Agent.this.hasTarget()) {
+			if (Agent.this.isAiming() || hasTarget()) {
 				updateAiming(delta);
 			} else {
 				updateDirection(delta);
 			}
+		}
+		
+		private boolean hasTarget() {
+		    Agent owner = Agent.this;
+		    return owner.hasTarget() && owner.hasLineOfSight(owner.getTarget());
 		}
 
 		@Override
