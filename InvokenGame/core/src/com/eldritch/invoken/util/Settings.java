@@ -14,8 +14,8 @@ public class Settings {
 	
 	// audio
 	public static boolean MUTE = false;
-	public static float MUSIC_VOLUME = 0.5f;
-//	public static float MUSIC_VOLUME = 0.0f;
+//	public static float MUSIC_VOLUME = 0.5f;
+	public static float MUSIC_VOLUME = 0.0f;
 	public static float SFX_VOLUME = 0.1f;
 	
 	// a number just greater than the previous for the purpose of approximating a total ordering
