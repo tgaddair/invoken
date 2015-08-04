@@ -3,6 +3,7 @@ package com.eldritch.invoken.actor;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -25,6 +26,7 @@ public class AgentInventory extends Inventory {
 
     private final Set<Item> loot = new HashSet<>();
     private final AgentInfo info;
+    private final List<InventoryListener> listeners = new ArrayList<>();
 
     // equipment
     private final Consumable[] consumables = new Consumable[2];
@@ -40,15 +42,15 @@ public class AgentInventory extends Inventory {
         super(new ArrayList<InventoryItem>());
         this.info = info;
     }
-    
+
     public void add(InventoryItem proto) {
         addItem(proto);
     }
-    
+
     @Override
     public void maybeAdd(InventoryItem proto) {
-    	// agents don't use the drop chance for adding items
-    	addItem(proto);
+        // agents don't use the drop chance for adding items
+        addItem(proto);
     }
 
     public AgentInfo getAgentInfo() {
@@ -245,7 +247,7 @@ public class AgentInventory extends Inventory {
     public void unequip(Item item) {
         item.unequipFrom(this);
     }
-    
+
     @Override
     protected void onAdd(Item item, int count) {
         item.addFrom(this);
@@ -257,6 +259,11 @@ public class AgentInventory extends Inventory {
         if (item.canLoot()) {
             loot.add(item);
         }
+
+        // notify listeners
+        for (InventoryListener listener : listeners) {
+            listener.onAdd(item, count);
+        }
     }
 
     @Override
@@ -264,6 +271,11 @@ public class AgentInventory extends Inventory {
         boolean wasBurdened = isBurdened();
         weight -= item.getWeight() * count;
         updateBurden(wasBurdened);
+
+        // notify listeners
+        for (InventoryListener listener : listeners) {
+            listener.onRemove(item, count);
+        }
     }
 
     @Override
@@ -286,7 +298,7 @@ public class AgentInventory extends Inventory {
     public boolean isBurdened() {
         return getWeight() / MAX_WEIGHT >= BURDEN_RATIO;
     }
-    
+
     public void releaseItems() {
         releaseItems(info.getAgent().getLocation(), info.getAgent().getPosition());
     }
@@ -326,7 +338,7 @@ public class AgentInventory extends Inventory {
         public float getReloadFraction() {
             return reloadElapsed / (getReloadSeconds());
         }
-        
+
         public float getReloadSeconds() {
             return weapon.getCooldown() * 1.5f + 1f;
         }
@@ -367,5 +379,15 @@ public class AgentInventory extends Inventory {
         public int getClip() {
             return clip;
         }
+    }
+
+    public void addListener(InventoryListener listener) {
+        listeners.add(listener);
+    }
+
+    public interface InventoryListener {
+        void onAdd(Item item, int count);
+
+        void onRemove(Item item, int count);
     }
 }
