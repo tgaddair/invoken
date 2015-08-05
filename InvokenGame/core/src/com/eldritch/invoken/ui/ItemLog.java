@@ -87,19 +87,6 @@ public class ItemLog implements HudElement, InventoryListener {
         delay = 1f;
         final Label label = message.getLabel();
 
-        // configure the fade-in/out effect on the splash image
-        label.addAction(sequence(fadeIn(fadeTime), delay(displayTime), fadeOut(fadeTime),
-                new Action() {
-                    @Override
-                    public boolean act(float delta) {
-                        // the last action will remove this item from the queue
-                        // messages.remove(message.getItem().getId());
-                        active.remove(message.getItem().getId());
-                        shiftTable(container);
-                        return true;
-                    }
-                }));
-
         // and finally we add the actor to the stage
         insert(container, label);
 
@@ -153,6 +140,7 @@ public class ItemLog implements HudElement, InventoryListener {
 
     private void insert(Table container, Actor actor) {
         container.add(actor).expandX().fillX().pad(10);
+        container.row();
     }
 
     private Message getHead() {
@@ -179,6 +167,19 @@ public class ItemLog implements HudElement, InventoryListener {
             // making the image completely transparent
             label.getColor().a = 0f;
             label.setAlignment(Align.right);
+
+            // configure the fade-in/out effect on the splash image
+            label.addAction(sequence(fadeIn(fadeTime), delay(displayTime), fadeOut(fadeTime),
+                    new Action() {
+                        @Override
+                        public boolean act(float delta) {
+                            // the last action will remove this item from the queue
+                            // messages.remove(message.getItem().getId());
+                            ItemLog.this.active.remove(getItem().getId());
+                            shiftTable(container);
+                            return true;
+                        }
+                    }));
 
             // update label text
             setText();
