@@ -28,11 +28,12 @@ public class FragmentCounter implements HudElement {
 
         LabelStyle labelStyle = skin.get("toast", LabelStyle.class);
         label = new Label("0", labelStyle);
-        label.setAlignment(Align.center);
+        label.setAlignment(Align.right);
         label.setFontScale(1f);
         container.add(label).padRight(10f);
         container.addListener(Utils.createTooltip(Fragment.getInstance().getTooltipFor(player),
                 skin));
+        container.row();
     }
 
     @Override
