@@ -1,11 +1,12 @@
 package com.eldritch.invoken.actor.aug;
 
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.actor.aug.Augmentation.ActiveAugmentation;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Agent.Activity;
-import com.eldritch.invoken.effects.BasicEffect;
+import com.eldritch.invoken.effects.AnimatedEffect;
 import com.eldritch.invoken.gfx.AnimatedEntity;
 import com.eldritch.invoken.location.Level;
 import com.eldritch.invoken.screens.GameScreen;
@@ -108,9 +109,9 @@ public class Burrow extends ActiveAugmentation {
         }
     }
 
-    public static class Burrowed extends BasicEffect {
+    public static class Burrowed extends AnimatedEffect {
         public Burrowed(Agent owner) {
-            super(owner);
+            super(owner, DUST_REGIONS, Animation.PlayMode.LOOP, 2f, 2f);
         }
 
         @Override
@@ -128,10 +129,6 @@ public class Burrow extends ActiveAugmentation {
         protected void doApply() {
             target.getBody().setActive(false);
             addDust(target);
-        }
-
-        @Override
-        protected void update(float delta) {
         }
     }
 

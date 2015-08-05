@@ -29,17 +29,22 @@ public abstract class AnimatedEffect extends BasicEffect {
             float height) {
         this(actor, region, offset, width, height, 0.1f);
     }
-    
+
     public AnimatedEffect(Agent actor, TextureRegion[] region, Vector2 offset, float width,
             float height, float frameDuration) {
-        this(actor, actor.getRenderPosition(), region, offset, 0, Animation.PlayMode.NORMAL, frameDuration,
-                width, height);
+        this(actor, actor.getRenderPosition(), region, offset, 0, Animation.PlayMode.NORMAL,
+                frameDuration, width, height);
     }
 
     public AnimatedEffect(Agent actor, TextureRegion[] region, Animation.PlayMode playMode) {
-        this(actor, actor.getRenderPosition(), region, Vector2.Zero, 0, playMode, 0.1f,
-                Settings.SCALE * region[0].getRegionWidth(), Settings.SCALE
-                        * region[0].getRegionHeight());
+        this(actor, region, playMode, Settings.SCALE * region[0].getRegionWidth(), Settings.SCALE
+                * region[0].getRegionHeight());
+    }
+
+    public AnimatedEffect(Agent actor, TextureRegion[] region, Animation.PlayMode playMode,
+            float width, float height) {
+        this(actor, actor.getRenderPosition(), region, Vector2.Zero, 0, playMode, 0.1f, width,
+                height);
     }
 
     public AnimatedEffect(Agent actor, Vector2 position, TextureRegion[] region, Vector2 offset,
@@ -55,7 +60,7 @@ public abstract class AnimatedEffect extends BasicEffect {
         this.width = width;
         this.height = height;
     }
-    
+
     public float getDuration() {
         return animation.getAnimationDuration();
     }
