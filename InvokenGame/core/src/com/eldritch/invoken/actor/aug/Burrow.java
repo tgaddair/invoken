@@ -1,11 +1,14 @@
 package com.eldritch.invoken.actor.aug;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.eldritch.invoken.actor.aug.Augmentation.ActiveAugmentation;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Agent.Activity;
+import com.eldritch.invoken.actor.type.Player;
 import com.eldritch.invoken.effects.AnimatedEffect;
 import com.eldritch.invoken.gfx.AnimatedEntity;
 import com.eldritch.invoken.location.Level;
@@ -110,8 +113,21 @@ public class Burrow extends ActiveAugmentation {
     }
 
     public static class Burrowed extends AnimatedEffect {
+        private static final float MAX_DST2 = 5f * 5f;
+        
+        private final Player player;
+        
         public Burrowed(Agent owner) {
             super(owner, DUST_REGIONS, Animation.PlayMode.LOOP, 2f, 2f);
+            this.player = owner.getLocation().getPlayer();
+        }
+        
+        @Override
+        public void render(float delta, OrthogonalTiledMapRenderer renderer) {
+            float a = Math.max(1f - target.dst2(player) / MAX_DST2, 0f);
+            renderer.getBatch().setColor(1, 1, 1, a);
+            super.render(delta, renderer);
+            renderer.getBatch().setColor(Color.WHITE);
         }
 
         @Override
