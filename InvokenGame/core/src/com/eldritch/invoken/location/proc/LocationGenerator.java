@@ -139,8 +139,7 @@ public class LocationGenerator {
     }
 
     public Level generate(PlayerActor playerState) {
-        return generate(Optional.<GameState> absent(), new GameState(playerState.getRegion(),
-                playerState.getFloor()));
+        return generate(Optional.<GameState> absent(), new GameState(playerState));
     }
 
     public Level generate(Optional<GameState> prev, GameState next) {
@@ -278,7 +277,8 @@ public class LocationGenerator {
         }
 
         InvokenGame.log("Adding Furniture");
-        RoomDecorator roomDecorator = new RoomDecorator(next.getFloor(), map, seed);
+        RoomDecorator roomDecorator = new RoomDecorator(next.getFloor(), next.getPlayerState(),
+                map, seed);
         roomDecorator.generate(rooms, hallways);
 
         InvokenGame.log("Creating Spawn Layers");

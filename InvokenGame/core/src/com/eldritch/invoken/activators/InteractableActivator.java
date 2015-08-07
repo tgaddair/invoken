@@ -47,6 +47,11 @@ public abstract class InteractableActivator extends ClickActivator implements In
         // distance constraint already handled by the parent class
         return true;
     }
+    
+    @Override
+    protected boolean canActivate(Agent agent) {
+        return super.canActivate(agent) && interactor == null;
+    }
 
     @Override
     public void endInteraction() {

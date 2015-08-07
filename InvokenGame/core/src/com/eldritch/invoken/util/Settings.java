@@ -75,7 +75,7 @@ public class Settings {
 	public static Profession DEFAULT_PROFESSION = Profession.Centurion;
 	
 	// string constants
-	public static final String FIRST_ROOM = "Vault1"; // "Medbay", "ResearchFacility" "Bedroom" "ThugLeaderBedroom";
+	public static final String FIRST_ROOM = "Vault1"; // "Medbay", "ResearchFacility" "Vault1" "ThugLeaderBedroom";
 	public static final String ENTRANCE = "Entrance";
 	public static final String EXIT = "Exit";
 	public static final String[] HALLS = { "HallCommon1" };

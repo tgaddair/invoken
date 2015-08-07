@@ -13,21 +13,24 @@ import com.eldritch.invoken.util.Constants;
 import com.google.common.base.Strings;
 
 public class PlaceableContainer extends PlaceableActivator {
-    private final Inventory inventory;
+    private final LootGenerator lootGenerator;
+    private final String asset;
 
     public PlaceableContainer(Furniture data, PlaceableFurniture tiles, LootGenerator lootGenerator) {
         super(data, tiles);
-        
-        String asset = data.getAssetId();
-        if (Strings.isNullOrEmpty(asset) || asset.equals(Constants.RANDOM_LOOT)) {
-            inventory = lootGenerator.generate();
-        } else {
-            inventory = Inventory.from(asset);
-        }
+        this.lootGenerator = lootGenerator;
+        this.asset = data.getAssetId();
     }
 
     @Override
     protected Activator load(String name, NaturalVector2 position, LocationMap map) {
+        Inventory inventory;
+        if (Strings.isNullOrEmpty(asset) || asset.equals(Constants.RANDOM_LOOT)) {
+            inventory = lootGenerator.generate(position);
+        } else {
+            inventory = Inventory.from(asset);
+        }
+        
         try {
             Class<?> clazz = getClassByName(name);
             Constructor<?> ctor = clazz.getConstructor(NaturalVector2.class, Inventory.class);

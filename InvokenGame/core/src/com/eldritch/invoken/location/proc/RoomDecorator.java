@@ -17,8 +17,10 @@ import com.eldritch.invoken.location.layer.LocationLayer.CollisionLayer;
 import com.eldritch.invoken.location.layer.LocationMap;
 import com.eldritch.invoken.location.proc.FurnitureLoader.PlaceableFurniture;
 import com.eldritch.invoken.location.proc.RoomGenerator.ControlRoom;
+import com.eldritch.invoken.proto.Actors.PlayerActor;
 import com.eldritch.invoken.proto.Locations.Furniture;
 import com.eldritch.invoken.proto.Locations.Room;
+import com.google.common.base.Optional;
 
 public class RoomDecorator {
     // threshold of furniture to open ground in room, past which we need to stop
@@ -61,10 +63,10 @@ public class RoomDecorator {
     private final Random rand;
     private final LootGenerator lootGenerator;
 
-    public RoomDecorator(int floor, LocationMap map, long seed) {
+    public RoomDecorator(int floor, Optional<PlayerActor> state, LocationMap map, long seed) {
         this.map = map;
         this.rand = new Random(seed);
-        this.lootGenerator = new LootGenerator(floor);
+        this.lootGenerator = new LootGenerator(floor, state, map.getRooms());
     }
 
     public void generate(ConnectedRoomManager rooms, List<Room> halls) {

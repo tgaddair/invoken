@@ -17,7 +17,7 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.eldritch.invoken.activators.Activator;
-import com.eldritch.invoken.actor.aug.Augmentation.SelfAugmentation;
+import com.eldritch.invoken.actor.aug.Augmentation.InstantAugmentation;
 import com.eldritch.invoken.actor.type.Agent;
 import com.eldritch.invoken.actor.type.Agent.Activity;
 import com.eldritch.invoken.actor.type.InanimateEntity;
@@ -32,7 +32,7 @@ import com.eldritch.invoken.util.Damage;
 import com.eldritch.invoken.util.Damager;
 import com.eldritch.invoken.util.Settings;
 
-public class Barrier extends SelfAugmentation {
+public class Barrier extends InstantAugmentation {
     private static final int COST = 20;
 
     private static final String TOOLTIP = "Barrier\n\n"
