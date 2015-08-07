@@ -27,4 +27,9 @@ public class ContainerSmall extends LootContainer {
     protected void onEndInteraction(Agent interactor) {
         // do not close automatically
     }
+    
+    @Override
+    protected boolean canActivate(Agent agent) {
+        return super.canActivate(agent) && !isOpen();
+    }
 }

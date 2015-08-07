@@ -6,6 +6,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -127,7 +128,7 @@ public class Level {
     private final List<Agent> pendingAgents = new ArrayList<>();
     private final List<Agent> inactiveEntities = new ArrayList<>();
     private final Map<Agent, Float> elapsed = new HashMap<>();
-    private final List<Agent> activeEntities = new ArrayList<>();
+    private final Set<Agent> activeEntities = new LinkedHashSet<>();
     private final Map<String, Integer> markers = new HashMap<>();
     private final Map<Agent, HealthBar> healthBars = new HashMap<>();
     private int inactiveIndex = 0;
@@ -322,7 +323,7 @@ public class Level {
         return markers.get(marker);
     }
 
-    public List<Agent> getActiveEntities() {
+    public Iterable<Agent> getActiveEntities() {
         return activeEntities;
     }
 
@@ -1068,7 +1069,7 @@ public class Level {
         return getNeighbors(agent, agent.getNeighbors(), getActiveEntities());
     }
 
-    public List<Agent> getNeighbors(Agent agent, List<Agent> neighbors, List<Agent> actors) {
+    public List<Agent> getNeighbors(Agent agent, List<Agent> neighbors, Iterable<Agent> actors) {
         neighbors.clear();
         for (Agent other : actors) {
             if (agent != other && agent.isNear(other)) {
@@ -1076,6 +1077,10 @@ public class Level {
             }
         }
         return neighbors;
+    }
+    
+    public boolean isActive(Agent agent) {
+        return activeEntities.contains(agent);
     }
 
     private void addActive(Agent agent) {

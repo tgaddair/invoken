@@ -67,6 +67,10 @@ public abstract class LootContainer extends InteractableActivator implements Loo
     public Inventory getInventory() {
         return inventory;
     }
+    
+    protected boolean isOpen() {
+        return open;
+    }
 
     @Override
     protected void onBeginInteraction(Agent interactor) {
