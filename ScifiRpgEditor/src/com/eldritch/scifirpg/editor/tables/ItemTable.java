@@ -17,8 +17,6 @@ import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
-import com.eldritch.scifirpg.editor.AssetTablePanel;
-import com.eldritch.scifirpg.editor.panel.AssetEditorPanel;
 import com.eldritch.invoken.proto.Disciplines.Discipline;
 import com.eldritch.invoken.proto.Effects.DamageType;
 import com.eldritch.invoken.proto.Effects.Effect;
@@ -27,6 +25,8 @@ import com.eldritch.invoken.proto.Items.Item.DamageMod;
 import com.eldritch.invoken.proto.Items.Item.RangedWeaponType;
 import com.eldritch.invoken.proto.Items.Item.Requirement;
 import com.eldritch.invoken.proto.Items.Item.Type;
+import com.eldritch.scifirpg.editor.AssetTablePanel;
+import com.eldritch.scifirpg.editor.panel.AssetEditorPanel;
 import com.google.common.base.Optional;
 import com.google.protobuf.TextFormat;
 import com.jgoodies.forms.builder.DefaultFormBuilder;
@@ -118,7 +118,7 @@ public class ItemTable extends MajorAssetTable<Item> {
 
             builder.append("Type:", typeBox);
             builder.nextLine();
-            
+
             builder.append("Description:", descriptionField);
             builder.nextLine();
 
@@ -151,7 +151,7 @@ public class ItemTable extends MajorAssetTable<Item> {
 
             builder.append("Cooldown:", cooldownField);
             builder.nextLine();
-            
+
             builder.append("Ranged Type:", rangedTypeBox);
             builder.nextLine();
 

@@ -1,7 +1,6 @@
 package com.eldritch.scifirpg.editor.tables;
 
 import java.awt.BorderLayout;
-import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -16,6 +15,8 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 
 import com.google.common.base.Optional;
 
@@ -62,11 +63,8 @@ public abstract class AssetTable<T> extends JTable {
 	        public void mousePressed(MouseEvent me) {
 	        	deleteItem.setVisible(AssetTable.this.getSelectedRow() >= 0);
 	        	
-	            JTable table = (JTable) me.getSource();
-	            Point p = me.getPoint();
-	            int row = table.rowAtPoint(p);
-	            
 	            if (me.getClickCount() == 2) {
+	                int row = convertRowIndexToModel(getSelectedRow());
 	            	if (row >= 0) {
 	            		editAsset(row);
 	            	} else {
@@ -75,6 +73,9 @@ public abstract class AssetTable<T> extends JTable {
 	            }
 	        }
 	    });
+	    
+	    TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(getModel());
+        setRowSorter(sorter);
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -103,7 +104,11 @@ public abstract class AssetTable<T> extends JTable {
 	
 	public void editAsset(int row) {
 		T asset = getModel().getAsset(row);
-		handleCreateAsset(Optional.<T>of(asset));
+		editAsset(asset);
+	}
+	
+	public void editAsset(T asset) {
+	    handleCreateAsset(Optional.<T>of(asset));
 	}
 	
 	public void deleteAsset(T asset) {
