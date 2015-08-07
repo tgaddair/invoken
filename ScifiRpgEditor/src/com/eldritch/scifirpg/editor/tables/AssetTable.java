@@ -64,8 +64,8 @@ public abstract class AssetTable<T> extends JTable {
 	        	deleteItem.setVisible(AssetTable.this.getSelectedRow() >= 0);
 	        	
 	            if (me.getClickCount() == 2) {
-	                int row = convertRowIndexToModel(getSelectedRow());
-	            	if (row >= 0) {
+	            	if (getSelectedRow() >= 0) {
+	            	    int row = convertRowIndexToModel(getSelectedRow());
 	            		editAsset(row);
 	            	} else {
 	            		handleCreateAsset(Optional.<T>absent());
