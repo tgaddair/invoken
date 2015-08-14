@@ -19,6 +19,7 @@ message Item {
 		CREDENTIAL = 5;
 		FRAGMENT = 7;
 		ICEPIK = 10;
+		CORE = 11;
 		OTHER = 6;
 	}
 

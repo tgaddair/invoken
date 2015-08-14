@@ -228,6 +228,18 @@ message PlayerActor {
 	optional PlayerActor corpse = 27;
 	optional int32 fragments = 28;
 
+	// backup
+	message Backup {
+		optional int32 floor = 1;
+		optional string region = 2;
+		optional string room = 3;
+
+		optional float x = 4;
+		optional float y = 5;
+	}
+
+	optional Backup backup = 35;
+
 	// minimap persistence
 	repeated int32 visited_rooms = 29;
 }
